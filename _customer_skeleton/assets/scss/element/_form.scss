@@ -47,7 +47,7 @@
 }
 
 .FormElement {
-	@media screen AND (max-width:#{$singleColumnBreakpoint}) {
+	@media screen and (width <= #{$singleColumnBreakpoint}) {
 		margin-top:var(--formRowGap);
 	}
 }

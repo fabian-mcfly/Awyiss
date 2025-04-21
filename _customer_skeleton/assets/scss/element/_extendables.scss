@@ -36,7 +36,7 @@
 	margin-inline:auto;
 	padding-inline:var(--pagePadding);
 
-	@media screen and (max-width:1024px) {
+	@media screen and (width <= 1024px) {
 		padding-inline:calc(var(--pagePadding) * .5);
 	}
 }

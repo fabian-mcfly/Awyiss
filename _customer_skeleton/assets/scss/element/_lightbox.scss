@@ -162,7 +162,7 @@
 			overflow-x:hidden;
 			overflow-y:auto;
 
-			@media screen AND (max-aspect-ratio:1) {
+			@media screen and (max-aspect-ratio:1) {
 				aspect-ratio:.5;
 			}
 		}
@@ -179,7 +179,7 @@
 
 		> iframe {
 			&:not(.Video) {
-				@media screen AND (max-aspect-ratio:1) {
+				@media screen and (max-aspect-ratio:1) {
 					aspect-ratio:.5;
 				}
 			}

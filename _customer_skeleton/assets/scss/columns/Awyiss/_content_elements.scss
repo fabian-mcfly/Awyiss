@@ -110,7 +110,7 @@
 	}
 
 	#{$combinedSelector} {
-		@media screen AND (max-width:$singleColumnBreakpoint) {
+		@media screen and (width <= $singleColumnBreakpoint) {
 			--elementWidth:100%;
 			--elementMargin:0;
 		}

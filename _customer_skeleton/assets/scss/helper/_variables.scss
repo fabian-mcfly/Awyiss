@@ -74,7 +74,7 @@ $singleColumnBreakpoint:860px !default;
 	--contentRowGap:calc(var(--lineHeightMain) * 2);
 	--formRowGap:calc(var(--lineHeightMain) * .5);
 
-	@media (max-width:$pageWidth) {
+	@media (width <= $pageWidth) {
 		--pagePadding:#{$pagePadding};
 	}
 }

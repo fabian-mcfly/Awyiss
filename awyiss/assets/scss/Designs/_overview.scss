@@ -72,15 +72,15 @@
 	}
 
 	.Overview-Fieldset {
-		@container (max-width:1200px) {
+		@container (width <= 1200px) {
 			grid-template-columns:repeat(8, 1fr);
 		}
 		
-		@container (max-width:860px) {
+		@container (width <= 860px) {
 			grid-template-columns:repeat(4, 1fr);
 		}
 
-		@container (max-width:480px) {
+		@container (width <= 480px) {
 			grid-template-columns:1fr;
 		}
 
@@ -102,7 +102,7 @@
 		padding-bottom:40px;
 		border-bottom:1px solid rgba(0, 0, 0, .1);
 
-		@container (max-width:900px) {
+		@container (width <= 900px) {
 			grid-template-columns:1fr;
 		}
 
@@ -116,7 +116,7 @@
 	.FormInputType-Color {
 		grid-column:auto / span 2;
 
-		@container (max-width:480px) {
+		@container (width <= 480px) {
 			grid-column:auto / -1;
 		}
 	}
@@ -127,7 +127,7 @@
 	) {
 		grid-column:auto / span 4;
 
-		@container (max-width:480px) {
+		@container (width <= 480px) {
 			grid-column:auto / -1;
 		}
 
@@ -193,30 +193,30 @@
 	}
 
 	.FormInputType-AdditionalVariables {
-		@container (max-width:1200px) {
+		@container (width <= 1200px) {
 			grid-template-columns:repeat(8, 1fr);
 		}
 
-		@container (max-width:860px) {
+		@container (width <= 860px) {
 			grid-template-columns:repeat(4, 1fr);
 		}
 
-		@container (max-width:480px) {
+		@container (width <= 480px) {
 			grid-template-columns:1fr;
 		}
 
 		> .FormInput {
 			grid-column:auto / span 6;
 
-			@container (max-width:1200px) {
+			@container (width <= 1200px) {
 				grid-column:auto / span 4;
 			}
 
-			@container (max-width:860px) {
+			@container (width <= 860px) {
 				grid-column:auto / span 2;
 			}
 
-			@container (max-width:480px) {
+			@container (width <= 480px) {
 				grid-column:1 / -1;
 			}
 
