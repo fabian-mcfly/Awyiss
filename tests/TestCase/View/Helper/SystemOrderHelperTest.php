@@ -162,8 +162,8 @@ class SystemOrderHelperTest extends TestCase {
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $options]);
 
-		$this->assertStringContainsString('<option value="1">', $result);
-		$this->assertStringContainsString('<option value="2" selected="selected">', $result);
+		$this->assertStringContainsString('<option value="1" title="system_order_first">', $result);
+		$this->assertStringContainsString('<option value="2" title="-&gt; system_order_after Option 1" selected="selected">', $result);
 	}
 
 
@@ -185,8 +185,8 @@ class SystemOrderHelperTest extends TestCase {
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $options]);
 
-		$this->assertStringContainsString('<option value="2" selected="selected">-&gt; system_order_after Option 1</option>', $result);
-		$this->assertStringContainsString('<option value="__CURRENT__" disabled="disabled">Option 2</option>', $result);
+		$this->assertStringContainsString('<option value="2" title="-&gt; system_order_after Option 1" selected="selected">-&gt; system_order_after Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="__CURRENT__" title="Option 2" disabled="disabled">Option 2</option>', $result);
 	}
 
 
@@ -208,8 +208,8 @@ class SystemOrderHelperTest extends TestCase {
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $options]);
 
-		$this->assertStringContainsString('<option value="2" selected="selected">-&gt; system_order_after Option 1</option>', $result);
-		$this->assertStringContainsString('<option value="3">system_order_after Option 2</option>', $result);
+		$this->assertStringContainsString('<option value="2" title="-&gt; system_order_after Option 1" selected="selected">-&gt; system_order_after Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="3" title="system_order_after Option 2">system_order_after Option 2</option>', $result);
 	}
 
 
@@ -227,9 +227,9 @@ class SystemOrderHelperTest extends TestCase {
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $records]);
 
 		$this->assertStringContainsString(
-			'<option value="2" selected="selected">-&gt; system_order_after Testfolder1</option>' .
-			'<option value="__CURRENT__" disabled="disabled">Testfolder2</option>' .
-			'<option value="3">system_order_after media_folders::inactive Testfolder3</option>',
+			'<option value="2" title="-&gt; system_order_after Testfolder1" selected="selected">-&gt; system_order_after Testfolder1</option>' .
+			'<option value="__CURRENT__" title="Testfolder2" disabled="disabled">Testfolder2</option>' .
+			'<option value="3" title="system_order_after media_folders::inactive Testfolder3">system_order_after media_folders::inactive Testfolder3</option>',
 			$result
 		);
 	}
@@ -251,9 +251,9 @@ class SystemOrderHelperTest extends TestCase {
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $records]);
 
 		$this->assertStringContainsString(
-			'<option value="2">system_order_after Testfolder1</option>' .
-			'<option value="__CURRENT__" disabled="disabled">Testfolder2</option>' .
-			'<option value="3" selected="selected">-&gt; system_order_after media_folders::inactive Testfolder3</option>',
+			'<option value="2" title="system_order_after Testfolder1">system_order_after Testfolder1</option>' .
+			'<option value="__CURRENT__" title="Testfolder2" disabled="disabled">Testfolder2</option>' .
+			'<option value="3" title="-&gt; system_order_after media_folders::inactive Testfolder3" selected="selected">-&gt; system_order_after media_folders::inactive Testfolder3</option>',
 			$result
 		);
 	}
@@ -274,9 +274,9 @@ class SystemOrderHelperTest extends TestCase {
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $records]);
 
 		$this->assertStringContainsString(
-			'<option value="2">system_order_after Testfolder1</option>' .
-			'<option value="3" selected="selected">-&gt; system_order_after Testfolder2</option>' .
-			'<option value="4">system_order_after media_folders::inactive Testfolder3</option>',
+			'<option value="2" title="system_order_after Testfolder1">system_order_after Testfolder1</option>' .
+			'<option value="3" title="-&gt; system_order_after Testfolder2" selected="selected">-&gt; system_order_after Testfolder2</option>' .
+			'<option value="4" title="system_order_after media_folders::inactive Testfolder3">system_order_after media_folders::inactive Testfolder3</option>',
 			$result
 		);
 	}
@@ -298,7 +298,7 @@ class SystemOrderHelperTest extends TestCase {
 
 		$result = $this->helper->control(null, ['includeFirst' => true, 'entity' => $entity, 'options' => $options]);
 
-		$this->assertStringContainsString('<option value="1">system_order_first</option>', $result);
+		$this->assertStringContainsString('<option value="1" title="system_order_first">system_order_first</option>', $result);
 	}
 
 
@@ -323,7 +323,7 @@ class SystemOrderHelperTest extends TestCase {
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $options, 'templates' => $templates]);
 
-		$this->assertStringContainsString('<option value="3" selected="selected">Something Custom</option>', $result);
+		$this->assertStringContainsString('<option value="3" title="Something Custom" selected="selected">Something Custom</option>', $result);
 	}
 
 

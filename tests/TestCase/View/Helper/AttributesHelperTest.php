@@ -359,12 +359,12 @@ class AttributesHelperTest extends TestCase {
 		$result = $this->helper->control('dropdown_select');
 
 		$this->assertStringContainsString('<select name="attributes[dropdown_select][]"', $result);
-		$this->assertStringContainsString('<option value="text">Text</option>', $result);
-		$this->assertStringContainsString('<option value="medium">Mittel</option>', $result);
-		$this->assertStringContainsString('<option value="main">Hauptfarbe</option>', $result);
-		$this->assertStringContainsString('<option value="contrast">Kontrastfarbe</option>', $result);
-		$this->assertStringNotContainsString('<option value="dark">Dunkel</option>', $result);
-		$this->assertStringNotContainsString('<option value="light">Hell</option>', $result);
+		$this->assertStringContainsString('<option value="text" title="Text">Text</option>', $result);
+		$this->assertStringContainsString('<option value="medium" title="Mittel">Mittel</option>', $result);
+		$this->assertStringContainsString('<option value="main" title="Hauptfarbe">Hauptfarbe</option>', $result);
+		$this->assertStringContainsString('<option value="contrast" title="Kontrastfarbe">Kontrastfarbe</option>', $result);
+		$this->assertStringNotContainsString('<option value="dark" title="Dunkel">Dunkel</option>', $result);
+		$this->assertStringNotContainsString('<option value="light" title="Hell">Hell</option>', $result);
 	}
 
 
@@ -388,8 +388,8 @@ class AttributesHelperTest extends TestCase {
 		]);
 
 		$this->assertStringContainsString('<select name="attributes[dropdown_select]"', $result);
-		$this->assertStringContainsString('<option value="val1">Value 1</option>', $result);
-		$this->assertStringContainsString('<option value="val2">Value 2</option>', $result);
+		$this->assertStringContainsString('<option value="val1" title="Value 1">Value 1</option>', $result);
+		$this->assertStringContainsString('<option value="val2" title="Value 2">Value 2</option>', $result);
 	}
 
 

@@ -151,8 +151,8 @@ class FormHelperTest extends TestCase {
 
 		$this->assertStringContainsString('<select name="category"', $result);
 		$this->assertStringContainsString('<option value=""', $result);
-		$this->assertStringContainsString('<option value="0">Option 1</option>', $result);
-		$this->assertStringContainsString('<option value="1">Option 2</option>', $result);
+		$this->assertStringContainsString('<option value="0" title="Option 1">Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="1" title="Option 2">Option 2</option>', $result);
 	}
 
 
@@ -167,8 +167,8 @@ class FormHelperTest extends TestCase {
 
 		$this->assertStringContainsString('<select', $result);
 		$this->assertStringNotContainsString('<option value=""', $result);
-		$this->assertStringContainsString('<option value="0">Option 1</option>', $result);
-		$this->assertStringContainsString('<option value="1">Option 2</option>', $result);
+		$this->assertStringContainsString('<option value="0" title="Option 1">Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="1" title="Option 2">Option 2</option>', $result);
 
 		$attributes = ['empty' => null];
 
@@ -176,8 +176,8 @@ class FormHelperTest extends TestCase {
 
 		$this->assertStringContainsString('<select', $result);
 		$this->assertStringNotContainsString('<option value=""', $result);
-		$this->assertStringContainsString('<option value="0">Option 1</option>', $result);
-		$this->assertStringContainsString('<option value="1">Option 2</option>', $result);
+		$this->assertStringContainsString('<option value="0" title="Option 1">Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="1" title="Option 2">Option 2</option>', $result);
 	}
 
 

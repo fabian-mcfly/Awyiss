@@ -191,8 +191,8 @@ class LocaleHelperTest extends TestCase {
 		$result = $this->locale->control('language');
 
 		$this->assertStringContainsString('<select name="language"', $result);
-		$this->assertStringContainsString('<option value="de">Deutsch</option>', $result);
-		$this->assertStringContainsString('<option value="en">English</option>', $result);
+		$this->assertStringContainsString('<option value="de" title="Deutsch">Deutsch</option>', $result);
+		$this->assertStringContainsString('<option value="en" title="English">English</option>', $result);
 	}
 
 
@@ -205,8 +205,8 @@ class LocaleHelperTest extends TestCase {
 		$result = $this->locale->control('language', ['class' => 'custom-class']);
 
 		$this->assertStringContainsString('<select name="language" class="custom-class"', $result);
-		$this->assertStringContainsString('<option value="de">Deutsch</option>', $result);
-		$this->assertStringContainsString('<option value="en">English</option>', $result);
+		$this->assertStringContainsString('<option value="de" title="Deutsch">Deutsch</option>', $result);
+		$this->assertStringContainsString('<option value="en" title="English">English</option>', $result);
 	}
 
 
@@ -219,8 +219,8 @@ class LocaleHelperTest extends TestCase {
 		$result = $this->locale->control('language', ['val' => 'en']);
 
 		$this->assertStringContainsString('<select name="language"', $result);
-		$this->assertStringContainsString('<option value="de">Deutsch</option>', $result);
-		$this->assertStringContainsString('<option value="en" selected="selected">English</option>', $result);
+		$this->assertStringContainsString('<option value="de" title="Deutsch">Deutsch</option>', $result);
+		$this->assertStringContainsString('<option value="en" title="English" selected="selected">English</option>', $result);
 	}
 
 

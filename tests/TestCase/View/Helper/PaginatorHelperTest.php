@@ -761,10 +761,10 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->paginator->limitControl();
 
-		$this->assertStringContainsString('<option value="10" selected="selected">10</option>', $result);
-		$this->assertStringContainsString('<option value="20">20</option>', $result);
-		$this->assertStringContainsString('<option value="50">50</option>', $result);
-		$this->assertStringContainsString('<option value="100">100</option>', $result);
+		$this->assertStringContainsString('<option value="10" title="10" selected="selected">10</option>', $result);
+		$this->assertStringContainsString('<option value="20" title="20">20</option>', $result);
+		$this->assertStringContainsString('<option value="50" title="50">50</option>', $result);
+		$this->assertStringContainsString('<option value="100" title="100">100</option>', $result);
 	}
 
 
@@ -780,9 +780,9 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->paginator->limitControl();
 
-		$this->assertStringContainsString('<option value="20" selected="selected">20</option>', $result);
-		$this->assertStringContainsString('<option value="50">50</option>', $result);
-		$this->assertStringContainsString('<option value="100">100</option>', $result);
+		$this->assertStringContainsString('<option value="20" title="20" selected="selected">20</option>', $result);
+		$this->assertStringContainsString('<option value="50" title="50">50</option>', $result);
+		$this->assertStringContainsString('<option value="100" title="100">100</option>', $result);
 	}
 
 
@@ -798,7 +798,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->paginator->limitControl();
 
-		$this->assertStringContainsString('<option value="20">20</option><option value="35" selected="selected">35</option><option value="50">50</option>', $result);
+		$this->assertStringContainsString('<option value="20" title="20">20</option><option value="35" title="35" selected="selected">35</option><option value="50" title="50">50</option>', $result);
 	}
 
 
@@ -819,10 +819,10 @@ class PaginatorHelperTest extends TestCase {
 			44 => 44,
 		]);
 
-		$this->assertStringContainsString('<option value="11">11</option>', $result);
-		$this->assertStringContainsString('<option value="22" selected="selected">22</option>', $result);
-		$this->assertStringContainsString('<option value="33">33</option>', $result);
-		$this->assertStringContainsString('<option value="44">44</option>', $result);
+		$this->assertStringContainsString('<option value="11" title="11">11</option>', $result);
+		$this->assertStringContainsString('<option value="22" title="22" selected="selected">22</option>', $result);
+		$this->assertStringContainsString('<option value="33" title="33">33</option>', $result);
+		$this->assertStringContainsString('<option value="44" title="44">44</option>', $result);
 	}
 
 

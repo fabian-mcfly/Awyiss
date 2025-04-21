@@ -244,8 +244,8 @@ class CategoriesHelperTest extends TestCase {
 
 		$result = $this->helper->control('media_folders', ['options' => ['val1' => 'option1', 'val2' => 'option2']]);
 
-		$this->assertStringContainsString('<option value="val1">option1</option>', $result);
-		$this->assertStringContainsString('<option value="val2">option2</option>', $result);
+		$this->assertStringContainsString('<option value="val1" title="option1">option1</option>', $result);
+		$this->assertStringContainsString('<option value="val2" title="option2">option2</option>', $result);
 	}
 
 
@@ -290,8 +290,8 @@ class CategoriesHelperTest extends TestCase {
 
 		$result = $this->helper->control('media_folders', ['options' => $options]);
 
-		$this->assertStringContainsString('<option value="1">Child 1</option>', $result);
-		$this->assertStringContainsString('<option value="10">Child 10</option>', $result);
+		$this->assertStringContainsString('<option value="1" title="Child 1">Child 1</option>', $result);
+		$this->assertStringContainsString('<option value="10" title="Child 10">Child 10</option>', $result);
 	}
 
 
@@ -327,8 +327,8 @@ class CategoriesHelperTest extends TestCase {
 			'options' => $options,
 		]);
 
-		$this->assertStringContainsString('<option value="foobar1">Child 1</option>', $result);
-		$this->assertStringContainsString('<option value="foobar10">Child 10</option>', $result);
+		$this->assertStringContainsString('<option value="foobar1" title="Child 1">Child 1</option>', $result);
+		$this->assertStringContainsString('<option value="foobar10" title="Child 10">Child 10</option>', $result);
 	}
 
 
@@ -569,7 +569,7 @@ class CategoriesHelperTest extends TestCase {
 			'val' => 'value2',
 		]);
 
-		$this->assertStringContainsString('value="value2" selected="selected"', $result);
+		$this->assertStringContainsString('value="value2" title="Option 2" selected="selected"', $result);
 	}
 
 
@@ -589,7 +589,7 @@ class CategoriesHelperTest extends TestCase {
 			],
 		]);
 
-		$this->assertStringContainsString('value="value2" selected="selected"', $result);
+		$this->assertStringContainsString('value="value2" title="Option 2" selected="selected"', $result);
 	}
 
 
@@ -648,7 +648,7 @@ class CategoriesHelperTest extends TestCase {
 			'empty' => true,
 		]);
 
-		$this->assertStringContainsString('<option value=""></option>', $result);
+		$this->assertStringContainsString('<option value="" title=""></option>', $result);
 	}
 
 
@@ -678,8 +678,8 @@ class CategoriesHelperTest extends TestCase {
 
 		$result = $this->helper->control('media_folders', ['options' => ['val1' => 'option1', 'val2' => 'option2'], 'disabled' => ['val2']]);
 
-		$this->assertStringContainsString('<option value="val1">option1</option>', $result);
-		$this->assertStringContainsString('<option value="val2" disabled="disabled">option2</option>', $result);
+		$this->assertStringContainsString('<option value="val1" title="option1">option1</option>', $result);
+		$this->assertStringContainsString('<option value="val2" title="option2" disabled="disabled">option2</option>', $result);
 	}
 
 
