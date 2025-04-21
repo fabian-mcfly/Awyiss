@@ -1,4 +1,5 @@
 #TranslationDialog {
+	max-width:640px;
 	padding:52px 0 0;
 	overflow:hidden;
 
@@ -25,6 +26,19 @@
 
 	&::after {
 		content:attr(data-title, 'Translation');
+		padding-right:360px;
+
+		@media screen and (width <= 1024px) {
+			padding-right:330px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-right:280px;
+		}
+
+		@media screen and (width <= 480px) {
+			padding-right:120px;
+		}
 	}
 
 	.TranslationDialog-Form {
@@ -61,7 +75,7 @@
 	}
 
 	#TranslationDialog-Message {
-		&:not(:has(*)) {
+		&:empty {
 			display:none;
 		}
 	}
@@ -72,6 +86,57 @@
 		&:nth-last-child(1 of .FormInput) {
 			@media screen and (width <= 540px) {
 				margin-bottom:10px;
+			}
+		}
+	}
+
+	> .ButtonArea {
+		width:max-content;
+		margin:0;
+		padding:2px;
+		position:absolute;
+		top:0;
+		right:0;
+
+		@media screen and (width <= 640px) {
+			display:flex;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				margin-top:0;
+			}
+		}
+
+		.Button {
+			width:auto;
+			height:48px;
+			background-color:transparent;
+			line-height:26px;
+
+			@media screen and (width <= 768px) {
+				height:38px;
+			}
+
+			@media screen and (width <= 540px) {
+				padding-inline:10px;
+			}
+
+			@media screen and (width <= 480px) {
+				font-size:0;
+				line-height:0;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					height:38px;
+				}
+			}
+
+			&::after {
+				@media screen and (width <= 480px) {
+					margin-left:0;
+				}
 			}
 		}
 	}

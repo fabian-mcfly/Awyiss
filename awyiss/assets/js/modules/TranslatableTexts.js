@@ -97,6 +97,15 @@ export default class TranslatableTexts {
 			this.dialog.confirmCancel = document.getElementById('TranslationDialog-Cancel');
 		}
 
+		if (!this.dialog.buttonArea) {
+			// Create button area
+			this.dialog.buttonArea = document.createElement('div');
+			this.dialog.buttonArea.classList.add('ButtonArea');
+
+			// Add the button area as the first child of the dialog
+			this.dialog.insertBefore(this.dialog.buttonArea, this.dialog.firstChild);
+		}
+
 		// Add event listeners
 		window.eventHandler.add('click', this.applyChanges.bind(this), this.dialog.confirmApply);
 		window.eventHandler.add('click', this.closeDialog.bind(this), this.dialog.confirmCancel);
@@ -303,6 +312,8 @@ export default class TranslatableTexts {
 		this.dialog.confirmCancel.firstChild.nodeValue = element.dataset.dialogCancel || 'Cancel';
 		this.dialog.confirmCancel.title = this.dialog.confirmCancel.firstChild.nodeValue;
 
+		this.copyButtons();
+
 		// Store the current element as a property on the dialog
 		this.dialog.currentElement = element;
 
@@ -310,6 +321,32 @@ export default class TranslatableTexts {
 
 		// Scroll the form to the top
 		this.dialog.form.scrollTo(0, 0);
+	}
+
+	/**
+	 * Copies the buttons from the element to the dialog.
+	 */
+	copyButtons() {
+		// Empty the button area
+		this.dialog.buttonArea.innerHTML = '';
+		// Copy the buttons from the element to the dialog
+		const confirmApply = this.dialog.confirmApply.cloneNode();
+		confirmApply.removeAttribute('id');
+
+		// Apply the text manually
+		confirmApply.textContent = this.dialog.confirmApply.textContent;
+
+		this.dialog.buttonArea.appendChild(confirmApply);
+		window.eventHandler.add('click', this.applyChanges.bind(this), confirmApply);
+
+		const confirmCancel = this.dialog.confirmCancel.cloneNode();
+		confirmCancel.removeAttribute('id');
+
+		// Apply the text manually
+		confirmCancel.textContent = this.dialog.confirmCancel.textContent;
+
+		this.dialog.buttonArea.appendChild(confirmCancel);
+		window.eventHandler.add('click', this.closeDialog.bind(this), confirmCancel);
 	}
 
 	/**
