@@ -1,5 +1,7 @@
 //noinspection JSUnusedGlobalSymbols
 
+import DraggableSidebarToggle from 'DraggableSidebarToggle';
+
 /**
  * ButtonArea class
  *
@@ -29,6 +31,24 @@ export default class ButtonArea {
 		}
 
 		this.eventHandler.add('click', this.handleClick.bind(this), document.body);
+
+		const buttonAreaToggle = document.getElementById('ButtonArea-Toggle');
+		if (buttonAreaToggle) {
+			const draggable = new DraggableSidebarToggle(
+				document.getElementById('ButtonArea-Toggle'),
+				document.querySelector('.ButtonArea'),
+				document.body.clientWidth <= 420
+					? 240
+					: (document.body.clientWidth <= 540 ? 290 : 300),
+			);
+
+			this.eventHandler.add('resize', requestAnimationFrame.bind(window, () => {
+				// Set the max width in the draggable instance
+				draggable.maxSize = document.body.clientWidth <= 420
+					? 240
+					: (document.body.clientWidth <= 540 ? 290 : 300);
+			}), window);
+		}
 
 		// Listen for hash changes
 		this.eventHandler.add('hashchange', this.handleHashChange.bind(this), window);
@@ -94,3 +114,5 @@ export default class ButtonArea {
 		this.buttonArea.inert = !hasButtonAreaHash && document.getElementById('ButtonArea-Toggle')?.offsetParent;
 	}
 }
+
+

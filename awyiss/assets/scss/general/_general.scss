@@ -59,6 +59,18 @@ html {
 		}
 	}
 
+	&:has(#Content .ButtonArea.Visible) {
+		@media screen and (width <= 640px) {
+			overflow:hidden;
+		}
+	}
+
+	&:has(.Sidebar-Fieldsets.Visible) {
+		@media screen and (width <= 1024px) {
+			overflow:hidden;
+		}
+	}
+
 	&.🌚,
 	.🌚 {
 		--backgroundColor:#{desaturate($colorText, 10)};
@@ -108,6 +120,7 @@ body {
 				opacity:inherit;
 				visibility:inherit;
 				transition-delay:0s;
+				z-index:2005;
 			}
 		}
 	}
@@ -135,7 +148,7 @@ body {
 		background-color:rgba(0, 0, 0, .75);
 		position:fixed;
 		inset:0;
-		z-index:2010;
+		z-index:2020;
 		opacity:0;
 		visibility:hidden;
 		transition:opacity .3s ease-in-out, visibility 0s ease-in-out .3s;

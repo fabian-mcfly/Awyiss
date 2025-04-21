@@ -11,17 +11,37 @@
 	z-index:2010;
 	transition:background-color .3s linear, outline-color .1s ease-in-out, transform .3s ease-in-out;
 
-	body:has(.Sidebar-Fieldsets.Visible) & {
-		@media screen and (width <= 1024px) {
-			--backgroundColor:var(--colorSuccess);
+	&.Dragging {
+		background-color:var(--colorSuccess);
+		transition:none;
 
-			transform:translateY(calc(-100dvh + 80px));
+		html:has(&) {
+			cursor:grabbing;
+			pointer-events:none;
+
+			body {
+				&::after {
+					z-index:2005;
+					opacity:var(--opacity, 0);
+					visibility:visible;
+					transition-delay:0s;
+					transition-duration:0s;
+				}
+			}
 		}
 	}
 
 	&.Visible {
 		@media screen and (width <= 1024px) {
 			display:block;
+		}
+	}
+
+	body:has(.Sidebar-Fieldsets.Visible) & {
+		@media screen and (width <= 1024px) {
+			--backgroundColor:var(--colorSuccess);
+
+			transform:translateY(calc(-100dvh + 80px));
 		}
 	}
 
@@ -91,7 +111,7 @@
 			display:none;
 		}
 
-		&.NoTransition {
+		&:is(.Dragging, .NoTransition) {
 			transition:none;
 		}
 

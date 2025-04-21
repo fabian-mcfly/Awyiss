@@ -1,5 +1,6 @@
 // noinspection JSUnusedGlobalSymbols,NpmUsedModulesInstalled
 
+import DraggableSidebarToggle from 'DraggableSidebarToggle';
 import NestedListHandler from 'NestedListHandler';
 import Crop from 'Media/Crop';
 import Selectors from 'Media/Selectors';
@@ -249,81 +250,158 @@ export default class Overlay {
 
 		const useButtons = this.element.querySelectorAll('.Button-UseFiles');
 		useButtons.forEach(button => {
-			this.eventHandler.add('click', () => {
-				if (typeof this.opener === 'function') {
-					// Find all selected items
-					const firstSelectedItem = this.mediaList.querySelector('.Media-ListItem.Selected');
-
-					const link = firstSelectedItem.querySelector('.Link');
-
-					let href = link.href;
-
-					if (href.indexOf(baseUrl) === 0) {
-						href = href.substring(baseUrl.length);
-					}
-
-					this.opener(href);
-
-					// Close the overlay
-					this.closeButton.dispatchEvent(new MouseEvent('click'));
-
-					return;
-				}
-
-				// noinspection JSUnresolvedReference
-				if (typeof this.opener.useMedia !== 'function') {
-					return;
-				}
-
-				// Find all selected items
-				const selectedItems = this.mediaList.querySelectorAll('.Media-ListItem.Selected');
-
-				selectedItems.forEach(item => {
-					// noinspection JSUnresolvedReference
-					this.opener.useMedia(item);
-					item.classList.remove('Selected');
-				});
-
-				// Close the overlay
-				this.closeButton.dispatchEvent(new MouseEvent('click'));
-			}, button);
+			this.addUseButtonEvents(button);
 		});
 
 		const buttonAreaToggle = this.element.querySelector('#MediaButtonArea-Toggle');
 		if (buttonAreaToggle) {
-			this.eventHandler.add('click', () => {
-				this.element.querySelector('.ButtonArea')?.classList.toggle('Visible');
-			}, buttonAreaToggle);
-
-			this.eventHandler.add('click', event => {
-				if (
-					event.target.closest('.ButtonArea') ||
-					event.target.matches('#MediaButtonArea-Toggle')
-				) {
-					return;
-				}
-
-				this.element.querySelector('.ButtonArea')?.classList.remove('Visible');
-			}, this.element);
+			this.addToggleButtonEvents(buttonAreaToggle);
 		}
 
 		const mediaFoldersToggle = this.element.querySelector('#MediaFolders-Toggle');
 		if (mediaFoldersToggle) {
-			this.eventHandler.add('click', () => {
-				this.element.querySelector('#MediaFolders-List').classList.toggle('Visible');
-			}, mediaFoldersToggle);
+			this.addMediaFoldersToggleButtonEvents(mediaFoldersToggle);
+		}
+	}
 
-			this.eventHandler.add('click', event => {
-				if (
-					event.target.closest('#MediaFolders-List') ||
-					event.target.matches('#MediaFolders-Toggle')
-				) {
-					return;
+	/**
+	 * Add the events for the media folders toggle button.
+	 * @param {HTMLElement} mediaFoldersToggle
+	 */
+	addMediaFoldersToggleButtonEvents(mediaFoldersToggle) {
+		this.eventHandler.add('click', () => {
+			this.element.querySelector('#MediaFolders-List').classList.toggle('Visible');
+		}, mediaFoldersToggle);
+
+		this.eventHandler.add('click', event => {
+			if (
+				event.target.closest('#MediaFolders-List') ||
+				event.target.matches('#MediaFolders-Toggle')
+			) {
+				return;
+			}
+
+			this.element.querySelector('#MediaFolders-List').classList.remove('Visible');
+		}, this.element);
+
+		const draggable = new DraggableSidebarToggle(
+			mediaFoldersToggle,
+			this.element.querySelector('#MediaFolders-List'),
+			document.body.clientWidth <= 420
+				? 240
+				: (document.body.clientWidth <= 540 ? 290 : 300),
+			'left',
+		);
+
+		this.eventHandler.add('resize', requestAnimationFrame.bind(window, () => {
+			// Set the max width in the draggable instance
+			draggable.maxSize = document.body.clientWidth <= 420
+				? 240
+				: (document.body.clientWidth <= 540 ? 290 : 300);
+		}), window);
+
+		draggable.oldUpdatePosition = draggable.updatePosition;
+		draggable.updatePosition = function () {
+			this.oldUpdatePosition();
+
+			// Y is an offset between 0 and 20, depending on the progress of the x drag
+			let y = this.currentX / this.maxSize * 20;
+
+			// Update DOM elements
+			this.buttonAreaToggle.style.transform = `translate(${this.currentX}px, ${y}px)`;
+		};
+	}
+
+	/**
+	 * Add the click event to the use button.
+	 * @param {HTMLElement} button
+	 */
+	addUseButtonEvents(button) {
+		this.eventHandler.add('click', () => {
+			if (typeof this.opener === 'function') {
+				// Find all selected items
+				const firstSelectedItem = this.mediaList.querySelector('.Media-ListItem.Selected');
+
+				const link = firstSelectedItem.querySelector('.Link');
+
+				let href = link.href;
+
+				if (href.indexOf(baseUrl) === 0) {
+					href = href.substring(baseUrl.length);
 				}
 
-				this.element.querySelector('#MediaFolders-List').classList.remove('Visible');
-			}, this.element);
-		}
+				this.opener(href);
+
+				// Close the overlay
+				this.closeButton.dispatchEvent(new MouseEvent('click'));
+
+				return;
+			}
+
+			// noinspection JSUnresolvedReference
+			if (typeof this.opener.useMedia !== 'function') {
+				return;
+			}
+
+			// Find all selected items
+			const selectedItems = this.mediaList.querySelectorAll('.Media-ListItem.Selected');
+
+			selectedItems.forEach(item => {
+				// noinspection JSUnresolvedReference
+				this.opener.useMedia(item);
+				item.classList.remove('Selected');
+			});
+
+			// Close the overlay
+			this.closeButton.dispatchEvent(new MouseEvent('click'));
+		}, button);
+	}
+
+	/**
+	 * Add the toggle button events to the button area toggle.
+	 * @param {HTMLElement} buttonAreaToggle
+	 */
+	addToggleButtonEvents(buttonAreaToggle) {
+		this.eventHandler.add('click', () => {
+			this.element.querySelector('.ButtonArea')?.classList.toggle('Visible');
+		}, buttonAreaToggle);
+
+		this.eventHandler.add('click', event => {
+			if (
+				event.target.closest('.ButtonArea') ||
+				event.target.matches('#MediaButtonArea-Toggle')
+			) {
+				return;
+			}
+
+			this.element.querySelector('.ButtonArea')?.classList.remove('Visible');
+		}, this.element);
+
+		const draggable = new DraggableSidebarToggle(
+			buttonAreaToggle,
+			this.element.querySelector('.ButtonArea'),
+			document.body.clientWidth <= 420
+				? 240
+				: (document.body.clientWidth <= 540 ? 290 : 300),
+		);
+
+		this.eventHandler.add('resize', requestAnimationFrame.bind(window, () => {
+			// Set the max width in the draggable instance
+			draggable.maxSize = document.body.clientWidth <= 420
+				? 240
+				: (document.body.clientWidth <= 540 ? 290 : 300);
+		}), window);
+
+		draggable.oldUpdatePosition = draggable.updatePosition;
+		draggable.updatePosition = function () {
+			this.oldUpdatePosition();
+
+			// Y is an offset between 0 and 20, depending on the progress of the x drag
+			let y = this.currentX / this.maxSize * -20;
+
+			// Update DOM elements
+			this.buttonAreaToggle.style.transform = `translate(${this.currentX}px, ${y}px)`;
+		};
 	}
 
 	/**

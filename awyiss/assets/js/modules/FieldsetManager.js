@@ -1,5 +1,7 @@
 //noinspection JSUnusedGlobalSymbols
 
+import DraggableSidebarToggle from 'DraggableSidebarToggle';
+
 /**
  * FieldsetManager class to manage fieldsets in a form.
  */
@@ -47,11 +49,26 @@ export default class FieldsetManager {
 		this.fieldsets = Array.from(document.querySelectorAll(this.selector));
 
 		// If the body tag has the class OverviewAction, don't hide the fieldsets
-		if (!document.body.classList.contains('OverviewAction')) {
+		if (document.querySelector('#Content .Form form')) {
 			this.fieldsets.forEach(fieldset => this.checkVisibleChildren(fieldset));
 
 			// Check if the sidebar is visible
 			this.checkSidebarVisibility();
+
+			const sidebar = document.querySelector('.Sidebar-Fieldsets');
+			const sidebarToggle = document.getElementById('Sidebar-Toggle');
+			if (sidebar && sidebarToggle) {
+				const draggable = new DraggableSidebarToggle(
+					sidebarToggle,
+					sidebar,
+					window.innerHeight - 80,
+					'bottom',
+				);
+
+				this.eventHandler.add('resize', requestAnimationFrame.bind(window, () => {
+					draggable.maxSize = window.innerHeight - 80;
+				}), window);
+			}
 		}
 
 		// Set the initial collapse state of the fieldsets

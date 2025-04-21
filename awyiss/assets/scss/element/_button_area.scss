@@ -23,9 +23,30 @@
 		top:85px;
 	}
 
+	&.Dragging {
+		background-color:var(--colorSuccess);
+		transition:none;
+		z-index:2030;
+
+		html:has(&) {
+			cursor:grabbing;
+			pointer-events:none;
+
+			body {
+				&::after {
+					opacity:var(--opacity, 0);
+					visibility:visible;
+					transition-delay:0s;
+					transition-duration:0s;
+				}
+			}
+		}
+	}
+
 	&:has(~ .ButtonArea.Visible) {
+		background-color:var(--colorSuccess);
 		transform:translateX(-300px);
-		z-index:2020;
+		z-index:2030;
 
 		@media screen and (width <= 540px) {
 			transform:translateX(-290px);
@@ -91,6 +112,10 @@
 	}
 
 	#Content &:not(.ButtonArea-Bottom, .EditFrontendEditor &) {
+		&.Dragging {
+			transition:none;
+		}
+
 		@media screen and (width <= 1024px) {
 			width:100%;
 			max-width:none;

@@ -35,6 +35,24 @@
 		display:block;
 	}
 
+	&.Dragging {
+		background-color:var(--colorSuccess);
+		transition:none;
+		z-index:2030;
+
+		#MediaOverlay:has(&) {
+			cursor:grabbing;
+			pointer-events:none;
+
+			&::after {
+				opacity:var(--opacity, 0);
+				visibility:visible;
+				transition-delay:0s;
+				transition-duration:0s;
+			}
+		}
+	}
+
 	#MediaOverlay:has(.ButtonArea.Visible) & {
 		transform:translate(-300px, 20px);
 		z-index:2020;
@@ -56,6 +74,24 @@
 
 	@media screen and (width <= 680px) {
 		display:block;
+	}
+
+	&.Dragging {
+		background-color:var(--colorSuccess);
+		transition:none;
+		z-index:2030;
+
+		#MediaOverlay:has(&) {
+			cursor:grabbing;
+			pointer-events:none;
+
+			&::after {
+				opacity:var(--opacity, 0);
+				visibility:visible;
+				transition-delay:0s;
+				transition-duration:0s;
+			}
+		}
 	}
 
 	#MediaOverlay:has(#MediaFolders-List.Visible) & {
@@ -153,7 +189,7 @@
 
 	&:has(#MediaFolders-List.Visible) {
 		&::after {
-			@media screen and (width <= 640px) {
+			@media screen and (width <= 680px) {
 				opacity:inherit;
 				visibility:inherit;
 				transition-delay:0s;
@@ -181,6 +217,10 @@
 		grid-area:unquote('1 / 1 / 2 / 3');
 		position:relative;
 		white-space:nowrap;
+
+		&.Dragging {
+			transition:none;
+		}
 
 		@media screen and (width <= 820px) {
 			width:280px;
@@ -331,6 +371,10 @@ div#MediaFolders-List {
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
 	transition:transform .3s ease-in-out;
+
+	&.Dragging {
+		transition:none;
+	}
 
 	@media screen and (width <= 680px) {
 		width:280px;
