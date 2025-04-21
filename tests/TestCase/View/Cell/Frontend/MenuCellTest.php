@@ -455,6 +455,7 @@ class MenuCellTest extends TestCase {
 			'title' => 'Test Content',
 			'url' => null,
 			'identifier' => 'TestContent',
+			'tabindex' => '',
 		])->willReturn('Test Content');
 
 		$data = [
@@ -487,6 +488,7 @@ class MenuCellTest extends TestCase {
 			'title' => 'Test Content',
 			'url' => '/test',
 			'identifier' => 'TestContent',
+			'tabindex' => '',
 		])->willReturn('Test Content');
 
 		$data = [
@@ -519,6 +521,7 @@ class MenuCellTest extends TestCase {
 			'title' => 'Test Content & ÖÄÜß <> & More',
 			'url' => '/test',
 			'identifier' => 'TestContentOeaeuessMore',
+			'tabindex' => '',
 		])->willReturn('Test Content & More');
 
 		$data = [
