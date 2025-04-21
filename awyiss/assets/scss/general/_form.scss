@@ -1264,14 +1264,6 @@ textarea {
 				display:none;
 			}
 		}
-
-		:is(
-			> label,
-			.FormInputType-Select,
-			.FormInputType-Checkbox
-		) {
-			display:none;
-		}
 	}
 }
 
