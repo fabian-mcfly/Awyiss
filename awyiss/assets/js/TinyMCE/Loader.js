@@ -407,6 +407,17 @@ export default class Loader {
 				}
 
 				dialog.focus();
+
+				// Check if .tox-dialog__footer-end contains more than one buttons
+				const footerEnd = dialog.querySelector('.tox-dialog__footer-end');
+				const buttons = footerEnd?.querySelectorAll('button');
+				if (buttons.length > 1) {
+					// If there's a save button ([data-mce-name="Save"]) inside, move it to the start
+					const saveButton = footerEnd.querySelector('[data-mce-name="Save"]');
+					if (saveButton) {
+						footerEnd.prepend(saveButton);
+					}
+				}
 			}
 
 			return instance;

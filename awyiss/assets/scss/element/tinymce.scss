@@ -838,6 +838,7 @@ body {
 				&-end {
 					width:100%;
 					flex:0 0 100%;
+					justify-content:space-between;
 
 					@media screen and (width <= 480px) {
 						gap:10px;
@@ -846,7 +847,7 @@ body {
 				}
 
 				.tox-button.tox-button {
-					margin-left:auto;
+					margin:0;
 					padding:11px 20px;
 					border:0 none;
 					background-color:var(--backgroundColor);
@@ -872,11 +873,6 @@ body {
 
 					&[data-mce-name="Save"] {
 						background-color:var(--colorSuccess);
-
-						&:last-child {
-							margin-left:0;
-							order:-1;
-						}
 
 						&::after {
 							@extend %LineAwesomeIcon;
@@ -905,6 +901,10 @@ body {
 						}
 					}
 
+					&:first-child:last-child {
+						margin-left:auto;
+					}
+
 					&:focus-visible {
 						box-shadow:0 0 10px var(--colorSuccess);
 						outline:2px solid var(--colorSuccess);
@@ -914,11 +914,6 @@ body {
 							box-shadow:0 0 10px var(--colorSuccess);
 							outline-color:transparent;
 						}
-					}
-
-					&:last-child {
-						order:2;
-						margin-left:auto;
 					}
 				}
 			}
