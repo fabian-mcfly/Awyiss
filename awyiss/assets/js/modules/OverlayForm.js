@@ -132,7 +132,7 @@ export default class OverlayForm {
 		const form = this.overlayElement.querySelector('form');
 
 		const formData = new FormData(form);
-		formData.append('submit', 'submit_close');
+		formData.append('submit_type', 'submit_close');
 
 		// Add a class to the form to show that a reload operation is in progress
 		form.parentElement.classList.add('FetchInProgress');
