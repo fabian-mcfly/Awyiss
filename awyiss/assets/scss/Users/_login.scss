@@ -136,6 +136,7 @@
 			margin-block:var(--lineHeightMain);
 			font-size:1rem;
 			line-height:var(--lineHeightMain);
+			grid-column:1 / -1;
 
 			+ .Form {
 				margin-top:var(--lineHeightMain);
