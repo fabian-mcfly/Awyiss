@@ -83,13 +83,25 @@ export default class FieldsetManager {
 							}
 						}, 100);
 					}
-					else if (!sidebar.classList.contains('Visible')){
+					else if (!sidebar.classList.contains('Visible')) {
 						clearTimeout(sidebar.timeout);
 						sidebar.timeout = setTimeout(() => {
 							sidebar.inert = true;
 						}, 100);
 					}
 				}), window);
+
+				setTimeout(() => {
+					// If the sidebar is not visible, check if it contains errors
+					if (sidebarToggle.offsetParent && !sidebar.classList.contains('Visible')) {
+						this.checkSidebarErrors(form, sidebar, sidebarToggle);
+					}
+				}, 100);
+			}
+
+			if (sidebar || this.fieldsets.length) {
+				form.noValidate = true;
+				this.eventHandler.add('submit', this.handleFormSubmit.bind(this), form, true);
 			}
 		}
 
@@ -140,7 +152,10 @@ export default class FieldsetManager {
 
 		const wasVisible = sidebar.classList.contains('Visible');
 
-		if (event.target.closest('.Sidebar-Fieldsets')) {
+		if (
+			event.target.closest('.Sidebar-Fieldsets') ||
+			event.target.closest('.air-datepicker-global-container')
+		) {
 			return;
 		}
 
@@ -409,6 +424,73 @@ export default class FieldsetManager {
 		sidebar.inert = !isVisible && document.getElementById('Sidebar-Toggle')?.offsetParent;
 	}
 
+
+	/**
+	 * Handle form submission
+	 * If the form is invalid, check if any invalid field is inside a collapsed fieldset
+	 * or the sidebar (if it exists and is not visible)
+	 */
+	handleFormSubmit(event) {
+		const form = event.target;
+		event.preventDefault();
+
+		//form.noValidate = false;
+		if (!form.checkValidity()) {
+			// Get all invalid fields
+			let invalidFields = Array.from(form.querySelectorAll(':invalid'));
+
+			// Filter out fieldsets
+			invalidFields = invalidFields.filter(field => field.tagName.toLowerCase() !== 'fieldset');
+
+			// Get the first invalid element
+			const firstInvalidElement = invalidFields[0];
+
+			if (!firstInvalidElement.offsetParent) {
+				// Check if the first invalid element is inside a collapsed fieldset
+				const fieldset = firstInvalidElement.closest('.Collapsed');
+				if (fieldset) {
+					// Remove the collapsed class from the fieldset
+					fieldset.classList.remove('Collapsed');
+				}
+			}
+
+			// Check if the first invalid element is inside the sidebar
+			// And if the sidebar is inert
+			const sidebar = firstInvalidElement.closest('.Sidebar-Fieldsets');
+			const sidebarToggle = document.getElementById('Sidebar-Toggle');
+			if (sidebar && sidebar.inert && sidebarToggle) {
+				sidebarToggle.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
+
+				// Wait for the sidebar to be visible
+				setTimeout(() =>{
+					if (!firstInvalidElement.offsetParent) {
+						form.submit();
+						return;
+					}
+
+					firstInvalidElement.reportValidity();
+				}, 300);
+				return;
+			}
+
+			// If the first invalid element is still invisible, which should never happen,
+			// force the form to submit. The server will handle the validation.
+			if (!firstInvalidElement.offsetParent) {
+				form.submit();
+				return;
+			}
+
+			// The first element is visible, so report its validity
+			firstInvalidElement.reportValidity();
+
+			return;
+		}
+
+		// If the form is valid, submit it
+		form.submit();
+	}
+
+
 	/**
 	 * Handle URL hash changes
 	 * @returns {void}
@@ -424,5 +506,29 @@ export default class FieldsetManager {
 
 		sidebar.classList.toggle('Visible', hasSidebarHash);
 		sidebar.inert = !hasSidebarHash && document.getElementById('Sidebar-Toggle')?.offsetParent;
+	}
+
+	/**
+	 * Check if the sidebar contains errors
+	 * If there are no errors outside the sidebar, open the sidebar
+	 *
+	 * @param {HTMLElement} form
+	 * @param {HTMLElement} sidebar
+	 * @param {HTMLElement} sidebarToggle
+	 */
+	checkSidebarErrors(form, sidebar, sidebarToggle) {
+		const errorElements = form.querySelectorAll('.FormInput.Error');
+
+		let errorsNotInSidebar = 0;
+		errorElements.forEach((element) => {
+			if (!sidebar.contains(element)) {
+				errorsNotInSidebar++;
+			}
+		});
+
+		if (!errorsNotInSidebar) {
+			// If there are no errors outside the sidebar, open the sidebar
+			sidebarToggle.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
+		}
 	}
 }
