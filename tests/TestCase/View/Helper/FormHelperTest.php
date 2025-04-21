@@ -183,6 +183,36 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testSelectWithCustomOptionTitle(): void {
+		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
+		$entity = $this->fetchTable('ContentTemplates')->get(2);
+
+		$this->formHelper->create($entity);
+
+		$result = $this->formHelper->select('category', [
+			[
+				'text' => 'Option 1',
+				'title' => 'Option 1',
+				'value' => 1,
+			],
+			[
+				'text' => 'Option 2',
+				'title' => 'Custom-Option 2',
+				'value' => 2,
+			],
+		]);
+
+		$this->assertStringContainsString('<select name="category"', $result);
+		$this->assertStringContainsString('<option value=""', $result);
+		$this->assertStringContainsString('<option value="1" title="Option 1">Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="2" title="Custom-Option 2">Option 2</option>', $result);
+	}
+
+
+	/**
+	 * @return void
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
