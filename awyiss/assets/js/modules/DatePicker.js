@@ -57,6 +57,11 @@ export default class DatePicker {
 			datePicker.selectDate(datePickerInput.value);
 		}
 
+		// Remove the required attribute from the altField as it is hidden
+		if (datePickerInput.required) {
+			datePicker.$altField.required = false;
+		}
+
 		window.eventHandler.add('change', () => {
 			if (!datePickerInput.value) {
 				input.value = '';
