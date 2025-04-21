@@ -270,58 +270,10 @@ class FormHelper extends BaseFormHelper {
 			return $this->widget('translatableText', $la_options);
 		}
 
-		$ls_association = '';
-		$ls_fieldName = $fieldName;
-		if (str_contains($ls_fieldName, '.')) {
-			$la_parts = explode('.', $ls_fieldName);
-			$ls_fieldName = array_pop($la_parts);
-
-			$ls_association = implode('.', $la_parts);
-			$ls_association .= '.';
-		}
-
-		$lo_userLanguage = LocaleMiddleware::getLanguage($this->languageRealm);
-
-
-		foreach ($this->languages as $ls_shortcode => $lo_language) {
-			$lx_value = false;
-			if (isset($la_values)) {
-				$lx_value = $la_values[ $ls_shortcode ] ?? null;
-				if ($lx_value instanceof EntityInterface) {
-					$lx_value = $lx_value->get($ls_fieldName);
-				}
-			}
-
-			$la_translatableOptions = [
-				'id' => $this->_domId($fieldName . '-Translations[' . $ls_shortcode . ']'),
-				'label' => $lo_language->label,
-				'placeholder' => $la_options['placeholder'] ?? $la_options['val'] ?? null,
-				'required' => $la_options['required'] && !count($la_options['controls']),
-				'type' => $ls_realType,
-				'val' => ($lx_value !== false ? $lx_value : $this->getSourceValue($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName)) ?? '',
-			];
-			$la_translatableOptions += $options;
-			unset($la_translatableOptions['values']);
-
-			if ($lo_userLanguage->shortcode === $ls_shortcode) {
-				// If the user's language is the same as the current language, add a class to highlight it.
-				$la_translatableOptions['templateVars']['containerClass'] = ' IsCurrentLanguage';
-			}
-
-			if ($ls_association === 'attributes.') {
-				$la_translatableOptions['isTranslation'] = true;
-				$la_translatableOptions['language'] = $lo_language;
-				$la_options['controls'][] = $this->Attributes->control($ls_fieldName, $la_translatableOptions);
-			}
-			else {
-				$la_options['controls'][] = $this->control($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName, $la_translatableOptions);
-			}
-		}
-
+		$la_options = $this->processMultiLanguageControls($fieldName, $la_options, $options, $ls_realType, $la_values);
 
 		$la_options['aria-required'] = $la_options['required'] = false;
 		$la_options['input'] = $this->widget($ls_realType, $la_options + ['readonly' => true]);
-
 
 		return $this->widget('translatableText', $la_options);
 	}
@@ -620,6 +572,76 @@ class FormHelper extends BaseFormHelper {
 
 		$la_options['templateVars']['additionalContent'] ??= '';
 		$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
+
+		return $la_options;
+	}
+
+
+	/**
+	 * Processes input parameters to generate options for translatable form controls
+	 * for various languages, including handling associations and specific field names.
+	 *
+	 * @param string $fieldName The name of the field being processed.
+	 * @param array $options Additional options for configuring the controls.
+	 * @param array $baseOptions Basic options to be merged into each language-specific configuration.
+	 * @param string $realType The type of the field (e.g., text, number).
+	 * @param array $values An array of values that may include language-specific translations.
+	 * @return array Modified options array, including controls for multiple languages.
+	 * @throws \ReflectionException
+	 * @throws \Exception
+	 */
+	protected function processMultiLanguageControls(string $fieldName, array $options, array $baseOptions, string $realType, ?array $values = null): array {
+		$la_options = $options;
+
+		$ls_association = '';
+
+		// Strip off the association name from the field name if it exists.
+		$ls_fieldName = $fieldName;
+		if (str_contains($ls_fieldName, '.')) {
+			$la_parts = explode('.', $ls_fieldName);
+			$ls_fieldName = array_pop($la_parts);
+
+			$ls_association = implode('.', $la_parts);
+			$ls_association .= '.';
+		}
+
+		$lo_userLanguage = LocaleMiddleware::getLanguage($this->languageRealm);
+
+
+		foreach ($this->languages as $ls_shortcode => $lo_language) {
+			$lx_value = false;
+			if (isset($values)) {
+				$lx_value = $values[ $ls_shortcode ] ?? null;
+				if ($lx_value instanceof EntityInterface) {
+					$lx_value = $lx_value->get($ls_fieldName);
+				}
+			}
+
+			$la_translatableOptions = [
+				'id' => $this->_domId($fieldName . '-Translations[' . $ls_shortcode . ']'),
+				'label' => $lo_language->label,
+				'placeholder' => $options['placeholder'] ?? $options['val'] ?? null,
+				'required' => $options['required'] && !count($options['controls']),
+				'type' => $realType,
+				'val' => ($lx_value !== false ? $lx_value : $this->getSourceValue($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName)) ?? '',
+			];
+			$la_translatableOptions += $baseOptions;
+			unset($la_translatableOptions['values']);
+
+			if ($lo_userLanguage->shortcode === $ls_shortcode) {
+				// If the user's language is the same as the current language, add a class to highlight it.
+				$la_translatableOptions['templateVars']['containerClass'] = ' IsCurrentLanguage';
+			}
+
+			if ($ls_association === 'attributes.') {
+				$la_translatableOptions['isTranslation'] = true;
+				$la_translatableOptions['language'] = $lo_language;
+				$la_options['controls'][] = $this->Attributes->control($ls_fieldName, $la_translatableOptions);
+			}
+			else {
+				$la_options['controls'][] = $this->control($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName, $la_translatableOptions);
+			}
+		}
 
 		return $la_options;
 	}
