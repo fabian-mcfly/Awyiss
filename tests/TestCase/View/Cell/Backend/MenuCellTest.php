@@ -8,6 +8,7 @@ use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Awyiss;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
+use Awyiss\Utility\Menu\BackendMenuItem;
 use Awyiss\View\BackendView;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -53,10 +54,10 @@ class MenuCellTest extends TestCase {
 		$this->loadRoutes();
 
 		$this->request = (new ServerRequest([
-			'url' => '/dummy',
+			'url' => '/backend/xy/dummy/overview/',
 			'params' => [
 				'lang' => 'xy',
-				'controller' => 'dashboard',
+				'controller' => 'dummy',
 				'action' => 'overview',
 				'_name' => 'Backend',
 				'prefix' => 'Backend',
@@ -89,6 +90,13 @@ class MenuCellTest extends TestCase {
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
 		$property->setValue(false);
+
+		$reflection = new ReflectionClass(BackendMenuItem::class);
+
+		$property = $reflection->getProperty('testUrl');
+		/** @noinspection PhpExpressionResultUnusedInspection */
+		$property->setAccessible(true);
+		$property->setValue(null);
 	}
 
 
@@ -143,9 +151,7 @@ class MenuCellTest extends TestCase {
 		$this->assertStringContainsString('<li class="Level1 MenuItem-Dashboard">', $output);
 		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
-		//$this->assertStringNotContainsString('<li class="Level1 HasSubmenu MenuItem-System">', $output);
 		$this->assertStringNotContainsString('<a href="http://localhost/backend/xy/system/analyze/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
-		//$this->assertStringNotContainsString('<ul class="Level2">', $output);
 	}
 
 
@@ -165,9 +171,7 @@ class MenuCellTest extends TestCase {
 		$this->assertStringContainsString('<li class="Level1 MenuItem-Dashboard">', $output);
 		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
-		//$this->assertStringNotContainsString('<li class="Level1 HasSubmenu MenuItem-System">', $output);
 		$this->assertStringNotContainsString('<a href="http://localhost/backend/xy/system/analyze/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
-		//$this->assertStringNotContainsString('<ul class="Level2">', $output);
 	}
 
 
@@ -291,5 +295,40 @@ class MenuCellTest extends TestCase {
 		$this->assertStringContainsString('<li class="Level1 HasSubmenu MenuItem-System">', $output);
 		$this->assertStringContainsString('<a href="http://localhost/backend/xy/system/analyze/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
 		$this->assertStringContainsString('<ul class="Level2">', $output);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testDisplayWithActiveItemForCurrentController(): void {
+		$user = $this->login();
+
+		$this->request = new ServerRequest([
+			'url' => '/backend/xy/pages/edit',
+			'params' => [
+				'lang' => 'xy',
+				'controller' => 'pages',
+				'action' => 'edit',
+				'_name' => 'Backend',
+				'prefix' => 'Backend',
+				'parts' => [],
+				'pass' => [],
+			],
+		]);
+
+		$this->request = $this->request->withAttribute('authorization', new AuthorizationService('Backend'));
+		$this->request = $this->request->withAttribute('identity', $user);
+
+		Router::setRequest($this->request);
+		$this->view = new BackendView($this->request, $this->response);
+
+		$output = (string)$this->view->cell('Backend/Menu');
+
+		$this->assertStringContainsString('<nav id="Menu-System">', $output);
+		$this->assertStringContainsString('<li class="Level1 Active HasSubmenu MenuItem-Pages">', $output);
+		$this->assertStringContainsString('<a href="http://localhost/backend/xy/pages/overview/" class="Level1 Active MenuItem-Pages">pages::menu_title</a>', $output);
 	}
 }

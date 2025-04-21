@@ -16,6 +16,18 @@ use Awyiss\Routing\Router;
  */
 class BackendMenuItem extends MenuItem {
 	/**
+	 * The url to check against.
+	 * Holds the url for the `overview`-action of the current controller.
+	 *
+	 * In special cases, like the contents controller, it holds the url for the
+	 * `overview`-action of the controller that is the parent of the current controller.
+	 *
+	 * @var string|null
+	 */
+	protected static $testUrl = null;
+
+
+	/**
 	 * Check if this item's currentRoute matches the current route
 	 * This variant checks if the test currentRoute is the same as the currentRoute of this item
 	 * The test currentRoute consists of the current controller but the overview action
@@ -24,9 +36,7 @@ class BackendMenuItem extends MenuItem {
 	 * @return bool
 	 */
 	public function isCurrentRoute(string $currentRoute): bool {
-		static $ls_testUrl;
-
-		if (!isset($ls_testUrl)) {
+		if (!isset(static::$testUrl)) {
 			$lo_request = Router::getRequest();
 			$ls_controller = $lo_request->getParam('controller');
 
@@ -40,7 +50,7 @@ class BackendMenuItem extends MenuItem {
 				default => $ls_controller,
 			};
 
-			$ls_testUrl = Router::url([
+			static::$testUrl = Router::url([
 				'lang' => $lo_request->getParam('lang'),
 				'controller' => $ls_controller,
 				'action' => 'overview',
@@ -75,7 +85,7 @@ class BackendMenuItem extends MenuItem {
 			return true;
 		}
 
-		$this->isCurrentRoute = $ls_itemUrl === $ls_testUrl;
+		$this->isCurrentRoute = $ls_itemUrl === static::$testUrl;
 
 		return $this->isCurrentRoute;
 	}
