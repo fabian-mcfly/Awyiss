@@ -338,8 +338,8 @@
 		}
 	}
 
-	:is(
-		> label,
+	> :is(
+		label,
 		.FormInputType-TranslatableText,
 		.FormInputType-Select,
 		.FormInputType-Checkbox
