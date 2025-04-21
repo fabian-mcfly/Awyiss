@@ -155,12 +155,10 @@ export default class SeoSnippet {
 		// Initialize the character counter
 		this.charCounter = new CharCounter('input[data-charcounter-name], textarea[data-charcounter-name]');
 
-		// Send an input event to update the SEO snippet
-		const event = new InputEvent('input', {bubbles: true, cancelable: true});
-
 		setTimeout(function () {
-			this.seoSnippetSearchTerm.dispatchEvent(event);
-			window.formLeaveConfirmation.unlock();
+			const event = new Event('fauxInput');
+			this.metaTitle.dispatchEvent(event);
+			this.update(event);
 		}.bind(this), 100);
 	}
 
