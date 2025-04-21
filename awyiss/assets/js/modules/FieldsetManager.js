@@ -48,8 +48,9 @@ export default class FieldsetManager {
 
 		this.fieldsets = Array.from(document.querySelectorAll(this.selector));
 
-		// If the body tag has the class OverviewAction, don't hide the fieldsets
-		if (document.querySelector('#Content .Form form')) {
+		/** @var {HTMLFormElement} form */
+		const form = document.querySelector('#Content .Form form');
+		if (form) {
 			this.fieldsets.forEach(fieldset => this.checkVisibleChildren(fieldset));
 
 			// Check if the sidebar is visible
@@ -67,6 +68,27 @@ export default class FieldsetManager {
 
 				this.eventHandler.add('resize', requestAnimationFrame.bind(window, () => {
 					draggable.maxSize = window.innerHeight - 80;
+
+					// If the sidebar is inert but the toggle is not visible, make the sidebar accessible
+					if (!sidebarToggle.offsetParent) {
+						clearTimeout(sidebar.timeout);
+						sidebar.timeout = setTimeout(() => {
+							// If the Sidebar is in the url, go back
+							if (window.location.hash === '#Sidebar') {
+								window.history.back();
+							}
+							else {
+								sidebar.classList.remove('Visible');
+								sidebar.inert = false;
+							}
+						}, 100);
+					}
+					else if (!sidebar.classList.contains('Visible')){
+						clearTimeout(sidebar.timeout);
+						sidebar.timeout = setTimeout(() => {
+							sidebar.inert = true;
+						}, 100);
+					}
 				}), window);
 			}
 		}
