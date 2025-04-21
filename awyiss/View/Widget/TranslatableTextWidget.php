@@ -62,7 +62,7 @@ class TranslatableTextWidget extends BasicWidget {
 
 		$la_data['templateVars'] += [
 			'buttonTitle' => __d('system', 'translations_button_title'),
-			'dialogTitle' => __d('system', 'translations_dialog_title', __($la_data['name'])),
+			'dialogTitle' => __d('system', 'translations_dialog_title', $la_data['dialogTitle']),
 			'dialogApply' => __d('system', 'translations_dialog_apply'),
 			'dialogCancel' => __d('system', 'translations_dialog_cancel'),
 		];

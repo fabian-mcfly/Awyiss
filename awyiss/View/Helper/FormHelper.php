@@ -186,6 +186,7 @@ class FormHelper extends BaseFormHelper {
 				$ls_association .= '.';
 			}
 
+			$la_options['dialogTitle'] = $la_options['label'] ?? $this->labelTextFromFieldname($fieldName);
 			$la_options['realType'] = $la_options['type'] ?? null;
 			$la_options['type'] = 'translatableText';
 			$la_options['val'] = $this->getSourceValue($ls_association . '_translations.' . array_key_first($this->languages) . '.' . $ls_fieldName);
