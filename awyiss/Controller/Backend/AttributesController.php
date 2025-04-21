@@ -207,7 +207,7 @@ class AttributesController extends Controller {
 					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit') == 'submit_close') {
+				if ($this->request->getData('submit_type') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'scope' => $attribute->scope,

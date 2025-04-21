@@ -526,7 +526,7 @@ class PagesController extends Controller {
 				$lo_session = $this->request->getSession();
 				$lo_session->write($this->selectedParentIdSessionIdentifier, $page->parentId);
 
-				if ($this->request->getData('submit') == 'submit_close') {
+				if ($this->request->getData('submit_type') == 'submit_close') {
 					/*
 					 * Make sure the currently selected category is still part of the categories assigned to the user.
 					 * Otherwise it would show a site without the modified user, which could be a bit confusing.

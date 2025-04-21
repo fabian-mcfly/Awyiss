@@ -245,7 +245,7 @@ abstract class GenericDatatablesController extends Controller {
 					$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', $method . '_succeeded'));
 				}
 
-				if ($this->request->getData('submit') == 'submit_close') {
+				if ($this->request->getData('submit_type') == 'submit_close') {
 					/*
 					 * Make sure the currently selected category is still part of the categories assigned to the user.
 					 * Otherwise it would show a site without the modified user, which could be a bit confusing.

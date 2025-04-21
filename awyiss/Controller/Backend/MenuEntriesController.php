@@ -264,7 +264,7 @@ class MenuEntriesController extends Controller {
 				$lo_session = $this->request->getSession();
 				$lo_session->write($this->selectedParentIdSessionIdentifier, $menuEntry->parentId);
 
-				if ($this->request->getData('submit') == 'submit_close') {
+				if ($this->request->getData('submit_type') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
 						'lang' => $menuEntry->languageShortcode,

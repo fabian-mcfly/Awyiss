@@ -90,7 +90,7 @@
 			<div class="Actions">
 				{% if canCreateUrlHistory %}
 					<form method="post" action="{{ UrlHelper.build({controller: 'UrlHistory', action: 'add'}) }}">
-						{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
+						{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit_type', value: 'submit'}) }}
 						{{ FormHelper.hidden('reload_form', {val: 1}) }}
 						{{ FormHelper.hidden('url', {val: entity.url|trim('/')}) }}
 					</form>

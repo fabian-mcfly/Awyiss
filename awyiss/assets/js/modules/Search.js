@@ -82,7 +82,7 @@ export default class Search {
 
 			const hiddenInput = document.createElement('input');
 			hiddenInput.type = 'hidden';
-			hiddenInput.name = 'submit';
+			hiddenInput.name = 'submit_type';
 			hiddenInput.value = 'reset';
 
 			const form = target.querySelector('form');

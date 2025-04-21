@@ -229,7 +229,7 @@ class MediaElementsController extends Controller {
 			if ($this->MediaElements->save($mediaElement, ['asCopy' => $lb_saveAsCopy])) {
 				$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 
-				if ($this->request->getData('submit') == 'submit_close') {
+				if ($this->request->getData('submit_type') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 

@@ -43,7 +43,7 @@
 
 				{% block formAddButtonSaveClose %}
 					{% if AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'UserForm', name: 'submit', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'UserForm', name: 'submit_type', value: 'submit_close'}) }}
 					{% endif %}
 				{% endblock %}
 			{% endblock %}

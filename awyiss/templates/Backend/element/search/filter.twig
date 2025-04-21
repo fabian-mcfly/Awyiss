@@ -102,14 +102,14 @@
 			</div>
 
 			<div class="ButtonArea">
-				{{ FormHelper.button(__d('search', 'filter_submit'), {class: 'Button Button-Success Button-Save', name: 'submit', value: 'submit' }) }}
-				{{ FormHelper.button(__d('search', 'filter_reset'), {class: 'Button Button-Error Button-Delete Button-Reset', name: 'submit', value: 'reset'}) }}
+				{{ FormHelper.button(__d('search', 'filter_submit'), {class: 'Button Button-Success Button-Save', name: 'submit_type', value: 'submit' }) }}
+				{{ FormHelper.button(__d('search', 'filter_reset'), {class: 'Button Button-Error Button-Delete Button-Reset', name: 'submit_type', value: 'reset'}) }}
 				{{ FormHelper.button(__d('search', 'filter_close'), {class: 'Button Button-Close', name: 'close', value: 'close' }) }}
 			</div>
 		</form>
 
 		<div class="ButtonArea">
-			{{ FormHelper.button(__d('search', 'filter_submit'), {class: 'Button Button-Success Button-Save', form: 'FilterForm-' ~ scope|camelize, name: 'submit', value: 'submit' }) }}
+			{{ FormHelper.button(__d('search', 'filter_submit'), {class: 'Button Button-Success Button-Save', form: 'FilterForm-' ~ scope|camelize, name: 'submit_type', value: 'submit' }) }}
 			{{ FormHelper.button(__d('search', 'filter_close'), {class: 'Button Button-Close', name: 'close', value: 'close' }) }}
 		</div>
 	</dialog>

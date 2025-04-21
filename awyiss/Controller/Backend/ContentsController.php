@@ -565,7 +565,7 @@ class ContentsController extends Controller {
 				$lo_session->write($this->selectedPageIdSessionIdentifier, $content->pageId);
 				$lo_session->write($this->selectedParentIdSessionIdentifier, $content->parentId);
 
-				if ($this->request->getData('submit') == 'submit_close') {
+				if ($this->request->getData('submit_type') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $this->page->languageShortcode, 'pageId' => $content->pageId], true), 302);
 				}
 
