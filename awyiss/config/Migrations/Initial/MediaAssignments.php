@@ -67,6 +67,33 @@ class MediaAssignments {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
+		])->addColumn('created_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('created_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('changed_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('changed_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('deleted_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('deleted_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
 		])->addIndex(
 			[
 				'media_element_id',

@@ -47,6 +47,10 @@ class Locks {
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
+		])->addColumn('unique_id', 'char', [
+			'default' => null,
+			'limit' => 36,
+			'null' => false,
 		])->addColumn('created_by', 'integer', [
 			'default' => null,
 			'limit' => null,
