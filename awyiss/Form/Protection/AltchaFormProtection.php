@@ -16,10 +16,11 @@ use Cake\View\View;
 
 
 /**
- * Class IpCheckFormProtection
+ * Class AltchaFormProtection
  *
- * Checks if any form has already been
- * submitted by the user within a certain time frame.
+ * This class implements the Altcha form protection.
+ * Altcha is a JavaScript-based CAPTCHA alternative that uses a
+ * challenge-response mechanism to verify that the user is human.
  */
 class AltchaFormProtection implements FormProtectionInterface {
 	use LocatorAwareTrait;
@@ -84,7 +85,7 @@ class AltchaFormProtection implements FormProtectionInterface {
 		];
 
 		$this->options = Hash::merge(
-			$this->formOptions->getProtectionOptions('ipCheck') ?? [],
+			$this->formOptions->getProtectionOptions('altcha') ?? [],
 			$this->defaultOptions,
 		);
 
