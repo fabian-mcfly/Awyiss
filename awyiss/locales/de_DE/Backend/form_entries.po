@@ -15,7 +15,10 @@ msgid "meta_title_overview"
 msgstr "Formulareinträge"
 
 msgid "meta_title_view"
-msgstr "Formulareintrag anzeigen"
+msgstr "E-Mail anzeigen"
+
+msgid "meta_title_view_confirmation"
+msgstr "Bestätigung anzeigen"
 
 msgid "menu_title"
 msgstr "Formulareinträge"

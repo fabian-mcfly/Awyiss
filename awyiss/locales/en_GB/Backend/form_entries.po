@@ -15,7 +15,10 @@ msgid "meta_title_overview"
 msgstr "Form Entries"
 
 msgid "meta_title_view"
-msgstr "View Form Entry"
+msgstr "View Email"
+
+msgid "meta_title_view_confirmation"
+msgstr "View Confirmation Email"
 
 msgid "menu_title"
 msgstr "Form Entries"
