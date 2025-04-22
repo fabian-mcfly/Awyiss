@@ -71,7 +71,7 @@ after a short delay to prevent spam bots from submitting the form directly.
 						{{ FormHelper.renderFormProtection(form, 'after') }}
 					{% endblock %}
 
-					<input type="hidden" name="form_identifier" value="{{ form.identifier }}">
+					<input type="hidden" name="_form_identifier" value="{{ form.identifier }}">
 					<input type="hidden" name="_page_id" value="{{ page.id }}">
 				</form>
 			{% endset %}

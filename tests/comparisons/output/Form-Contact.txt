@@ -153,7 +153,7 @@
 <button type="submit" name="" class="FormInputType-Button Button">Absenden</button>
 </div>
 </div>
-<input type="hidden" name="form_identifier" value="contact">
+<input type="hidden" name="_form_identifier" value="contact">
 <input type="hidden" name="_page_id" value="1">
 </form>
 </div>

@@ -69,7 +69,7 @@ class FormController extends AppController {
 		$this->view = $this->viewBuilder()->build();
 
 		if ($this->request->is('post')) {
-			$ls_identifier = $this->request->getData('form_identifier');
+			$ls_identifier = $this->request->getData('_form_identifier');
 
 			if (!$ls_identifier) {
 				throw new InvalidArgumentException('No form identifier provided.');

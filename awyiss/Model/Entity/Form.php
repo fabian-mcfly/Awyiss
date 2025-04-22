@@ -163,7 +163,7 @@ class Form extends Entity {
 		$this->isPreview = $isPreview;
 		$this->sourcePage = $page;
 
-		if ($this->identifier === ($requestData['form_identifier'] ?? null)) {
+		if ($this->identifier === ($requestData['_form_identifier'] ?? null)) {
 			$this->formSubmitted = true;
 			$this->setFormData($requestData);
 		}
