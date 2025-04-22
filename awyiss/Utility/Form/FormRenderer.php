@@ -113,7 +113,7 @@ class FormRenderer {
 
 
 	/**
-	 * Returns whether the form was sent,
+	 * Returns whether the form was sent
 	 * or null if the form was not processed yet (no request data).
 	 *
 	 * @return bool|null
@@ -185,7 +185,7 @@ class FormRenderer {
 			}
 		}
 
-		// If there's at least one input of type file, set the form enctype to multipart/form-data
+		// If there's at least one input of inputtype `file`, set the form enctype to multipart/form-data
 		$this->form->set(
 			'enctype',
 			array_reduce($la_formElements, function ($carry, FormElement $element) {
@@ -278,6 +278,7 @@ class FormRenderer {
 	 * @param string $children
 	 * @return string
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
 		/**

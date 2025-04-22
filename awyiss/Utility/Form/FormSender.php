@@ -40,7 +40,7 @@ class FormSender {
 	protected array $emailBody = ['email' => '', 'confirmation' => ''];
 	/**
 	 * Stores the identifier of the saved form entry.
-	 * The value is a md5 hash of the form entry id and the post hash.
+	 * The value is a md5 hash of the form entry id and the post-hash.
 	 *
 	 * @var string $formEntryIdentifier
 	 */
@@ -103,7 +103,7 @@ class FormSender {
 	 * Replaces all placeholders in the form fields with
 	 * the actual form data.
 
-	 * If neither `sendEmail`, nor `sendConfirmationEmail` are enabled
+	 * If neither `sendEmail` nor `sendConfirmationEmail` are enabled,
 	 * just save the form data in the database and return true,
 	 * otherwise save the form data in the database and send the email(s).
 	 *
@@ -148,7 +148,7 @@ class FormSender {
 
 	/**
 	 * Returns the identifier of the saved form entry.
-	 * The value is a md5 hash of the form entry id and the post hash.
+	 * The value is a md5 hash of the form entry id and the post-hash.
 	 *
 	 * @return string
 	 */
@@ -357,7 +357,7 @@ class FormSender {
 		foreach ($this->form->getProtectionMethods() as $lo_protectionMethod) {
 			$lo_formEntry = $lo_protectionMethod->modifyFormEntry($lo_formEntry);
 
-			// If the modify methods decides to intervene, return the desired status.
+			// If the modify method decides to intervene, return the desired status.
 			if (is_bool($lo_formEntry)) {
 				return $lo_formEntry;
 			}
@@ -410,6 +410,16 @@ class FormSender {
 			$this->getFormData(),
 			$la_formData,
 		);
+
+		if ($type === 'html') {
+			/**
+			 * {{$data}} needs a special treatment: it must never be inside a <p> tag
+			 * because it will be replaced by the `<table>` containing all data.
+			 *
+			 * @noinspection RegExpRedundantEscape
+			 */
+			$ls_body = preg_replace_callback('/<p([^>]*)>(.*?)(\{\{\$data\}\})(.*?)<\/p>/Um', $this->unwrapDataString(...), $ls_body);
+		}
 
 		return $this->replacePlaceholders($ls_body, $la_data, ['data']);
 	}
@@ -689,5 +699,82 @@ class FormSender {
 	 */
 	protected function getFormOptions(): FormOptionsInterface {
 		return $this->form->getFormOptions();
+	}
+
+
+	/**
+	 * Adjusts and rewraps a string containing HTML content around a specified placeholder to ensure
+	 * proper HTML tag closure and maintain a valid structure. This function processes tags before and after
+	 * a placeholder to close and reopen those tags, while recursively removing any empty tags.
+	 *
+	 * @param array $matches An array containing matches from a regular expression. It should include:
+	 *                       - `$matches[1]`: Attributes for a wrapping `<p>` tag.
+	 *                       - `$matches[2]`: Content before the `{{$data}}` placeholder.
+	 *                       - `$matches[3]`: The `{{$data}}` placeholder itself.
+	 *                       - `$matches[4]`: Content after the `{{$data}}` placeholder.
+	 * @return string The restructured and cleaned HTML string with proper wrapping and placeholder integration.
+	 */
+	protected function unwrapDataString(array $matches): string {
+		$la_attributes = $matches[1]; // p tag attributes
+		$ls_beforeContent = $matches[2]; // content before {{$data}}
+		$ls_dataPlaceholder = $matches[3]; // the {{$data}} placeholder
+		$ls_afterContent = $matches[4]; // content after {{$data}}
+
+		// If there's no other content, just return the placeholder
+		if (trim($ls_beforeContent) === '' && trim($ls_afterContent) === '') {
+			return $ls_dataPlaceholder;
+		}
+
+		// Find all opened tags that need to be closed before dataPlaceholder
+		$la_openedTags = [];
+		preg_match_all('/<([a-z0-9]+)[^>]*>/i', $ls_beforeContent, $la_openTagMatches);
+		preg_match_all('/<\/([a-z0-9]+)>/i', $ls_beforeContent, $la_closeTagMatches);
+
+		// Count opened and closed tags
+		$la_tagCounts = [];
+		foreach ($la_openTagMatches[1] as $ls_tag) {
+			$la_tagCounts[ $ls_tag ] = isset($la_tagCounts[ $ls_tag ]) ? $la_tagCounts[ $ls_tag ] + 1 : 1;
+		}
+
+		foreach ($la_closeTagMatches[1] as $ls_tag) {
+			$la_tagCounts[ $ls_tag ] = isset($la_tagCounts[ $ls_tag ]) ? $la_tagCounts[ $ls_tag ] - 1 : -1;
+		}
+
+		// Collect tags that remain open
+		foreach ($la_tagCounts as $ls_tag => $li_count) {
+			if ($li_count > 0) {
+				// Add tags that need to be closed, in reverse order (LIFO)
+				for ($li_i = 0; $li_i < $li_count; $li_i++) {
+					array_unshift($la_openedTags, $ls_tag);
+				}
+			}
+		}
+
+		// Build the result
+		$ls_result = '<p' . $la_attributes . '>' . $ls_beforeContent;
+
+		// Close all open tags before the dataPlaceholder
+		foreach ($la_openedTags as $ls_tag) {
+			$ls_result .= '</' . $ls_tag . '>';
+		}
+
+		$ls_result .= '</p>' . $ls_dataPlaceholder . ' <p' . $la_attributes . '>';
+
+		// Reopen all closed tags in the original order
+		foreach (array_reverse($la_openedTags) as $ls_tag) {
+			$ls_result .= '<' . $ls_tag . '>';
+		}
+
+		$ls_result .= $ls_afterContent . '</p>';
+
+		// Filter out empty tags recursively
+		$ls_previous = '';
+		// Remove all empty tags recursively, including those with attributes (like <span class="foo"></span>)
+		while ($ls_previous !== $ls_result) {
+			$ls_previous = $ls_result;
+			$ls_result = preg_replace('/<([a-z0-9]+)(?:\s[^>]*)?><\/\1>/', '', $ls_result);
+		}
+
+		return $ls_result;
 	}
 }
