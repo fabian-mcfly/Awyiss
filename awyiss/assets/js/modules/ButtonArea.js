@@ -47,6 +47,27 @@ export default class ButtonArea {
 				draggable.maxSize = document.body.clientWidth <= 420
 					? 240
 					: (document.body.clientWidth <= 540 ? 290 : 300);
+
+				// If the button area is inert but the toggle is not visible, make the button area accessible
+				if (!buttonAreaToggle.offsetParent) {
+					clearTimeout(this.buttonArea.timeout);
+					this.buttonArea.timeout = setTimeout(() => {
+						// If the ButtonArea is in the url, go back
+						if (window.location.hash === '#ButtonArea') {
+							window.history.back();
+						}
+						else {
+							this.buttonArea.classList.remove('Visible');
+							this.buttonArea.inert = false;
+						}
+					}, 100);
+				}
+				else if (!this.buttonArea.classList.contains('Visible')) {
+					clearTimeout(this.buttonArea.timeout);
+					this.buttonArea.timeout = setTimeout(() => {
+						this.buttonArea.inert = true;
+					}, 100);
+				}
 			}), window);
 		}
 
