@@ -1,6 +1,8 @@
 #MediaFolderSelectOverlay {
 	@extend %DialogNoTitle;
 
+	max-width:640px;
+
 	&:not(:has(.Form)) {
 		@extend %LoaderIcon;
 	}
@@ -8,17 +10,7 @@
 	.Form.MediaFolderSelect {
 		@extend %OverlayForm;
 
-		padding:92px 20px 40px 20px;
-
-		@media screen and (width <= 768px) {
-			padding:52px 10px 10px 10px;
-		}
-
-		html.Scale-Small & {
-			@media screen and (width > 768px) {
-				padding:52px 10px 10px 10px;
-			}
-		}
+		grid-column:1 / -1;
 
 		&::after {
 			content:attr(data-title, 'Select Media Folder');
@@ -27,17 +19,23 @@
 		> #MediaFolders-List {
 			display:block;
 			height:100%;
-			max-height:calc(80dvh - 132px);
-			padding:0 20px;
+			max-height:calc(80dvh - 112px);
+			padding:30px;
+			border:0 none;
 			border-radius:5px;
-			border-inline-width:0;
 			overscroll-behavior:contain;
 			overflow-y:auto;
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
+			grid-column:1 / -1;
+			grid-row:auto;
 
 			@media screen and (width <= 768px) {
 				padding:10px;
+			}
+
+			@media screen and (width <= 540px) {
+				padding:5px;
 			}
 
 			html.Scale-Small & {
@@ -50,12 +48,6 @@
 				box-shadow:0 0 10px var(--colorSuccess);
 				outline:2px solid var(--colorSuccess);
 				outline-offset:2px;
-			}
-
-			.Overview-Fieldset {
-				&:last-of-type {
-					margin-bottom:40px;
-				}
 			}
 		}
 
