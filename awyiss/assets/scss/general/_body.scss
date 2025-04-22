@@ -380,6 +380,19 @@ fieldset {
 		}
 	}
 
+	&:has(.FormInput.Error) {
+		&.Collapsed {
+			opacity:unset;
+			outline:2px solid var(--colorError);
+		}
+
+		> legend {
+			box-shadow:0 0 10px var(--colorError);
+			background-color:var(--colorError);
+			color:var(--colorBright);
+		}
+	}
+
 	&:focus-within {
 		box-shadow:0 0 10px rgba(0, 0, 0, .25);
 

@@ -1023,6 +1023,7 @@ textarea {
 					&::before {
 						border-color:var(--colorError);
 						box-shadow:0 0 10px 5px rgba(202, 46, 85, 0.1);
+						bottom:calc(1.2rem + 10px);
 					}
 				}
 
@@ -1054,6 +1055,10 @@ textarea {
 				bottom:0;
 				left:0;
 				pointer-events:none;
+
+				@media screen and (768 < width <= 1024px) {
+					top:calc(1rem + 1px);
+				}
 
 				html.Scale-Small & {
 					@media screen and (width > 768px) {
@@ -1107,10 +1112,6 @@ textarea {
 				cursor:default;
 				pointer-events:none;
 
-				@media screen and (width <= 1024px) {
-					margin-top:1px;
-				}
-
 				@media screen and (width <= 768px) {
 					margin-top:0;
 					padding-block:10px;
@@ -1133,8 +1134,7 @@ textarea {
 			}
 
 			div.Error {
-				width:100%;
-				flex:0 0 100%;
+				grid-column:1 / -1;
 				order:4;
 			}
 		}
@@ -1156,8 +1156,13 @@ textarea {
 	}
 
 	> div.Error {
-		padding-inline:5px;
-		color:var(--colorError);
+		width:fit-content;
+		padding:3px 10px 7px;
+		margin-inline:5px;
+		border-radius:0 0 5px 5px;
+		box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
+		background-color:var(--colorError);
+		color:var(--colorBright);
 		font-size:.8rem;
 		line-height:1.5;
 	}
