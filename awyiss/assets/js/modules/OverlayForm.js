@@ -325,6 +325,8 @@ export default class OverlayForm {
 				}
 			});
 			document.dispatchEvent(event);
+
+			form.focus();
 		});
 	}
 

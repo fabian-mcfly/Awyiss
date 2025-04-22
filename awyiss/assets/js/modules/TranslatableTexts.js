@@ -321,6 +321,8 @@ export default class TranslatableTexts {
 
 		// Scroll the form to the top
 		this.dialog.form.scrollTo(0, 0);
+		// Focus the first input field in the dialog
+		this.dialog.form.focus();
 	}
 
 	/**

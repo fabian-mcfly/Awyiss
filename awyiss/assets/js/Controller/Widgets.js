@@ -35,6 +35,7 @@ export default class WidgetsController {
 			});
 
 			document.getElementById('Content').dataset.title = frontendEditor.dataset.title;
+			frontendEditor.focus();
 		}
 
 		// If the document contains a flash message, send an event to the parent window
