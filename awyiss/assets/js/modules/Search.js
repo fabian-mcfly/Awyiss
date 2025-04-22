@@ -187,8 +187,9 @@ export class SearchFilter {
 
 	handleClickEvent(event) {
 		const target = event.target;
+		const removeButton = target.closest('.RemoveColumn');
 
-		if (target.closest('.RemoveColumn')) {
+		if (removeButton) {
 			const row = target.closest('.Column');
 			const select = this.element.querySelector('select[name="filter_add_column"]');
 			const column = row.dataset.column;
@@ -211,12 +212,10 @@ export class SearchFilter {
 				valueInput.value = '';
 			}
 
-
 			const hiddenActiveInput = row.querySelector('input[name^="filter["][name$="][active]"]');
 			hiddenActiveInput.value = '0';
 
-			// Reset the order of the columns
-			//this.resetColumnOrder();
+			removeButton.setAttribute('tabindex', '-1');
 		}
 
 		if (target.closest('.Button-Close') && !target.closest('.Button-Reset')) {
@@ -230,30 +229,6 @@ export class SearchFilter {
 
 	handleInputEvent(event) {
 		const target = event.target;
-
-		if (target.matches('select[name="filter_add_column"]')) {
-			const value = target.value;
-			const row = this.element.querySelector('.Column[data-column="' + value + '"]');
-			if (row) {
-				row.classList.add('Active');
-
-				const lastRow = this.element.querySelector('.Actions');
-				// Insert the row before the last row
-				lastRow.insertAdjacentElement('beforebegin', row);
-
-				// Reset the order of the columns
-				//this.resetColumnOrder();
-
-				// Find the value input and focus it
-				const valueInput = row.querySelector('input[name^="filter["][name$="][value]"]');
-				valueInput.focus();
-			}
-
-			// Disable the selected option
-			target.selectedOptions[0].disabled = true;
-
-			target.value = '';
-		}
 
 		if (target.matches('select[name^="filter["][name$="][operator]"]')) {
 			const value = target.value;
@@ -275,6 +250,11 @@ export class SearchFilter {
 			// Toggle the Active class of the row
 			row.classList.toggle('Active', value !== '');
 
+			const removeButton = row.querySelector('.RemoveColumn');
+			if (removeButton) {
+				removeButton.setAttribute('tabindex', value !== '' ? '0' : '-1');
+			}
+
 			const hiddenActiveInput = row.querySelector('input[name^="filter["][name$="][active]"]');
 			hiddenActiveInput.value = value !== '' ? '1' : '0';
 		}
@@ -292,15 +272,19 @@ export class SearchFilter {
 			const hiddenActiveInput = row.querySelector('input[name^="filter["][name$="][active]"]');
 			hiddenActiveInput.value = '1';
 
+			const removeButton = row.querySelector('.RemoveColumn');
+
 			if (target.matches('[type="radio"]') && target.value === '') {
 				hiddenActiveInput.value = 0;
 
 				// Toggle the Active class of the row
 				row.classList.remove('Active');
+				removeButton.setAttribute('tabindex', '-1');
 			}
 			else {
 				// Toggle the Active class of the row
 				row.classList.add('Active');
+				removeButton.setAttribute('tabindex', '0');
 			}
 		}
 	}
@@ -427,6 +411,8 @@ export class SearchFilter {
 		const button = document.createElement('button');
 		// Set the button type to button
 		button.type = 'button';
+		// Make the button not focusable by default
+		button.tabIndex = row.classList.contains('Active') ? '0' : '-1';
 		// Set the button text
 		button.textContent = text;
 		// Add the Button and the provided class to the button
