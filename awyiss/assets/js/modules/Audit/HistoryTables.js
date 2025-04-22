@@ -26,6 +26,7 @@ export default class HistoryTables {
 
 		tables.forEach(table => {
 			slider.appendChild(table);
+			table.inert = true;
 		});
 
 		// Append the slider to the table's wrapper
@@ -163,6 +164,12 @@ export default class HistoryTables {
 				hoverElement.style.width = '';
 				hoverElement.style.height = '';
 			}
+		}
+
+		// Set the current table to be active
+		// and set all other tables to be inactive
+		for (let i = 0, childrenLength = slider.children.length; i < childrenLength; i++) {
+			slider.children[i].inert = i !== slider.children.length - 1 - index;
 		}
 
 		if (!current.htmlInitialized) {
