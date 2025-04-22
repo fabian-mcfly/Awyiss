@@ -401,7 +401,7 @@ class PagesTable extends Table {
 				}
 			}
 
-			$la_nestedChildren = $page->getNestedChildren()->toArray();
+			$la_nestedChildren = $page->getNestedChildren()?->toArray();
 
 			if (!$la_nestedChildren) {
 				return true;
