@@ -154,7 +154,15 @@ export default class FieldsetManager {
 
 		if (
 			event.target.closest('.Sidebar-Fieldsets') ||
-			event.target.closest('.air-datepicker-global-container')
+			event.target.closest('.air-datepicker-global-container') ||
+			/**
+			 * This is a workaround for the click event fired by implicit form submission
+			 * when the user presses the enter key in a form input field,
+			 * which causes the browser to simulate a click on the default submit button.
+			 *
+			 * @see https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#implicit-submission
+			 */
+			event.pointerType === ''
 		) {
 			return;
 		}
@@ -177,7 +185,12 @@ export default class FieldsetManager {
 
 		// Create a new history entry if the button area is visible
 		if (isVisible) {
-			window.history.pushState({}, '', `${currentUrl}#Sidebar`);
+			if (window.location.hash === '#Sidebar') {
+				window.history.replaceState({}, '', `${currentUrl}#Sidebar`);
+			}
+			else {
+				window.history.pushState({}, '', `${currentUrl}#Sidebar`);
+			}
 			sidebar.focus();
 		}
 		// Otherwise go back one step in the history
@@ -429,65 +442,83 @@ export default class FieldsetManager {
 	 * Handle form submission
 	 * If the form is invalid, check if any invalid field is inside a collapsed fieldset
 	 * or the sidebar (if it exists and is not visible)
+	 *
+	 * @param {SubmitEvent} event - The form submit event
 	 */
 	handleFormSubmit(event) {
 		const form = event.target;
 		event.preventDefault();
 
 		//form.noValidate = false;
-		if (!form.checkValidity()) {
-			// Get all invalid fields
-			let invalidFields = Array.from(form.querySelectorAll(':invalid'));
-
-			// Filter out fieldsets
-			invalidFields = invalidFields.filter(field => field.tagName.toLowerCase() !== 'fieldset');
-
-			// Get the first invalid element
-			const firstInvalidElement = invalidFields[0];
-
-			if (!firstInvalidElement.offsetParent) {
-				// Check if the first invalid element is inside a collapsed fieldset
-				const fieldset = firstInvalidElement.closest('.Collapsed');
-				if (fieldset) {
-					// Remove the collapsed class from the fieldset
-					fieldset.classList.remove('Collapsed');
-				}
-			}
-
-			// Check if the first invalid element is inside the sidebar
-			// And if the sidebar is inert
-			const sidebar = firstInvalidElement.closest('.Sidebar-Fieldsets');
-			const sidebarToggle = document.getElementById('Sidebar-Toggle');
-			if (sidebar && sidebar.inert && sidebarToggle) {
-				sidebarToggle.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
-
-				// Wait for the sidebar to be visible
-				setTimeout(() =>{
-					if (!firstInvalidElement.offsetParent) {
-						form.submit();
-						return;
-					}
-
-					firstInvalidElement.reportValidity();
-				}, 300);
-				return;
-			}
-
-			// If the first invalid element is still invisible, which should never happen,
-			// force the form to submit. The server will handle the validation.
-			if (!firstInvalidElement.offsetParent) {
-				form.submit();
-				return;
-			}
-
-			// The first element is visible, so report its validity
-			firstInvalidElement.reportValidity();
+		if (form.checkValidity()) {
+			// If the form is valid, submit it
+			form.submit();
 
 			return;
 		}
 
-		// If the form is valid, submit it
-		form.submit();
+		// Get all invalid fields
+		let invalidFields = Array.from(form.querySelectorAll(':invalid'));
+
+		// Filter out fieldsets
+		invalidFields = invalidFields.filter(field => field.tagName.toLowerCase() !== 'fieldset');
+
+		// Get the first invalid element
+		const firstInvalidElement = invalidFields[0];
+
+		// Check if the first invalid element is not visible
+		// .offsetParent is null if the element is not visible
+		if (!firstInvalidElement.offsetParent) {
+			let fieldset;
+			// Expand all parent fieldsets
+			while (fieldset = firstInvalidElement.closest('fieldset.Collapsed')) {
+				fieldset.classList.remove('Collapsed');
+			}
+		}
+
+		// Check if the first invalid element is inside the sidebar
+		// And if the sidebar is inert
+		const sidebar = firstInvalidElement.closest('.Sidebar-Fieldsets');
+		const sidebarToggle = document.getElementById('Sidebar-Toggle');
+		if (sidebar?.inert && sidebarToggle) {
+			sidebarToggle.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
+
+			// Wait for the sidebar to be visible
+			setTimeout(() =>{
+				if (!firstInvalidElement.offsetParent) {
+					form.submit();
+					return;
+				}
+
+				firstInvalidElement.reportValidity();
+			}, 300);
+			return;
+		}
+
+		// If the first invalid element is still invisible, which should never happen,
+		// force the form to submit. The server will handle the validation.
+		if (!firstInvalidElement.offsetParent) {
+			form.submit();
+			return;
+		}
+
+		// The first element is visible, so report its validity
+		firstInvalidElement.reportValidity();
+
+		// Check if the element is inside the current viewport
+		const rect = firstInvalidElement.getBoundingClientRect();
+		const isVisible = (
+			rect.top >= 0 &&
+			rect.left >= 0 &&
+			rect.bottom <= window.innerHeight  &&
+			rect.right <= window.innerWidth
+		);
+
+		if (!isVisible || document.activeElement !== firstInvalidElement) {
+			// The browser was not able to focus the element or scroll it into view
+			// Since there's no practical way to do make it visible, submit the form
+			form.submit();
+		}
 	}
 
 
@@ -518,6 +549,10 @@ export default class FieldsetManager {
 	 */
 	checkSidebarErrors(form, sidebar, sidebarToggle) {
 		const errorElements = form.querySelectorAll('.FormInput.Error');
+
+		if (!errorElements.length) {
+			return;
+		}
 
 		let errorsNotInSidebar = 0;
 		errorElements.forEach((element) => {
