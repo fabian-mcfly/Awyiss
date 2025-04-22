@@ -58,10 +58,23 @@
 											id="Form-{{ form.identifier|ucparts(false) }}"
 										>
 
-											{{ captcha|raw }}
-											{{ contents|raw }}
+											{% block formProtectionBefore %}
+												{{ FormHelper.renderFormProtection(form, 'before') }}
+											{% endblock %}
+
+											{% block formCaptcha %}
+												{{ captcha|raw }}
+											{% endblock %}
+
+											{% block formBody %}
+												{{ contents|raw }}
+											{% endblock %}
 
 											<input type="hidden" name="form_identifier" value="{{ form.identifier }}">
+											{% block formProtectionAfter %}
+												{{ FormHelper.renderFormProtection(form, 'after') }}
+											{% endblock %}
+
 											<input type="hidden" name="_page_id" value="{{ page.id }}">
 										</form>
 									</div>
