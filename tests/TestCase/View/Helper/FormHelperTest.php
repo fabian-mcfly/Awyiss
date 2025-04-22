@@ -72,6 +72,9 @@ class FormHelperTest extends TestCase {
 
 		Awyiss::setRealm('Backend');
 
+		// Clear the table locator to ensure a fresh instance
+		$this->getTableLocator()->clear();
+
 		$this->formHelper = new FormHelper(new BackendView(), [
 			'autoSetCustomValidity' => false,
 			'errorClass' => 'Error',
@@ -210,7 +213,6 @@ class FormHelperTest extends TestCase {
 		$this->assertStringContainsString('<option value="2" title="Custom-Option 2">Option 2</option>', $result);
 	}
 
-
 	/**
 	 * @return void
 	 * @throws \ReflectionException
@@ -227,6 +229,25 @@ class FormHelperTest extends TestCase {
 		$this->assertStringContainsString('<div class="TranslatableTexts"', $result);
 		$this->assertStringContainsString('<input type="text" name="_translations[de][title]"', $result);
 		$this->assertStringContainsString('<input type="text" name="_translations[en][title]"', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testTranslatableTextMarksOnlyFirstAsRequired(): void {
+		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
+		$entity = $this->fetchTable('ContentTemplates')->get(2);
+
+		$this->formHelper->create($entity);
+
+		$result = $this->formHelper->translatableText('title', ['required' => true]);
+
+		$this->assertStringContainsString('id="Title-Translations[de]" placeholder="Inhaltsblock" required="required" value="', $result);
+		$this->assertStringContainsString('id="Title-Translations[en]" placeholder="Inhaltsblock" value="', $result);
 	}
 
 

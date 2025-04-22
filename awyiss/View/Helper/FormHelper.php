@@ -621,8 +621,8 @@ class FormHelper extends BaseFormHelper {
 			$la_translatableOptions = [
 				'id' => $this->_domId($fieldName . '-Translations[' . $ls_shortcode . ']'),
 				'label' => $lo_language->label,
-				'placeholder' => $options['placeholder'] ?? $options['val'] ?? null,
-				'required' => $options['required'] && !count($options['controls']),
+				'placeholder' => $la_options['placeholder'] ?? $la_options['val'] ?? null,
+				'required' => $la_options['required'] && !count($la_options['controls']),
 				'type' => $realType,
 				'val' => ($lx_value !== false ? $lx_value : $this->getSourceValue($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName)) ?? '',
 			];
