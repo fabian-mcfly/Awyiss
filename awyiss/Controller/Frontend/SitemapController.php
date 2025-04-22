@@ -56,11 +56,11 @@ class SitemapController extends AppController {
 		}
 
 		// Define a custom root node in the generated document.
-		$this->viewBuilder()->setOption('rootNode', 'urlset')->setOption('serialize', ['@xmlns', 'url']);
+		$this->viewBuilder()->setOption('rootNode', 'urlset')->setOption('serialize', ['xmlns:', 'url']);
 		$this->set([
 			// Define an attribute on the root node.
-			'@xmlns' => 'https://www.sitemaps.org/schemas/sitemap/0.9/',
 			'url' => $la_urls,
+			'xmlns:' => 'http://www.sitemaps.org/schemas/sitemap/0.9',
 		]);
 	}
 
