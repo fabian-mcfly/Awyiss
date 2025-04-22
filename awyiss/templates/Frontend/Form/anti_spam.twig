@@ -26,6 +26,8 @@
 	{% do _view.assign('metaTitle', 'Form Protection' ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
 {% endblock %}
 
+{% do _view.setLayout('form_anti_spam') %}
+
 {% block contentArea %}
 	<main id="ContentArea">
 		<div class="ContentElement Template-Section">
