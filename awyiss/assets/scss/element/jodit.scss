@@ -182,6 +182,12 @@ $relativePath:'../../';
 			background-color:var(--colorMedium);
 		}
 
+		&:focus {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
+		}
+
 		.jodit-toolbar-editor-collection {
 			padding:0;
 		}
@@ -298,6 +304,12 @@ $relativePath:'../../';
 ) {
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
+
+	&:focus {
+		box-shadow:0 0 10px var(--colorSuccess);
+		outline:2px solid var(--colorSuccess);
+		outline-offset:2px;
+	}
 }
 
 .jodit-workplace {
@@ -415,6 +427,12 @@ $relativePath:'../../';
 			@media screen and (width > 768px) {
 				padding:20px;
 			}
+		}
+
+		&:focus {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
 		}
 	}
 

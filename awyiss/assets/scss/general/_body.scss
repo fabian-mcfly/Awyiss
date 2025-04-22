@@ -50,6 +50,7 @@
 			height:30px;
 			margin:auto 0;
 			padding:5px;
+			outline-offset:-2px;
 			box-shadow:none;
 			background-image:none;
 			background-color:transparent;
@@ -65,7 +66,7 @@
 				color:var(--colorBright);
 			}
 
-			&:nth-child(2) {
+			&:nth-last-child(2) {
 				right:35px;
 			}
 

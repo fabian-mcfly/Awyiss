@@ -376,6 +376,8 @@
 		right:0;
 		opacity:0;
 		visibility:hidden;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
 		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
 
 		@media screen and (width > 768px) and (height <= 660px),
@@ -421,6 +423,12 @@
 				scrollbar-color:var(--scrollbarColor);
 				scrollbar-width:thin;
 
+				&:focus-visible {
+					box-shadow:0 0 10px var(--colorSuccess);
+					outline:2px solid var(--colorSuccess);
+					outline-offset:2px;
+				}
+
 				li.Level1 {
 					margin:2px 0 0 0;
 
@@ -440,6 +448,12 @@
 					bottom:-999px;
 				}
 			}
+		}
+
+		&:focus-visible {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
 		}
 
 		.Submenu-Toggle {
@@ -520,6 +534,12 @@
 			@media screen and (width > 768px) and (height > 660px) {
 				scrollbar-color:var(--scrollbarColor);
 				scrollbar-width:thin;
+
+				&:focus-visible {
+					box-shadow:0 0 10px var(--colorSuccess);
+					outline:2px solid var(--colorSuccess);
+					outline-offset:2px;
+				}
 			}
 		}
 

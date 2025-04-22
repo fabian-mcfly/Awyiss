@@ -173,6 +173,16 @@ body {
 				background-color:var(--colorSuccess);
 			}
 
+			&:focus {
+				background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
+				outline:2px solid var(--colorSuccess);
+				outline-offset:-3px;
+
+				html.🌚 & {
+					background-color:var(--colorDark);
+				}
+			}
+
 			&--enabled {
 				background-color:var(--colorSuccess);
 			}
@@ -218,6 +228,11 @@ body {
 
 			html.🌚 & {
 				background-color:var(--colorMedium);
+			}
+
+			&:focus {
+				outline:2px solid var(--colorSuccess);
+				outline-offset:-3px;
 			}
 
 			&.tox-collection {
@@ -804,6 +819,11 @@ body {
 							margin-inline:-20px;
 							padding:10px 10px 0 10px;
 						}
+					}
+
+					&:focus {
+						outline:2px solid var(--colorSuccess);
+						outline-offset:-3px;
 					}
 				}
 			}

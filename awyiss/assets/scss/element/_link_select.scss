@@ -251,6 +251,12 @@
 		&::-webkit-scrollbar-thumb {
 			background-color:var(--colorText);
 		}
+
+		&:focus-visible {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
+		}
 	}
 
 	.Item {

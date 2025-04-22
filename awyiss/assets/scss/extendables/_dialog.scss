@@ -52,10 +52,6 @@
 	padding:0;
 	overflow:hidden;
 
-	&:focus-visible {
-		outline:0 none;
-	}
-
 	&::before,
 	&::after {
 		display:none;

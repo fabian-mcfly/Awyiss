@@ -46,6 +46,7 @@
 		height:100%;
 		max-height:calc(80vh - 52px);
 		padding:30px;
+		border-radius:5px;
 		border:10px solid transparent;
 		overflow:auto;
 		gap:20px;
@@ -65,6 +66,11 @@
 
 		@media screen and (width <= 480px) {
 			grid-template-columns:auto;
+		}
+
+		&:focus {
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-3px;
 		}
 
 		html.Scale-Small & {

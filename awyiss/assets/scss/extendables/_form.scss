@@ -110,6 +110,9 @@
 	}
 }
 
+/**
+ * Not to be confused with the #OverlayForm
+ */
 %OverlayForm {
 	width:100%;
 	height:100%;
@@ -186,6 +189,7 @@
 		height:100%;
 		max-height:calc(80dvh - 112px);
 		padding:30px;
+		border-radius:5px;
 		overscroll-behavior:contain;
 		overflow-y:auto;
 		scrollbar-color:var(--scrollbarColor);
@@ -203,6 +207,12 @@
 			@media screen and (width > 768px) {
 				padding:10px;
 			}
+		}
+
+		&:focus-visible {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
 		}
 	}
 

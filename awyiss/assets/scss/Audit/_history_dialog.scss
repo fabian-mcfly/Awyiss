@@ -114,6 +114,7 @@
 		.AuditHistory-Tables {
 			display:block;
 			height:100%;
+			border-radius:5px;
 			max-height:calc(80dvh - 72px);
 			padding:30px;
 			overscroll-behavior:contain;
@@ -131,6 +132,12 @@
 				max-height:calc(80dvh - 57px);
 				padding-inline:5px;
 				padding-bottom:5px;
+			}
+
+			&:focus-visible {
+				box-shadow:0 0 10px var(--colorSuccess);
+				outline:2px solid var(--colorSuccess);
+				outline-offset:2px;
 			}
 		}
 	}

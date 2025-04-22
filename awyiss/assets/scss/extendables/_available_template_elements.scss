@@ -86,6 +86,7 @@
 		max-height:calc(100dvh - 240px);
 		margin:0 -10px 0;
 		padding-inline:10px;
+		border-radius:5px;
 		overscroll-behavior:contain;
 		overflow-y:auto;
 		scrollbar-color:var(--colorMedium) var(--colorLight);
@@ -97,6 +98,12 @@
 
 		html.👀 & {
 			max-height:calc(100dvh - 140px);
+		}
+
+		&:focus-visible {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
 		}
 	}
 }

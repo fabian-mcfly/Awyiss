@@ -351,6 +351,12 @@
 			scrollbar-color:var(--colorSemiDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
 		}
 
+		&:focus {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
+		}
+
 		.Actions {
 			.Button-Delete {
 				display:none;
@@ -362,6 +368,7 @@
 
 div#MediaFolders-List {
 	padding:0 10px 20px 10px;
+	border-radius:5px;
 	border:10px solid transparent;
 	border-top-width:0;
 	border-bottom-width:0;
@@ -371,10 +378,6 @@ div#MediaFolders-List {
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
 	transition:transform .3s ease-in-out;
-
-	&.Dragging {
-		transition:none;
-	}
 
 	@media screen and (width <= 680px) {
 		width:280px;
@@ -412,10 +415,19 @@ div#MediaFolders-List {
 		--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
 	}
 
+	&.Dragging {
+		transition:none;
+	}
+
 	&.Visible {
 		@media screen and (width <= 680px) {
 			transform:none;
 		}
+	}
+
+	&:focus-visible {
+		outline:2px solid var(--colorSuccess);
+		outline-offset:-3px;
 	}
 
 	.Overview-Fieldset {

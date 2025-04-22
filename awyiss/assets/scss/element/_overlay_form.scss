@@ -7,8 +7,6 @@
 	opacity:0;
 	visibility:hidden;
 	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
-	scrollbar-color:var(--scrollbarColor);
-	scrollbar-width:thin;
 
 	&:is(
 		.FetchInProgress,
@@ -93,6 +91,7 @@
 	.Form {
 		max-height:calc(80dvh - 52px);
 		border:10px solid transparent;
+		border-radius:5px;
 		padding:30px;
 		overflow:hidden auto;
 		grid-template-columns:auto;
@@ -114,6 +113,11 @@
 			@media screen and (width > 768px) {
 				padding:10px;
 			}
+		}
+
+		&:focus {
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-3px;
 		}
 
 		.Headlines {

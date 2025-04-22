@@ -255,6 +255,14 @@ select {
 	}
 }
 
+input[type="range"] {
+	&:focus-visible {
+		box-shadow:0 0 10px var(--colorSuccess);
+		outline:2px solid var(--colorSuccess);
+		outline-offset:2px;
+	}
+}
+
 input[type="checkbox"],
 input[type="radio"] {
 	display:inline-block;
@@ -1363,6 +1371,7 @@ textarea {
 		max-height:calc(100dvh - 240px);
 		margin:0 -10px 0;
 		padding-inline:10px;
+		border-radius:5px;
 		overscroll-behavior:contain;
 		overflow-y:auto;
 		scrollbar-color:var(--colorMedium) var(--colorLight);
@@ -1374,6 +1383,12 @@ textarea {
 
 		html.👀 & {
 			max-height:calc(100dvh - 140px);
+		}
+
+		&:focus-visible {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
 		}
 	}
 }
@@ -1514,8 +1529,9 @@ textarea {
 
 	.EditFrontendEditor {
 		height:100%;
-		border:10px solid transparent;
 		padding:30px;
+		border-radius:5px;
+		border:10px solid transparent;
 		overflow:auto;
 		grid-template-columns:auto;
 		scrollbar-color:var(--scrollbarColor);
@@ -1545,6 +1561,11 @@ textarea {
 			) {
 				display:none;
 			}
+		}
+
+		&:focus {
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-3px;
 		}
 
 		> .ButtonArea {

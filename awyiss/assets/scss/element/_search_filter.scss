@@ -29,6 +29,7 @@
 	.Columns {
 		max-height:calc(80dvh - 52px);
 		border:10px solid transparent;
+		border-radius:5px;
 		overscroll-behavior:contain;
 		overflow-y:auto;
 		scrollbar-color:var(--scrollbarColor);
@@ -52,11 +53,10 @@
 			}
 		}
 
-		//margin-left:auto;
-		//align-self:flex-end;
-		//.Button-Reset {
-		//	margin-left:20px;
-		//}
+		&:focus {
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-3px;
+		}
 
 		.ButtonArea {
 			display:flex;
@@ -142,17 +142,11 @@
 			}
 		}
 
-		&:nth-child(even of .Active) {
+		&:nth-child(even) {
 			background-color:var(--colorLight);
 
 			html.🌚 & {
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4))
-			}
-
-			&:nth-last-child(1 of .Active) {
-				~ .Actions {
-					background-color:transparent;
-				}
 			}
 		}
 
