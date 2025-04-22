@@ -147,6 +147,16 @@ export default class Overlay {
 			if (window.location.hash === '#Media') {
 				window.history.back();
 			}
+
+			// Check if the OverlayForm is visible and contains the media folders form
+			const overlayForm = document.querySelector('#OverlayForm');
+			if (
+				overlayForm?.classList.contains('Visible') &&
+				overlayForm.querySelector('.MediaFolders.Form')
+			) {
+				// Close the overlay form
+				window.overlayForm.closeOverlay();
+			}
 		}, this.closeButton);
 	}
 
