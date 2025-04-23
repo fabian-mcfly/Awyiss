@@ -1,30 +1,25 @@
-:is(
-	.ConfigurationController,
-	.UserConfigurationController
-) {
-	&.OverviewAction {
-		:is(
-			.Fieldset-RealmFrontend,
-			.Fieldset-RealmBackend
-		) {
-			grid-column:1 / -1;
+.Configuration.Overview {
+	:is(
+		.Fieldset-RealmFrontend,
+		.Fieldset-RealmBackend
+	) {
+		grid-column:1 / -1;
 
-			&:not(.Collapsed) {
-				&:not(:has(.ListItem)) {
-					padding-bottom:40px;
+		&:not(.Collapsed) {
+			&:not(:has(.ListItem)) {
+				padding-bottom:40px;
 
-					&::after {
-						@extend %EmptyList;
+				&::after {
+					@extend %EmptyList;
 
-						html.🌚 & {
-							@extend %EmptyListDarkMode;
-						}
+					html.🌚 & {
+						@extend %EmptyListDarkMode;
 					}
+				}
 
-					.Attributes-List {
-						height:40px;
-						margin-left:-52px;
-					}
+				.Attributes-List {
+					height:40px;
+					margin-left:-52px;
 				}
 			}
 		}

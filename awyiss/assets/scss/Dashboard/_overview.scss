@@ -1,16 +1,12 @@
-.DashboardController {
-	#Content {
-		.Overview {
-			grid-template-columns:1fr 400px;
+.Dashboard.Overview {
+	grid-template-columns:1fr 400px;
 
-			@media screen and (width <= 1024px) {
-				grid-template-columns:1fr;
-			}
-		}
+	@media screen and (width <= 1024px) {
+		grid-template-columns:1fr;
+	}
 
-		h1 {
-			grid-column:1 / -1;
-		}
+	h1 {
+		grid-column:1 / -1;
 	}
 
 	.StatusCells {

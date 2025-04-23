@@ -1,7 +1,5 @@
-.WidgetsController {
-	@extend %ContentFormElements;
-
-	.EditFrontendEditor {
+.Widgets.Form {
+	&.EditFrontendEditor {
 		&:not(.ExpertMode) {
 			:is(
 				.FormInputName-Identifier,
@@ -11,4 +9,6 @@
 			}
 		}
 	}
+
+	@extend %ContentFormElements;
 }

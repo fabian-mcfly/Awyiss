@@ -1,82 +1,77 @@
-:is(
-	.PagesController,
-	.IsGenericPage
-) {
-	&.OverviewAction {
-		.ListItem-Inner {
-			&:hover {
-				.Audit-Preview {
-					.Button-Preview {
-						opacity:1;
-					}
+.Pages.Overview {
+	.ListItem-Inner {
+		&:hover {
+			.Audit-Preview {
+				.Button-Preview {
+					opacity:1;
 				}
 			}
 		}
+	}
 
-		tr {
-			&:hover {
-				.TableCell-AuditInfo {
-					.Button-Preview {
-						opacity:1;
-					}
+	tr {
+		&:hover {
+			.TableCell-AuditInfo {
+				.Button-Preview {
+					opacity:1;
 				}
 			}
 		}
+	}
 
-		:is(
-			.Audit-Preview,
-			.TableCell-AuditInfo
-		) {
-			position:relative;
+	:is(
+		.Audit-Preview,
+		.TableCell-AuditInfo
+	) {
+		position:relative;
 
-			.Button-Preview {
-				width:36px;
-				margin-top:5px;
-				padding:0 6px;
-				box-shadow:none;
-				background-image:none;
-				background-color:transparent;
-				color:var(--colorSemiDark);
-				font-size:0;
-				line-height:0;
-				opacity:.25;
-				transition:opacity .2s;
+		.Button-Preview {
+			width:36px;
+			margin-top:5px;
+			padding:0 6px;
+			box-shadow:none;
+			background-image:none;
+			background-color:transparent;
+			color:var(--colorSemiDark);
+			font-size:0;
+			line-height:0;
+			opacity:.25;
+			transition:opacity .2s;
 
-				@media screen and (width <= 768px) {
+			@media screen and (width <= 768px) {
+				width:30px;
+				margin-top:-2px;
+				margin-left:3px;
+				padding:0 4px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
 					width:30px;
 					margin-top:-2px;
 					margin-left:3px;
 					padding:0 4px;
 				}
+			}
+
+			&:hover {
+				color:var(--colorBright);
+			}
+
+			&::after {
+				margin-left:0;
+				font-size:24px;
+				line-height:36px;
+
+				@media screen and (width <= 768px) {
+					font-size:20px;
+					line-height:26px;
+				}
 
 				html.Scale-Small & {
 					@media screen and (width > 768px) {
-						width:30px;
-						margin-top:-2px;
-						margin-left:3px;
-						padding:0 4px;
-					}
-				}
-
-				&:hover {
-					color:var(--colorBright);
-				}
-
-				&::after {
-					margin-left:0;
-					font-size:24px;
-					line-height:36px;
-
-					@media screen and (width <= 768px) {
 						font-size:20px;
 						line-height:26px;
-					}
-
-					html.Scale-Small & {
-						@media screen and (width > 768px) {
-							font-size:20px;
-							line-height:26px;
-						}
 					}
 				}
 			}

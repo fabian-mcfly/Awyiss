@@ -1,5 +1,5 @@
-.FormElementsController {
-	.EditFrontendEditor {
+.FormElements.Form {
+	&.EditFrontendEditor {
 		&:not(.ExpertMode) {
 			:is(
 				.FormInputName-Active,
@@ -17,45 +17,40 @@
 		}
 	}
 
-	&:is(
-		.AddAction,
-		.EditAction
-	) {
-		.FormInput {
-			&.Hidden {
-				display:none;
-			}
+	.FormInput {
+		&.Hidden {
+			display:none;
+		}
+	}
+
+	.FormInputName-Type {
+		grid-column-start:1;
+	}
+
+	.FormInputName-Options {
+		> .Label {
+			display:none;
 		}
 
-		.FormInputName-Type {
-			grid-column-start:1;
-		}
+		.FormInputType-ListItem {
+			display:grid;
+			padding-right:57px;
+			gap:0 5px;
+			grid-template-columns:1fr 2fr;
 
-		.FormInputName-Options {
-			> .Label {
-				display:none;
+			@media screen and (width <= 768px) {
+				padding-right:47px;
 			}
 
-			.FormInputType-ListItem {
-				display:grid;
-				padding-right:57px;
-				gap:0 5px;
-				grid-template-columns:1fr 2fr;
-
-				@media screen and (width <= 768px) {
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
 					padding-right:47px;
 				}
-
-				html.Scale-Small & {
-					@media screen and (width > 768px) {
-						padding-right:47px;
-					}
-				}
 			}
+		}
 
-			.FormInput {
-				grid-column:auto / auto;
-			}
+		.FormInput {
+			grid-column:auto / auto;
 		}
 	}
 }

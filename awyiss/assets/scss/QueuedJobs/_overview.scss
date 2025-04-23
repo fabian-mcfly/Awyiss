@@ -1,71 +1,69 @@
-.QueuedJobsController {
-	&.OverviewAction {
-		.Overview-Table {
-			:is(
-				.TableHeader-Created,
-				.TableHeader-Completed
-			) {
-				width:260px;
+.QueuedJobs.Overview {
+	.Overview-Table {
+		:is(
+			.TableHeader-Created,
+			.TableHeader-Completed
+		) {
+			width:260px;
 
-				@media screen and (width <= 1280px) {
-					width:220px;
-				}
+			@media screen and (width <= 1280px) {
+				width:220px;
+			}
 
-				@media screen and (width <= 1024px) {
-					width:170px;
+			@media screen and (width <= 1024px) {
+				width:170px;
+			}
+		}
+
+		.TableCell-Reference {
+			&:hover {
+				.Command {
+					opacity:inherit;
+					visibility:inherit;
+					transition-delay:0s;
 				}
 			}
 
-			.TableCell-Reference {
-				&:hover {
-					.Command {
-						opacity:inherit;
-						visibility:inherit;
-						transition-delay:0s;
-					}
-				}
+			&::after {
+				@extend %LineAwesomeIcon;
+				content:'\f05a';
+			}
+		}
 
-				&::after {
-					@extend %LineAwesomeIcon;
-					content:'\f05a';
-				}
+		:is(
+			.TableCell-Created,
+			.TableCell-Completed
+		) {
+			@media screen and (width > 640px) {
+				text-align:right;
+			}
+		}
+
+		.Command {
+			min-width:300px;
+				position:absolute;
+			top:0;
+			left:100%;
+			z-index:20;
+			opacity:0;
+			visibility:hidden;
+			transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+
+			@media screen and (width <= 768px) {
+				width:100%;
+				min-width:0;
+				max-height:200px;
+				font-size:10px;
+				top:100%;
+				left:0;
+				overflow:auto;
 			}
 
-			:is(
-				.TableCell-Created,
-				.TableCell-Completed
-			) {
-				@media screen and (width > 640px) {
-					text-align:right;
-				}
-			}
-
-			.Command {
-				min-width:300px;
-					position:absolute;
-				top:0;
-				left:100%;
-				z-index:20;
-				opacity:0;
-				visibility:hidden;
-				transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+			pre.sf-dump {
+				margin-block:0;
 
 				@media screen and (width <= 768px) {
-					width:100%;
-					min-width:0;
-					max-height:200px;
 					font-size:10px;
-					top:100%;
-					left:0;
-					overflow:auto;
-				}
-
-				pre.sf-dump {
-					margin-block:0;
-
-					@media screen and (width <= 768px) {
-						font-size:10px;
-					}
 				}
 			}
 		}

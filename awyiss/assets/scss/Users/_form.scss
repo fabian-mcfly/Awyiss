@@ -1,134 +1,87 @@
-.UsersController {
-	.Form {
-		.Fieldset-Usergroups {
-			padding:0;
+.Users.Form {
+	.Fieldset-Usergroups {
+		padding:0;
 
-			.Overview-Table {
-				margin:0;
+		.Overview-Table {
+			margin:0;
 
-				&:has(th:nth-last-child(4)) {
-					@media screen and (width <= 768px) {
-						--idColumnWidth:60px;
+			&:has(th:nth-last-child(4)) {
+				@media screen and (width <= 768px) {
+					--idColumnWidth:60px;
 
-						th {
-							@media screen and (width <= 640px) {
-								padding-top:10px;
-							}
-
-							&.TableHeader-UsergroupCheckbox {
-								width:100%;
-							}
+					th {
+						@media screen and (width <= 640px) {
+							padding-top:10px;
 						}
 
-						td {
-							&.TableHeader-UsergroupCheckbox {
-								width:100%;
-							}
+						&.TableHeader-UsergroupCheckbox {
+							width:100%;
 						}
 					}
 
 					td {
-						&.TableCell-UsergroupCheckbox {
-							@media screen and (width <= 640px) {
-								height:42px;
-							}
+						&.TableHeader-UsergroupCheckbox {
+							width:100%;
 						}
-					}
-
-					.FormInputType-Checkbox {
-						.Label {
-							&::before {
-								@media screen and (width <= 640px) {
-									top:10px;
-									left:10px;
-								}
-							}
-						}
-					}
-				}
-
-				tr {
-					position:relative;
-
-					&:has(input:checked) {
-						--backgroundColor:color-mix(in srgb, var(--colorSuccess), transparent 90%);
-					}
-				}
-
-				th {
-					padding-top:20px;
-
-					&.TableHeader-UsergroupCheckbox {
-						width:60px;
-						min-width:0;
-						padding:0;
 					}
 				}
 
 				td {
 					&.TableCell-UsergroupCheckbox {
-						min-width:0;
-						padding:0;
-						position:static;
+						@media screen and (width <= 640px) {
+							height:42px;
+						}
+					}
+				}
 
-						&:has(input:checked) {
+				.FormInputType-Checkbox {
+					.Label {
+						&::before {
+							@media screen and (width <= 640px) {
+								top:10px;
+								left:10px;
+							}
+						}
+					}
+				}
+			}
+
+			tr {
+				position:relative;
+
+				&:has(input:checked) {
+					--backgroundColor:color-mix(in srgb, var(--colorSuccess), transparent 90%);
+				}
+			}
+
+			th {
+				padding-top:20px;
+
+				&.TableHeader-UsergroupCheckbox {
+					width:60px;
+					min-width:0;
+					padding:0;
+				}
+			}
+
+			td {
+				&.TableCell-UsergroupCheckbox {
+					min-width:0;
+					padding:0;
+					position:static;
+
+					&:has(input:checked) {
+						background-color:var(--backgroundColor);
+
+						&::before {
+							display:none;
+						}
+
+						~ td {
 							background-color:var(--backgroundColor);
 
 							&::before {
-								display:none;
-							}
-
-							~ td {
-								background-color:var(--backgroundColor);
-
-								&::before {
-									background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
-								}
-							}
-						}
-					}
-				}
-			}
-
-			.FormInputType-Checkbox {
-				position:static;
-
-				.Label {
-					padding:0;
-					position:absolute;
-					inset:0;
-					z-index:2;
-
-					&::before {
-						top:18px;
-						left:18px;
-
-						@media screen and (width <= 1024px) {
-							top:10px;
-						}
-
-						@media screen and (width <= 768px) {
-							top:8px;
-						}
-
-						@media screen and (width <= 640px) {
-							top:7px;
-						}
-
-						html.Scale-Small & {
-							@media screen and (width > 768px) {
-								top:5px;
-							}
-						}
-					}
-				}
-
-				input {
-					&:checked {
-						+ Label {
-							&::before {
-								border-color:transparent;
-								background-color:var(--colorSuccess);
+								background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
 							}
 						}
 					}
@@ -136,52 +89,97 @@
 			}
 		}
 
-		.FormInputType-Password {
+		.FormInputType-Checkbox {
+			position:static;
+
+			.Label {
+				padding:0;
+				position:absolute;
+				inset:0;
+				z-index:2;
+
+				&::before {
+					top:18px;
+					left:18px;
+
+					@media screen and (width <= 1024px) {
+						top:10px;
+					}
+
+					@media screen and (width <= 768px) {
+						top:8px;
+					}
+
+					@media screen and (width <= 640px) {
+						top:7px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							top:5px;
+						}
+					}
+				}
+			}
+
 			input {
-				padding-right:110px;
-
-				@media screen and (width <= 768px) {
-					padding-right:90px;
-				}
-
-				html.Scale-Small & {
-					@media screen and (width > 768px) {
-						padding-right:90px;
+				&:checked {
+					+ Label {
+						&::before {
+							border-color:transparent;
+							background-color:var(--colorSuccess);
+						}
 					}
 				}
 			}
 		}
+	}
 
-		.PasswordGenerator {
-			@extend %InFieldButton;
-
-			position:absolute;
-			right:52px;
+	.FormInputType-Password {
+		input {
+			padding-right:110px;
 
 			@media screen and (width <= 768px) {
-				right:42px;
+				padding-right:90px;
 			}
 
 			html.Scale-Small & {
 				@media screen and (width > 768px) {
-					right:42px;
+					padding-right:90px;
 				}
 			}
+		}
+	}
 
-			&::after {
-				@extend %LineAwesomeIcon;
-				content:'\f084';
-				font-size:24px;
-				line-height:50px;
+	.PasswordGenerator {
+		@extend %InFieldButton;
 
-				@media screen and (width <= 768px) {
+		position:absolute;
+		right:52px;
+
+		@media screen and (width <= 768px) {
+			right:42px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				right:42px;
+			}
+		}
+
+		&::after {
+			@extend %LineAwesomeIcon;
+			content:'\f084';
+			font-size:24px;
+			line-height:50px;
+
+			@media screen and (width <= 768px) {
+				line-height:40px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
 					line-height:40px;
-				}
-
-				html.Scale-Small & {
-					@media screen and (width > 768px) {
-						line-height:40px;
-					}
 				}
 			}
 		}

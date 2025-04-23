@@ -1,22 +1,20 @@
-.MediaFolders {
-	&.Form {
-		fieldset {
-			&.Collapsed {
-				:is(
-					.FormInputName-Path,
-					.FormInputName-LanguageShortcode
-				) {
-					display:none;
-				}
+.MediaFolders.Form {
+	fieldset {
+		&.Collapsed {
+			:is(
+				.FormInputName-Path,
+				.FormInputName-LanguageShortcode
+			) {
+				display:none;
 			}
 		}
+	}
 
-		.FormInputName-LanguageShortcode {
-			display:block;
-		}
+	.FormInputName-LanguageShortcode {
+		display:block;
+	}
 
-		.FormInputName-Path {
-			@extend .FormInputName-Slug;
-		}
+	.FormInputName-Path {
+		@extend .FormInputName-Slug;
 	}
 }

@@ -1,88 +1,249 @@
-.UsergroupsController {
-	.Form {
-		.Fieldset-Users {
-			padding:0;
+.Usergroups.Form {
+	.Fieldset-Users {
+		padding:0;
 
-			.Overview-Table {
-				margin:0;
+		.Overview-Table {
+			margin:0;
 
-				&:has(th:nth-last-child(4)) {
-					@media screen and (width <= 768px) {
-						--idColumnWidth:60px;
+			&:has(th:nth-last-child(4)) {
+				@media screen and (width <= 768px) {
+					--idColumnWidth:60px;
 
-						th {
-							@media screen and (width <= 640px) {
-								padding-top:10px;
-							}
-
-							&.TableHeader-UserCheckbox {
-								width:100%;
-							}
+					th {
+						@media screen and (width <= 640px) {
+							padding-top:10px;
 						}
 
-						td {
-							&.TableHeader-UserCheckbox {
-								width:100%;
-							}
+						&.TableHeader-UserCheckbox {
+							width:100%;
 						}
 					}
 
 					td {
-						&.TableCell-UserCheckbox {
-							@media screen and (width <= 640px) {
-								height:42px;
-							}
+						&.TableHeader-UserCheckbox {
+							width:100%;
 						}
-					}
-
-					.FormInputType-Checkbox {
-						.Label {
-							&::before {
-								@media screen and (width <= 640px) {
-									top:10px;
-									left:10px;
-								}
-							}
-						}
-					}
-				}
-
-				tr {
-					position:relative;
-
-					&:has(input:checked) {
-						--backgroundColor:color-mix(in srgb, var(--colorSuccess), transparent 90%);
-					}
-				}
-
-				th {
-					padding-top:20px;
-
-					&.TableHeader-UserCheckbox {
-						width:60px;
-						min-width:0;
-						padding:0;
 					}
 				}
 
 				td {
 					&.TableCell-UserCheckbox {
-						min-width:0;
-						padding:0;
-						position:static;
+						@media screen and (width <= 640px) {
+							height:42px;
+						}
+					}
+				}
 
-						&:has(input:checked) {
+				.FormInputType-Checkbox {
+					.Label {
+						&::before {
+							@media screen and (width <= 640px) {
+								top:10px;
+								left:10px;
+							}
+						}
+					}
+				}
+			}
+
+			tr {
+				position:relative;
+
+				&:has(input:checked) {
+					--backgroundColor:color-mix(in srgb, var(--colorSuccess), transparent 90%);
+				}
+			}
+
+			th {
+				padding-top:20px;
+
+				&.TableHeader-UserCheckbox {
+					width:60px;
+					min-width:0;
+					padding:0;
+				}
+			}
+
+			td {
+				&.TableCell-UserCheckbox {
+					min-width:0;
+					padding:0;
+					position:static;
+
+					&:has(input:checked) {
+						background-color:var(--backgroundColor);
+
+						&::before {
+							display:none;
+						}
+
+						~ td {
 							background-color:var(--backgroundColor);
 
 							&::before {
-								display:none;
+								background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		.FormInputType-Checkbox {
+			position:static;
+
+			.Label {
+				padding:0;
+				position:absolute;
+				inset:0;
+				z-index:2;
+
+				&::before {
+					top:18px;
+					left:18px;
+
+					@media screen and (width <= 1024px) {
+						top:10px;
+					}
+
+					@media screen and (width <= 768px) {
+						top:8px;
+					}
+
+					@media screen and (width <= 640px) {
+						top:7px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							top:5px;
+						}
+					}
+				}
+			}
+
+			input {
+				&:checked {
+					+ Label {
+						&::before {
+							border-color:transparent;
+							background-color:var(--colorSuccess);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+.Fieldset-Permissions {
+	padding-inline:20px;
+	row-gap:2rem;
+
+	@media screen and (width <= 540px) {
+		padding-inline:10px;
+	}
+
+	&:not(.Collapsed) {
+		padding-bottom:40px;
+	}
+}
+
+.Fieldset-Permission {
+	margin:0;
+	padding:0;
+	box-shadow:none;
+	gap:0;
+	grid-column:auto / span 6;
+	grid-template-columns:9rem auto;
+	align-items:stretch;
+
+	@media screen and (width <= 1180px) {
+		grid-template-columns:1fr;
+	}
+
+	&:first-child {
+		margin-top:0;
+	}
+
+	.Title {
+		@extend %CategoryListTitle;
+
+		@media screen and (width <= 1180px) {
+			margin-block:0;
+			border-radius:5px 5px 0 0;
+		}
+	}
+
+	.Permissions {
+		display:grid;
+		padding:5px 10px;
+		border-radius:5px;
+		border-left:2px solid var(--colorMedium);
+		align-content:center;
+
+		@media screen and (width <= 1180px) {
+			border-top-left-radius:0;
+		}
+
+		html.🌚 & {
+			border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
+		}
+	}
+
+	.Permission {
+		display:flex;
+		padding:10px 15px;
+		border-radius:5px;
+
+		@media screen and (width <= 768px) {
+			padding-block:8px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding-block:8px;
+			}
+		}
+
+		&:nth-child(2n) {
+			background-color:var(--colorLight);
+
+			html.🌚 & {
+				background-color:var(--colorSemiDark);
+			}
+		}
+	}
+
+	.Label {
+		display:inline-block;
+		margin-right:20px;
+	}
+
+	.SimpleRadio {
+		margin-left:auto;
+		font-size:0;
+		line-height:0;
+		position:relative;
+
+		input {
+			position:absolute;
+			opacity:0;
+
+			&:nth-child(1) {
+				&:checked {
+					~ .Labels {
+						&::after {
+							background-color:var(--colorSuccess);
+							transform:translate(33px, 0);
+
+							@media screen and (width <= 768px) {
+								transform:translate(26px, 0);
 							}
 
-							~ td {
-								background-color:var(--backgroundColor);
-
-								&::before {
-									background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
+							html.Scale-Small & {
+								@media screen and (width > 768px) {
+									transform:translate(26px, 0);
 								}
 							}
 						}
@@ -90,297 +251,134 @@
 				}
 			}
 
-			.FormInputType-Checkbox {
-				position:static;
+			&:nth-child(3) {
+				&:checked {
+					~ .Labels {
+						&::after {
+							background-color:var(--colorError);
+							transform:translate(-33px, 0);
 
-				.Label {
-					padding:0;
-					position:absolute;
-					inset:0;
-					z-index:2;
-
-					&::before {
-						top:18px;
-						left:18px;
-
-						@media screen and (width <= 1024px) {
-							top:10px;
-						}
-
-						@media screen and (width <= 768px) {
-							top:8px;
-						}
-
-						@media screen and (width <= 640px) {
-							top:7px;
-						}
-
-						html.Scale-Small & {
-							@media screen and (width > 768px) {
-								top:5px;
+							@media screen and (width <= 768px) {
+								transform:translate(-26px, 0);
 							}
-						}
-					}
-				}
 
-				input {
-					&:checked {
-						+ Label {
-							&::before {
-								border-color:transparent;
-								background-color:var(--colorSuccess);
+							html.Scale-Small & {
+								@media screen and (width > 768px) {
+									transform:translate(-26px, 0);
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-	}
 
-	.Fieldset-Permissions {
-		padding-inline:20px;
-		row-gap:2rem;
-
-		@media screen and (width <= 540px) {
-			padding-inline:10px;
-		}
-
-		&:not(.Collapsed) {
-			padding-bottom:40px;
-		}
-	}
-
-	.Fieldset-Permission {
-		margin:0;
-		padding:0;
-		box-shadow:none;
-		gap:0;
-		grid-column:auto / span 6;
-		grid-template-columns:9rem auto;
-		align-items:stretch;
-
-		@media screen and (width <= 1180px) {
-			grid-template-columns:1fr;
-		}
-
-		&:first-child {
-			margin-top:0;
-		}
-
-		.Title {
-			@extend %CategoryListTitle;
-
-			@media screen and (width <= 1180px) {
-				margin-block:0;
-				border-radius:5px 5px 0 0;
+			&:focus-visible {
+				~ .Labels {
+					&::after {
+						box-shadow:0 0 10px var(--colorSuccess);
+						outline:2px solid var(--colorSuccess);
+						outline-offset:2px;
+					}
+				}
 			}
 		}
 
-		.Permissions {
-			display:grid;
-			padding:5px 10px;
+		.Labels {
+			display:inline-block;
+			width:120px;
+			height:16px;
+			margin-top:7px;
 			border-radius:5px;
-			border-left:2px solid var(--colorMedium);
-			align-content:center;
+			background-color:var(--colorBright);
+			outline:1px solid oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
+			font-size:0;
+			line-height:0;
+			position:relative;
+			vertical-align:top;
 
-			@media screen and (width <= 1180px) {
-				border-top-left-radius:0;
+			@media screen and (width <= 768px) {
+				width:87px;
+				margin-top:4px;
 			}
 
 			html.🌚 & {
-				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
-			}
-		}
-
-		.Permission {
-			display:flex;
-			padding:10px 15px;
-			border-radius:5px;
-
-			@media screen and (width <= 768px) {
-				padding-block:8px;
+				outline-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
+				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 			}
 
 			html.Scale-Small & {
 				@media screen and (width > 768px) {
-					padding-block:8px;
-				}
-			}
-
-			&:nth-child(2n) {
-				background-color:var(--colorLight);
-
-				html.🌚 & {
-					background-color:var(--colorSemiDark);
-				}
-			}
-		}
-
-		.Label {
-			display:inline-block;
-			margin-right:20px;
-		}
-
-		.SimpleRadio {
-			margin-left:auto;
-			font-size:0;
-			line-height:0;
-			position:relative;
-
-			input {
-				position:absolute;
-				opacity:0;
-
-				&:nth-child(1) {
-					&:checked {
-						~ .Labels {
-							&::after {
-								background-color:var(--colorSuccess);
-								transform:translate(33px, 0);
-
-								@media screen and (width <= 768px) {
-									transform:translate(26px, 0);
-								}
-
-								html.Scale-Small & {
-									@media screen and (width > 768px) {
-										transform:translate(26px, 0);
-									}
-								}
-							}
-						}
-					}
-				}
-
-				&:nth-child(3) {
-					&:checked {
-						~ .Labels {
-							&::after {
-								background-color:var(--colorError);
-								transform:translate(-33px, 0);
-
-								@media screen and (width <= 768px) {
-									transform:translate(-26px, 0);
-								}
-
-								html.Scale-Small & {
-									@media screen and (width > 768px) {
-										transform:translate(-26px, 0);
-									}
-								}
-							}
-						}
-					}
-				}
-
-				&:focus-visible {
-					~ .Labels {
-						&::after {
-							box-shadow:0 0 10px var(--colorSuccess);
-							outline:2px solid var(--colorSuccess);
-							outline-offset:2px;
-						}
-					}
-				}
-			}
-
-			.Labels {
-				display:inline-block;
-				width:120px;
-				height:16px;
-				margin-top:7px;
-				border-radius:5px;
-				background-color:var(--colorBright);
-				outline:1px solid oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
-				font-size:0;
-				line-height:0;
-				position:relative;
-				vertical-align:top;
-
-				@media screen and (width <= 768px) {
 					width:87px;
 					margin-top:4px;
 				}
+			}
 
-				html.🌚 & {
-					outline-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
-					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
+			&.Animate {
+				&::after {
+					animation:blop .5s infinite ease-in-out;
+				}
+			}
+
+			&::after {
+				content:'';
+				width:26px;
+				height:26px;
+				margin:auto;
+				outline:1px solid var(--colorBright);
+				border-radius:5px;
+				background-color:var(--colorMedium);
+				position:absolute;
+				top:0;
+				right:0;
+				bottom:0;
+				left:0;
+				transition:background-color .3s ease-in-out .1s, transform .3s ease-in-out .1s;
+				transform:translate(0, 0);
+
+				@media screen and (width <= 768px) {
+					width:20px;
+					height:20px;
 				}
 
 				html.Scale-Small & {
 					@media screen and (width > 768px) {
-						width:87px;
-						margin-top:4px;
-					}
-				}
-
-				&.Animate {
-					&::after {
-						animation:blop .5s infinite ease-in-out;
-					}
-				}
-
-				&::after {
-					content:'';
-					width:26px;
-					height:26px;
-					margin:auto;
-					outline:1px solid var(--colorBright);
-					border-radius:5px;
-					background-color:var(--colorMedium);
-					position:absolute;
-					top:0;
-					right:0;
-					bottom:0;
-					left:0;
-					transition:background-color .3s ease-in-out .1s, transform .3s ease-in-out .1s;
-					transform:translate(0, 0);
-
-					@media screen and (width <= 768px) {
 						width:20px;
 						height:20px;
 					}
+				}
 
-					html.Scale-Small & {
-						@media screen and (width > 768px) {
-							width:20px;
-							height:20px;
-						}
-					}
-
-					@keyframes blop {
-						50% {
-							border-radius:50%;
-							scale:1.5 .5;
-						}
-					}
-
-					html.🌚 & {
-						outline-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0847) calc(c + 0.009) calc(h + 1.53));
-						background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
+				@keyframes blop {
+					50% {
+						border-radius:50%;
+						scale:1.5 .5;
 					}
 				}
 
-				label {
-					display:inline-block;
-					width:40px;
-					aspect-ratio:1;
-					font-size:0;
-					line-height:0;
-					position:relative;
-					z-index:1;
-					transform:translateY(-12px);
+				html.🌚 & {
+					outline-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0847) calc(c + 0.009) calc(h + 1.53));
+					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
+				}
+			}
 
-					@media screen and (width <= 768px) {
+			label {
+				display:inline-block;
+				width:40px;
+				aspect-ratio:1;
+				font-size:0;
+				line-height:0;
+				position:relative;
+				z-index:1;
+				transform:translateY(-12px);
+
+				@media screen and (width <= 768px) {
+					width:29px;
+					transform:translateY(-7px);
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
 						width:29px;
 						transform:translateY(-7px);
-					}
-
-					html.Scale-Small & {
-						@media screen and (width > 768px) {
-							width:29px;
-							transform:translateY(-7px);
-						}
 					}
 				}
 			}

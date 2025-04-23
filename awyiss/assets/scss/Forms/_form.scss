@@ -1,197 +1,195 @@
-.FormsController {
+.Forms.Form {
+	&:has(input[type="checkbox"][name="send_email"]:checked) {
+		.Fieldset-Email:not(.Collapsed) {
+			:is(
+				.FormInputName-Subject,
+				.FormInputName-EmailTemplateId,
+				.FormInputName-Cc,
+				.FormInputName-Bcc
+			) {
+				display:block;
+			}
+
+			details {
+				display:initial;
+			}
+		}
+	}
+
+	&:has(input[type="checkbox"][name="send_confirmation_email"]:checked) {
+		.Fieldset-ConfirmationEmail:not(.Collapsed) {
+			:is(
+				.FormInputName-SubjectConfirmation,
+				.FormInputName-ConfirmationEmailTemplateId,
+				.FormInputName-SalutationConfirmation
+			) {
+				display:block;
+			}
+		}
+	}
+
+	.EmailDetails {
+		margin:var(--lineHeightMain) 0 0 0;
+		padding:0;
+		box-shadow:none;
+		background-color:transparent;
+		box-sizing:border-box;
+
+		@container (width <= 640px) {
+			grid-template-columns:1fr;
+
+			> .FormInput {
+				grid-column:1 / -1;
+			}
+		}
+	}
+
+	.Fieldset-Email {
+		details {
+			display:none;
+		}
+	}
+
+	:is(
+		.FormInputName-Subject,
+		.FormInputName-SubjectConfirmation,
+		.FormInputName-SalutationConfirmation,
+		.FormInputName-EmailTemplateId,
+		.FormInputName-ConfirmationEmailTemplateId,
+		.FormInputName-Cc,
+		.FormInputName-Bcc
+	) {
+		display:none;
+	}
+
+	:is(
+		.FormInputName-Cc,
+		.FormInputName-Bcc
+	) {
+		> .Label {
+			display:none;
+		}
+
+		.FormInputType-ListItem {
+			display:grid;
+			padding-right:57px;
+			gap:0 5px;
+			grid-template-columns:1fr 2fr;
+
+			@media screen and (width <= 768px) {
+				padding-right:47px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-right:47px;
+				}
+			}
+		}
+
+		.FormInput {
+			grid-column:auto / auto;
+		}
+	}
+
+	.FormInputName-FormConditionalRecipients {
+		> .Label {
+			margin:calc(var(--lineHeightMain) * .5) 0;
+			padding:0;
+			//noinspection CssNoGenericFontName
+			font-family:var(--fontStackHeading);
+			font-size:calc(var(--fontSizeHeading) * .4);
+			line-height:var(--lineHeightHeading);
+		}
+
+		.FormInputType-ListItem {
+			display:grid;
+			padding-right:57px;
+			gap:5px;
+			//grid-template-columns:repeat(3, 1fr) 200px 200px;
+			grid-template-columns:1fr 2fr 100px repeat(2, 2fr);
+
+			@container (width <= 640px) {
+				margin-bottom:30px;
+				grid-template-columns:1fr 1fr;
+			}
+
+			@media screen and (width <= 768px) {
+				padding-right:47px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-right:47px;
+				}
+			}
+
+			.FormInput {
+				grid-column:auto / auto;
+				margin-bottom:0;
+
+				&:nth-last-child(1 of .FormInput) {
+					@container (width <= 640px) {
+						grid-column:1 / -1;
+					}
+				}
+
+				> .Label {
+					@container (width <= 640px) {
+						display:block;
+					}
+				}
+			}
+
+			.SortableHandle {
+				@container (width <= 640px) {
+					top:calc(1rem + 7px);
+
+					@media screen and (width <= 540px) {
+						top:calc(1rem + 10px);
+					}
+				}
+			}
+
+			.Button-Remove {
+				@container (width <= 640px) {
+					top:1.05rem;
+				}
+			}
+		}
+	}
+
+	.FormInputName-ConditionalRecipientsStrategy {
+		display:grid;
+		position:absolute;
+		top:0;
+		right:0;
+		align-items:center;
+		grid-template-columns:1fr 200px;
+		gap:20px;
+
+		@media screen and (width <= 540px) {
+			display:flex;
+			margin-bottom:20px;
+			position:relative;
+		}
+
+		label {
+			margin-bottom:0;
+		}
+
+		select {
+			height:30px;
+			line-height:30px;
+		}
+	}
+
 	details {
 		font-size:16px;
 		line-height:1.4;
 
 		pre {
 			white-space:break-spaces;
-		}
-	}
-
-	.Forms.Form {
-		&:has(input[type="checkbox"][name="send_email"]:checked) {
-			.Fieldset-Email:not(.Collapsed) {
-				:is(
-					.FormInputName-Subject,
-					.FormInputName-EmailTemplateId,
-					.FormInputName-Cc,
-					.FormInputName-Bcc
-				) {
-					display:block;
-				}
-
-				details {
-					display:initial;
-				}
-			}
-		}
-
-		&:has(input[type="checkbox"][name="send_confirmation_email"]:checked) {
-			.Fieldset-ConfirmationEmail:not(.Collapsed) {
-				:is(
-					.FormInputName-SubjectConfirmation,
-					.FormInputName-ConfirmationEmailTemplateId,
-					.FormInputName-SalutationConfirmation
-				) {
-					display:block;
-				}
-			}
-		}
-
-		.EmailDetails {
-			margin:var(--lineHeightMain) 0 0 0;
-			padding:0;
-			box-shadow:none;
-			background-color:transparent;
-			box-sizing:border-box;
-
-			@container (width <= 640px) {
-				grid-template-columns:1fr;
-
-				> .FormInput {
-					grid-column:1 / -1;
-				}
-			}
-		}
-
-		.Fieldset-Email {
-			details {
-				display:none;
-			}
-		}
-
-		:is(
-			.FormInputName-Subject,
-			.FormInputName-SubjectConfirmation,
-			.FormInputName-SalutationConfirmation,
-			.FormInputName-EmailTemplateId,
-			.FormInputName-ConfirmationEmailTemplateId,
-			.FormInputName-Cc,
-			.FormInputName-Bcc
-		) {
-			display:none;
-		}
-
-		:is(
-			.FormInputName-Cc,
-			.FormInputName-Bcc
-		) {
-			> .Label {
-				display:none;
-			}
-
-			.FormInputType-ListItem {
-				display:grid;
-				padding-right:57px;
-				gap:0 5px;
-				grid-template-columns:1fr 2fr;
-
-				@media screen and (width <= 768px) {
-					padding-right:47px;
-				}
-
-				html.Scale-Small & {
-					@media screen and (width > 768px) {
-						padding-right:47px;
-					}
-				}
-			}
-
-			.FormInput {
-				grid-column:auto / auto;
-			}
-		}
-
-		.FormInputName-FormConditionalRecipients {
-			> .Label {
-				margin:calc(var(--lineHeightMain) * .5) 0;
-				padding:0;
-				//noinspection CssNoGenericFontName
-				font-family:var(--fontStackHeading);
-				font-size:calc(var(--fontSizeHeading) * .4);
-				line-height:var(--lineHeightHeading);
-			}
-
-			.FormInputType-ListItem {
-				display:grid;
-				padding-right:57px;
-				gap:5px;
-				//grid-template-columns:repeat(3, 1fr) 200px 200px;
-				grid-template-columns:1fr 2fr 100px repeat(2, 2fr);
-
-				@container (width <= 640px) {
-					margin-bottom:30px;
-					grid-template-columns:1fr 1fr;
-				}
-
-				@media screen and (width <= 768px) {
-					padding-right:47px;
-				}
-
-				html.Scale-Small & {
-					@media screen and (width > 768px) {
-						padding-right:47px;
-					}
-				}
-
-				.FormInput {
-					grid-column:auto / auto;
-					margin-bottom:0;
-
-					&:nth-last-child(1 of .FormInput) {
-						@container (width <= 640px) {
-							grid-column:1 / -1;
-						}
-					}
-
-					> .Label {
-						@container (width <= 640px) {
-							display:block;
-						}
-					}
-				}
-
-				.SortableHandle {
-					@container (width <= 640px) {
-						top:calc(1rem + 7px);
-
-						@media screen and (width <= 540px) {
-							top:calc(1rem + 10px);
-						}
-					}
-				}
-
-				.Button-Remove {
-					@container (width <= 640px) {
-						top:1.05rem;
-					}
-				}
-			}
-		}
-
-		.FormInputName-ConditionalRecipientsStrategy {
-			display:grid;
-			position:absolute;
-			top:0;
-			right:0;
-			align-items:center;
-			grid-template-columns:1fr 200px;
-			gap:20px;
-
-			@media screen and (width <= 540px) {
-				display:flex;
-				margin-bottom:20px;
-				position:relative;
-			}
-
-			label {
-				margin-bottom:0;
-			}
-
-			select {
-				height:30px;
-				line-height:30px;
-			}
 		}
 	}
 }

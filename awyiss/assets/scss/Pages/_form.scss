@@ -1,7 +1,4 @@
-:is(
-	.PagesController,
-	.IsGenericPage
-) {
+.Pages.Form {
 	.FormInputName-CopyDescendantsWithDifferentPageRole {
 		grid-column:auto / span 2;
 

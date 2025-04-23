@@ -1,16 +1,14 @@
-.EmailTemplatesController {
-	.Preview {
-		iframe {
-			display:block;
-			width:100%;
-			max-width:1024px;
-			max-height:80dvh;
-			aspect-ratio:16 / 9;
-			border-radius:5px;
-			margin:var(--rowGap) auto 0;
-			border:0 none;
-			scrollbar-width:thin;
-		}
+.EmailTemplates.Preview {
+	iframe {
+		display:block;
+		width:100%;
+		max-width:1024px;
+		max-height:80dvh;
+		aspect-ratio:16 / 9;
+		border-radius:5px;
+		margin:var(--rowGap) auto 0;
+		border:0 none;
+		scrollbar-width:thin;
 	}
 
 	.EmailTemplateBodyText {

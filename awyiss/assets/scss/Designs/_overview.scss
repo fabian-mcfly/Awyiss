@@ -1,13 +1,11 @@
-.DesignsController {
-	.Overview {
-		> form {
-			grid-column:1 / -1;
+.Designs.Overview {
+	> form {
+		grid-column:1 / -1;
 
-			@media screen and (width > 1920px) {
-				display:grid;
-				gap:0 var(--lineHeightMain);
-				grid-template-columns:1fr 1fr;
-			}
+		@media screen and (width > 1920px) {
+			display:grid;
+			gap:0 var(--lineHeightMain);
+			grid-template-columns:1fr 1fr;
 		}
 	}
 

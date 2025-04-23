@@ -1,42 +1,38 @@
-.AttributesController {
-	&.OverviewAction {
-		.Overview {
-			&:has(.SortableChosen) {
-				.Overview-Fieldset {
-					&:not(:has(.ListItem)) {
-						background-color:color-mix(in srgb, var(--colorSuccess) 20%, #FFFFFF);
+.Attributes.Overview {
+	&:has(.SortableChosen) {
+		.Overview-Fieldset {
+			&:not(:has(.ListItem)) {
+				background-color:color-mix(in srgb, var(--colorSuccess) 20%, #FFFFFF);
 
-						html.🌚 & {
-							background-color:var(--colorSemiDark)
-						}
-					}
+				html.🌚 & {
+					background-color:var(--colorSemiDark)
 				}
 			}
 		}
+	}
 
-		.Overview-Fieldset {
-			grid-column:1 / -1;
+	.Overview-Fieldset {
+		grid-column:1 / -1;
 
-			&:not(.Collapsed) {
-				&:not(:has(legend)) {
-					padding-top:20px;
+		&:not(.Collapsed) {
+			&:not(:has(legend)) {
+				padding-top:20px;
+			}
+
+			&:not(:has(.ListItem)) {
+				padding-bottom:40px;
+
+				&::after {
+					@extend %EmptyList;
+
+					html.🌚 & {
+						@extend %EmptyListDarkMode;
+					}
 				}
 
-				&:not(:has(.ListItem)) {
-					padding-bottom:40px;
-
-					&::after {
-						@extend %EmptyList;
-
-						html.🌚 & {
-							@extend %EmptyListDarkMode;
-						}
-					}
-
-					.Attributes-List {
-						height:40px;
-						margin-left:-52px;
-					}
+				.Attributes-List {
+					height:40px;
+					margin-left:-52px;
 				}
 			}
 		}

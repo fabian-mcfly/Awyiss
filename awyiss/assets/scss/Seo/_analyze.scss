@@ -1,7 +1,5 @@
-.SeoController {
-	.Analyze {
-		@extend %ContentGrid;
-	}
+.Seo.Analyze {
+	@extend %ContentGrid;
 
 	.Summary-List {
 		grid-column:1 / -1;

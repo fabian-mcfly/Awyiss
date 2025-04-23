@@ -1,7 +1,5 @@
-.ContentsController {
-	@extend %ContentFormElements;
-
-	.EditFrontendEditor {
+.Contents.Form {
+	&.EditFrontendEditor {
 		&:not(.ExpertMode) {
 			:is(
 				.FormInputName-ContentTemplateId,
@@ -12,6 +10,8 @@
 			}
 		}
 	}
+
+	@extend %ContentFormElements;
 
 	.FormInputName-DuplicateOf {
 		input {

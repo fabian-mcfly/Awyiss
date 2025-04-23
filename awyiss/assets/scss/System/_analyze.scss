@@ -1,7 +1,5 @@
-.SystemController.AnalyzeAction {
-	.Analyze {
-		@extend %ContentGrid;
-	}
+.System.Analyze {
+	@extend %ContentGrid;
 
 	.Button-ClearCache {
 		&.FetchInProgress {
