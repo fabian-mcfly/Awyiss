@@ -1583,6 +1583,7 @@ textarea {
 					height:48px;
 					line-height:26px;
 					background-color:transparent;
+					outline-offset:-2px;
 
 					@media screen and (width <= 768px) {
 						height:38px;

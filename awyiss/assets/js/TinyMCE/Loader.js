@@ -406,8 +406,6 @@ export default class Loader {
 					container.appendChild(dialog.closest('.tox-tinymce-aux'));
 				}
 
-				dialog.focus();
-
 				// Check if .tox-dialog__footer-end contains more than one buttons
 				const footerEnd = dialog.querySelector('.tox-dialog__footer-end');
 				const buttons = footerEnd?.querySelectorAll('button');

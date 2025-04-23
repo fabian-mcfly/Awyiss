@@ -230,6 +230,7 @@ export default class FormLeaveConfirmation {
 		}.bind(this), this.dialog.confirmLeave);
 
 		this.dialog.showModal();
+		this.dialog.focus();
 	}
 
 

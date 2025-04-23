@@ -24,6 +24,11 @@
 	) %}
 
 	<dialog class="SearchFilter-Form" data-title="{{ __d('search', 'filter_headline') }}">
+		<div class="ButtonArea">
+			{{ FormHelper.button(__d('search', 'filter_submit'), {class: 'Button Button-Success Button-Save', form: 'FilterForm-' ~ scope|camelize, name: 'submit_type', value: 'submit' }) }}
+			{{ FormHelper.button(__d('search', 'filter_close'), {class: 'Button Button-Close', name: 'close', value: 'close' }) }}
+		</div>
+
 		<form class="Columns" method="post" id="FilterForm-{{ scope|camelize }}">
 			{% for column, settings in _filter[ scope ]['columns'] %}
 				<div class="Column Column-{{ column|camelize }}{% if column in _filter[ scope ]['selectedColumns'] %} Active{% endif %}" data-column="{{ column }}"
@@ -107,10 +112,5 @@
 				{{ FormHelper.button(__d('search', 'filter_close'), {class: 'Button Button-Close', name: 'close', value: 'close' }) }}
 			</div>
 		</form>
-
-		<div class="ButtonArea">
-			{{ FormHelper.button(__d('search', 'filter_submit'), {class: 'Button Button-Success Button-Save', form: 'FilterForm-' ~ scope|camelize, name: 'submit_type', value: 'submit' }) }}
-			{{ FormHelper.button(__d('search', 'filter_close'), {class: 'Button Button-Close', name: 'close', value: 'close' }) }}
-		</div>
 	</dialog>
 {% endif %}

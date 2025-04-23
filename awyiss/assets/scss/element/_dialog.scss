@@ -11,6 +11,7 @@ dialog {
 	color:var(--colorText);
 	gap:20px;
 	grid-template-columns:repeat(2, 1fr);
+	overflow:visible;
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
 
@@ -49,7 +50,7 @@ dialog {
 		}
 	}
 
-	&:focus-visible {
+	&:focus {
 		box-shadow:0 0 10px var(--colorSuccess);
 		outline:2px solid var(--colorSuccess);
 		outline-offset:2px;
@@ -71,6 +72,12 @@ dialog {
 			@media screen and (width <= 768px) {
 				margin-bottom:0;
 			}
+		}
+	}
+
+	.ButtonArea {
+		.Button {
+			outline-offset:-2px;
 		}
 	}
 

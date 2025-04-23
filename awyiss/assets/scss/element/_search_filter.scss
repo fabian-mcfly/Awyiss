@@ -5,7 +5,6 @@
 	min-height:80px;
 	max-height:80dvh;
 	padding:52px 0 0 0;
-	overflow:hidden;
 	z-index:9999;
 	grid-template-columns:auto;
 	grid-auto-rows:max-content;
@@ -88,11 +87,7 @@
 
 			.Button {
 				margin:0;
-
-				@media screen and (width <= 800px) {
-					//width:100%;
-					//padding-inline:10px;
-				}
+				outline-offset:2px;
 			}
 		}
 	}

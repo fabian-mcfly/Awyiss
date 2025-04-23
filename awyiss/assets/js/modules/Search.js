@@ -67,6 +67,8 @@ export default class Search {
 			event.stopPropagation();
 
 			target.showModal();
+
+			target.focus();
 		}, element);
 	}
 
@@ -167,8 +169,6 @@ export class SearchFilter {
 		rows.forEach((row) => {
 			this.initRow(row);
 		});
-
-		//this.resetColumnOrder();
 
 		// Handle the open and close events of the dialog
 		this.element.addEventListener('beforetoggle', this.handleShowEvent.bind(this));
@@ -289,25 +289,6 @@ export class SearchFilter {
 		}
 	}
 
-	/*resetColumnOrder() {
-		const rows = this.element.querySelectorAll('.Column');
-		let order = 1;
-
-		rows.forEach((row, index) => {
-			const hiddenOrderInput = row.querySelector('input[name^="filter["][name$="][order]"]');
-			const hiddenActiveInput = row.querySelector('input[name^="filter["][name$="][active]"]');
-
-			hiddenActiveInput.value = row.matches('.Active') ? '1' : '0';
-
-			if (row.matches('.Active')) {
-				hiddenOrderInput.value = order++;
-			}
-			else {
-				hiddenOrderInput.value = '';
-			}
-		});
-	}*/
-
 	initRow(row) {
 		const operatorInput = row.querySelector('select[name^="filter["][name$="][operator]"]');
 		const operator = operatorInput.value;
@@ -369,6 +350,9 @@ export class SearchFilter {
 					element.dispatchEvent(inputEvent)
 				}
 			});
+
+			// Set the altField to inert so it is not focusable
+			valueInput.datepicker.$altField.inert = true;
 
 			window.eventHandler.add('input', function (event) {
 				const value = event.target.value;

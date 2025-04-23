@@ -294,6 +294,7 @@ export default class ButtonHandler {
 
 		this.target = event.target;
 		this.dialog.showModal();
+		this.dialog.focus();
 	}
 
 	/**

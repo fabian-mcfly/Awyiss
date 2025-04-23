@@ -118,7 +118,6 @@
 	height:100%;
 	margin-bottom:0;
 	padding:62px 10px 10px 10px;
-	overflow:hidden;
 
 	@media screen and (width <= 768px) {
 		padding-top:52px;
@@ -267,6 +266,7 @@
 				width:auto;
 				margin-right:0;
 				margin-bottom:0;
+				outline-offset:2px;
 
 				@media screen and (width <= 480px) {
 					width:100%;
