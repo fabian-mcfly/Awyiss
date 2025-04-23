@@ -260,7 +260,7 @@ export default class Loader {
 		if (document.body.classList.contains('EmailTemplatesController')) {
 			this.settings.toolbar = this.settings.toolbar.replace('awyissModule', '');
 			this.settings.toolbar = this.settings.toolbar.replace(' styles ', '');
-			this.settings.toolbar += 'formPlaceholders';
+			this.settings.toolbar = 'formPlaceholders | ' + this.settings.toolbar;
 		}
 
 		this.settingsSet = true;
