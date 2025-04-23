@@ -119,6 +119,7 @@
 	transition:background-color .3s ease-in-out;
 	cursor:move;
 	align-items:center;
+	position:relative;
 
 	@media screen and (width <= 540px) {
 		padding-inline:10px;
@@ -160,6 +161,12 @@
 		}
 	}
 
+	.List[data-fieldset="unused"] > & {
+		@media screen and (width <= 1024px) {
+			padding-right:60px;
+		}
+	}
+
 	.List:not([data-fieldset="unused"]) > & {
 		gap:10px 20px;
 		grid-template-columns:auto fit-content(120px) fit-content(250px) 52px;
@@ -188,6 +195,12 @@
 		) {
 			.FormInput {
 				display:none;
+			}
+		}
+
+		&:hover {
+			.Button-AddRemove {
+				opacity:unset;
 			}
 		}
 
@@ -315,6 +328,22 @@
 				}
 			}
 		}
+
+		.Button-AddRemove {
+			border-radius:0 5px 5px 0;
+			right:auto;
+			left:100%;
+			opacity:.2;
+			transition:opacity .3s ease-in-out;
+
+			@media screen and (width <= 540px) {
+				width:30px;
+				height:30px;
+				right:-30px;
+				left:auto;
+				opacity:unset;
+			}
+		}
 	}
 
 	&:first-child {
@@ -352,5 +381,50 @@
 		.FormInputType-Checkbox
 	) {
 		display:none;
+	}
+
+	.Button-AddRemove {
+		@extend %InFieldButton;
+
+		margin:auto;
+		font-size:0;
+		line-height:0;
+
+		@media screen and (width > 1024px) {
+			display:none;
+		}
+
+		&:is(.Button-Delete) {
+			background-color:var(--colorError);
+
+			&::after {
+				border:0 none;
+				top:-1px;
+			}
+		}
+
+		&:is(.Button-Add) {
+			background-color:var(--colorSuccess);
+		}
+
+		&:is(.Button) {
+			width:40px;
+			height:40px;
+			inset:0 10px 0 auto;
+		}
+
+		&::after {
+			width:auto;
+			height:auto;
+			margin:0;
+			font-size:20px;
+			line-height:.9;
+			vertical-align:-2px;
+			position:relative;
+
+			@media screen and (width <= 768px) {
+				transform:none;
+			}
+		}
 	}
 }
