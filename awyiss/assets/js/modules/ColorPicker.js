@@ -30,13 +30,21 @@ export default class ColorPicker {
 	initColorPicker(element) {
 		element.type = 'text';
 
-		// noinspection JSUndefinedPropertyAssignment
-		element.colorPicker = new Coloris({
+		const options = {
 			defaultColor: '#00000000',
 			element: element,
 			theme: 'large',
 			themeMode: document.documentElement.classList.contains('🌚') ? 'dark' : 'light',
-		});
+		};
+
+		// Check if the element is inside a dialog
+		const dialog = element.closest('dialog');
+		if (dialog) {
+			options.parent = dialog;
+		}
+
+		// noinspection JSUndefinedPropertyAssignment
+		element.colorPicker = new Coloris(options);
 	}
 
 	/*
