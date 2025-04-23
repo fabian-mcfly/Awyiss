@@ -17,11 +17,6 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-<div class="CatchAutofill">
-	<input type="text" name="username" value="">
-	<input type="password" name="password" value="">
-</div>
-
 {{ FormHelper.create(user, {method: 'post', id: 'UserForm', idPrefix: 'User'}) }}
 
 {% block sidebarToggle %}
@@ -48,6 +43,7 @@
 							{% block formControlPassword %}
 								{{ FormHelper.control('password', {
 									autocapitalize: 'off',
+									autocomplete: 'new-password',
 									columnSpan: 6,
 									type: 'password',
 									value: '',
@@ -58,6 +54,7 @@
 							{% block formControlPasswordConfirm %}
 								{{ FormHelper.control('password_confirm', {
 									autocapitalize: 'off',
+									autocomplete: 'new-password',
 									columnSpan: 6,
 									type: 'password',
 									value: '',
