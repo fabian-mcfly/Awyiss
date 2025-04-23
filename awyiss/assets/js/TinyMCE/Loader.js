@@ -56,6 +56,9 @@ export default class Loader {
 		],
 		link_title: false,
 		menubar: false,
+		mobile: {
+			toolbar_mode: 'floating',
+		},
 		min_height: 300,
 		object_resizing: false,
 		paste_as_text: true,
@@ -75,6 +78,7 @@ export default class Loader {
 		table_default_attributes: {},
 		table_default_styles: {},
 		table_header_type: 'sectionCells',
+		toolbar_mode: 'floating',
 		table_resize_bars: false,
 		table_row_advtab: false,
 		table_sizing_mode: 'responsive',
