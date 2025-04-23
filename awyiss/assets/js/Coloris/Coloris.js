@@ -1476,7 +1476,7 @@ export default class Coloris {
 			};
 
 			if (Object.keys(movements).includes(event.key)) {
-				this.moveMarkerOnKeydown.apply(void 0, movements[event.key]);
+				this.moveMarkerOnKeydown.apply(this, movements[event.key]);
 				event.preventDefault();
 			}
 		});
