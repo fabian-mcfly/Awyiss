@@ -556,7 +556,7 @@ export default class Coloris {
 		}
 
 		// Trigger an "open" event
-		Coloris.currentEl.dispatchEvent(new Event('open', {bubbles: true}));
+		Coloris.currentEl.dispatchEvent(new Event('coloris:open', {bubbles: true}));
 	}
 
 	/**
@@ -730,7 +730,7 @@ export default class Coloris {
 		}
 
 		// Trigger a "close" event
-		prevEl.dispatchEvent(new Event('close', {bubbles: true}));
+		prevEl.dispatchEvent(new Event('coloris:close', {bubbles: true}));
 
 		if (this.settings.focusInput) {
 			prevEl.focus({preventScroll: true});
