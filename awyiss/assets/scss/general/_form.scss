@@ -35,6 +35,28 @@
 		@media screen and (width <= 1024px) {
 			display:block;
 		}
+
+		&:not(:has(~ .Fieldsets .Main-Fieldsets > fieldset:not(.Hidden))) {
+			display:none;
+
+			~ .Fieldsets {
+				.Sidebar-Fieldsets {
+					@media screen and (width <= 1024px) {
+						display:grid;
+						padding:0;
+						box-shadow:none;
+						background-color:transparent;
+						background-image:none;
+						position:relative;
+						inset:unset;
+						overflow:visible;
+						transform:none;
+						z-index:unset;
+					}
+				}
+			}
+		}
+
 	}
 
 	body:has(.Sidebar-Fieldsets.Visible) & {
@@ -1527,6 +1549,7 @@ textarea {
 			inset:unset;
 			overflow:visible;
 			transform:none;
+			z-index:unset;
 		}
 	}
 
