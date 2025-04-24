@@ -190,9 +190,8 @@ export default class IdentifierAutofill {
 			return;
 		}
 
-		// If the identifier field is locked or if the event target is not the title input or if it is inside a dialog
-		// then do nothing
-		if (inputDataObject.isLocked || target.closest('dialog')) {
+		// Check if the input is locked and if the target is not in the same form
+		if (inputDataObject.isLocked || target.closest('form') !== event.target.closest('form')) {
 			return;
 		}
 
