@@ -11,10 +11,22 @@
 	}
 
 	&.FetchInProgress {
+		background-color:var(--colorBright);
+		background-image:none;
+
+		html.🌚 & {
+			background-color:var(--colorDark);
+		}
+
+		&::before {
+			display:none;
+		}
+
 		&::after {
 			@extend %LoaderIcon;
 
 			content:'';
+			background-color:transparent;
 			width:220px;
 			height:20px;
 			margin:auto;
@@ -26,6 +38,7 @@
 
 		.Form {
 			pointer-events:none;
+
 			> * {
 				opacity:.1;
 			}

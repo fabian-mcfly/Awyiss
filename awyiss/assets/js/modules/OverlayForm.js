@@ -239,6 +239,10 @@ export default class OverlayForm {
 		}
 		target += 'ajax-form:1/';
 
+		// Show the overlay and mark it as loading
+		this.dialog.classList.add('FetchInProgress');
+		this.dialog.showModal();
+
 		// Fetch the target URL
 		fetch(target, {
 			method: 'GET',
@@ -312,8 +316,6 @@ export default class OverlayForm {
 
 			// Show the overlay
 			this.dialog.classList.remove('FetchInProgress');
-
-			this.dialog.showModal();
 
 			// Scroll the form to the top
 			form.scrollTo(0, 0);
