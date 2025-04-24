@@ -18,14 +18,6 @@
 			content:attr(data-title, 'Select Content to duplicate');
 		}
 
-		.Fieldsets {
-			margin-bottom:40px;
-
-			@media screen and (width <= 768px) {
-				margin-bottom:20px;
-			}
-		}
-
 		.FormInputName-DuplicateOfPageId {
 			margin-bottom:0;
 		}

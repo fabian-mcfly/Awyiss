@@ -63,19 +63,15 @@ dialog {
 
 	@extend %DialogTitle;
 
-	.FormInput {
-		width:100%;
-
-		&:nth-last-child(1 of .FormInput) {
-			margin-bottom:20px;
+	.ButtonArea {
+		&.ButtonArea-Bottom {
+			margin-top:40px;
 
 			@media screen and (width <= 768px) {
-				margin-bottom:0;
+				margin-top:20px;
 			}
 		}
-	}
 
-	.ButtonArea {
 		.Button {
 			outline-offset:-2px;
 		}

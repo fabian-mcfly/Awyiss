@@ -17,13 +17,5 @@
 		&::after {
 			content:attr(data-title, 'Module Configuration');
 		}
-
-		.FormInput {
-			&:nth-last-child(1 of .FormInput) {
-				@media screen and (width <= 768px) {
-					margin-bottom:20px;
-				}
-			}
-		}
 	}
 }

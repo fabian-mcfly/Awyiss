@@ -6,7 +6,11 @@ export default class OverlayForm {
 	 * @type {HTMLElement}
 	 */
 	closeButton;
-
+	/**
+	 * The overlay element
+	 * @type {HTMLDialogElement}
+	 */
+	dialog;
 	/**
 	 * The event handler instance.
 	 * @type {EventHandler}
@@ -22,11 +26,6 @@ export default class OverlayForm {
 	 */
 	observer = window.observer;
 	/**
-	 * The overlay element
-	 * @type {HTMLElement}
-	 */
-	overlayElement;
-	/**
 	 * The remembered state of the form changed flag.
 	 * @type {boolean}
 	 */
@@ -38,12 +37,21 @@ export default class OverlayForm {
 	 * Add a submit event to the overlay.
 	 */
 	constructor() {
-		this.overlayElement = document.getElementById('OverlayForm');
+		this.dialog = document.getElementById('OverlayForm');
 
-		if (this.overlayElement) {
-			this.eventHandler.add('click', this.handleClick.bind(this), this.overlayElement);
-			// Add a submit event to the overlay
-			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), this.overlayElement, true);
+		if (this.dialog) {
+			this.eventHandler.add('click', this.handleClick.bind(this), this.dialog);
+			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), this.dialog, true);
+			this.eventHandler.add('close', this.handleClose.bind(this), this.dialog);
+			this.eventHandler.add('cancel', (event) => {
+				if (window.formLeaveConfirmation.isFormChanged) {
+					event.preventDefault();
+
+					window.formLeaveConfirmation.showCustomDialog(() => {
+						this.closeOverlay();
+					});
+				}
+			}, this.dialog);
 		}
 
 		this.observer.addObserver(this.observeMutations.bind(this));
@@ -69,12 +77,18 @@ export default class OverlayForm {
 	 * Reset the form changed flag to the saved state.
 	 */
 	closeOverlay() {
-		this.overlayElement.classList.remove('Visible');
+		this.dialog.close();
+	}
 
+	/**
+	 * Handle the close event of the overlay.
+	 */
+	handleClose() {
 		// Remove the form from the overlay
-		const form = this.overlayElement.querySelector('.Form');
+		const form = this.dialog.querySelector('.Form');
 		if (form) {
-			const closeButton = this.overlayElement.querySelector('.Button-Close');
+			const buttonArea = this.dialog.querySelector(':scope > .ButtonArea');
+			const closeButton = buttonArea.querySelector('.Button-Close');
 
 			// Reset width and height of the button since the mouse leave event doesn't fire
 			const hoverElement = closeButton.querySelector('.Hover');
@@ -84,10 +98,12 @@ export default class OverlayForm {
 			}
 
 			// Move the close button back to the overlay
-			this.overlayElement.append(closeButton);
+			this.dialog.append(closeButton);
 
 			// Remove the form
 			form.remove();
+			// Remove the button area
+			buttonArea.remove();
 		}
 
 		// Reset the form changed flag
@@ -100,24 +116,6 @@ export default class OverlayForm {
 	 */
 	handleClick(event) {
 		if (event.target.classList.contains('Button-Close')) {
-			this.handleCloseButton(event);
-		}
-	}
-
-	/**
-	 * Handle the close button click event.
-	 * If the form has been changed, show a confirmation dialog.
-	 * @param {Event} event
-	 */
-	handleCloseButton(event) {
-		event.preventDefault();
-
-		if (window.formLeaveConfirmation.isFormChanged) {
-			window.formLeaveConfirmation.showCustomDialog(() => {
-				this.closeOverlay();
-			});
-		}
-		else {
 			this.closeOverlay();
 		}
 	}
@@ -129,7 +127,7 @@ export default class OverlayForm {
 	handleFormSubmit(event) {
 		event.preventDefault();
 
-		const form = this.overlayElement.querySelector('form');
+		const form = this.dialog.querySelector('form');
 
 		const formData = new FormData(form);
 		formData.append('submit_type', 'submit_close');
@@ -179,11 +177,6 @@ export default class OverlayForm {
 			const newForm = new DOMParser().parseFromString(html, 'text/html').querySelector('form');
 
 			form.querySelector('.Fieldsets').replaceWith(newForm.querySelector('.Fieldsets'));
-
-			// Get the close button
-			const closeButton = this.overlayElement.querySelector('.Button-Close').cloneNode(true);
-			// Append a clone of the close button to the form
-			form.querySelector('.ButtonArea.Bottom').append(closeButton.cloneNode(true));
 		})
 		.catch(error => console.error('Error:', error))
 		.finally(() => {
@@ -211,35 +204,30 @@ export default class OverlayForm {
 		window.formLeaveConfirmation.isFormChanged = false;
 
 		// If the overlay element doesn't exist yet, create it.
-		if (!this.overlayElement) {
-			this.overlayElement = document.createElement('div');
-			this.overlayElement.id = 'OverlayForm';
+		if (!this.dialog) {
+			this.dialog = document.createElement('dialog');
+			this.dialog.id = 'OverlayForm';
 
 			// Add a close button
 			const closeButton = document.createElement('button');
 			closeButton.classList.add('Button', 'Button-Close');
 			closeButton.innerHTML = 'Close';
-			this.overlayElement.append(closeButton);
+			this.dialog.append(closeButton);
 
 			// Add a submit event to the overlay
-			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), this.overlayElement, true);
+			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), this.dialog, true);
 
 			// Append the overlay to the body
-			document.body.append(this.overlayElement);
+			document.body.append(this.dialog);
+
+			this.eventHandler.add('close', this.handleClose.bind(this), this.dialog);
 		}
 
-		let inner = this.overlayElement.querySelector('.Inner');
-		if (!inner) {
-			inner = document.createElement('div');
-			inner.classList.add('Inner');
-			this.overlayElement.append(inner);
-		}
-
-		let form = this.overlayElement.querySelector('.Form');
+		let form = this.dialog.querySelector('.Form');
 		if (!form) {
 			form = document.createElement('div');
 			form.classList.add('Form');
-			inner.append(form);
+			this.dialog.append(form);
 		}
 
 		let target = element.getAttribute('href');
@@ -262,7 +250,7 @@ export default class OverlayForm {
 			const doc = parser.parseFromString(html, 'text/html');
 
 			form.replaceWith(doc.querySelector('.Form'));
-			form = this.overlayElement.querySelector('.Form');
+			form = this.dialog.querySelector('.Form');
 
 			// Remove the default save buttons
 			const saveButtons = form.querySelectorAll('.Button-Success.Button-Save');
@@ -279,19 +267,26 @@ export default class OverlayForm {
 			// Give the form the data-title attribute containing the h1 and remove the h1
 			const title = form.querySelector('h1');
 			if (title) {
-				inner.setAttribute('data-title', title.textContent);
+				this.dialog.setAttribute('data-title', title.textContent);
 				title.remove();
 			}
 
-			// Move the close button to the form
-			const closeButton = this.overlayElement.querySelector('.Button-Close');
-			form.append(closeButton);
+			// Get the first button area
+			const buttonArea = form.querySelector('.ButtonArea');
+
+			// Move the button area above of the form
+			form.insertAdjacentElement('beforebegin', buttonArea);
+
+			// Move the close button to the first button area
+			const closeButton = this.dialog.querySelector('.Button-Close');
+			buttonArea.append(closeButton);
 
 			// Get the first save button, append it to the form and give it an offset
 			let saveButton = form.querySelector('.Button-SaveClose');
 			saveButton.classList.add('Button-Success');
-			saveButton.style.setProperty('--offsetX', closeButton.offsetWidth + 'px');
-			form.append(saveButton);
+
+			form.querySelector('.Headlines').remove();
+			form.querySelector('#ButtonArea-Toggle').remove();
 
 			// Set the form id and the form attribute of the save button
 			const realForm = form.querySelector('form');
@@ -313,8 +308,12 @@ export default class OverlayForm {
 			saveButton.parentElement.append(closeButtonClone);
 
 			// Show the overlay
-			this.overlayElement.classList.remove('FetchInProgress');
-			this.overlayElement.classList.add('Visible');
+			this.dialog.classList.remove('FetchInProgress');
+
+			this.dialog.showModal();
+
+			// Scroll the form to the top
+			form.scrollTo(0, 0);
 
 			// When everything is ready, dispatch an event
 			const event = new CustomEvent('overlayFormLoaded', {
@@ -326,7 +325,7 @@ export default class OverlayForm {
 			});
 			document.dispatchEvent(event);
 
-			form.focus();
+			this.dialog.focus();
 		});
 	}
 

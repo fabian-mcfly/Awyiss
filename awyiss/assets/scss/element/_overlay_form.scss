@@ -1,24 +1,13 @@
 #OverlayForm {
-	background-color:rgba(0, 0, 0, .75);
-	backdrop-filter:blur(5px);
-	position:fixed;
-	inset:0;
-	z-index:182182;
-	opacity:0;
-	visibility:hidden;
-	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+	max-width:1280px;
+	padding:52px 0 0 0;
+	background-attachment:fixed;
+	background-color:var(--backgroundColor);
+	background-image:url("../img/background-pattern-light.png");
+	grid-template-columns:auto;
 
-	&:is(
-		.FetchInProgress,
-		.Visible
-	) {
-		opacity:1;
-		visibility:visible;
-		transition-delay:0s;
-
-		html:has(&) {
-			overflow:hidden;
-		}
+	@media screen and (width <= 768px) {
+		padding:42px 0 0 0;
 	}
 
 	&.FetchInProgress {
@@ -43,52 +32,7 @@
 		}
 	}
 
-	> .Inner {
-		@extend %DialogTitle;
-
-		display:block;
-		width:calc(100% - 80px);
-		max-width:860px;
-		height:fit-content;
-		max-height:80dvh;
-		margin:auto;
-		padding-top:52px;
-		border-radius:5px;
-		box-shadow:0 0 10px rgba(0, 0, 0, .25);
-		background-image:url($relativePath + 'img/background-pattern-light.png');
-		background-color:var(--backgroundColor);
-		color:var(--colorText);
-		position:fixed;
-		inset:0;
-		overflow:hidden;
-
-		@media screen and (width <= 768px) {
-			width:calc(100dvw - 40px);
-			padding-top:42px;
-		}
-
-		@media screen and (width <= 540px) {
-			width:calc(100dvw - 20px);
-		}
-
-		html.🌚 & {
-			background-image:url($relativePath + 'img/background-pattern-dark.png');
-			background-blend-mode:color-burn;
-		}
-
-		html.Scale-Small & {
-			@media screen and (width > 768px) {
-				padding-top:42px;
-			}
-		}
-
-		&::after {
-			content:attr(data-title, 'Form');
-			display:block;
-		}
-	}
-
-	.Form {
+	> .Form {
 		max-height:calc(80dvh - 52px);
 		border:10px solid transparent;
 		border-radius:5px;
@@ -120,16 +64,6 @@
 			outline-offset:-3px;
 		}
 
-		.Headlines {
-			display:none;
-		}
-
-		.ButtonArea {
-			&:nth-child(1 of .ButtonArea) {
-				display:none;
-			}
-		}
-
 		.Fieldsets {
 			grid-template-columns:[main sidebar] auto;
 		}
@@ -148,23 +82,61 @@
 			overflow:visible;
 		}
 
-		> :is(
-			.Button-SaveClose,
-			.Button-Close
-		) {
+		.ButtonArea {
+			&.ButtonArea-Bottom {
+				display:flex;
+				width:100%;
+				margin:0;
+
+				@media screen and (width <= 768px) {
+					margin-top:calc(20px - var(--rowGap));
+				}
+
+				.Button {
+					margin-right:0;
+					margin-bottom:0;
+
+					&:first-child {
+						margin-right:auto;
+					}
+				}
+			}
+		}
+	}
+
+	> .ButtonArea {
+		width:max-content;
+		margin:0;
+		padding:2px;
+		position:absolute;
+		top:0;
+		right:0;
+
+		@media screen and (width <= 640px) {
+			display:flex;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				margin-top:0;
+			}
+		}
+
+		.Button {
+			width:auto;
 			height:48px;
 			background-color:transparent;
 			line-height:26px;
-			position:absolute;
-			top:2px;
 
 			@media screen and (width <= 768px) {
 				height:38px;
-				padding-block:0;
 			}
 
-			@media screen and (width <= 680px) {
+			@media screen and (width <= 540px) {
 				padding-inline:10px;
+			}
+
+			@media screen and (width <= 480px) {
 				font-size:0;
 				line-height:0;
 			}
@@ -172,55 +144,18 @@
 			html.Scale-Small & {
 				@media screen and (width > 768px) {
 					height:38px;
-					padding-block:0;
 				}
 			}
 
 			&::after {
-				@media screen and (width <= 680px) {
+				@media screen and (width <= 480px) {
 					margin-left:0;
 				}
 			}
 		}
-
-		> .Button-SaveClose {
-			margin-right:20px;
-			right:var(--offsetX, 20px);
-
-			@media screen and (width <= 680px) {
-				margin-right:10px;
-				right:var(--offsetX, 10px);
-			}
-		}
-
-		> .Button-Close {
-			right:2px;
-		}
 	}
 
 	> .Button-Close {
-		display:none;
-	}
-
-	.ButtonArea {
-		&.ButtonArea-Bottom {
-			display:flex;
-			width:100%;
-			margin-bottom:0;
-			margin-left:0;
-
-			.Button {
-				margin-right:0;
-				margin-bottom:0;
-
-				&:first-child {
-					margin-right:auto;
-				}
-			}
-		}
-	}
-
-	#ButtonArea-Toggle {
 		display:none;
 	}
 }

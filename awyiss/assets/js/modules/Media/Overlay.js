@@ -151,8 +151,11 @@ export default class Overlay {
 			// Check if the OverlayForm is visible and contains the media folders form
 			const overlayForm = document.querySelector('#OverlayForm');
 			if (
-				overlayForm?.classList.contains('Visible') &&
-				overlayForm.querySelector('.MediaFolders.Form')
+				overlayForm?.open &&
+				(
+					overlayForm.querySelector('.Media.Form') ||
+					overlayForm.querySelector('.MediaFolders.Form')
+				)
 			) {
 				// Close the overlay form
 				window.overlayForm.closeOverlay();
@@ -858,7 +861,7 @@ export default class Overlay {
 	 * Handle URL hash changes
 	 * @returns {void}
 	 */
-	handleHashChange() {
+	handleHashChange(event) {
 		const hasMediaHash = window.location.hash === '#Media';
 
 		if (hasMediaHash) {
