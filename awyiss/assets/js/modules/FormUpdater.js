@@ -49,6 +49,10 @@ export default class FormUpdater {
 	 * @param {Event} event - The event object.
 	 */
 	handleInputEvent(event) {
+		const form = this.getForm(event.target);
+
+		this.hideFlashMessages(form);
+
 		if (event.target.matches('select[data-options-for]')) {
 			const targetInputId = event.target.getAttribute('data-options-for');
 			const targetInput = document.getElementById(targetInputId);
@@ -76,8 +80,6 @@ export default class FormUpdater {
 		if (!event.target.dataset[this.dataAttribute]) {
 			return;
 		}
-
-		const form = this.getForm(event.target);
 		const dataAttributeValue = event.target.dataset[this.dataAttribute];
 
 		if (!form || !dataAttributeValue || dataAttributeValue === '0' || dataAttributeValue.toLowerCase() === 'false') {
@@ -120,6 +122,34 @@ export default class FormUpdater {
 	handleFocus(event) {
 		this.lastFocusedElementId = event.target.id || event.target.name;
 	};
+
+
+	/**
+	 * Hide flash messages when the form is changed.
+	 *
+	 * @returns {void}
+	 */
+	hideFlashMessages(form) {
+		// Check if the main area has a flas message and remove it
+		const formWrapper = form.closest('.Form');
+		const flashMessages = formWrapper?.parentElement.querySelectorAll('.FlashMessage');
+		if (!flashMessages.length) {
+			return;
+		}
+
+		// Get the current scroll position
+		const scrollPosition = window.scrollY;
+		let messageHeight = 0;
+
+		flashMessages.forEach((element) => {
+			messageHeight += element.offsetHeight + 15;
+			element.remove();
+		})
+
+		// Set the new scroll position
+		window.scrollTo(0, scrollPosition - messageHeight);
+
+	}
 
 	/**
 	 * Finds the closest form element to the given element.
