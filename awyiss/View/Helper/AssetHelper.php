@@ -350,7 +350,7 @@ class AssetHelper extends Helper {
 		// If the asset is critical, generate a <script> tag for JavaScript files and a <link> tag with rel="stylesheet" for CSS files
 		if ($options['critical']) {
 			if ($ls_extension === 'js') {
-				return '<script' . $ls_nonce . ' src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
+				return '<script' . $ls_nonce . ' defer src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 			}
 
 			return '<link' . $ls_nonce . ' rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '>' . PHP_EOL;
