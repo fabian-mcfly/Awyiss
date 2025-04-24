@@ -29,12 +29,29 @@ $relativePath:'../../' !default;
 		z-index:987654;
 		align-items:center;
 
+		@media screen and (width <= 680px) {
+			padding:5px 10px;
+		}
+
+		@media screen and (width <= 580px) {
+			display:grid;
+			gap:10px;
+		}
+
 		.AwyissFrontendPreview-Info-Title {
 			display:inline-block;
 			margin-right:20px;
 			font-family:'2F media', Bebas Neue, Impact, Arial Display, sans-serif;
-			font-size:22px;
+			font-size:24px;
 			font-weight:400;
+
+			@media screen and (width <= 680px) {
+				font-size:20px;
+			}
+
+			@media screen and (width <= 580px) {
+				margin-right:0;
+			}
 		}
 
 		.AwyissFrontendPreview-Info-Option {
@@ -46,6 +63,10 @@ $relativePath:'../../' !default;
 			line-height:22px;
 			font-weight:400;
 			position:relative;
+
+			@media screen and (width <= 580px) {
+				margin:0;
+			}
 
 			&:has(input:checked) {
 				&::before {
@@ -89,6 +110,11 @@ $relativePath:'../../' !default;
 			text-decoration:none;
 			cursor:pointer;
 			transition:background-color .3s ease-in-out;
+
+			@media screen and (width <= 680px) {
+				font-size:16px;
+				line-height:20px;
+			}
 
 			&:hover {
 				background-color:#3b4651;

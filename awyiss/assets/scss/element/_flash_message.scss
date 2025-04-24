@@ -22,6 +22,12 @@
 		--backgroundColor:var(--colorSemiDark);
 	}
 
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			margin-top:0;
+		}
+	}
+
 	&.Success {
 		--boxShadowColor:color-mix(in srgb, var(--colorSuccess), transparent 75%);
 		--colorText:var(--colorSuccess);

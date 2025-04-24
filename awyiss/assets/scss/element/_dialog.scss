@@ -37,7 +37,6 @@ dialog {
 
 	html.Scale-Small & {
 		@media screen and (width > 768px) {
-			width:480px;
 			padding:62px 20px 20px 20px;
 		}
 	}
@@ -70,6 +69,12 @@ dialog {
 			@media screen and (width <= 768px) {
 				margin-top:20px;
 			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-top:20px;
+				}
+			}
 		}
 
 		.Button {
@@ -82,12 +87,6 @@ dialog {
 
 		@media screen and (width <= 480px) {
 			width:100%;
-		}
-
-		html.Scale-Small & {
-			@media screen and (width > 768px) {
-				width:12rem;
-			}
 		}
 
 		&:last-child {

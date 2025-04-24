@@ -48,6 +48,12 @@
 			margin-inline:0;
 		}
 
+		html.Scale-Small & {
+			@media screen and (width > 1280px) {
+				margin-inline:0;
+			}
+		}
+
 		&.SortableDragging {
 			&:has(.SortableChosen[data-nestable="false"]) {
 				.NestedList {
@@ -306,6 +312,12 @@
 				margin-top:2px;
 				margin-bottom:-2px;
 			}
+
+			html.Scale-Small & {
+				@media screen and (width <= 768px) {
+					margin-top:0;
+				}
+			}
 		}
 
 		.Data {
@@ -326,9 +338,10 @@
 				}
 
 				html.Scale-Small & {
+					line-height:30px;
+
 					@media screen and (width > 768px) {
 						width:100%;
-						line-height:30px;
 						flex-basis:100%;
 					}
 				}
@@ -396,6 +409,12 @@
 						margin-top:0;
 						margin-left:10px;
 					}
+
+					html.Scale-Small & {
+						@media screen and (768px < width <= 1024px) {
+							margin-left:5px;
+						}
+					}
 				}
 
 				&::after {
@@ -447,6 +466,8 @@
 			}
 
 			html.Scale-Small & {
+				top:23px;
+
 				@media screen and (width > 768px) {
 					top:20px;
 				}
@@ -674,6 +695,12 @@
 
 			@media screen and (width <= 500px) {
 				grid-template-columns:auto var(--listItemAuditInfoColumnWidth);
+			}
+
+			html.Scale-Medium & {
+				@media screen and (width > 1024px) {
+					padding-block:.75rem;
+				}
 			}
 
 			html.Scale-Small & {

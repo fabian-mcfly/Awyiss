@@ -81,7 +81,9 @@
 
 			html.Scale-Small & {
 				@media screen and (width > 768px) {
+					margin-top:20px;
 					margin-bottom:10px;
+					padding-inline:10px;
 				}
 			}
 

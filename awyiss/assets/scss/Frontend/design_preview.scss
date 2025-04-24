@@ -27,6 +27,10 @@ $relativePath:'../../' !default;
 		cursor:default;
 		align-items:center;
 
+		@media screen and (width <= 540px) {
+			padding:5px 10px;
+		}
+
 		form {
 			font-size:0;
 			line-height:0;
@@ -38,6 +42,10 @@ $relativePath:'../../' !default;
 			font-family:'2f media', Bebas Neue, Impact, Arial Display, monospace;
 			font-size:24px;
 			line-height:22px;
+
+			@media screen and (width <= 540px) {
+				font-size:20px;
+			}
 		}
 
 		.AwyissDesignPreview-Subtitle {
@@ -62,6 +70,11 @@ $relativePath:'../../' !default;
 			cursor:pointer;
 			transition:background-color .3s ease-in-out;
 
+			@media screen and (width <= 540px) {
+				font-size:16px;
+				line-height:20px;
+			}
+
 			&:hover {
 				background-color:#3b4651;
 			}
@@ -69,6 +82,10 @@ $relativePath:'../../' !default;
 
 		html:has(#AwyissFrontendPreview-Info) & {
 			bottom:100px;
+
+			@media screen and (width <= 580px) {
+				bottom:140px;
+			}
 		}
 	}
 }

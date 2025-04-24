@@ -104,6 +104,21 @@ body {
 		padding-bottom:0;
 	}
 
+	&:has(#Menu-System .Overflow.Visible) {
+		@media screen and (width > 768px) and (height <= 660px),
+		screen and (width <= 768px) {
+			#Header {
+				z-index:3000;
+			}
+
+			&::after {
+				opacity:inherit;
+				visibility:inherit;
+				transition-delay:0s;
+			}
+		}
+	}
+
 	&:has(#Content .ButtonArea.Visible) {
 		&::after {
 			@media screen and (width <= 640px) {

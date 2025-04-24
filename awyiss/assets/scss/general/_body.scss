@@ -17,7 +17,8 @@
 
 	html.Scale-Small & {
 		@media screen and (width > 768px) {
-			padding:var(--lineHeightMain) 20px;
+			padding-top:var(--lineHeightMain);
+			padding-inline:20px;
 		}
 	}
 

@@ -89,12 +89,6 @@
 		grid-auto-rows:min-content;
 	}
 
-	html.Scale-Small & {
-		@media screen and (width > 768px) {
-			margin-top:-44px;
-		}
-	}
-
 	&:has(
 		.Button-ColumnView:nth-last-child(2),
 		.Button-ListView:nth-last-child(2)
@@ -107,6 +101,12 @@
 
 			@media screen and (width <= 768px) {
 				right:140px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					right:140px;
+				}
 			}
 		}
 	}
@@ -387,6 +387,8 @@
 
 			html.Scale-Small & {
 				@media screen and (width > 768px) {
+					width:60px;
+					height:30px;
 					padding:0;
 					font-size:0;
 					line-height:0;
@@ -426,6 +428,14 @@
 				padding-inline:10px;
 			}
 
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					width:auto;
+					min-width:60px;
+					padding-inline:10px;
+				}
+			}
+
 			&.Button-Info {
 				padding-right:60px;
 				border-top-right-radius:6px;
@@ -433,6 +443,12 @@
 
 				@media screen and (width <= 400px) {
 					padding-right:50px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						padding-right:50px;
+					}
 				}
 
 				@keyframes glow {
@@ -456,6 +472,12 @@
 				@media screen and (width <= 768px) {
 					font-size:24px;
 				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						font-size:24px;
+					}
+				}
 			}
 
 			.Label {
@@ -472,6 +494,12 @@
 				@media screen and (width <= 400px) {
 					margin-left:0;
 				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						line-height:30px;
+					}
+				}
 			}
 		}
 
@@ -483,11 +511,23 @@
 			line-height:0;
 			opacity:inherit;
 
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					width:40px;
+				}
+			}
+
 			&::after {
 				margin:0;
 
 				@media screen and (width <= 768px) {
 					top:-2px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						top:-2px;
+					}
 				}
 			}
 		}
@@ -507,6 +547,13 @@
 					font-size:24px;
 					line-height:30px;
 				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						font-size:24px;
+						line-height:30px;
+					}
+				}
 			}
 		}
 
@@ -523,6 +570,12 @@
 
 			@media screen and (width <= 768px) {
 				right:65px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					right:65px;
+				}
 			}
 
 			&::after {
@@ -552,6 +605,13 @@
 					font-size:24px;
 					line-height:30px;
 				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						font-size:24px;
+						line-height:30px;
+					}
+				}
 			}
 		}
 
@@ -560,6 +620,12 @@
 
 			@media screen and (width <= 768px) {
 				right:65px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					right:65px;
+				}
 			}
 
 			&::after {

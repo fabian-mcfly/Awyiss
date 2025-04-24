@@ -231,10 +231,22 @@
 		scrollbar-color:var(--colorText) var(--colorMedium);
 		scrollbar-width:thin;
 
+		@media screen and (width <= 768px) {
+			right:-10px;
+			left:-10px;
+		}
+
 		html.🌚 & {
 			box-shadow:0 0 10px 0 rgba(0, 0, 0, .4);
 			background-color:var(--backgroundColor);
 			scrollbar-color:var(--colorDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.1041) calc(c + 0.011) calc(h + 2.24));
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				right:-10px;
+				left:-10px;
+			}
 		}
 
 		.ButtonArea-Bottom & {

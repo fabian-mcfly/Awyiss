@@ -59,6 +59,12 @@
 			@media screen and (width <= 768px) {
 				margin-bottom:20px;
 			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-bottom:0;
+				}
+			}
 		}
 	}
 

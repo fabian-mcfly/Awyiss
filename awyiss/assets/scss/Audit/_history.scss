@@ -12,9 +12,14 @@
 		margin-top:var(--lineHeightMain);
 	}
 
+	html.Scale-Small & {
+		margin-top:var(--lineHeightMain);
+	}
+
 	.AuditHistory-Table {
 		width:100%;
 		margin-top:0;
+		padding:0;
 		//noinspection CssInvalidFunction
 		transform:translateX(calc(var(--slideOffset) * 100% * -1));
 		transition:transform .5s linear;
@@ -361,6 +366,13 @@
 
 		@media screen and (width <= 768px) {
 			top:5px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				font-size:0;
+				line-height:0;
+			}
 		}
 
 		&::after {

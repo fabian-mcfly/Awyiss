@@ -165,6 +165,10 @@
 				@container listItem (width <= 1024px) {
 					font-size:12px;
 				}
+
+				html.Scale-Small & {
+					font-size:11px;
+				}
 			}
 
 			.Icon {

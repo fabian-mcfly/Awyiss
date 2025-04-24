@@ -132,6 +132,13 @@
 		background-color:var(--colorSemiDark);
 	}
 
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			min-height:0;
+			padding-inline:10px;
+		}
+	}
+
 	&.SortableGhost {
 		background-color:var(--colorSuccess);
 		outline:2px solid var(--colorSuccess);

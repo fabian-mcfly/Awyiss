@@ -106,6 +106,12 @@
 					margin-top:calc(20px - var(--rowGap));
 				}
 
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						margin-top:calc(20px - var(--rowGap));
+					}
+				}
+
 				.Button {
 					margin-right:0;
 					margin-bottom:0;

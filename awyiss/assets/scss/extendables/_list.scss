@@ -122,6 +122,12 @@
 		margin-bottom:0;
 	}
 
+	html.Scale-Medium & {
+		@media screen and (width > 1024px) {
+			row-gap:5px;
+		}
+	}
+
 	&:has(
 		> .Title:first-child:last-child,
 		> .DataItem:nth-child(2):last-child
@@ -154,12 +160,6 @@
 		font-weight:700;
 		line-height:1.2;
 		grid-column:1 / -1;
-
-		html.Scale-Small & {
-			@media screen and (width > 768px) {
-				grid-column:1 / auto;
-			}
-		}
 	}
 
 	.DataItem {

@@ -8,7 +8,7 @@
 	bottom:0;
 	right:20px;
 	left:20px;
-	z-index:2010;
+	z-index:1820;
 	transition:background-color .3s linear, outline-color .1s ease-in-out, transform .3s ease-in-out;
 
 	&.Dragging {
@@ -64,6 +64,7 @@
 			--backgroundColor:var(--colorSuccess);
 
 			transform:translateY(calc(-100dvh + 80px));
+			z-index:2030;
 		}
 	}
 
@@ -851,7 +852,7 @@ textarea {
 
 					html.Scale-Small & {
 						@media screen and (width > 768px) {
-							top:-4.5px
+							top:-1px
 						}
 					}
 				}
@@ -1160,7 +1161,7 @@ textarea {
 
 				html.Scale-Small & {
 					@media screen and (width > 768px) {
-						line-height:42px;
+						padding-block:10px;
 					}
 				}
 			}

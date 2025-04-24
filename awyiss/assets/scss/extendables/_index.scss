@@ -33,6 +33,7 @@
 		&-Delete {
 			width:36px;
 			height:36px;
+			margin-top:0;
 			margin-left:10px;
 			padding:0;
 			font-size:0;
@@ -69,12 +70,17 @@
 				@media screen and (width > 768px) {
 					width:30px;
 					height:30px;
+					margin-left:5px;
 					text-indent:-1px;
 
 					&::after {
 						line-height:30px;
 						transform:none;
 					}
+				}
+
+				@media screen and (768px < width <= 1024px) {
+					margin-left:0;
 				}
 			}
 
@@ -166,6 +172,12 @@
 
 			@media screen and (width <= 768px) {
 				margin-top:0;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-top:-.5rem;
+				}
 			}
 		}
 	}

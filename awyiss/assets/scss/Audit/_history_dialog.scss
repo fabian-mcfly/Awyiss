@@ -42,6 +42,15 @@
 			height:100px;
 			inset:42px 10px auto 10px;
 		}
+
+
+		html.Scale-Small & {
+			@media screen and (width > 540px) {
+				height:100px;
+				right:20px;
+				left:20px;
+			}
+		}
 	}
 
 	.Inner {
@@ -132,6 +141,14 @@
 				max-height:calc(80dvh - 57px);
 				padding-inline:5px;
 				padding-bottom:5px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					max-height:calc(80dvh - 62px);
+					padding-inline:10px;
+					padding-bottom:20px;
+				}
 			}
 
 			&:focus-visible {
