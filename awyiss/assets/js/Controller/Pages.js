@@ -1,5 +1,6 @@
 // noinspection JSUnusedGlobalSymbols,NpmUsedModulesInstalled
 
+import BatchTextArea from 'Form/BatchTextArea';
 import SeoSnippet from 'SeoSnippet';
 
 /**
@@ -30,14 +31,10 @@ export default class PagesController {
 
 		const batchTextArea = document.getElementById('Page-Pages')
 		if (batchTextArea) {
-			import('BatchTextArea').then((BatchTextArea) => {
-				this.batchTextArea = BatchTextArea.default;
+			new BatchTextArea(batchTextArea);
 
-				new this.batchTextArea(batchTextArea);
-
-				const observer = window.observer;
-				observer.addObserver(this.observeMutations.bind(this));
-			});
+			const observer = window.observer;
+			observer.addObserver(this.observeMutations.bind(this));
 		}
 	}
 
@@ -79,12 +76,12 @@ export default class PagesController {
 			const selector = '#Page-Pages';
 			if (node.nodeType === Node.ELEMENT_NODE) {
 				if (node.matches(selector)) {
-					new this.batchTextArea(node);
+					new BatchTextArea(node);
 				}
 
 				const elements = node.querySelectorAll(selector);
 				elements.forEach((element) => {
-					new this.batchTextArea(element);
+					new BatchTextArea(element);
 				});
 			}
 		});
