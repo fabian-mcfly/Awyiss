@@ -33,9 +33,11 @@ You are to set the nonce for each script tag to the value of
 
 {% block scriptTagsExample %}
 	{# Never used #}
+	{#
 	<script nonce="{{ AssetHelper.getScriptNonce() }}" type="text/plain" data-category="analytics">
 		console.log('script enabled');
 	</script>
+	#}
 {% endblock %}
 
 {% block cookieBannerConfigAutoDetectCategories %}
