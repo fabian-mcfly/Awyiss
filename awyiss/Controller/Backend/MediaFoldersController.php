@@ -352,7 +352,8 @@ class MediaFoldersController extends Controller {
 	protected function getThreadedMediaFolders(MediaFolder $mediaFolder): CollectionInterface {
 		if (!isset($this->threadedMediaFolders)) {
 			$lo_query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $mediaFolder->languageShortcode ?? '_global', includeGlobal: false)
-			->where($this->getOverviewWhere());
+			->where($this->getOverviewWhere())
+			->where(['hidden' => $mediaFolder->hidden]);
 
 			$this->threadedMediaFolders = $this->MediaFolders->listNested($lo_query);
 		}
