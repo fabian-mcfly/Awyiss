@@ -601,7 +601,7 @@ class ContentsController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function requestLock(): void {
+	public function requestLock(string $method = 'update'): void {
 		$li_contentId = (int)$this->request->getData('id');
 
 		$this->Categories->disable();
@@ -622,7 +622,7 @@ class ContentsController extends Controller {
 
 		$this->forPage($lo_content->pageId);
 
-		parent::requestLock();
+		parent::requestLock($method);
 	}
 
 
@@ -630,7 +630,7 @@ class ContentsController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function releaseLock(): void {
+	public function releaseLock(string $method = 'update'): void {
 		$li_contentId = (int)$this->request->getData('id');
 
 		$this->Categories->disable();
@@ -653,7 +653,7 @@ class ContentsController extends Controller {
 
 		$this->forPage($lo_content->pageId);
 
-		parent::releaseLock();
+		parent::releaseLock($method);
 	}
 
 

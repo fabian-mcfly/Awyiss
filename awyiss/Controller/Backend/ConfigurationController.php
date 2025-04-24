@@ -312,7 +312,7 @@ class ConfigurationController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function requestLock(): void {
+	public function requestLock(string $method = 'update'): void {
 		$li_configId = (int)$this->request->getData('id');
 
 		/** @var \Awyiss\Model\Entity\Configuration $lo_configuration */
@@ -331,7 +331,7 @@ class ConfigurationController extends Controller {
 
 		$this->Authorization->setAdditionalData(['scope' => $lo_configuration->scope]);
 
-		parent::requestLock();
+		parent::requestLock($method);
 	}
 
 
@@ -339,7 +339,7 @@ class ConfigurationController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function releaseLock(): void {
+	public function releaseLock(string $method = 'update'): void {
 		$li_configId = (int)$this->request->getData('id');
 
 		/** @var \Awyiss\Model\Entity\Configuration $lo_configuration */
@@ -358,7 +358,7 @@ class ConfigurationController extends Controller {
 
 		$this->Authorization->setAdditionalData(['scope' => $lo_configuration->scope]);
 
-		parent::releaseLock();
+		parent::releaseLock($method);
 	}
 
 

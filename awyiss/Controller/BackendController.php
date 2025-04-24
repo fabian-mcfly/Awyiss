@@ -282,11 +282,12 @@ abstract class BackendController extends AppController {
 
 
 	/**
+	 * @param string $method
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function requestLock(): void {
-		$this->Authorization->ensure('update');
+	public function requestLock(string $method = 'update'): void {
+		$this->Authorization->ensure($method);
 
 		$lo_lock = false;
 		if ($this->request->is('post')) {
@@ -332,11 +333,12 @@ abstract class BackendController extends AppController {
 
 
 	/**
+	 * @param string $method
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function releaseLock(): void {
-		$this->Authorization->ensure('update');
+	public function releaseLock(string $method = 'update'): void {
+		$this->Authorization->ensure($method);
 
 		$lo_lock = false;
 		if ($this->request->is('post')) {

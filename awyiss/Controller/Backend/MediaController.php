@@ -655,6 +655,32 @@ class MediaController extends Controller {
 
 
 	/**
+	 * Requests a lock for the specified method.
+	 *
+	 * For media elements, the required permission is 'create'.
+	 *
+	 * @param string $method The method for which the lock is requested. Default is 'create'.
+	 * @return void
+	 */
+	public function requestLock(string $method = 'create'): void {
+		parent::requestLock($method);
+	}
+
+
+	/**
+	 * Releases a lock based on the provided method type.
+	 *
+	 * For media elements, the required permission is 'create'.
+	 *
+	 * @param string $method The method type to be used for releasing the lock. Defaults to 'create'.
+	 * @return void
+	 */
+	public function releaseLock(string $method = 'create'): void {
+		parent::releaseLock($method);
+	}
+
+
+	/**
 	 * @param \Awyiss\Model\Entity\MediaFolder $mediaFolder
 	 * @param string $method
 	 * @param bool $isAjax
