@@ -55,56 +55,6 @@ blockquote {
 	font-style:italic;
 	font-size:1.5rem;
 	line-height:1.4;
-
-	> :first-child {
-		&::before {
-			content:'\201E';
-		}
-	}
-
-	> :last-child {
-		&::after {
-			content:'\201C';
-		}
-	}
-}
-
-picture {
-	font-size:0;
-	line-height:0;
-}
-
-img {
-	&.Lazyload {
-		color:#000000;
-
-		&::before {
-			content:attr(alt);
-			display:block;
-			aspect-ratio:var(--imageAspectRatio);
-			padding:20px;
-			background-color:var(--imageBackgroundColor);
-			font-size:1rem;
-			line-height:1;
-			text-overflow:ellipsis;
-			overflow:hidden;
-			white-space:nowrap;
-		}
-	}
-
-	&[data-src] {
-		&.Loaded {
-			width:auto;
-		}
-
-		@media (scripting:none) {
-			display:none;
-		}
-	}
-
-	@media (scripting:none) {
-		width:auto;
-	}
 }
 
 a {
