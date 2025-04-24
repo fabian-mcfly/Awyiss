@@ -46,6 +46,8 @@
 		{% include('@Backend/Widgets/form.twig') %}
 	{% endblock %}
 
+	<input type="hidden" name="submit_type" value="submit_close" form="WidgetForm">
+
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('formEditButtons') }}

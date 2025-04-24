@@ -365,11 +365,3 @@ if (document.readyState === 'loading') {
 else {
 	window.frontendEditor = new Editor(frontendEditorConfig);
 }
-
-
-/**
- * Expose the class globally
- * @global
- * @type {Editor}
- */
-window.Editor = Editor;

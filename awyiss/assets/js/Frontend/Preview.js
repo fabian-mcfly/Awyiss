@@ -96,11 +96,3 @@ if (document.readyState === 'loading') {
 else {
 	window.frontendPreview = new Preview(frontendPreviewConfig);
 }
-
-
-/**
- * Expose the class globally
- * @global
- * @type {Preview}
- */
-window.Preview = Preview;

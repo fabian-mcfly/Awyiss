@@ -100,6 +100,9 @@ export default class OverlayForm {
 			// Move the close button back to the overlay
 			this.dialog.append(closeButton);
 
+			// Unlock the loaded entity
+			this.unlockEntity(form);
+
 			// Remove the form
 			form.remove();
 			// Remove the button area
@@ -327,6 +330,22 @@ export default class OverlayForm {
 
 			this.dialog.focus();
 		});
+	}
+
+	/**
+	 * Sends a request to unlock the entity,
+	 * just like the beacon does when the form is closed regularly.
+	 *
+	 * @param form
+	 */
+	unlockEntity(form) {
+		// Check if there's a lock dialog inside the form
+		const lockDialog = form.querySelector('.LockDialog');
+		if (!lockDialog) {
+			return;
+		}
+
+		window.formLock.handleUnload('#OverlayForm form');
 	}
 
 	/**

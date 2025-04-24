@@ -22,9 +22,15 @@ export default class FormLock {
 		observer.addObserver(this.observeMutations.bind(this));
 
 		window.eventHandler.add('click', this.handleClickEvent.bind(this));
-		window.eventHandler.add('unload', this.handleUnload.bind(this));
+		window.eventHandler.add('unload', this.handleUnload.bind(this, this.selector));
 	}
 
+	/**
+	 * Initializes the given form by handling its lock/unlock state and setting up relevant timers or dialogs.
+	 *
+	 * @param {HTMLFormElement} form - The form element to be initialized, containing lock-related attributes and elements.
+	 * @return {void} This method does not return a value.
+	 */
 	initForm(form) {
 		// Get the form's unlock time
 		const unlockTime = form.dataset.lockedUntil;
@@ -66,6 +72,12 @@ export default class FormLock {
 		}
 	}
 
+	/**
+	 * Handles a click event and processes the request lock button logic.
+	 *
+	 * @param {Event} event - The event object triggered by the click action.
+	 * @return {void} This method does not return a value.
+	 */
 	handleClickEvent(event) {
 		const requestLockButton = event.target.closest('.Button-RequestLock');
 		if (requestLockButton) {
@@ -81,8 +93,14 @@ export default class FormLock {
 		}
 	}
 
-	handleUnload() {
-		const forms = document.querySelectorAll(this.selector);
+	/**
+	 * Handles the unload event for forms and releases locks on the specified entities using navigator.sendBeacon.
+	 *
+	 * @param {string} selector The CSS selector used to identify the forms to process. If not provided, defaults to `this.selector`.
+	 * @return {void} No return value. Executes release lock actions for matched forms.
+	 */
+	handleUnload(selector) {
+		const forms = document.querySelectorAll(selector || this.selector);
 		if (!forms.length) {
 			return;
 		}
@@ -97,6 +115,13 @@ export default class FormLock {
 		});
 	}
 
+	/**
+	 * Locks a form to prevent further submissions or modifications by setting
+	 * a "locked" state and clearing the form's `action` attribute.
+	 *
+	 * @param {HTMLFormElement} form - The form element to be locked.
+	 * @return {void} This method does not return a value.
+	 */
 	lockForm(form) {
 		// The form should now be unlocked for others.
 		form.dataset.locked = 'true';
@@ -107,6 +132,12 @@ export default class FormLock {
 		}
 	}
 
+	/**
+	 * Unlocks a given form, allowing interactions and restoring its action attribute if previously modified.
+	 *
+	 * @param {HTMLFormElement} form - The HTML form element to be unlocked.
+	 * @return {void} This method does not return any value.
+	 */
 	unlockForm(form) {
 		// The form should now be locked for others.
 		form.dataset.locked = 'false';
