@@ -22,6 +22,7 @@ import Observer from 'Observer';
 import OverflowMenu from 'OverflowMenu';
 import OverlayForm from 'Form/OverlayForm';
 import PasswordReveal from 'Form/PasswordReveal';
+import PlaceholderHelper from 'Form/PlaceholderHelper';
 import Search from 'Search';
 import TitleSetter from 'TitleSetter';
 import TranslatableTexts from 'Form/TranslatableTexts';
@@ -169,35 +170,6 @@ export function addLinkSelectMouseEvent() {
 			activeItem.dataset.scrolledIntoView = 'true';
 		}
 	}, window, true);
-}
-
-/**
- * Add a keydown event listener to the document
- * This event listener sets the value of an input or textarea to its placeholder when the tab key is pressed
- * @returns {void}
- */
-export function addTabAutocompleteEvent() {
-	// Add a keydown event listener to the document
-	window.eventHandler.add('keydown', function (event) {
-		// Bail early if the event target is not an input or textarea or the key is not the tab key
-		if (event.target.tagName.toLowerCase() !== 'input' && event.target.tagName.toLowerCase() !== 'textarea' || event.key !== 'Tab') {
-			return;
-		}
-
-		// Bail early if the element does not have a placeholder or its value is not empty
-		if (!event.target.placeholder || event.target.value !== '') {
-			return;
-		}
-
-		// Prevent the default action of the tab key
-		event.preventDefault();
-
-		// Set the value of the element to its placeholder
-		event.target.value = event.target.placeholder;
-
-		// Trigger the 'input' event on the element
-		event.target.dispatchEvent(new Event('input', {bubbles: true}));
-	});
 }
 
 
@@ -422,6 +394,12 @@ export async function initMainOnReady() {
 
 	/**
 	 * @global
+	 * @type {PlaceholderHelper}
+	 */
+	window.placeholderHelper = new PlaceholderHelper();
+
+	/**
+	 * @global
 	 * @type {Search}
 	 */
 	window.search = new Search();
@@ -446,9 +424,6 @@ export async function initMainOnReady() {
 
 	// Scroll to active item in link selects on mouseenter
 	addLinkSelectMouseEvent();
-
-	// Tab autocomplete for placeholders
-	addTabAutocompleteEvent();
 
 	// Handle label keypresses
 	handleLabelKeypress();

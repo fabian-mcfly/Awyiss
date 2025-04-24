@@ -1207,6 +1207,52 @@ textarea {
 		right:20px;
 		bottom:20px;
 	}
+
+	.Button-ApplyPlaceholder {
+		--offsetTop:1.05rem;
+
+		padding:5px;
+		font-size:0;
+		line-height:0;
+		box-shadow:none;
+		background-color:transparent;
+		background-image:none;
+		color:var(--colorMedium);
+		position:absolute;
+		top:calc(var(--offsetTop) + 7px);
+		left:var(--offsetLeft, 200px);
+		opacity:0;
+		visibility:hidden;
+		transition:color .3s ease-in-out, opacity .3s ease-in-out, visibility 0s linear .3s;
+
+		@media screen and (width <= 768px) {
+			top:calc(var(--offsetTop) + 3px);
+		}
+
+		.TranslatableTexts & {
+			--offsetTop:0px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				top:calc(var(--offsetTop) + 3px);
+			}
+		}
+
+		&.Visible {
+			opacity:unset;
+			visibility:unset;
+			transition-delay:0s;
+		}
+
+		&:hover {
+			color:var(--colorBright);
+		}
+
+		&::after {
+			margin:0;
+		}
+	}
 }
 
 .Fieldset-MediaElementAssignments {
