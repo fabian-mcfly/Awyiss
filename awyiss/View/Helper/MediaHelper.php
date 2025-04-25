@@ -5,12 +5,12 @@ namespace Awyiss\View\Helper;
 
 
 use Awyiss\Core\App;
-use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
+use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
@@ -168,6 +168,7 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $mediaRenderOptions
 	 * @param bool $allowPreview
 	 * @return string
+	 * @throws \Exception
 	 */
 	public function htmlTag(Media $media, ?MediaRenderOptions $mediaRenderOptions = null, bool $allowPreview = true): string {
 		if (
@@ -234,18 +235,7 @@ class MediaHelper extends Helper {
 			}
 
 			// If the mimetype of the alternative is a subtitle, set the source
-			if ($lo_alternative->mimeType === 'text/vtt') {
-				// Source language is the last two characters of the filename
-				$ls_sourceLang = substr($lo_alternative->cleanName, -2);
-
-				// If the source language is the current language, set it as default
-				$ls_default = $ls_sourceLang === LocaleMiddleware::getLanguage()->shortcode ? 'default' : '';
-
-				// Add a track tag for the subtitle
-				$ls_subtitles .= PHP_EOL . '<track src="' . $lo_alternative->path . '" kind="subtitles"
-					' . $ls_default . '
-					srclang="' . $ls_sourceLang . '" label="' . ($lo_alternative->alt ?? locale_get_display_language($ls_sourceLang)) . '">';
-			}
+			$ls_subtitles = $this->getSubtitles($lo_alternative, $ls_subtitles);
 		}
 
 		if ($ls_subtitles && $allowVideoTag) {
@@ -414,19 +404,7 @@ class MediaHelper extends Helper {
 				continue;
 			}
 
-			// If the mimetype of the alternative is a subtitle, set the source
-			if ($lo_alternative->mimeType === 'text/vtt') {
-				// Source language is the last two characters of the filename
-				$ls_sourceLang = substr($lo_alternative->cleanName, -2);
-
-				// If the source language is the current language, set it as default
-				$ls_default = $ls_sourceLang === LocaleMiddleware::getLanguage()->shortcode ? 'default' : '';
-
-				// Add a track tag for the subtitle
-				$ls_subtitles .= PHP_EOL . '<track src="' . $lo_alternative->path . '" kind="subtitles"
-					' . $ls_default . '
-					srclang="' . $ls_sourceLang . '" label="' . ($lo_alternative->alt ?? locale_get_display_language($ls_sourceLang)) . '">';
-			}
+			$ls_subtitles = $this->getSubtitles($lo_alternative, $ls_subtitles);
 		}
 
 		return '<video ' . $ls_attributes . '><source src="' . $ls_path . '" type="' . $media->mimeType . '">' . $ls_sources . $ls_subtitles . '</video>';
@@ -655,6 +633,7 @@ class MediaHelper extends Helper {
 	 * @param array $fields
 	 * @return void
 	 * @throws \DOMException
+	 * @noinspection PhpUnused
 	 */
 	public function rebuildSimpleImageTags(Entity $entity, array $fields = []): void {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
@@ -672,7 +651,7 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $field
 	 * @param string|null $value
-	 * @return void
+	 * @return string|null
 	 * @throws \DOMException
 	 */
 	public function rebuildSimpleImageTagsInField(Entity $entity, string $field, ?string $value = null): ?string {
@@ -693,6 +672,7 @@ class MediaHelper extends Helper {
 	 * @param bool $absolutePath
 	 * @return string|null
 	 * @throws \DOMException
+	 * @noinspection PhpUnused
 	 */
 	public function rebuildSimpleImageTagsInText(?string $value, array $media, bool $absolutePath = false): ?string {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
@@ -715,6 +695,7 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param array $fields
 	 * @return void
+	 * @noinspection PhpUnused
 	 */
 	public function replaceCustomImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
@@ -733,7 +714,8 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param string $field
 	 * @param string|null $value
-	 * @return void
+	 * @return string|null
+	 * @noinspection PhpUnused
 	 */
 	public function replaceCustomImageTagsInField(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field, ?string $value = null): ?string {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
@@ -1095,5 +1077,29 @@ class MediaHelper extends Helper {
 		});
 
 		return $la_breakpoints;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $lo_alternative
+	 * @param string $ls_subtitles
+	 * @return string
+	 */
+	protected function getSubtitles(Media $lo_alternative, string $ls_subtitles): string {
+		// If the mimetype of the alternative is a subtitle, set the source
+		if ($lo_alternative->mimeType === 'text/vtt') {
+			// Source language is the last two characters of the filename
+			$ls_sourceLang = substr($lo_alternative->cleanName, -2);
+
+			// If the source language is the current language, set it as default
+			$ls_default = $ls_sourceLang === (Router::getRequest()?->getParam('lang') ?? '') ? ' default' : '';
+
+			// Add a track tag for the subtitle
+			$ls_subtitles .= PHP_EOL .  '<track src="' . $lo_alternative->path . '" kind="subtitles"' .
+				$ls_default .
+				' srclang="' . $ls_sourceLang . '" label="' . ($lo_alternative->alt ?? locale_get_display_language($ls_sourceLang)) . '">';
+		}
+
+		return $ls_subtitles;
 	}
 }
