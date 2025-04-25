@@ -98,11 +98,6 @@ export default class FieldsetManager {
 					}
 				}, 100);
 			}
-
-			if (sidebar || this.fieldsets.length) {
-				form.noValidate = true;
-				this.eventHandler.add('submit', this.handleFormSubmit.bind(this), form, true);
-			}
 		}
 
 		// Set the initial collapse state of the fieldsets
@@ -113,7 +108,6 @@ export default class FieldsetManager {
 		observer.addObserver(this.observeFieldsets.bind(this));
 
 		this.eventHandler.add('click', this.handleClick.bind(this), document.body);
-		this.eventHandler.add('click', this.handleLegendClick.bind(this), document.body);
 
 		// Listen for hash changes
 		this.eventHandler.add('hashchange', this.handleHashChange.bind(this), window);
@@ -144,6 +138,18 @@ export default class FieldsetManager {
 	 * @param event
 	 */
 	handleClick(event) {
+		if (
+			event.target.tagName.toLowerCase() === 'legend' &&
+			event.target.parentElement.matches(this.selector)
+		) {
+			const fieldset = event.target.parentElement;
+			const index = this.fieldsets.indexOf(fieldset);
+			if (index !== -1) {
+				this.toggleCollapse(index);
+			}
+		}
+
+
 		const sidebar = document.querySelector('.Sidebar-Fieldsets');
 
 		if (!sidebar) {
@@ -199,26 +205,6 @@ export default class FieldsetManager {
 		}
 
 		sidebar.inert = !isVisible && document.getElementById('Sidebar-Toggle')?.offsetParent;
-	}
-
-
-	/**
-	 * Handles the click event on the legend element.
-	 * @param event
-	 */
-	handleLegendClick(event) {
-		if (
-			event.target.tagName.toLowerCase() !== 'legend' ||
-			!event.target.parentElement.matches(this.selector)
-		) {
-			return;
-		}
-
-		const fieldset = event.target.parentElement;
-		const index = this.fieldsets.indexOf(fieldset);
-		if (index !== -1) {
-			this.toggleCollapse(index);
-		}
 	}
 
 
@@ -435,90 +421,6 @@ export default class FieldsetManager {
 
 		const isVisible = sidebar.classList.contains('Visible');
 		sidebar.inert = !isVisible && document.getElementById('Sidebar-Toggle')?.offsetParent;
-	}
-
-
-	/**
-	 * Handle form submission
-	 * If the form is invalid, check if any invalid field is inside a collapsed fieldset
-	 * or the sidebar (if it exists and is not visible)
-	 *
-	 * @param {SubmitEvent} event - The form submit event
-	 */
-	handleFormSubmit(event) {
-		const form = event.target;
-		event.preventDefault();
-
-		//form.noValidate = false;
-		if (form.checkValidity()) {
-			// If the form is valid, submit it
-			form.submit();
-
-			return;
-		}
-
-		// Get all invalid fields
-		let invalidFields = Array.from(form.querySelectorAll(':invalid'));
-
-		// Filter out fieldsets
-		invalidFields = invalidFields.filter(field => field.tagName.toLowerCase() !== 'fieldset');
-
-		// Get the first invalid element
-		const firstInvalidElement = invalidFields[0];
-
-		// Check if the first invalid element is not visible
-		// .offsetParent is null if the element is not visible
-		if (!firstInvalidElement.offsetParent) {
-			let fieldset;
-			// Expand all parent fieldsets
-			while (fieldset = firstInvalidElement.closest('fieldset.Collapsed')) {
-				fieldset.classList.remove('Collapsed');
-			}
-		}
-
-		// Check if the first invalid element is inside the sidebar
-		// And if the sidebar is inert
-		const sidebar = firstInvalidElement.closest('.Sidebar-Fieldsets');
-		const sidebarToggle = document.getElementById('Sidebar-Toggle');
-		if (sidebar?.inert && sidebarToggle) {
-			sidebarToggle.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
-
-			// Wait for the sidebar to be visible
-			setTimeout(() =>{
-				if (!firstInvalidElement.offsetParent) {
-					form.submit();
-					return;
-				}
-
-				firstInvalidElement.reportValidity();
-			}, 300);
-			return;
-		}
-
-		// If the first invalid element is still invisible, which should never happen,
-		// force the form to submit. The server will handle the validation.
-		if (!firstInvalidElement.offsetParent) {
-			form.submit();
-			return;
-		}
-
-		// The first element is visible, so report its validity
-		firstInvalidElement.reportValidity();
-
-		// Check if the element is inside the current viewport
-		const rect = firstInvalidElement.getBoundingClientRect();
-		const isVisible = (
-			rect.top >= 0 &&
-			rect.left >= 0 &&
-			rect.bottom <= window.innerHeight  &&
-			rect.right <= window.innerWidth
-		);
-
-		if (!isVisible || document.activeElement !== firstInvalidElement) {
-			// The browser was not able to focus the element or scroll it into view
-			// Since there's no practical way to do make it visible, submit the form
-			form.submit();
-		}
 	}
 
 

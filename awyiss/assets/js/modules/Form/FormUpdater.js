@@ -41,7 +41,17 @@ export default class FormUpdater {
 
 		// Attach a single event listener to the document
 		this.eventHandler.add('input', this.handleInputEvent.bind(this));
+
+		const forms = document.querySelectorAll('form');
+		forms.forEach((form) => {
+			form.noValidate = true;
+			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), form, true);
+		});
+
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
 	}
+
 
 	/**
 	 * Handles the input event by sending a request if the event target is within a form.
@@ -116,6 +126,101 @@ export default class FormUpdater {
 	}
 
 	/**
+	 * Handle form submission
+	 * If the form is invalid, check if any invalid field is inside a collapsed fieldset
+	 * or the sidebar (if it exists and is not visible)
+	 *
+	 * @param {SubmitEvent} event - The form submit event
+	 */
+	handleFormSubmit(event) {
+		const form = event.target;
+		event.preventDefault();
+
+		let hiddenInput = form.querySelector('input[name="submit_type"]');
+		if (!hiddenInput) {
+			hiddenInput = document.createElement('input');
+			hiddenInput.type = 'hidden';
+			hiddenInput.name = 'submit_type';
+			form.appendChild(hiddenInput);
+		}
+
+		const submitter = event.submitter;
+		hiddenInput.value = submitter?.value ?? '';
+
+		//form.noValidate = false;
+		if (form.checkValidity()) {
+			// If the form is valid, submit it
+			form.submit();
+
+			return;
+		}
+
+		// Get all invalid fields
+		let invalidFields = Array.from(form.querySelectorAll(':invalid'));
+
+		// Filter out fieldsets
+		invalidFields = invalidFields.filter(field => field.tagName.toLowerCase() !== 'fieldset');
+
+		// Get the first invalid element
+		const firstInvalidElement = invalidFields[0];
+
+		// Check if the first invalid element is not visible
+		// .offsetParent is null if the element is not visible
+		if (!firstInvalidElement.offsetParent) {
+			let fieldset;
+			// Expand all parent fieldsets
+			while (fieldset = firstInvalidElement.closest('fieldset.Collapsed')) {
+				fieldset.classList.remove('Collapsed');
+			}
+		}
+
+		// Check if the first invalid element is inside the sidebar
+		// And if the sidebar is inert
+		const sidebar = firstInvalidElement.closest('.Sidebar-Fieldsets');
+		const sidebarToggle = document.getElementById('Sidebar-Toggle');
+		if (sidebar?.inert && sidebarToggle) {
+			sidebarToggle.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));
+
+			// Wait for the sidebar to be visible
+			setTimeout(() => {
+				if (!firstInvalidElement.offsetParent) {
+					form.submit();
+					return;
+				}
+
+				firstInvalidElement.reportValidity();
+			}, 300);
+			return;
+		}
+
+		// If the first invalid element is still invisible, which should never happen,
+		// force the form to submit. The server will handle the validation.
+		if (!firstInvalidElement.offsetParent) {
+			form.submit();
+			return;
+		}
+
+		// The first element is visible, so report its validity
+		firstInvalidElement.reportValidity();
+
+		// Check if the element is inside the current viewport
+		const rect = firstInvalidElement.getBoundingClientRect();
+		const isVisible = (
+			rect.top >= 0 &&
+			rect.left >= 0 &&
+			rect.bottom <= window.innerHeight &&
+			rect.right <= window.innerWidth
+		);
+
+		if (!isVisible || document.activeElement !== firstInvalidElement) {
+			// The browser was not able to focus the element or scroll it into view
+			// Since there's no practical way to do make it visible, submit the form
+			form.submit();
+		}
+	}
+
+
+	/**
 	 * Add a new method to handle the 'focusin' event
 	 * @param {Event} event - The event object.
 	 */
@@ -133,7 +238,7 @@ export default class FormUpdater {
 		// Check if the main area has a flas message and remove it
 		const formWrapper = form.closest('.Form');
 		const flashMessages = formWrapper?.parentElement.querySelectorAll('.FlashMessage');
-		if (!flashMessages.length) {
+		if (!flashMessages?.length) {
 			return;
 		}
 
@@ -240,5 +345,33 @@ export default class FormUpdater {
 			// Capitalize the first letter of the rest
 			return word.charAt(0).toUpperCase() + word.slice(1);
 		}).join('');
+	}
+
+	/**
+	 * Observe mutations.
+	 * @param {MutationRecord} mutation
+	 */
+	observeMutations(mutation) {
+		if (!mutation.addedNodes.length) {
+			return;
+		}
+
+		mutation.addedNodes.forEach(node => {
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				return;
+			}
+
+			if (node.matches('form')) {
+				node.noValidate = true;
+				this.eventHandler.add('submit', this.handleFormSubmit.bind(this), node, true);
+			}
+
+			// Also check all children
+			const forms = node.querySelectorAll('form');
+			forms.forEach((form) => {
+				form.noValidate = true;
+				this.eventHandler.add('submit', this.handleFormSubmit.bind(this), form, true);
+			});
+		});
 	}
 }
