@@ -695,10 +695,22 @@ class FrontendController extends AppController {
 
 		// Don't track resized and preview images and assets
 		if (
+			$ls_slug === '/apple-touch-icon-precomposed.png' ||
+			$ls_slug === '/apple-touch-icon.png' ||
+			$ls_slug === '/favicon.png' ||
+			$ls_slug === '/backup' ||
+			$ls_slug === '/new' ||
+			$ls_slug === '/old' ||
+			$ls_slug === '/test' ||
+			$ls_slug === '/temp' ||
 			str_contains($ls_slug, '/_resized') ||
 			str_contains($ls_slug, '_preview/') ||
 			str_starts_with($ls_slug, '/assets/') ||
-			str_starts_with($ls_slug, '/awyiss/assets/')
+			str_starts_with($ls_slug, '/awyiss/assets/') ||
+			str_starts_with($ls_slug, '/config/') ||
+			str_starts_with($ls_slug, '//google') ||
+			str_starts_with($ls_slug, '/wordpress') ||
+			str_starts_with($ls_slug, '/wp-admin')
 		) {
 			return;
 		}
