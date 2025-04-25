@@ -29,12 +29,13 @@
 
 			{% block fieldsetLoginInner %}
 				{% block formControlUsername %}
-					{{ FormHelper.control('username', {autocapitalize: 'off'}) }}
+					{{ FormHelper.control('username', {autocapitalize: 'off', required: true}) }}
 				{% endblock %}
 
 				{% block formControlPassword %}
 					{{ FormHelper.control('password', {
 						autocapitalize: 'off',
+						required: true,
 						'data-show-password-label': __d('users', 'show_password'),
 					}) }}
 				{% endblock %}
