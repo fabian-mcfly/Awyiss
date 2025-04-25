@@ -68,6 +68,51 @@ export default class Lightbox {
 		captionAttribute: false,
 		counterFormat: '{current} / {total}',
 		hrefAttribute: false,
+		i18n: {
+			'de': {
+				'close': 'Schließen',
+				'previous': 'Zurück',
+				'next': 'Weiter',
+				'zoomIn': 'Vergrößern',
+				'zoomOut': 'Verkleinern',
+			},
+			'en': {
+				'close': 'Close',
+				'previous': 'Previous',
+				'next': 'Next',
+				'zoomIn': 'Zoom In',
+				'zoomOut': 'Zoom Out',
+			},
+			'es': {
+				'close': 'Cerrar',
+				'previous': 'Anterior',
+				'next': 'Siguiente',
+				'zoomIn': 'Acercar',
+				'zoomOut': 'Alejar',
+			},
+			'fr': {
+				'close': 'Fermer',
+				'previous': 'Précédent',
+				'next': 'Suivant',
+				'zoomIn': 'Agrandir',
+				'zoomOut': 'Réduire',
+			},
+			'it': {
+				'close': 'Chiudere',
+				'previous': 'Precedente',
+				'next': 'Successivo',
+				'zoomIn': 'Ingrandire',
+				'zoomOut': 'Ridurre',
+			},
+			'ru': {
+				'close': 'Закрыть',
+				'previous': 'Назад',
+				'next': 'Вперёд',
+				'zoomIn': 'Увеличить',
+				'zoomOut': 'Уменьшить',
+			}
+
+		},
 		index: 0,
 		loaderIcon: 'assets/img/lightbox/loader.svg',
 		loop: true,
@@ -101,6 +146,11 @@ export default class Lightbox {
 	 * @property {HTMLElement} [counter] - Element showing current position
 	 */
 	domNodes = {};
+	/**
+	 * The language to use for the lightbox.
+	 * @type {string}
+	 */
+	language = 'en';
 	/**
 	 * The Panzoom instance.
 	 * @type {panzoom} panzoom
@@ -229,10 +279,6 @@ export default class Lightbox {
 		this.open();
 
 		this.showItem(this.settings.index);
-
-		setTimeout(function() {
-			this.domNodes.buttons.close.focus();
-		}.bind(this), 500);
 	}
 
 	/**
@@ -365,7 +411,7 @@ export default class Lightbox {
 			return;
 		}
 
-		this.domNodes.lightbox = this.createElement('div', {id: 'Lightbox'}, document.body);
+		this.domNodes.lightbox = this.createElement('dialog', {id: 'Lightbox'}, document.body);
 		this.domNodes.lightbox.addEventListener('click', this.handleClick.bind(this));
 		document.addEventListener('keydown', this.handleKeyDown.bind(this));
 
@@ -379,12 +425,18 @@ export default class Lightbox {
 		this.domNodes.buttons = this.createElement('div', {class: 'Lightbox-Buttons'}, this.domNodes.lightbox);
 		// Create the buttons to close and zoom in/out
 		this.domNodes.buttons.close = this.createElement('button', {class: 'Lightbox-Close'}, this.domNodes.buttons);
+		this.domNodes.buttons.close.setAttribute('title', this.settings.i18n[this.language].close);
+		this.domNodes.buttons.close.textContent = this.settings.i18n[this.language].close;
 
-		this.domNodes.buttons.zoomIn = this.createElement('button', {class: 'Lightbox-Zoom Lightbox-Zoom-In Disabled'}, this.domNodes.buttons);
+		this.domNodes.buttons.zoomIn = this.createElement('button', {class: 'Lightbox-Zoom Lightbox-Zoom-In Disabled', inert: true}, this.domNodes.buttons);
 		this.domNodes.buttons.zoomIn.addEventListener('click', () => this.panzoom?.zoomIn());
+		this.domNodes.buttons.zoomIn.setAttribute('title', this.settings.i18n[this.language].zoomIn);
+		this.domNodes.buttons.zoomIn.textContent = this.settings.i18n[this.language].zoomIn;
 
-		this.domNodes.buttons.zoomOut = this.createElement('button', {class: 'Lightbox-Zoom Lightbox-Zoom-Out Disabled'}, this.domNodes.buttons);
+		this.domNodes.buttons.zoomOut = this.createElement('button', {class: 'Lightbox-Zoom Lightbox-Zoom-Out Disabled', inert: true}, this.domNodes.buttons);
 		this.domNodes.buttons.zoomOut.addEventListener('click', () => this.panzoom?.zoomOut());
+		this.domNodes.buttons.zoomOut.setAttribute('title', this.settings.i18n[this.language].zoomOut);
+		this.domNodes.buttons.zoomOut.textContent = this.settings.i18n[this.language].zoomOut;
 
 		this.domNodes.loader = this.createElement('div', {class: 'Lightbox-Loader'}, this.domNodes.lightbox);
 		if (this.settings.loaderIcon) {
@@ -395,7 +447,12 @@ export default class Lightbox {
 
 		this.domNodes.arrows = this.createElement('div', {class: 'Lightbox-Arrows'}, this.domNodes.lightbox);
 		this.domNodes.arrows.arrowLeft = this.createElement('button', {class: 'Lightbox-Arrow Lightbox-Arrow-Left', 'aria-hidden': true}, this.domNodes.arrows);
+		this.domNodes.arrows.arrowLeft.setAttribute('title', this.settings.i18n[this.language].previous);
+		this.domNodes.arrows.arrowLeft.textContent = this.settings.i18n[this.language].previous;
+
 		this.domNodes.arrows.arrowRight = this.createElement('button', {class: 'Lightbox-Arrow Lightbox-Arrow-Right', 'aria-hidden': true}, this.domNodes.arrows);
+		this.domNodes.arrows.arrowRight.setAttribute('title', this.settings.i18n[this.language].next);
+		this.domNodes.arrows.arrowRight.textContent = this.settings.i18n[this.language].next;
 
 		this.domNodes.pagination = this.createElement('ul', {class: 'Lightbox-Pagination'}, this.domNodes.lightbox);
 
@@ -450,7 +507,7 @@ export default class Lightbox {
 
 		requestAnimationFrame(() => {
 			setTimeout(() => {
-				this.domNodes.lightbox.classList.add('Visible');
+				this.domNodes.lightbox.showModal();
 			}, 50); // Adjust the delay as needed
 		});
 
@@ -489,7 +546,7 @@ export default class Lightbox {
 			return;
 		}
 
-		this.domNodes.lightbox.classList.remove('Visible');
+		this.domNodes.lightbox.close();
 		this.domNodes.loader.classList.remove('Visible');
 
 		// Make sure the stage is empty to not have videos playing in the background
@@ -601,8 +658,13 @@ export default class Lightbox {
 		this.domNodes.arrows.arrowLeft.classList.toggle('Hidden', this.currentElements.length === 1);
 		this.domNodes.arrows.arrowRight.classList.toggle('Hidden', this.currentElements.length === 1);
 
-		this.domNodes.arrows.arrowLeft.classList.toggle('Disabled', !this.settings.loop && nextIndex === 0);
-		this.domNodes.arrows.arrowRight.classList.toggle('Disabled', !this.settings.loop && nextIndex === this.currentElements.length - 1);
+		const atBeginning = !this.settings.loop && nextIndex === 0;
+		this.domNodes.arrows.arrowLeft.classList.toggle('Disabled', atBeginning);
+		this.domNodes.arrows.arrowLeft.inert = atBeginning;
+
+		const atEnd = !this.settings.loop && nextIndex === this.currentElements.length - 1;
+		this.domNodes.arrows.arrowRight.classList.toggle('Disabled', atEnd);
+		this.domNodes.arrows.arrowRight.inert = atEnd;
 
 		// Remove all elements from the stage
 		this.domNodes.stage.innerHTML = '';
@@ -687,7 +749,7 @@ export default class Lightbox {
 		}
 
 		this.currentPreload.then(() => {
-			if (!this.domNodes.lightbox.classList.contains('Visible')) {
+			if (!this.domNodes.lightbox.open) {
 				// Remove all elements from the stage
 				this.domNodes.stage.innerHTML = '';
 
@@ -879,15 +941,22 @@ export default class Lightbox {
 		this.domNodes.buttons.zoomOut.classList.add('Visible');
 
 		this.domNodes.buttons.zoomIn.classList.remove('Disabled');
+		this.domNodes.buttons.zoomIn.inert = false;
 		this.domNodes.buttons.zoomOut.classList.add('Disabled');
+		this.domNodes.buttons.zoomOut.inert = true;
 
 		this.panzoom = Panzoom(element, this.settings.panzoom);
 
 		element.addEventListener('panzoomzoom', event => {
-			this.domNodes.buttons.zoomIn.classList.toggle('Disabled', event.detail.scale >= this.panzoom.getOptions().maxScale);
-			this.domNodes.buttons.zoomOut.classList.toggle('Disabled', event.detail.scale <= this.panzoom.getOptions().minScale);
+			const atMaxScale = event.detail.scale >= this.panzoom.getOptions().maxScale;
+			this.domNodes.buttons.zoomIn.classList.toggle('Disabled', atMaxScale);
+			this.domNodes.buttons.zoomIn.inert = atMaxScale;
 
-			if (event.detail.scale <= this.panzoom.getOptions().minScale) {
+			const atMinScale = event.detail.scale <= this.panzoom.getOptions().minScale;
+			this.domNodes.buttons.zoomOut.classList.toggle('Disabled', atMinScale);
+			this.domNodes.buttons.zoomOut.inert = atMinScale;
+
+			if (atMinScale) {
 				this.panzoom.pan(0, 0);
 			}
 		});
@@ -926,19 +995,39 @@ export default class Lightbox {
 	 * @param {KeyboardEvent} event
 	 */
 	handleKeyDown(event) {
-		if (this.domNodes.lightbox.classList.contains('Visible')) {
-			if (event.key === 'Escape') {
-				event.preventDefault();
-				this.close();
+		if (!this.domNodes.lightbox.open) {
+			return;
+		}
+
+		if (event.key === 'Escape') {
+			event.preventDefault();
+			this.close();
+			return;
+		}
+
+		if (event.key === 'ArrowLeft') {
+			if (
+				this.domNodes.arrows.arrowLeft.classList.contains('Disabled') ||
+				this.domNodes.arrows.arrowLeft.classList.contains('Hidden')
+			) {
+				return;
 			}
-			else if (event.key === 'ArrowLeft') {
-				event.preventDefault();
-				this.showItem('previous');
+
+			event.preventDefault();
+			this.showItem('previous');
+			return;
+		}
+
+		if (event.key === 'ArrowRight') {
+			if (
+				this.domNodes.arrows.arrowRight.classList.contains('Disabled') ||
+				this.domNodes.arrows.arrowRight.classList.contains('Hidden')
+			) {
+				return;
 			}
-			else if (event.key === 'ArrowRight') {
-				event.preventDefault();
-				this.showItem('next');
-			}
+
+			event.preventDefault();
+			this.showItem('next');
 		}
 	}
 

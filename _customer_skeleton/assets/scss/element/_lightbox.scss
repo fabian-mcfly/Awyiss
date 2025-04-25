@@ -1,18 +1,12 @@
 #Lightbox {
-	background-color:rgba(0, 0, 0, .8);
-	backdrop-filter:blur(5px);
-	position:fixed;
+	border:0;
+	width:100dvw;
+	height:100dvh;
+	background-color:transparent;
+	margin:auto;
 	inset:0;
-	z-index:999999;
-	opacity:0;
-	visibility:hidden;
-	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
 
-	&.Visible {
-		opacity:inherit;
-		visibility:inherit;
-		transition-delay:0s;
-
+	&[open] {
 		.Lightbox-Stage {
 			&.Loaded {
 				opacity:inherit;
@@ -21,6 +15,11 @@
 				transition-delay:0s;
 			}
 		}
+	}
+
+	&::backdrop {
+		background-color:rgba(0, 0, 0, .75);
+		backdrop-filter:blur(5px);
 	}
 
 	:is(
@@ -59,10 +58,11 @@
 		border:0 none;
 		background-color:transparent;
 		color:#FFFFFF;
+		font-size:0;
+		line-height:0;
 		text-align:center;
 		cursor:pointer;
-		opacity:.5;
-		transition:opacity .3s ease-in-out;
+		transition:color .3s ease-in-out;
 
 		&::before {
 			@include fa('\f00d', 24px);
@@ -70,7 +70,7 @@
 		}
 
 		&:hover {
-			opacity:1;
+			color:var(--colorMain, #63d1a5);
 		}
 	}
 
@@ -84,7 +84,7 @@
 		margin-inline:5px;
 		opacity:0;
 		visibility:hidden;
-		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+		transition:color .3s ease-in-out, opacity .3s ease-in-out, visibility 0s linear .3s;
 
 		&.Lightbox-Zoom-In {
 			&::before {
@@ -167,8 +167,7 @@
 			}
 		}
 
-		> iframe,
-		> video {
+		> :is(iframe, video) {
 			width:calc(100% - 40px);
 			margin:auto;
 			border:0 none;
@@ -206,6 +205,8 @@
 		border:0 none;
 		background-color:#FFFFFF;
 		color:#333333;
+		font-size:0;
+		line-height:0;
 		text-align:center;
 		position:absolute;
 		top:0;

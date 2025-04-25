@@ -99,6 +99,7 @@ function initMainOnReady() {
 	window.lightbox = new Lightbox({
 		baseUrl: baseUrl,
 		currentUrl: currentUrl,
+		language: languageShortcode,
 	});
 
 	// Remove the "ready" event listener

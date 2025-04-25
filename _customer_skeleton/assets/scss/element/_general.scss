@@ -32,14 +32,18 @@ html {
 		scroll-behavior:auto;
 	}
 
+	@media (scripting:none) {
+		//noinspection CssNoGenericFontName
+		font-family:var(--fontStackMain);
+	}
+
 	&.wf-active {
 		//noinspection CssNoGenericFontName
 		font-family:var(--fontStackMain);
 	}
 
-	@media (scripting:none) {
-		//noinspection CssNoGenericFontName
-		font-family:var(--fontStackMain);
+	&:has(dialog[open]) {
+		overflow:hidden;
 	}
 }
 
