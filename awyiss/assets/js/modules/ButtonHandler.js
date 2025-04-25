@@ -94,20 +94,6 @@ export default class ButtonHandler {
 		 */
 		let hoverParent = hoverSelector ? element.querySelector(hoverSelector) : element;
 
-		// If the element is of type link or button
-		// and if the title attribute is not set, set it to the text content of the element
-		if ((element.tagName === 'A' || element.tagName === 'BUTTON') && !element.hasAttribute('title')) {
-			let text = element.textContent.trim();
-
-			// Replace all types of line breaks and tabs with a single space
-			text = text.replace(/[\r\n\t]+/g, ' ');
-
-			// Replace multiple spaces with a single space
-			text = text.replace(/ {2,}/g, ' ');
-
-			element.setAttribute('title', text);
-		}
-
 		/**
 		 * @type {HTMLElement}
 		 */
@@ -307,8 +293,8 @@ export default class ButtonHandler {
 	handleConfirm(originalEvent) {
 		this.eventHandler.remove('click', this.boundClick, this.dialog.confirmYes);
 
-		// In case the target element is not a link or part of a form, resend a new event
-		// This way, the event can be caught by other event listeners that might be listening for it, yet we were able to get a confirmation
+		// In case the target element is not a link or part of a form, resend a new event.
+		// This way, the event can be caught by other event listeners that might be listening for it, yet we were able to get a confirmation.
 		const newEvent = new CustomMouseEvent('click', {sentFromConfirmDialog: true}, {
 			bubbles: true,
 			cancelable: true,
@@ -382,8 +368,8 @@ export default class ButtonHandler {
 			target.hoverElement.style.width = '0';
 			target.hoverElement.style.height = '0';
 
-			target.hoverElement.parentElement.style.removeProperty('--x');
-			target.hoverElement.parentElement.style.removeProperty('--y');
+			target.hoverElement.parentElement?.style.removeProperty('--x');
+			target.hoverElement.parentElement?.style.removeProperty('--y');
 		}
 	}
 

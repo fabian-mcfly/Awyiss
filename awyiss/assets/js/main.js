@@ -408,7 +408,7 @@ export async function initMainOnReady() {
 	 * @global
 	 * @type {TitleSetter}
 	 */
-	window.titleSetter = new TitleSetter('DataItem');
+	window.titleSetter = new TitleSetter('.DataItem, .Button');
 
 	/**
 	 * @global
