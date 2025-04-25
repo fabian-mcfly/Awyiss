@@ -272,10 +272,12 @@ class ContentsController extends Controller {
 			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
 
-			foreach ($lo_content->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+				foreach ($lo_content->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -341,9 +343,7 @@ class ContentsController extends Controller {
 		}
 		else {
 			if (!$lo_content->hasErrors()) {
-				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__('edit_succeeded'));
-				}
+				$this->Flash->success(__('edit_succeeded'));
 			}
 			else {
 				$this->Flash->error(__('edit_failed'));
@@ -376,9 +376,7 @@ class ContentsController extends Controller {
 		}
 		else {
 			if ($li_affectedRows) {
-				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__d('system', 'system_order_saved'));
-				}
+				$this->Flash->success(__d('system', 'system_order_saved'));
 			}
 			else {
 				$this->Flash->error(__d('system', 'system_order_not_saved'));
@@ -572,9 +570,11 @@ class ContentsController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $this->page->languageShortcode, 'id' => $content->id], true), 302);
 			}
 
-			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($content->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($content->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 		else {

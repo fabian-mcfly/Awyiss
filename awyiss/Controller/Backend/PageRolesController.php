@@ -141,10 +141,11 @@ class PageRolesController extends Controller {
 			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_pageRole->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_pageRole->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -188,9 +189,11 @@ class PageRolesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $pageRole->id], true), 302);
 			}
 
-			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($pageRole->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($pageRole->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 		else {

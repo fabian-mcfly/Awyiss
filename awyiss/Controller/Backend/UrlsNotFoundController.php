@@ -128,13 +128,17 @@ class UrlsNotFoundController extends Controller {
 		}
 
 		if ($this->UrlsNotFound->delete($lo_urlsNotFound)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
 
-			foreach ($lo_urlsNotFound->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+				foreach ($lo_urlsNotFound->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 

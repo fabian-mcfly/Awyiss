@@ -245,9 +245,11 @@ class PagesController extends Controller {
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $lo_page->languageShortcode], true), 302);
 				}
 				else {
-					$this->Flash->error(__df($this->pageRoleName, 'pages', 'add_batch_failed'));
-					foreach ($lo_page->getError('_general') as $ls_error) {
-						$this->Flash->error($ls_error);
+					if (!$this->request->is('ajax')) {
+						$this->Flash->error(__df($this->pageRoleName, 'pages', 'add_batch_failed'));
+						foreach ($lo_page->getError('_general') as $ls_error) {
+							$this->Flash->error($ls_error);
+						}
 					}
 				}
 			}
@@ -328,10 +330,11 @@ class PagesController extends Controller {
 			}
 		}
 		else {
-			$this->Flash->error(__df($this->pageRoleName, 'pages', 'delete_failed'));
-
-			foreach ($lo_page->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__df($this->pageRoleName, 'pages', 'delete_failed'));
+				foreach ($lo_page->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -544,9 +547,11 @@ class PagesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $page->languageShortcode, 'id' => $page->id], true), 302);
 			}
 
-			$this->Flash->error(__df($this->pageRoleName, 'pages', ($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($page->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__df($this->pageRoleName, 'pages', ($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($page->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 		elseif ($this->request->getData('reload_form')) {

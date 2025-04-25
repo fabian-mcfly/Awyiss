@@ -200,10 +200,11 @@ class MenuEntriesController extends Controller {
 			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_menuEntry->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_menuEntry->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -276,9 +277,11 @@ class MenuEntriesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $menuEntry->languageShortcode, 'id' => $menuEntry->id], true), 302);
 			}
 
-			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($menuEntry->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($menuEntry->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 		else {

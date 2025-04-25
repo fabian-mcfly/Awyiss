@@ -149,13 +149,16 @@ class FormEntriesController extends Controller {
 		}
 
 		if ($this->FormEntries->delete($lo_formEntry)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_formEntry->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_formEntry->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 

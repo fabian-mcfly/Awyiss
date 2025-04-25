@@ -207,10 +207,11 @@ class FormElementsController extends Controller {
 			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_formElement->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_formElement->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -273,9 +274,7 @@ class FormElementsController extends Controller {
 		}
 		else {
 			if (!$lo_formElement->hasErrors()) {
-				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__('edit_succeeded'));
-				}
+				$this->Flash->success(__('edit_succeeded'));
 			}
 			else {
 				$this->Flash->error(__('edit_failed'));
@@ -351,9 +350,11 @@ class FormElementsController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $formElement->id], true), 302);
 			}
 
-			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($formElement->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($formElement->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 		else {

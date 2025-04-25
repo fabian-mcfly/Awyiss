@@ -128,10 +128,11 @@ class EmailTemplatesController extends Controller {
 			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_emailTemplate->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_emailTemplate->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -217,7 +218,9 @@ class EmailTemplatesController extends Controller {
 			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
 			if ($this->EmailTemplates->save($emailTemplate, ['asCopy' => $lb_saveAsCopy])) {
-				$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
@@ -226,9 +229,11 @@ class EmailTemplatesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $emailTemplate->id], true), 302);
 			}
 
-			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($emailTemplate->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($emailTemplate->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 	}

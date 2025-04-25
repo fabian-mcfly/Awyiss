@@ -225,9 +225,11 @@ class DesignsController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'overview', 'identifier' => $lb_use ? $design->identifier : null], true), 302);
 			}
 
-			$this->Flash->error(__('save_failed'));
-			foreach ($design->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('save_failed'));
+				foreach ($design->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 	}
@@ -509,10 +511,11 @@ class DesignsController extends Controller {
 			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_design->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_design->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 

@@ -132,13 +132,16 @@ class FormsController extends Controller {
 		}
 
 		if ($this->Forms->delete($lo_form)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_form->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_form->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -189,9 +192,11 @@ class FormsController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $form->id], true), 302);
 			}
 
-			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($form->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($form->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 	}

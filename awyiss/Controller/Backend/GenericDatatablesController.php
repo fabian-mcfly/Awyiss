@@ -203,10 +203,11 @@ abstract class GenericDatatablesController extends Controller {
 			}
 		}
 		else {
-			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'delete_failed'));
-
-			foreach ($lo_datatable->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'delete_failed'));
+				foreach ($lo_datatable->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -265,9 +266,11 @@ abstract class GenericDatatablesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $entity->languageShortcode, 'id' => $entity->id], true), 302);
 			}
 
-			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', ($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($entity->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', ($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($entity->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 		elseif ($this->Datatable->hasBehavior('SystemOrder')) {

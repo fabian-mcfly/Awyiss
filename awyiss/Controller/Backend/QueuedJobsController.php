@@ -127,7 +127,9 @@ class QueuedJobsController extends BackendController {
 			}
 		}
 		else {
-			$this->Flash->error(__('restart_failed'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('restart_failed'));
+			}
 		}
 
 
@@ -174,10 +176,11 @@ class QueuedJobsController extends BackendController {
 			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_queuedJob->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_queuedJob->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 

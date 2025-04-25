@@ -147,13 +147,16 @@ class MediaElementsController extends Controller {
 		}
 
 		if ($this->MediaElements->delete($lo_mediaElement)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_mediaElement->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_mediaElement->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -227,7 +230,9 @@ class MediaElementsController extends Controller {
 			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
 			if ($this->MediaElements->save($mediaElement, ['asCopy' => $lb_saveAsCopy])) {
-				$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
@@ -236,9 +241,11 @@ class MediaElementsController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $mediaElement->id], true), 302);
 			}
 
-			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($mediaElement->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($mediaElement->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 		else {

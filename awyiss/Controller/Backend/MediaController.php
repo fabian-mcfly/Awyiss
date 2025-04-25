@@ -365,10 +365,11 @@ class MediaController extends Controller {
 			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_media->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_media->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -706,9 +707,11 @@ class MediaController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $media->id], true), 302);
 			}
 
-			$this->Flash->error(__($method . '_failed'));
-			foreach ($media->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__($method . '_failed'));
+				foreach ($media->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 		else {
@@ -813,9 +816,7 @@ class MediaController extends Controller {
 			$this->Flash->error(__('no_records_selected'));
 		}
 		else {
-			if (!$this->request->is('ajax')) {
-				$this->Flash->success(__('delete_succeeded'));
-			}
+			$this->Flash->success(__('delete_succeeded'));
 		}
 
 		return $this->redirect(['action' => 'overview']);
