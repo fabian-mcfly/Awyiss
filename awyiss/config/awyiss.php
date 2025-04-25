@@ -233,10 +233,11 @@ return [
 
 
 	'MimeTypes' => [
-		'text/plain' => ['txt', 'csv'],
+		'text/plain' => ['txt', 'csv', 'vtt'],
 		'text/html' => ['html', 'htm'],
 		'text/css' => ['css'],
 		'text/javascript' => ['js'],
+		'text/vtt' => ['vtt'],
 		'application/json' => ['json'],
 		'application/xml' => ['xml'],
 		'image/jpeg' => ['jpeg', 'jpg'],
@@ -248,6 +249,7 @@ return [
 		'audio/ogg' => ['oga', 'ogg'],
 		'video/mp4' => ['mp4'],
 		'video/x-msvideo' => ['avi'],
+		'video/webm' => ['webm'],
 		'application/pdf' => ['pdf', 'ai'],
 		'application/zip' => ['zip'],
 		'application/x-rar-compressed' => ['rar'],
