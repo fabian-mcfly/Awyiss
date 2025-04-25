@@ -235,7 +235,10 @@ class MediaElementsController extends Controller {
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($mediaElement),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $mediaElement->id], true), 302);

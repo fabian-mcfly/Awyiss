@@ -209,6 +209,7 @@ class WidgetTemplatesController extends Controller {
 				if ($this->request->getData('submit_type') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($widgetTemplate),
 					], true), 302);
 				}
 

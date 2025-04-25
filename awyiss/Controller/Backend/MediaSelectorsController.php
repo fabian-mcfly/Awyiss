@@ -185,7 +185,10 @@ class MediaSelectorsController extends Controller {
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($mediaSelector),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $mediaSelector->id], true), 302);

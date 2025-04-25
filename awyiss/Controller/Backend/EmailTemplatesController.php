@@ -223,7 +223,10 @@ class EmailTemplatesController extends Controller {
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($emailTemplate),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $emailTemplate->id], true), 302);

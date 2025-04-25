@@ -26,7 +26,10 @@
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition(${{ singularName }}),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => ${{ singularName }}->id], true), 302);
