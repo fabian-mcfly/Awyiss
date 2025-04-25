@@ -882,10 +882,11 @@ class MediaController extends Controller {
 			if (empty($la_data['name'])) {
 				$la_data['name'] = $lo_uploadedFile->getClientFilename();
 			}
-			else {
-				$li_dotPos = strrpos($lo_uploadedFile->getClientFilename(), '.');
-				$ls_extension = substr($lo_uploadedFile->getClientFilename(), $li_dotPos + 1);
-			}
+
+			$li_dotPos = strrpos($la_data['name'], '.');
+			$ls_extension = substr($la_data['name'], $li_dotPos + 1);
+
+			$la_data['mimeType'] = $this->Media->detectMimeType($lo_uploadedFile, $ls_extension);
 		}
 		elseif (!empty($la_data['name'])) {
 			$ls_extension = $media->extension;

@@ -15,6 +15,7 @@ use Cake\Database\Type\EnumType;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 use finfo;
+use Laminas\Diactoros\UploadedFile;
 
 
 /**
@@ -190,8 +191,6 @@ class MediaTable extends Table {
 				$lo_stream = $entity->file->getStream();
 				$ls_tempName = $lo_stream->getMetadata('uri');
 
-				$entity->mimeType = static::getFinfo()->file($ls_tempName, FILEINFO_MIME_TYPE);
-
 				$ls_knownExtensions = static::getFinfo()->file($ls_tempName, FILEINFO_EXTENSION);
 				$la_knownExtensions = explode('/', $ls_knownExtensions);
 
@@ -259,6 +258,38 @@ class MediaTable extends Table {
 		}
 
 		return $li_maxFileSize;
+	}
+
+
+	/**
+	 * @param \Laminas\Diactoros\UploadedFile $uploadedFile
+	 * @param string $extension
+	 * @return string
+	 */
+	public function detectMimeType(UploadedFile $uploadedFile, string $extension): string {
+		$lo_stream = $uploadedFile->getStream();
+		$ls_tempName = $lo_stream->getMetadata('uri');
+
+		$ls_mimeType = static::getFinfo()->file($ls_tempName, FILEINFO_MIME_TYPE);
+
+		// If the uploaded file's mime type is the same as the detected mime type, return it
+		if ($ls_mimeType === $uploadedFile->getClientMediaType()) {
+			return $ls_mimeType;
+		}
+
+		//Fallback if extension isn't known for the mimetype
+		$la_knownExtensionsForDetectedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $ls_mimeType));
+		$la_knownExtensionsForProvidedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $uploadedFile->getClientMediaType()));
+
+		// If both mime types contain the same, provided extension, return the provided mime type
+		if (
+			in_array($extension, $la_knownExtensionsForDetectedMimeType) &&
+			in_array($extension, $la_knownExtensionsForProvidedMimeType)
+		) {
+			return $uploadedFile->getClientMediaType();
+		}
+
+		return $ls_mimeType;
 	}
 
 

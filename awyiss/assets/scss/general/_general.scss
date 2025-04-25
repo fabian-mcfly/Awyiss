@@ -259,7 +259,8 @@ code {
 
 	&::after {
 		content:attr(data-extension);
-		padding:2px 5px;
+		padding:3px 5px 1px;
+		border-radius:5px;
 		background-color:var(--colorSuccess);
 		color:var(--colorBright);
 		//noinspection CssNoGenericFontName
