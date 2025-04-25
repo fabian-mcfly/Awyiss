@@ -218,16 +218,7 @@ class MediaController extends Controller {
 			 * set the view class to JSON, disable the auto layout and render the response
 			 */
 			if ($this->request->is('ajax') && !$this->request->getData('reload_form')) {
-				$ls_errorMessage = null;
-				if ($lo_media->hasErrors()) {
-					$la_errors = $lo_media->getErrors();
-					//First key will be the field name
-					$ls_field = key($la_errors);
-
-					$la_errors = $la_errors[ $ls_field ];
-					$ls_errorMessage = __(Inflector::underscore($ls_field)) . ': ';
-					$ls_errorMessage .= array_values($la_errors)[0];
-				}
+				$ls_errorMessage = $this->getErrorMessage($lo_media);
 
 				// Consume the flash messages to prevent them from being displayed the next time the page is loaded
 				$this->request->getFlash()->consume('media');
@@ -309,16 +300,7 @@ class MediaController extends Controller {
 		 * set the view class to JSON, disable the auto layout and render the response
 		 */
 		if ($this->request->is(['patch', 'post', 'put']) && $this->request->is('ajax') && !$this->request->getData('reload_form')) {
-			$ls_errorMessage = null;
-			if ($lo_media->hasErrors()) {
-				$la_errors = $lo_media->getErrors();
-				//First key will be the field name
-				$ls_field = key($la_errors);
-
-				$la_errors = $la_errors[ $ls_field ];
-				$ls_errorMessage = __(Inflector::underscore($ls_field)) . ': ';
-				$ls_errorMessage .= array_values($la_errors)[0];
-			}
+			$ls_errorMessage = $this->getErrorMessage($lo_media);
 
 			// Consume the flash messages to prevent them from being displayed the next time the page is loaded
 			$this->request->getFlash()->consume('media');
@@ -400,6 +382,7 @@ class MediaController extends Controller {
 	 * that do not have a preview image yet
 	 *
 	 * @return void
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function checkPreviewProgress(): void {
@@ -411,6 +394,7 @@ class MediaController extends Controller {
 	 * Check the progress of the resizing of the images (or preview images) for the media files
 	 *
 	 * @return void
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function checkResizeProgress(): void {
@@ -444,7 +428,7 @@ class MediaController extends Controller {
 		$la_lastRecords = [];
 
 		// If there are initial elements, remember them for the first iteration
-		// Due to race conditions, the initial elements might have been processed already by the time the loop starts
+		// Due to race-conditions the initial elements might have been processed already by the time the loop starts
 		if ($this->request->getData('elements')) {
 			if ($type === 'preview') {
 				// Get the media files that do not have a preview image yet
@@ -560,6 +544,7 @@ class MediaController extends Controller {
 	 *
 	 * @return void
 	 * @throws \Exception
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function folderSelect(): void {
@@ -598,6 +583,7 @@ class MediaController extends Controller {
 	 * Rebuild the system order to ensure that there are no gaps in the order
 	 *
 	 * @return void
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function rebuildSystemOrder(): void {
@@ -656,11 +642,11 @@ class MediaController extends Controller {
 
 	/**
 	 * Requests a lock for the specified method.
-	 *
 	 * For media elements, the required permission is 'create'.
 	 *
 	 * @param string $method The method for which the lock is requested. Default is 'create'.
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function requestLock(string $method = 'create'): void {
 		parent::requestLock($method);
@@ -669,11 +655,11 @@ class MediaController extends Controller {
 
 	/**
 	 * Releases a lock based on the provided method type.
-	 *
 	 * For media elements, the required permission is 'create'.
 	 *
 	 * @param string $method The method type to be used for releasing the lock. Defaults to 'create'.
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function releaseLock(string $method = 'create'): void {
 		parent::releaseLock($method);
@@ -681,7 +667,7 @@ class MediaController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\MediaFolder $mediaFolder
+	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param string $method
 	 * @param bool $isAjax
 	 * @return void
@@ -929,5 +915,26 @@ class MediaController extends Controller {
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @return string|null
+	 */
+	protected function getErrorMessage(Media $media): ?string {
+		if (!$media->hasErrors()) {
+			return null;
+		}
+
+		$la_errors = $media->getErrors();
+		//First key will be the field name
+		$ls_field = key($la_errors);
+
+		$la_errors = $la_errors[ $ls_field ];
+		$ls_errorMessage = __(Inflector::underscore($ls_field)) . ': ';
+		$ls_errorMessage .= array_values($la_errors)[0];
+
+		return $ls_errorMessage;
 	}
 }
