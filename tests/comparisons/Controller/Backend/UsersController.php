@@ -121,13 +121,16 @@ class UsersController extends Controller {
 		}
 
 		if ($this->Users->delete($lo_user)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
-
-			foreach ($lo_user->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_user->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 
@@ -157,18 +160,25 @@ class UsersController extends Controller {
 			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
 			if ($this->Users->save($user, ['asCopy' => $lb_saveAsCopy])) {
-				$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($user),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $user->id], true), 302);
 			}
 
-			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($user->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($user->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
 			}
 		}
 		elseif ($this->Users->hasBehavior('SystemOrder')) {

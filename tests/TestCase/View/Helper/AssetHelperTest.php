@@ -987,7 +987,7 @@ class AssetHelperTest extends TestCase {
 		$result = $this->helper->createAssetTag($assetPath, ['critical' => true]);
 
 		/** @noinspection HtmlUnknownTarget */
-		$this->assertStringContainsString('<script src="assets/js/dummy.js">', $result);
+		$this->assertStringContainsString('<script defer src="assets/js/dummy.js">', $result);
 	}
 
 

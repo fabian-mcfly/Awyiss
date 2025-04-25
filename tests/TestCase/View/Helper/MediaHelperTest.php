@@ -405,10 +405,10 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
 
 		$this->assertStringNotContainsString('<picture', $result);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt="logo-awyiss.png"', $result);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt=""', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt="logo-awyiss.png"', $result);
+		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt=""', $result);
 	}
 
 
@@ -525,7 +525,7 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('class="Lazyload"', $result);
 		$this->assertStringContainsString('<noscript', $result);
 		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/logo-awyiss.svg" id="FoobarId-NoScript"', $result);
-		$this->assertStringContainsString('<style>#FoobarId::', $result);
+		$this->assertStringContainsString('<style>#FoobarId { --imageAspectRatio: 2; }</style>', $result);
 
 		// Make sure that nothing changes when responsive is set
 		$mediaRenderOptions = $mediaRenderOptions->withResponsive();
@@ -543,6 +543,7 @@ class MediaHelperTest extends TestCase {
 	 */
 	public function testHtmlTagForAudio(): void {
 		$media = new Media([
+			'id' => 0,
 			'name' => 'audio.mp3',
 			'path' => '/path/to/audio.mp3',
 			'mime_type' => 'audio/mpeg',
@@ -573,6 +574,7 @@ class MediaHelperTest extends TestCase {
 	 */
 	public function testHtmlTagForVideo(): void {
 		$media = new Media([
+			'id' => 0,
 			'name' => 'video.mp4',
 			'path' => '/path/to/video.mp4',
 			'mime_type' => 'video/mp4',
@@ -658,6 +660,7 @@ class MediaHelperTest extends TestCase {
 	 */
 	public function testAudioTag(): void {
 		$media = new Media([
+			'id' => 0,
 			'name' => 'audio.mp3',
 			'path' => '/path/to/audio.mp3',
 			'mime_type' => 'audio/mpeg',
@@ -667,6 +670,125 @@ class MediaHelperTest extends TestCase {
 
 		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions);
 		$this->assertStringContainsString('<audio', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAudioTagWithSources(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(19);
+
+		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+
+		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions);
+
+		$this->assertStringContainsString('<audio', $result);
+		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/audio-test.mp3" type="audio/mpeg">', $result);
+		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/audio-test.ogg" type="audio/ogg">', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAudioTagWithSingleSource(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(17);
+
+		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+
+		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions);
+
+		// Make sure the <source> tag is present only once
+		$this->assertSame(1, substr_count($result, '<source'));
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAudioTagWithSubtitlesGeneratesVideoTag(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(15);
+
+		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+
+		$request = new ServerRequest([
+			'url' => '/de/no-slug/',
+			'params' => [
+				'lang' => 'de',
+				'slug' => 'no-slug',
+				'_name' => 'Frontend',
+				'prefix' => 'Frontend',
+				'parts' => [],
+				'pass' => [],
+			],
+		]);
+		Router::setRequest($request);
+
+		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions);
+
+		$this->assertStringContainsString('<video', $result);
+		$this->assertStringNotContainsString('<audio', $result);
+		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.mp3" type="audio/mpeg">', $result);
+		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.ogg" type="audio/ogg">', $result);
+		$this->assertStringContainsString('<track src="../awyiss/Command/Media/TestFiles/multimedia-test-de.vtt" kind="subtitles" default srclang="de" label="German">', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAudioTagWithSubtitlesGeneratesAudiTagIfForced(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(15);
+
+		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+
+		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions, false);
+
+		$this->assertStringNotContainsString('<video', $result);
+		$this->assertStringContainsString('<audio', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAudioTagWithSubtitlesAndNoDefault(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(15);
+
+		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+
+		$request = new ServerRequest([
+			'url' => '/xy/no-slug/',
+			'params' => [
+				'lang' => 'xy',
+				'slug' => 'no-slug',
+				'_name' => 'Frontend',
+				'prefix' => 'Frontend',
+				'parts' => [],
+				'pass' => [],
+			],
+		]);
+		Router::setRequest($request);
+
+		$result = $this->mediaHelper->audioTag($media, $mediaRenderOptions);
+
+		$this->assertStringNotContainsString('default', $result);
 	}
 
 
@@ -992,6 +1114,7 @@ class MediaHelperTest extends TestCase {
 	 */
 	public function testVideoTag(): void {
 		$media = new Media([
+			'id' => 0,
 			'name' => 'video.mp4',
 			'path' => '/path/to/video.mp4',
 			'mime_type' => 'video/mp4',
@@ -1003,6 +1126,103 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('<video', $result);
 		/** @noinspection HtmlUnknownTarget */
 		$this->assertStringContainsString('<source src="/path/to/video.mp4" type="video/mp4">', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testVideoTagWithSources(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(11);
+
+		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+
+		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
+
+		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.mp4" type="video/mp4">', $result);
+		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.webm" type="video/webm">', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testVideoTagWithSingleSource(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(18);
+
+		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+
+		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
+
+		// Make sure the <source> tag is present only once
+		$this->assertSame(1, substr_count($result, '<source'));
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testVideoTagWithSubtitles(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(11);
+
+		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+
+		$request = new ServerRequest([
+			'url' => '/de/no-slug/',
+			'params' => [
+				'lang' => 'de',
+				'slug' => 'no-slug',
+				'_name' => 'Frontend',
+				'prefix' => 'Frontend',
+				'parts' => [],
+				'pass' => [],
+			],
+		]);
+		Router::setRequest($request);
+
+		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
+
+		$this->assertStringContainsString('<track src="../awyiss/Command/Media/TestFiles/multimedia-test-de.vtt" kind="subtitles" default srclang="de" label="German">', $result);
+		$this->assertStringContainsString('<track src="../awyiss/Command/Media/TestFiles/multimedia-test-en.vtt" kind="subtitles" srclang="en" label="English">', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testVideoTagWithSubtitlesAndNoDefault(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(11);
+
+		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
+
+		$request = new ServerRequest([
+			'url' => '/xy/no-slug/',
+			'params' => [
+				'lang' => 'xy',
+				'slug' => 'no-slug',
+				'_name' => 'Frontend',
+				'prefix' => 'Frontend',
+				'parts' => [],
+				'pass' => [],
+			],
+		]);
+		Router::setRequest($request);
+
+		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
+
+		$this->assertStringNotContainsString('default', $result);
 	}
 
 
