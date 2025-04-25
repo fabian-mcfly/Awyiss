@@ -248,7 +248,7 @@ class MediaHelper extends Helper {
 
 		$la_attributes = $lo_mediaRenderOptions->getAttributes();
 		$la_attributes += [
-			'alt' => $media->alt ?: $media->name,
+			'alt' => $media->alt ?: '',
 		];
 
 		$la_attributes['id'] ??= 'Image-' . substr(sha1($media->name . serialize($lo_mediaRenderOptions)), 0, 15);
