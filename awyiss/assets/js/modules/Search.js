@@ -69,6 +69,8 @@ export default class Search {
 			target.showModal();
 
 			target.focus();
+
+			target.querySelector('form').scrollTo(0, 0);
 		}, element);
 	}
 
