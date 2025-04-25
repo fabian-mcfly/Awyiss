@@ -295,9 +295,18 @@ class FormHelperTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
 		$entity = $this->fetchTable('ContentTemplates')->get(2);
 
-		$this->formHelper->create($entity, ['languageRealm' => 'Frontend']);
+		$this->formHelper->create($entity, ['languageRealm' => 'Dummy']);
+
+		/** @var \Awyiss\Model\Table\LanguagesTable $languagesTable */
+		$languagesTable = $this->fetchTable('Languages');
+		$esperanto = $languagesTable->find('all')->where(['shortcode' => 'es'])->first();
+		$esperanto->set('active', false);
+		$languagesTable->save($esperanto, ['audit' => ['skip' => true]]);
 
 		$result = $this->formHelper->translatableText('title');
+
+		$esperanto->set('active', true);
+		$languagesTable->save($esperanto, ['audit' => ['skip' => true]]);
 
 		$this->assertStringNotContainsString('<div class="TranslatableTexts"', $result);
 		$this->assertStringNotContainsString('name="_translations', $result);

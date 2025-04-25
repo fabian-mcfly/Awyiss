@@ -5,12 +5,12 @@ namespace Awyiss\View\Helper;
 
 
 use Awyiss\Core\App;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
-use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
@@ -367,6 +367,7 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $mediaRenderOptions
 	 * @return string
+	 * @throws \Exception
 	 */
 	public function videoTag(Media $media, ?MediaRenderOptions $mediaRenderOptions): string {
 		if (!in_array($media->mimeType, ['video/mp4', 'video/webm', 'video/ogg'], true)) {
@@ -1084,6 +1085,7 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Model\Entity\Media $lo_alternative
 	 * @param string $ls_subtitles
 	 * @return string
+	 * @throws \Exception
 	 */
 	protected function getSubtitles(Media $lo_alternative, string $ls_subtitles): string {
 		// If the mimetype of the alternative is a subtitle, set the source
@@ -1092,7 +1094,7 @@ class MediaHelper extends Helper {
 			$ls_sourceLang = substr($lo_alternative->cleanName, -2);
 
 			// If the source language is the current language, set it as default
-			$ls_default = $ls_sourceLang === (Router::getRequest()?->getParam('lang') ?? '') ? ' default' : '';
+			$ls_default = $ls_sourceLang === (LocaleMiddleware::getLanguage()->shortcode ?? '') ? ' default' : '';
 
 			// Add a track tag for the subtitle
 			$ls_subtitles .= PHP_EOL .  '<track src="' . $lo_alternative->path . '" kind="subtitles"' .

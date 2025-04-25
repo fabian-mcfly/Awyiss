@@ -774,9 +774,9 @@ class MediaHelperTest extends TestCase {
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
 		$request = new ServerRequest([
-			'url' => '/xy/no-slug/',
+			'url' => '/es/no-slug/',
 			'params' => [
-				'lang' => 'xy',
+				'lang' => 'es',
 				'slug' => 'no-slug',
 				'_name' => 'Frontend',
 				'prefix' => 'Frontend',
@@ -1208,9 +1208,9 @@ class MediaHelperTest extends TestCase {
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
 		$request = new ServerRequest([
-			'url' => '/xy/no-slug/',
+			'url' => '/es/no-slug/',
 			'params' => [
-				'lang' => 'xy',
+				'lang' => 'es',
 				'slug' => 'no-slug',
 				'_name' => 'Frontend',
 				'prefix' => 'Frontend',

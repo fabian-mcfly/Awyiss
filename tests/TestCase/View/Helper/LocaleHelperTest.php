@@ -231,7 +231,7 @@ class LocaleHelperTest extends TestCase {
 	public function testAllLanguagesReturnsAllLanguages(): void {
 		$result = $this->locale->allLanguages();
 
-		$this->assertEquals(['de' => 'Deutsch', 'en' => 'English'], $result);
+		$this->assertEquals(['de' => 'Deutsch', 'en' => 'English', 'es' => 'Esperanto'], $result);
 	}
 
 
@@ -243,7 +243,7 @@ class LocaleHelperTest extends TestCase {
 		$result = $this->locale->allLanguages(true);
 
 		$allLanguages = [];
-		$query = $this->fetchTable('Languages')->find('all');
+		$query = $this->fetchTable('Languages')->find('all')->where(['realm !=' => 'Dummy']);
 		foreach ($query->all() as $lo_language) {
 			if (!isset($allLanguages[ $lo_language->shortcode ])) {
 				$allLanguages[ $lo_language->shortcode ] = $lo_language;
@@ -262,7 +262,7 @@ class LocaleHelperTest extends TestCase {
 	public function testLanguagesForRealmReturnsLanguagesForSpecificRealm(): void {
 		$result = $this->locale->languagesForRealm(Awyiss::REALM_FRONTEND);
 
-		$this->assertEquals(['de' => 'Deutsch'], $result);
+		$this->assertEquals(['de' => 'Deutsch', 'es' => 'Esperanto'], $result);
 
 		$result = $this->locale->languagesForRealm(Awyiss::REALM_BACKEND);
 
