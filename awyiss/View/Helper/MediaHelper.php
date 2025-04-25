@@ -5,6 +5,7 @@ namespace Awyiss\View\Helper;
 
 
 use Awyiss\Core\App;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
@@ -203,9 +204,11 @@ class MediaHelper extends Helper {
 	/**
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $mediaRenderOptions
+	 * @param bool $allowVideoTag
 	 * @return string
+	 * @throws \Exception
 	 */
-	public function audioTag(Media $media, ?MediaRenderOptions $mediaRenderOptions): string {
+	public function audioTag(Media $media, ?MediaRenderOptions $mediaRenderOptions, bool $allowVideoTag = true): string {
 		if (!in_array($media->mimeType, ['audio/mpeg', 'audio/ogg', 'audio/wav', 'audio/webm'], true)) {
 			return '';
 		}
@@ -220,7 +223,36 @@ class MediaHelper extends Helper {
 
 		$ls_attributes = $this->Html->templater()->formatAttributes($la_attributes);
 
-		return '<audio' . $ls_attributes . '><source src="' . $media->path . '" type="' . $media->mimeType . '"></audio>';
+		$ls_sources = $ls_subtitles = '';
+
+		/** @var \Awyiss\Model\Entity\Media $lo_alternative */
+		foreach ($media->findAlternatives() as $lo_alternative) {
+			// If the mimetype of the alternative is an audio file, set the source
+			if ($lo_alternative->isAudio()) {
+				$ls_sources .= PHP_EOL . '<source src="' . $lo_alternative->path . '" type="' . $lo_alternative->mimeType . '">';
+				continue;
+			}
+
+			// If the mimetype of the alternative is a subtitle, set the source
+			if ($lo_alternative->mimeType === 'text/vtt') {
+				// Source language is the last two characters of the filename
+				$ls_sourceLang = substr($lo_alternative->cleanName, -2);
+
+				// If the source language is the current language, set it as default
+				$ls_default = $ls_sourceLang === LocaleMiddleware::getLanguage()->shortcode ? 'default' : '';
+
+				// Add a track tag for the subtitle
+				$ls_subtitles .= PHP_EOL . '<track src="' . $lo_alternative->path . '" kind="subtitles"
+					' . $ls_default . '
+					srclang="' . $ls_sourceLang . '" label="' . ($lo_alternative->alt ?? locale_get_display_language($ls_sourceLang)) . '">';
+			}
+		}
+
+		if ($ls_subtitles && $allowVideoTag) {
+			return '<video' . $ls_attributes . '><source src="' . $media->path . '" type="' . $media->mimeType . '">' . $ls_sources . $ls_subtitles . '</video>';
+		}
+
+		return '<audio' . $ls_attributes . '><source src="' . $media->path . '" type="' . $media->mimeType . '">' . $ls_sources . $ls_subtitles . '</audio>';
 	}
 
 
@@ -372,7 +404,32 @@ class MediaHelper extends Helper {
 
 		$ls_path = $media->path;
 
-		return '<video ' . $ls_attributes . '><source src="' . $ls_path . '" type="' . $media->mimeType . '"></video>';
+		$ls_sources = $ls_subtitles = '';
+
+		/** @var \Awyiss\Model\Entity\Media $lo_alternative */
+		foreach ($media->findAlternatives() as $lo_alternative) {
+			// If the mimetype of the alternative is a video, set the source
+			if ($lo_alternative->isVideo()) {
+				$ls_sources .= PHP_EOL . '<source src="' . $lo_alternative->path . '" type="' . $lo_alternative->mimeType . '">';
+				continue;
+			}
+
+			// If the mimetype of the alternative is a subtitle, set the source
+			if ($lo_alternative->mimeType === 'text/vtt') {
+				// Source language is the last two characters of the filename
+				$ls_sourceLang = substr($lo_alternative->cleanName, -2);
+
+				// If the source language is the current language, set it as default
+				$ls_default = $ls_sourceLang === LocaleMiddleware::getLanguage()->shortcode ? 'default' : '';
+
+				// Add a track tag for the subtitle
+				$ls_subtitles .= PHP_EOL . '<track src="' . $lo_alternative->path . '" kind="subtitles"
+					' . $ls_default . '
+					srclang="' . $ls_sourceLang . '" label="' . ($lo_alternative->alt ?? locale_get_display_language($ls_sourceLang)) . '">';
+			}
+		}
+
+		return '<video ' . $ls_attributes . '><source src="' . $ls_path . '" type="' . $media->mimeType . '">' . $ls_sources . $ls_subtitles . '</video>';
 	}
 
 
@@ -993,8 +1050,8 @@ class MediaHelper extends Helper {
 
 
 	/**
-	 * Check if there is a breakpoint with the same value as the single column breakpoint
-	 * If there is, use it's current values and set the column width to 100 (if not set),
+	 * Check if there is a breakpoint with the same value as the single column breakpoint.
+	 * If there is, use its current values and set the column width to 100 (if not set),
 	 * otherwise add a new breakpoint with the single column breakpoint value and a column width of 100
 	 *
 	 * @param array $breakpoints

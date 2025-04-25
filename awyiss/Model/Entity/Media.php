@@ -185,6 +185,33 @@ class Media extends Entity {
 
 
 	/**
+	 * Finds alternative media records with the same base name but different extensions or variations in the name.
+	 *
+	 * @return array|null Returns an array of alternative media records if found, or null otherwise.
+	 */
+	public function findAlternatives(): ?array {
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get('Media');
+
+		$ls_name = $this->cleanName;
+		if (!$ls_name) {
+			return null;
+		}
+
+		// Find files with same name but different extension or -xx pattern
+		$la_results = $lo_table->find()->where([
+			'id !=' => $this->id,
+			'OR' => [
+				['name LIKE' => $ls_name . '.%'],
+				['name LIKE' => $ls_name . '-__.%'],
+			],
+		])->all()->toArray();
+
+		return $la_results ?: null;
+	}
+
+
+	/**
 	 * @return void
 	 */
 	public function moveConvertedFiles(): void {
