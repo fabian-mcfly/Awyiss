@@ -585,6 +585,10 @@ class ContentsController extends Controller {
 				$content->systemOrder = $content->hasOriginal('systemOrder') ? $content->getOriginal('systemOrder') : $content->get('systemOrder');
 			}
 
+			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+			$lo_request = $this->request->withData('system_order', $content->systemOrder);
+			$this->setRequest($lo_request);
+
 			$this->Categories->ensurePossibleCategory($content);
 
 			if ($content->isDirty('pageId')) {

@@ -188,6 +188,10 @@ class UsersController extends Controller {
 			else {
 				$user->systemOrder = $user->hasOriginal('systemOrder') ? $user->getOriginal('systemOrder') : $user->get('systemOrder');
 			}
+
+			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+			$lo_request = $this->request->withData('system_order', $user->systemOrder);
+			$this->setRequest($lo_request);
 		}
 	}
 }

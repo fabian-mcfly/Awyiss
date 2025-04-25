@@ -291,6 +291,10 @@ class MenuEntriesController extends Controller {
 			else {
 				$menuEntry->systemOrder = $menuEntry->hasOriginal('systemOrder') ? $menuEntry->getOriginal('systemOrder') : $menuEntry->get('systemOrder');
 			}
+
+			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+			$lo_request = $this->request->withData('system_order', $menuEntry->systemOrder);
+			$this->setRequest($lo_request);
 		}
 
 		$this->Categories->ensurePossibleCategory($menuEntry);

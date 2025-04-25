@@ -234,6 +234,10 @@ class AttributesController extends Controller {
 			else {
 				$attribute->systemOrder = $attribute->hasOriginal('systemOrder') ? $attribute->getOriginal('systemOrder') : $attribute->get('systemOrder');
 			}
+
+			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+			$lo_request = $this->request->withData('system_order', $attribute->systemOrder);
+			$this->setRequest($lo_request);
 		}
 
 		$this->Categories->ensurePossibleCategory($attribute);

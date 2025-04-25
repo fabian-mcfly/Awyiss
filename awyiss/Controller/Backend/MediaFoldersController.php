@@ -295,6 +295,10 @@ class MediaFoldersController extends Controller {
 			else {
 				$mediaFolder->systemOrder = $mediaFolder->hasOriginal('systemOrder') ? $mediaFolder->getOriginal('systemOrder') : $mediaFolder->get('systemOrder');
 			}
+
+			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+			$lo_request = $this->request->withData('system_order', $mediaFolder->systemOrder);
+			$this->setRequest($lo_request);
 		}
 	}
 

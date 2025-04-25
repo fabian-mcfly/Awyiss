@@ -377,6 +377,10 @@ class WidgetsController extends Controller {
 			else {
 				$widget->systemOrder = $widget->hasOriginal('systemOrder') ? $widget->getOriginal('systemOrder') : $widget->get('systemOrder');
 			}
+
+			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+			$lo_request = $this->request->withData('system_order', $widget->systemOrder);
+			$this->setRequest($lo_request);
 		}
 	}
 

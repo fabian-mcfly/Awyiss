@@ -230,6 +230,10 @@ class WidgetTemplatesController extends Controller {
 			else {
 				$widgetTemplate->systemOrder = $widgetTemplate->hasOriginal('systemOrder') ? $widgetTemplate->getOriginal('systemOrder') : $widgetTemplate->get('systemOrder');
 			}
+
+			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+			$lo_request = $this->request->withData('system_order', $widgetTemplate->systemOrder);
+			$this->setRequest($lo_request);
 		}
 	}
 

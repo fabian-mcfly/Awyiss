@@ -260,6 +260,10 @@ class PagesController extends Controller {
 				else {
 					$lo_page->systemOrder = $lo_page->hasOriginal('systemOrder') ? $lo_page->getOriginal('systemOrder') : $lo_page->get('systemOrder');
 				}
+
+				// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+				$lo_request = $this->request->withData('system_order', $lo_page->systemOrder);
+				$this->setRequest($lo_request);
 			}
 		}
 
@@ -561,6 +565,10 @@ class PagesController extends Controller {
 			else {
 				$page->systemOrder = $page->hasOriginal('systemOrder') ? $page->getOriginal('systemOrder') : $page->get('systemOrder');
 			}
+
+			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+			$lo_request = $this->request->withData('system_order', $page->systemOrder);
+			$this->setRequest($lo_request);
 		}
 
 		$this->set([
