@@ -352,10 +352,11 @@ export default class Sortable {
 			let noOpener = !this.overlay.opener;
 			if (
 				selectedItemsLength > 1 &&
+				this.overlay.opener &&
 				(
 					typeof this.overlay.opener === 'function' ||
 					(
-						typeof this.overlay.opener === 'object' &&
+						typeof(this.overlay.opener) === 'object' &&
 						this.overlay.opener.matches('.MediaSelector-SingleFile')
 					)
 				)
