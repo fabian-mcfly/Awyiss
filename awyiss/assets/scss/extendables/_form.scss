@@ -23,47 +23,7 @@
 
 	.FormInputName-Data {
 		.FormInputType-ListItem {
-			display:grid;
-			padding-right:57px;
-			gap:0 5px;
 			grid-template-columns:repeat(2, 1fr);
-
-			@media screen and (width <= 768px) {
-				padding-right:47px;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					padding-right:47px;
-				}
-			}
-		}
-
-		.SortableHandle {
-			top:6px;
-
-			@media screen and (width <= 540px) {
-				top:10px;
-			}
-		}
-
-		.Button-Remove {
-			width:52px;
-			height:52px;
-			top:0;
-			right:0;
-
-			@media screen and (width <= 768px) {
-				width:42px;
-				height:42px;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					width:42px;
-					height:42px;
-				}
-			}
 		}
 	}
 }

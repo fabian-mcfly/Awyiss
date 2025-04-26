@@ -1,30 +1,23 @@
 .Forms.Form {
-	&:has(input[type="checkbox"][name="send_email"]:checked) {
-		.Fieldset-Email:not(.Collapsed) {
-			:is(
-				.FormInputName-Subject,
-				.FormInputName-EmailTemplateId,
-				.FormInputName-Cc,
-				.FormInputName-Bcc
-			) {
-				display:block;
-			}
-
-			details {
-				display:initial;
-			}
+	&:has(input[type="checkbox"][name="send_email"]:not(:checked)) {
+		:is(
+			.FormInputName-Subject,
+			.FormInputName-EmailTemplateId,
+			.FormInputName-Cc,
+			.FormInputName-Bcc,
+			.Fieldset-Email details
+		) {
+			display:none;
 		}
 	}
 
-	&:has(input[type="checkbox"][name="send_confirmation_email"]:checked) {
-		.Fieldset-ConfirmationEmail:not(.Collapsed) {
-			:is(
-				.FormInputName-SubjectConfirmation,
-				.FormInputName-ConfirmationEmailTemplateId,
-				.FormInputName-SalutationConfirmation
-			) {
-				display:block;
-			}
+	&:has(input[type="checkbox"][name="send_confirmation_email"]:not(:checked)) {
+		:is(
+			.FormInputName-SubjectConfirmation,
+			.FormInputName-ConfirmationEmailTemplateId,
+			.FormInputName-SalutationConfirmation
+		) {
+			display:none;
 		}
 	}
 
@@ -44,24 +37,6 @@
 		}
 	}
 
-	.Fieldset-Email {
-		details {
-			display:none;
-		}
-	}
-
-	:is(
-		.FormInputName-Subject,
-		.FormInputName-SubjectConfirmation,
-		.FormInputName-SalutationConfirmation,
-		.FormInputName-EmailTemplateId,
-		.FormInputName-ConfirmationEmailTemplateId,
-		.FormInputName-Cc,
-		.FormInputName-Bcc
-	) {
-		display:none;
-	}
-
 	:is(
 		.FormInputName-Cc,
 		.FormInputName-Bcc
@@ -71,20 +46,7 @@
 		}
 
 		.FormInputType-ListItem {
-			display:grid;
-			padding-right:57px;
-			gap:0 5px;
 			grid-template-columns:1fr 2fr;
-
-			@media screen and (width <= 768px) {
-				padding-right:47px;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					padding-right:47px;
-				}
-			}
 		}
 
 		.FormInput {
@@ -103,25 +65,11 @@
 		}
 
 		.FormInputType-ListItem {
-			display:grid;
-			padding-right:57px;
-			gap:5px;
-			//grid-template-columns:repeat(3, 1fr) 200px 200px;
 			grid-template-columns:1fr 2fr 100px repeat(2, 2fr);
 
 			@container (width <= 640px) {
 				margin-bottom:30px;
 				grid-template-columns:1fr 1fr;
-			}
-
-			@media screen and (width <= 768px) {
-				padding-right:47px;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					padding-right:47px;
-				}
 			}
 
 			.FormInput {

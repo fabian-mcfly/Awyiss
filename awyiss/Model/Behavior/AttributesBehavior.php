@@ -55,6 +55,7 @@ class AttributesBehavior extends Behavior {
 			'withMatchingAttributes' => 'findWithMatchingAttributes',
 		],
 		'implementedEvents' => [
+			'beforeMarshal',
 			'buildRules',
 			'beforeFind',
 			'beforeCopy',
@@ -269,6 +270,63 @@ class AttributesBehavior extends Behavior {
 		})->toArray();
 
 		return static::$attributes[ $ls_scope ] ?? [];
+	}
+
+
+	/**
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \ArrayObject $data
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
+		if (!$this->getConfig('isAttributesTable')) {
+			return;
+		}
+
+		foreach ($this->getAttributes() as $lo_attribute) {
+			if (!in_array($lo_attribute->inputType, ['input_list', 'input_key_value_list'])) {
+				continue;
+			}
+
+			// If the attribute is not set, skip it
+			if (!isset($data[ $lo_attribute->identifier ]) || !is_array($data[ $lo_attribute->identifier ])) {
+				continue;
+			}
+
+			if ($lo_attribute->inputType === 'input_list') {
+				/**
+				 * Filter out all empty values
+				 *
+				 * @noinspection PhpVariableNamingConventionInspection
+				 */
+				$data[ $lo_attribute->identifier ] = array_filter($data[ $lo_attribute->identifier ], function ($lx_value) {
+					return !empty($lx_value);
+				});
+
+				continue;
+			}
+
+			/**
+			 * For key-value-list items, empty values are allowed
+			 * if the key is set. And empty keys are allowed
+			 * if the value is set.
+			 *
+			 * @noinspection PhpVariableNamingConventionInspection
+			 */
+			$data[ $lo_attribute->identifier ] = array_filter($data[ $lo_attribute->identifier ], function ($value) {
+				return !empty($value['key']) || !empty($value['value']);
+			});
+
+			// If the data isn't empty, combine the key and value into a single array
+			if ($data[ $lo_attribute->identifier ]) {
+				$data[ $lo_attribute->identifier ] = array_combine(
+					array_column($data[ $lo_attribute->identifier ], 'key'),
+					array_column($data[ $lo_attribute->identifier ], 'value')
+				);
+			}
+		}
 	}
 
 

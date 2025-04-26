@@ -33,27 +33,7 @@
 		}
 
 		.FormInputType-ListItem {
-			display:grid;
-			padding-right:57px;
-			transform:translateZ(0);
-			gap:0 5px;
 			grid-template-columns:repeat(2, 1fr);
-
-			@media screen and (width <= 768px) {
-				padding-right:47px;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					padding-right:47px;
-				}
-			}
-
-			&:nth-child(1) {
-				.Button-Remove {
-					transform:translateY(1.05rem);
-				}
-			}
 
 			&:nth-child(n+2) {
 				.Label {
@@ -73,31 +53,6 @@
 			white-space:nowrap;
 			overflow:hidden;
 			text-overflow:ellipsis;
-		}
-
-		.Button-Remove {
-			width:52px;
-			height:52px;
-			top:0;
-			right:0;
-
-			@media screen and (width <= 768px) {
-				width:42px;
-				height:42px;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					width:42px;
-					height:42px;
-				}
-			}
-
-			&.Disabled {
-				opacity:.25;
-				visibility:visible;
-				pointer-events:none;
-			}
 		}
 	}
 }

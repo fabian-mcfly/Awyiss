@@ -59,6 +59,8 @@ class FormHelper extends BaseFormHelper {
 			$config + [
 				'templateClass' => StringTemplate::class,
 				'widgets' => [
+					'inputList' => ['InputList'],
+					'inputKeyValueList' => ['InputKeyValueList'],
 					'translatableText' => ['TranslatableText'],
 				],
 			]

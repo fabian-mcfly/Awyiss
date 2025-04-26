@@ -277,9 +277,9 @@ class AttributesController extends Controller {
 	 */
 	protected function _saveSystemOrder(array $requestData, Table $table): int {
 		/*
-		 * Build an array of the order data
-		 * In the first level, the key is the fieldset, the value is an array of the child ids
-		 * In the second level, the value is the child id, the key is the order, offset by -1
+		 * Build an array of the order data.
+		 * In the first level, the key is the fieldset, the value is an array of the child ids.
+		 * In the second level, the value is the child id, the key is the order, offset by -1.
 		 */
 		$la_orderData = [];
 		foreach ($requestData as $ls_fieldset => $la_children) {
@@ -331,8 +331,9 @@ class AttributesController extends Controller {
 			return !is_string($table);
 		}));
 
-		$lb_translatableDisabled = in_array($attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
-		$lb_requiredDisabled = in_array($attribute->scope, ['contents', 'widgets']);
+		$lb_isInputList = in_array($attribute->inputType, ['input_list', 'input_key_value_list']);
+		$lb_translatableDisabled = in_array($attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages'])) || $lb_isInputList;
+		$lb_requiredDisabled = in_array($attribute->scope, ['contents', 'widgets']) || $lb_isInputList;
 		$lb_columnSpanDisabled = in_array($attribute->scope, ['contents', 'widgets']);
 
 		if (!$lb_translatableDisabled) {

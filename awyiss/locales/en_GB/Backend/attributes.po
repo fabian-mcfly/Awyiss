@@ -98,8 +98,11 @@ msgstr "Date and Time"
 msgid "input_type_time"
 msgstr "Time"
 
-msgid "input_type_media"
-msgstr "Media"
+msgid "input_type_input_list"
+msgstr "Liste"
+
+msgid "input_type_input_key_value_list"
+msgstr "Key-Value List"
 
 msgid "input_type_checkbox"
 msgstr "Checkbox"
@@ -112,12 +115,6 @@ msgstr "Select"
 
 msgid "input_type_select_multiple"
 msgstr "Multi-Select"
-
-msgid "input_type_custom_select"
-msgstr "Custom Select"
-
-msgid "input_type_custom_select_multiple"
-msgstr "Custom Multi-Select"
 
 msgid "input_type_textarea"
 msgstr "Textarea"

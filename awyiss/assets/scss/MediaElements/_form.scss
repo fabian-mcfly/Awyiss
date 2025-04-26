@@ -6,25 +6,11 @@
 		container-type:inline-size;
 
 		.FormInputType-ListItem {
-			display:grid;
-			padding-right:57px;
-			gap:5px;
-			//grid-template-columns:repeat(3, 1fr) 200px 200px;
 			grid-template-columns:repeat(4, 1fr);
 
 			@container (width <= 640px) {
 				margin-bottom:30px;
 				grid-template-columns:repeat(2, 1fr);
-			}
-
-			@media screen and (width <= 768px) {
-				padding-right:47px;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					padding-right:47px;
-				}
 			}
 
 			> .FormInput {

@@ -23,6 +23,10 @@ return [
 	'inputContainer' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}}">{{content}}{{additionalContent}}</div>',
 	// Container element used by control() when a field has an error.
 	'inputContainerError' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}} Error">{{content}}{{error}}{{additionalContent}}</div>',
+	// Wrapper for inputs in an inputList or inputKeyValueList
+	'inputListItem' => '<div class="FormInputType-ListItem">{{content}}</div>',
+	// Wrapper for inputs in an inputList or inputKeyValueList
+	'inputListItemDefault' => '<div class="FormInputType-ListItem FormInputType-ListItem-Default">{{content}}</div>',
 	// Label element when inputs are not nested inside the label.
 	'label' => '<label class="Label{{labelClass}}"{{attrs}}>{{text}}</label>',
 	// Legends created by allControls()

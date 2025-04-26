@@ -31,7 +31,7 @@ export default class InputListManager {
 	 * Selector for FormInputType-List elements
 	 * @type {string}
 	 */
-	selector = '.FormInputType-List';
+	selector = '.FormInputType-List, .FormInputType-InputList, .FormInputType-InputKeyValueList';
 
 	/**
 	 * Constructor

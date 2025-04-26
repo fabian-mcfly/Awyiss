@@ -175,10 +175,15 @@
 
 				{{ FormHelper.control('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.required', {
 					checked: widgetTemplateElement ? widgetTemplateElement.required : false,
+					disabled: widgetAttribute.inputType in ['input_list', 'input_key_value_list'],
 					label: __('required'),
 					hiddenField: true,
 					id: 'WidgetTemplate-WidgetAttribute-' ~ widgetAttribute.identifier|camelize ~ '-Required',
 					value: true,
+					templateVars: {
+						additionalContent: widgetAttribute.inputType not in ['input_list', 'input_key_value_list'] ? '' :
+							FormHelper.hidden('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.required'),
+					},
 				}) }}
 
 				{{ FormHelper.control('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.column_span', {

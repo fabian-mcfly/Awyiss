@@ -482,81 +482,14 @@ textarea {
 		}
 	}
 
-	&Type-List {
-		&Item {
-			margin-left:-40px;
-			margin-bottom:5px;
-			padding-left:40px;
-			position:relative;
-
-			@media screen and (width <= 768px) {
-				margin-left:-30px;
-				padding-left:30px;
-			}
-
-			@media screen and (width <= 540px) {
-				margin-left:-20px;
-				padding-left:20px;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					margin-left:-30px;
-					padding-left:30px;
-				}
-			}
-
-			&.SortableGhost {
-				:is(
-					input,
-					select
-				) {
-					background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
-					outline:2px solid var(--colorSuccess);
-					outline-offset:-2px;
-				}
-			}
-
-			&:nth-child(n+2 of .FormInputType-ListItem) {
-				> .FormInput {
-					> .Label {
-						display:none;
-					}
-				}
-
-				.SortableHandle {
-					top:6px;
-
-					@media screen and (width <= 540px) {
-						top:11px;
-					}
-
-					html.Scale-Small & {
-						@media screen and (width > 768px) {
-							top:1px;
-						}
-					}
-				}
-
-				.Button-Remove {
-					top:0;
-				}
-
-				.ShowTranslationDialog {
-					top:0;
-				}
-			}
-
-			&:hover {
-				.SortableHandle {
-					opacity:1;
-				}
-			}
-
-			> .FormInput {
-				margin-bottom:0;
-			}
-		}
+	:is(
+		&Type-List,
+		&Type-InputList,
+		&Type-InputKeyValueList
+	) {
+		display:grid;
+		gap:5px;
+		grid-template-columns:auto;
 
 		.SortableHandle {
 			width:40px;
@@ -578,8 +511,6 @@ textarea {
 			@media screen and (width <= 768px) {
 				width:30px;
 				height:30px;
-				//top:calc(1rem + 2px);
-				//top:6px;
 			}
 
 			@media screen and (width <= 540px) {
@@ -594,7 +525,6 @@ textarea {
 					width:30px;
 					height:30px;
 					top:calc(1rem + 2px);
-					//top:1px;
 				}
 			}
 
@@ -706,6 +636,118 @@ textarea {
 				line-height:20px;
 				text-indent:1px;
 			}
+		}
+	}
+
+	&Type-InputKeyValueList {
+		.FormInputType-ListItem {
+			grid-template-columns:1fr 2fr;
+		}
+	}
+
+	&Type-ListItem {
+		display:grid;
+		gap:5px;
+		margin-left:-40px;
+		padding-left:40px;
+		padding-right:57px;
+		position:relative;
+		grid-template-columns:auto;
+
+		@media screen and (width <= 768px) {
+			margin-left:-30px;
+			padding-left:30px;
+			padding-right:47px;
+		}
+
+		@media screen and (width <= 540px) {
+			margin-left:-20px;
+			padding-left:20px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				margin-left:-30px;
+				padding-left:30px;
+				padding-right:47px;
+			}
+		}
+
+		&.SortableGhost {
+			:is(
+				input,
+				select
+			) {
+				background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
+				outline:2px solid var(--colorSuccess);
+				outline-offset:-2px;
+			}
+		}
+
+		&:nth-child(1 of .FormInputType-ListItem) {
+			&:not(:has(label)) {
+				.SortableHandle {
+					top:6px;
+
+					@media screen and (width <= 540px) {
+						top:11px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							top:1px;
+						}
+					}
+				}
+
+				.Button-Remove {
+					top:0;
+				}
+
+				.ShowTranslationDialog {
+					top:0;
+				}
+			}
+		}
+
+		&:nth-child(n+2 of .FormInputType-ListItem) {
+			> .FormInput {
+				> .Label {
+					display:none;
+				}
+			}
+
+			.SortableHandle {
+				top:6px;
+
+				@media screen and (width <= 540px) {
+					top:11px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						top:1px;
+					}
+				}
+			}
+
+			.Button-Remove {
+				top:0;
+			}
+
+			.ShowTranslationDialog {
+				top:0;
+			}
+		}
+
+		&:hover {
+			.SortableHandle {
+				opacity:1;
+			}
+		}
+
+		> .FormInput {
+			margin-bottom:0;
 		}
 	}
 

@@ -186,10 +186,15 @@
 
 				{{ FormHelper.control('content_template_elements.' ~ (loop.index0 + availableContentElements|length) ~ '.required', {
 					checked: contentTemplateElement ? contentTemplateElement.required : false,
+					disabled: contentAttribute.inputType in ['input_list', 'input_key_value_list'],
 					label: __('required'),
 					hiddenField: true,
 					id: 'ContentTemplate-ContentAttribute-' ~ contentAttribute.identifier|camelize ~ '-Required',
 					value: true,
+					templateVars: {
+						additionalContent: contentAttribute.inputType not in ['input_list', 'input_key_value_list'] ? '' :
+						FormHelper.hidden('content_template_elements.' ~ (loop.index0 + availableContentElements|length) ~ '.required'),
+					},
 				}) }}
 
 				{{ FormHelper.control('content_template_elements.' ~ (loop.index0 + availableContentElements|length) ~ '.column_span', {

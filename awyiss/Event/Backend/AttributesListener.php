@@ -4,6 +4,7 @@
 namespace Awyiss\Event\Backend;
 
 
+use ArrayObject;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Attribute;
 use Cake\Datasource\FactoryLocator;
@@ -30,6 +31,7 @@ class AttributesListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
+			'Model.Attributes.beforeMarshal' => 'beforeMarshal',
 			'Model.Attributes.beforeSave' => 'beforeSave',
 			'Model.Attributes.afterSaveCommit' => 'afterSaveCommit',
 		];
@@ -38,9 +40,29 @@ class AttributesListener implements EventListenerInterface {
 
 	/**
 	 * @param \Cake\Event\Event $event
+	 * @param \ArrayObject $data
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options): void {
+		if (empty($data['input_type'])) {
+			return;
+		}
+
+		if (in_array($data['input_type'], ['input_list', 'input_key_value_list'])) {
+			// Force the database type of input_list and input_key_value_list to be json
+			$data['type'] = 'json';
+			$data['required'] = false;
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Attribute $entity
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	public function beforeSave(Event $event, Attribute $entity): void {
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
@@ -81,7 +103,7 @@ class AttributesListener implements EventListenerInterface {
 	 * @param Event $event
 	 * @param \Awyiss\Model\Entity\Attribute $entity
 	 * @return void
-	 * @see \Awyiss\Queue\Task\AttributesTask
+	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, Attribute $entity): void {

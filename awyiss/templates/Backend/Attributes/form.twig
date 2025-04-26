@@ -50,7 +50,10 @@
 							{% endblock %}
 
 							{% block formControlType %}
-								{{ FormHelper.control('type', {columnSpan: 6}) }}
+								{{ FormHelper.control('type', {
+									columnSpan: 6,
+									readonly: attribute.inputType in ['input_list', 'input_key_value_list'],
+								}) }}
 							{% endblock %}
 
 							{% block fieldsetGeneralAttributes %}
@@ -112,7 +115,12 @@
 							{% endblock %}
 
 							{% block formControlInputType %}
-								{{ FormHelper.control('input_type', {columnSpan: 6, empty: false, options: combine(availableInputTypes, availableInputTypes|map(inputType => __('input_type_' ~ inputType)))}) }}
+								{{ FormHelper.control('input_type', {
+									columnSpan: 6,
+									empty: false,
+									options: combine(availableInputTypes, availableInputTypes|map(inputType => __('input_type_' ~ inputType))),
+									'data-form-updater': true,
+								}) }}
 							{% endblock %}
 
 							{% block formControlColumnSpan %}

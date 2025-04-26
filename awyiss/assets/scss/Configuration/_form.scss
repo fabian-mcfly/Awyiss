@@ -1,37 +1,4 @@
 .Configuration.Form {
-	.FormInputType-ListItem {
-		padding-right:57px;
-
-		@media screen and (width <= 768px) {
-			padding-right:47px;
-		}
-
-		html.Scale-Small & {
-			@media screen and (width > 768px) {
-				padding-right:47px;
-			}
-		}
-
-		.Button-Remove {
-			height:52px;
-			width:52px;
-			top:0;
-			right:0;
-
-			@media screen and (width <= 768px) {
-				width:42px;
-				height:42px;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					width:42px;
-					height:42px;
-				}
-			}
-		}
-	}
-
 	fieldset:not(.Collapsed) {
 		.FormInputName-LanguageShortcode {
 			display:block;
