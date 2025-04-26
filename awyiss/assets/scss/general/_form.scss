@@ -1419,14 +1419,29 @@ textarea {
 ) {
 	display:block;
 	padding-inline:20px;
+	position:sticky;
+	top:160px;
 
 	@media screen and (width <= 768px) {
 		padding-bottom:20px;
 	}
 
+	@media screen and (width <= 640px) {
+		position:relative;
+		top:0;
+	}
+
 	@media screen and (width <= 540px) {
 		padding-inline:10px;
 		padding-bottom:10px;
+	}
+
+	html.👀 & {
+		top:60px;
+
+		@media screen and (width <= 640px) {
+			top:0;
+		}
 	}
 
 	html.Scale-Small & {
@@ -1463,23 +1478,6 @@ textarea {
 }
 
 .Fieldset-MediaElements-Available {
-	margin-bottom:0;
-	position:sticky;
-	top:160px;
-
-	@media screen and (width <= 640px) {
-		position:relative;
-		top:0;
-	}
-
-	html.👀 & {
-		top:60px;
-
-		@media screen and (width <= 640px) {
-			top:0;
-		}
-	}
-
 	.List {
 		max-height:calc(100dvh - 240px);
 		margin:0 -10px 0;
