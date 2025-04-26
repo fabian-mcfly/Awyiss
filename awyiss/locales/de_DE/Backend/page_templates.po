@@ -83,8 +83,11 @@ msgstr "Dateiname"
 msgid "used_for_pages"
 msgstr "Verwendungen"
 
-msgid "fieldset_content_areas"
-msgstr "Inhaltsbereiche"
+msgid "content_areas_available"
+msgstr "Verfügbare Inhaltsbereiche"
+
+msgid "content_areas_assigned"
+msgstr "Zugewiesene Inhaltsbereiche"
 
 msgid "content_areas[new][title][0]"
 msgstr "Titel"

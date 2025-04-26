@@ -65,15 +65,26 @@ export default class PageTemplatesController {
 	 */
 	initializeForm() {
 		// Select the ContentAreaNew list and the Row element
-		const contentAreaNew = document.querySelector('.ContentAreas');
+		const contentAreas = document.querySelectorAll('.ContentAreas-List');
+		contentAreas.forEach(contentArea => {
+			contentArea.sortable = Sortable.create(contentArea, {
+				chosenClass: 'SortableChosen',
+				direction: 'vertical',
+				group: 'ContentAreas',
+				ghostClass: 'SortableGhost',
+				invertSwap: true,
+				preventOnFilter: false,
+				swapThreshold: .9,
+				onEnd: (event) => {
+					const target = event.item;
+					const list = event.to;
 
-		contentAreaNew.sortable = Sortable.create(contentAreaNew, {
-			chosenClass: 'SortableChosen',
-			fallbackOnBody: true,
-			ghostClass: 'SortableGhost',
-			invertSwap: true,
-			preventOnFilter: false,
-			swapThreshold: .4,
+					const checkbox = target.querySelector('input[type="checkbox"]');
+					setTimeout(() => {
+						checkbox.checked = list.classList.contains('ContentAreas-List-Assigned');
+					}, 50);
+				}
+			});
 		});
 	}
 }

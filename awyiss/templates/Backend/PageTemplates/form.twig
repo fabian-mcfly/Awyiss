@@ -48,48 +48,71 @@
 				{% endblock %}
 
 				{% block fieldsetContentAreas %}
-					<fieldset class="Fieldset-ContentAreas">
-						<legend>{{ __('fieldset_content_areas') }}</legend>
+					{% set assignedContentAreas = pageTemplate.contentAreas ? pageTemplate.contentAreas|column('id') : [] %}
+					{% set assignedContentAreasListItems = '' %}
+					{% set availableContentAreasListItems = '' %}
+					{% for key, contentArea in contentAreas %}
+						{% set content %}
+							<li>
+								<label class="Title">{{ contentArea.label }} (<em>{{ contentArea.identifier }}</em>)</label>
+								{{ FormHelper.control('content_areas[' ~ key ~'][id]', {
+									checked: contentArea.id in assignedContentAreas,
+									escape: false,
+									hiddenField: false,
+									label: contentArea.label ~ ' (<em>' ~ contentArea.identifier ~ '</em>)',
+									id: 'ContentTemplate-ContentElements-' ~ contentArea.identifier|camelize,
+									value: contentArea.id,
+								}) }}
+							</li>
+						{% endset %}
+						{% if contentArea.id in assignedContentAreas %}
+							{% set assignedContentAreasListItems = assignedContentAreasListItems ~ content %}
+						{% else %}
+							{% set availableContentAreasListItems = availableContentAreasListItems ~ content %}
+						{% endif %}
+					{% endfor %}
 
+					<fieldset class="Fieldset-ContentAreaAssignments">
 						{% block fieldsetContentAreasInner %}
-							{% block formControlContentAreas %}
-								{% set assignedContentAreas = pageTemplate.contentAreas ? pageTemplate.contentAreas|column('id') : [] %}
+							{% block formControlContentAreasAvailable %}
+								<fieldset class="Fieldset-ContentAreasAvailable Collapsible">
+									<legend>{{ __('content_areas_available') }}</legend>
 
-								<ul class="NoList ContentAreas ColumnSpan-4">
-									{% for key, contentArea in contentAreas %}
-										{% block formControlContentArea %}
-											<li>
-												<label for="ContentTemplate-ContentElements-{{ contentArea.identifier|camelize }}">
-													{{ FormHelper.control('content_areas[' ~ key ~'][id]', {
-														checked: contentArea.id in assignedContentAreas,
-														escape: false,
-														hiddenField: false,
-														label: contentArea.label ~ ' (<em>' ~ contentArea.identifier ~ '</em>)',
-														id: 'ContentTemplate-ContentElements-' ~ contentArea.identifier|camelize,
-														value: contentArea.id,
-													}) }}
-												</label>
-											</li>
-										{% endblock %}
-									{% endfor %}
-								</ul>
-
-								<div
-									class="FormInput FormInputType-List FormInputType-Default FormInputName-ContentAreasNew ColumnSpan-8"
-									data-list-item-add="{{ __('list_item_add') }}"
-									data-list-item-remove="{{ __('list_item_remove') }}">
-									<div class="FormInputType-ListItem">
-										{{ FormHelper.control('content_areas[new][title][0]') }}
-										{{ FormHelper.control('content_areas[new][identifier][0]') }}
-									</div>
-								</div>
-
-								{% block fieldsetContentElementsErrors %}
-									{% if contentTemplate.error('contentAreas') %}
-										{{ FormHelper.error('contentAreas') }}
-									{% endif %}
-								{% endblock %}
+									{% block formControlContentAreasAvailableInner %}
+										<ul class="NoList ContentAreas-List ContentAreas-List-Available">
+											{{ availableContentAreasListItems|raw }}
+										</ul>
+									{% endblock %}
+								</fieldset>
 							{% endblock %}
+
+							{% block formControlContentAreasAssigned %}
+								<fieldset class="Fieldset-ContentAreasAssigned Collapsible">
+									<legend>{{ __('content_areas_assigned') }}</legend>
+
+									{% block formControlContentAreasAssignedInner %}
+										<ul class="NoList ContentAreas-List ContentAreas-List-Assigned">
+											{{ assignedContentAreasListItems|raw }}
+										</ul>
+									{% endblock %}
+
+									<div
+										class="FormInput FormInputType-List FormInputName-ContentAreasNew"
+										data-list-item-add="{{ __('list_item_add') }}"
+										data-list-item-remove="{{ __('list_item_remove') }}">
+										<div class="FormInputType-ListItem">
+											{{ FormHelper.control('content_areas[new][title][0]') }}
+											{{ FormHelper.control('content_areas[new][identifier][0]') }}
+										</div>
+									</div>
+
+									{% block fieldsetContentElementsErrors %}
+										{% if contentTemplate.error('contentAreas') %}
+											{{ FormHelper.error('contentAreas') }}
+										{% endif %}
+									{% endblock %}
+								{% endblock %}
+							</fieldset>
 						{% endblock %}
 					</fieldset>
 				{% endblock %}

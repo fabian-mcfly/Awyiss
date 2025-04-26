@@ -1,36 +1,135 @@
 .PageTemplates.Form {
-	.ContentAreas {
-		@media screen and (width < 640px) {
-			grid-column:1 / -1;
+	.Fieldset-ContentAreaAssignments {
+		padding:0;
+		box-shadow:none;
+		background-color:transparent;
+		grid-template-columns:repeat(2, 1fr);
+
+		@media screen and (width <= 768px) {
+			padding:0;
+		}
+
+		@media screen and (width <= 640px) {
+			grid-template-columns:1fr;
+			row-gap:calc(var(--lineHeightMain) * 1.5);
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding:0;
+			}
+		}
+	}
+
+	:is(
+		.Fieldset-ContentAreasAvailable,
+		.Fieldset-ContentAreasAssigned
+	) {
+		padding-inline:20px;
+		position:sticky;
+		top:160px;
+		grid-template-columns:auto;
+
+		@media screen and (width <= 768px) {
+			padding-bottom:20px;
+		}
+
+		@media screen and (width <= 640px) {
+			position:relative;
+			top:0;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-inline:10px;
+			padding-bottom:10px;
+		}
+
+
+		html.👀 & {
+			top:60px;
+
+			@media screen and (width <= 640px) {
+				top:0;
+			}
+		}
+	}
+
+	.ContentAreas-List {
+		&:not(:has(li)) {
+			height:72px;
+			position:relative;
+
+			&::after {
+				@extend %EmptyList;
+			}
 		}
 
 		li {
-			margin-top:10px;
-			position:relative;
-			cursor:move;
+			display:grid;
+			min-height:50px;
+			margin:5px 0 0 0;
+			padding:10px 20px;
+			border-radius:5px;
+			background-color:var(--colorNeutralLight);
+			list-style-type:none;
+			transition:background-color .3s ease-in-out;
+			align-items:center;
+
+			@media screen and (width <= 540px) {
+				padding:0 10px;
+				line-height:1.2;
+			}
+
+			html.🌚 & {
+				background-color:var(--colorSemiDark);
+			}
 
 			&.SortableGhost {
-				&::before {
-					content:'';
-					border-radius:5px;
-					background-color:color-mix(in srgb, var(--colorSuccess), transparent 90%);
-					position:absolute;
-					inset:-9px -10px -10px -10px;
-					outline:2px solid var(--colorSuccess);
-					outline-offset:-2px;
+				background-color:var(--colorSuccess);
+				outline:2px solid var(--colorSuccess);
+				outline-offset:-2px;
+
+				html.🌚 & {
+					&:is(
+					*,
+					[data-assignable="false"],
+					:hover
+				) {
+						background-color:var(--colorSuccess);
+					}
+				}
+
+				&:hover {
+					background-color:var(--colorSuccess);
+				}
+			}
+
+			&:hover {
+				background-color:var(--colorLight);
+
+				html.🌚 & {
+					background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 				}
 			}
 
 			&:first-child {
 				margin-top:0;
 			}
+
+			.Title {
+				display:block;
+				line-height:1;
+				cursor:move;
+			}
+		}
+
+		.FormInputType-Checkbox {
+			display:none;
 		}
 	}
 
 	.FormInputName-ContentAreasNew {
-		@media screen and (width < 640px) {
-			grid-column:1 / -1;
-		}
+		grid-column:1 / -1;
 
 		.FormInputType-ListItem {
 			grid-template-columns:repeat(2, 1fr);

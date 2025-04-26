@@ -83,8 +83,11 @@ msgstr "File name"
 msgid "used_for_pages"
 msgstr "Used for pages"
 
-msgid "fieldset_content_areas"
-msgstr "Content areas"
+msgid "content_areas_available"
+msgstr "Available Content areas"
+
+msgid "content_areas_assigned"
+msgstr "Assigned Content areas"
 
 msgid "content_areas[new][title][0]"
 msgstr "Title"
