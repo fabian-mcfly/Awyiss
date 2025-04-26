@@ -746,7 +746,7 @@ class AssetHelper extends Helper {
 				$la_parts = explode('/', $ls_moduleName);
 
 				$ls_folder = $la_parts[0];
-				if (in_array($la_parts[0], ['modules', 'Controller'])) {
+				if (in_array($la_parts[0], ['Modules', 'Controller'])) {
 					// Remove the first part of the path
 					array_shift($la_parts);
 				}

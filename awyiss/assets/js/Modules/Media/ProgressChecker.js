@@ -19,7 +19,7 @@ export default class ProgressChecker {
 
 	constructor() {
 		// Register the service worker for checking the progress of file creation
-		navigator.serviceWorker?.register(`${baseUrl}awyiss/assets/js/modules/Media/ProgressCheckerWorker.js`, {scope: `${baseUrl}`})
+		navigator.serviceWorker?.register(`${baseUrl}awyiss/assets/js/Modules/Media/ProgressCheckerWorker.js`, {scope: `${baseUrl}`})
 		.then((registration) => {
 			this.worker = registration;
 
