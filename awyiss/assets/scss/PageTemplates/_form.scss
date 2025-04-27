@@ -54,8 +54,14 @@
 		}
 	}
 
+	.Fieldset-ContentAreasAvailable {
+		.ContentTemplates {
+			display:none;
+		}
+	}
+
 	.ContentAreas-List {
-		&:not(:has(li)) {
+		&:not(:has(.ContentAreas-ListItem)) {
 			height:72px;
 			position:relative;
 
@@ -63,69 +69,88 @@
 				@extend %EmptyList;
 			}
 		}
+	}
 
-		li {
-			display:grid;
-			min-height:50px;
-			margin:5px 0 0 0;
-			padding:10px 20px;
-			border-radius:5px;
-			background-color:var(--colorNeutralLight);
-			list-style-type:none;
-			transition:background-color .3s ease-in-out;
-			align-items:center;
+	.ContentAreas-ListItem {
+		display:grid;
+		min-height:50px;
+		margin:5px 0 0 0;
+		padding:10px 20px;
+		border-radius:5px;
+		background-color:var(--colorNeutralLight);
+		list-style-type:none;
+		transition:background-color .3s ease-in-out;
+		align-items:center;
 
-			@media screen and (width <= 540px) {
-				padding:0 10px;
-				line-height:1.2;
-			}
+		@media screen and (width <= 540px) {
+			padding:0 10px;
+			line-height:1.2;
+		}
+
+		html.🌚 & {
+			background-color:var(--colorSemiDark);
+		}
+
+		&.SortableGhost {
+			background-color:var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-2px;
 
 			html.🌚 & {
-				background-color:var(--colorSemiDark);
-			}
-
-			&.SortableGhost {
-				background-color:var(--colorSuccess);
-				outline:2px solid var(--colorSuccess);
-				outline-offset:-2px;
-
-				html.🌚 & {
-					&:is(
-					*,
-					[data-assignable="false"],
-					:hover
-				) {
-						background-color:var(--colorSuccess);
-					}
-				}
-
-				&:hover {
+				&:is(
+				*,
+				[data-assignable="false"],
+				:hover
+			) {
 					background-color:var(--colorSuccess);
 				}
 			}
 
 			&:hover {
-				background-color:var(--colorLight);
-
-				html.🌚 & {
-					background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
-				}
-			}
-
-			&:first-child {
-				margin-top:0;
-			}
-
-			.Title {
-				display:block;
-				line-height:1;
-				cursor:move;
+				background-color:var(--colorSuccess);
 			}
 		}
 
-		.FormInputType-Checkbox {
+		&:hover {
+			background-color:var(--colorLight);
+
+			html.🌚 & {
+				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
+			}
+		}
+
+		&:first-child {
+			margin-top:0;
+		}
+
+		.Title {
+			display:block;
+			line-height:1;
+			cursor:move;
+		}
+
+		> .FormInputType-Checkbox {
 			display:none;
 		}
+	}
+
+	.ContentTemplates {
+		margin-top:10px;
+
+		.Title {
+			font-size:.8rem;
+		}
+	}
+
+	.ContentTemplates-List {
+		display:grid;
+		margin-top:5px;
+		gap:5px;
+		grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+	}
+
+	.ContentTemplates-ListItem {
+
 	}
 
 	.FormInputName-ContentAreasNew {

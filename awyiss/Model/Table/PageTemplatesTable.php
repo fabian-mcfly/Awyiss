@@ -20,6 +20,7 @@ use Cake\Validation\Validator;
  * PageTemplates Model
  *
  * @property \Awyiss\Model\Table\ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
+ * @property \Awyiss\Model\Table\ContentTemplateContentAreasTable&\Awyiss\ORM\Association\HasMany $ContentTemplateContentAreas
  * @property \Awyiss\Model\Table\PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
  * @method \Awyiss\Model\Entity\PageTemplate newDefaultEntity(array $additionalData = [], array $options = [])
@@ -61,6 +62,10 @@ class PageTemplatesTable extends Table {
 		$this->belongsToMany('ContentAreas', [
 			'sort' => ['system_order' => 'ASC'],
 			'through' => 'PageTemplateContentAreas',
+		]);
+
+		$this->hasMany('ContentTemplateContentAreas', [
+			'saveStrategy' => 'replace',
 		]);
 
 		$this->belongsTo('PageRoles');

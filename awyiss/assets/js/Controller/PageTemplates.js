@@ -79,8 +79,8 @@ export default class PageTemplatesController {
 					const target = event.item;
 					const list = event.to;
 
-					const checkbox = target.querySelector('input[type="checkbox"]');
 					setTimeout(() => {
+						const checkbox = target.querySelector('input[type="checkbox"]');
 						checkbox.checked = list.classList.contains('ContentAreas-List-Assigned');
 					}, 50);
 				}

@@ -200,16 +200,16 @@
 					}
 
 					&::before {
-						top:.9rem;
+						top:1rem;
 						left:20px;
 
 						@media screen and (width <= 768px) {
-							top:.2rem;
+							top:.5rem;
 						}
 
 						html.Scale-Small & {
 							@media screen and (width > 768px) {
-								top:.2rem;
+								top:.5rem;
 							}
 						}
 					}

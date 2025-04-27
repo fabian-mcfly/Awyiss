@@ -1,6 +1,7 @@
 {#
 @var pageTemplate \Awyiss\Model\Entity\PageTemplate
 @var contentAreas \Awyiss\Model\Entity\ContentArea[]
+@var contentTemplates \Awyiss\Model\Entity\ContentTemplate[]
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -47,33 +48,81 @@
 					</fieldset>
 				{% endblock %}
 
-				{% block fieldsetContentAreas %}
-					{% set assignedContentAreas = pageTemplate.contentAreas ? pageTemplate.contentAreas|column('id') : [] %}
-					{% set assignedContentAreasListItems = '' %}
-					{% set availableContentAreasListItems = '' %}
-					{% for key, contentArea in contentAreas %}
-						{% set content %}
-							<li>
-								<label class="Title">{{ contentArea.label }} (<em>{{ contentArea.identifier }}</em>)</label>
-								{{ FormHelper.control('content_areas[' ~ key ~'][id]', {
-									checked: contentArea.id in assignedContentAreas,
-									escape: false,
-									hiddenField: false,
-									label: contentArea.label ~ ' (<em>' ~ contentArea.identifier ~ '</em>)',
-									id: 'ContentTemplate-ContentElements-' ~ contentArea.identifier|camelize,
-									value: contentArea.id,
-								}) }}
-							</li>
-						{% endset %}
-						{% if contentArea.id in assignedContentAreas %}
-							{% set assignedContentAreasListItems = assignedContentAreasListItems ~ content %}
-						{% else %}
-							{% set availableContentAreasListItems = availableContentAreasListItems ~ content %}
-						{% endif %}
-					{% endfor %}
 
+				{% set assignedContentAreas = pageTemplate.contentAreas ? pageTemplate.contentAreas|column('id') : [] %}
+				{% set assignedContentAreasListItems = '' %}
+				{% set availableContentAreasListItems = '' %}
+
+				{% for key, contentArea in contentAreas %}
+					{% set content %}
+						{% block contentAreasListItem %}
+							<li class="ListItem ContentAreas-ListItem">
+								{% block contentAreasListItemLabel %}
+								<label class="Title">{{ contentArea.label }} (<em>{{ contentArea.identifier }}</em>)</label>
+								{% endblock %}
+
+								{% block contentAreasListItemControl %}
+									{{ FormHelper.control('content_areas[' ~ key ~'][id]', {
+										checked: contentArea.id in assignedContentAreas,
+										escape: false,
+										hiddenField: false,
+										label: contentArea.label ~ ' (<em>' ~ contentArea.identifier ~ '</em>)',
+										id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|camelize,
+										value: contentArea.id,
+									}) }}
+								{% endblock %}
+
+								{% block contentAreasContentTemplates %}
+									<div class="ContentTemplates">
+										{% block contentAreasContentTemplatesLabel %}
+											<label class="Title">{{ __('content_templates') }}</label>
+										{% endblock %}
+
+										{% block contentAreasContentTemplatesInner %}
+											<ul class="NoList ContentTemplates-List">
+												{% for contentTemplate in contentTemplates %}
+													{% block contentAreasContentTemplatesListItem %}
+														<li class="ListItem ContentTemplates-ListItem">
+															{{ FormHelper.control('content_template_content_areas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][content_template_id]', {
+																checked: contentArea.contentTemplates[ contentTemplate.id ] is defined,
+																escape: false,
+																hiddenField: false,
+																id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|camelize ~ '-ContentTemplate-' ~ contentTemplate.fileName|camelize,
+																label: contentTemplate.title,
+																type: 'checkbox',
+																value: contentTemplate.id,
+															}) }}
+
+															{{ FormHelper.hidden('content_template_content_areas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][content_area_id]', {
+																value: contentArea.id,
+															}) }}
+
+															{% if contentArea.contentTemplates[ contentTemplate.id ] is defined %}
+																{{ FormHelper.hidden('content_template_content_areas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][id]', {
+																	value: contentArea.contentTemplates[ contentTemplate.id ].id,
+																}) }}
+															{% endif %}
+														</li>
+													{% endblock %}
+												{% endfor %}
+											</ul>
+										{% endblock %}
+									</div>
+								{% endblock %}
+							</li>
+						{% endblock %}
+					{% endset %}
+
+					{% if contentArea.id in assignedContentAreas %}
+						{% set assignedContentAreasListItems = assignedContentAreasListItems ~ content %}
+					{% else %}
+						{% set availableContentAreasListItems = availableContentAreasListItems ~ content %}
+					{% endif %}
+				{% endfor %}
+
+				{% block fieldsetContentAreaAssignments %}
 					<fieldset class="Fieldset-ContentAreaAssignments">
-						{% block fieldsetContentAreasInner %}
+						{% block fieldsetContentAreaAssignmentsInner %}
 							{% block formControlContentAreasAvailable %}
 								<fieldset class="Fieldset-ContentAreasAvailable Collapsible">
 									<legend>{{ __('content_areas_available') }}</legend>

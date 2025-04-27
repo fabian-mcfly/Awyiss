@@ -8,6 +8,7 @@ use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Routing\Router;
+use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -93,12 +94,7 @@ class PageTemplatesController extends Controller {
 			$this->save($lo_pageTemplate);
 		}
 
-		$la_contentAreas = $this->PageTemplates->ContentAreas->find()->all()->toArray();
-
-		$this->set([
-			'pageTemplate' => $lo_pageTemplate,
-			'contentAreas' => $la_contentAreas,
-		]);
+		$this->setViewVars($lo_pageTemplate);
 	}
 
 
@@ -124,21 +120,7 @@ class PageTemplatesController extends Controller {
 			$this->save($lo_pageTemplate, 'edit');
 		}
 
-		$lo_query = $this->PageTemplates->ContentAreas->find();
-		if ($lo_pageTemplate->contentAreas) {
-			/** @noinspection PhpUndefinedMethodInspection */
-			$lo_query->orderByDesc($lo_query->newExpr($lo_query->func()->FIELD([
-				'id' => 'identifier',
-				...array_reverse(collection($lo_pageTemplate->contentAreas)->extract('id')->toArray()),
-			])), true);
-		}
-
-		$la_contentAreas = $lo_query->all()->toArray();
-
-		$this->set([
-			'pageTemplate' => $lo_pageTemplate,
-			'contentAreas' => $la_contentAreas,
-		]);
+		$this->setViewVars($lo_pageTemplate);
 	}
 
 
@@ -223,6 +205,19 @@ class PageTemplatesController extends Controller {
 			}
 		}
 
+		if (!empty($la_requestData['content_template_content_areas'])) {
+			if (empty($la_requestData['content_areas'])) {
+				unset($la_requestData['content_template_content_areas']);
+			}
+			else {
+				$la_contentAreaIds = array_column($la_requestData['content_areas'], 'id');
+				$la_requestData['content_template_content_areas'] = array_merge(...$la_requestData['content_template_content_areas']);
+				$la_requestData['content_template_content_areas'] = array_filter($la_requestData['content_template_content_areas'], function (array $element) use ($la_contentAreaIds) {
+					return !empty($element['content_template_id']) && in_array($element['content_area_id'], $la_contentAreaIds);
+				});
+			}
+		}
+
 		$this->PageTemplates->patchEntity($pageTemplate, $la_requestData, [
 			'associated' => array_merge($la_associated, [
 				'ContentAreas' => [
@@ -230,6 +225,9 @@ class PageTemplatesController extends Controller {
 					'associated' => [
 						'_joinData',
 					],
+				],
+				'ContentTemplateContentAreas' => [
+					'fields' => ['content_template_id', 'content_area_id'],
 				],
 			]),
 			'validate' => !$this->request->getData('reload_form'),
@@ -312,5 +310,49 @@ class PageTemplatesController extends Controller {
 		}
 
 		return $la_newContentAreas;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\PageTemplate $pageTemplate
+	 * @return void
+	 */
+	protected function setViewVars(PageTemplate $pageTemplate): void {
+		$lo_query = $this->PageTemplates->ContentAreas->find();
+
+		if ($pageTemplate->contentAreas && !$pageTemplate->isNew()) {
+			/** @noinspection PhpUndefinedMethodInspection */
+			$lo_query->orderByDesc($lo_query->newExpr($lo_query->func()->FIELD([
+				'id' => 'identifier',
+				...array_reverse(collection($pageTemplate->contentAreas)->extract('id')->toArray()),
+			])), true);
+
+			$lo_query->contain([
+				'ContentTemplates' => function (SelectQuery $query) use ($pageTemplate) {
+					return $query->where(['ContentTemplateContentAreas.page_template_id' => $pageTemplate->id]);
+				},
+			])->formatResults(function (CollectionInterface $collection): CollectionInterface {
+				return $collection->map(function ($row) {
+					/** @var \Awyiss\Model\Entity\ContentArea $row */
+					if (!is_array($row->contentTemplates)) {
+						return $row;
+					}
+
+					$row->contentTemplates = collection($row->contentTemplates)->indexBy('id')->toArray();
+
+					return $row;
+				});
+			});
+		}
+
+		$la_contentAreas = $lo_query->all()->toArray();
+
+		$la_contentTemplates = $this->PageTemplates->ContentAreas->ContentTemplates->find('translations')->all()->toArray();
+
+		$this->set([
+			'pageTemplate' => $pageTemplate,
+			'contentAreas' => $la_contentAreas,
+			'contentTemplates' => $la_contentTemplates,
+		]);
 	}
 }

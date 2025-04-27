@@ -97,3 +97,7 @@ msgstr "Identifier"
 
 msgid "file_changes_in_progress"
 msgstr "A file change is currently in progress. Please wait until it is completed."
+
+msgid "content_templates"
+msgstr "Content templates"
+

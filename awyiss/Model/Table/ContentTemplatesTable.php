@@ -105,6 +105,10 @@ class ContentTemplatesTable extends Table {
 			'dependent' => true,
 			'saveStrategy' => 'replace',
 		]);
+
+		$this->belongsToMany('PageTemplates', [
+			'through' => 'ContentTemplateContentAreas',
+		]);
 	}
 
 

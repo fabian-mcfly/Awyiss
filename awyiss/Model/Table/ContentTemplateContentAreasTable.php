@@ -64,10 +64,17 @@ class ContentTemplateContentAreasTable extends Table {
 
 
 		$validator->requirePresence([
-			//'contentTemplateId',
-			//'contentAreaId',
+			'contentTemplateId',
+		], function (array $context): bool {
+			return empty($context['data']['page_template_id']) && $context['newRecord'];
+		});
+
+
+		$validator->requirePresence([
 			'pageTemplateId',
-		], 'create');
+		], function (array $context): bool {
+			return empty($context['data']['content_template_id']) && $context['newRecord'];
+		});
 
 
 		$validator->add('id', [

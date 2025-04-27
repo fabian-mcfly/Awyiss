@@ -27,6 +27,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\PageRole $pageRole
  * @property \Awyiss\Model\Entity\ContentArea[] $contentAreas
+ * @property \Awyiss\Model\Entity\ContentTemplateContentArea[] $contentTemplateContentAreas
  * @property \Awyiss\Model\Entity\PageTemplateContentArea[] $_joinData
  */
 class PageTemplate extends Entity {
@@ -40,6 +41,7 @@ class PageTemplate extends Entity {
 		'systemOrder' => true,
 		'active' => true,
 		'contentAreas' => true,
+		'contentTemplateContentAreas' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -56,6 +58,7 @@ class PageTemplate extends Entity {
 		'deleted_on' => 'deletedOn',
 		'page_role' => 'pageRole',
 		'content_areas' => 'contentAreas',
+		'content_template_content_areas' => 'contentTemplateContentAreas',
 		'used_for_pages' => 'usedForPages',
 	];
 
