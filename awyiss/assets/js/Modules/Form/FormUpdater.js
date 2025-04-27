@@ -236,7 +236,7 @@ export default class FormUpdater {
 	 */
 	hideFlashMessages(form) {
 		// Check if the main area has a flas message and remove it
-		const formWrapper = form.closest('.Form');
+		const formWrapper = form?.closest('.Form');
 		const flashMessages = formWrapper?.parentElement.querySelectorAll('.FlashMessage');
 		if (!flashMessages?.length) {
 			return;
