@@ -20,9 +20,9 @@ return [
 	// Generic input element.
 	'input' => '<input type="{{type}}" name="{{name}}" {{attrs}}>',
 	// Container element used by control().
-	'inputContainer' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}}">{{content}}{{additionalContent}}</div>',
+	'inputContainer' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}}"{{containerAttrs}}>{{content}}{{additionalContent}}</div>',
 	// Container element used by control() when a field has an error.
-	'inputContainerError' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}} Error">{{content}}{{error}}{{additionalContent}}</div>',
+	'inputContainerError' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}} Error"{containerAttrs}}>{{content}}{{error}}{{additionalContent}}</div>',
 	// Wrapper for inputs in an inputList or inputKeyValueList
 	'inputListItem' => '<div class="FormInputType-ListItem">{{content}}</div>',
 	// Wrapper for inputs in an inputList or inputKeyValueList
@@ -34,7 +34,7 @@ return [
 	// Multi-Checkbox input set title element.
 	'multicheckboxTitle' => '<legend class="Legend">{{text}}</legend>',
 	// Label element used for radio and multi-checkbox inputs.
-	'nestingLabel' => '{{hidden}}{{input}}<label class="Label"{{attrs}}>{{text}}</label>',
+	'nestingLabel' => '{{hidden}}{{input}}<label class="Label" {{attrs}}>{{text}}</label>',
 	// Wrapping container for radio input/label,
 	'radioWrapper' => '{{label}}',
 	// Textarea input element,

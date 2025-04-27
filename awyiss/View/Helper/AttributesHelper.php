@@ -495,12 +495,6 @@ class AttributesHelper extends Helper {
 			case 'datetime':
 				$la_options['type'] = 'datetime-local';
 				break;
-			case 'input_list':
-				$la_options['type'] = 'inputList';
-				break;
-			case 'input_key_value_list':
-				$la_options['type'] = 'inputKeyValueList';
-				break;
 			case 'select':
 				$la_options['empty'] ??= true;
 				break;

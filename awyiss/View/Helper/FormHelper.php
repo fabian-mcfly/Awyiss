@@ -59,8 +59,8 @@ class FormHelper extends BaseFormHelper {
 			$config + [
 				'templateClass' => StringTemplate::class,
 				'widgets' => [
-					'inputList' => ['InputList'],
-					'inputKeyValueList' => ['InputKeyValueList'],
+					'input_list' => ['InputList'],
+					'input_key_value_list' => ['InputKeyValueList'],
 					'translatableText' => ['TranslatableText'],
 				],
 			]
@@ -201,6 +201,18 @@ class FormHelper extends BaseFormHelper {
 		}
 
 		$la_options = $this->setTimezoneOptions($fieldName, $la_options);
+
+		$la_options['templateVars'] ??= [];
+		if (in_array(($la_options['type'] ?? null), ['input_list', 'input_key_value_list'])) {
+			$la_options['templateVars']['containerAttrs'] ??= [];
+
+			$la_options['templateVars']['containerAttrs']['data-list-item-add'] = __('list_item_add');
+			$la_options['templateVars']['containerAttrs']['data-list-item-remove'] = __('list_item_remove');
+		}
+
+		if (is_array($la_options['templateVars']['containerAttrs'] ?? null)) {
+			$la_options['templateVars']['containerAttrs'] = $this->templater()->formatAttributes($la_options['templateVars']['containerAttrs']);
+		}
 
 		return parent::control($fieldName, $la_options);
 	}
@@ -588,7 +600,7 @@ class FormHelper extends BaseFormHelper {
 	 * @param array $options Additional options for configuring the controls.
 	 * @param array $baseOptions Basic options to be merged into each language-specific configuration.
 	 * @param string $realType The type of the field (e.g., text, number).
-	 * @param array $values An array of values that may include language-specific translations.
+	 * @param array|null $values An array of values that may include language-specific translations.
 	 * @return array Modified options array, including controls for multiple languages.
 	 * @throws \ReflectionException
 	 * @throws \Exception
