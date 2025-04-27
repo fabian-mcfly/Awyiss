@@ -293,6 +293,9 @@ export default class ButtonHandler {
 	handleConfirm(originalEvent) {
 		this.eventHandler.remove('click', this.boundClick, this.dialog.confirmYes);
 
+		// Close the dialog
+		this.dialog.close();
+
 		// In case the target element is not a link or part of a form, resend a new event.
 		// This way, the event can be caught by other event listeners that might be listening for it, yet we were able to get a confirmation.
 		const newEvent = new CustomMouseEvent('click', {sentFromConfirmDialog: true}, {
@@ -304,8 +307,6 @@ export default class ButtonHandler {
 		// Dispatch the event on the same target as the original event
 		originalEvent.target.dispatchEvent(newEvent);
 
-		// Close the dialog
-		this.dialog.close();
 	}
 
 	/**
