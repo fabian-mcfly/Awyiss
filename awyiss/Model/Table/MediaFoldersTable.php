@@ -20,6 +20,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\MediaFoldersTable&\Awyiss\ORM\Association\BelongsTo $ParentMediaFolders
  * @property \Awyiss\Model\Table\MediaFoldersTable&\Awyiss\ORM\Association\HasMany $ChildMediaFolders
  * @property \Awyiss\Model\Table\MediaTable&\Awyiss\ORM\Association\HasMany $Media
+ * @property \Awyiss\Model\Table\MediaAssignmentsTable&\Awyiss\ORM\Association\HasMany $MediaAssignments
  * @method \Awyiss\Model\Entity\MediaFolder newDefaultEntity(array $additionalData = [], array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getNestedChildren(MediaFolder $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface|null getChildren(MediaFolder $entity, array $options = [])

@@ -32,6 +32,7 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\MediaFolder $parentMediaFolder
  * @property \Awyiss\Model\Entity\MediaFolder[] $childMediaFolders
  * @property \Awyiss\Model\Entity\Media[] $media
+ * @property \Awyiss\Model\Entity\MediaAssignment[] $mediaAssignments
  * @property \Awyiss\Model\Entity\Language $language
  */
 class MediaFolder extends Entity {
