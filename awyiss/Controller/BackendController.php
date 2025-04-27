@@ -383,6 +383,8 @@ abstract class BackendController extends AppController {
 
 				// Setting the response status to 422 Unprocessable Entity
 				$this->response = $this->response->withStatus(422, 'Unable to process entity');
+
+				return;
 			}
 			else {
 				$this->Flash->error(__d('system', 'system_order_not_enabled'));
@@ -403,6 +405,8 @@ abstract class BackendController extends AppController {
 
 				// Setting the response status to 422 Unprocessable Entity
 				$this->response = $this->response->withStatus(422, 'Unable to process entity');
+
+				return;
 			}
 			else {
 				$this->Flash->error(__d('system', 'system_order_manual_order_is_disabled'));
