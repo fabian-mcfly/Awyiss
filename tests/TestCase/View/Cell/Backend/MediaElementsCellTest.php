@@ -156,8 +156,8 @@ class MediaElementsCellTest extends TestCase {
 			$this->assertStringContainsString('<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-SingleFile', $output);
 		}
 		elseif ($type === 'hidden_folder') {
-			$this->assertStringContainsString('<input type="hidden" name="media_assignments[0][hidden_folder][id]"', $output);
-			$this->assertStringContainsString('<input type="hidden" name="media_assignments[0][hidden_folder][media_folder_id]"', $output);
+			$this->assertStringContainsString('<input type="hidden" name="media_assignments[1][hidden_folder][id]"', $output);
+			$this->assertStringContainsString('<input type="hidden" name="media_assignments[1][hidden_folder][media_folder_id]"', $output);
 		}
 		else {
 			$this->assertSame('', $output);
