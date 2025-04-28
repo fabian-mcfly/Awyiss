@@ -138,13 +138,16 @@ class MediaController extends Controller {
 
 		$lo_mediaFoldersQuery = $this->Media->MediaFolders->find('active')->find('threaded')->find('forCurrentLanguage');
 
-		// Exclude hidden folders but include the selected one
-		$lo_mediaFoldersQuery->where([
-			'OR' => [
+		$la_where = [];
+		if (!$this->request->getParam('includeHidden', false)) {
+			$la_where['OR'] = [
 				'hidden' => false,
 				'id' => $this->Categories->getSelectedCategory(),
-			],
-		]);
+			];
+		}
+
+		// Exclude hidden folders but include the selected one
+		$lo_mediaFoldersQuery->where($la_where);
 
 		$la_mediaFolders = $lo_mediaFoldersQuery->all()->groupBy(function (MediaFolder $element) {
 			if ($element->hidden) {
