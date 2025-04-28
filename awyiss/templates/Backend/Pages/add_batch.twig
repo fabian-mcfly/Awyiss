@@ -62,39 +62,45 @@
 		</div>
 	{% endblock %}
 
-	{{ FormHelper.create(page, {method: 'post', id: 'PageForm', idPrefix: 'page'}) }}
+	{{ block('formOpen') }}
+
+	{{ block('sidebarToggle') }}
 
 	{% block fieldsets %}
 		<div class="Fieldsets">
-			{% block formAddBatch %}
-				{{ block("fieldsetPresentation") }}
+			{% block mainFieldsets %}
+				<div class="Main-Fieldsets">
+					{% block fieldsetGeneral %}
+						<fieldset class="Fieldset-General">
+							<legend>{{ __('fieldset_general') }}</legend>
 
-				{{ block("fieldsetConditions") }}
+							{% block fieldsetGeneralInner %}
+								{% block formControlPages %}
+									{{ FormHelper.control('pages', {type: 'textarea'}) }}
+								{% endblock %}
 
-				{% block fieldsetGeneral %}
-					<fieldset class="Fieldset-General">
-						<legend>{{ __('fieldset_general') }}</legend>
-
-						{% block fieldsetGeneralInner %}
-							{% block formControlPages %}
-								{{ FormHelper.control('pages', {type: 'textarea'}) }}
+								{% block fieldsetGeneralAttributes %}
+									{{ AttributesHelper.allControls('general') }}
+								{% endblock %}
 							{% endblock %}
+						</fieldset>
+					{% endblock %}
 
-							{{ parent() }}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
+					{{ block('fieldsetContent') }}
 
-				{{ block("fieldsetContent") }}
+					{{ block('fieldsetMedia') }}
 
-				{{ block("fieldsetAttributes") }}
-
-				{{ block("formInputReloadForm") }}
+					{{ block('fieldsetMediaElementAssignments') }}
+				</div>
 			{% endblock %}
+
+			{{ block('sidebarFieldsets') }}
+
+			{{ block('formInputReloadForm') }}
 		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() }}
+	{{ block('formClose') }}
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">

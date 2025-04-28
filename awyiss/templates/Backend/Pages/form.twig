@@ -25,7 +25,9 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{{ FormHelper.create(page, {method: 'post', id: 'PageForm', idPrefix: 'page'}) }}
+{% block formOpen %}
+	{{ FormHelper.create(page, {method: 'post', id: 'PageForm', idPrefix: 'page'}) }}
+{% endblock %}
 
 {% block sidebarToggle %}
 	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
@@ -65,7 +67,6 @@
 									templateVars: {
 										additionalContent: '<span class="PrePath">' ~ page.languageShortcode ~ '/' ~ (parentRecord.slug ? (parentRecord.slug ~ '/') : '') ~ '</span>',
 									},
-									val: page.slug|split('/')|last,
 									'data-autofill-from': 'title',
 									'data-replacement-char': '-',
 								}) }}
@@ -225,4 +226,6 @@
 	{{ element('lock_dialog', {entity: page}) }}
 {% endblock %}
 
-{{ FormHelper.end() }}
+{% block formClose %}
+	{{ FormHelper.end() }}
+{% endblock %}
