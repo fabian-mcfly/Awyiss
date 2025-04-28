@@ -4,7 +4,9 @@
 namespace Awyiss\Controller\Frontend;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Controller\AppController;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -37,8 +39,15 @@ class SitemapController extends AppController {
 		]);
 
 		$lo_pages = $lo_query->all()->listNested()->indexBy('id');
-		$la_urls = [];
 
+		// Get the first language
+		$la_languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
+		/** @var \Awyiss\Model\Entity\Language $lo_firstLanguage */
+		$lo_firstLanguage = reset($la_languages);
+
+		$la_firstPagesOfLanguage = [];
+
+		$la_urls = [];
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
 		foreach ($lo_pages as $lo_page) {
 			$lo_lastMod = $lo_page->changedOn ?? $lo_page->createdOn;
@@ -47,8 +56,22 @@ class SitemapController extends AppController {
 				$lo_lastMod = max($lo_lastMod, $lo_page->contents[0]->changedOn ?? $lo_page->contents[0]->createdOn);
 			}
 
+			if (isset($la_firstPagesOfLanguage[ $lo_page->languageShortcode ])) {
+				$ls_url = Router::url(['lang' => $lo_page->languageShortcode, 'slug' => $lo_page->slug, '_full' => true]);
+			}
+			else {
+				$la_firstPagesOfLanguage[ $lo_page->languageShortcode ] = true;
+
+				if ($lo_page->languageShortcode === $lo_firstLanguage->shortcode) {
+					$ls_url = Router::url(['_full' => true, '_name' => 'FrontendRoot']);
+				}
+				else {
+					$ls_url = Router::url(['lang' => $lo_page->languageShortcode, '_full' => true, '_name' => 'FrontendLanguageRoot']);
+				}
+			}
+
 			$la_urls[] = [
-				'loc' => Router::url(['lang' => $lo_page->languageShortcode, 'slug' => $lo_page->slug, '_full' => true]),
+				'loc' => $ls_url,
 				'lastmod' => $lo_lastMod->format('Y-m-d'),
 				'changefreq' => 'weekly',
 				'priority' => '0.5',
