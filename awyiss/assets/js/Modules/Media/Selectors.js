@@ -344,8 +344,13 @@ export class MediaFolderSelect {
 	 *
 	 * @returns {Promise<Element>}
 	 */
-	async fetchMediaFolderSelect() {
-		const response = await fetch(`${baseUrl}backend/${languageShortcode}/media/folder-select/`, {
+	async fetchMediaFolderSelect(event) {
+		let includeHidden = '';
+		if (event.ctrlKey || event.metaKey) {
+			includeHidden = 'include-hidden:1/';
+		}
+
+		const response = await fetch(`${baseUrl}backend/${languageShortcode}/media/folder-select/${includeHidden}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -383,7 +388,7 @@ export class MediaFolderSelect {
 
 		this.dialog.showModal();
 
-		const form = await this.fetchMediaFolderSelect();
+		const form = await this.fetchMediaFolderSelect(event);
 
 		if (!form) {
 			return;

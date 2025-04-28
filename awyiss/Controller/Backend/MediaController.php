@@ -551,7 +551,13 @@ class MediaController extends Controller {
 	public function folderSelect(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->all();
+		$la_where = [];
+
+		if (!$this->request->getParam('includeHidden', false)) {
+			$la_where['hidden'] = false;
+		}
+
+		$lo_mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->where($la_where)->all();
 		$la_mediaFolders = $lo_mediaFolders->groupBy(function (MediaFolder $element) {
 			return $element->languageShortcode ?? '';
 		})->toArray();
