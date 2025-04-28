@@ -789,6 +789,11 @@ class PagesController extends Controller {
 		$lo_pageTemplates = $this->getPageTemplates();
 		$this->ensurePossibleTemplate($page, $lo_pageTemplates);
 
+		if ($page->slug) {
+			$la_parts = explode('/', $page->slug);
+			$page->slug = end($la_parts);
+		}
+
 		$this->set([
 			'page' => $page,
 			'pageTemplates' => $lo_pageTemplates,
@@ -866,6 +871,11 @@ class PagesController extends Controller {
 		foreach (explode("\n", $text) as $ls_title) {
 			$ls_title = rtrim($ls_title);
 			$ls_title = ltrim($ls_title, " \n\r\v\0");
+
+			if (empty($ls_title)) {
+				continue;
+			}
+
 			$li_level = substr_count($ls_title, "\t");
 
 			//Update parent stack for the current level
@@ -895,7 +905,7 @@ class PagesController extends Controller {
 			$la_data += [
 				'tempId' => $li_currentId,
 				'title' => trim($ls_title),
-				'slug' => $ls_title,
+				'slug' => mb_strlen($ls_title) >= 3 ? $ls_title : 'page-' . $ls_title,
 				'level' => $li_level,
 				'parentId' => $li_level === 0 ? $li_rootParentId : null,
 				'tempParentId' => $li_level === 0 ? null : $li_parentId,
