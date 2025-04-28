@@ -220,3 +220,9 @@ msgstr "Focus point"
 
 msgid "media_folders_toggle"
 msgstr "Toggle Media folders"
+
+msgid "confirm_in_use"
+msgstr "The file is in use. Are you sure you want to delete the file?"
+
+msgid "confirm_multiple_in_use"
+msgstr "At least one file is in use. Are you sure you want to delete the selected files?"

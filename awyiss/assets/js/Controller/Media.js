@@ -62,8 +62,6 @@ export default class MediaController {
 	 * @returns {void}
 	 */
 	initOverview() {
-		this.bindAutoOverwriteChangeLabel();
-
 		const mediaList = document.querySelector(this.selector);
 
 		if (mediaList) {
@@ -72,10 +70,14 @@ export default class MediaController {
 				saveSystemOrderButtons: document.querySelectorAll('.Button-SaveSystemOrder')
 			});
 
+			this.eventHandler.add('click', this.handleClick.bind(this), mediaList);
+
 			// No add button? Most likely not authorized to add media items
 			if (!document.querySelector('.Button-Add')) {
 				return;
 			}
+
+			this.bindAutoOverwriteChangeLabel();
 
 			this.upload = new Upload(mediaList, {
 				dropZone: document.querySelector('#UploadQueue-DropZone'),
@@ -94,8 +96,12 @@ export default class MediaController {
 			return;
 		}
 
+		this.bindAutoOverwriteChangeLabel();
+
 		const overviewTable = document.querySelector('.Overview-Table');
 		const uploadQueue = document.querySelector('#UploadQueue');
+
+		this.eventHandler.add('click', this.handleClick.bind(this), overviewTable);
 
 		this.upload = new Upload(overviewTable.querySelector('tbody'), {
 			dropZone: document.querySelector('#UploadQueue-DropZone'),
@@ -148,6 +154,13 @@ export default class MediaController {
 		}, uploadQueue);
 	}
 
+	/**
+	 * Binds a change event listener to the auto-overwrite option checkbox, enabling dynamic updates
+	 * to the corresponding labels' titles based on the checkbox state. The method fetches data to update
+	 * the server-side configuration for the auto-overwrite setting when the checkbox state is toggled.
+	 *
+	 * @return {void}
+	 */
 	bindAutoOverwriteChangeLabel() {
 		const autoOverwrite = document.querySelector('input[name="upload_auto_overwrite"]');
 		const labels = document.querySelectorAll('label[for="UploadAutoOverwrite"]');
@@ -226,6 +239,59 @@ export default class MediaController {
 		.catch(error => {
 			console.error('There has been a problem with the fetch operation:', error);
 		});
+	}
+
+	/**
+	 * Handle the click event
+	 * @param {Event} event - The click event
+	 * @returns {void}
+	 */
+	async handleClick(event) {
+		const target = event.target.closest('.Button-Delete');
+		if (target) {
+			const response = await this.handleDelete(event);
+
+			window.buttonHandler.dialog.confirmYes.onclick = undefined
+			window.buttonHandler.dialog.confirmNo.onclick = undefined;
+
+			if (!response) {
+				event.preventDefault();
+				return false;
+			}
+
+			window.location.href = event.target.href;
+		}
+	}
+
+
+	/**
+	 * Handle the delete button click event.
+	 * @param {Event} event - The click event.
+	 */
+	async handleDelete(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		const usageCount = parseInt(event.target.dataset.usageCount);
+
+		if (usageCount === 0) {
+			return true;
+		}
+
+		window.buttonHandler.dialog.message.innerHTML = event.target.dataset.confirmInUse;
+
+		window.buttonHandler.dialog.showModal();
+		window.buttonHandler.dialog.focus();
+
+		return new Promise((resolve, reject) => {
+			window.buttonHandler.dialog.confirmYes.onclick = () => {
+				return resolve(true);
+			};
+
+			window.buttonHandler.dialog.confirmNo.onclick = () => {
+				return resolve(false);
+			};
+		})
 	}
 }
 

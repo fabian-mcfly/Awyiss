@@ -116,8 +116,19 @@ class MediaAssignmentsTable extends Table {
 		]);
 
 
-		$validator->notEmptyString('mediaId');
+		$validator->notEmptyString('mediaId', null, function ($context) {
+			return empty($context['data']['media_folder_id']);
+		});
 		$validator->add('mediaId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$validator->notEmptyString('mediaFolderId', null, function ($context) {
+			return empty($context['data']['media_id']);
+		});
+		$validator->add('mediaFolderId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);

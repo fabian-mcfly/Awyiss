@@ -55,7 +55,10 @@
 										'data-confirm-yes': __('confirm_delete_yes'),
 										'data-confirm-yes-class': 'Button-Delete',
 										'data-confirm-no': __('confirm_delete_no'),
-										'data-confirm': __('confirm_delete', mediaItem.id) }) }}
+										'data-confirm': __('confirm_delete', mediaItem.id),
+										'data-confirm-in-use': __('confirm_in_use'),
+										'data-usage-count': mediaItem.usageCount ?? 0,
+									}) }}
 								{% endif %}
 							{% endblock %}
 						</span>

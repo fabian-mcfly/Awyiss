@@ -87,3 +87,18 @@
 		{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'edit') : __('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
 	{% endif %}
 {% endblock %}
+
+{% block tableOverviewCellActionsDelete %}
+	{% if AuthorizationHelper.isAccessible('delete') %}
+		{{ HtmlHelper.link(__('delete'), {action: 'delete', id: entity.id}, {
+			class: 'Button Button-Small Button-Delete',
+			'data-confirm-title': __('confirm_delete_title'),
+			'data-confirm-yes': __('confirm_delete_yes'),
+			'data-confirm-yes-class': 'Button-Delete',
+			'data-confirm-no': __('confirm_delete_no'),
+			'data-confirm': __('confirm_delete', entity.id),
+			'data-confirm-in-use': __('confirm_in_use'),
+			'data-usage-count': entity.usageCount ?? 0,
+		}) }}
+	{% endif %}
+{% endblock %}

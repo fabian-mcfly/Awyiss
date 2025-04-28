@@ -61,7 +61,8 @@
 									data-confirm-yes="{{ __('confirm_delete_yes') }}"
 									data-confirm-yes-class="Button-Delete"
 									data-confirm-no="{{ __('confirm_delete_no') }}"
-									data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
+									data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}"
+									data-confirm-multiple-in-use="{{ __('confirm_multiple_in_use') }}">{{ __('delete') }}</button>
 							{% endif %}
 						{% endblock %}
 					{% endif %}
@@ -173,7 +174,8 @@
 							data-confirm-yes="{{ __('confirm_delete_yes') }}"
 							data-confirm-yes-class="Button-Delete"
 							data-confirm-no="{{ __('confirm_delete_no') }}"
-							data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
+							data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}"
+							data-confirm-multiple-in-use="{{ __('confirm_multiple_in_use') }}">{{ __('delete') }}</button>
 					{% endif %}
 
 					<button class="Button Button-Close">

@@ -220,3 +220,9 @@ msgstr "Fokuspunkt"
 
 msgid "media_folders_toggle"
 msgstr "Medianordner anzeigen"
+
+msgid "confirm_in_use"
+msgstr "Die Datei wird verwendet. Sind Sie sicher, dass Sie die Datei löschen möchten?"
+
+msgid "confirm_multiple_in_use"
+msgstr "Mindestens eine Datei wird verwendet. Sind Sie sicher, dass Sie die ausgewählten Dateien löschen möchten?"

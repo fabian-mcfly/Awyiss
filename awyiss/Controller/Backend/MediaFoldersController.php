@@ -17,6 +17,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
+use InvalidArgumentException;
 
 
 /**
@@ -300,6 +301,88 @@ class MediaFoldersController extends Controller {
 			$lo_request = $this->request->withData('system_order', $mediaFolder->systemOrder);
 			$this->setRequest($lo_request);
 		}
+	}
+
+
+	/**
+	 * Check if the media folder or one of its children,
+	 * or items in them, are used in the system.
+	 *
+	 * @param \Awyiss\Model\Entity\MediaFolder|null $mediaFolder
+	 * @return bool
+	 */
+	public function checkUsage(?MediaFolder $mediaFolder = null): bool|Response {
+		$lo_mediaFolder = $mediaFolder;
+		if (!$lo_mediaFolder) {
+			// Check if the request contains a media folder ID
+			$li_mediaFolderId = $this->request->getParam('id');
+
+			if ($li_mediaFolderId) {
+				$lo_mediaFolder = $this->MediaFolders->findById($li_mediaFolderId)->first();
+			}
+		}
+
+		// Still no media folder? Throw an error
+		if (!$lo_mediaFolder) {
+			if (!$this->request->is('ajax')) {
+				throw new InvalidArgumentException('No media folder was provided');
+			}
+
+			$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse']);
+
+			$this->set('success', false);
+			$this->set('inUse');
+			$this->set('message', __('record_not_found'));
+
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+
+			return $this->render()->withStatus(404);
+		}
+
+		$lo_children = $this->MediaFolders->getNestedChildren($lo_mediaFolder);
+		$la_mediaFolderIds = [$lo_mediaFolder->id, ...array_column($lo_children->toArray(), 'id')];
+
+		$li_mediaFolderAssignments = $this->MediaFolders->MediaAssignments->find()->where([
+			'media_folder_id IN' => $la_mediaFolderIds,
+		])->count();
+
+		if ($li_mediaFolderAssignments) {
+			if (!$this->request->is('ajax')) {
+				return true;
+			}
+
+			$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse']);
+
+			$this->set('success', true);
+			$this->set('inUse', true);
+			$this->set('message', __('error_in_use'));
+
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+
+			return $this->render()->withStatus(200);
+		}
+
+		// Check if any of the files inside the media folders are used
+		$li_files = $this->MediaFolders->Media->find()->where([
+			'media_folder_id IN' => $la_mediaFolderIds,
+		])->contain(['MediaAssignments'])->matching('MediaAssignments')->count();
+
+		if (!$this->request->is('ajax')) {
+			return $li_files > 0;
+		}
+
+		$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse']);
+
+		$this->set('success', true);
+		$this->set('inUse', $li_files > 0);
+		$this->set('message', __('error_files_in_use'));
+
+		// Set the view class to JSON
+		$this->viewBuilder()->setClassName('Json');
+
+		return $this->render()->withStatus(200);
 	}
 
 

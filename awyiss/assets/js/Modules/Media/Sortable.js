@@ -83,7 +83,21 @@ export default class Sortable {
 				button.removeAttribute('href');
 			}
 
-			this.eventHandler.add('click', this.deleteItems.bind(this), button);
+			this.eventHandler.add('click', async(event) => {
+				const response = await this.handleDelete(event);
+
+				window.buttonHandler.dialog.confirmYes.onclick = undefined
+				window.buttonHandler.dialog.confirmNo.onclick = undefined;
+
+				if (!response) {
+					event.preventDefault();
+					return false;
+				}
+
+				window.buttonHandler.dialog.close();
+
+				this.deleteItems();
+			}, button);
 		});
 
 		// Add an event listener to the save buttons
@@ -216,6 +230,46 @@ export default class Sortable {
 		}
 
 		return isDefaultOrder;
+	}
+
+	/**
+	 * Handle the delete button click event.
+	 * @param {Event} event - The click event.
+	 */
+	async handleDelete(event) {
+		event.preventDefault();
+		event.stopPropagation();
+
+		let selectedItems = this.multiSelection.getSelectedItems();
+
+		if (selectedItems.length === 0) {
+			return true;
+		}
+
+		let usageCount = 0;
+		selectedItems.forEach(item => {
+			const deleteButton = item.querySelector('.Button-Delete');
+			usageCount += parseInt(deleteButton.dataset.usageCount);
+		});
+
+		if (usageCount === 0) {
+			return true;
+		}
+
+		window.buttonHandler.dialog.message.innerHTML = event.target.dataset.confirmMultipleInUse;
+
+		window.buttonHandler.dialog.showModal();
+		window.buttonHandler.dialog.focus();
+
+		return new Promise((resolve, reject) => {
+			window.buttonHandler.dialog.confirmYes.onclick = () => {
+				return resolve(true);
+			};
+
+			window.buttonHandler.dialog.confirmNo.onclick = () => {
+				return resolve(false);
+			};
+		})
 	}
 
 	/**

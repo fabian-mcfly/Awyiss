@@ -82,3 +82,10 @@ msgstr "Unterordner von"
 
 msgid "path"
 msgstr "Pfad"
+
+msgid "error_in_use"
+msgstr "Der Medienorder und/oder mind. ein Unterordner wird verwendet. Sind Sie sicher, dass Sie den Medienordner inkl. aller Dateien löschen möchten?"
+
+msgid "error_files_in_use"
+msgstr "Mindestens eine Datei wird verwendet. Sind Sie sicher, dass Sie den Medienordner inkl. aller Dateien löschen möchten?"
+
