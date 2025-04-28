@@ -196,6 +196,7 @@ class PagesTable extends Table {
 		$validator->notEmptyString('slug');
 		$validator->add('slug', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'minLength' => ['rule' => ['minLength', 3]],
 			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
