@@ -74,21 +74,19 @@ export default class MediaFoldersController {
 
 		const data = await response.json();
 
-		if (data.inUse === false) {
+		if (data.inUse === false && data.hiddenChildren === false) {
 			return true;
 		}
 
 		window.buttonHandler.dialog.message.innerHTML = data.message;
+		window.buttonHandler.dialog.confirmYes.disabled = true;
 
 		window.buttonHandler.dialog.showModal();
 		window.buttonHandler.dialog.focus();
 
 		return new Promise((resolve, reject) => {
-			window.buttonHandler.dialog.confirmYes.onclick = () => {
-				return resolve(true);
-			};
-
 			window.buttonHandler.dialog.confirmNo.onclick = () => {
+				window.buttonHandler.dialog.confirmYes.disabled = false;
 				return resolve(false);
 			};
 		})

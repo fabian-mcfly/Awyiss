@@ -221,6 +221,18 @@ class MediaFoldersController extends Controller {
 			return $this->redirect(['action' => 'overview']);
 		}
 
+		$lo_children = $this->MediaFolders->getNestedChildren($lo_mediaFolder);
+
+		// Check if any of the subfolders is hidden
+		$la_hiddenSubfolders = $lo_children->filter(function (MediaFolder $mediaFolder) {
+			return $mediaFolder->hidden;
+		})->extract('id')->toArray();
+		if ($lo_mediaFolder->hidden || $la_hiddenSubfolders) {
+			$this->Flash->error(__('error_subfolders_hidden'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
 		if ($this->MediaFolders->delete($lo_mediaFolder)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
@@ -328,10 +340,11 @@ class MediaFoldersController extends Controller {
 				throw new InvalidArgumentException('No media folder was provided');
 			}
 
-			$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse']);
+			$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse', 'hiddenChildren']);
 
 			$this->set('success', false);
 			$this->set('inUse');
+			$this->set('hiddenChildren');
 			$this->set('message', __('record_not_found'));
 
 			// Set the view class to JSON
@@ -341,6 +354,31 @@ class MediaFoldersController extends Controller {
 		}
 
 		$lo_children = $this->MediaFolders->getNestedChildren($lo_mediaFolder);
+
+		// Check if any of the subfolders is hidden
+		$la_hiddenSubfolders = $lo_children->filter(function (MediaFolder $mediaFolder) {
+			return $mediaFolder->hidden;
+		})->extract('id')->toArray();
+
+		if ($lo_mediaFolder->hidden || $la_hiddenSubfolders) {
+			if (!$this->request->is('ajax')) {
+				return true;
+			}
+
+			$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse', 'hiddenChildren']);
+
+			$this->set('success', true);
+			$this->set('inUse');
+			$this->set('hiddenChildren', true);
+			$this->set('message', __('error_subfolders_hidden'));
+
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+
+			return $this->render()->withStatus(200);
+		}
+
+
 		$la_mediaFolderIds = [$lo_mediaFolder->id, ...array_column($lo_children->toArray(), 'id')];
 
 		$li_mediaFolderAssignments = $this->MediaFolders->MediaAssignments->find()->where([
@@ -352,10 +390,11 @@ class MediaFoldersController extends Controller {
 				return true;
 			}
 
-			$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse']);
+			$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse', 'hiddenChildren']);
 
 			$this->set('success', true);
 			$this->set('inUse', true);
+			$this->set('hiddenChildren', false);
 			$this->set('message', __('error_in_use'));
 
 			// Set the view class to JSON
@@ -373,10 +412,11 @@ class MediaFoldersController extends Controller {
 			return $li_files > 0;
 		}
 
-		$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse']);
+		$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse', 'hiddenChildren']);
 
 		$this->set('success', true);
 		$this->set('inUse', $li_files > 0);
+		$this->set('hiddenChildren', false);
 		$this->set('message', __('error_files_in_use'));
 
 		// Set the view class to JSON

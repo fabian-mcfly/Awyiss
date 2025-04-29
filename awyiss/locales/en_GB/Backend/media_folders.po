@@ -88,3 +88,6 @@ msgstr "The media Folder and/or at least one subfolder is in use. Are you sure y
 
 msgid "error_files_in_use"
 msgstr "At least one file is in use. Are you sure you want to delete the media Folder including all files?"
+
+msgid "error_subfolders_hidden"
+msgstr "At least one subfolder is a hidden folder and is used by the system. Deletion is not possible."

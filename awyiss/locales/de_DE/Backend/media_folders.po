@@ -89,3 +89,5 @@ msgstr "Der Medienorder und/oder mind. ein Unterordner wird verwendet. Sind Sie 
 msgid "error_files_in_use"
 msgstr "Mindestens eine Datei wird verwendet. Sind Sie sicher, dass Sie den Medienordner inkl. aller Dateien löschen möchten?"
 
+msgid "error_subfolders_hidden"
+msgstr "Mindestens ein Unterordner ist ein versteckter Ordner und wird vom System verwendet. Das Löschen ist nicht möglich."
