@@ -24,6 +24,7 @@
 	<label class="Label">{{ label }}</label>
 
 	{{ FormHelper.input('media_assignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '.media_folder_id', {
+		required: false,
 		type: 'text',
 		value: entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].mediaFolderId,
 	}) }}
