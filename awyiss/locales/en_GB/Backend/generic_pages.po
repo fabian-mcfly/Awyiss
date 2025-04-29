@@ -117,7 +117,7 @@ msgstr "Categories"
 msgid "configuration_category_frontend_media_folders"
 msgstr "Media folders"
 
-msgid "configuration_identifier_frontend_parent_folder_id"
+msgid "configuration_identifier_frontend_media_folders_parent_folder_id"
 msgstr "Subfolder of"
 
 msgid "configuration_identifier_frontend_categories_forced_root_page_id"
