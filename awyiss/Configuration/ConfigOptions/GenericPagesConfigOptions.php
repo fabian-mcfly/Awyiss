@@ -221,7 +221,48 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					values: $this->getPages(...),
 				),
 			],
+			'mediaFolders' => [
+				/**
+				 * This option should normally be in the backend realm,
+				 * but it is required to be in the frontend realm to
+				 * use the correct languages
+				 */
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'parentFolderId',
+					localizable: true,
+					nullable: true,
+					type: ConfigOptionType::ListKey,
+					values: $this->getMediaFolders(...),
+				),
+			],
 		]);
+	}
+
+
+	/**
+	 * Returns a list of all media folders
+	 */
+	protected function getMediaFolders(?string $languageShortcode): array {
+		$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+		$lo_mediaFolders = $lo_mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode)->find('threaded')->where([
+			'id !=' => 1,
+			'hidden' => false,
+			'OR' => [
+				'language_shortcode' . ($languageShortcode === null ? ' IS' : '') => $languageShortcode,
+			],
+		])->all();
+		$lo_mediaFolders = $lo_mediaFolders->listNested();
+
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		foreach ($lo_mediaFolders as $lo_page) {
+			$lo_page->setVirtual(['level']);
+			//Add the current depth as a level-property to the entity
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_page->level = $lo_mediaFolders->getDepth();
+		}
+
+		return $lo_mediaFolders->printer('label', 'id', '- ')->toArray();
 	}
 
 

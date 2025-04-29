@@ -114,5 +114,11 @@ msgstr "Also copy pages with other roles"
 msgid "configuration_category_frontend_categories"
 msgstr "Categories"
 
+msgid "configuration_category_frontend_media_folders"
+msgstr "Media folders"
+
+msgid "configuration_identifier_frontend_parent_folder_id"
+msgstr "Subfolder of"
+
 msgid "configuration_identifier_frontend_categories_forced_root_page_id"
 msgstr "Forced parent page ID"

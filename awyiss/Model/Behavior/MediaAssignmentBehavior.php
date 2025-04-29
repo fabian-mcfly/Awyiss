@@ -16,6 +16,7 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
+use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Datasource\EntityInterface;
@@ -472,11 +473,16 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			'title' => $entity->title ?? 'HiddenFolder' . $entity->id,
 		]);
 
+		$li_parentMediaFolderId = Configure::read(implode('.', ['Awyiss', $entity->getSource(), 'Frontend', 'mediaFolders', 'parentFolderId']));
+		if ($li_parentMediaFolderId) {
+			$lo_folder->parentId = $li_parentMediaFolderId;
+		}
+
 		if (!empty($entity->slug)) {
 			$lo_folder->path = $entity->slug;
 		}
 
-		if (!$lo_mediaFoldersTable->save($lo_folder)) {
+		if (!$lo_mediaFoldersTable->save($lo_folder, ['checkRules' => false])) {
 			return;
 		}
 
