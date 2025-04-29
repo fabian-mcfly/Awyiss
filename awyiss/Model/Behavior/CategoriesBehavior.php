@@ -764,12 +764,12 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	/**
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function buildRules(Event $event, RulesChecker|BaseRulesChecker $rules): RulesChecker {
+	public function buildRules(Event $event, RulesChecker|BaseRulesChecker $rules): void {
 		if (!$this->getConfig('enabled') || !$this->getConfig('buildRules')) {
-			return $rules;
+			return;
 		}
 
 		$ls_fieldName = Inflector::camelize($this->getConfig('field'));
@@ -811,9 +811,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 				'error_valid_' . Inflector::underscore($ls_fieldName)
 			),
 		]);
-
-
-		return $rules;
 	}
 
 

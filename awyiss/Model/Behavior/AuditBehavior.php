@@ -249,10 +249,10 @@ class AuditBehavior extends Behavior {
 	 * @param EventInterface $event
 	 * @param Validator $validator
 	 * @param string $name
-	 * @return Validator
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function buildValidator(EventInterface $event, Validator $validator, string $name): Validator {
+	public function buildValidator(EventInterface $event, Validator $validator, string $name): void {
 		$validator->allowEmptyDateTime('createdOn');
 		$validator->add('createdOn', [
 			'dateTime' => ['rule' => 'dateTime'],
@@ -282,9 +282,6 @@ class AuditBehavior extends Behavior {
 		$validator->add('deletedBy', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
-
-
-		return $validator;
 	}
 
 

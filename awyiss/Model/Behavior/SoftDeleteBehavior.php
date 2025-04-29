@@ -120,12 +120,12 @@ class SoftDeleteBehavior extends Behavior {
 	 *
 	 * @param EventInterface $event
 	 * @param RulesChecker $rules
-	 * @return RulesChecker
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function buildRules(EventInterface $event, RulesChecker $rules): RulesChecker {
+	public function buildRules(EventInterface $event, RulesChecker $rules): void {
 		if (!$this->getConfig('enabled')) {
-			return $rules;
+			return;
 		}
 
 		$rules->addUpdate(function (EntityInterface $entity, array $options): ?bool {
@@ -134,9 +134,6 @@ class SoftDeleteBehavior extends Behavior {
 			'errorField' => '_general',
 			'message' => __d('system', 'cant_modify_deleted'),
 		]);
-
-
-		return $rules;
 	}
 
 

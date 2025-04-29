@@ -404,12 +404,12 @@ class NestBehavior extends Behavior {
 	/**
 	 * @param EventInterface $event
 	 * @param RulesChecker $rules
-	 * @return RulesChecker
+	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function buildRules(EventInterface $event, RulesChecker $rules): RulesChecker {
+	public function buildRules(EventInterface $event, RulesChecker $rules): void {
 		if (!$this->getConfig('enabled') || !$this->getConfig('buildRules')) {
-			return $rules;
+			return;
 		}
 
 		$ls_foreignKey = $this->getConfig('parent.foreignKey');
@@ -477,9 +477,6 @@ class NestBehavior extends Behavior {
 		}, 'valid' . Inflector::camelize($ls_foreignKey), [
 			'errorField' => Inflector::variable($ls_foreignKey),
 		]);
-
-
-		return $rules;
 	}
 
 

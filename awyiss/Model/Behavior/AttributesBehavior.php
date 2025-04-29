@@ -16,11 +16,11 @@ use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\SqliteSchemaDialect;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
-use Cake\ORM\Entity as BaseEntity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -171,6 +171,7 @@ class AttributesBehavior extends Behavior {
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param array $keys
 	 * @return \Cake\ORM\Query\SelectQuery
+	 * @noinspection PhpUnused
 	 */
 	public function findWithMatchingAttributes(SelectQuery $query, Entity $entity, array $keys): SelectQuery {
 		/** @var \Awyiss\Model\Table $lo_table */
@@ -207,7 +208,6 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @param bool $camelized
 	 * @return \Awyiss\Model\Table
 	 */
 	public function getAttributesTable(): Table {
@@ -321,6 +321,7 @@ class AttributesBehavior extends Behavior {
 
 			// If the data isn't empty, combine the key and value into a single array
 			if ($data[ $lo_attribute->identifier ]) {
+				/** @noinspection PhpVariableNamingConventionInspection */
 				$data[ $lo_attribute->identifier ] = array_combine(
 					array_column($data[ $lo_attribute->identifier ], 'key'),
 					array_column($data[ $lo_attribute->identifier ], 'value')
@@ -331,18 +332,17 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 * Adds `validateValue()`-checks for each attribute
 	 *
 	 * @param Event $event
 	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @return void
 	 * @throws \ReflectionException
 	 * @see \Awyiss\Attribute\AttributeOptions::validateValue
 	 */
-	public function buildRules(Event $event, RulesChecker|BaseRulesChecker $rules): RulesChecker {
+	public function buildRules(Event $event, RulesChecker|BaseRulesChecker $rules): void {
 		if (!$this->getConfig('isAttributesTable')) {
-			return $rules;
+			return;
 		}
 
 		/** @var \Awyiss\Model\Table $lo_subject */
@@ -379,9 +379,6 @@ class AttributesBehavior extends Behavior {
 				'message' => __df($ls_source, 'attributes', 'error_valid_value'),
 			]);
 		}
-
-
-		return $rules;
 	}
 
 
@@ -464,12 +461,13 @@ class AttributesBehavior extends Behavior {
 
 	/**
 	 * @param EventInterface $event
-	 * @param \Awyiss\Model\Entity|\Cake\ORM\Entity $entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpUnused
 	 */
-	public function beforeCopy(EventInterface $event, Entity|BaseEntity $entity, ArrayObject $options): void {
+	public function beforeCopy(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		$lo_attributes = $entity->get('attributes');
 
 		if ($this->getConfig('isAttributesTable') || !$lo_attributes) {
@@ -490,7 +488,7 @@ class AttributesBehavior extends Behavior {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(EventInterface $event, Entity|BaseEntity $entity/*, ArrayObject $options*/): void {
+	public function beforeSave(EventInterface $event, EntityInterface $entity/*, ArrayObject $options*/): void {
 		if (!$this->getConfig('isAttributesTable')) {
 			if ($this->getAttributes() && $entity->get('attributes')) {
 				if ($entity->get('attributes')->isDirty()) {
@@ -525,7 +523,7 @@ class AttributesBehavior extends Behavior {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave(EventInterface $event, Entity|BaseEntity $entity/*, ArrayObject $options*/): void {
+	public function afterSave(EventInterface $event, EntityInterface $entity/*, ArrayObject $options*/): void {
 		if (!$this->hasAttributes()) {
 			return;
 		}
@@ -595,7 +593,7 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @param \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query $attributesQuery
+	 * @param \Cake\ORM\Query\SelectQuery $attributesQuery
 	 * @param \Awyiss\Model\Table\AttributesTable $attributesTable
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
