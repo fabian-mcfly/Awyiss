@@ -33,12 +33,6 @@ class MediaAssignmentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $audit = [
-		'enabled' => false,
-	];
-	/**
-	 * @inheritDoc
-	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['media_element_id', 'media_element_selector_identifier', 'scope', 'foreign_key'],
 	];
