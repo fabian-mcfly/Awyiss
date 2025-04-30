@@ -44,7 +44,6 @@ class Menu {
 	 * @param object|iterable $items
 	 * @param array $config
 	 * @param int $level
-	 * @throws \ReflectionException
 	 */
 	public function __construct(object|iterable $items, array $config = [], int $level = 1) {
 		$la_items = $items;
@@ -94,6 +93,12 @@ class Menu {
 		$lo_item = $this->getItem($identifier);
 
 		if (!$lo_item) {
+			// If the identifier is not found, we try to find the system menu
+			$lo_item = $this->getItem('system');
+		}
+
+		if (!$lo_item) {
+			// If an item to append to is still not found, throw an exception
 			throw new RuntimeException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $identifier));
 		}
 
@@ -177,7 +182,8 @@ class Menu {
 	public function insertEntriesAfter(array $entries, ?string $identifier = null, bool $determineVisibility = true): void {
 		if ($identifier) {
 			if (!isset($this->items[ $identifier ]) && !$this->getItem($identifier)) {
-				throw new RuntimeException(sprintf('Cannot insert entries after an unknown identifier. `%s` given.', $identifier));
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$identifier = null;
 			}
 		}
 
@@ -241,7 +247,7 @@ class Menu {
 
 
 	/**
-	 * @return Generator|MenuItem
+	 * @return \Awyiss\Utility\Menu\MenuItem|\Generator
 	 */
 	public function items(int $maxLevel = -1): Generator {
 		foreach ($this->items as $lx_identifier => $lo_item) {
