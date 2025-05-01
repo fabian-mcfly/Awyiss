@@ -562,6 +562,10 @@ class ContentsTable extends Table {
 	 * @return bool
 	 */
 	protected function childrenCanBeMoved(Content $entity, int $pageTemplateId): bool {
+		if ($entity->isNew()) {
+			return true;
+		}
+
 		$li_contentAreaId = $entity->contentAreaId;
 		$li_pageTemplateId = $pageTemplateId;
 
@@ -992,6 +996,10 @@ class ContentsTable extends Table {
 	 * @return string|bool
 	 */
 	protected function checkValidDuplicateRules(Content $entity): string|bool {
+		if ($entity->isNew()) {
+			return true;
+		}
+
 		// Get all children of the current entity
 		$la_nestedChildren = $entity->getNestedChildren()->toArray();
 		$la_duplicatedContentIds = array_column($la_nestedChildren, 'duplicateOf');
