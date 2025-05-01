@@ -228,7 +228,7 @@
 		overscroll-behavior:contain;
 		overflow-y:auto;
 		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
-		scrollbar-color:var(--colorText) var(--colorMedium);
+		scrollbar-color:var(--colorMedium) var(--colorLight);
 		scrollbar-width:thin;
 
 		@media screen and (width <= 768px) {
