@@ -12,6 +12,11 @@ export default class TitleSetter {
 	constructor(selector) {
 		const elements = document.querySelectorAll(selector);
 		elements.forEach((element) => {
+			if (element.title) {
+				// If the element already has a title, skip it
+				return;
+			}
+
 			let text = element.textContent.trim();
 
 			// Replace all types of line breaks and tabs with a single space
