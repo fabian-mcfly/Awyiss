@@ -77,6 +77,10 @@ export default class PlaceholderHelper {
 		const input = event.target;
 		let applyButton = input.applyButton;
 
+		if (!input.placeholder) {
+			return;
+		}
+
 		if (!applyButton) {
 			applyButton = document.createElement('button');
 			applyButton.type = 'button';
