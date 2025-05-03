@@ -178,3 +178,9 @@ msgstr "CSS Class"
 
 msgid "error_valid_form_id"
 msgstr "The form does not exist"
+
+msgid "configuration_category_backend_overview_column_view"
+msgstr "Column View"
+
+msgid "configuration_identifier_backend_overview_column_view_enabled"
+msgstr "Enabled"
