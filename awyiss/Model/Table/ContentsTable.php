@@ -4,9 +4,11 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
@@ -704,7 +706,14 @@ class ContentsTable extends Table {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function forPageRole(PageRoleEnumInterface $pageRole, bool $initializePages = true): void {
+	public function forPageRole(PageRole|PageRoleEnumInterface $pageRole, bool $initializePages = true): void {
+		if ($pageRole instanceof PageRole) {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$pageRole = $ls_pageRoleEnum::tryFromName($pageRole->identifier);
+		}
+
 		if ($initializePages) {
 			if (!$this->hasAssociation($pageRole->tableAlias())) {
 				$this->belongsTo($pageRole->tableAlias(), [
