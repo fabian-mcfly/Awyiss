@@ -226,3 +226,18 @@ msgstr "Die Datei wird verwendet. Sind Sie sicher, dass Sie die Datei löschen m
 
 msgid "confirm_multiple_in_use"
 msgstr "Mindestens eine Datei wird verwendet. Sind Sie sicher, dass Sie die ausgewählten Dateien löschen möchten?"
+
+msgid "meta_title_usages"
+msgstr "Verwendungen"
+
+msgid "headline_usages"
+msgstr "Verwendungen"
+
+msgid "media_usages_inaccessible"
+msgstr "Die Datei wird außerdem <strong>{0}</strong> Mal in Bereichen ohne Zugriffsberechtigkeiten verwendet."
+
+msgid "media_element"
+msgstr "Medienelement"
+
+msgid "media_element_inline_img_tag"
+msgstr "Per Texteditor"

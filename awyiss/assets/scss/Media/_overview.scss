@@ -310,6 +310,10 @@ ul#Media-List {
 				line-height:30px;
 				cursor:default;
 
+				&:is(a) {
+					cursor:pointer;
+				}
+
 				.Hover {
 					display:none;
 				}

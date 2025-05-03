@@ -226,3 +226,18 @@ msgstr "The file is in use. Are you sure you want to delete the file?"
 
 msgid "confirm_multiple_in_use"
 msgstr "At least one file is in use. Are you sure you want to delete the selected files?"
+
+msgid "meta_title_usages"
+msgstr "Usages"
+
+msgid "headline_usages"
+msgstr "Usages"
+
+msgid "media_usages_inaccessible"
+msgstr "The file is also used <strong>{0}</strong> times in areas without access permissions."
+
+msgid "media_element"
+msgstr "Media element"
+
+msgid "media_element_inline_img_tag"
+msgstr "Per text editor"

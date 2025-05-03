@@ -69,6 +69,13 @@
 		{{ HtmlHelper.link(entity.path, entity.path, {
 			target: '_blank',
 		}) }}
+	{% elseif field == 'usage_count' %}
+		{% set value = entity.has(field) ? entity.get(field) : 0 %}
+		{% if value > 0 %}
+			{{ HtmlHelper.link(value, {action: 'usages', id: entity.id}, {title: __('show_usages')}) }}
+		{% else %}
+			{{ value }}
+		{% endif %}
 	{% else %}
 		{{ parent() }}
 	{% endif %}

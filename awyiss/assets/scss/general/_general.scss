@@ -300,6 +300,7 @@ details {
 			padding-right:50px;
 			font-size:1.5rem;
 			line-height:1;
+			list-style-type:none;
 
 			&::before {
 				@extend %LineAwesomeIcon;
@@ -313,7 +314,7 @@ details {
 			}
 
 			&::after {
-				font-size:30px;
+				font-size:20px;
 				line-height:1.5rem;
 			}
 		}

@@ -1,0 +1,41 @@
+.Media.Usages {
+	@extend %ContentGrid;
+
+	.Fieldset {
+		grid-column:1 / -1;
+	}
+
+	.Fieldset-Inaccessible {
+		display:block;
+		padding:20px 70px 20px 20px;
+		border:1px solid var(--colorInfo);
+		background-color:color-mix(in srgb, var(--colorInfo), transparent 85%);
+
+		&::before {
+			@extend %LineAwesomeIcon;
+			content:'\f05a';
+			color:var(--colorInfo);
+			font-size:30px;
+			line-height:1.5rem;
+			position:absolute;
+			top:20px;
+			right:20px;
+		}
+	}
+
+	.ListItem {
+		.Data {
+			.Label {
+				@media screen and (width <= 840px) {
+					display:block;
+				}
+			}
+		}
+
+		.Actions {
+			@media screen and (width <= 500px) {
+				grid-template-columns:auto;
+			}
+		}
+	}
+}

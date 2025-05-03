@@ -1,0 +1,151 @@
+{#
+@var media \Awyiss\Model\Entity\Media
+@var mediaAssignments array<string, \Awyiss\Model\Entity\MediaAssignment[]>
+@var inaccessibleAssignments array<string, \Awyiss\Model\Entity\MediaAssignment[]>
+@var usedScopes array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Media Usages">
+	{% block headlinesUsages %}
+		<div class="Headlines">
+			{% block headlineUsages %}
+				<h1>{{ __('headline_usages') }}</h1>
+			{% endblock %}
+
+			{% block subheadlineHistory %}
+				<h2>{{ media.name }}</h2>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% for scope, label in usedScopes %}
+		{% set scopeIsAccessible = AuthorizationHelper.scopeIsAccessible(scope, [], 'update') %}
+		{% if scope != 'contents' %}
+			{% block scopeFieldset %}
+				<fieldset class="Fieldset Fieldset-{{ scope|camelize }} Collapsible">
+					<legend>{{ label }} ({{ mediaAssignments[scope]|length + mediaAssignments.contents[scope]|length }}x)</legend>
+
+					{% block scopeFieldsetInner %}
+						<ul class="Usages-List NestedList Level1" data-nestable="false" data-sortable="false">
+							{% for assignment in mediaAssignments[scope] %}
+								{% block nestedListItem %}
+									<li id="MediaAssignment-ListItem{{ assignment.id }}" class="MediaAssignment-ListItem ListItem"
+										title="{{ assignment.entity.label ?? assignment.entity.title ?? assignment.entity.name ?? assignment.entity.id }}">
+										{% block nestedListItemInner %}
+											<div class="ListItem-Inner">
+												{% block nestedListItemData %}
+													<ul class="Data">
+														<li class="Title">{{ assignment.entity.label ?? assignment.entity.title ?? assignment.entity.name ?? assignment.entity.id }}</li>
+														<li class="DataItem DataItem-MediaElement">
+															<span class="Label">{{ __('media_element') }}:</span>
+															{% if assignment.mediaElement.identifier == 'inline_img_tag' %}
+																{{ __('media_element_inline_img_tag') }}
+															{% else %}
+																{{ assignment.mediaElementSelector.label }}
+																({{ assignment.mediaElement.label }})
+															{% endif %}
+														</li>
+													</ul>
+												{% endblock %}
+
+												{% block nestedListItemAuditInfo %}
+													<div class="AuditInfo" data-id="{{ assignment.entity.id }}" data-scope="{{ scope }}" title="">
+														{% block nestedListItemAuditInfoList %}
+															<ul class="AuditInfoList">
+																<li><strong>ID:</strong> {{ assignment.entity.id }}</li>
+															</ul>
+														{% endblock %}
+													</div>
+												{% endblock %}
+
+												{% block nestedListActions %}
+													<span class="Actions">
+														{% block nestedListActionsEdit %}
+															{% if scopeIsAccessible %}
+																{{ HtmlHelper.link(__('edit'), {controller: scope, action: 'edit', id: assignment.entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+															{% endif %}
+														{% endblock %}
+													</span>
+												{% endblock %}
+											</div>
+										{% endblock %}
+									</li>
+								{% endblock %}
+							{% endfor %}
+
+							{% if mediaAssignments.contents[scope] is defined %}
+								{% for assignment in mediaAssignments.contents[scope] %}
+									{% block nestedListContentItem %}
+										<li id="MediaAssignment-ListItem{{ assignment.id }}" class="MediaAssignment-ListItem ListItem"
+											title="{{ assignment.entity.label ?? assignment.entity.title ?? assignment.entity.name ?? assignment.entity.id }}">
+											{% block nestedListContentItemInner %}
+												<div class="ListItem-Inner">
+													{% block nestedListContentItemData %}
+														<ul class="Data">
+															<li class="Title">{{ assignment.entity.label ?? assignment.entity.title ?? assignment.entity.name ?? assignment.entity.id }}</li>
+															<li class="DataItem DataItem-MediaElement">
+																<span class="Label">{{ __('media_element') }}:</span>
+																{% if assignment.mediaElement.identifier == 'inline_img_tag' %}
+																	{{ __('media_element_inline_img_tag') }}
+																{% else %}
+																	{{ assignment.mediaElementSelector.label }}
+																	({{ assignment.mediaElement.label }})
+																{% endif %}
+															</li>
+															<li class="DataItem DataItem-Page">
+																<span class="Label">{{ assignment.entity.page.pageRole.label }}:</span>
+																{{ HtmlHelper.link(assignment.entity.page.label , {controller: 'contents', action: 'overview', pageId: assignment.entity.pageId}) }}
+															</li>
+														</ul>
+													{% endblock %}
+
+													{% block nestedListContentItemAuditInfo %}
+														<div class="AuditInfo" data-id="{{ assignment.entity.id }}" data-scope="contents" title="">
+															{% block nestedListContentItemAuditInfoList %}
+																<ul class="AuditInfoList">
+																	<li><strong>ID:</strong> {{ assignment.entity.id }}</li>
+																</ul>
+															{% endblock %}
+														</div>
+													{% endblock %}
+
+													{% block nestedListContentActions %}
+														<span class="Actions">
+															{% block nestedListContentActionsEdit %}
+																{{ HtmlHelper.link(__('edit'), {controller: 'contents', action: 'edit', id: assignment.entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+															{% endblock %}
+														</span>
+													{% endblock %}
+												</div>
+											{% endblock %}
+										</li>
+									{% endblock %}
+								{% endfor %}
+							{% endif %}
+						</ul>
+					{% endblock %}
+				</fieldset>
+			{% endblock %}
+		{% endif %}
+	{% endfor %}
+
+	{% if inaccessibleAssignments|length > 0%}
+		<fieldset class="Fieldset Fieldset-Inaccessible">
+			{{ __('media_usages_inaccessible', inaccessibleAssignments|length)|raw }}
+		</fieldset>
+	{% endif %}
+</div>

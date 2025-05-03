@@ -9,11 +9,13 @@ use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaFolder;
+use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -677,6 +679,76 @@ class MediaController extends Controller {
 
 
 	/**
+	 * Overview method
+	 *
+	 * @return \Cake\Http\Response
+	 * @throws \Exception
+	 */
+	public function usages(): Response {
+		$this->Authorization->ensure('read');
+
+		$this->request->allowMethod(['get']);
+
+		$li_id = $this->request->getParam('id');
+
+		if (!$li_id) {
+			$this->Flash->error(__('record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
+		/** @var Media $lo_media */
+		$lo_media = $this->Media->findById($li_id)->contain([
+			'MediaAssignments.MediaElements',
+			'MediaAssignments.MediaElementSelectors',
+		])->first();
+		if (!$lo_media) {
+			$this->Flash->error(__('record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
+		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
+		$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+
+		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
+		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
+			return Inflector::pluralize($pageRole->identifier);
+		})->toArray();
+
+		$la_inaccessibleAssignments = [];
+		$la_usedScopes = $this->getUsedScopes($lo_media, $la_pageRoles, $la_datatables);
+
+		// Reorder the media assignments by their scope
+		$la_mediaAssignments = collection($lo_media->mediaAssignments ?? [])
+			->groupBy('scope')
+			->toArray();
+
+		if (isset($la_mediaAssignments['contents'])) {
+			$this->groupAssignmentsByPageRole($la_mediaAssignments, $la_usedScopes, $la_inaccessibleAssignments, $la_pageRoles);
+		}
+
+		// Sort the scopes by their label
+		uasort($la_usedScopes, function ($a, $b) {
+			return strnatcasecmp($a, $b);
+		});
+
+		$la_inaccessibleAssignments = $this->setInaccessibleScopes($la_inaccessibleAssignments, $la_usedScopes, $la_mediaAssignments);
+
+		$this->set([
+			'mediaAssignments' => $la_mediaAssignments,
+			'inaccessibleAssignments' => $la_inaccessibleAssignments,
+			'media' => $lo_media,
+			'usedScopes' => $la_usedScopes,
+		]);
+
+		return $this->render();
+	}
+
+
+	/**
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param string $method
 	 * @param bool $isAjax
@@ -951,5 +1023,177 @@ class MediaController extends Controller {
 		$ls_errorMessage .= array_values($la_errors)[0];
 
 		return $ls_errorMessage;
+	}
+
+
+	/**
+	 * @param array $mediaAssignments
+	 * @param array $usedScopes
+	 * @param array $inaccessibleAssignments
+	 * @param array $pageRoles
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function groupAssignmentsByPageRole(array &$mediaAssignments, array &$usedScopes, array &$inaccessibleAssignments, array $pageRoles): void {
+		// Contents need to be grouped by their page's role
+		$la_contentIds = array_column($mediaAssignments['contents'], 'foreign_key');
+
+		/** @var \Awyiss\Model\Table\ContentsTable $lo_contentsTable */
+		$lo_contentsTable = $this->fetchTable('Contents');
+		$lo_contentsTable->forPageRole($pageRoles['pages']);
+		$la_contents = $lo_contentsTable->find('mediaAssignments', useMediaEntity: true)->where([
+			'id IN' => $la_contentIds,
+		])->contain([
+			'Pages' => [
+				'finder' => [
+					'all' => [
+						'skipPageRoleCheck' => true,
+					],
+				],
+				'PageRoles',
+			],
+		])->all()->indexBy('id')->toArray();
+
+		$la_groupedAssignments = [];
+		/**
+		 * For each content, group the media assignments by their page's role
+		 *
+		 * @var \Awyiss\Model\Entity\MediaAssignment $lo_assignment
+		 */
+		foreach ($mediaAssignments['contents'] as $lo_assignment) {
+			/** @var \Awyiss\Model\Entity\Content $lo_content */
+			$lo_content = $la_contents[ $lo_assignment->foreignKey ];
+			$le_pageRole = $lo_content->page->pageRoleId;
+			$ls_pageRole = Inflector::underscore(Inflector::pluralize($le_pageRole->name));
+
+			if (!isset($usedScopes[ $ls_pageRole ])) {
+				$ls_translation = __d($ls_pageRole, 'headline_overview');
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$usedScopes[ $ls_pageRole ] = !str_contains($ls_translation, '::') ? $ls_translation : $pageRoles[ $ls_pageRole ]->label;
+			}
+
+			$lo_assignment->entity = $lo_content;
+
+			$la_groupedAssignments[ $ls_pageRole ][] = $lo_assignment;
+		}
+
+		foreach ($la_groupedAssignments as $ls_scope => $la_assignments) {
+			$lb_isAccessible = $this->Authorization->scopeIsAccessible($ls_scope, [], ['contents']);
+
+			if ($lb_isAccessible) {
+				continue;
+			}
+
+			if (empty($mediaAssignments[ $ls_scope ])) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				unset($usedScopes[ $ls_scope ], $mediaAssignments[ $ls_scope ]);
+			}
+
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$inaccessibleAssignments = array_merge($inaccessibleAssignments, $la_assignments);
+
+			unset($la_groupedAssignments[ $ls_scope ]);
+		}
+
+		if (!$la_groupedAssignments) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			unset($usedScopes['contents'], $mediaAssignments['contents']);
+
+
+			return;
+		}
+
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$mediaAssignments['contents'] = $la_groupedAssignments;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @param array $pageRoles
+	 * @param array $datatables
+	 * @return array
+	 */
+	protected function getUsedScopes(Media $media, array $pageRoles, array $datatables): array {
+		$la_usedScopes = [];
+
+		// Build the list of scopes that are used by the media assignments
+		foreach (array_column($media->mediaAssignments ?? [], 'scope') as $ls_scope) {
+			if (isset($la_usedScopes[ $ls_scope ])) {
+				continue;
+			}
+
+			if (isset($pageRoles[ $ls_scope ]) && $ls_scope !== 'page') {
+				$ls_translation = __d($ls_scope, 'headline_overview');
+				$la_usedScopes[ $ls_scope ] = !str_contains($ls_translation, '::') ? $ls_translation : $pageRoles[ $ls_scope ]->label;
+
+				continue;
+			}
+
+			if (isset($datatables[ $ls_scope ])) {
+				$ls_translation = __d($ls_scope, 'headline_overview');
+				$la_usedScopes[ $ls_scope ] = !str_contains($ls_translation, '::') ? $ls_translation : $datatables[ $ls_scope ]->label;
+
+				continue;
+			}
+
+			$la_usedScopes[ $ls_scope ] = __d($ls_scope, 'headline_overview');
+		}
+
+		return $la_usedScopes;
+	}
+
+
+	/**
+	 * @param array $inaccessibleAssignments
+	 * @param array $usedScopes
+	 * @param array $mediaAssignments
+	 * @return array
+	 * @throws \Exception
+	 */
+	protected function setInaccessibleScopes(array &$inaccessibleAssignments, array &$usedScopes, array &$mediaAssignments): array {
+		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+
+		foreach ($usedScopes as $ls_scope => $ls_label) {
+			if ($ls_scope === 'contents') {
+				continue;
+			}
+
+			$lb_isAccessible = $this->Authorization->scopeIsAccessible($ls_scope, [], ['read', 'update']);
+
+			if (!$lb_isAccessible) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$inaccessibleAssignments = array_merge($inaccessibleAssignments, $mediaAssignments[ $ls_scope ]);
+				/** @noinspection PhpVariableNamingConventionInspection */
+				unset($usedScopes[ $ls_scope ], $mediaAssignments[ $ls_scope ]);
+
+				if (isset($mediaAssignments['contents'][ $ls_scope ])) {
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$inaccessibleAssignments = array_merge($inaccessibleAssignments, $mediaAssignments['contents'][ $ls_scope ]);
+					/** @noinspection PhpVariableNamingConventionInspection */
+					unset($mediaAssignments['contents'][ $ls_scope ]);
+				}
+
+				continue;
+			}
+
+			if (empty($mediaAssignments[ $ls_scope ])) {
+				continue;
+			}
+
+			$ls_tableName = Inflector::camelize($ls_scope);
+
+			$lo_mediaAssignmentsTable->belongsTo($ls_tableName, [
+				'foreignKey' => 'foreign_key',
+				'conditions' => [
+					'MediaAssignments.scope' => $ls_scope,
+				],
+				'propertyName' => 'entity',
+			]);
+
+			$lo_mediaAssignmentsTable->loadInto($mediaAssignments[ $ls_scope ], [$ls_tableName]);
+		}
+
+		return $inaccessibleAssignments;
 	}
 }
