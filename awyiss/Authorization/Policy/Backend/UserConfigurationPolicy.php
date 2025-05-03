@@ -8,6 +8,7 @@ use Awyiss\Authorization\Permission\PermissionCollection;
 use Awyiss\Authorization\PermissionOption\CallbackPermissionOption;
 use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\Policy\AbstractPolicy;
+use Awyiss\Utility\Inflector;
 use RuntimeException;
 
 
@@ -52,7 +53,18 @@ class UserConfigurationPolicy extends AbstractPolicy {
 			return $lb_accessible;
 		}
 
-		if (!in_array(strtolower($ls_scope), ['contents', 'system'], true)) {
+		$ls_scope = Inflector::underscore($ls_scope);
+
+		if (!in_array($ls_scope, ['contents', 'system'], true)) {
+			// Form elements are accessible if the user has access to the Forms scope
+			if ($ls_scope === 'form_elements') {
+				$ls_scope = 'forms';
+			}
+			// Menu entries are accessible if the user has access to the Menus scope
+			elseif ($ls_scope === 'menu_entries') {
+				$ls_scope = 'menus';
+			}
+
 			$lb_accessible = $permissionCollection->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure']);
 		}
 

@@ -10,6 +10,7 @@ use Awyiss\Authorization\PermissionOption\CallbackPermissionOption;
 use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\Policy\AbstractPolicy;
 use Awyiss\Model\Entity\Configuration;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\ORM\Query\SelectQuery;
 use RuntimeException;
@@ -55,7 +56,18 @@ class ConfigurationPolicy extends AbstractPolicy {
 			return $lb_accessible;
 		}
 
+		$ls_scope = Inflector::underscore($ls_scope);
+
 		if (strtolower($ls_scope) !== 'system') {
+			// Form elements are accessible if the user has access to the Forms scope
+			if ($ls_scope === 'form_elements') {
+				$ls_scope = 'forms';
+			}
+			// Menu entries are accessible if the user has access to the Menus scope
+			elseif ($ls_scope === 'menu_entries') {
+				$ls_scope = 'menus';
+			}
+
 			$lb_accessible = $permissionCollection->scopeIsAccessible($ls_scope, [], 'configure');
 		}
 
