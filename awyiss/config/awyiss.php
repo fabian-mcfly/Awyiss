@@ -240,6 +240,7 @@ return [
 		'text/vtt' => ['vtt'],
 		'application/json' => ['json'],
 		'application/xml' => ['xml'],
+		'image/avif' => ['avif'],
 		'image/jpeg' => ['jpeg', 'jpg'],
 		'image/png' => ['png'],
 		'image/gif' => ['gif'],
