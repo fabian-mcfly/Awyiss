@@ -275,6 +275,12 @@ class MediaHelper extends Helper {
 
 		$la_attributes['id'] ??= 'Image-' . substr(sha1($media->name . serialize($lo_mediaRenderOptions)), 0, 15);
 
+		if (!$la_attributes['alt']) {
+			$la_attributes['alt'] = $media->name;
+			$la_attributes['aria-hidden'] = 'true';
+			$la_attributes['role'] = 'presentation';
+		}
+
 		if ($media->mimeType === 'image/svg+xml') {
 			$la_attributes += [
 				'width' => $media->width,
