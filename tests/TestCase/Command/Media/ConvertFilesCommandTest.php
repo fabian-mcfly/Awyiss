@@ -70,6 +70,10 @@ class ConvertFilesCommandTest extends TestCase {
 			(new Process(['rm', '-r', ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_webp']))->run();
 		}
 
+		if (file_exists(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_docx_preview')) {
+			(new Process(['rm', '-r', ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_docx_preview']))->run();
+		}
+
 		if (file_exists(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_pdf_preview')) {
 			(new Process(['rm', '-r', ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_pdf_preview']))->run();
 		}
@@ -990,13 +994,13 @@ class ConvertFilesCommandTest extends TestCase {
 	public function testConvertNonImagesWithUnknownCommand(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 3])->all();
+		$resultSet = $lo_table->find()->where(['id' => 1])->all();
 
 		// Mock the MediaTable
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll')->with(
 			$this->equalTo(['preview' => ProcessStatus::Fail, 'avif' => ProcessStatus::Undefined, 'webp' => ProcessStatus::Undefined]),
-			$this->equalTo(['id IN' => [3]])
+			$this->equalTo(['id IN' => [1]])
 		);
 
 		// Mock the Process
@@ -1008,13 +1012,13 @@ class ConvertFilesCommandTest extends TestCase {
 		$invokedCount = $this->exactly(2);
 		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
 			if ($invokedCount->numberOfInvocations() === 1) {
-				$this->assertSame('Creating directory `../awyiss/Command/Media/TestFiles/_pdf_preview` for file preview', $parameters);
+				$this->assertSame('Creating directory `../awyiss/Command/Media/TestFiles/_docx_preview` for file preview', $parameters);
 			}
 			elseif ($invokedCount->numberOfInvocations() === 2) {
-				$this->assertSame('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.pdf`', $parameters);
+				$this->assertSame('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.docx`', $parameters);
 			}
 		});
-		$this->io->expects($this->once())->method('warning')->with('Status: Cannot convert filetype `pdf`');
+		$this->io->expects($this->once())->method('warning')->with('Status: Cannot convert filetype `docx`');
 
 		// Mock the ConvertFilesCommand
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([

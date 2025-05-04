@@ -60,6 +60,17 @@ class MediaConfigOptions extends AbstractConfigOptions {
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_FRONTEND, [
 			new ConfigOption(
+				defaultValue: 'imagick',
+				identifier: 'driver',
+				localizable: false,
+				nullable: false,
+				type: ConfigOptionType::ListKey,
+				values: [
+					'imagick' => __d(Inflector::underscore(static::getScope()), 'driver_imagick'),
+					'gd' => __d(Inflector::underscore(static::getScope()), 'driver_gd'),
+				],
+			),
+			new ConfigOption(
 				defaultValue: [2560, 1920, 1680, 1280, 1024, 768, 640, 480, 375],
 				identifier: 'defaultBreakpoints',
 				localizable: false,

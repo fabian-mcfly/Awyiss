@@ -4,6 +4,8 @@
 namespace Awyiss\Command\Media;
 
 
+use Awyiss\Awyiss;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
@@ -17,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ResultSetInterface;
 use Exception;
+use Imagick;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageInterface;
 use Symfony\Component\Process\Process;
@@ -41,7 +44,18 @@ class ConvertFilesCommand extends Command {
 
 		$this->cliMagickExists = Configure::read('AvailableCommands.imageMagick', false) !== false;
 
-		$this->imageManager = ImageManager::gd(autoOrientation: false);
+		try {
+			Awyiss::loadConfiguration(
+				LocaleMiddleware::getLanguage()->shortcode,
+				LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->shortcode,
+			);
+		}
+		catch (Exception) {
+			// Ignore exception.
+		}
+
+		$ls_driver = Configure::read('Awyiss.Media.Frontend.driver', 'imagick');
+		$this->imageManager = $ls_driver === 'gd' ? ImageManager::gd(autoOrientation: false) : ImageManager::imagick(autoOrientation: false);
 	}
 
 
@@ -356,17 +370,12 @@ class ConvertFilesCommand extends Command {
 	 * @return array|false
 	 */
 	protected function calculateAverageColor(string $path, ConsoleIo $io): array|false {
-		// Prefer the GD library for calculating the average color as it should be faster
-		if (function_exists('imagecreatefromstring')) {
-			return $this->calculateAverageColorGD($path);
-		}
-
-		// If the ImageMagick command line tool is not available, return false
+		// If magick is not available, use Intervention
 		if (!$this->cliMagickExists) {
-			return false;
+			return $this->calculateAverageColorIntervention($path, $io);
 		}
 
-		return $this->calculateAverageColorIM($path, $io);
+		return $this->calculateAverageColorCli($path, $io);
 	}
 
 
@@ -377,7 +386,7 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return array|false
 	 */
-	protected function calculateAverageColorIM(string $path, ConsoleIo $io): array|false {
+	protected function calculateAverageColorCli(string $path, ConsoleIo $io): array|false {
 		$lo_process = $this->getProcess([
 			'magick',
 			$path,
@@ -406,32 +415,34 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * Calculate the average color of an image using the GD library
+	 * Calculate the average color of an image
+	 * using the Intervention Image library
 	 *
-	 * @param string $path
+	 * @param string $filePath
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return array|false
 	 */
-	protected function calculateAverageColorGD(string $path): array|false {
-		$lo_image = imagecreatefromstring(file_get_contents($path));
+	protected function calculateAverageColorIntervention(string $filePath, ConsoleIo $io): array|false {
+		try {
+			$lo_image = $this->imageManager->read($filePath);
 
-		if (!$lo_image) {
+			// Resize the image to 1x1 pixel
+			$lo_color = $lo_image->resize(1, 1)->pickColor(0, 0);
+		}
+		catch (Exception $ex) {
+			$io->error('Status: ' . $ex->getMessage());
+
 			return false;
 		}
 
-		// Resize the imag to 1x1 pixel
-		$lo_pixel = imagecreatetruecolor(1, 1);
+		$la_colors = $lo_color->toArray();
 
-		imagecopyresampled($lo_pixel, $lo_image, 0, 0, 0, 0, 1, 1, imagesx($lo_image), imagesy($lo_image));
-		$li_index = imagecolorat($lo_pixel, 0, 0);
-		$la_colors = imagecolorsforindex($lo_pixel, $li_index);
-
-		// Free up memory
-		imagedestroy($lo_image);
-		imagedestroy($lo_pixel);
-		$lo_image = null; //phpcs:ignore
-		$lo_pixel = null; //phpcs:ignore
-
-		return $la_colors;
+		return [
+			'red' => $la_colors[0],
+			'green' => $la_colors[1],
+			'blue' => $la_colors[2],
+			'alpha' => 255,
+		];
 	}
 
 
@@ -567,15 +578,15 @@ class ConvertFilesCommand extends Command {
 
 		$io->out(sprintf('Creating Avif file for file `%s`', $file->path));
 
-		// If magick is not available or cannot convert web, use the GD library
+		// If magick is not available or cannot convert web, use the Intervention library
 		if (
 			!$this->cliMagickExists ||
 			Configure::read('AvailableCommands.imageMagick.avif', false) === false
 		) {
-			return $this->convertImageToAvifGD($file, $io);
+			return $this->convertImageToAvifIntervention($file, $io);
 		}
 
-		return $this->convertImageToAvifIM($file, $io);
+		return $this->convertImageToAvifCli($file, $io);
 	}
 
 
@@ -613,15 +624,15 @@ class ConvertFilesCommand extends Command {
 
 		$io->out(sprintf('Creating WebP file for file `%s`', $file->path));
 
-		// If magick is not available or cannot convert web, use the GD library
+		// If magick is not available or cannot convert web, use the Intervention library
 		if (
 			!$this->cliMagickExists ||
 			Configure::read('AvailableCommands.imageMagick.webp', false) === false
 		) {
-			return $this->convertImageToWebpGD($file, $io);
+			return $this->convertImageToWebpIntervention($file, $io);
 		}
 
-		return $this->convertImageToWebpIM($file, $io);
+		return $this->convertImageToWebpCli($file, $io);
 	}
 
 
@@ -630,14 +641,7 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
 	 */
-	protected function convertImageToAvifGD(Media $file, ConsoleIo $io): bool {
-		if (!function_exists('imageavif')) {
-			$io->error('Status: Cannot create Avif file without imageavif function');
-			$file->avif = ProcessStatus::Fail;
-
-			return false;
-		}
-
+	protected function convertImageToAvifIntervention(Media $file, ConsoleIo $io): bool {
 		$ls_inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
 
 		try {
@@ -665,14 +669,7 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
 	 */
-	protected function convertImageToWebpGD(Media $file, ConsoleIo $io): bool {
-		if (!function_exists('imagewebp')) {
-			$io->error('Status: Cannot create WebP file without imagewebp function');
-			$file->webp = ProcessStatus::Fail;
-
-			return false;
-		}
-
+	protected function convertImageToWebpIntervention(Media $file, ConsoleIo $io): bool {
 		$ls_inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
 
 		try {
@@ -700,7 +697,7 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
 	 */
-	protected function convertImageToAvifIM(Media $file, ConsoleIo $io): bool {
+	protected function convertImageToAvifCli(Media $file, ConsoleIo $io): bool {
 		$lo_process = $this->getProcess($this->getAvifCommand($file));
 
 		$lb_process = $this->runProcess($lo_process, $io);
@@ -716,7 +713,7 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
 	 */
-	protected function convertImageToWebpIM(Media $file, ConsoleIo $io): bool {
+	protected function convertImageToWebpCli(Media $file, ConsoleIo $io): bool {
 		$lo_process = $this->getProcess($this->getWebPCommand($file));
 
 		$lb_process = $this->runProcess($lo_process, $io);
@@ -849,31 +846,14 @@ class ConvertFilesCommand extends Command {
 
 		$io->out(sprintf('Creating preview for file `%s`', $file->path));
 
-		if (!$this->cliMagickExists) {
-			return $this->convertNonImageGD($file, $io, $includeAvif, $includeWebp);
+		if (
+			!$this->cliMagickExists ||
+			Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+		) {
+			return $this->convertNonImageIntervention($file, $io, $includeAvif, $includeWebp);
 		}
 
-		return $this->convertNonImageIM($file, $io, $includeAvif, $includeWebp);
-	}
-
-
-	/**
-	 * @param \Awyiss\Model\Entity\Media $file
-	 * @param \Cake\Console\ConsoleIo $io
-	 * @param bool $includeAvif
-	 * @param bool $includeWebp
-	 * @return bool
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	protected function convertNonImageGD(Media $file, ConsoleIo $io, bool $includeAvif, bool $includeWebp): bool {
-		// For now, converting non-image files is not supported by GD
-		$io->warning(sprintf('Status: Cannot convert filetype `%s`', $file->extension));
-
-		$file->preview = ProcessStatus::Fail;
-		$file->avif = ProcessStatus::Fail;
-		$file->webp = ProcessStatus::Fail;
-
-		return false;
+		return $this->convertNonImageCli($file, $io, $includeAvif, $includeWebp);
 	}
 
 
@@ -884,7 +864,73 @@ class ConvertFilesCommand extends Command {
 	 * @param bool $includeWebp
 	 * @return bool
 	 */
-	protected function convertNonImageIM(Media $file, ConsoleIo $io, bool $includeAvif, bool $includeWebp): bool {
+	protected function convertNonImageIntervention(Media $file, ConsoleIo $io, bool $includeAvif, bool $includeWebp): bool {
+		try {
+			// If Imagick does not exist, nothing can be done
+			if (
+				!class_exists('Imagick') ||
+				!in_array($file->extension, ['pdf', 'eps', 'ai', 'psd'], true)
+			) {
+				throw new Exception(sprintf('Cannot convert filetype `%s`', $file->extension));
+			}
+
+			$lo_image = new Imagick();
+			$lo_image->setResolution(150, 150);
+			$lo_image->readImage($file->pathAbsolute . '[' . 0 . ']');
+			$lo_image->setImageUnits(Imagick::RESOLUTION_PIXELSPERINCH);
+			$lo_image->stripImage();
+			$lo_image->setImageColorspace(Imagick::COLORSPACE_SRGB);
+			$lo_image->setImageBackgroundColor('#FFFFFF');
+
+			$lo_image = $lo_image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+
+			$lo_image->setImageFormat('jpeg');
+			$lo_image->setCompression(Imagick::COMPRESSION_JPEG);
+			$lo_image->setCompressionQuality(90);
+
+			if (!$lo_image->writeImage($file->previewPathAbsolute)) {
+				throw new Exception('Cannot write image to file');
+			}
+		}
+		catch (Exception $ex) {
+			$io->warning('Status: ' . $ex->getMessage());
+
+			$file->preview = ProcessStatus::Fail;
+			$file->avif = ProcessStatus::Fail;
+			$file->webp = ProcessStatus::Fail;
+
+			return false;
+		}
+
+		$io->success('Status: Preview file created');
+
+		/** @noinspection DuplicatedCode */
+		$la_imageSize = $this->getRealImageSize($file->previewPathAbsolute, $io);
+
+		$file->width = $la_imageSize[0] ?? null;
+		$file->height = $la_imageSize[1] ?? null;
+		$file->preview = ProcessStatus::Success;
+
+		if ($includeAvif) {
+			$this->convertImageToAvif($file, $io);
+		}
+
+		if ($includeWebp) {
+			$this->convertImageToWebp($file, $io);
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $file
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @param bool $includeAvif
+	 * @param bool $includeWebp
+	 * @return bool
+	 */
+	protected function convertNonImageCli(Media $file, ConsoleIo $io, bool $includeAvif, bool $includeWebp): bool {
 		$la_command = $this->getPreviewCommand($file);
 
 		if (!$la_command) {
@@ -909,6 +955,7 @@ class ConvertFilesCommand extends Command {
 			return false;
 		}
 
+		/** @noinspection DuplicatedCode */
 		$la_imageSize = $this->getRealImageSize($file->previewPathAbsolute, $io);
 
 		$file->width = $la_imageSize[0] ?? null;
@@ -981,10 +1028,10 @@ class ConvertFilesCommand extends Command {
 			!$this->cliMagickExists ||
 			Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
 		) {
-			$lb_cropped = $this->cropImageGD($file, $io);
+			$lb_cropped = $this->cropImageIntervention($file, $io);
 		}
 		else {
-			$lb_cropped = $this->cropImageIM($file, $io);
+			$lb_cropped = $this->cropImageCli($file, $io);
 		}
 
 		if (!$lb_cropped) {
@@ -1011,9 +1058,8 @@ class ConvertFilesCommand extends Command {
 	 * @param \Awyiss\Model\Entity\Media $file
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
-	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function cropImageGD(Media $file, ConsoleIo $io): bool {
+	protected function cropImageIntervention(Media $file, ConsoleIo $io): bool {
 		$ls_inputPath = $file->pathAbsolute;
 		$la_crop = [];
 		$la_resize = [];
@@ -1023,14 +1069,14 @@ class ConvertFilesCommand extends Command {
 		}
 
 		if (isset($file->crop['rotate']) && $file->crop['rotate'] === 'auto') {
-			if (!$this->autoRotateImageGD($ls_inputPath)) {
+			if (!$this->autoRotateImageIntervention($ls_inputPath)) {
 				return false;
 			}
 
 			// If an avif file exists, rotate it as well
 			if ($file->avifPathAbsolute && file_exists($file->avifPathAbsolute)) {
 				try {
-					$this->autoRotateImageGD($file->avifPathAbsolute);
+					$this->autoRotateImageIntervention($file->avifPathAbsolute);
 				}
 				catch (Exception) {
 					// Ignore the exception for avif autorotation
@@ -1041,7 +1087,7 @@ class ConvertFilesCommand extends Command {
 			// If a webp file exists, rotate it as well
 			if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
 				try {
-					$this->autoRotateImageGD($file->webpPathAbsolute);
+					$this->autoRotateImageIntervention($file->webpPathAbsolute);
 				}
 				catch (Exception) {
 					// Ignore the exception for webp autorotation
@@ -1082,7 +1128,7 @@ class ConvertFilesCommand extends Command {
 		// If an avif file exists, crop it as well
 		if ($file->avifPathAbsolute && file_exists($file->avifPathAbsolute)) {
 			try {
-				$this->cropAndResizeGD($file->avifPathAbsolute, $la_crop, $la_resize, $ls_inputPath);
+				$this->cropAndResizeIntervention($file->avifPathAbsolute, $la_crop, $la_resize, $ls_inputPath);
 			}
 			catch (Exception) {
 				// Ignore the exception for avif cropping
@@ -1092,7 +1138,7 @@ class ConvertFilesCommand extends Command {
 		// If a webp file exists, crop it as well
 		if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
 			try {
-				$this->cropAndResizeGD($file->webpPathAbsolute, $la_crop, $la_resize, $ls_inputPath);
+				$this->cropAndResizeIntervention($file->webpPathAbsolute, $la_crop, $la_resize, $ls_inputPath);
 			}
 			catch (Exception) {
 				// Ignore the exception for webp cropping
@@ -1108,7 +1154,7 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
 	 */
-	protected function cropImageIM(Media $file, ConsoleIo $io): bool {
+	protected function cropImageCli(Media $file, ConsoleIo $io): bool {
 		$la_commands = $this->getCropCommand($file);
 
 		$lo_process = $this->getProcess($la_commands['original']);
@@ -1229,10 +1275,10 @@ class ConvertFilesCommand extends Command {
 			!$this->cliMagickExists ||
 			Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
 		) {
-			$lb_resized = $this->resizeImageGD($file, $io);
+			$lb_resized = $this->resizeImageIntervention($file, $io);
 		}
 		else {
-			$lb_resized = $this->resizeImageIM($file, $io);
+			$lb_resized = $this->resizeImageCli($file, $io);
 		}
 
 		if (!$lb_resized) {
@@ -1256,7 +1302,7 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
 	 */
-	protected function resizeImageGD(MediaResizedImage $file, ConsoleIo $io): bool {
+	protected function resizeImageIntervention(MediaResizedImage $file, ConsoleIo $io): bool {
 		try {
 			$lo_image = $this->imageManager->read($file->media->isImage() ? $file->media->pathAbsolute : $file->media->previewPathAbsolute);
 
@@ -1340,7 +1386,7 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
 	 */
-	protected function resizeImageIM(MediaResizedImage $file, ConsoleIo $io): bool {
+	protected function resizeImageCli(MediaResizedImage $file, ConsoleIo $io): bool {
 		$lo_process = $this->getProcess($this->getResizeCommand($file));
 
 		return $this->runProcess($lo_process, $io);
@@ -1543,7 +1589,7 @@ class ConvertFilesCommand extends Command {
 		return [
 			'magick',
 			'-density',
-			300,
+			150,
 			WWW_ROOT . str_replace('/', DS, $ls_inputPath),
 			'-colorspace',
 			'sRGB',
@@ -1792,21 +1838,32 @@ class ConvertFilesCommand extends Command {
 	 * Return the real size of an image
 	 * Uses `getimagesize()` if available, otherwise falls back to the identify command
 	 *
-	 * @param string $imagePath
+	 * @param string $filePath
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return array
 	 */
-	protected function getRealImageSize(string $imagePath, ConsoleIo $io): array {
+	protected function getRealImageSize(string $filePath, ConsoleIo $io): array {
+		// Use GD lib's getimagesize() if available. This is faster than using ImageMagick
 		if (function_exists('getimagesize')) {
-			return getimagesize($imagePath);
+			return getimagesize($filePath);
 		}
 
 		/**
-		 * If the ImageMagick command is not available, we cannot get the image size.
-		 * Return an empty array in this case.
+		 * If the ImageMagick command is not available,
+		 * use Intervention's width and height method to get the image size
 		 */
 		if (!$this->cliMagickExists) {
-			return [];
+			try {
+				$lo_image = $this->imageManager->read($filePath);
+			}
+			catch (Exception) {
+				$io->error('Status: Cannot get image size');
+				$io->hr();
+
+				return [];
+			}
+
+			return [$lo_image->width(), $lo_image->height()];
 		}
 
 		$lo_process = $this->getProcess([
@@ -1814,7 +1871,7 @@ class ConvertFilesCommand extends Command {
 			'identify',
 			'-format',
 			'%wx%h',
-			$imagePath,
+			$filePath,
 		]);
 
 		$lb_process = $this->runProcess($lo_process, $io);
@@ -1831,7 +1888,7 @@ class ConvertFilesCommand extends Command {
 	 * @param string $inputPath
 	 * @return bool
 	 */
-	protected function autoRotateImageGD(string $inputPath): bool {
+	protected function autoRotateImageIntervention(string $inputPath): bool {
 		try {
 			$lo_image = $this->imageManager->read($inputPath);
 
@@ -1876,7 +1933,7 @@ class ConvertFilesCommand extends Command {
 	 * @param string|null $outputPath
 	 * @return \Intervention\Image\Interfaces\ImageInterface
 	 */
-	protected function cropAndResizeGD(string $filePath, array $crop, array $resize, ?string $outputPath): ImageInterface {
+	protected function cropAndResizeIntervention(string $filePath, array $crop, array $resize, ?string $outputPath): ImageInterface {
 		$lo_image = $this->imageManager->read($filePath);
 
 		if ($crop) {

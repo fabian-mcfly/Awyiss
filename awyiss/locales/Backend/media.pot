@@ -253,3 +253,12 @@ msgstr "AVIF"
 
 msgid "resize_media_file_type_webp"
 msgstr "WebP"
+
+msgid "configuration_identifier_frontend_driver"
+msgstr "Library"
+
+msgid "driver_imagick"
+msgstr "ImageMagick"
+
+msgid "driver_gd"
+msgstr "GD"
