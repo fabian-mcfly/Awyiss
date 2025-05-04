@@ -17,6 +17,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Datasource\ResultSetInterface;
+use Intervention\Image\Exceptions\DecoderException;
 use Symfony\Component\Process\Process;
 
 
@@ -87,7 +88,7 @@ class ConvertFilesCommandTest extends TestCase {
 		$this->assertTrue($options['include-webp']->isBoolean());
 
 		$this->assertArrayHasKey('limit', $options);
-		$this->assertEquals('20', $options['limit']->defaultValue());
+		$this->assertEquals('5', $options['limit']->defaultValue());
 
 		$this->assertArrayHasKey('retry-failed', $options);
 		$this->assertTrue($options['retry-failed']->isBoolean());
@@ -655,10 +656,10 @@ class ConvertFilesCommandTest extends TestCase {
 		$invokedCount = $this->exactly(2);
 		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
 			if ($invokedCount->numberOfInvocations() === 1) {
-				$this->assertSame('Creating webp image for file `../awyiss/Command/Media/TestFiles/logo-awyiss.jpg`', $parameters);
+				$this->assertSame('Creating directory `../awyiss/Command/Media/TestFiles/_webp` for WebP file', $parameters);
 			}
 			elseif ($invokedCount->numberOfInvocations() === 2) {
-				$this->assertSame('Creating directory (../awyiss/Command/Media/TestFiles/_webp) for webp file', $parameters);
+				$this->assertSame('Creating WebP file for file `../awyiss/Command/Media/TestFiles/logo-awyiss.jpg`', $parameters);
 			}
 		});
 
@@ -668,7 +669,7 @@ class ConvertFilesCommandTest extends TestCase {
 				$this->assertSame('Status: Directory created', $parameters);
 			}
 			elseif ($invokedCount->numberOfInvocations() === 2) {
-				$this->assertSame('Status: OK', $parameters);
+				$this->assertSame('Status: WebP file created', $parameters);
 			}
 		});
 
@@ -706,21 +707,16 @@ class ConvertFilesCommandTest extends TestCase {
 		);
 
 		// Mock the ConsoleIo
-		$invokedCount = $this->exactly(4);
+		$invokedCount = $this->exactly(2);
 		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
 			if ($invokedCount->numberOfInvocations() === 1) {
-				$this->assertSame('Creating webp image for file `../awyiss/Command/Media/TestFiles/logo-awyiss2.jpg`', $parameters);
+				$this->assertSame('Creating directory `../awyiss/Command/Media/TestFiles/_webp` for WebP file', $parameters);
 			}
 			elseif ($invokedCount->numberOfInvocations() === 2) {
-				$this->assertSame('Creating directory (../awyiss/Command/Media/TestFiles/_webp) for webp file', $parameters);
-			}
-			else {
-				if ($invokedCount->numberOfInvocations() === 4) {
-					$this->assertStringContainsString('unable to open image', $parameters);
-				}
+				$this->assertSame('Creating WebP file for file `../awyiss/Command/Media/TestFiles/logo-awyiss2.jpg`', $parameters);
 			}
 		});
-		$this->io->expects($this->once())->method('error')->with('Status: General error');
+		$this->io->expects($this->once())->method('error')->with('Status: Unable to decode input');
 
 		// Mock the ConvertFilesCommand
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getMock();
@@ -764,10 +760,10 @@ class ConvertFilesCommandTest extends TestCase {
 		$invokedCount = $this->exactly(2);
 		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
 			if ($invokedCount->numberOfInvocations() === 1) {
-				$this->assertSame('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.pdf`', $parameters);
+				$this->assertSame('Creating directory `../awyiss/Command/Media/TestFiles/_pdf_preview` for file preview', $parameters);
 			}
 			elseif ($invokedCount->numberOfInvocations() === 2) {
-				$this->assertSame('Creating directory (../awyiss/Command/Media/TestFiles/_pdf_preview) for file preview', $parameters);
+				$this->assertSame('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.pdf`', $parameters);
 			}
 		});
 
@@ -829,10 +825,10 @@ class ConvertFilesCommandTest extends TestCase {
 		$invokedCount = $this->exactly(2);
 		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
 			if ($invokedCount->numberOfInvocations() === 1) {
-				$this->assertSame('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.pdf`', $parameters);
+				$this->assertSame('Creating directory `../awyiss/Command/Media/TestFiles/_pdf_preview` for file preview', $parameters);
 			}
 			elseif ($invokedCount->numberOfInvocations() === 2) {
-				$this->assertSame('Creating directory (../awyiss/Command/Media/TestFiles/_pdf_preview) for file preview', $parameters);
+				$this->assertSame('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.pdf`', $parameters);
 			}
 		});
 		$this->io->expects($this->once())->method('warning')->with('Status: Cannot convert filetype `pdf`');
@@ -907,6 +903,7 @@ class ConvertFilesCommandTest extends TestCase {
 			if ($file->id === 1) {
 				$this->assertSame([
 					'original' => [
+						'magick',
 						'mogrify',
 						'-auto-orient',
 						WWW_ROOT . '../awyiss/Command/Media/TestFiles/_docx_preview/logo-awyiss.jpg',
@@ -917,7 +914,7 @@ class ConvertFilesCommandTest extends TestCase {
 			elseif ($file->id === 2) {
 				$this->assertSame([
 					'original' => [
-						'convert',
+						'magick',
 						WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.jpg',
 						'-crop',
 						'800x600+100+50',
@@ -929,7 +926,7 @@ class ConvertFilesCommandTest extends TestCase {
 			elseif ($file->id === 4) {
 				$this->assertSame([
 					'original' => [
-						'convert',
+						'magick',
 						WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.png',
 						'-crop',
 						'1000x1000+80+60',
@@ -996,7 +993,7 @@ class ConvertFilesCommandTest extends TestCase {
 
 			if ($file->id === 1) {
 				$this->assertSame([
-					'convert',
+					'magick',
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/_docx_preview/logo-awyiss.jpg',
 					'-resize',
 					'1280x1280',
@@ -1005,7 +1002,7 @@ class ConvertFilesCommandTest extends TestCase {
 			}
 			elseif ($file->id === 2) {
 				$this->assertSame([
-					'convert',
+					'magick',
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.jpg',
 					'-resize',
 					'1280x1280^',
@@ -1014,7 +1011,7 @@ class ConvertFilesCommandTest extends TestCase {
 			}
 			elseif ($file->id === 3) {
 				$this->assertSame([
-					'convert',
+					'magick',
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/_pdf_preview/logo-awyiss.jpg',
 					'-resize',
 					'1280x1280^',
@@ -1027,7 +1024,7 @@ class ConvertFilesCommandTest extends TestCase {
 			}
 			elseif ($file->id === 4) {
 				$this->assertSame([
-					'convert',
+					'magick',
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.png',
 					'-resize',
 					'1280x1280!',

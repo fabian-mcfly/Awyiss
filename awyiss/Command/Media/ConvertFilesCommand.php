@@ -29,7 +29,7 @@ class ConvertFilesCommand extends Command {
 	/**
 	 * @var bool Whether to use the ImageMagick commands for image manipulation
 	 */
-	protected bool $useImageMagick = false;
+	protected bool $cliMagickExists = false;
 
 
 	/**
@@ -38,11 +38,9 @@ class ConvertFilesCommand extends Command {
 	public function __construct(?CommandFactoryInterface $factory = null) {
 		parent::__construct($factory);
 
-		$this->useImageMagick = Configure::read('AvailableCommands.imageMagick') !== false;
+		$this->cliMagickExists = Configure::read('AvailableCommands.imageMagick', false) !== false;
 
-		if (!$this->useImageMagick) {
-			$this->imageManager = ImageManager::gd(autoOrientation: false);
-		}
+		$this->imageManager = ImageManager::gd(autoOrientation: false);
 	}
 
 
@@ -56,12 +54,14 @@ class ConvertFilesCommand extends Command {
 
 		$lo_parser->addOption('include-webp', [
 			'boolean' => true,
-			'help' => 'Include the creation of webp files after converting non-images to jpgs.',
+			'help' => 'Include the creation of WebP files after converting non-images to jpgs.',
 			'short' => 'w',
 		]);
 
 		$lo_parser->addOption('limit', [
-			'default' => '20',
+			// If ImageMagick is available via command line, set the default to 20
+			// otherwise set it to 5 to avoid potential memory issues
+			'default' => $this->cliMagickExists ? '20' : '5',
 			'help' => 'The maximum amount of files to convert per run.',
 			'short' => 'l',
 		]);
@@ -279,7 +279,7 @@ class ConvertFilesCommand extends Command {
 				continue;
 			}
 
-			$la_colors = $this->calculateAverageColor($ls_path);
+			$la_colors = $this->calculateAverageColor($ls_path, $io);
 
 			if (!$la_colors) {
 				$io->error('Status: Cannot calculate average color for file');
@@ -289,7 +289,7 @@ class ConvertFilesCommand extends Command {
 				continue;
 			}
 
-			// If alpha is full transparent, set it to FF
+			// If alpha is fully transparent, set it to FF
 			$la_colors['alpha'] = $la_colors['alpha'] === 0 ? 255 : $la_colors['alpha'];
 
 			$lo_file->averageColor = sprintf('%02X%02X%02X%02X', $la_colors['red'], $la_colors['green'], $la_colors['blue'], $la_colors['alpha']);
@@ -322,20 +322,21 @@ class ConvertFilesCommand extends Command {
 
 	/**
 	 * @param string $path
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return array|false
 	 */
-	protected function calculateAverageColor(string $path): array|false {
+	protected function calculateAverageColor(string $path, ConsoleIo $io): array|false {
 		// Prefer the GD library for calculating the average color as it should be faster
 		if (function_exists('imagecreatefromstring')) {
 			return $this->calculateAverageColorGD($path);
 		}
 
 		// If the ImageMagick command line tool is not available, return false
-		if (!$this->useImageMagick) {
+		if (!$this->cliMagickExists) {
 			return false;
 		}
 
-		return $this->calculateAverageColorIM($path);
+		return $this->calculateAverageColorIM($path, $io);
 	}
 
 
@@ -343,11 +344,12 @@ class ConvertFilesCommand extends Command {
 	 * Calculate the average color of an image using the ImageMagick command line tool
 	 *
 	 * @param string $path
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return array|false
 	 */
-	protected function calculateAverageColorIM(string $path): array|false {
+	protected function calculateAverageColorIM(string $path, ConsoleIo $io): array|false {
 		$lo_process = $this->getProcess([
-			'convert',
+			'magick',
 			$path,
 			'-resize',
 			'1x1!',
@@ -356,9 +358,9 @@ class ConvertFilesCommand extends Command {
 			'info:-',
 		]);
 
-		$lo_process->run();
+		$lb_process = $this->runProcess($lo_process, $io);
 
-		if (!$lo_process->isSuccessful()) {
+		if (!$lb_process) {
 			return false;
 		}
 
@@ -404,17 +406,14 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Cake\Datasource\ResultSetInterface $args
+	 * @param \Cake\Datasource\ResultSetInterface $files
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return int
 	 */
 	protected function convertImagesToWebp(ResultSetInterface $files, ConsoleIo $io): int {
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
 		foreach ($files as $lo_file) {
-			$io->out(sprintf('Creating webp image for file `%s`', $lo_file->path));
-
 			$this->convertImageToWebp($lo_file, $io);
-
 			$io->hr();
 		}
 
@@ -462,16 +461,21 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function convertImageToWebp(Media $file, ConsoleIo $io): bool {
 		if (!$file->webpPathAbsolute) {
+			$io->out(sprintf('Creating WebP file for file `%s`', $file->path));
+			$io->error('Status: Cannot convert file without a path');
+			$io->hr();
+
 			$file->webp = ProcessStatus::Fail;
 
 			return false;
 		}
 
 		if (!file_exists(dirname($file->webpPathAbsolute))) {
-			$io->out(sprintf('Creating directory (%s) for webp file', dirname($file->webpPath)));
+			$io->out(sprintf('Creating directory `%s` for WebP file', dirname($file->webpPath)));
 
 			if (!mkdir(dirname($file->webpPathAbsolute))) {
-				$io->error('Status: Cannot create directory for webp file');
+				$io->error('Status: Cannot create directory for WebP file');
+				$io->hr();
 
 				$file->webp = ProcessStatus::Fail;
 
@@ -479,9 +483,16 @@ class ConvertFilesCommand extends Command {
 			}
 
 			$io->success('Status: Directory created');
+			$io->hr();
 		}
 
-		if (!$this->useImageMagick) {
+		$io->out(sprintf('Creating WebP file for file `%s`', $file->path));
+
+		// If magick is not available or cannot convert web, use the GD library
+		if (
+			!$this->cliMagickExists ||
+			Configure::read('AvailableCommands.imageMagick.webp', false) === false
+		) {
 			return $this->convertImageToWebpGD($file, $io);
 		}
 
@@ -496,7 +507,7 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function convertImageToWebpGD(Media $file, ConsoleIo $io): bool {
 		if (!function_exists('imagewebp')) {
-			$io->error('Status: Cannot create webp file without imagewebp function');
+			$io->error('Status: Cannot create WebP file without imagewebp function');
 			$file->webp = ProcessStatus::Fail;
 
 			return false;
@@ -504,9 +515,9 @@ class ConvertFilesCommand extends Command {
 
 		$ls_inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
 
-		$lo_image = $this->imageManager->read($ls_inputPath);
-
 		try {
+			$lo_image = $this->imageManager->read($ls_inputPath);
+
 			$lo_image->toWebp(90)->save($file->webpPathAbsolute);
 		}
 		catch (Exception $ex) {
@@ -517,7 +528,7 @@ class ConvertFilesCommand extends Command {
 			return false;
 		}
 
-		$io->success('Status: Webp file created');
+		$io->success('Status: WebP file created');
 		$file->webp = ProcessStatus::Success;
 
 		return true;
@@ -531,22 +542,12 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function convertImageToWebpIM(Media $file, ConsoleIo $io): bool {
 		$lo_process = $this->getProcess($this->getWebPCommand($file));
-		$lo_process->run();
 
-		if (!$lo_process->isSuccessful()) {
-			$io->error('Status: ' . $lo_process->getExitCodeText());
-			$io->out('Command: ' . $lo_process->getCommandLine());
-			$io->out('Message: ' . $lo_process->getErrorOutput(), 0);
+		$lb_process = $this->runProcess($lo_process, $io);
 
-			$file->webp = ProcessStatus::Fail;
+		$file->webp = $lb_process ? ProcessStatus::Success : ProcessStatus::Fail;
 
-			return false;
-		}
-
-		$io->success('Status: ' . $lo_process->getExitCodeText());
-		$file->webp = ProcessStatus::Success;
-
-		return true;
+		return $lb_process;
 	}
 
 
@@ -559,8 +560,6 @@ class ConvertFilesCommand extends Command {
 	protected function convertNonImages(ResultSetInterface $files, ConsoleIo $io, bool $includeWebp): int {
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
 		foreach ($files as $lo_file) {
-			$io->out(sprintf('Creating preview for file `%s`', $lo_file->path));
-
 			$this->convertNonImage($lo_file, $io, $includeWebp);
 
 			$io->hr();
@@ -635,6 +634,7 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function convertNonImage(Media $file, ConsoleIo $io, bool $includeWebp): bool {
 		if (!$file->previewPathAbsolute) {
+			$io->out(sprintf('Creating preview for file `%s`', $file->path));
 			$io->error('Status: Cannot convert file without a path');
 			$io->hr();
 
@@ -642,18 +642,22 @@ class ConvertFilesCommand extends Command {
 		}
 
 		if (!file_exists(dirname($file->previewPathAbsolute))) {
-			$io->out(sprintf('Creating directory (%s) for file preview', dirname($file->previewPath)));
+			$io->out(sprintf('Creating directory `%s` for file preview', dirname($file->previewPath)));
 
 			if (!mkdir(dirname($file->previewPathAbsolute))) {
 				$io->error('Status: Cannot create directory for file preview');
+				$io->hr();
 
 				return false;
 			}
 
 			$io->success('Status: Directory created');
+			$io->hr();
 		}
 
-		if (!$this->useImageMagick) {
+		$io->out(sprintf('Creating preview for file `%s`', $file->path));
+
+		if (!$this->cliMagickExists) {
 			return $this->convertNonImageGD($file, $io, $includeWebp);
 		}
 
@@ -671,7 +675,6 @@ class ConvertFilesCommand extends Command {
 	protected function convertNonImageGD(Media $file, ConsoleIo $io, bool $includeWebp): bool {
 		// For now, converting non-image files is not supported by GD
 		$io->warning(sprintf('Status: Cannot convert filetype `%s`', $file->extension));
-		$io->hr();
 
 		$file->preview = ProcessStatus::Fail;
 		$file->webp = ProcessStatus::Fail;
@@ -691,7 +694,6 @@ class ConvertFilesCommand extends Command {
 
 		if (!$la_command) {
 			$io->warning(sprintf('Status: Cannot convert filetype `%s`', $file->extension));
-			$io->hr();
 
 			$file->preview = ProcessStatus::Fail;
 			$file->webp = ProcessStatus::Fail;
@@ -700,30 +702,23 @@ class ConvertFilesCommand extends Command {
 		}
 
 		$lo_process = $this->getProcess($la_command);
-		$lo_process->run();
 
-		if (!$lo_process->isSuccessful()) {
-			$io->error('Status: ' . $lo_process->getExitCodeText());
-			$io->out('Command: ' . $lo_process->getCommandLine());
-			$io->out('Message: ' . $lo_process->getErrorOutput(), 0);
+		$lb_process = $this->runProcess($lo_process, $io);
 
+		if (!$lb_process) {
 			$file->preview = ProcessStatus::Fail;
 			$file->webp = ProcessStatus::Undefined;
 
 			return false;
 		}
 
-		$io->success('Status: ' . $lo_process->getExitCodeText());
-
-		$la_imageSize = $this->getRealImageSize($file->previewPathAbsolute);
+		$la_imageSize = $this->getRealImageSize($file->previewPathAbsolute, $io);
 
 		$file->width = $la_imageSize[0] ?? null;
 		$file->height = $la_imageSize[1] ?? null;
 		$file->preview = ProcessStatus::Success;
 
 		if ($includeWebp) {
-			$io->out(sprintf('Creating WebP file for file `%s`', $file->path));
-
 			$this->convertImageToWebp($file, $io);
 		}
 
@@ -734,7 +729,7 @@ class ConvertFilesCommand extends Command {
 	/**
 	 * @param \Cake\Datasource\ResultSetInterface $files
 	 * @param \Cake\Console\ConsoleIo $io
-	 * @return void
+	 * @return int
 	 */
 	protected function cropImages(ResultSetInterface $files, ConsoleIo $io): int {
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
@@ -781,7 +776,10 @@ class ConvertFilesCommand extends Command {
 	 * @return bool
 	 */
 	protected function cropImage(Media $file, ConsoleIo $io): bool {
-		if (!$this->useImageMagick) {
+		if (
+			!$this->cliMagickExists ||
+			Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+		) {
 			$lb_cropped = $this->cropImageGD($file, $io);
 		}
 		else {
@@ -798,7 +796,7 @@ class ConvertFilesCommand extends Command {
 			$file->deleteResizedFiles();
 		}
 
-		$la_imageSize = $this->getRealImageSize($file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute);
+		$la_imageSize = $this->getRealImageSize($file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute, $io);
 
 		$file->width = $la_imageSize[0] ?? null;
 		$file->height = $la_imageSize[1] ?? null;
@@ -834,33 +832,33 @@ class ConvertFilesCommand extends Command {
 					$this->autoRotateImageGD($file->webpPathAbsolute);
 				}
 				catch (Exception) {
-					// Ignore the exception for webp auto rotatation
+					// Ignore the exception for webp autorotation
 				}
 			}
 
 			return true;
 		}
 
-		$lo_image = $this->imageManager->read($ls_inputPath);
-
-		if ($file->width !== (float)$file->crop['width'] || $file->height !== (float)$file->crop['height']) {
-			$lb_crop = true;
-
-			$lo_image->crop((int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']);
-		}
-
-		if ((float)$file->crop['width'] !== (float)$file->crop['resize_width'] || (float)$file->crop['height'] !== (float)$file->crop['resize_height']) {
-			$lb_resize = true;
-
-			$lo_image->scaleDown((int)$file->crop['resize_width'], (int)$file->crop['resize_height']);
-		}
-
-		if (!$lb_crop && !$lb_resize) {
-			$lo_image = null; //phpcs:ignore
-			return true;
-		}
-
 		try {
+			$lo_image = $this->imageManager->read($ls_inputPath);
+
+			if ($file->width !== (float)$file->crop['width'] || $file->height !== (float)$file->crop['height']) {
+				$lb_crop = true;
+
+				$lo_image->crop((int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']);
+			}
+
+			if ((float)$file->crop['width'] !== (float)$file->crop['resize_width'] || (float)$file->crop['height'] !== (float)$file->crop['resize_height']) {
+				$lb_resize = true;
+
+				$lo_image->scaleDown((int)$file->crop['resize_width'], (int)$file->crop['resize_height']);
+			}
+
+			if (!$lb_crop && !$lb_resize) {
+				$lo_image = null; //phpcs:ignore
+				return true;
+			}
+
 			$lo_image->save($ls_inputPath, quality: 90, progressive: true);
 		}
 		catch (Exception $ex) {
@@ -871,17 +869,17 @@ class ConvertFilesCommand extends Command {
 
 		// If a webp file exists, crop it as well
 		if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
-			$lo_image = $this->imageManager->read($file->webpPathAbsolute);
-
-			if ($lb_crop) {
-				$lo_image->crop((int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']);
-			}
-
-			if ($lb_resize) {
-				$lo_image->scaleDown((int)$file->crop['resize_width'], (int)$file->crop['resize_height']);
-			}
-
 			try {
+				$lo_image = $this->imageManager->read($file->webpPathAbsolute);
+
+				if ($lb_crop) {
+					$lo_image->crop((int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']);
+				}
+
+				if ($lb_resize) {
+					$lo_image->scaleDown((int)$file->crop['resize_width'], (int)$file->crop['resize_height']);
+				}
+
 				$lo_image->save($ls_inputPath, quality: 90, progressive: true);
 			}
 			catch (Exception) {
@@ -902,17 +900,12 @@ class ConvertFilesCommand extends Command {
 		$la_commands = $this->getCropCommand($file);
 
 		$lo_process = $this->getProcess($la_commands['original']);
-		$lo_process->run();
 
-		if (!$lo_process->isSuccessful()) {
-			$io->error('Status: ' . $lo_process->getExitCodeText());
-			$io->out('Command: ' . $lo_process->getCommandLine());
-			$io->out('Message: ' . $lo_process->getErrorOutput(), 0);
+		$lb_process = $this->runProcess($lo_process, $io);
 
+		if (!$lb_process) {
 			return false;
 		}
-
-		$io->success('Status: ' . $lo_process->getExitCodeText());
 
 		// If there's a webp command, run it and crop the webp file as well
 		if ($la_commands['webp']) {
@@ -935,8 +928,6 @@ class ConvertFilesCommand extends Command {
 	protected function resizeImages(ResultSetInterface $files, ConsoleIo $io): int {
 		/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_file */
 		foreach ($files as $lo_file) {
-			$io->out(sprintf('Resizing file `%s` to `%s', $lo_file->media->path, $lo_file->path));
-
 			$this->resizeImage($lo_file, $io);
 
 			$io->hr();
@@ -991,6 +982,7 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function resizeImage(MediaResizedImage $file, ConsoleIo $io): bool {
 		if (!$file->media->isImage() && $file->media->preview === ProcessStatus::Fail) {
+			$io->out(sprintf('Resizing file `%s` to `%s', $file->media->path, $file->path));
 			$io->error('Status: Cannot resize non-image file without a preview');
 			$io->hr();
 
@@ -1000,18 +992,25 @@ class ConvertFilesCommand extends Command {
 		}
 
 		if (!file_exists(dirname($file->pathAbsolute))) {
-			$io->out(sprintf('Creating directory (%s) for resized file', dirname($file->path)));
+			$io->out(sprintf('Creating directory `%s` for resized file', dirname($file->path)));
 
 			if (!mkdir(dirname($file->pathAbsolute))) {
 				$io->error('Status: Cannot create directory for resized file');
+				$io->hr();
 
 				return false;
 			}
 
 			$io->success('Status: Directory created');
+			$io->hr();
 		}
 
-		if (!$this->useImageMagick) {
+		$io->out(sprintf('Resizing file `%s` to `%s', $file->media->path, $file->path));
+
+		if (
+			!$this->cliMagickExists ||
+			Configure::read('AvailableCommands.imageMagick.' . $file->extension, false) === false
+		) {
 			$lb_resized = $this->resizeImageGD($file, $io);
 		}
 		else {
@@ -1024,7 +1023,7 @@ class ConvertFilesCommand extends Command {
 			return false;
 		}
 
-		$la_imageSize = $this->getRealImageSize($file->pathAbsolute);
+		$la_imageSize = $this->getRealImageSize($file->pathAbsolute, $io);
 
 		$file->realWidth = $la_imageSize[0] ?? null;
 		$file->realHeight = $la_imageSize[1] ?? null;
@@ -1040,68 +1039,68 @@ class ConvertFilesCommand extends Command {
 	 * @return bool
 	 */
 	protected function resizeImageGD(MediaResizedImage $file, ConsoleIo $io): bool {
-		$lo_image = $this->imageManager->read($file->media->isImage() ? $file->media->pathAbsolute : $file->media->previewPathAbsolute);
+		try {
+			$lo_image = $this->imageManager->read($file->media->isImage() ? $file->media->pathAbsolute : $file->media->previewPathAbsolute);
 
-		if ($file->strategy === ResizeStrategy::Contain) {
-			$lo_image->scaleDown($file->width, $file->height);
-		}
-		elseif ($file->strategy === ResizeStrategy::Cover) {
-			// Calculate aspect ratios
-			$lf_originalRatio = $file->media->width / $file->media->height;
-			$lf_targetRatio = $lf_originalRatio;
-			if ($file->width && $file->height) {
-				$lf_targetRatio = $file->width / $file->height;
+			if ($file->strategy === ResizeStrategy::Contain) {
+				$lo_image->scaleDown($file->width, $file->height);
 			}
-
-			// Resize logic mimicking ^
-			if ($lf_originalRatio > $lf_targetRatio) {
-				// Image is wider - scale by height
-				$lo_image->scaleDown(null, $file->height);
-			}
-			else {
-				// Image is taller - scale by width
-				$lo_image->scaleDown($file->width);
-			}
-		}
-		elseif ($file->strategy === ResizeStrategy::Crop) {
-			$ls_position = 'center';
-
-			if ($file->media->focusPoint) {
-				// Focus point is in the format "[0|1|2],[0|1|2]"
-				$la_focusPoint = explode(',', $file->media->focusPoint);
-
-				if (count($la_focusPoint) !== 2) {
-					$la_focusPoint = [1, 1];
+			elseif ($file->strategy === ResizeStrategy::Cover) {
+				// Calculate aspect ratios
+				$lf_originalRatio = $file->media->width / $file->media->height;
+				$lf_targetRatio = $lf_originalRatio;
+				if ($file->width && $file->height) {
+					$lf_targetRatio = $file->width / $file->height;
 				}
 
-				// Convert the focus point to a position value
-				// Possible values should be "top-left", "top", "top-right", "left", "center", "right", "bottom-left", "bottom", "bottom-right"
-				$la_positionValues = [
-					'top-left',
-					'top',
-					'top-right',
-					'left',
-					'center',
-					'right',
-					'bottom-left',
-					'bottom',
-					'bottom-right',
-				];
+				// Resize logic mimicking ^
+				if ($lf_originalRatio > $lf_targetRatio) {
+					// Image is wider - scale by height
+					$lo_image->scaleDown(null, $file->height);
+				}
+				else {
+					// Image is taller - scale by width
+					$lo_image->scaleDown($file->width);
+				}
+			}
+			elseif ($file->strategy === ResizeStrategy::Crop) {
+				$ls_position = 'center';
 
-				$ls_position = $la_positionValues[ (int)$la_focusPoint[0] * 3 + (int)$la_focusPoint[1] ];
+				if ($file->media->focusPoint) {
+					// The focus point is in the format "[0|1|2],[0|1|2]"
+					$la_focusPoint = explode(',', $file->media->focusPoint);
+
+					if (count($la_focusPoint) !== 2) {
+						$la_focusPoint = [1, 1];
+					}
+
+					// Convert the focus point to a position value
+					// Possible values should be "top-left", "top", "top-right", "left", "center", "right", "bottom-left", "bottom", "bottom-right"
+					$la_positionValues = [
+						'top-left',
+						'top',
+						'top-right',
+						'left',
+						'center',
+						'right',
+						'bottom-left',
+						'bottom',
+						'bottom-right',
+					];
+
+					$ls_position = $la_positionValues[ (int)$la_focusPoint[0] * 3 + (int)$la_focusPoint[1] ];
+				}
+
+				$lo_image->coverDown($file->width, $file->height, $ls_position);
+			}
+			elseif ($file->strategy === ResizeStrategy::Stretch) {
+				$lo_image->resizeDown($file->width, $file->height);
+			}
+			else {
+				$io->error('Status: Unsupported resize strategy');
+				return false;
 			}
 
-			$lo_image->coverDown($file->width, $file->height, $ls_position);
-		}
-		elseif ($file->strategy === ResizeStrategy::Stretch) {
-			$lo_image->resizeDown($file->width, $file->height);
-		}
-		else {
-			$io->error('Status: Unsupported resize strategy');
-			return false;
-		}
-
-		try {
 			$lo_image->save($file->pathAbsolute, quality: 90, progressive: true);
 		}
 		catch (Exception $ex) {
@@ -1125,19 +1124,8 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function resizeImageIM(MediaResizedImage $file, ConsoleIo $io): bool {
 		$lo_process = $this->getProcess($this->getResizeCommand($file));
-		$lo_process->run();
 
-		if (!$lo_process->isSuccessful()) {
-			$io->error('Status: ' . $lo_process->getExitCodeText());
-			$io->out('Command: ' . $lo_process->getCommandLine());
-			$io->out('Message: ' . $lo_process->getErrorOutput(), 0);
-
-			return false;
-		}
-
-		$io->success('Status: ' . $lo_process->getExitCodeText());
-
-		return true;
+		return $this->runProcess($lo_process, $io);
 	}
 
 
@@ -1288,7 +1276,7 @@ class ConvertFilesCommand extends Command {
 				return false;
 			}
 
-			$la_command = [
+			return [
 				'ffmpeg',
 				'-y',
 				'-i',
@@ -1300,32 +1288,32 @@ class ConvertFilesCommand extends Command {
 				$file->previewPathAbsolute,
 			];
 		}
-		else {
-			if (!Configure::read('AvailableCommands.imageMagick.' . $file->extension)) {
-				return false;
-			}
 
-			$ls_inputPath = $file->path;
-			if (in_array($file->extension, ['pdf', 'psd'])) {
-				$ls_inputPath .= '[0]';
-			}
-
-			$la_command = [
-				'convert',
-				'-density',
-				300,
-				'-quality',
-				90,
-				'-colorspace',
-				'sRGB',
-				'-alpha',
-				'remove',
-				WWW_ROOT . str_replace('/', DS, $ls_inputPath),
-				$file->previewPathAbsolute,
-			];
+		if (!Configure::read('AvailableCommands.imageMagick.' . $file->extension)) {
+			return false;
 		}
 
-		return $la_command;
+		$ls_inputPath = $file->path;
+		if (in_array($file->extension, ['pdf', 'psd'])) {
+			$ls_inputPath .= '[0]';
+		}
+
+		return [
+			'magick',
+			'-density',
+			300,
+			WWW_ROOT . str_replace('/', DS, $ls_inputPath),
+			'-colorspace',
+			'sRGB',
+			'-background',
+			'white',
+			'-quality',
+			90,
+			'-alpha',
+			'remove',
+			'-flatten',
+			$file->previewPathAbsolute,
+		];
 	}
 
 
@@ -1337,7 +1325,7 @@ class ConvertFilesCommand extends Command {
 		$ls_inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
 
 		return [
-			'convert',
+			'magick',
 			$ls_inputPath,
 			$file->webpPathAbsolute,
 		];
@@ -1361,6 +1349,7 @@ class ConvertFilesCommand extends Command {
 			$la_commandWebp = null;
 			if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
 				$la_commandWebp = [
+					'magick',
 					'mogrify',
 					'-auto-orient',
 					$file->webpPathAbsolute,
@@ -1369,6 +1358,7 @@ class ConvertFilesCommand extends Command {
 
 			return [
 				'original' => [
+					'magick',
 					'mogrify',
 					'-auto-orient',
 					$ls_inputPath,
@@ -1378,7 +1368,7 @@ class ConvertFilesCommand extends Command {
 		}
 
 		$la_commandOriginal = [
-			'convert',
+			'magick',
 			$ls_inputPath,
 		];
 
@@ -1403,7 +1393,7 @@ class ConvertFilesCommand extends Command {
 		$la_commandWebp = null;
 		if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
 			$la_commandWebp = [
-				'convert',
+				'magick',
 				$file->webpPathAbsolute,
 			];
 
@@ -1444,7 +1434,7 @@ class ConvertFilesCommand extends Command {
 
 		$ls_gravity = 'center';
 		if ($file->media->focusPoint) {
-			// Focus point is in the format "[0|1|2],[0|1|2]"
+			// The focus point is in the format "[0|1|2],[0|1|2]"
 			$la_focusPoint = explode(',', $file->media->focusPoint);
 
 			if (count($la_focusPoint) !== 2) {
@@ -1470,21 +1460,21 @@ class ConvertFilesCommand extends Command {
 
 		return match ($file->strategy) {
 			ResizeStrategy::Contain => [
-				'convert',
+				'magick',
 				$ls_inputPath,
 				'-resize',
 				$file->width . 'x' . $file->height,
 				$file->pathAbsolute,
 			],
 			ResizeStrategy::Cover => [
-				'convert',
+				'magick',
 				$ls_inputPath,
 				'-resize',
 				$file->width . 'x' . $file->height . '^',
 				$file->pathAbsolute,
 			],
 			ResizeStrategy::Crop => [
-				'convert',
+				'magick',
 				$ls_inputPath,
 				'-resize',
 				$file->width . 'x' . $file->height . '^',
@@ -1495,7 +1485,7 @@ class ConvertFilesCommand extends Command {
 				$file->pathAbsolute,
 			],
 			ResizeStrategy::Stretch => [
-				'convert',
+				'magick',
 				$ls_inputPath,
 				'-resize',
 				$file->width . 'x' . $file->height . '!',
@@ -1507,12 +1497,13 @@ class ConvertFilesCommand extends Command {
 
 	/**
 	 * Return the real size of an image
-	 * Uses getimagesize if available, otherwise falls back to the identify command
+	 * Uses `getimagesize()` if available, otherwise falls back to the identify command
 	 *
 	 * @param string $imagePath
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return array
 	 */
-	protected function getRealImageSize(string $imagePath): array {
+	protected function getRealImageSize(string $imagePath, ConsoleIo $io): array {
 		if (function_exists('getimagesize')) {
 			return getimagesize($imagePath);
 		}
@@ -1521,18 +1512,23 @@ class ConvertFilesCommand extends Command {
 		 * If the ImageMagick command is not available, we cannot get the image size.
 		 * Return an empty array in this case.
 		 */
-		if (!$this->useImageMagick) {
+		if (!$this->cliMagickExists) {
 			return [];
 		}
 
 		$lo_process = $this->getProcess([
+			'magick',
 			'identify',
 			'-format',
 			'%wx%h',
 			$imagePath,
 		]);
 
-		$lo_process->run();
+		$lb_process = $this->runProcess($lo_process, $io);
+
+		if (!$lb_process) {
+			return [];
+		}
 
 		return explode('x', $lo_process->getOutput());
 	}
@@ -1543,16 +1539,38 @@ class ConvertFilesCommand extends Command {
 	 * @return bool
 	 */
 	protected function autoRotateImageGD(string $inputPath): bool {
-		$lo_image = $this->imageManager->read($inputPath);
-
-		$lo_image = $lo_image->orient();
-
 		try {
+			$lo_image = $this->imageManager->read($inputPath);
+
+			$lo_image = $lo_image->orient();
+
 			$lo_image->save($inputPath, quality: 90, progressive: true);
 		}
 		catch (Exception) {
 			return false;
 		}
+
+		return true;
+	}
+
+
+	/**
+	 * @param \Symfony\Component\Process\Process $process
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return bool
+	 */
+	protected function runProcess(Process $process, ConsoleIo $io): bool {
+		$process->run();
+
+		if (!$process->isSuccessful()) {
+			$io->error('Status: ' . $process->getExitCodeText());
+			$io->out('Command: ' . str_replace('\' \'', ' ', $process->getCommandLine()));
+			$io->out('Message: ' . $process->getErrorOutput(), 0);
+
+			return false;
+		}
+
+		$io->success('Status: ' . $process->getExitCodeText());
 
 		return true;
 	}
