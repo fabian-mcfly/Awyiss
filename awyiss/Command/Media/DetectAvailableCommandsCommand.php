@@ -67,25 +67,31 @@ class DetectAvailableCommandsCommand extends Command {
 			$io->error('ffmpg not available');
 		}
 
-		$io->out('Testing ImageMagick (`convert`)... ', 0);
-		$lb_imageMagick = $this->testProcess(['convert', '-version']);
+		$io->out('Testing ImageMagick (`magick`)... ', 0);
+		$lb_imageMagick = $this->testProcess(['magick', '-version']);
 		$la_imageMagick = false;
 		if ($lb_imageMagick) {
-			$io->success('convert available');
+			$io->success('magick available');
 
-			$lb_imageMagickPdf = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.pdf', TMP . 'logo-awyiss.jpg'], 'PDF support', $io);
+			$lb_imageMagickAvif = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.avif', TMP . 'logo-awyiss.jpg'], 'Avif support', $io);
 
-			$lb_imageMagickSvg = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.svg', TMP . 'logo-awyiss.jpg'], 'SVG support', $io);
+			$lb_imageMagickWebp = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.webp', TMP . 'logo-awyiss.jpg'], 'WebP support', $io);
 
-			$lb_imageMagickDocx = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.docx', TMP . 'logo-awyiss.jpg'], 'DOCX support', $io);
+			$lb_imageMagickPdf = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.pdf', TMP . 'logo-awyiss.jpg'], 'PDF support', $io);
 
-			$lb_imageMagickPptx = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.pptx', TMP . 'logo-awyiss.jpg'], 'PPTX support', $io);
+			$lb_imageMagickSvg = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.svg', TMP . 'logo-awyiss.jpg'], 'SVG support', $io);
 
-			$lb_imageMagickPsd = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.psd', TMP . 'logo-awyiss.jpg'], 'PSD support', $io);
+			$lb_imageMagickDocx = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.docx', TMP . 'logo-awyiss.jpg'], 'DOCX support', $io);
 
-			$lb_imageMagickXlxs = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.xlsx', TMP . 'logo-awyiss.jpg'], 'XLSX support', $io);
+			$lb_imageMagickPptx = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.pptx', TMP . 'logo-awyiss.jpg'], 'PPTX support', $io);
+
+			$lb_imageMagickPsd = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.psd', TMP . 'logo-awyiss.jpg'], 'PSD support', $io);
+
+			$lb_imageMagickXlxs = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.xlsx', TMP . 'logo-awyiss.jpg'], 'XLSX support', $io);
 
 			$la_imageMagick = [
+				'avif' => $lb_imageMagickAvif,
+				'webp' => $lb_imageMagickWebp,
 				'pdf' => $lb_imageMagickPdf,
 				'svg' => $lb_imageMagickSvg,
 				'doc' => $lb_imageMagickDocx,
@@ -98,8 +104,8 @@ class DetectAvailableCommandsCommand extends Command {
 			];
 		}
 		else {
-			$io->error('convert not available');
-			$io->out('Skipping specific file type detection for `convert`...');
+			$io->error('magick not available');
+			$io->out('Skipping specific file type detection for `magick`...');
 		}
 
 		if (file_exists(TMP . 'logo-awyiss.jpg')) {
