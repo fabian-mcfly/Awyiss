@@ -15,6 +15,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
 
 /**
@@ -22,6 +23,7 @@ use Cake\Event\EventListenerInterface;
  */
 class ConfigurationListener implements EventListenerInterface {
 	use EventListenerTrait;
+	use LocatorAwareTrait;
 
 
 	/**
@@ -77,6 +79,7 @@ class ConfigurationListener implements EventListenerInterface {
 		$this->unnestEntries($event, $entity);
 		$this->rebuildSystemOrder($event, $entity);
 		$this->createCustomConfiguration();
+		$this->clearMediaCache($entity);
 	}
 
 
@@ -90,6 +93,7 @@ class ConfigurationListener implements EventListenerInterface {
 	public function afterDelete(Event $event, Configuration $entity): void {
 		$this->unnestEntries($event, $entity, true);
 		$this->createCustomConfiguration();
+		$this->clearMediaCache($entity, true);
 	}
 
 
@@ -277,6 +281,46 @@ class ConfigurationListener implements EventListenerInterface {
 		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE) . '\[??\]\[??\].php';
 		foreach (glob(ENV_CUSTOM_CONFIG . $ls_fileName) as $ls_filePath) {
 			unlink($ls_filePath);
+		}
+	}
+
+
+	/**
+	 * If the resizeMediaFileType config is changed, we need to clear the media cache
+	 * to remove unused files.
+	 *
+	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param bool $deleted
+	 * @return void
+	 */
+	protected function clearMediaCache(Configuration $entity, bool $deleted = false): void {
+		if (
+			$entity->scope !== 'media' ||
+			$entity->identifier !== 'resize_media_file_type'
+		) {
+			return;
+		}
+
+		if (
+			$deleted ||
+			$entity->isNew() ||
+			(
+				$entity->hasOriginal('value') &&
+				$entity->getOriginal('value') !== $entity->value
+			)
+		) {
+			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+			$lo_queue = $this->fetchTable('Queue.QueuedJobs');
+
+			$lo_queue->createJob('Queue.Execute', [
+				'command' => 'bin' . DS . 'cake media clear_cache',
+				'escape' => false,
+				'log' => true,
+			], [
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'media::clear_cache',
+			]);
 		}
 	}
 }
