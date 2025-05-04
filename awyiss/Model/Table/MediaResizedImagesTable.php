@@ -53,9 +53,9 @@ class MediaResizedImagesTable extends Table {
 	 * @param string $format
 	 * @return \Awyiss\Model\Entity\MediaResizedImage
 	 */
-	public function newEntityFromMedia(Media $media, ?int $width, ?int $height = null, ResizeStrategy $strategy = ResizeStrategy::Contain, string $format = 'webp'): MediaResizedImage {
+	public function newEntityFromMedia(Media $media, ?int $width, ?int $height = null, ResizeStrategy $strategy = ResizeStrategy::Contain, string $format = 'avif'): MediaResizedImage {
 		// Check if the format is supported
-		if (!in_array($format, ['webp', 'jpg'])) {
+		if (!in_array($format, ['avif', 'jpg', 'png', 'webp'])) {
 			throw new InvalidArgumentException('The format is not supported.');
 		}
 

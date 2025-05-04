@@ -198,7 +198,7 @@ class ResizedImageManager {
 		float|int|null $height = null,
 		float|int|null $aspectRatio = null,
 		ResizeStrategy|string|int $strategy = ResizeStrategy::Contain,
-		string $format = 'webp',
+		string $format = 'avif',
 		bool $strictSize = false,
 		bool $allowUpscale = false,
 	): ?MediaResizedImage {

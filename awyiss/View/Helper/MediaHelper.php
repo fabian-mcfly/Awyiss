@@ -4,6 +4,7 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Configuration\ConfigOptions\MediaConfigOptions;
 use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
@@ -15,6 +16,7 @@ use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Collection\Collection;
+use Cake\Core\Configure;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\View\Helper;
 use InvalidArgumentException;
@@ -38,6 +40,10 @@ class MediaHelper extends Helper {
 	 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 */
 	protected MediaRenderOptions $mediaRenderOptions;
+	/**
+	 * @var string $resizeMediaFileType The file type used for resizing media
+	 */
+	protected string $resizeMediaFileType;
 
 
 	/**
@@ -52,6 +58,8 @@ class MediaHelper extends Helper {
 		$lo_twig = $this->getView()->getTwig();
 		$lo_twig->addGlobal('ProcessStatus', ProcessStatus::class);
 		$lo_twig->addGlobal('ResizeStrategy', ResizeStrategy::class);
+
+		$this->resizeMediaFileType = $config['resizeMediaFileType'] ?? Configure::read('Awyiss.Media.Frontend.resizeMediaFileType', MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF);
 	}
 
 
@@ -124,7 +132,7 @@ class MediaHelper extends Helper {
 
 		$ls_path = $lo_file?->path;
 		if (!$ls_path) {
-			$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
+			$ls_path = $media->isImage() ? $this->getTargetPath($media) : $media->previewPath;
 		}
 
 		$lf_aspectRatio = 1;
@@ -295,7 +303,7 @@ class MediaHelper extends Helper {
 
 		$ls_path = $lo_file?->path;
 		if (!$ls_path) {
-			$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
+			$ls_path = $media->isImage() ? $this->getTargetPath($media) : $media->previewPath;
 		}
 
 		if ($lo_file?->realWidth && $lo_file?->realHeight) {
@@ -358,7 +366,10 @@ class MediaHelper extends Helper {
 			$ls_path = $lo_file->path;
 
 			$ls_mimeType = $media->mimeType;
-			if (str_ends_with($ls_path, 'webp')) {
+			if (str_ends_with($ls_path, 'avif')) {
+				$ls_mimeType = 'image/avif';
+			}
+			elseif (str_ends_with($ls_path, 'webp')) {
 				$ls_mimeType = 'image/webp';
 			}
 
@@ -568,10 +579,20 @@ class MediaHelper extends Helper {
 		float|int|null $height = null,
 		float|int|null $aspectRatio = null,
 		ResizeStrategy|string|int $strategy = ResizeStrategy::Contain,
-		string $format = 'webp',
+		?string $format = null,
 		bool $strictSize = false,
 		bool $allowUpscale = false,
 	): ?MediaResizedImage {
+		if (!$format) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$format = $this->resizeMediaFileType;
+		}
+
+		if ($format === MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$format = $media->isImage() ? $media->extension : 'jpg';
+		}
+
 		if (!$renderOptions) {
 			$la_vars = get_defined_vars();
 			unset($la_vars['renderOptions']);
@@ -750,7 +771,7 @@ class MediaHelper extends Helper {
 
 		$ls_lastPath = $lo_file?->path;
 		if (!$ls_lastPath) {
-			$ls_lastPath = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
+			$ls_lastPath = $media->isImage() ? $this->getTargetPath($media) : $media->previewPath;
 		}
 
 		$la_overrideOptions = [
@@ -778,7 +799,7 @@ class MediaHelper extends Helper {
 				$ls_path = $lo_resizedImage->path;
 			}
 			else {
-				$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
+				$ls_path = $media->isImage() ? $this->getTargetPath($media) : $media->previewPath;
 			}
 
 			if (!$removeDuplicates || $ls_lastPath !== $ls_path) {
@@ -1109,5 +1130,21 @@ class MediaHelper extends Helper {
 		}
 
 		return $ls_subtitles;
+	}
+
+
+	/**
+	 * Return the target path for the media item,
+	 * depending on the configured media type.
+	 *
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @return string|null
+	 */
+	protected function getTargetPath(Media $media): ?string {
+		return match ($this->resizeMediaFileType) {
+			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF => $media->avifPath,
+			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_WEBP => $media->webpPath,
+			default => $media->path,
+		};
 	}
 }

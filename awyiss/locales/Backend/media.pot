@@ -241,3 +241,15 @@ msgstr "Media element"
 
 msgid "media_element_inline_img_tag"
 msgstr "Per text editor"
+
+msgid "configuration_identifier_frontend_resize_media_file_type"
+msgstr "File type for responsive media"
+
+msgid "resize_media_file_type_match_source"
+msgstr "Use original file format (fallback to JPG for non-image files)"
+
+msgid "resize_media_file_type_avif"
+msgstr "AVIF"
+
+msgid "resize_media_file_type_webp"
+msgstr "WebP"

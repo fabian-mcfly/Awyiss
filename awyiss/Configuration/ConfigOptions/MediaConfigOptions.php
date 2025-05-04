@@ -40,6 +40,18 @@ class MediaConfigOptions extends AbstractConfigOptions {
 	 * @var string Create historical paths when file or folder name changes
 	 */
 	final public const CREATE_HISTORICAL_PATHS_ALWAYS = 'always';
+	/**
+	 * @var string Resize media file type match source
+	 */
+	final public const RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE = 'match_source';
+	/**
+	 * @var string Resize media file type avif
+	 */
+	final public const RESIZE_MEDIA_FILE_TYPE_AVIF = 'avif';
+	/**
+	 * @var string Resize media file type webp
+	 */
+	final public const RESIZE_MEDIA_FILE_TYPE_WEBP = 'webp';
 
 
 	/**
@@ -74,6 +86,18 @@ class MediaConfigOptions extends AbstractConfigOptions {
 
 					return $la_values ?: null;
 				}
+			),
+			new ConfigOption(
+				defaultValue: static::RESIZE_MEDIA_FILE_TYPE_AVIF,
+				identifier: 'resizeMediaFileType',
+				localizable: false,
+				nullable: false,
+				type: ConfigOptionType::ListKey,
+				values: [
+					static::RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE => __d(Inflector::underscore(static::getScope()), 'resize_media_file_type_match_source'),
+					static::RESIZE_MEDIA_FILE_TYPE_AVIF => __d(Inflector::underscore(static::getScope()), 'resize_media_file_type_avif'),
+					static::RESIZE_MEDIA_FILE_TYPE_WEBP => __d(Inflector::underscore(static::getScope()), 'resize_media_file_type_webp'),
+				],
 			),
 		]);
 

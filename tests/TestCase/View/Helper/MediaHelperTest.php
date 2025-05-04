@@ -16,6 +16,7 @@ use Awyiss\Utility\Media\ResizedImageManager;
 use Awyiss\View\BackendView;
 use Awyiss\View\Helper\MediaHelper;
 use Awyiss\View\HelperRegistry;
+use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
 use Cake\View\Helper\HtmlHelper;
 use InvalidArgumentException;
@@ -135,7 +136,7 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->background($media, $mediaRenderOptions);
 
 		$this->assertStringContainsString('<style>.selector', $result);
-		$this->assertStringContainsString('background-image:url(\'/path/to/_webp/image.jpg.webp\');', $result);
+		$this->assertStringContainsString('background-image:url(\'/path/to/_avif/image.jpg.avif\');', $result);
 		$this->assertStringContainsString('background-color:#ffff00;', $result);
 	}
 
@@ -163,7 +164,7 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->background($media, $mediaRenderOptions);
 
 		$this->assertStringContainsString('<style>.selector', $result);
-		$this->assertStringContainsString('background-image:url(\'/path/to/_webp/image.jpg.webp\');', $result);
+		$this->assertStringContainsString('background-image:url(\'/path/to/_avif/image.jpg.avif\');', $result);
 		$this->assertStringNotContainsString('background-color:', $result);
 	}
 
@@ -206,7 +207,7 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->background($media, $mediaRenderOptions);
 
 		$this->assertStringContainsString('<style>.selector', $result);
-		$this->assertStringContainsString('background-image:url(\'_resized/dummypath/logo-awyiss-[w1024].webp\');', $result);
+		$this->assertStringContainsString('background-image:url(\'_resized/dummypath/logo-awyiss-[w1024].avif\');', $result);
 		$this->assertStringContainsString('@media (max-width:1234px) { .selector', $result);
 		$this->assertStringContainsString('@media (max-width:768px) { .selector', $result);
 		$this->assertStringContainsString('@media (max-width:640px) { .selector', $result);
@@ -405,10 +406,11 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
 
 		$this->assertStringNotContainsString('<picture', $result);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt=""', $result);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="logo-awyiss.png"', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
+		$this->assertStringContainsString('aria-hidden="true" role="presentation"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt=""', $result);
+		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="logo-awyiss.png"', $result);
 	}
 
 
@@ -426,9 +428,9 @@ class MediaHelperTest extends TestCase {
 
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
 
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt="Test alt"', $result);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="Test alt"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt="Test alt"', $result);
+		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="Test alt"', $result);
 	}
 
 
@@ -452,9 +454,9 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
 
 		$this->assertStringNotContainsString('Test alt', $result);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt="Another alt"', $result);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="Another alt"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.png.webp" alt="Another alt"', $result);
+		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="Another alt"', $result);
 	}
 
 
@@ -619,15 +621,15 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('<picture', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 
-		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].webp"', $result);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].webp"', $result);
+		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].avif"', $result);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
 
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].webp"', $result);
+		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
 
 		$this->assertStringNotContainsString('(max-width:1920px)', $result);
 		$this->assertStringNotContainsString('(max-width:1440px)', $result);
@@ -647,7 +649,7 @@ class MediaHelperTest extends TestCase {
 			'<source media="\(max-width:640px\)".*' .
 			'<source media="\(max-width:768px\)".*' .
 			'<source media="\(max-width:1234px\)".*' .
-			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].webp"/s',
+			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].avif"/s',
 			$result
 		);
 	}
@@ -822,9 +824,9 @@ class MediaHelperTest extends TestCase {
 
 		$result = $this->mediaHelper->imageTag($media, $this->mediaHelper->getMediaRenderOptions());
 
-		$this->assertStringContainsString('<img data-src="/path/to/_webp/image.jpg.webp"', $result);
+		$this->assertStringContainsString('<img data-src="/path/to/_avif/image.jpg.avif"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="/path/to/_webp/image.jpg.webp"', $result);
+		$this->assertStringContainsString('<img src="/path/to/_avif/image.jpg.avif"', $result);
 	}
 
 
@@ -842,9 +844,9 @@ class MediaHelperTest extends TestCase {
 
 		$result = $this->mediaHelper->imageTag($media, $this->mediaHelper->getMediaRenderOptions());
 
-		$this->assertStringContainsString('<img data-src="/path/to/_webp/image.jpg.webp" alt="Test alt"', $result);
+		$this->assertStringContainsString('<img data-src="/path/to/_avif/image.jpg.avif" alt="Test alt"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="/path/to/_webp/image.jpg.webp" alt="Test alt"', $result);
+		$this->assertStringContainsString('<img src="/path/to/_avif/image.jpg.avif" alt="Test alt"', $result);
 	}
 
 
@@ -943,6 +945,130 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('<picture', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 
+		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].avif"', $result);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
+		$this->assertStringContainsString('--imageBackgroundColor:#00ff00;', $result);
+
+		$this->assertStringContainsString('<noscript', $result);
+		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
+
+		$this->assertStringNotContainsString('(max-width:1920px)', $result);
+		$this->assertStringNotContainsString('(max-width:1440px)', $result);
+		$this->assertStringNotContainsString('(max-width:1280px)', $result);
+
+		/**
+		 * Make sure all breakpoints are in the correct order
+		 * The order of the breakpoints is important since
+		 * the first source with a matching media query is used
+		 *
+		 * @noinspection RegExpRedundantEscape
+		 */
+		$this->assertMatchesRegularExpression(
+			'/<source media="\(max-width:320px\)".*' .
+			'<source media="\(max-width:480px\)".*' .
+			'<source media="\(max-width:640px\)".*' .
+			'<source media="\(max-width:768px\)".*' .
+			'<source media="\(max-width:1234px\)".*' .
+			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].avif"/s',
+			$result
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testPictureTagWithWebpResizeFileType(): void {
+		Configure::write('Awyiss.Media.Frontend.resizeMediaFileType', 'webp');
+
+		$this->mediaHelper = new MediaHelper($this->view);
+		$this->mediaHelper->initialize([]);
+
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$media->averageColor = '#00ff00';
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1280.00,
+			'columnWidth' => 75.00,
+			'responsive' => true,
+			'singleColumnBreakpoint' => 640,
+			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
+		]);
+
+		$result = $this->mediaHelper->pictureTag($media, $mediaRenderOptions);
+
+		$this->assertStringContainsString('<picture', $result);
+		$this->assertStringContainsString('class="Lazyload"', $result);
+
+		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp"', $result);
+		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp"', $result);
+		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp"', $result);
+		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].webp"', $result);
+		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].webp"', $result);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].webp"', $result);
+		$this->assertStringContainsString('--imageBackgroundColor:#00ff00;', $result);
+
+		$this->assertStringContainsString('<noscript', $result);
+		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].webp"', $result);
+
+		$this->assertStringNotContainsString('(max-width:1920px)', $result);
+		$this->assertStringNotContainsString('(max-width:1440px)', $result);
+		$this->assertStringNotContainsString('(max-width:1280px)', $result);
+
+		/**
+		 * Make sure all breakpoints are in the correct order
+		 * The order of the breakpoints is important since
+		 * the first source with a matching media query is used
+		 *
+		 * @noinspection RegExpRedundantEscape
+		 */
+		$this->assertMatchesRegularExpression(
+			'/<source media="\(max-width:320px\)".*' .
+			'<source media="\(max-width:480px\)".*' .
+			'<source media="\(max-width:640px\)".*' .
+			'<source media="\(max-width:768px\)".*' .
+			'<source media="\(max-width:1234px\)".*' .
+			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].webp"/s',
+			$result
+		);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testPictureTagWithWebpResizeFileTypePerConfig(): void {
+		$this->mediaHelper = new MediaHelper($this->view);
+		$this->mediaHelper->initialize([
+			'resizeMediaFileType' => 'webp',
+		]);
+
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$media->averageColor = '#00ff00';
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1280.00,
+			'columnWidth' => 75.00,
+			'responsive' => true,
+			'singleColumnBreakpoint' => 640,
+			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
+		]);
+
+		$result = $this->mediaHelper->pictureTag($media, $mediaRenderOptions);
+
+		$this->assertStringContainsString('<picture', $result);
+		$this->assertStringContainsString('class="Lazyload"', $result);
+
 		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp"', $result);
 		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp"', $result);
 		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp"', $result);
@@ -1022,15 +1148,15 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('<picture', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 
-		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].webp"', $result);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].webp" alt="Test alt" ', $result);
+		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif"', $result);
+		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].avif"', $result);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].avif" alt="Test alt" ', $result);
 
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].webp"', $result);
+		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
 
 		$this->assertStringNotContainsString('(max-width:1920px)', $result);
 		$this->assertStringNotContainsString('(max-width:1440px)', $result);
@@ -1049,7 +1175,7 @@ class MediaHelperTest extends TestCase {
 			'<source media="\(max-width:640px\)".*' .
 			'<source media="\(max-width:768px\)".*' .
 			'<source media="\(max-width:1234px\)".*' .
-			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].webp"/s',
+			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].avif"/s',
 			$result
 		);
 	}
@@ -1101,9 +1227,9 @@ class MediaHelperTest extends TestCase {
 
 		$this->assertStringContainsString('<picture>', $result);
 		$this->assertStringNotContainsString('<source', $result);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.jpg.webp"', $result);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_webp/logo-awyiss.jpg.webp"', $result);
+		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif"', $result);
 	}
 
 
@@ -1338,7 +1464,7 @@ class MediaHelperTest extends TestCase {
 		]);
 
 		$this->assertStringContainsString('<div class="Preview">', $result);
-		$this->assertStringContainsString('<img src="http://localhost/_resized/dummypath/logo-awyiss-[w320].webp', $result);
+		$this->assertStringContainsString('<img src="http://localhost/_resized/dummypath/logo-awyiss-[w320].avif', $result);
 
 		$result = $mediaHelper->preview($media, [
 			'id' => 'Preview',
@@ -1358,7 +1484,7 @@ class MediaHelperTest extends TestCase {
 		$media = $this->fetchTable('Media')->get(2);
 
 		$media->preview = ProcessStatus::NotRequired;
-		$media->webp = ProcessStatus::Success;
+		$media->avif = ProcessStatus::Success;
 
 		$renderOptions = (new MediaRenderOptions())
 			->withWidth(400)
@@ -1368,7 +1494,7 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->resize($media, $renderOptions);
 
 		$this->assertInstanceOf(MediaResizedImage::class, $result);
-		$this->assertEquals('logo-awyiss-[w400h300].webp', $result->name);
+		$this->assertEquals('logo-awyiss-[w400h300].avif', $result->name);
 		$this->assertEquals(400, $result->width);
 		$this->assertEquals(300, $result->height);
 		$this->assertEquals(ResizeStrategy::Contain, $result->strategy);
@@ -1384,13 +1510,79 @@ class MediaHelperTest extends TestCase {
 		$media = $this->fetchTable('Media')->get(2);
 
 		$media->preview = ProcessStatus::NotRequired;
-		$media->webp = ProcessStatus::Success;
+		$media->avif = ProcessStatus::Success;
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$result = $this->mediaHelper->resize($media, width: 400, height: 300, strategy: ResizeStrategy::Contain);
 
 		$this->assertInstanceOf(MediaResizedImage::class, $result);
+		$this->assertEquals('logo-awyiss-[w400h300].avif', $result->name);
+		$this->assertEquals(400, $result->width);
+		$this->assertEquals(300, $result->height);
+		$this->assertEquals(ResizeStrategy::Contain, $result->strategy);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testResizeWithoutRenderOptionsSameFormat(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(2);
+
+		$media->preview = ProcessStatus::NotRequired;
+		$media->avif = ProcessStatus::Success;
+
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		$result = $this->mediaHelper->resize($media, format: 'match_source', width: 400, height: 300, strategy: ResizeStrategy::Contain);
+
+		$this->assertInstanceOf(MediaResizedImage::class, $result);
+		$this->assertEquals('logo-awyiss-[w400h300].jpg', $result->name);
+		$this->assertEquals(400, $result->width);
+		$this->assertEquals(300, $result->height);
+		$this->assertEquals(ResizeStrategy::Contain, $result->strategy);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testResizeWithoutRenderOptionsWebPFormat(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(2);
+
+		$media->preview = ProcessStatus::NotRequired;
+		$media->avif = ProcessStatus::Success;
+
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		$result = $this->mediaHelper->resize($media, format: 'webp', width: 400, height: 300, strategy: ResizeStrategy::Contain);
+
+		$this->assertInstanceOf(MediaResizedImage::class, $result);
 		$this->assertEquals('logo-awyiss-[w400h300].webp', $result->name);
+		$this->assertEquals(400, $result->width);
+		$this->assertEquals(300, $result->height);
+		$this->assertEquals(ResizeStrategy::Contain, $result->strategy);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testResizeWithoutRenderOptionsNullFormat(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(2);
+
+		$media->preview = ProcessStatus::NotRequired;
+		$media->avif = ProcessStatus::Success;
+
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		$result = $this->mediaHelper->resize($media, format: null, width: 400, height: 300, strategy: ResizeStrategy::Contain);
+
+		$this->assertInstanceOf(MediaResizedImage::class, $result);
+		$this->assertEquals('logo-awyiss-[w400h300].avif', $result->name);
 		$this->assertEquals(400, $result->width);
 		$this->assertEquals(300, $result->height);
 		$this->assertEquals(ResizeStrategy::Contain, $result->strategy);
