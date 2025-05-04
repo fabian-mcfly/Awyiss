@@ -106,7 +106,7 @@ class BackupCommand extends Command {
 					}
 
 					// Exclude directories with certain names
-					return !in_array($current->getFilename(), ['_resized', '_webp', 'backup', 'vendor']);
+					return !in_array($current->getFilename(), ['_resized', '_avif', '_webp', 'backup', 'vendor']);
 				}
 
 				return true;
