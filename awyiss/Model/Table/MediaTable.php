@@ -301,6 +301,7 @@ class MediaTable extends Table {
 
 		$schema->setColumnType('meta_data', 'json');
 		$schema->setColumnType('preview', EnumType::from(ProcessStatus::class));
+		$schema->setColumnType('avif', EnumType::from(ProcessStatus::class));
 		$schema->setColumnType('webp', EnumType::from(ProcessStatus::class));
 		$schema->setColumnType('crop', 'json');
 	}

@@ -23,6 +23,7 @@ use Cake\Utility\Text;
  * @property string $metaData
  * @property string $averageColor
  * @property \Awyiss\Model\Enum\ProcessStatus|null $preview
+ * @property \Awyiss\Model\Enum\ProcessStatus|null $avif
  * @property \Awyiss\Model\Enum\ProcessStatus|null $webp
  * @property array|null $crop
  * @property string|null $focusPoint
@@ -49,6 +50,12 @@ use Cake\Utility\Text;
  * @property string|null $originalPreviewPath
  * @property string|null $previewPathAbsolute
  * @property string|null $originalPreviewPathAbsolute
+ * @property string|null $avifName
+ * @property string|null $originalAvifName
+ * @property string|null $avifPath
+ * @property string|null $originalAvifPath
+ * @property string|null $avifPathAbsolute
+ * @property string|null $originalAvifPathAbsolute
  * @property string|null $webpName
  * @property string|null $originalWebpName
  * @property string|null $webpPath
@@ -72,6 +79,7 @@ class Media extends Entity {
 		'metaData' => true,
 		'averageColor' => true,
 		'preview' => true,
+		'avif' => true,
 		'webp' => true,
 		'crop' => true,
 		'focusPoint' => true,
@@ -120,6 +128,12 @@ class Media extends Entity {
 		'originalPreviewPath',
 		'previewPathAbsolute',
 		'originalPreviewPathAbsolute',
+		'avifName',
+		'originalAvifName',
+		'avifPath',
+		'originalAvifPath',
+		'avifPathAbsolute',
+		'originalAvifPathAbsolute',
 		'webpName',
 		'originalWebpName',
 		'webpPath',
@@ -147,6 +161,7 @@ class Media extends Entity {
 	 */
 	public function isImage(): bool {
 		return in_array($this->mimeType, [
+			'image/avif',
 			'image/jpeg',
 			'image/png',
 			'image/gif',
@@ -164,6 +179,7 @@ class Media extends Entity {
 		}
 
 		return in_array($this->getOriginal('mimeType'), [
+			'image/avif',
 			'image/jpeg',
 			'image/png',
 			'image/gif',
@@ -198,7 +214,7 @@ class Media extends Entity {
 			return null;
 		}
 
-		// Find files with same name but different extension or -xx pattern
+		// Find files with the same name but different extension or -xx pattern
 		$la_results = $lo_table->find()->where([
 			'id !=' => $this->id,
 			'OR' => [
@@ -215,6 +231,21 @@ class Media extends Entity {
 	 * @return void
 	 */
 	public function moveConvertedFiles(): void {
+		$ls_sourceFile = $this->originalAvifPathAbsolute;
+		if ($ls_sourceFile && is_file($ls_sourceFile)) {
+			$ls_targetFile = $this->avifPathAbsolute;
+			if ($ls_targetFile) {
+				if (!is_dir(dirname($ls_targetFile))) {
+					mkdir(dirname($ls_targetFile));
+				}
+
+				rename($ls_sourceFile, $ls_targetFile);
+			}
+			else {
+				unlink($ls_sourceFile);
+			}
+		}
+
 		$ls_sourceFile = $this->originalWebpPathAbsolute;
 		if ($ls_sourceFile && is_file($ls_sourceFile)) {
 			$ls_targetFile = $this->webpPathAbsolute;
@@ -338,6 +369,16 @@ class Media extends Entity {
 		}
 
 		$ls_filePath = $this->originalPreviewPathAbsolute;
+		if ($ls_filePath && is_file($ls_filePath)) {
+			unlink($ls_filePath);
+		}
+
+		$ls_filePath = $this->avifPathAbsolute;
+		if ($ls_filePath && is_file($ls_filePath)) {
+			unlink($ls_filePath);
+		}
+
+		$ls_filePath = $this->originalAvifPathAbsolute;
 		if ($ls_filePath && is_file($ls_filePath)) {
 			unlink($ls_filePath);
 		}
@@ -577,6 +618,102 @@ class Media extends Entity {
 		}
 
 		return WWW_ROOT . str_replace('/', DS, $this->originalPreviewPath);
+	}
+
+
+	/**
+	 * @return string|null
+	 * @noinspection PhpUnused
+	 */
+	protected function _getAvifName(): ?string {
+		if (!$this->name) {
+			return null;
+		}
+
+		return $this->name . '.avif';
+	}
+
+
+	/**
+	 * @return string|null
+	 * @noinspection PhpUnused
+	 */
+	protected function _getOriginalAvifName(): ?string {
+		if (!$this->hasOriginal('name')) {
+			return null;
+		}
+
+		return $this->getOriginal('name') . '.avif';
+	}
+
+
+	/**
+	 * @return string|null
+	 * @noinspection PhpUnused
+	 */
+	protected function _getAvifPath(): ?string {
+		if (!$this->path || $this->mimeType === 'image/avif') {
+			return null;
+		}
+
+		$ls_avifPath = substr($this->path, 0, -strlen($this->name));
+		$ls_avifPath .= '_avif';
+
+
+		return $ls_avifPath . DS . $this->avifName;
+	}
+
+
+	/**
+	 * @return string|null
+	 * @noinspection PhpUnused
+	 */
+	protected function _getOriginalAvifPath(): ?string {
+		if (
+			!$this->hasOriginal('path') ||
+			(
+				$this->hasOriginal('mimeType') &&
+				$this->getOriginal('mimeType') === 'image/avif'
+			)
+		) {
+			return null;
+		}
+
+		$ls_name = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
+		$ls_avifPath = substr($this->getOriginal('path'), 0, -strlen($ls_name));
+		$ls_avifPath .= '_avif';
+
+		return $ls_avifPath . DS . ($this->originalAvifName ?? $this->avifName);
+	}
+
+
+	/**
+	 * @return string|null
+	 * @noinspection PhpUnused
+	 */
+	protected function _getAvifPathAbsolute(): ?string {
+		$ls_avifPath = $this->avifPath;
+
+		if (!$ls_avifPath) {
+			return null;
+		}
+
+		return WWW_ROOT . str_replace('/', DS, $ls_avifPath);
+	}
+
+
+	/**
+	 * @return string|null
+	 * @noinspection PhpUnused
+	 */
+	protected function _getOriginalAvifPathAbsolute(): ?string {
+		$ls_originalAvifPath = $this->originalAvifPath;
+
+		if (!$ls_originalAvifPath) {
+			return null;
+		}
+
+		return WWW_ROOT . str_replace('/', DS, $ls_originalAvifPath);
 	}
 
 

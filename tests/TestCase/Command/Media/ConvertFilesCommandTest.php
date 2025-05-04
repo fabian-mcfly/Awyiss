@@ -17,7 +17,6 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Datasource\ResultSetInterface;
-use Intervention\Image\Exceptions\DecoderException;
 use Symfony\Component\Process\Process;
 
 
@@ -47,6 +46,7 @@ class ConvertFilesCommandTest extends TestCase {
 		$this->args->method('getOption')->willReturnMap([
 			['quiet', false],
 			['limit', '20'],
+			['include-avif', true],
 			['include-webp', true],
 			['retry-failed', true],
 		]);
@@ -61,6 +61,10 @@ class ConvertFilesCommandTest extends TestCase {
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
+
+		if (file_exists(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_avif')) {
+			(new Process(['rm', '-r', ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_avif']))->run();
+		}
 
 		if (file_exists(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_webp')) {
 			(new Process(['rm', '-r', ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_webp']))->run();
@@ -84,6 +88,9 @@ class ConvertFilesCommandTest extends TestCase {
 		$command->buildOptionParser($parser);
 		$options = $parser->options();
 
+		$this->assertArrayHasKey('include-avif', $options);
+		$this->assertTrue($options['include-avif']->isBoolean());
+
 		$this->assertArrayHasKey('include-webp', $options);
 		$this->assertTrue($options['include-webp']->isBoolean());
 
@@ -104,6 +111,7 @@ class ConvertFilesCommandTest extends TestCase {
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'processCropFiles',
 			'processNonImageFiles',
+			'processAvifConversion',
 			'processWebpConversion',
 			'processResizing',
 			'processAverageColorCalculation',
@@ -113,6 +121,8 @@ class ConvertFilesCommandTest extends TestCase {
 		$command->expects($this->once())->method('processCropFiles')->willReturn(3);
 
 		$command->expects($this->once())->method('processNonImageFiles')->willReturn(3);
+
+		$command->expects($this->once())->method('processAvifConversion')->willReturn(3);
 
 		$command->expects($this->once())->method('processWebpConversion')->willReturn(3);
 
@@ -135,6 +145,7 @@ class ConvertFilesCommandTest extends TestCase {
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'processCropFiles',
 			'processNonImageFiles',
+			'processAvifConversion',
 			'processWebpConversion',
 			'processResizing',
 			'processAverageColorCalculation',
@@ -145,11 +156,13 @@ class ConvertFilesCommandTest extends TestCase {
 
 		$command->expects($this->once())->method('processNonImageFiles')->willReturn(3);
 
-		$command->expects($this->once())->method('processWebpConversion')->willReturn(false);
+		$command->expects($this->once())->method('processAvifConversion')->willReturn(false);
 
-		$command->expects($this->never())->method('processResizing')->willReturn(3);
+		$command->expects($this->never())->method('processWebpConversion');
 
-		$command->expects($this->never())->method('processAverageColorCalculation')->willReturn(3);
+		$command->expects($this->never())->method('processResizing');
+
+		$command->expects($this->never())->method('processAverageColorCalculation');
 
 		$result = $command->execute($this->args, $this->io);
 
@@ -293,6 +306,77 @@ class ConvertFilesCommandTest extends TestCase {
 		$command->method('convertNonImages')->with($files)->willReturn(CommandInterface::CODE_ERROR);
 
 		$result = $command->processNonImageFiles($this->args, $this->io);
+
+		$this->assertFalse($result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testProcessAvifConversionReturnsFileCountWhenFilesExist(): void {
+		$files = $this->createMock(ResultSetInterface::class);
+		$files->method('count')->willReturn(5);
+
+		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
+			'fetchFilesForAvifConversion',
+			'convertImagesToAvif',
+		])->getMock();
+
+		$command->method('fetchFilesForAvifConversion')->with(20)->willReturn($files);
+		$command->method('convertImagesToAvif')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
+
+		$result = $command->processAvifConversion($this->args, $this->io);
+
+		$this->assertEquals(5, $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testProcessAvifConversionReturnsZeroWhenNoFilesExist(): void {
+		$files = $this->createMock(ResultSetInterface::class);
+		$files->method('count')->willReturn(0);
+
+		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
+			'fetchFilesForAvifConversion',
+			'convertImagesToAvif',
+		])->getMock();
+
+		$command->method('fetchFilesForAvifConversion')->with(20)->willReturn($files);
+
+		$result = $command->processAvifConversion($this->args, $this->io);
+
+		$this->assertEquals(0, $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testProcessAvifConversionReturnsFalseWhenConvertImagesFails(): void {
+		$files = $this->createMock(ResultSetInterface::class);
+		$files->method('count')->willReturn(5);
+
+		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
+			'fetchFilesForAvifConversion',
+			'convertImagesToAvif',
+		])->getMock();
+
+		$command->method('fetchFilesForAvifConversion')->with(20)->willReturn($files);
+		$command->method('convertImagesToAvif')->with($files)->willReturn(CommandInterface::CODE_ERROR);
+
+		$result = $command->processAvifConversion($this->args, $this->io);
 
 		$this->assertFalse($result);
 	}
@@ -640,6 +724,105 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
+	public function testConvertImagesToAvif(): void {
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+		$resultSet = $lo_table->find()->where(['id' => 2])->all();
+
+		// Mock the MediaTable
+		$table = $this->createMock(MediaTable::class);
+		$table->expects($this->once())->method('updateAll')->with(
+			$this->equalTo(['avif' => ProcessStatus::Success]),
+			$this->equalTo(['id IN' => [2]])
+		);
+
+		// Mock the ConsoleIo
+		$invokedCount = $this->exactly(2);
+		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
+			if ($invokedCount->numberOfInvocations() === 1) {
+				$this->assertSame('Creating directory `../awyiss/Command/Media/TestFiles/_avif` for Avif file', $parameters);
+			}
+			elseif ($invokedCount->numberOfInvocations() === 2) {
+				$this->assertSame('Creating Avif file for file `../awyiss/Command/Media/TestFiles/logo-awyiss.jpg`', $parameters);
+			}
+		});
+
+		$invokedCount = $this->exactly(2);
+		$this->io->expects($invokedCount)->method('success')->willReturnCallback(function ($parameters) use ($invokedCount) {
+			if ($invokedCount->numberOfInvocations() === 1) {
+				$this->assertSame('Status: Directory created', $parameters);
+			}
+			elseif ($invokedCount->numberOfInvocations() === 2) {
+				$this->assertSame('Status: Avif file created', $parameters);
+			}
+		});
+
+		// Mock the ConvertFilesCommand
+		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getMock();
+
+		$command->method('fetchTable')->willReturn($table);
+
+		// Call the method
+		$result = $this->callProtectedMethod($command, 'convertImagesToAvif', $resultSet, $this->io);
+
+		// Assert the result
+		$this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
+		$this->assertFileExists(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_avif' . DS . 'logo-awyiss.jpg.avif');
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testConvertImagesToAvifFailed(): void {
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+		$resultSet = $lo_table->find()->where(['id' => 10])->all();
+
+		// Mock the MediaTable
+		$table = $this->createMock(MediaTable::class);
+		$table->expects($this->once())->method('updateAll')->with(
+			$this->equalTo(['avif' => ProcessStatus::Fail]),
+			$this->equalTo(['id IN' => [10]])
+		);
+
+		// Mock the ConsoleIo
+		$invokedCount = $this->exactly(2);
+		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
+			if ($invokedCount->numberOfInvocations() === 1) {
+				$this->assertSame('Creating directory `../awyiss/Command/Media/TestFiles/_avif` for Avif file', $parameters);
+			}
+			elseif ($invokedCount->numberOfInvocations() === 2) {
+				$this->assertSame('Creating Avif file for file `../awyiss/Command/Media/TestFiles/logo-awyiss2.jpg`', $parameters);
+			}
+		});
+		$this->io->expects($this->once())->method('error')->with('Status: Unable to decode input');
+
+		// Mock the ConvertFilesCommand
+		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getMock();
+
+		$command->method('fetchTable')->willReturn($table);
+
+		// Call the method
+		$result = $this->callProtectedMethod($command, 'convertImagesToAvif', $resultSet, $this->io);
+
+		// Assert the result
+		$this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
+		$this->assertFileDoesNotExist(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_avif' . DS . 'logo-awyiss2.jpg.avif');
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
 	public function testConvertImagesToWebp(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
@@ -787,7 +970,7 @@ class ConvertFilesCommandTest extends TestCase {
 		$command->method('getRealImageSize')->willReturn([100, 100]);
 
 		// Call the method
-		$result = $this->callProtectedMethod($command, 'convertNonImages', $resultSet, $this->io, false);
+		$result = $this->callProtectedMethod($command, 'convertNonImages', $resultSet, $this->io, false, false);
 
 		// Assert the result
 		$this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
@@ -812,7 +995,7 @@ class ConvertFilesCommandTest extends TestCase {
 		// Mock the MediaTable
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll')->with(
-			$this->equalTo(['preview' => ProcessStatus::Fail, 'webp' => ProcessStatus::Undefined]),
+			$this->equalTo(['preview' => ProcessStatus::Fail, 'avif' => ProcessStatus::Undefined, 'webp' => ProcessStatus::Undefined]),
 			$this->equalTo(['id IN' => [3]])
 		);
 
@@ -845,7 +1028,7 @@ class ConvertFilesCommandTest extends TestCase {
 		$command->method('getProcess')->willReturn($process);
 
 		// Call the method
-		$result = $this->callProtectedMethod($command, 'convertNonImages', $resultSet, $this->io, false);
+		$result = $this->callProtectedMethod($command, 'convertNonImages', $resultSet, $this->io, false, false);
 
 		// Assert the result
 		$this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
@@ -908,6 +1091,7 @@ class ConvertFilesCommandTest extends TestCase {
 						'-auto-orient',
 						WWW_ROOT . '../awyiss/Command/Media/TestFiles/_docx_preview/logo-awyiss.jpg',
 					],
+					'avif' => null,
 					'webp' => null,
 				], $result);
 			}
@@ -920,6 +1104,7 @@ class ConvertFilesCommandTest extends TestCase {
 						'800x600+100+50',
 						WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.jpg',
 					],
+					'avif' => null,
 					'webp' => null,
 				], $result);
 			}
@@ -934,6 +1119,7 @@ class ConvertFilesCommandTest extends TestCase {
 						'500x500',
 						WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.png',
 					],
+					'avif' => null,
 					'webp' => null,
 				], $result);
 			}

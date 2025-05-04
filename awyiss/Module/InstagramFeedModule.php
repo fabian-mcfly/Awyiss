@@ -298,6 +298,7 @@ class InstagramFeedModule implements ModuleInterface {
 					'height' => $lo_media->getHeight(),
 					'createdOn' => $lo_media->getDate(),
 					'preview' => $entity->isImage() ? ProcessStatus::NotRequired : ProcessStatus::Undefined,
+					'avif' => in_array($entity->mimeType, ['image/avif', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined,
 					'webp' => in_array($entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined,
 				]);
 			}, [

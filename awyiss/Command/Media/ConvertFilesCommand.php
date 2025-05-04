@@ -18,6 +18,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ResultSetInterface;
 use Exception;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Interfaces\ImageInterface;
 use Symfony\Component\Process\Process;
 
 
@@ -51,6 +52,12 @@ class ConvertFilesCommand extends Command {
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
 		$lo_parser = parent::buildOptionParser($parser);
+
+		$lo_parser->addOption('include-avif', [
+			'boolean' => true,
+			'help' => 'Include the creation of Avif files after converting non-images to jpgs.',
+			'short' => 'w',
+		]);
 
 		$lo_parser->addOption('include-webp', [
 			'boolean' => true,
@@ -93,6 +100,7 @@ class ConvertFilesCommand extends Command {
 			$la_processMethods = [
 				'processCropFiles',
 				'processNonImageFiles',
+				'processAvifConversion',
 				'processWebpConversion',
 				'processResizing',
 				'processAverageColorCalculation',
@@ -166,11 +174,33 @@ class ConvertFilesCommand extends Command {
 		$lo_files = $this->fetchNonImageFiles(
 			(int)$args->getOption('limit'),
 			$args->getOption('retry-failed'),
+			$args->getOption('include-avif'),
 			$args->getOption('include-webp')
 		);
 
 		if ($lo_files->count()) {
-			$li_result = $this->convertNonImages($lo_files, $io, $args->getOption('include-webp'));
+			$li_result = $this->convertNonImages($lo_files, $io, $args->getOption('include-avif'), $args->getOption('include-webp'));
+			if ($li_result !== static::CODE_SUCCESS) {
+				return false;
+			}
+
+			return $lo_files->count();
+		}
+
+		return 0;
+	}
+
+
+	/**
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return int|false
+	 */
+	public function processAvifConversion(Arguments $args, ConsoleIo $io): int|false {
+		$lo_files = $this->fetchFilesForAvifConversion((int)$args->getOption('limit'), $args->getOption('retry-failed'));
+
+		if ($lo_files->count()) {
+			$li_result = $this->convertImagesToAvif($lo_files, $io);
 			if ($li_result !== static::CODE_SUCCESS) {
 				return false;
 			}
@@ -410,6 +440,55 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return int
 	 */
+	protected function convertImagesToAvif(ResultSetInterface $files, ConsoleIo $io): int {
+		/** @var \Awyiss\Model\Entity\Media $lo_file */
+		foreach ($files as $lo_file) {
+			$this->convertImageToAvif($lo_file, $io);
+			$io->hr();
+		}
+
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+
+		$la_avifStatus = array_unique($files->extract('avif')->toArray(), SORT_REGULAR);
+		if (count($la_avifStatus) === 1) {
+			/**
+			 * If all files have the same avif status, use a simple updateAll command
+			 */
+			$lo_table->updateAll([
+				'avif' => $la_avifStatus[0],
+			], [
+				'id IN' => $files->extract('id')->toArray(),
+			]);
+		}
+		else {
+			$lo_files = $files;
+			$lo_table->updateAll(function (QueryExpression $expression) use ($lo_files) {
+				$lo_avifCases = $expression->case();
+
+				/** @var \Awyiss\Model\Entity\Media $lo_file */
+				foreach ($lo_files as $lo_file) {
+					$lo_avifCases->when(['id = ' . $lo_file->id])->then($lo_file->avif->value, 'integer');
+				}
+
+				return [
+					'avif' => $lo_avifCases,
+				];
+			}, [
+				'id IN' => $files->extract('id')->toArray(),
+			]);
+		}
+
+
+		return static::CODE_SUCCESS;
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\ResultSetInterface $files
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return int
+	 */
 	protected function convertImagesToWebp(ResultSetInterface $files, ConsoleIo $io): int {
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
 		foreach ($files as $lo_file) {
@@ -451,6 +530,52 @@ class ConvertFilesCommand extends Command {
 
 
 		return static::CODE_SUCCESS;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $file
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return bool
+	 */
+	protected function convertImageToAvif(Media $file, ConsoleIo $io): bool {
+		if (!$file->avifPathAbsolute) {
+			$io->out(sprintf('Creating Avif file for file `%s`', $file->path));
+			$io->error('Status: Cannot convert file without a path');
+			$io->hr();
+
+			$file->avif = ProcessStatus::Fail;
+
+			return false;
+		}
+
+		if (!file_exists(dirname($file->avifPathAbsolute))) {
+			$io->out(sprintf('Creating directory `%s` for Avif file', dirname($file->avifPath)));
+
+			if (!mkdir(dirname($file->avifPathAbsolute))) {
+				$io->error('Status: Cannot create directory for Avif file');
+				$io->hr();
+
+				$file->avif = ProcessStatus::Fail;
+
+				return false;
+			}
+
+			$io->success('Status: Directory created');
+			$io->hr();
+		}
+
+		$io->out(sprintf('Creating Avif file for file `%s`', $file->path));
+
+		// If magick is not available or cannot convert web, use the GD library
+		if (
+			!$this->cliMagickExists ||
+			Configure::read('AvailableCommands.imageMagick.avif', false) === false
+		) {
+			return $this->convertImageToAvifGD($file, $io);
+		}
+
+		return $this->convertImageToAvifIM($file, $io);
 	}
 
 
@@ -505,6 +630,41 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
 	 */
+	protected function convertImageToAvifGD(Media $file, ConsoleIo $io): bool {
+		if (!function_exists('imageavif')) {
+			$io->error('Status: Cannot create Avif file without imageavif function');
+			$file->avif = ProcessStatus::Fail;
+
+			return false;
+		}
+
+		$ls_inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
+
+		try {
+			$lo_image = $this->imageManager->read($ls_inputPath);
+
+			$lo_image->toAvif(90)->save($file->avifPathAbsolute);
+		}
+		catch (Exception $ex) {
+			$io->error('Status: ' . $ex->getMessage());
+
+			$file->avif = ProcessStatus::Fail;
+
+			return false;
+		}
+
+		$io->success('Status: Avif file created');
+		$file->avif = ProcessStatus::Success;
+
+		return true;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $file
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return bool
+	 */
 	protected function convertImageToWebpGD(Media $file, ConsoleIo $io): bool {
 		if (!function_exists('imagewebp')) {
 			$io->error('Status: Cannot create WebP file without imagewebp function');
@@ -540,6 +700,22 @@ class ConvertFilesCommand extends Command {
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return bool
 	 */
+	protected function convertImageToAvifIM(Media $file, ConsoleIo $io): bool {
+		$lo_process = $this->getProcess($this->getAvifCommand($file));
+
+		$lb_process = $this->runProcess($lo_process, $io);
+
+		$file->avif = $lb_process ? ProcessStatus::Success : ProcessStatus::Fail;
+
+		return $lb_process;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $file
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return bool
+	 */
 	protected function convertImageToWebpIM(Media $file, ConsoleIo $io): bool {
 		$lo_process = $this->getProcess($this->getWebPCommand($file));
 
@@ -554,13 +730,14 @@ class ConvertFilesCommand extends Command {
 	/**
 	 * @param \Cake\Datasource\ResultSetInterface $files
 	 * @param \Cake\Console\ConsoleIo $io
+	 * @param bool $includeAvif
 	 * @param bool $includeWebp
 	 * @return int
 	 */
-	protected function convertNonImages(ResultSetInterface $files, ConsoleIo $io, bool $includeWebp): int {
+	protected function convertNonImages(ResultSetInterface $files, ConsoleIo $io, bool $includeAvif, bool $includeWebp): int {
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
 		foreach ($files as $lo_file) {
-			$this->convertNonImage($lo_file, $io, $includeWebp);
+			$this->convertNonImage($lo_file, $io, $includeAvif, $includeWebp);
 
 			$io->hr();
 		}
@@ -571,12 +748,13 @@ class ConvertFilesCommand extends Command {
 		$la_previewStatus = array_unique($files->extract('preview')->toArray(), SORT_REGULAR);
 		/**
 		 * If all files have the same preview status "failed", use a simple updateAll command
-		 * This also means no webp was created, even though it was requested.
-		 * Set the webp status to undefined in this case.
+		 * This also means no preview was created, even though it was requested.
+		 * Set the avif and webp status to undefined in this case.
 		 */
 		if (count($la_previewStatus) === 1 && $la_previewStatus[0] === ProcessStatus::Fail) {
 			$lo_table->updateAll([
 				'preview' => $la_previewStatus[0],
+				'avif' => ProcessStatus::Undefined,
 				'webp' => ProcessStatus::Undefined,
 			], [
 				'id IN' => $files->extract('id')->toArray(),
@@ -584,12 +762,17 @@ class ConvertFilesCommand extends Command {
 		}
 		else {
 			$lo_files = $files;
+			$lb_includeAvif = $includeAvif;
 			$lb_includeWebp = $includeWebp;
 
-			$lo_table->updateAll(function (QueryExpression $expression) use ($lo_files, $lb_includeWebp) {
+			$lo_table->updateAll(function (QueryExpression $expression) use ($lo_files, $lb_includeAvif, $lb_includeWebp) {
 				$lo_widthCases = $expression->case();
 				$lo_heightCases = $expression->case();
 				$lo_previewCases = $expression->case();
+
+				if ($lb_includeAvif) {
+					$lo_avifCases = $expression->case();
+				}
 
 				if ($lb_includeWebp) {
 					$lo_webpCases = $expression->case();
@@ -601,6 +784,10 @@ class ConvertFilesCommand extends Command {
 					$lo_heightCases->when(['id = ' . $lo_file->id])->then($lo_file->height, 'float');
 					$lo_previewCases->when(['id = ' . $lo_file->id])->then($lo_file->preview->value, 'integer');
 
+					if ($lb_includeAvif) {
+						$lo_avifCases->when(['id = ' . $lo_file->id])->then($lo_file->avif->value, 'integer');
+					}
+
 					if ($lb_includeWebp) {
 						$lo_webpCases->when(['id = ' . $lo_file->id])->then($lo_file->webp->value, 'integer');
 					}
@@ -611,6 +798,10 @@ class ConvertFilesCommand extends Command {
 					'height' => $lo_heightCases,
 					'preview' => $lo_previewCases,
 				];
+
+				if ($lb_includeAvif) {
+					$la_cases['avif'] = $lo_avifCases;
+				}
 
 				if ($lb_includeWebp) {
 					$la_cases['webp'] = $lo_webpCases;
@@ -629,10 +820,11 @@ class ConvertFilesCommand extends Command {
 	/**
 	 * @param \Awyiss\Model\Entity\Media $file
 	 * @param \Cake\Console\ConsoleIo $io
+	 * @param bool $includeAvif
 	 * @param bool $includeWebp
 	 * @return bool
 	 */
-	protected function convertNonImage(Media $file, ConsoleIo $io, bool $includeWebp): bool {
+	protected function convertNonImage(Media $file, ConsoleIo $io, bool $includeAvif, bool $includeWebp): bool {
 		if (!$file->previewPathAbsolute) {
 			$io->out(sprintf('Creating preview for file `%s`', $file->path));
 			$io->error('Status: Cannot convert file without a path');
@@ -658,25 +850,27 @@ class ConvertFilesCommand extends Command {
 		$io->out(sprintf('Creating preview for file `%s`', $file->path));
 
 		if (!$this->cliMagickExists) {
-			return $this->convertNonImageGD($file, $io, $includeWebp);
+			return $this->convertNonImageGD($file, $io, $includeAvif, $includeWebp);
 		}
 
-		return $this->convertNonImageIM($file, $io, $includeWebp);
+		return $this->convertNonImageIM($file, $io, $includeAvif, $includeWebp);
 	}
 
 
 	/**
 	 * @param \Awyiss\Model\Entity\Media $file
 	 * @param \Cake\Console\ConsoleIo $io
+	 * @param bool $includeAvif
 	 * @param bool $includeWebp
 	 * @return bool
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function convertNonImageGD(Media $file, ConsoleIo $io, bool $includeWebp): bool {
+	protected function convertNonImageGD(Media $file, ConsoleIo $io, bool $includeAvif, bool $includeWebp): bool {
 		// For now, converting non-image files is not supported by GD
 		$io->warning(sprintf('Status: Cannot convert filetype `%s`', $file->extension));
 
 		$file->preview = ProcessStatus::Fail;
+		$file->avif = ProcessStatus::Fail;
 		$file->webp = ProcessStatus::Fail;
 
 		return false;
@@ -686,16 +880,18 @@ class ConvertFilesCommand extends Command {
 	/**
 	 * @param \Awyiss\Model\Entity\Media $file
 	 * @param \Cake\Console\ConsoleIo $io
+	 * @param bool $includeAvif
 	 * @param bool $includeWebp
 	 * @return bool
 	 */
-	protected function convertNonImageIM(Media $file, ConsoleIo $io, bool $includeWebp): bool {
+	protected function convertNonImageIM(Media $file, ConsoleIo $io, bool $includeAvif, bool $includeWebp): bool {
 		$la_command = $this->getPreviewCommand($file);
 
 		if (!$la_command) {
 			$io->warning(sprintf('Status: Cannot convert filetype `%s`', $file->extension));
 
 			$file->preview = ProcessStatus::Fail;
+			$file->avif = ProcessStatus::Fail;
 			$file->webp = ProcessStatus::Fail;
 
 			return false;
@@ -707,6 +903,7 @@ class ConvertFilesCommand extends Command {
 
 		if (!$lb_process) {
 			$file->preview = ProcessStatus::Fail;
+			$file->avif = ProcessStatus::Undefined;
 			$file->webp = ProcessStatus::Undefined;
 
 			return false;
@@ -717,6 +914,10 @@ class ConvertFilesCommand extends Command {
 		$file->width = $la_imageSize[0] ?? null;
 		$file->height = $la_imageSize[1] ?? null;
 		$file->preview = ProcessStatus::Success;
+
+		if ($includeAvif) {
+			$this->convertImageToAvif($file, $io);
+		}
 
 		if ($includeWebp) {
 			$this->convertImageToWebp($file, $io);
@@ -814,8 +1015,8 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function cropImageGD(Media $file, ConsoleIo $io): bool {
 		$ls_inputPath = $file->pathAbsolute;
-		$lb_crop = false;
-		$lb_resize = false;
+		$la_crop = [];
+		$la_resize = [];
 
 		if (!$file->isImage()) {
 			$ls_inputPath = $file->previewPathAbsolute;
@@ -825,6 +1026,17 @@ class ConvertFilesCommand extends Command {
 			if (!$this->autoRotateImageGD($ls_inputPath)) {
 				return false;
 			}
+
+			// If an avif file exists, rotate it as well
+			if ($file->avifPathAbsolute && file_exists($file->avifPathAbsolute)) {
+				try {
+					$this->autoRotateImageGD($file->avifPathAbsolute);
+				}
+				catch (Exception) {
+					// Ignore the exception for avif autorotation
+				}
+			}
+
 
 			// If a webp file exists, rotate it as well
 			if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
@@ -843,18 +1055,18 @@ class ConvertFilesCommand extends Command {
 			$lo_image = $this->imageManager->read($ls_inputPath);
 
 			if ($file->width !== (float)$file->crop['width'] || $file->height !== (float)$file->crop['height']) {
-				$lb_crop = true;
+				$la_crop = [(int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']];
 
-				$lo_image->crop((int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']);
+				$lo_image->crop(...$la_crop);
 			}
 
 			if ((float)$file->crop['width'] !== (float)$file->crop['resize_width'] || (float)$file->crop['height'] !== (float)$file->crop['resize_height']) {
-				$lb_resize = true;
+				$la_resize = [(int)$file->crop['resize_width'], (int)$file->crop['resize_height']];
 
-				$lo_image->scaleDown((int)$file->crop['resize_width'], (int)$file->crop['resize_height']);
+				$lo_image->scaleDown(...$la_resize);
 			}
 
-			if (!$lb_crop && !$lb_resize) {
+			if (!$la_crop && !$la_resize) {
 				$lo_image = null; //phpcs:ignore
 				return true;
 			}
@@ -867,20 +1079,20 @@ class ConvertFilesCommand extends Command {
 			return false;
 		}
 
+		// If an avif file exists, crop it as well
+		if ($file->avifPathAbsolute && file_exists($file->avifPathAbsolute)) {
+			try {
+				$this->cropAndResizeGD($file->avifPathAbsolute, $la_crop, $la_resize, $ls_inputPath);
+			}
+			catch (Exception) {
+				// Ignore the exception for avif cropping
+			}
+		}
+
 		// If a webp file exists, crop it as well
 		if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
 			try {
-				$lo_image = $this->imageManager->read($file->webpPathAbsolute);
-
-				if ($lb_crop) {
-					$lo_image->crop((int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']);
-				}
-
-				if ($lb_resize) {
-					$lo_image->scaleDown((int)$file->crop['resize_width'], (int)$file->crop['resize_height']);
-				}
-
-				$lo_image->save($ls_inputPath, quality: 90, progressive: true);
+				$this->cropAndResizeGD($file->webpPathAbsolute, $la_crop, $la_resize, $ls_inputPath);
 			}
 			catch (Exception) {
 				// Ignore the exception for webp cropping
@@ -905,6 +1117,12 @@ class ConvertFilesCommand extends Command {
 
 		if (!$lb_process) {
 			return false;
+		}
+
+		// If there's an avif command, run it and crop the avif file as well
+		if ($la_commands['avif']) {
+			$lo_process = $this->getProcess($la_commands['avif']);
+			$lo_process->run();
 		}
 
 		// If there's a webp command, run it and crop the webp file as well
@@ -1147,10 +1365,11 @@ class ConvertFilesCommand extends Command {
 	/**
 	 * @param int $limit
 	 * @param bool $retryFailed
+	 * @param bool $includeAvif
 	 * @param bool $includeWebp
 	 * @return \Cake\Datasource\ResultSetInterface
 	 */
-	protected function fetchNonImageFiles(int $limit, bool $retryFailed, bool $includeWebp): ResultSetInterface {
+	protected function fetchNonImageFiles(int $limit, bool $retryFailed, bool $includeAvif, bool $includeWebp): ResultSetInterface {
 		$la_where = [
 			'preview' => ProcessStatus::Undefined,
 		];
@@ -1162,6 +1381,10 @@ class ConvertFilesCommand extends Command {
 		$la_processStatusColumns = [
 			'preview',
 		];
+
+		if ($includeAvif) {
+			$la_processStatusColumns[] = 'avif';
+		}
 
 		if ($includeWebp) {
 			$la_processStatusColumns[] = 'webp';
@@ -1218,6 +1441,25 @@ class ConvertFilesCommand extends Command {
 		}
 
 		return $lo_records;
+	}
+
+
+	/**
+	 * @param int $limit
+	 * @param bool $retryFailed
+	 * @return \Cake\Datasource\ResultSetInterface
+	 */
+	protected function fetchFilesForAvifConversion(int $limit, bool $retryFailed): ResultSetInterface {
+		$la_where = [
+			'avif' => ProcessStatus::Undefined,
+			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
+		];
+
+		if ($retryFailed) {
+			$la_where['avif'] = ProcessStatus::Fail;
+		}
+
+		return $this->fetchFiles($la_where, $limit, ['avif']);
 	}
 
 
@@ -1321,6 +1563,21 @@ class ConvertFilesCommand extends Command {
 	 * @param \Awyiss\Model\Entity\Media $file
 	 * @return array
 	 */
+	protected function getAvifCommand(Media $file): array {
+		$ls_inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
+
+		return [
+			'magick',
+			$ls_inputPath,
+			$file->avifPathAbsolute,
+		];
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $file
+	 * @return array
+	 */
 	protected function getWebPCommand(Media $file): array {
 		$ls_inputPath = $file->isImage() ? $file->pathAbsolute : $file->previewPathAbsolute;
 
@@ -1338,14 +1595,24 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function getCropCommand(Media $file): array {
 		$ls_inputPath = $file->pathAbsolute;
-		$lb_crop = false;
-		$lb_resize = false;
+		$la_crop = [];
+		$la_resize = [];
 
 		if (!$file->isImage()) {
 			$ls_inputPath = $file->previewPathAbsolute;
 		}
 
 		if (isset($file->crop['rotate']) && $file->crop['rotate'] === 'auto') {
+			$la_commandAvif = null;
+			if ($file->avifPathAbsolute && file_exists($file->avifPathAbsolute)) {
+				$la_commandAvif = [
+					'magick',
+					'mogrify',
+					'-auto-orient',
+					$file->avifPathAbsolute,
+				];
+			}
+
 			$la_commandWebp = null;
 			if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
 				$la_commandWebp = [
@@ -1363,6 +1630,7 @@ class ConvertFilesCommand extends Command {
 					'-auto-orient',
 					$ls_inputPath,
 				],
+				'avif' => $la_commandAvif,
 				'webp' => $la_commandWebp,
 			];
 		}
@@ -1373,22 +1641,46 @@ class ConvertFilesCommand extends Command {
 		];
 
 		if ($file->width !== (float)$file->crop['width'] || $file->height !== (float)$file->crop['height']) {
-			$lb_crop = true;
+			$la_crop = [(int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']];
 			$la_commandOriginal = array_merge($la_commandOriginal, [
 				'-crop',
-				sprintf('%dx%d+%d+%d', (int)$file->crop['width'], (int)$file->crop['height'], (int)$file->crop['x'], (int)$file->crop['y']),
+				sprintf('%dx%d+%d+%d', ...$la_crop),
 			]);
 		}
 
 		if ((float)$file->crop['width'] !== (float)$file->crop['resize_width'] || (float)$file->crop['height'] !== (float)$file->crop['resize_height']) {
-			$lb_resize = true;
+			$la_resize = [(int)$file->crop['resize_width'], (int)$file->crop['resize_height']];
 			$la_commandOriginal = array_merge($la_commandOriginal, [
 				'-resize',
-				sprintf('%dx%d', (int)$file->crop['resize_width'], (int)$file->crop['resize_height']),
+				sprintf('%dx%d', ...$la_resize),
 			]);
 		}
 
 		$la_commandOriginal[] = $ls_inputPath;
+
+		$la_commandAvif = null;
+		if ($file->avifPathAbsolute && file_exists($file->avifPathAbsolute)) {
+			$la_commandAvif = [
+				'magick',
+				$file->avifPathAbsolute,
+			];
+
+			if ($la_crop) {
+				$la_commandAvif = array_merge($la_commandAvif, [
+					'-crop',
+					sprintf('%dx%d+%d+%d', ...$la_crop),
+				]);
+			}
+
+			if ($la_resize) {
+				$la_commandAvif = array_merge($la_commandAvif, [
+					'-resize',
+					sprintf('%dx%d', ...$la_resize),
+				]);
+			}
+
+			$la_commandAvif[] = $file->avifPathAbsolute;
+		}
 
 		$la_commandWebp = null;
 		if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
@@ -1397,29 +1689,30 @@ class ConvertFilesCommand extends Command {
 				$file->webpPathAbsolute,
 			];
 
-			if ($lb_crop) {
+			if ($la_crop) {
 				$la_commandWebp = array_merge($la_commandWebp, [
 					'-crop',
-					sprintf('%dx%d+%d+%d', $file->crop['width'], $file->crop['height'], $file->crop['x'], $file->crop['y']),
+					sprintf('%dx%d+%d+%d', ...$la_crop),
 				]);
 			}
 
-			if ($lb_resize) {
+			if ($la_resize) {
 				$la_commandWebp = array_merge($la_commandWebp, [
 					'-resize',
-					sprintf('%dx%d', $file->crop['resize_width'], $file->crop['resize_height']),
+					sprintf('%dx%d', ...$la_resize),
 				]);
 			}
 
 			$la_commandWebp[] = $file->webpPathAbsolute;
 		}
 
-		if (!$lb_crop && !$lb_resize) {
-			$la_commandOriginal = $la_commandWebp = null;
+		if (!$la_crop && !$la_resize) {
+			$la_commandOriginal = $la_commandAvif = $la_commandWebp = null;
 		}
 
 		return [
 			'original' => $la_commandOriginal,
+			'avif' => $la_commandAvif,
 			'webp' => $la_commandWebp,
 		];
 	}
@@ -1573,5 +1866,29 @@ class ConvertFilesCommand extends Command {
 		$io->success('Status: ' . $process->getExitCodeText());
 
 		return true;
+	}
+
+
+	/**
+	 * @param string $filePath
+	 * @param array $crop
+	 * @param array $resize
+	 * @param string|null $outputPath
+	 * @return \Intervention\Image\Interfaces\ImageInterface
+	 */
+	protected function cropAndResizeGD(string $filePath, array $crop, array $resize, ?string $outputPath): ImageInterface {
+		$lo_image = $this->imageManager->read($filePath);
+
+		if ($crop) {
+			$lo_image->crop(...$crop);
+		}
+
+		if ($resize) {
+			$lo_image->scaleDown(...$resize);
+		}
+
+		$lo_image->save($outputPath, quality: 90, progressive: true);
+
+		return $lo_image;
 	}
 }

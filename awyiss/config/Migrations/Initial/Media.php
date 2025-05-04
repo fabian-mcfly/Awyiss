@@ -84,6 +84,10 @@ class Media {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
+		])->addColumn('avif', 'boolean', [
+			'default' => false,
+			'limit' => null,
+			'null' => false,
 		])->addColumn('webp', 'boolean', [
 			'default' => false,
 			'limit' => null,
@@ -151,6 +155,12 @@ class Media {
 				'preview',
 			], [
 				'name' => 'MEDIA_PREVIEW',
+			]
+		)->addIndex(
+			[
+				'avif',
+			], [
+				'name' => 'MEDIA_AVIF',
 			]
 		)->addIndex(
 			[

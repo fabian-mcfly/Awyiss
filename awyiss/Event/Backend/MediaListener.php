@@ -56,10 +56,10 @@ class MediaListener implements EventListenerInterface {
 
 
 	/**
-	 * Before saving a file, make sure its name is unique, path is set
-	 * image dimensions are known and file extension matches the mimetype
+	 * Before saving a file, make sure its name is unique, its path is set,
+	 * image dimensions are known, and the file extension matches the mimetype
 	 *
-	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Media $entity
 	 * @param \ArrayObject $options
 	 * @return void
@@ -118,6 +118,7 @@ class MediaListener implements EventListenerInterface {
 		if ($entity->file && !$entity->file->getError()) {
 			$this->setDimensions($entity);
 
+			$entity->avif = in_array($entity->mimeType, ['image/avif', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
 			$entity->webp = in_array($entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
 
 			if ($lb_isNew && LocalConfig::read('upload.autoOverwrite', false, 'Media') === true) {
@@ -284,7 +285,7 @@ class MediaListener implements EventListenerInterface {
 			$la_conditions['name'] = $ls_fileName . $ls_suffix . '.' . $ls_extension;
 		}
 
-		//Append the suffix, if it's not empty
+		//Append the suffix if it's not empty
 		if ($ls_suffix) {
 			$entity->name = $ls_fileName . $ls_suffix . '.' . $ls_extension;
 		}
@@ -330,7 +331,7 @@ class MediaListener implements EventListenerInterface {
 
 	/**
 	 * Returns the dimensions of an image
-	 * using the getimagesize function if available,
+	 * using the getimagesize function if available.
 	 *
 	 * @param mixed $tempName
 	 * @return array|false

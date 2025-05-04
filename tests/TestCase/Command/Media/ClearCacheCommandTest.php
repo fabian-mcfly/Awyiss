@@ -83,6 +83,7 @@ class ClearCacheCommandTest extends TestCase {
 			'effects',
 			'previews',
 			'resized',
+			'avif',
 			'webp',
 		], $options['type']->choices());
 	}
@@ -310,11 +311,13 @@ class ClearCacheCommandTest extends TestCase {
 			WWW_ROOT . '../tmp/media/testfolder1/_effects',
 			WWW_ROOT . '../tmp/media/testfolder1/_pdf_preview',
 			WWW_ROOT . '../tmp/media/testfolder1/_resized',
+			WWW_ROOT . '../tmp/media/testfolder1/_avif',
 			WWW_ROOT . '../tmp/media/testfolder1/_webp',
 			WWW_ROOT . '../tmp/media/testfolder2',
 			WWW_ROOT . '../tmp/media/testfolder3/_effects',
 			WWW_ROOT . '../tmp/media/testfolder3/_pdf_preview',
 			WWW_ROOT . '../tmp/media/testfolder3/_resized',
+			WWW_ROOT . '../tmp/media/testfolder3/_avif',
 			WWW_ROOT . '../tmp/media/testfolder3/_webp',
 		], $result);
 	}
@@ -449,6 +452,37 @@ class ClearCacheCommandTest extends TestCase {
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
+	public function testFetchAvifFolders(): void {
+		$this->_createTestFolders();
+
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
+		$lo_table = $this->fetchTable('MediaFolders');
+		$lo_records = $lo_table->find()->all();
+
+		$table = $this->createMock(MediaFoldersTable::class);
+		$query = $this->createMock(SelectQuery::class);
+
+		$table->expects($this->once())->method('find')->willReturn($query);
+		$query->expects($this->once())->method('all')->willReturn($lo_records);
+
+		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
+
+		$command->expects($this->once())->method('fetchTable')->willReturn($table);
+
+		$result = $this->callProtectedMethod($command, 'fetchFolders', 'avif');
+
+		$this->assertSame([
+			WWW_ROOT . '../tmp/media/testfolder1/_avif',
+			WWW_ROOT . '../tmp/media/testfolder3/_avif',
+		], $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
 	public function testFetchWebpFolders(): void {
 		$this->_createTestFolders();
 
@@ -482,16 +516,19 @@ class ClearCacheCommandTest extends TestCase {
 		mkdir(TMP . 'media' . DS . 'testfolder1' . DS . '_effects', 0777, true);
 		mkdir(TMP . 'media' . DS . 'testfolder1' . DS . '_pdf_preview', 0777, true);
 		mkdir(TMP . 'media' . DS . 'testfolder1' . DS . '_resized', 0777, true);
+		mkdir(TMP . 'media' . DS . 'testfolder1' . DS . '_avif', 0777, true);
 		mkdir(TMP . 'media' . DS . 'testfolder1' . DS . '_webp', 0777, true);
 
 		mkdir(TMP . 'media' . DS . 'testfolder2' . DS . '_effects', 0777, true);
 		mkdir(TMP . 'media' . DS . 'testfolder2' . DS . '_pdf_preview', 0777, true);
 		mkdir(TMP . 'media' . DS . 'testfolder2' . DS . '_resized', 0777, true);
+		mkdir(TMP . 'media' . DS . 'testfolder2' . DS . '_avif', 0777, true);
 		mkdir(TMP . 'media' . DS . 'testfolder2' . DS . '_webp', 0777, true);
 
 		mkdir(TMP . 'media' . DS . 'testfolder3' . DS . '_effects', 0777, true);
 		mkdir(TMP . 'media' . DS . 'testfolder3' . DS . '_pdf_preview', 0777, true);
 		mkdir(TMP . 'media' . DS . 'testfolder3' . DS . '_resized', 0777, true);
+		mkdir(TMP . 'media' . DS . 'testfolder3' . DS . '_avif', 0777, true);
 		mkdir(TMP . 'media' . DS . 'testfolder3' . DS . '_webp', 0777, true);
 	}
 }

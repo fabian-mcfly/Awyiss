@@ -21,7 +21,7 @@ class ClearCacheCommand extends Command {
 	 * @inheritDoc
 	 */
 	public static function getDescription(): string {
-		return 'Removes files (resized, previews, effects, webp), deleted folders, and resets the database status (preview, webp) of media records';
+		return 'Removes files (resized, previews, effects, avif, webp), deleted folders, and resets the database status (preview, avif, webp) of media records';
 	}
 
 
@@ -46,6 +46,7 @@ class ClearCacheCommand extends Command {
 				'effects',
 				'previews',
 				'resized',
+				'avif',
 				'webp',
 			],
 			'default' => 'all',
@@ -157,6 +158,13 @@ class ClearCacheCommand extends Command {
 				$la_cases['preview'] = $lo_previewCases;
 			}
 
+			if (in_array($ls_type, ['all', 'avif'])) {
+				$lo_avifCases = $expression->case()->when([
+					'avif !=' => ProcessStatus::NotRequired->value,
+				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');
+				$la_cases['avif'] = $lo_avifCases;
+			}
+
 			if (in_array($ls_type, ['all', 'webp'])) {
 				$lo_webpCases = $expression->case()->when([
 					'webp !=' => ProcessStatus::NotRequired->value,
@@ -245,6 +253,14 @@ class ClearCacheCommand extends Command {
 
 				if (in_array($type, ['all', 'resized'])) {
 					$ls_folder = WWW_ROOT . $lo_folder->path . DS . '_resized';
+					if (file_exists($ls_folder)) {
+						$la_folders[] = $ls_folder;
+					}
+				}
+
+				if (in_array($type, ['all', 'avif'])) {
+					$ls_folder = WWW_ROOT . $lo_folder->path . DS . '_avif';
+
 					if (file_exists($ls_folder)) {
 						$la_folders[] = $ls_folder;
 					}
