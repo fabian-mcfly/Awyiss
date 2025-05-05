@@ -606,7 +606,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testCalculatesAverageColorForValidFiles(): void {
+	public function testCalculateAverageColorsForValidFiles(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 		$resultSet = $lo_table->find()->limit(5)->all();
@@ -635,7 +635,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testCalculatesAverageColorForNonExistentFile(): void {
+	public function testCalculateAverageColorsForNonExistentFile(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 		$resultSet = $lo_table->find()->where(['id' => 9])->all();
@@ -666,7 +666,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testCalculatesAverageColorForPngFile(): void {
+	public function testCalculateAverageColorsForPngFile(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 		$resultSet = $lo_table->find()->where(['id' => 4])->all();
@@ -675,11 +675,9 @@ class ConvertFilesCommandTest extends TestCase {
 		$table->expects($this->once())->method('updateAll');
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
-			'calculateAverageColor',
 			'fetchTable',
 		])->getMock();
 
-		$command->method('calculateAverageColor')->willReturn(['red' => 100, 'green' => 150, 'blue' => 200, 'alpha' => 255]);
 		$command->method('fetchTable')->willReturn($table);
 
 		$this->io->expects($this->once())->method('info')->with('Status: Cannot calculate average color for png files');
@@ -697,7 +695,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testCalculatesAverageColorForFile(): void {
+	public function testCalculateAverageColorsForFile(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 		$resultSet = $lo_table->find()->where(['id' => 2])->all();
@@ -718,6 +716,32 @@ class ConvertFilesCommandTest extends TestCase {
 		$result = $this->callProtectedMethod($command, 'calculateAverageColors', $resultSet, $this->io);
 
 		$this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testCalculateAverageColor(): void {
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $lo_table->find()->where(['id' => 2])->first();
+
+		$command = $this->getMockBuilder(ConvertFilesCommand::class)->getMock();
+
+		$result = $this->callProtectedMethod($command, 'calculateAverageColor', $media->pathAbsolute, $this->io);
+
+		$this->assertEquals([
+			'red' => 57,
+			'green' => 75,
+			'blue' => 76,
+			'alpha' => 255,
+		], $result);
 	}
 
 
