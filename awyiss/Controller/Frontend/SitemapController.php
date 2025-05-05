@@ -6,8 +6,10 @@ namespace Awyiss\Controller\Frontend;
 
 use Awyiss\Awyiss;
 use Awyiss\Controller\AppController;
+use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\XmlView;
@@ -23,22 +25,36 @@ class SitemapController extends AppController {
 	 * @return void
 	 */
 	public function index(): void {
-		$lo_pagesTable = $this->fetchTable('Pages');
+		/** @var \Cake\Datasource\ResultSetInterface $lo_pages */
+		$lo_pages = null;
 
-		$lo_query = $lo_pagesTable->find('threaded')
-		->find('all', skipPageRoleCheck: true)
-		->where([
-			'active' => true,
-			'parents_active' => true,
-			'robots_index' => true,
-		])
-		->contain([
-			'Contents' => function (SelectQuery $query) {
-				return $query->find('latestForPages');
-			},
-		]);
+		/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
+			$lo_pagesTable = $this->fetchTable(Inflector::pluralize($le_pageRole->name));
 
-		$lo_pages = $lo_query->all()->listNested()->indexBy('id');
+			$lo_query = $lo_pagesTable->find('threaded')
+				->find('published')
+				->where([
+					'active' => true,
+					'parents_active' => true,
+					'robots_index' => true,
+				])
+				->contain([
+					'Contents' => function (SelectQuery $query) {
+						return $query->find('latestForPages');
+					},
+				]);
+
+			if ($lo_pages) {
+				$lo_pages = $lo_pages->append($lo_query->all());
+			}
+			else {
+				$lo_pages = $lo_query->all();
+			}
+		}
+
+		$lo_pages = $lo_pages->listNested()->indexBy('id');
 
 		// Get the first language
 		$la_languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
