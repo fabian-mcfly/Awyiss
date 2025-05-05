@@ -169,7 +169,7 @@ class AwyissTest extends TestCase {
 
 		Configure::write('Awyiss');
 
-		Awyiss::addUserConfiguration();
+		Awyiss::loadUserConfiguration();
 
 		$config = Hash::flatten(Configure::read('Awyiss', []));
 

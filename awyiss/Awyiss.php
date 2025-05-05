@@ -388,7 +388,6 @@ class Awyiss extends BaseApplication {
 	 * @param string $frontendLanguage
 	 * @param string $backendLanguage
 	 * @param bool $forceReload
-	 * @throws \ReflectionException
 	 */
 	public static function loadConfiguration(string $frontendLanguage, string $backendLanguage, bool $forceReload = false): void {
 		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
@@ -402,23 +401,20 @@ class Awyiss extends BaseApplication {
 			 */
 			Configure::load($ls_fileName, 'default', false);
 			if (Configure::read('Awyiss')) {
-				static::addUserConfiguration();
-
 				return;
 			}
 
 			/**
-			 * Trigger the creation of the custom configuriation
+			 * Trigger the creation of the custom configuration
 			 *
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 			 */
 			$lo_eventManager = EventManager::instance();
 			$lo_eventManager->dispatch('Configuration.createCustomConfiguration');
 
+			// Try to load the config file again
 			Configure::load($ls_fileName, 'default', false);
 			if (Configure::read('Awyiss')) {
-				static::addUserConfiguration();
-
 				return;
 			}
 		}
@@ -427,10 +423,6 @@ class Awyiss extends BaseApplication {
 
 		$la_config = static::getDatabaseConfiguration($frontendLanguage, $backendLanguage);
 		$la_config = static::getFileConfiguration($la_config);
-
-		if (!$forceReload) {
-			static::addUserConfiguration();
-		}
 
 		ksort($la_config);
 
@@ -443,7 +435,7 @@ class Awyiss extends BaseApplication {
 	 *
 	 * @return void
 	 */
-	public static function addUserConfiguration(): void {
+	public static function loadUserConfiguration(): void {
 		$lo_event = EventManager::instance()->dispatch('Authentication.requestIdentity');
 
 		$lo_identity = $lo_event->getResult();
@@ -468,7 +460,7 @@ class Awyiss extends BaseApplication {
 	 * @param string $frontendLanguage
 	 * @param string $backendLanguage
 	 * @return array
-	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function getDatabaseConfiguration(string $frontendLanguage, string $backendLanguage): array {
 		/** @var \Awyiss\Model\Table\ConfigurationTable $lo_configurationTable */
@@ -525,7 +517,6 @@ class Awyiss extends BaseApplication {
 	/**
 	 * @param array $config
 	 * @return array
-	 * @throws \ReflectionException
 	 */
 	public static function getFileConfiguration(array $config): array {
 		/** @var \Awyiss\Configuration\AbstractConfigOptions $lo_configOptions */

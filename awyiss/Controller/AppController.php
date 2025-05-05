@@ -5,7 +5,6 @@ namespace Awyiss\Controller;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 use Cake\Controller\Controller;
 use Cake\Http\Response;
@@ -21,13 +20,8 @@ abstract class AppController extends Controller {
 	 * @throws \Exception
 	 */
 	public function initialize(): void {
-		// Reload the configuration a second time
-		// This time, the user configuration is loaded as well,
-		// as the user is now logged in
-		Awyiss::loadConfiguration(
-			LocaleMiddleware::getLanguage()->shortcode,
-			LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->shortcode,
-		);
+		// Load the user configuration
+		Awyiss::loadUserConfiguration();
 	}
 
 
