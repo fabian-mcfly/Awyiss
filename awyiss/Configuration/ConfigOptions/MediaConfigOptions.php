@@ -60,17 +60,6 @@ class MediaConfigOptions extends AbstractConfigOptions {
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_FRONTEND, [
 			new ConfigOption(
-				defaultValue: 'imagick',
-				identifier: 'driver',
-				localizable: false,
-				nullable: false,
-				type: ConfigOptionType::ListKey,
-				values: [
-					'imagick' => __d(Inflector::underscore(static::getScope()), 'driver_imagick'),
-					'gd' => __d(Inflector::underscore(static::getScope()), 'driver_gd'),
-				],
-			),
-			new ConfigOption(
 				defaultValue: [2560, 1920, 1680, 1280, 1024, 768, 640, 480, 375],
 				identifier: 'defaultBreakpoints',
 				localizable: false,
@@ -98,18 +87,41 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					return $la_values ?: null;
 				}
 			),
-			new ConfigOption(
-				defaultValue: static::RESIZE_MEDIA_FILE_TYPE_AVIF,
-				identifier: 'resizeMediaFileType',
-				localizable: false,
-				nullable: false,
-				type: ConfigOptionType::ListKey,
-				values: [
-					static::RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE => __d(Inflector::underscore(static::getScope()), 'resize_media_file_type_match_source'),
-					static::RESIZE_MEDIA_FILE_TYPE_AVIF => __d(Inflector::underscore(static::getScope()), 'resize_media_file_type_avif'),
-					static::RESIZE_MEDIA_FILE_TYPE_WEBP => __d(Inflector::underscore(static::getScope()), 'resize_media_file_type_webp'),
-				],
-			),
+			'resizing' => [
+				new ConfigOption(
+					defaultValue: 'imagick',
+					identifier: 'driver',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::ListKey,
+					values: [
+						'imagick' => __d(Inflector::underscore(static::getScope()), 'driver_imagick'),
+						'gd' => __d(Inflector::underscore(static::getScope()), 'driver_gd'),
+					],
+				),
+				new ConfigOption(
+					defaultValue: static::RESIZE_MEDIA_FILE_TYPE_AVIF,
+					identifier: 'fileType',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::ListKey,
+					values: [
+						static::RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE => __d(Inflector::underscore(static::getScope()), 'resize_media_file_type_match_source'),
+						static::RESIZE_MEDIA_FILE_TYPE_AVIF => __d(Inflector::underscore(static::getScope()), 'resize_media_file_type_avif'),
+						static::RESIZE_MEDIA_FILE_TYPE_WEBP => __d(Inflector::underscore(static::getScope()), 'resize_media_file_type_webp'),
+					],
+				),
+				new ConfigOption(
+					defaultValue: 70,
+					identifier: 'quality',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Integer,
+					validate: function (int $value): bool {
+						return $value >= 0 && $value <= 100;
+					},
+				),
+			],
 		]);
 
 		$this->add(Awyiss::REALM_BACKEND, [

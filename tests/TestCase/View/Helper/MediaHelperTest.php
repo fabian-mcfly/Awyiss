@@ -984,7 +984,7 @@ class MediaHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPictureTagWithWebpResizeFileType(): void {
-		Configure::write('Awyiss.Media.Frontend.resizeMediaFileType', 'webp');
+		Configure::write('Awyiss.Media.Frontend.resizing.fileType', 'webp');
 
 		$this->mediaHelper = new MediaHelper($this->view);
 		$this->mediaHelper->initialize([]);

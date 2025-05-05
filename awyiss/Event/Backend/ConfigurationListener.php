@@ -286,7 +286,7 @@ class ConfigurationListener implements EventListenerInterface {
 
 
 	/**
-	 * If the resizeMediaFileType config is changed, we need to clear the media cache
+	 * If the resizing.fileType config is changed, we need to clear the media cache
 	 * to remove unused files.
 	 *
 	 * @param \Awyiss\Model\Entity\Configuration $entity
@@ -296,7 +296,10 @@ class ConfigurationListener implements EventListenerInterface {
 	protected function clearMediaCache(Configuration $entity, bool $deleted = false): void {
 		if (
 			$entity->scope !== 'media' ||
-			$entity->identifier !== 'resize_media_file_type'
+			(
+				$entity->identifier !== 'resizing.file_type' &&
+				$entity->identifier !== 'resizing.quality'
+			)
 		) {
 			return;
 		}

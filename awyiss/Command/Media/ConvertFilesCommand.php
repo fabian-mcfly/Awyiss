@@ -29,11 +29,28 @@ use Symfony\Component\Process\Process;
  * Fetches records from the media and tries to generate a preview image
  */
 class ConvertFilesCommand extends Command {
+	/**
+	 * An instance of the Intervention ImageManager,
+	 * using the configured driver (gd or imagick)
+	 *
+	 * @var \Intervention\Image\ImageManager
+	 */
 	protected ImageManager $imageManager;
 	/**
-	 * @var bool Whether to use the ImageMagick commands for image manipulation
+	 * Whether to use the ImageMagick commands
+	 * for image manipulation.
+	 *
+	 * @var bool
 	 */
 	protected bool $cliMagickExists = false;
+	/**
+	 * The quality of the generated images.
+	 * For Avif files, the quality can be lower while
+	 * getting a similar or even better result.
+	 *
+	 * @var int
+	 */
+	protected int $quality;
 
 
 	/**
@@ -54,8 +71,10 @@ class ConvertFilesCommand extends Command {
 			// Ignore exception.
 		}
 
-		$ls_driver = Configure::read('Awyiss.Media.Frontend.driver', 'imagick');
+		$ls_driver = Configure::read('Awyiss.Media.Frontend.resizing.driver', 'imagick');
 		$this->imageManager = $ls_driver === 'gd' ? ImageManager::gd(autoOrientation: false) : ImageManager::imagick(autoOrientation: false);
+
+		$this->quality = Configure::read('Awyiss.Media.Frontend.resizing.quality', 70);
 	}
 
 
@@ -107,6 +126,9 @@ class ConvertFilesCommand extends Command {
 		$li_startTime = time();
 		$lb_errorOccurred = false;
 
+		$ls_driver = Configure::read('Awyiss.Media.Frontend.resizing.driver', 'imagick');
+		$io->out(sprintf('Starting media processing using %s with %u%% quality...', $this->cliMagickExists ? 'ImageMagick (CLI)' : 'Intervention Image (' . $ls_driver . ')', $this->quality));
+
 		// Keep this job running for 60 seconds to process as many files as possible
 		while (time() - $li_startTime < 60) {
 			$li_totalFiles = 0;
@@ -134,6 +156,8 @@ class ConvertFilesCommand extends Command {
 			// If the script is not running in quiet mode, break the loop if no files were found
 			// This is just an assumption that the script was called manually and should not run indefinitely
 			if (!$args->getOption('quiet')) {
+				$io->out(sprintf('Finished processing %u files.', $li_totalFiles));
+
 				break;
 			}
 
@@ -647,7 +671,7 @@ class ConvertFilesCommand extends Command {
 		try {
 			$lo_image = $this->imageManager->read($ls_inputPath);
 
-			$lo_image->toAvif(90)->save($file->avifPathAbsolute);
+			$lo_image->toAvif($this->quality)->save($file->avifPathAbsolute);
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -675,7 +699,7 @@ class ConvertFilesCommand extends Command {
 		try {
 			$lo_image = $this->imageManager->read($ls_inputPath);
 
-			$lo_image->toWebp(90)->save($file->webpPathAbsolute);
+			$lo_image->toWebp($this->quality)->save($file->webpPathAbsolute);
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -886,7 +910,9 @@ class ConvertFilesCommand extends Command {
 
 			$lo_image->setImageFormat('jpeg');
 			$lo_image->setCompression(Imagick::COMPRESSION_JPEG);
-			$lo_image->setCompressionQuality(90);
+
+			// Preview files are always saved as JPEG and in a higher quality
+			$lo_image->setCompressionQuality(95);
 
 			if (!$lo_image->writeImage($file->previewPathAbsolute)) {
 				throw new Exception('Cannot write image to file');
@@ -1117,7 +1143,7 @@ class ConvertFilesCommand extends Command {
 				return true;
 			}
 
-			$lo_image->save($ls_inputPath, quality: 90, progressive: true);
+			$lo_image->save($ls_inputPath, quality: $this->quality, progressive: true);
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -1365,7 +1391,7 @@ class ConvertFilesCommand extends Command {
 				return false;
 			}
 
-			$lo_image->save($file->pathAbsolute, quality: 90, progressive: true);
+			$lo_image->save($file->pathAbsolute, quality: $this->quality, progressive: true);
 		}
 		catch (Exception $ex) {
 			$io->error('Status: ' . $ex->getMessage());
@@ -1596,7 +1622,7 @@ class ConvertFilesCommand extends Command {
 			'-background',
 			'white',
 			'-quality',
-			90,
+			$this->quality,
 			'-alpha',
 			'remove',
 			'-flatten',
@@ -1894,7 +1920,7 @@ class ConvertFilesCommand extends Command {
 
 			$lo_image = $lo_image->orient();
 
-			$lo_image->save($inputPath, quality: 90, progressive: true);
+			$lo_image->save($inputPath, quality: $this->quality, progressive: true);
 		}
 		catch (Exception) {
 			return false;
@@ -1944,7 +1970,7 @@ class ConvertFilesCommand extends Command {
 			$lo_image->scaleDown(...$resize);
 		}
 
-		$lo_image->save($outputPath, quality: 90, progressive: true);
+		$lo_image->save($outputPath, quality: $this->quality, progressive: true);
 
 		return $lo_image;
 	}

@@ -242,7 +242,10 @@ msgstr "Medienelement"
 msgid "media_element_inline_img_tag"
 msgstr "Per Texteditor"
 
-msgid "configuration_identifier_frontend_resize_media_file_type"
+msgid "configuration_category_frontend_resizing"
+msgstr "Responsive Bilder"
+
+msgid "configuration_identifier_frontend_resizing_file_type"
 msgstr "Dateiformat für responsive Bilder"
 
 msgid "resize_media_file_type_match_source"
@@ -254,7 +257,10 @@ msgstr "AVIF"
 msgid "resize_media_file_type_webp"
 msgstr "WebP"
 
-msgid "configuration_identifier_frontend_driver"
+msgid "configuration_identifier_frontend_resizing_quality"
+msgstr "Qualität (0-100%)"
+
+msgid "configuration_identifier_frontend_resizing_driver"
 msgstr "Bibliothek"
 
 msgid "driver_imagick"

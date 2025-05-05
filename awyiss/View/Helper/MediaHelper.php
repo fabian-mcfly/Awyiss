@@ -59,7 +59,7 @@ class MediaHelper extends Helper {
 		$lo_twig->addGlobal('ProcessStatus', ProcessStatus::class);
 		$lo_twig->addGlobal('ResizeStrategy', ResizeStrategy::class);
 
-		$this->resizeMediaFileType = $config['resizeMediaFileType'] ?? Configure::read('Awyiss.Media.Frontend.resizeMediaFileType', MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF);
+		$this->resizeMediaFileType = $config['resizeMediaFileType'] ?? Configure::read('Awyiss.Media.Frontend.resizing.fileType', MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF);
 	}
 
 
