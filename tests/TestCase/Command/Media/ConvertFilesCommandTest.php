@@ -1211,6 +1211,8 @@ class ConvertFilesCommandTest extends TestCase {
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/_docx_preview/logo-awyiss.jpg',
 					'-resize',
 					'1280x1280',
+					'-quality',
+					70,
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.docx',
 				], $result);
 			}
@@ -1220,6 +1222,8 @@ class ConvertFilesCommandTest extends TestCase {
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.jpg',
 					'-resize',
 					'1280x1280^',
+					'-quality',
+					70,
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.jpg',
 				], $result);
 			}
@@ -1233,6 +1237,8 @@ class ConvertFilesCommandTest extends TestCase {
 					'West',
 					'-extent',
 					'1280x1280',
+					'-quality',
+					70,
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.pdf',
 				], $result);
 			}
@@ -1242,9 +1248,113 @@ class ConvertFilesCommandTest extends TestCase {
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.png',
 					'-resize',
 					'1280x1280!',
+					'-quality',
+					70,
 					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.png',
 				], $result);
 			}
 		});
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testGetResizeCommandRespectsQualitySetting(): void {
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $lo_table->find()->where(['id' => 2])->first();
+
+		Configure::write('Awyiss.Media.Frontend.resizing.quality', 54);
+
+		// Mock the ConvertFilesCommand
+		$command = $this->getMockBuilder(ConvertFilesCommand::class)->getMock();
+
+		// Set different crop properties on the files
+		for ($i = 1; $i <= 4; $i++) {
+			$resizedFile = new MediaResizedImage();
+
+			$resizedFile->name = $media->name;
+			$resizedFile->path = $media->path;
+			$resizedFile->width = 1280;
+			$resizedFile->height = 1280;
+			$resizedFile->media = $media;
+
+			if ($media->id === 1) {
+				$resizedFile->strategy = ResizeStrategy::Contain;
+				$media->focusPoint = '2,1';
+			}
+			elseif ($media->id === 2) {
+				$resizedFile->strategy = ResizeStrategy::Cover;
+				$media->focusPoint = '0,2';
+			}
+			elseif ($media->id === 3) {
+				$resizedFile->strategy = ResizeStrategy::Crop;
+				$media->focusPoint = '1,0';
+			}
+			elseif ($media->id === 4) {
+				$resizedFile->strategy = ResizeStrategy::Stretch;
+				$media->focusPoint = '2,2';
+			}
+			else {
+				return;
+			}
+
+			// Call the method
+			$result = $this->callProtectedMethod($command, 'getResizeCommand', $resizedFile);
+
+			if ($media->id === 1) {
+				$this->assertSame([
+					'magick',
+					WWW_ROOT . '../awyiss/Command/Media/TestFiles/_docx_preview/logo-awyiss.jpg',
+					'-resize',
+					'1280x1280',
+					'-quality',
+					54,
+					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.docx',
+				], $result);
+			}
+			elseif ($media->id === 2) {
+				$this->assertSame([
+					'magick',
+					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.jpg',
+					'-resize',
+					'1280x1280^',
+					'-quality',
+					54,
+					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.jpg',
+				], $result);
+			}
+			elseif ($media->id === 3) {
+				$this->assertSame([
+					'magick',
+					WWW_ROOT . '../awyiss/Command/Media/TestFiles/_pdf_preview/logo-awyiss.jpg',
+					'-resize',
+					'1280x1280^',
+					'-gravity',
+					'West',
+					'-extent',
+					'1280x1280',
+					'-quality',
+					54,
+					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.pdf',
+				], $result);
+			}
+			elseif ($media->id === 4) {
+				$this->assertSame([
+					'magick',
+					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.png',
+					'-resize',
+					'1280x1280!',
+					'-quality',
+					54,
+					WWW_ROOT . '../awyiss/Command/Media/TestFiles/logo-awyiss.png',
+				], $result);
+			}
+		}
 	}
 }

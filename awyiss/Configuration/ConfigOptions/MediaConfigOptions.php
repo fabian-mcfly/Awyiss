@@ -118,7 +118,7 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					nullable: false,
 					type: ConfigOptionType::Integer,
 					validate: function (int $value): bool {
-						return $value >= 0 && $value <= 100;
+						return $value > 0 && $value <= 100;
 					},
 				),
 			],

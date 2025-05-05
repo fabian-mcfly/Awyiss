@@ -1829,6 +1829,8 @@ class ConvertFilesCommand extends Command {
 				$ls_inputPath,
 				'-resize',
 				$file->width . 'x' . $file->height,
+				'-quality',
+				$this->quality,
 				$file->pathAbsolute,
 			],
 			ResizeStrategy::Cover => [
@@ -1836,6 +1838,8 @@ class ConvertFilesCommand extends Command {
 				$ls_inputPath,
 				'-resize',
 				$file->width . 'x' . $file->height . '^',
+				'-quality',
+				$this->quality,
 				$file->pathAbsolute,
 			],
 			ResizeStrategy::Crop => [
@@ -1847,6 +1851,8 @@ class ConvertFilesCommand extends Command {
 				$ls_gravity,
 				'-extent',
 				$file->width . 'x' . $file->height,
+				'-quality',
+				$this->quality,
 				$file->pathAbsolute,
 			],
 			ResizeStrategy::Stretch => [
@@ -1854,6 +1860,8 @@ class ConvertFilesCommand extends Command {
 				$ls_inputPath,
 				'-resize',
 				$file->width . 'x' . $file->height . '!',
+				'-quality',
+				$this->quality,
 				$file->pathAbsolute,
 			],
 		};
