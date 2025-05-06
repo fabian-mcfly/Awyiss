@@ -222,14 +222,14 @@ class AwyissModule {
 			// If the element is a number, convert it to a number
 			if (element.type === 'number') {
 				// If the value is empty, set it to null
-				settings[key] = element.value === '' ? null : element.value;
+				settings[key] = element.valueAsNumber || null;
 
-				// If step is not set or does not contain a dot, convert the value to a float
+				// If the step attribute is not set or does not contain a dot, convert the value to an integer
 				if (!element.step || !element.step.includes('.')) {
-					settings[key] = parseFloat(settings[key]);
+					settings[key] = parseInt(settings[key]);
 				}
 				else {
-					settings[key] = parseInt(settings[key]);
+					settings[key] = parseFloat(settings[key]);
 				}
 
 				return;

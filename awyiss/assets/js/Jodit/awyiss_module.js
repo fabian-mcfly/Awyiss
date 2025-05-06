@@ -150,16 +150,16 @@ class AwyissModule {
 			}
 
 			if (element.type === 'number') {
-				settings[key] = element.value === '' ? null : element.value;
+				// If the value is empty, set it to null
+				settings[key] = element.valueAsNumber || null;
 
+				// If the step attribute is not set or does not contain a dot, convert the value to an integer
 				if (!element.step || !element.step.includes('.')) {
-					settings[key] = parseFloat(settings[key]);
-				}
-				else {
 					settings[key] = parseInt(settings[key]);
 				}
-
-				return;
+				else {
+					settings[key] = parseFloat(settings[key]);
+				}
 			}
 
 			settings[key] = element.value;
