@@ -539,7 +539,7 @@ class AssetHelper extends Helper {
 		if ($lb_hasLazyloadCss && $ls_assetTags) {
 			$ls_assetTags .= '<script' . $ls_nonce . '>
 				[...document.querySelectorAll(\'link[data-lazyload]\')].map(e=>{!performance.getEntriesByType("resource").some(r=>r.name.includes(e.href))?e.addEventListener("load",e=>{e.target.rel="stylesheet"}):e.rel="stylesheet"});
-			</script>';
+			</script>' . PHP_EOL;
 		}
 
 
@@ -774,7 +774,7 @@ class AssetHelper extends Helper {
 			}
 
 			if (!empty($la_importMap['imports'])) {
-				return '<script type="importmap"' . $ls_nonce . '>' . json_encode($la_importMap) . '</script>';
+				return '<script type="importmap"' . $ls_nonce . '>' . json_encode($la_importMap) . '</script>' . PHP_EOL;
 			}
 
 			return '';
