@@ -114,24 +114,16 @@ class BreadcrumbsModule implements ModuleInterface {
 			$lo_homepage = $lo_pagesTable->get($li_homepageId);
 		}
 		else {
-			if (static::isPreview()) {
-				// Get the homepage entity (first active and published page for the current language with parent_id = null)
-				$lo_query = $lo_pagesTable->find('all', skipPageRoleCheck: true);
+			// Get the homepage entity (first page for the current language)
+			$lo_query = $lo_pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true)->orderBy([
+				'Pages.parent_id' => 'ASC',
+			]);
 
-				$lo_query->orderBy([
-					'Pages.deleted' => 'ASC',
-					'Pages.parent_id' => 'ASC',
-				]);
-			}
-			else {
-				// Get the homepage entity (first active and published page for the current language with parent_id = null)
-				$lo_query = $lo_pagesTable->find('published', skipPageRoleCheck: true);
-
-				$lo_query->orderBy([
-					'Pages.deleted' => 'ASC',
-					'Pages.parents_active' => 'DESC',
-					'Pages.active' => 'DESC',
-					'Pages.parent_id' => 'ASC',
+			if (!static::isPreview()) {
+				// Find only published pages
+				$lo_query->find('published')->where([
+					'Pages.active' => true,
+					'Pages.parents_active' => true,
 				]);
 			}
 
