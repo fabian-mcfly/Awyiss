@@ -30,6 +30,7 @@ export default class PlaceholderHelper {
 		// Bind focus and blur events to the element
 		this.eventHandler.add('focus', this.handleElement.bind(this), element);
 		this.eventHandler.add('blur', this.handleElement.bind(this), element);
+		this.eventHandler.add('keyup', this.handleElement.bind(this), element);
 	}
 
 	/**
@@ -95,7 +96,26 @@ export default class PlaceholderHelper {
 			input.applyButton = applyButton;
 		}
 
-		if (input.value.length > 0) {
+		const value = input.value;
+
+		if (event.type === 'keyup') {
+			if (value.length > 0) {
+				// Set a timeout to hide the button
+				applyButton.hideTimeout = setTimeout(() => {
+					applyButton.classList.remove('Visible');
+					applyButton.inert = true;
+				}, 100);
+			}
+			else {
+				clearTimeout(applyButton.hideTimeout);
+
+				// If the input is focused, show the button
+				applyButton.classList.add('Visible');
+				applyButton.inert = false;
+			}
+		}
+
+		if (value.length > 0) {
 			// If the input has a value, there is nothing to do
 			return;
 		}
