@@ -367,10 +367,13 @@ class FormHelper extends BaseFormHelper {
 		}
 
 		$ls_name = $options['options']['id'];
-		$li_dashPos = strpos($ls_name, '-');
-		// When the id contains a dash, we want to remove the prefix (association name) from the id.
-		if ($li_dashPos !== false) {
-			$ls_name = substr($ls_name, $li_dashPos + 1);
+		// When the id starts with the entity context's table, we want to remove the prefix (association name) from the id.
+		if ($this->context() instanceof EntityContext) {
+			$lo_entity = $this->context()->entity();
+			$ls_source = Inflector::singularize($lo_entity->getSource());
+			if (str_starts_with($ls_name, $ls_source . '-')) {
+				$ls_name = substr($ls_name, strlen($ls_source) + 1);
+			}
 		}
 
 		return $this->formatTemplate($ls_inputContainerTemplate, [

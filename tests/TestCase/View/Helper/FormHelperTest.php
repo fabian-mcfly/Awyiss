@@ -611,6 +611,14 @@ class FormHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testInputContainerTemplateContainsCorrectClasses(): void {
+		$entity = $this->createMock(Entity::class);
+		$entity->method('getSource')->willReturn('Foo');
+
+		$context = $this->createMock(EntityContext::class);
+		$context->method('entity')->willReturn($entity);
+
+		$this->formHelper->context($context);
+
 		$result = $this->formHelper->control('path', [
 			'required' => true,
 			'type' => 'weird_input',
@@ -619,7 +627,24 @@ class FormHelperTest extends TestCase {
 
 		$this->assertStringContainsString('FormInputType-WeirdInput', $result);
 		$this->assertStringContainsString('FormInputName-Bar Required', $result);
-		$this->assertStringNotContainsString('FormInputName-Bar required', $result);
+
+		$entity = $this->createMock(Entity::class);
+		$entity->method('getSource')->willReturn('Bar');
+
+		$context = $this->createMock(EntityContext::class);
+		$context->method('entity')->willReturn($entity);
+
+		$this->formHelper->context($context);
+
+		$result = $this->formHelper->control('path', [
+			'required' => true,
+			'type' => 'weird_input',
+			'id' => 'Foo-Bar',
+		]);
+
+		$this->assertStringContainsString('FormInputType-WeirdInput', $result);
+		$this->assertStringContainsString('FormInputName-Foo-Bar Required', $result);
+
 		$result = $this->formHelper->control('path', [
 			'required' => true,
 			'type' => 'weird_input',
@@ -628,7 +653,6 @@ class FormHelperTest extends TestCase {
 
 		$this->assertStringContainsString('FormInputType-WeirdInput', $result);
 		$this->assertStringContainsString('FormInputName-FooBar Required', $result);
-		$this->assertStringNotContainsString('FormInputName-FooBar required', $result);
 	}
 
 
