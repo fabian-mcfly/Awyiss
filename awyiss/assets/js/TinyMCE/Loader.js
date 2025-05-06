@@ -84,7 +84,7 @@ export default class Loader {
 		table_sizing_mode: 'responsive',
 		table_use_colgroups: false,
 		toolbar: 'bold italic underline strikethrough styles removeformat | undo redo | link unlink anchor | blockquote bullist numlist'
-		+ ' | image | hr subscript superscript nonbreaking charmap | table | awyissModule | aligncenter alignright alignjustify outdent indent'
+		+ ' | image | awyissModule | hr subscript superscript nonbreaking charmap | table | aligncenter alignright alignjustify outdent indent'
 		+ ' | copy cut paste pastetext | visualblocks visualchars | wordcount code | fullscreen',
 		toolbar_sticky: true,
 		toolbar_sticky_offset: document.documentElement.classList.contains('👀')

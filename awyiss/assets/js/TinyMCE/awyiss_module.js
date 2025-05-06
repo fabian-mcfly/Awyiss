@@ -127,7 +127,7 @@ class AwyissModule {
 	 * @param {MouseEvent} event
 	 */
 	handleDialogClick(event) {
-		if (event.target.matches('.Button-Save')) {
+		if (event.target.matches('.Button-Success.Button-Save')) {
 			event.preventDefault();
 
 			// If the module identifier is empty, just close the dialog

@@ -408,7 +408,7 @@ export class MediaFolderSelect {
 	 * @param {MouseEvent} event
 	 */
 	handleDialogClick(event) {
-		if (event.target.matches('.Button-Save')) {
+		if (event.target.matches('.Button-Success.Button-Save')) {
 			event.preventDefault();
 
 			// Get the ckecked checkbox and use its value

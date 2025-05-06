@@ -109,7 +109,7 @@ class AwyissModule {
 	 * @param {MouseEvent} event
 	 */
 	handleDialogClick(event) {
-		if (event.target.matches('.Button-Save')) {
+		if (event.target.matches('.Button-Success.Button-Save')) {
 			event.preventDefault();
 
 			if (!this.dialog.querySelector('select[name="module_identifier"]').value) {
