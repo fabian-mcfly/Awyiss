@@ -755,8 +755,16 @@ class AssetHelper extends Helper {
 				}
 			}
 
+			if (isset($la_options['as'])) {
+				$ls_cleanModuleName = $la_options['as'];
+			}
+
 			// Add the module to the import map
-			$la_importMap['imports'][ $ls_cleanModuleName ] = $this->getAssetPath($ls_moduleName, $la_options);
+			$ls_assetPath = $this->getAssetPath($ls_moduleName, $la_options);
+			if (!$ls_assetPath && isset($la_options['fallback'])) {
+				$ls_assetPath = $this->getAssetPath($la_options['fallback'], $la_options);
+			}
+			$la_importMap['imports'][ $ls_cleanModuleName ] = $ls_assetPath;
 		}
 
 		// If includeScriptTag is true, wrap the import map in a script tag
