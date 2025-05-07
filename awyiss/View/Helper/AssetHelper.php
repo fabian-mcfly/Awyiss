@@ -672,14 +672,8 @@ class AssetHelper extends Helper {
 				continue;
 			}
 
-			// If module options is an array and contains a 'minified' key, use the provided options
-			if (is_array($la_moduleOptions) && array_key_exists('minified', $la_moduleOptions)) {
-				static::$jsModules[ $ls_moduleName ] = $la_moduleOptions;
-				continue;
-			}
-
 			// Otherwise, use the default minified value
-			static::$jsModules[ $ls_moduleName ] = ['minified' => $lb_minified];
+			static::$jsModules[ $ls_moduleName ] = $la_moduleOptions + ['minified' => $lb_minified];
 		}
 	}
 
