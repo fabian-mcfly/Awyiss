@@ -365,6 +365,7 @@ trait ContentElementTrait {
 		$lo_moduleTags = $lo_xpath->query('//module');
 
 		// Iterate over the <module> tags
+		/** @var \DOMElement $lo_moduleTag */
 		foreach ($lo_moduleTags as $lo_moduleTag) {
 			// Get the value of the data-identifier attribute
 			$ls_identifier = Inflector::variable($lo_moduleTag->getAttribute('data-identifier'));
@@ -381,6 +382,10 @@ trait ContentElementTrait {
 
 			/** @noinspection PhpParamsInspection */
 			$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->getView(), $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
+
+			// Re-encode the html entities. Otherwise, calling `saveHTML()`
+			// would include unencoded html entities like `ü` instead of `&uuml;`.
+			$lo_moduleTag->nodeValue = htmlentities($lo_moduleTag->textContent ?? '', ENT_NOQUOTES, 'UTF-8', false);
 
 			if ($ls_moduleOutput) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -596,8 +601,7 @@ trait ContentElementTrait {
 		libxml_use_internal_errors(true);
 
 		// Load the HTML string into the DOMDocument
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_dom->loadHTML('<!DOCTYPE html>' . $text);
+		$lo_dom->loadHTML('<!DOCTYPE html>' . mb_encode_numericentity($text, [0x80, 0x10FFFF, 0, ~0], 'UTF-8'));
 
 		// Clear any errors collected during loadHTML
 		libxml_clear_errors();
