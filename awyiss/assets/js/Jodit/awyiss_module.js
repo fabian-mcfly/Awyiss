@@ -10,6 +10,11 @@ class AwyissModule {
 	 */
 	editor;
 
+	/**
+	 * @type {HTMLElement} node - The node to be configured.
+	 */
+	node;
+
 	constructor(editor) {
 		this.editor = editor;
 		this.dialog = null;
@@ -81,6 +86,7 @@ class AwyissModule {
 
 		this.dialog.showModal();
 		this.editor.selection.select(node);
+		this.node = node;
 
 		let settings = {};
 
@@ -133,7 +139,7 @@ class AwyissModule {
 	/**
 	 * Use the settings from the dialog to update the module node.
 	 *
-	 * @returns {void}
+	 * @returns {boolean}
 	 */
 	useModuleSettings() {
 		const identifierSelect = this.dialog.querySelector('select[name="module_identifier"]');
@@ -185,12 +191,16 @@ class AwyissModule {
 			settings[key] = element.value;
 		});
 
-		const node = this.editor.selection.current();
+		let node = this.node;
 
 		if (node.nodeName.toLowerCase() === 'module') {
 			node.dataset.identifier = identifier;
 			node.dataset.label = identifierSelect.querySelector(`option[value="${identifier}"]`).textContent;
 			node.textContent = JSON.stringify(settings);
+
+			this.editor.selection.select(node);
+			// Replace the module with the new one
+			this.editor.selection.current().parentNode.replaceWith(node);
 		}
 		else {
 			const module = document.createElement('module');
@@ -199,8 +209,10 @@ class AwyissModule {
 			module.dataset.label = identifierSelect.querySelector(`option[value="${identifier}"]`).textContent;
 			module.textContent = JSON.stringify(settings);
 
-			this.editor.selection.insertNode(module);
+			this.editor.selection.current().replaceWith(module);
 		}
+
+		return true;
 	}
 
 	/**
@@ -284,7 +296,7 @@ Jodit.plugins.add('awyissModuleConfig', (editor) => {
 				awyissModule.openOverlay(event, current);
 			}
 		},
-		tooltip: 'Awyiss module helper plugin'
+		tooltip: 'Awyiss Module'
 	};
 
 	editor.events.on('afterInit', (event) => {
