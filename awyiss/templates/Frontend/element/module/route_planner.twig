@@ -85,10 +85,10 @@
 					<p class="RoutePlanner-Route-Summary-Start">
 						{{ __d('route', 'route_planner_route_summary_start') }}:<br>
 						<strong>{% verbatim %}{{start}}{% endverbatim %}</strong><br>
-						({{ FormHelper.button(__d('route', 'route_planner_reset'), {
+						{{ FormHelper.button(__d('route', 'route_planner_reset'), {
 							type: 'button',
 							class: 'Button Button-Reset Button-RoutePlanner-Reset'
-						}) }})
+						}) }}
 					</p>
 					<p class="RoutePlanner-Route-Summary-End">
 						{{ __d('route', 'route_planner_route_summary_end') }}:<br>

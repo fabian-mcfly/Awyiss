@@ -18,23 +18,39 @@
 #}
 
 {% block scriptsAdd %}
-	{% do AssetHelper.addJsModule([
-		'Headroom/headroom.js',
-		'LazyLoad/lazyload.js',
-		'Lightbox/Lightbox.js'
-	]) %}
-	{% do AssetHelper.add('WebfontLoader/webfontloader.js') %}
-	{% do AssetHelper.add('main.js', {type: 'module'}, true, null, 0) %}
+	{%- block scriptsAddLightbox %}
+		{% do AssetHelper.addJsModule({
+			'Frontend/Lightbox.js': {
+				as: 'Lightbox',
+				realm: 'Backend',
+			}
+		}) %}
+	{%- endblock -%}
 
-	{%- block frontendEditorConfig -%}
+	{%- block scriptsAddModules %}
+		{% do AssetHelper.addJsModule([
+			'Headroom/headroom.js',
+			'LazyLoad/lazyload.js',
+		]) %}
+	{%- endblock -%}
+
+	{%- block scriptsAddWebfontLoader -%}
+		{% do AssetHelper.add('WebfontLoader/webfontloader.js') %}
+	{%- endblock -%}
+
+	{%- block scriptsAddMainScript %}
+		{% do AssetHelper.add('main.js', {type: 'module'}, true, null, 0) %}
+	{%- endblock -%}
+
+	{%- block scriptsAddFrontendEditor -%}
 		{% if frontendEditorConfig %}
-			{% do AssetHelper.add(['Frontend/editor.css', 'Frontend/Editor.js'], {realm: 'Backend'}) %}
+			{% do AssetHelper.add(['Frontend/Editor.js'], {realm: 'Backend'}) %}
 		{% endif %}
 	{%- endblock -%}
 
-	{%- block frontendPreviewConfig -%}
+	{%- block scriptsAddFrontendPreview -%}
 		{% if frontendPreviewConfig %}
-			{% do AssetHelper.add(['Frontend/preview.css', 'Frontend/Preview.js'], {realm: 'Backend'}) %}
+			{% do AssetHelper.add(['Frontend/Preview.js'], {realm: 'Backend'}) %}
 		{% endif %}
 	{%- endblock -%}
 {% endblock %}
@@ -79,15 +95,7 @@
 						urls: [baseUrl + 'assets/css/webfonts{{ webfontTimestamp ? '.' ~ webfontTimestamp : '' }}.css']
 					},
 				};
-
-				{% do AssetHelper.addNoScriptAsset('webfonts.css') %}
 			{% endif %}
 		{% endblock %}
-
-		{%- block designPreviewStylesheet -%}
-			{% if designPreview %}
-				{% do AssetHelper.add('Frontend/design_preview.css', {realm: 'Backend'}) %}
-			{% endif %}
-		{%- endblock -%}
 	</script>
 {% endblock %}

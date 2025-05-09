@@ -65,8 +65,17 @@
 		transition:color .3s ease-in-out;
 
 		&::before {
-			@include fa('\f00d', 24px);
+			display:inline-block;
+			content:'\f00d';
+			//noinspection CssNoGenericFontName
+			font-family:'Font Awesome 6 Free', 'Font Awesome 6 Brands';
+			font-size:24px;
+			font-style:normal;
+			font-variant:normal;
+			font-weight:900;
 			line-height:40px;
+			-webkit-font-smoothing:antialiased;
+			-moz-osx-font-smoothing:grayscale;
 		}
 
 		&:hover {
@@ -239,8 +248,17 @@
 		}
 
 		&::before {
-			@include fa('\f104', 24px);
+			display:inline-block;
+			content:'\f104';
+			//noinspection CssNoGenericFontName
+			font-family:'Font Awesome 6 Free', 'Font Awesome 6 Brands';
+			font-size:24px;
+			font-style:normal;
+			font-variant:normal;
+			font-weight:900;
 			line-height:40px;
+			-webkit-font-smoothing:antialiased;
+			-moz-osx-font-smoothing:grayscale;
 		}
 	}
 

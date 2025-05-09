@@ -102,8 +102,41 @@
 				<meta property="og:image" content="{{ fetch('ogImage') ?: ogImage }}">
 
 				{%- block headStylesheets -%}
-					{%- do AssetHelper.add('full.css', [], true, null, 0) -%}
-					{%- do AssetHelper.addCssLayer(['reset', 'columnSystem', 'externalIcons', 'Awyiss']) -%}
+					{%- block headStylesheetsFullStylesheet -%}
+						{%- do AssetHelper.add('full.css', [], true, null, 0) -%}
+					{%- endblock -%}
+
+					{%- block headStylesheetsCssLayer -%}
+						{%- do AssetHelper.addCssLayer(['reset', 'columnSystem', 'externalIcons', 'Awyiss']) -%}
+					{%- endblock -%}
+
+					{%- block headStylesheetsDesignPreview -%}
+						{% if designPreview %}
+							{% do AssetHelper.add('Frontend/design_preview.css', {realm: 'Backend'}) %}
+						{% endif %}
+					{%- endblock -%}
+
+					{%- block headStylesheetsFrontendEditor -%}
+						{% if frontendEditorConfig %}
+							{% do AssetHelper.add(['Frontend/editor.css'], {realm: 'Backend'}) %}
+						{% endif %}
+					{%- endblock -%}
+
+					{%- block headStylesheetsFrontendPreview -%}
+						{% if frontendPreviewConfig %}
+							{% do AssetHelper.add(['Frontend/preview.css'], {realm: 'Backend'}) %}
+						{% endif %}
+					{%- endblock -%}
+
+					{%- block headStylesheetsLightbox -%}
+						{% do AssetHelper.add(['Frontend/lightbox.css'], {realm: 'Backend'}) %}
+					{%- endblock -%}
+
+					{%- block headStylesheetsWebfont -%}
+						{% if webfont is not empty %}
+							{% do AssetHelper.addNoScriptAsset('webfonts.css') %}
+						{% endif %}
+					{%- endblock -%}
 				{%- endblock -%}
 
 				{%- block headScripts -%}

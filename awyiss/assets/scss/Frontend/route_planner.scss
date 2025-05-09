@@ -176,7 +176,6 @@
 		}
 
 		.Button-RoutePlanner-Geolocator {
-			all:unset;
 			width:30px;
 			height:30px;
 			margin:auto;
@@ -361,16 +360,6 @@
 				position:absolute;
 				top:10px;
 				right:0;
-			}
-		}
-
-		.Button-RoutePlanner-Reset {
-			all:unset;
-
-			&:hover {
-				all:unset;
-				color:var(--colorMain);
-				cursor:pointer;
 			}
 		}
 
