@@ -227,7 +227,7 @@ class FormElement extends Entity {
 	 */
 	protected function _getLabel(): string {
 		if ($this->type === 'free_text') {
-			return $this->cleanTitle($this->text);
+			return $this->cleanTitle($this->text ?? '');
 		}
 
 		return parent::_getLabel();

@@ -108,7 +108,7 @@ msgid "type_tel"
 msgstr "Phone"
 
 msgid "type_range"
-msgstr "Range"
+msgstr "Range slider"
 
 msgid "type_url"
 msgstr "URL"
