@@ -1,5 +1,7 @@
 // noinspection JSUnusedGlobalSymbols
 
+import AirDatepicker from 'AirDatepicker/AirDatepicker';
+
 /**
  * Search class
  */
@@ -17,18 +19,17 @@ export default class Search {
 	 */
 	filterButtonSelector = '.Button-ShowFilter';
 	/**
-	 * The selector for reset filter buttons
-	 *
-	 * @type {string}
-	 */
-	resetButtonSelector = '.Button-ResetFilter';
-
-	/**
 	 * The selector for filter forms
 	 *
 	 * @type {string}
 	 */
 	filterSelector = '.SearchFilter-Form';
+	/**
+	 * The selector for reset filter buttons
+	 *
+	 * @type {string}
+	 */
+	resetButtonSelector = '.Button-ResetFilter';
 
 	constructor() {
 		const filter = document.querySelectorAll(this.filterSelector);
@@ -316,10 +317,13 @@ export class SearchFilter {
 			datePickerInput.value = '';
 			valueInput.insertAdjacentElement('beforebegin', datePickerInput);
 
+			valueInput.setAttribute('autocomplete', 'off');
+
 			valueInput.datepicker = new AirDatepicker(datePickerInput, {
 				altField: valueInput,
 				altFieldDateFormat: altFieldDateFormat,
 				container: this.element,
+				keyboardNav: true,
 				locale: airDatepickerLocale,
 				multipleDates: valueInput.dataset.allowMultipleValues === 'true' && (operator === 'in' || operator === 'not_in'),
 				multipleDatesSeparator: ', ',

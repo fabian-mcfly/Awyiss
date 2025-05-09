@@ -1,128 +1,130 @@
-html {
-	box-sizing:border-box;
-	-webkit-text-size-adjust:none;
-	text-size-adjust:none;
-}
-
-* {
-	margin:0;
-	padding:0;
-
-	&,
-	&::before,
-	&::after {
-		box-sizing:inherit;
+@layer reset {
+	html {
+		box-sizing:border-box;
+		-webkit-text-size-adjust:none;
+		text-size-adjust:none;
 	}
-}
 
-table {
-	border-collapse:collapse;
-	border-spacing:0;
-}
+	* {
+		margin:0;
+		padding:0;
 
-fieldset,
-img {
-	border:0;
-}
-
-address,
-caption,
-cite,
-code,
-dfn,
-em,
-th,
-var,
-optgroup {
-	font-style:inherit;
-	font-weight:inherit;
-}
-
-del,
-ins {
-	text-decoration:none;
-}
-
-caption,
-th {
-	text-align:left;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	font-size:100%;
-	font-weight:normal;
-}
-
-abbr,
-acronym {
-	border:0;
-	font-variant:normal;
-}
-
-sup {
-	font-size:.75em;
-	vertical-align:super;
-}
-
-sub {
-	vertical-align:baseline;
-}
-
-legend {
-	color:inherit;
-}
-
-:where(
-	input,
-	button,
-	textarea,
-	select,
-	optgroup,
-	option
-) {
-	font-family:inherit;
-	font-size:inherit;
-	font-style:inherit;
-	font-weight:inherit;
-	line-height:inherit;
-}
-
-textarea {
-	min-height:5rem;
-	resize:vertical;
-	scrollbar-width:thin;
-}
-
-strong, b {
-	font-weight:700;
-}
-
-em,
-i {
-	font-style:italic;
-}
-
-li {
-	margin-left:20px;
-}
-
-ul {
-	> li {
-		list-style-type:square;
+		&,
+		&::before,
+		&::after {
+			box-sizing:inherit;
+		}
 	}
-}
 
-ol {
-	> li {
-		list-style-type:decimal;
+	table {
+		border-collapse:collapse;
+		border-spacing:0;
 	}
-}
 
-:target {
-	scroll-margin-block:5ex;
+	fieldset,
+	img {
+		border:0;
+	}
+
+	address,
+	caption,
+	cite,
+	code,
+	dfn,
+	em,
+	th,
+	var,
+	optgroup {
+		font-style:inherit;
+		font-weight:inherit;
+	}
+
+	del,
+	ins {
+		text-decoration:none;
+	}
+
+	caption,
+	th {
+		text-align:left;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-size:100%;
+		font-weight:normal;
+	}
+
+	abbr,
+	acronym {
+		border:0;
+		font-variant:normal;
+	}
+
+	sup {
+		font-size:.75em;
+		vertical-align:super;
+	}
+
+	sub {
+		vertical-align:baseline;
+	}
+
+	legend {
+		color:inherit;
+	}
+
+	:where(
+		input,
+		button,
+		textarea,
+		select,
+		optgroup,
+		option
+	) {
+		font-family:inherit;
+		font-size:inherit;
+		font-style:inherit;
+		font-weight:inherit;
+		line-height:inherit;
+	}
+
+	textarea {
+		min-height:5rem;
+		resize:vertical;
+		scrollbar-width:thin;
+	}
+
+	strong, b {
+		font-weight:700;
+	}
+
+	em,
+	i {
+		font-style:italic;
+	}
+
+	li {
+		margin-left:20px;
+	}
+
+	ul {
+		> li {
+			list-style-type:square;
+		}
+	}
+
+	ol {
+		> li {
+			list-style-type:decimal;
+		}
+	}
+
+	:target {
+		scroll-margin-block:5ex;
+	}
 }

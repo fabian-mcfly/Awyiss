@@ -58,7 +58,9 @@
 			{% endblock %}
 
 			{% block headStylesheets %}
+				{%- do AssetHelper.addCssLayer(['reset']) -%}
 				{% do AssetHelper.add('line-awesome/line-awesome.css', [], false, true) %}
+				{% do AssetHelper.add('element/air_datepicker.css', [], true) %}
 				{% do AssetHelper.add('element/coloris.css', [], true) %}
 				{% do AssetHelper.add('main.css', [], true) %}
 			{% endblock %}

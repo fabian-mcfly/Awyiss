@@ -1,5 +1,7 @@
 // noinspection JSUnusedGlobalSymbols,NpmUsedModulesInstalled
 
+import AirDatepicker from 'AirDatepicker/AirDatepicker';
+
 export default class DatePicker {
 	/**
 	 * The selector for the date picker input
@@ -46,11 +48,14 @@ export default class DatePicker {
 		const settings = {
 			altField: input,
 			altFieldDateFormat: altFieldDateFormat,
+			keyboardNav: true,
 			locale: airDatepickerLocale,
 			position: 'top center',
 			onlyTimepicker: type === 'time',
 			timepicker: type === 'time' || type === 'datetime-local',
 		};
+
+		datePickerInput.setAttribute('autocomplete', 'off');
 
 		const datePicker = new AirDatepicker(datePickerInput, settings);
 		if (datePickerInput.value) {

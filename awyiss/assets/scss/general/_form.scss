@@ -281,6 +281,11 @@ select {
 }
 
 input[type="range"] {
+	margin:0;
+	padding:0;
+	border:0 none;
+	background:none;
+
 	&:focus-visible {
 		box-shadow:0 0 10px var(--colorSuccess);
 		outline:2px solid var(--colorSuccess);
