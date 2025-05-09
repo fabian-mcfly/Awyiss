@@ -23,7 +23,7 @@
 				realm: 'Backend'
 			},
 		}) %}
-		{% do AssetHelper.add(['Frontend/MapLibre/maplibre-gl.css', 'Frontend/route_planner.css'], {realm: 'Backend'}) %}
+		{% do AssetHelper.add(['Frontend/route_planner.css'], {realm: 'Backend'}) %}
 		{% do AssetHelper.add(['Frontend/RoutePlanner.js'], {realm: 'Backend', type: 'module'}, true) %}
 	{% endblock %}
 

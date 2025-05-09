@@ -37,6 +37,7 @@ class AssetHelper extends Helper {
 			'critical' => [],
 			'nonCritical' => [],
 		],
+		'cssLayer' => [],
 		'js' => [
 			'critical' => [],
 			'nonCritical' => [],
@@ -79,6 +80,7 @@ class AssetHelper extends Helper {
 			'critical' => [],
 			'nonCritical' => [],
 		],
+		'cssLayer' => [],
 		'js' => [
 			'critical' => [],
 			'nonCritical' => [],
@@ -201,6 +203,28 @@ class AssetHelper extends Helper {
 
 			// Add the asset to the appropriate assets array based on its extension and criticality
 			static::$assets[ $ls_extension ][ $ls_key ][ $ls_fileName ] = $la_options;
+		}
+	}
+
+
+	/**
+	 * Adds a new css layer (single layer or group),
+	 * with a given name and priority.
+	 *
+	 * Layers will be ordered by priority, with the
+	 * highest priority last.
+	 *
+	 * Layers provided as an array will be added
+	 * with their internal priority `as-is`.
+	 */
+	public function addCssLayer(string|array $layer, int $priority = 10): void {
+		$ls_layer = is_string($layer) ? $layer : implode(', ', $layer);
+
+		if (!isset(static::$assets['cssLayer'][ $ls_layer ])) {
+			static::$assets['cssLayer'][ $ls_layer ] = [
+				'layer' => $ls_layer,
+				'priority' => $priority,
+			];
 		}
 	}
 
@@ -376,6 +400,35 @@ class AssetHelper extends Helper {
 
 
 	/**
+	 * Creates a style tag containing the layer definition
+	 *
+	 * @returns string
+	 */
+	public function createLayerTag(): string {
+		$la_layers = static::$assets['cssLayer'];
+
+		if (empty($la_layers)) {
+			return '';
+		}
+
+		// Sort the layers by priority
+		usort($la_layers, function ($a, $b) {
+			return $a['priority'] <=> $b['priority'];
+		});
+
+		$ls_layer = '@layer ';
+		foreach ($la_layers as $la_layer) {
+			$ls_layer .= $la_layer['layer'] . ', ';
+		}
+		$ls_layer = rtrim($ls_layer, ', ');
+
+		$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+
+		return '<style' . ($ls_nonce ? ' nonce="' . $ls_nonce . '"' : '') . '>' . $ls_layer . ';</style>' . PHP_EOL;
+	}
+
+
+	/**
 	 * Retrieves the path to an asset, optionally minifying it if required.
 	 * If the asset is a full URL, it returns the URL directly.
 	 * Otherwise, it constructs the asset path based on the provided options and the application's configuration.
@@ -491,15 +544,16 @@ class AssetHelper extends Helper {
 			$la_assets = array_merge($la_assets['critical'], $la_assets['nonCritical']);
 		}
 
+		$ls_assetTags = $this->createLayerTag();
+
 		// If the assets array is empty, return an empty string
-		if (empty($la_assets)) {
+		if (empty($la_assets) && empty($ls_assetTags)) {
 			return '';
 		}
 
 		// Sort the assets by priority
 		$la_assets = $this->sortAssetsByPriority($la_assets);
 
-		$ls_assetTags = '';
 		$lb_hasLazyloadCss = false;
 		foreach ($la_assets as $ls_asset => $la_options) {
 			// Check if the asset is a CSS file

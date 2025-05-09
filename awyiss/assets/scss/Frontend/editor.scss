@@ -3,7 +3,7 @@
  * This file is only used in the frontend,
  * but compiled only in the backend.
  */
-@layer awyissFrontendEditor {
+@layer Awyiss {
 	html:has(#AwyissFrontendEditor.Visible) {
 		overflow:hidden;
 	}

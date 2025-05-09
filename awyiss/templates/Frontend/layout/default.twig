@@ -102,7 +102,8 @@
 				<meta property="og:image" content="{{ fetch('ogImage') ?: ogImage }}">
 
 				{%- block headStylesheets -%}
-					{%- do AssetHelper.add('full.css', [], true) -%}
+					{%- do AssetHelper.add('full.css', [], true, null, 0) -%}
+					{%- do AssetHelper.addCssLayer(['reset', 'columnSystem', 'externalIcons', 'Awyiss']) -%}
 				{%- endblock -%}
 
 				{%- block headScripts -%}
