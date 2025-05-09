@@ -73,6 +73,7 @@ class AssetHelperTest extends TestCase {
 				'critical' => [],
 				'nonCritical' => [],
 			],
+			'cssLayer' => [],
 			'font' => [
 				'critical' => [],
 				'nonCritical' => [],
