@@ -136,9 +136,9 @@ class AwyissModule {
 				return;
 			}
 
-			this.useModuleSettings();
-
-			this.dialog.close();
+			if (this.useModuleSettings()) {
+				this.dialog.close();
+			}
 
 			return;
 		}
@@ -199,11 +199,17 @@ class AwyissModule {
 	/**
 	 * Use the settings from the dialog to update the module node.
 	 *
-	 * @returns {void}
+	 * @returns {boolean}
 	 */
 	useModuleSettings() {
 		const identifierSelect = this.dialog.querySelector('select[name="module_identifier"]');
 		const identifier = identifierSelect.value;
+
+		const form = this.dialog.querySelector('form');
+		if (!form.checkValidity()) {
+			form.reportValidity();
+			return false;
+		}
 
 		// Get the form data for all elements starting with `settings[` and create a JSON object
 		const settings = {};
@@ -216,6 +222,15 @@ class AwyissModule {
 			// If the element is a checkbox, use the checked property and convert it to a boolean
 			if (element.type === 'checkbox') {
 				settings[key] = element.checked;
+				return;
+			}
+
+			// If the element is a radio button, use the checked property and set it to the value
+			if (element.type === 'radio') {
+				if (element.checked) {
+					settings[key] = element.value;
+				}
+
 				return;
 			}
 
@@ -260,6 +275,8 @@ class AwyissModule {
 			// noinspection JSUnresolvedReference
 			this.editor.insertContent(module.outerHTML + '\n');
 		}
+
+		return true;
 	}
 }
 

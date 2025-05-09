@@ -117,8 +117,10 @@ class AwyissModule {
 				return;
 			}
 
-			this.useModuleSettings();
-			this.dialog.close();
+			if (this.useModuleSettings()) {
+				this.dialog.close();
+			}
+
 			return;
 		}
 
@@ -137,6 +139,13 @@ class AwyissModule {
 		const identifierSelect = this.dialog.querySelector('select[name="module_identifier"]');
 		const identifier = identifierSelect.value;
 
+		const form = this.dialog.querySelector('form');
+		if (!form.checkValidity()) {
+			form.reportValidity();
+			return false;
+		}
+
+		// Get the form data for all elements starting with `settings[` and create a JSON object
 		const settings = {};
 
 		const formElements = this.dialog.querySelectorAll('input[name^="settings["], select[name^="settings["], textarea[name^="settings["]');
@@ -144,11 +153,22 @@ class AwyissModule {
 			// noinspection RegExpRedundantEscape
 			const key = element.name.match(/\[(.*?)\]/)[1];
 
+			// If the element is a checkbox, use the checked property and convert it to a boolean
 			if (element.type === 'checkbox') {
 				settings[key] = element.checked;
 				return;
 			}
 
+			// If the element is a radio button, use the checked property and set it to the value
+			if (element.type === 'radio') {
+				if (element.checked) {
+					settings[key] = element.value;
+				}
+
+				return;
+			}
+
+			// If the element is a number, convert it to a number
 			if (element.type === 'number') {
 				// If the value is empty, set it to null
 				settings[key] = element.valueAsNumber || null;
