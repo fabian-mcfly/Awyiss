@@ -72,7 +72,7 @@ class NewsListingModule implements ModuleInterface {
 		$ls_return .= $lo_formHelper->control('settings.titleTag', [
 			'columnSpan' => 6,
 			'empty' => false,
-			'label' => __d('module', 'title_tag'),
+			'label' => __df('Frontend/news', 'Frontend/module', 'title_tag'),
 			'options' => [
 				'h1' => 'H1',
 				'h2' => 'H2',
@@ -86,7 +86,7 @@ class NewsListingModule implements ModuleInterface {
 		]);
 
 		$ls_return .= $lo_formHelper->control('settings.paginate', [
-			'label' => __d('module', 'paginate'),
+			'label' => __df('Frontend/news', 'Frontend/module', 'paginate'),
 			'type' => 'checkbox',
 			'data-form-updater' => true,
 		]);
@@ -96,7 +96,7 @@ class NewsListingModule implements ModuleInterface {
 				'columnSpan' => 6,
 				'max' => 100,
 				'min' => 1,
-				'label' => __d('module', 'items_per_page'),
+				'label' => __df('Frontend/news', 'Frontend/module', 'items_per_page'),
 				'placeholder' => 9,
 				'required' => true,
 				'type' => 'number',
@@ -106,7 +106,7 @@ class NewsListingModule implements ModuleInterface {
 		else {
 			$ls_return .= $lo_formHelper->control('settings.items', [
 				'columnSpan' => 6,
-				'label' => __d('module', 'number_of_items'),
+				'label' => __df('Frontend/news', 'Frontend/module', 'number_of_items'),
 				'max' => 20,
 				'min' => 1,
 				'placeholder' => 3,
@@ -117,7 +117,7 @@ class NewsListingModule implements ModuleInterface {
 
 			$ls_return .= $lo_formHelper->control('settings.offset', [
 				'columnSpan' => 6,
-				'label' => __d('module', 'offset'),
+				'label' => __df('Frontend/news', 'Frontend/module', 'offset'),
 				'max' => 20,
 				'min' => 1,
 				'placeholder' => 0,

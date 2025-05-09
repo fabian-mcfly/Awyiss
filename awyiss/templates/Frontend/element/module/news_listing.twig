@@ -74,7 +74,7 @@
 								{% block newsListingItemLink %}
 									<p class="Link">
 										<a href="{{ link }}" class="Button">
-											{{ __d('module', 'read_more') }}
+											{{ __df('news', 'module', 'read_more') }}
 										</a>
 									</p>
 								{% endblock %}
@@ -91,7 +91,7 @@
 			{% endblock %}
 		{% else %}
 			{% block newsListingEmpty %}
-				{{ __d('Backend/module', 'no_news') }}
+				{{ __df('news', 'module', 'no_records') }}
 			{% endblock %}
 		{% endif %}
 	</div>

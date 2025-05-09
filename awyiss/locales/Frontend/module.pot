@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "title_tag"
+msgstr "Title-Tag"
+
 msgid "paginate"
 msgstr "Paginate"
 
@@ -23,26 +26,23 @@ msgstr "Number of items"
 msgid "offset"
 msgstr "Offset"
 
-msgid "no_news"
-msgstr "No news"
+msgid "no_records"
+msgstr "No records"
 
-msgid "breadcrumbs_include_homepage"
+msgid "include_homepage"
 msgstr "Include homepage"
 
-msgid "breadcrumbs_include_current_page"
+msgid "include_current_page"
 msgstr "Include current page"
 
-msgid "breadcrumbs_show_on_homepage"
+msgid "show_on_homepage"
 msgstr "Show on homepage"
 
-msgid "breadcrumbs_homepage_id"
+msgid "homepage_id"
 msgstr "Homepage"
 
-msgid "instagram_items"
-msgstr "Number of items"
-
-msgid "instagram_profile_name"
+msgid "profile_name"
 msgstr "Profile name"
 
-msgid "instagram_credentials_missing"
-msgstr "Instagram credentials missing"
+msgid "credentials_missing"
+msgstr "Credentials missing"

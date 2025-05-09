@@ -64,7 +64,7 @@ class BreadcrumbsModule implements ModuleInterface {
 		$ls_return .= $lo_formHelper->control('settings.includeHomepage', [
 			'checked' => $settings['includeHomepage'] ?? true,
 			'columnSpan' => 4,
-			'label' => __d('module', 'breadcrumbs_include_homepage'),
+			'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'include_homepage'),
 			'type' => 'checkbox',
 		]);
 
@@ -72,7 +72,7 @@ class BreadcrumbsModule implements ModuleInterface {
 		$ls_return .= $lo_formHelper->control('settings.includeCurrentPage', [
 			'checked' => $settings['includeCurrentPage'] ?? true,
 			'columnSpan' => 4,
-			'label' => __d('module', 'breadcrumbs_include_current_page'),
+			'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'include_current_page'),
 			'type' => 'checkbox',
 		]);
 
@@ -80,7 +80,7 @@ class BreadcrumbsModule implements ModuleInterface {
 		$ls_return .= $lo_formHelper->control('settings.showOnHomepage', [
 			'checked' => $settings['showOnHomepage'] ?? false,
 			'columnSpan' => 4,
-			'label' => __d('module', 'breadcrumbs_show_on_homepage'),
+			'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'show_on_homepage'),
 			'type' => 'checkbox',
 		]);
 
@@ -88,7 +88,7 @@ class BreadcrumbsModule implements ModuleInterface {
 		$ls_return .= $lo_formHelper->control('settings.homepageId', [
 			'columnSpan' => 12,
 			'empty' => true,
-			'label' => __d('module', 'breadcrumbs_homepage_id'),
+			'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'homepage_id'),
 			'options' => static::getHomepageOptions(),
 			'type' => 'select',
 			'value' => $settings['homepageId'] ?? null,

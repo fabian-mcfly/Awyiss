@@ -49,11 +49,11 @@
 
 			{% if settings.showTransportationModes %}
 				{{ FormHelper.control(entity ? 'route_planner.' ~ entity.id ~ '.transportation_mode' : 'route_planner.transportation_mode', {
-					label: __d('Frontend/route', 'transportation_mode'),
+					label: __d('route', 'transportation_mode'),
 					options: {
-						car: __d('Frontend/route', 'transportation_mode_car'),
-						bike: __d('Frontend/route', 'transportation_mode_bike'),
-						foot: __d('Frontend/route', 'transportation_mode_foot'),
+						car: __d('route', 'transportation_mode_car'),
+						bike: __d('route', 'transportation_mode_bike'),
+						foot: __d('route', 'transportation_mode_foot'),
 					},
 					templateVars: {
 						'containerClass': 'RoutePlanner-FormInput RoutePlanner-FormInput-TransportationMode',

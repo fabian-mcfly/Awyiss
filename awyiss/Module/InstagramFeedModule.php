@@ -69,7 +69,7 @@ class InstagramFeedModule implements ModuleInterface {
 		// A dropdown to select the homepage (for the current language)
 		$ls_return .= $lo_formHelper->control('settings.items', [
 			'columnSpan' => 6,
-			'label' => __d('module', 'instagram_items'),
+			'label' => __df('Frontend/instagram_feed', 'Frontend/module', 'number_of_items'),
 			'placeholder' => '6',
 			'type' => 'number',
 			'value' => $settings['items'] ?? null,
@@ -78,7 +78,7 @@ class InstagramFeedModule implements ModuleInterface {
 		// A dropdown to select the homepage (for the current language)
 		$ls_return .= $lo_formHelper->control('settings.profileName', [
 			'columnSpan' => 6,
-			'label' => __d('module', 'instagram_profile_name'),
+			'label' => __df('Frontend/instagram_feed', 'Frontend/module', 'profile_name'),
 			'placeholder' => Configure::read('Instagram.userName'),
 			'value' => $settings['profileName'] ?? null,
 		]);
