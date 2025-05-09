@@ -27,6 +27,10 @@ $routes->registerMiddleware(
 			'connect-src' => [
 				'allow' => Configure::read('Csp.connectSrc.allow'),
 				'self' => true,
+			],
+			'child-src' => [
+				'allow' => Configure::read('Csp.childSrc.allow'),
+				'self' => true,
 				'blob' => true,
 			],
 			'default-src' => [
@@ -49,6 +53,7 @@ $routes->registerMiddleware(
 			],
 			'script-src' => [
 				'allow' => Configure::read('Csp.scriptSrc.allow'),
+				'blob' => true,
 				'self' => true,
 				'unsafe-inline' => false,
 				'unsafe-eval' => false,
@@ -75,7 +80,7 @@ $routes->registerMiddleware(
 				'allow' => Configure::read('Csp.workerSrcElem.allow'),
 				'blob' => true,
 				'self' => true,
-				'unsafe-inline' => true,
+				'unsafe-inline' => false,
 				'unsafe-eval' => false,
 			],
 		], [
@@ -143,6 +148,24 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	])->setPatterns([
 		'lang' => '[a-z]{2}',
 		'formEntry' => '[a-z0-9]{32}',
+	])->setPersist(['lang']);
+
+	$routeBuilder->connect(
+		'/{lang}/_route/start:{start}/end:{end}/*',
+		['prefix' => 'Frontend', 'controller' => 'Route', 'action' => 'route'],
+	)->setMethods([
+		'GET',
+	])->setPass(['start', 'end'])->setPatterns([
+		'lang' => '[a-z]{2}',
+	])->setPersist(['lang']);
+
+	$routeBuilder->connect(
+		'/{lang}/_route/find-coordinates/{search}',
+		['prefix' => 'Frontend', 'controller' => 'Route', 'action' => 'findCoordinates'],
+	)->setMethods([
+		'GET',
+	])->setPass(['search'])->setPatterns([
+		'lang' => '[a-z]{2}',
 	])->setPersist(['lang']);
 
 	$routeBuilder->connect(

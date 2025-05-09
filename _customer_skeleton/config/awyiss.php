@@ -12,6 +12,11 @@ use Cake\Mailer\Transport\MailTransport;
 
 return [
 	'Csp' => [
+		'connectSrc' => [
+			'allow' => [
+				'https://tiles.versatiles.org',
+			],
+		],
 		'fontSrc' => [
 			'allow' => [
 				'https://fonts.gstatic.com',

@@ -1,5 +1,6 @@
 //noinspection NpmUsedModulesInstalled
 
+import AddressFinder from 'Form/AddressFinder';
 import Audit from 'Audit/Audit';
 import ButtonArea from 'ButtonArea';
 import ButtonHandler from 'ButtonHandler';
@@ -63,6 +64,7 @@ export async function loadControllerClass(controllerClass) {
 	}
 }
 
+
 /**
  * Add a click event listener to the dark mode switcher
  * This event listener toggles the class "🌚" on the HTML tag
@@ -112,6 +114,7 @@ export function addDarkModeSwitcherEvent() {
 	}, window, true);
 }
 
+
 /**
  * Add a click event listener to the language switcher
  * This event listener toggles the visibility of the language switcher
@@ -122,7 +125,7 @@ export function addLanguageSwitcherEvent() {
 		return;
 	}
 
-	// Toggle the visible classn on .Languages when clicking .LanguageSwitcherLabel;
+	// Toggle the visible class on .Languages when clicking .LanguageSwitcherLabel;
 	// Remove it when clicking outside .Languages
 	window.eventHandler.add('click', function (event) {
 		const languageSwitcherLabel = languageSwitcher.querySelector('.LanguageSwitcherLabel');
@@ -149,6 +152,7 @@ export function addLanguageSwitcherEvent() {
 		image.parentElement.appendChild(clone);
 	});
 }
+
 
 /**
  * Add a mouseenter event listener to the link select elements
@@ -232,6 +236,7 @@ export function handlePaginationForm() {
 	}, paginateForm);
 }
 
+
 /**
  * Load the configured rich text editor
  * @param {string} editor - The identifier of the rich text editor to load
@@ -255,22 +260,22 @@ export async function loadTextEditor(editor) {
 	}
 }
 
+
 /**
- * Initialize the main functionality when the DOM is ready
- * This function creates instances of the main classes and attaches them to the window object
- * It also loads the controller class if it exists
+ * Initialize the main functionality when the DOM is ready.
+ * This function creates instances of the main classes and attaches them to the window object.
+ * It also loads the controller class if it exists.
+ *
  * @returns {Promise<void>}
  */
 export async function initMainOnReady() {
-	//Make sure the observer is created before any other classes that use it
-	const observer = new Observer();
-	observer.observe(document.body, {childList: true, subtree: true});
 	/**
-	 * Attach observer to the window object for global access
+	 * Make sure the observer is created before any other classes that use it
 	 * @global
 	 * @type {Observer}
 	 */
-	window.observer = observer;
+	window.observer = new Observer();
+	window.observer.observe(document.body, {childList: true, subtree: true});
 
 	/*
 	 * Create an instance of the EventHandler class, so that it can be used globally
@@ -278,6 +283,12 @@ export async function initMainOnReady() {
 	 * @type {EventHandler}
 	 */
 	window.eventHandler = new EventHandler();
+
+	/**
+	 * @global
+	 * @type {AddressFinder}
+	 */
+	window.AddressFinder = new AddressFinder();
 
 	/**
 	 * @global

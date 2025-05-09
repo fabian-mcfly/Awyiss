@@ -33,6 +33,13 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				nullable: false,
 				type: ConfigOptionType::Bool,
 			),
+			new ConfigOption(
+				defaultValue: null,
+				identifier: 'orsApiKey',
+				localizable: false,
+				nullable: true,
+				type: ConfigOptionType::String,
+			),
 			'meta' => [
 				new ConfigOption(
 					defaultValue: 'Firma',

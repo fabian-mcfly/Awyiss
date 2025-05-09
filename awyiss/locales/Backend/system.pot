@@ -466,6 +466,9 @@ msgstr "Appendix"
 msgid "configuration_identifier_frontend_meta_title_separator"
 msgstr "Separator"
 
+msgid "configuration_identifier_frontend_ors_api_key"
+msgstr "OpenRouteService API Key"
+
 msgid "button_area_toggle"
 msgstr "Toggle Button Area"
 

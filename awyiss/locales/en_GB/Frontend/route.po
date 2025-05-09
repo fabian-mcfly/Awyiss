@@ -1,0 +1,102 @@
+# Route translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-05-07 21:45+0000\n"
+"PO-Revision-Date: 2025-05-07 21:45+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "lat"
+msgstr "Latitude"
+
+msgid "lng"
+msgstr "Longitude"
+
+msgid "route_planner_start"
+msgstr "Start"
+
+msgid "route_planner_start_placeholder"
+msgstr "Enter address or coordinates"
+
+msgid "route_planner_end"
+msgstr "Destination"
+
+msgid "route_planner_calculate_route"
+msgstr "Calculate route"
+
+msgid "route_planner_error_api_key_missing"
+msgstr "API key is missing"
+
+msgid "route_planner_error_start_coordinates"
+msgstr "The start coordinates are invalid"
+
+msgid "route_planner_error_end_coordinates"
+msgstr "The destination coordinates are invalid"
+
+msgid "route_planner_multiple_results_found"
+msgstr "<strong>Multiple results were found for the entered address.</strong><br>Please select one of the following options:"
+
+msgid "route_planner_start_choices_close"
+msgstr "Cancel"
+
+msgid "route_planner_directions_found"
+msgstr "The route has been successfully calculated."
+
+msgid "route_planner_no_directions_found"
+msgstr "<strong>No routes were found.</strong><br>Please check the entered addresses or coordinates and try again."
+
+msgid "route_planner_route_summary_start"
+msgstr "Start"
+
+msgid "route_planner_route_summary_end"
+msgstr "Destination"
+
+msgid "route_planner_route_summary_distance"
+msgstr "Distance"
+
+msgid "route_planner_route_summary_duration"
+msgstr "Duration"
+
+msgid "route_planner_reset"
+msgstr "change"
+
+msgid "address"
+msgstr "Address"
+
+msgid "show_transportation_modes"
+msgstr "Show transportation modes"
+
+msgid "transportation_mode"
+msgstr "Transportation mode"
+
+msgid "transportation_mode_car"
+msgstr "Car"
+
+msgid "transportation_mode_bike"
+msgstr "Bike"
+
+msgid "transportation_mode_foot"
+msgstr "On Foot"
+
+msgid "geocode_address"
+msgstr "Find coordinates"
+
+msgid "geocode_error_api_key_missing"
+msgstr "API key is missing"
+
+msgid "geocode_address_found"
+msgstr "The address has been found."
+
+msgid "geocode_multiple_results_found"
+msgstr "Multiple results were found for the entered address."
+
+msgid "geocode_multiple_results_found_title"
+msgstr "Multiple results found"
+
+msgid "geocode_error_address"
+msgstr "The entered address is invalid"

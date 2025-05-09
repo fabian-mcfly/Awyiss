@@ -1,0 +1,102 @@
+# Route translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-05-07 21:45+0000\n"
+"PO-Revision-Date: 2025-05-07 21:45+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "lat"
+msgstr "Breitengrad"
+
+msgid "lng"
+msgstr "Längengrad"
+
+msgid "route_planner_start"
+msgstr "Start"
+
+msgid "route_planner_start_placeholder"
+msgstr "Adresse oder Koordinaten eingeben"
+
+msgid "route_planner_end"
+msgstr "Ziel"
+
+msgid "route_planner_calculate_route"
+msgstr "Route berechnen"
+
+msgid "route_planner_error_api_key_missing"
+msgstr "API-Schlüssel fehlt"
+
+msgid "route_planner_error_start_coordinates"
+msgstr "Die Startkoordinaten sind ungültig"
+
+msgid "route_planner_error_end_coordinates"
+msgstr "Die Zielkoordinaten sind ungültig"
+
+msgid "route_planner_multiple_results_found"
+msgstr "<strong>Für die eingegebene Adresse wurden mehrere Ergebnisse gefunden.</strong><br>Bitte wählen Sie eine der folgenden Optionen aus:"
+
+msgid "route_planner_start_choices_close"
+msgstr "Abbrechen"
+
+msgid "route_planner_directions_found"
+msgstr "Die Route wurde erfolgreich berechnet."
+
+msgid "route_planner_no_directions_found"
+msgstr "<strong>Es wurden keine Routen gefunden.</strong><br>Bitte überprüfen Sie die eingegebenen Adressen oder Koordinaten und versuchen Sie es erneut."
+
+msgid "route_planner_route_summary_start"
+msgstr "Start"
+
+msgid "route_planner_route_summary_end"
+msgstr "Ziel"
+
+msgid "route_planner_route_summary_distance"
+msgstr "Entfernung"
+
+msgid "route_planner_route_summary_duration"
+msgstr "Dauer"
+
+msgid "route_planner_reset"
+msgstr "ändern"
+
+msgid "address"
+msgstr "Adresse"
+
+msgid "show_transportation_modes"
+msgstr "Verkehrsmittel anzeigen"
+
+msgid "transportation_mode"
+msgstr "Verkehrsmittel"
+
+msgid "transportation_mode_car"
+msgstr "Auto"
+
+msgid "transportation_mode_bike"
+msgstr "Fahrrad"
+
+msgid "transportation_mode_foot"
+msgstr "Zu Fuß"
+
+msgid "geocode_address"
+msgstr "Koordinaten finden"
+
+msgid "geocode_error_api_key_missing"
+msgstr "API-Schlüssel fehlt"
+
+msgid "geocode_address_found"
+msgstr "Die Adresse wurde gefunden."
+
+msgid "geocode_multiple_results_found"
+msgstr "Für die eingegebene Adresse wurden mehrere Ergebnisse gefunden."
+
+msgid "geocode_multiple_results_found_title"
+msgstr "Mehrere Ergebnisse gefunden"
+
+msgid "geocode_error_address"
+msgstr "Die eingegebene Adresse ist ungültig"

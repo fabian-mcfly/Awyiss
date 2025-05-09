@@ -903,11 +903,26 @@ textarea {
 	}
 
 	&Type-Radio {
+		display:grid;
+		grid-template-columns:repeat(3, 0 1fr);
+
+		@container (width <= 640px) {
+			grid-template-columns:repeat(2, 0 1fr);
+		}
+
+		@container (width <= 480px) {
+			grid-template-columns:repeat(1, 0 1fr);
+		}
+
 		> .Label {
 			&[for] {
 				&::before {
 					border-radius:50%;
 				}
+			}
+
+			&:first-child {
+				grid-column:1 / -1;
 			}
 		}
 	}
@@ -1294,6 +1309,10 @@ textarea {
 		&::after {
 			margin:0;
 		}
+	}
+
+	.Button-Geocode {
+		@extend %InFieldButton;
 	}
 }
 
