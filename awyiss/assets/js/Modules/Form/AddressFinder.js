@@ -100,6 +100,7 @@ export default class AddressFinder {
 		const address = input.value;
 
 		if (!address) {
+			button.classList.remove('FetchInProgress');
 			return;
 		}
 
