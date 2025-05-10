@@ -48,7 +48,6 @@ class NewsListingModule extends AbstractModule {
 	 */
 	public static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
 		$la_formFields = [
-			// Todo: show a multiselect / custom multiselect for the categories, if PageRoleEnumInterface::Newscategory exists
 			'settings.titleTag' => [
 				'columnSpan' => 6,
 				'empty' => false,
@@ -111,7 +110,24 @@ class NewsListingModule extends AbstractModule {
 			];
 		}
 
-		return $la_formFields;
+		$la_categoriesField = static::getCategoriesField(
+			$frontendLanguage,
+			$userLanguage,
+			$settings
+		);
+
+		return $la_categoriesField + $la_formFields;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function isAvailable(): bool {
+		/** @var \Awyiss\Model\Enum\PageRoleEnumInterface $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+		return !!$ls_pageRoleEnum::tryFromName('news');
 	}
 
 
@@ -203,5 +219,42 @@ class NewsListingModule extends AbstractModule {
 		];
 
 		return $lo_paginator->paginate($query, $la_params, $la_settings);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Language|null $frontendLanguage
+	 * @param \Awyiss\Model\Entity\Language|null $userLanguage
+	 * @param array $settings
+	 * @return array
+	 */
+	protected static function getCategoriesField(?Language $frontendLanguage, ?Language $userLanguage, array $settings): array {
+		/** @var \Awyiss\Model\Table\PagesTable $lo_newsTable */
+		$lo_newsTable = FactoryLocator::get('Table')->get('News');
+
+		if (
+			!$lo_newsTable->hasBehavior('Categories') ||
+			!$lo_newsTable->getBehavior('Categories')->getConfig('enabled')
+		) {
+			return [];
+		}
+
+		$la_categories = $lo_newsTable->getCategories();
+
+		if (!$la_categories) {
+			return [];
+		}
+
+		$la_categoriesField = [
+			'label' => __df('Frontend/news', 'Frontend/module', 'categories'),
+			'multiple' => true,
+			'options' => $la_categories,
+			'type' => 'select',
+			'value' => $settings['categories'] ?? null,
+		];
+
+		return [
+			'settings.categories' => $la_categoriesField,
+		];
 	}
 }

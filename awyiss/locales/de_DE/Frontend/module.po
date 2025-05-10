@@ -26,6 +26,9 @@ msgstr "Anzahl der Einträge"
 msgid "offset"
 msgstr "Offset"
 
+msgid "categories"
+msgstr "Kategorie(n)"
+
 msgid "no_records"
 msgstr "Keine Einträge vorhanden"
 

@@ -26,6 +26,9 @@ msgstr "Number of items"
 msgid "offset"
 msgstr "Offset"
 
+msgid "categories"
+msgstr "Categories"
+
 msgid "no_records"
 msgstr "No records"
 
