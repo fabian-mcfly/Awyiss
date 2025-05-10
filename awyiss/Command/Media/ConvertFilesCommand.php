@@ -89,7 +89,7 @@ class ConvertFilesCommand extends Command {
 		$lo_parser->addOption('include-avif', [
 			'boolean' => true,
 			'help' => 'Include the creation of Avif files after converting non-images to jpgs.',
-			'short' => 'w',
+			'short' => 'a',
 		]);
 
 		$lo_parser->addOption('include-webp', [
