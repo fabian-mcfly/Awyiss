@@ -109,7 +109,7 @@ class AwyissModule {
 			catch (error) {
 				// Handle or log the error as needed
 				console.error('Failed to parse JSON:', error);
-				return;
+				settings = {};
 			}
 		}
 

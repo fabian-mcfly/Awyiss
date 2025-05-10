@@ -98,7 +98,7 @@ class AwyissModule {
 				settings = JSON.parse(node.textContent ?? '{}');
 			} catch (error) {
 				console.error('Failed to parse JSON:', error);
-				return;
+				settings = {};
 			}
 		}
 
@@ -226,7 +226,23 @@ class AwyissModule {
 			module.dataset.label = identifierSelect.querySelector(`option[value="${identifier}"]`).textContent;
 			module.textContent = JSON.stringify(settings);
 
-			this.editor.selection.current().replaceWith(module);
+			let target = this.editor.selection.current();
+			if (!target) {
+				this.editor.selection.insertNode(module);
+			}
+			else {
+				if (target.nodeName.toLowerCase() === '#text') {
+					target = target.parentNode;
+				}
+
+				console.log(target, target.nodeName);
+
+				if (target.matches('body')) {
+					target = target.querySelector('p');
+				}
+
+				target.replaceWith(module);
+			}
 		}
 
 		return true;
@@ -238,39 +254,26 @@ class AwyissModule {
 	 *
 	 * @returns {void}
 	 */
-	cleanModuleTags(event, clean = false) {
+	cleanModuleTags(event) {
 		const target = event.target;
 
-		if (clean) {
-			// Parse the value as HTML
-			const parser = new DOMParser();
-			const doc = parser.parseFromString(target.value, 'text/html');
+		// Parse the value as HTML
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(target.value, 'text/html');
 
-			// Get all module elements
-			// noinspection CssInvalidHtmlTagReference
-			const modules = doc.querySelectorAll('module');
+		// Get all module elements
+		// noinspection CssInvalidHtmlTagReference
+		const modules = doc.querySelectorAll('module');
 
-			modules.forEach((module) => {
-				// If the module is inside a p, div, or other block element, replace the block element with the module
-				if (module.parentNode && module.parentNode.nodeName.toLowerCase() !== 'body') {
-					module.parentNode.replaceWith(module);
-				}
-			});
+		modules.forEach((module) => {
+			// If the module is inside a p, div, or other block element, replace the block element with the module
+			if (module.parentNode && module.parentNode.nodeName.toLowerCase() !== 'body') {
+				module.parentNode.replaceWith(module);
+			}
+		});
 
-			// Set the cleaned value
-			target.value = doc.body.innerHTML;
-
-			return;
-		}
-
-		if (target.cleanTimeout) {
-			clearTimeout(target.cleanTimeout);
-		}
-
-		target.cleanTimeout = setTimeout(function () {
-			target.cleanTimeout = null;
-			this.cleanModuleTags(event, true);
-		}.bind(this), 500);
+		// Set the cleaned value
+		target.value = doc.body.innerHTML;
 	}
 }
 
@@ -320,11 +323,6 @@ Jodit.plugins.add('awyissModuleConfig', (editor) => {
 		const element = editor.element;
 		element.addEventListener('change', awyissModule.cleanModuleTags.bind(awyissModule));
 		element.addEventListener('input', awyissModule.cleanModuleTags.bind(awyissModule));
-
-		// Trigger a change event to clean the module tags
-		setTimeout(() => {
-			element.dispatchEvent(new Event('change'));
-		}, 250);
 	});
 
 	editor.events.on('keydown', (event) => {

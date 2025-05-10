@@ -128,6 +128,10 @@ export default class Loader {
 		toolbarInlineForSelection: false,
 		toolbarStickyOffset: document.documentElement.classList.contains('👀') ? 0 : 100,
 		uploader: {url: 'none'},
+		wrapNodes: {
+			exclude: new Set(['hr', 'module']),
+			emptyBlockAfterInit: true,
+		}
 	}
 	/**
 	 * If the settings are already set (merged defaults with custom settings)
