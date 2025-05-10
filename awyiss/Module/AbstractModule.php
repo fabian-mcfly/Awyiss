@@ -38,6 +38,16 @@ abstract class AbstractModule implements ModuleInterface {
 
 	/**
 	 * @inheritDoc
+	 */
+	public static function isAvailable(): bool {
+		// Check if the module is available in the current context
+		// This can be overridden in the child class
+		return true;
+	}
+
+
+	/**
+	 * @inheritDoc
 	 * @throws \Exception
 	 */
 	public static function renderForm(

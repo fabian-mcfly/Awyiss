@@ -122,6 +122,10 @@ class ModulesProvider {
 					);
 				}
 
+				if (!$ls_moduleClass::isAvailable()) {
+					continue;
+				}
+
 				$ls_identifier = static::sanitizeIdentifier($ls_moduleClass::getIdentifier());
 
 				if (isset(static::$modules[ $ls_identifier ])) {

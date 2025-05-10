@@ -32,6 +32,15 @@ interface ModuleInterface {
 
 
 	/**
+	 * Returns whether the module is available.
+	 * Not all modules are available in all contexts.
+	 *
+	 * @return bool
+	 */
+	public static function isAvailable(): bool;
+
+
+	/**
 	 * Renders the form for the module configuration
 	 * All used form elements should be translated:
 	 *  - the values to the frontend language
