@@ -26,21 +26,13 @@ use Throwable;
  * Show a list of Instagram posts from a profile
  * Also downloads the images and creates media entities for them
  */
-class InstagramFeedModule implements ModuleInterface {
+class InstagramFeedModule extends AbstractModule {
 	/**
 	 * The identifier of the module
 	 *
 	 * @var string
 	 */
 	protected static string $identifier = 'instagramFeed';
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public static function getIdentifier(): string {
-		return static::$identifier;
-	}
 
 
 	/**
@@ -54,36 +46,26 @@ class InstagramFeedModule implements ModuleInterface {
 
 	/**
 	 * @inheritDoc
-	 * @throws \Exception
 	 */
-	public static function renderForm(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): string {
-		$ls_return = '';
+	public static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
+		return [
+			// A dropdown to select the homepage (for the current language)
+			'settings.items' => [
+				'columnSpan' => 6,
+				'label' => __df('Frontend/instagram_feed', 'Frontend/module', 'number_of_items'),
+				'placeholder' => '6',
+				'type' => 'number',
+				'value' => $settings['items'] ?? null,
+			],
 
-		/**
-		 * Get the form helper
-		 *
-		 * @var \Awyiss\View\Helper\FormHelper $lo_formHelper
-		 */
-		$lo_formHelper = $view->helpers()->get('Form');
-
-		// A dropdown to select the homepage (for the current language)
-		$ls_return .= $lo_formHelper->control('settings.items', [
-			'columnSpan' => 6,
-			'label' => __df('Frontend/instagram_feed', 'Frontend/module', 'number_of_items'),
-			'placeholder' => '6',
-			'type' => 'number',
-			'value' => $settings['items'] ?? null,
-		]);
-
-		// A dropdown to select the homepage (for the current language)
-		$ls_return .= $lo_formHelper->control('settings.profileName', [
-			'columnSpan' => 6,
-			'label' => __df('Frontend/instagram_feed', 'Frontend/module', 'profile_name'),
-			'placeholder' => Configure::read('Instagram.userName'),
-			'value' => $settings['profileName'] ?? null,
-		]);
-
-		return $ls_return;
+			// A dropdown to select the homepage (for the current language)
+			'settings.profileName' => [
+				'columnSpan' => 6,
+				'label' => __df('Frontend/instagram_feed', 'Frontend/module', 'profile_name'),
+				'placeholder' => Configure::read('Instagram.userName'),
+				'value' => $settings['profileName'] ?? null,
+			],
+		];
 	}
 
 

@@ -17,24 +17,13 @@ use Cake\Datasource\FactoryLocator;
  * Class BreadcrumbsModule
  * Show a list of breadcrumbs, optionally including the homepage and/or the current page
  */
-class BreadcrumbsModule implements ModuleInterface {
-	use Trait\PreviewTrait;
-
-
+class BreadcrumbsModule extends AbstractModule {
 	/**
 	 * The identifier of the module
 	 *
 	 * @var string
 	 */
 	protected static string $identifier = 'breadcrumbs';
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public static function getIdentifier(): string {
-		return static::$identifier;
-	}
 
 
 	/**
@@ -48,53 +37,43 @@ class BreadcrumbsModule implements ModuleInterface {
 
 	/**
 	 * @inheritDoc
-	 * @throws \Exception
 	 */
-	public static function renderForm(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): string {
-		$ls_return = '';
+	public static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
+		return [
+			// Checkbox if the homepage should be included in the breadcrumbs (default: true)
+			'settings.includeHomepage' => [
+				'checked' => $settings['includeHomepage'] ?? true,
+				'columnSpan' => 4,
+				'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'include_homepage'),
+				'type' => 'checkbox',
+			],
 
-		/**
-		 * Get the form helper
-		 *
-		 * @var \Awyiss\View\Helper\FormHelper $lo_formHelper
-		 */
-		$lo_formHelper = $view->helpers()->get('Form');
+			// Checkbox if the current page should be included in the breadcrumbs (default: true)
+			'settings.includeCurrentPage' => [
+				'checked' => $settings['includeCurrentPage'] ?? true,
+				'columnSpan' => 4,
+				'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'include_current_page'),
+				'type' => 'checkbox',
+			],
 
-		// Checkbox if the homepage should be included in the breadcrumbs (default: true)
-		$ls_return .= $lo_formHelper->control('settings.includeHomepage', [
-			'checked' => $settings['includeHomepage'] ?? true,
-			'columnSpan' => 4,
-			'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'include_homepage'),
-			'type' => 'checkbox',
-		]);
+			// Checkbox if the breadcrumb should be shown on the homepage (default: false)
+			'settings.showOnHomepage' => [
+				'checked' => $settings['showOnHomepage'] ?? false,
+				'columnSpan' => 4,
+				'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'show_on_homepage'),
+				'type' => 'checkbox',
+			],
 
-		// Checkbox if the current page should be included in the breadcrumbs (default: true)
-		$ls_return .= $lo_formHelper->control('settings.includeCurrentPage', [
-			'checked' => $settings['includeCurrentPage'] ?? true,
-			'columnSpan' => 4,
-			'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'include_current_page'),
-			'type' => 'checkbox',
-		]);
-
-		// Checkbox if the breadcrumb should be shown on the homepage (default: false)
-		$ls_return .= $lo_formHelper->control('settings.showOnHomepage', [
-			'checked' => $settings['showOnHomepage'] ?? false,
-			'columnSpan' => 4,
-			'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'show_on_homepage'),
-			'type' => 'checkbox',
-		]);
-
-		// A dropdown to select the homepage (for the current language)
-		$ls_return .= $lo_formHelper->control('settings.homepageId', [
-			'columnSpan' => 12,
-			'empty' => true,
-			'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'homepage_id'),
-			'options' => static::getHomepageOptions(),
-			'type' => 'select',
-			'value' => $settings['homepageId'] ?? null,
-		]);
-
-		return $ls_return;
+			// A dropdown to select the homepage (for the current language)
+			'settings.homepageId' => [
+				'columnSpan' => 12,
+				'empty' => true,
+				'label' => __df('Frontend/breadcrumbs', 'Frontend/module', 'homepage_id'),
+				'options' => static::getHomepageOptions(),
+				'type' => 'select',
+				'value' => $settings['homepageId'] ?? null,
+			],
+		];
 	}
 
 

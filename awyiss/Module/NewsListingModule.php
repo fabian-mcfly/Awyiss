@@ -25,24 +25,13 @@ use Cake\ORM\Query\SelectQuery;
  *
  * Show a list of news, either paginated or limited to a certain number of items
  */
-class NewsListingModule implements ModuleInterface {
-	use Trait\PreviewTrait;
-
-
+class NewsListingModule extends AbstractModule {
 	/**
 	 * The identifier of the module
 	 *
 	 * @var string
 	 */
 	protected static string $identifier = 'newsListing';
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public static function getIdentifier(): string {
-		return static::$identifier;
-	}
 
 
 	/**
@@ -56,77 +45,73 @@ class NewsListingModule implements ModuleInterface {
 
 	/**
 	 * @inheritDoc
-	 * @throws \Exception
 	 */
-	public static function renderForm(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): string {
-		$ls_return = '';
-
-		/**
-		 * Get the form helper
-		 * @var \Awyiss\View\Helper\FormHelper $lo_formHelper
-		 */
-		$lo_formHelper = $view->helpers()->get('Form');
-
-		// Todo: show a multiselect / custom multiselect for the categories, if PageRoleEnumInterface::Newscategory exists
-
-		$ls_return .= $lo_formHelper->control('settings.titleTag', [
-			'columnSpan' => 6,
-			'empty' => false,
-			'label' => __df('Frontend/news', 'Frontend/module', 'title_tag'),
-			'options' => [
-				'h1' => 'H1',
-				'h2' => 'H2',
-				'h3' => 'H3',
-				'h4' => 'H4',
-				'h5' => 'H5',
-				'h6' => 'H6',
+	public static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
+		$la_formFields = [
+			// Todo: show a multiselect / custom multiselect for the categories, if PageRoleEnumInterface::Newscategory exists
+			'settings.titleTag' => [
+				'columnSpan' => 6,
+				'empty' => false,
+				'label' => __df('Frontend/news', 'Frontend/module', 'title_tag'),
+				'options' => [
+					'h1' => 'H1',
+					'h2' => 'H2',
+					'h3' => 'H3',
+					'h4' => 'H4',
+					'h5' => 'H5',
+					'h6' => 'H6',
+				],
+				'type' => 'select',
+				'value' => $settings['titleTag'] ?? 'h3',
 			],
-			'type' => 'select',
-			'value' => $settings['titleTag'] ?? 'h3',
-		]);
 
-		$ls_return .= $lo_formHelper->control('settings.paginate', [
-			'label' => __df('Frontend/news', 'Frontend/module', 'paginate'),
-			'type' => 'checkbox',
-			'data-form-updater' => true,
-		]);
+			'settings.paginate' => [
+				'label' => __df('Frontend/news', 'Frontend/module', 'paginate'),
+				'type' => 'checkbox',
+				'data-form-updater' => true,
+			],
+		];
 
 		if (!empty($settings['paginate'])) {
-			$ls_return .= $lo_formHelper->control('settings.itemsPerPage', [
-				'columnSpan' => 6,
-				'max' => 100,
-				'min' => 1,
-				'label' => __df('Frontend/news', 'Frontend/module', 'items_per_page'),
-				'placeholder' => 9,
-				'required' => true,
-				'type' => 'number',
-				'value' => $settings['itemsPerPage'] ?? null,
-			]);
+			$la_formFields += [
+				'settings.itemsPerPage' => [
+					'columnSpan' => 6,
+					'max' => 100,
+					'min' => 1,
+					'label' => __df('Frontend/news', 'Frontend/module', 'items_per_page'),
+					'placeholder' => 9,
+					'required' => true,
+					'type' => 'number',
+					'value' => $settings['itemsPerPage'] ?? null,
+				],
+			];
 		}
 		else {
-			$ls_return .= $lo_formHelper->control('settings.items', [
-				'columnSpan' => 6,
-				'label' => __df('Frontend/news', 'Frontend/module', 'number_of_items'),
-				'max' => 20,
-				'min' => 1,
-				'placeholder' => 3,
-				'required' => true,
-				'type' => 'number',
-				'value' => $settings['items'] ?? null,
-			]);
+			$la_formFields += [
+				'settings.items' => [
+					'columnSpan' => 6,
+					'label' => __df('Frontend/news', 'Frontend/module', 'number_of_items'),
+					'max' => 20,
+					'min' => 1,
+					'placeholder' => 3,
+					'required' => true,
+					'type' => 'number',
+					'value' => $settings['items'] ?? null,
+				],
 
-			$ls_return .= $lo_formHelper->control('settings.offset', [
-				'columnSpan' => 6,
-				'label' => __df('Frontend/news', 'Frontend/module', 'offset'),
-				'max' => 20,
-				'min' => 1,
-				'placeholder' => 0,
-				'type' => 'number',
-				'value' => $settings['offset'] ?? null,
-			]);
+				'settings.offset' => [
+					'columnSpan' => 6,
+					'label' => __df('Frontend/news', 'Frontend/module', 'offset'),
+					'max' => 20,
+					'min' => 1,
+					'placeholder' => 0,
+					'type' => 'number',
+					'value' => $settings['offset'] ?? null,
+				],
+			];
 		}
 
-		return $ls_return;
+		return $la_formFields;
 	}
 
 

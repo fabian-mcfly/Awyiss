@@ -12,7 +12,7 @@ use Awyiss\View\FrontendView;
 
 
 /**
- * Signature of all neccessary methods to connect `Module` with `ModulesProvider`
+ * Signature of all necessary methods to connect `Module` with `ModulesProvider`
  */
 interface ModuleInterface {
 	/**
@@ -37,7 +37,7 @@ interface ModuleInterface {
 	 *  - the values to the frontend language
 	 *  - the labels to the user language
 	 *
-	 * All form elements should be unter the key `settings`
+	 * All form elements should be under the key `settings`
 	 *
 	 * @param \Awyiss\View\BackendView $view
 	 * @param \Awyiss\Model\Entity\Language|null $frontendLanguage
