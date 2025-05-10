@@ -48,10 +48,13 @@ class AwyissModule {
 	 * Fetch the module configuration form.
 	 * @param {string} identifier
 	 * @param {Object} settings
+	 * @param {string} language
 	 * @returns {Promise<Element>}
 	 */
-	async fetchModuleConfiguration(identifier, settings) {
-		const response = await fetch(`${baseUrl}backend/${languageShortcode}/contents/module-configuration/`, {
+	async fetchModuleConfiguration(identifier, settings, language) {
+		language = language || languageShortcode;
+
+		const response = await fetch(`${baseUrl}backend/${language}/contents/module-configuration/`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -99,7 +102,15 @@ class AwyissModule {
 			}
 		}
 
-		const form = await this.fetchModuleConfiguration(node.dataset.identifier ?? null, settings);
+		// If the editor is inside the TranslationDialog, the language of the editor's textarea
+		// must be used to fetch the module configuration
+		let language = null;
+		if (this.editor.element.closest('#TranslationDialog')) {
+			// The language is part of the textarea's name
+			language = this.editor.element.name.split('[')[1].split(']')[0];
+		}
+
+		const form = await this.fetchModuleConfiguration(node.dataset.identifier ?? null, settings, language);
 
 		if (!form) {
 			return;
