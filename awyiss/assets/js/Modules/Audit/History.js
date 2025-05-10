@@ -65,7 +65,7 @@ export default class AuditHistory {
 		event.preventDefault();
 
 		// Store the form element if the element is a form
-		this.form = element.closest('form');
+		this.form = element.closest('form') || element.closest('.Form').querySelector('form');
 
 		// Store the form changed status
 		this.isFormChanged = window.formLeaveConfirmation.isFormChanged;
