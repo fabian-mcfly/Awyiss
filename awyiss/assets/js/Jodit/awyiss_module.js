@@ -188,6 +188,12 @@ class AwyissModule {
 				}
 			}
 
+			// If the element is a select-multiple, get all selected options
+			if (element.type === 'select-multiple') {
+				settings[key] = Array.from(element.selectedOptions).map(option => option.value);
+				return;
+			}
+
 			settings[key] = element.value;
 		});
 
