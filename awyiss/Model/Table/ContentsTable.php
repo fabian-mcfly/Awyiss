@@ -655,6 +655,7 @@ class ContentsTable extends Table {
 		/** @var Page $lo_page */
 		$lo_page = $lo_pages->get(
 			$pageId,
+			'mediaAssignments',
 			attributes: ['skip' => true],
 			contain: [
 				'PageTemplates' => [

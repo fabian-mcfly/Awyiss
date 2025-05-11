@@ -6,6 +6,7 @@ namespace Awyiss\Model\Behavior;
 
 use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
+use Awyiss\Core\App;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MediaAssignment;
@@ -98,10 +99,21 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		/** @var \Awyiss\Model\Entity $ls_entityClass */
 		$ls_entityClass = $this->_table->getEntityClass();
 
+		$la_contain = [
+			'MediaAssignments.scope' => $this->getScope($this->table()),
+		];
+
+		if ($la_contain['MediaAssignments.scope'] === 'pages') {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			$la_scope = array_map(function ($pageRole) {
+				return Inflector::underscore(Inflector::pluralize($pageRole->name));
+			}, $ls_pageRoleEnum::cases());
+			$la_contain = ['MediaAssignments.scope IN' => $la_scope];
+		}
+
 		$this->_table->hasMany('MediaAssignments', [
-			'conditions' => [
-				'MediaAssignments.scope' => $this->getScope($this->table()),
-			],
+			'conditions' => $la_contain,
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'foreign_key',
