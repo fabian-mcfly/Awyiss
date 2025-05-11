@@ -491,30 +491,19 @@ export default class ImageCropper {
 	 * @param {boolean} selected - Whether the heart is selected.
 	 */
 	drawHeart(x, y, selected) {
-		const realX = x;
-		const realY = y;
+		this.ctx.save();
+		this.ctx.translate(x-22.5, y-21);
+
+		this.ctx.fillStyle = selected ? 'rgba(255, 0, 0, .75)' : 'rgba(255, 255, 255, .5)';
+
+		const path = new Path2D(
+			'M41.365,4.081C39.009,1.463,35.889.032,32.56.032s-6.459,1.442-8.815,4.06l-1.231,1.367-1.25-1.389C18.908,1.452,15.77,0,12.44,0S5.991,1.442,3.644,4.049C1.288,6.667-.009,10.144,0,13.844,0,17.543,1.307,21.009,3.663,23.627l17.916,17.907c.248.276.582.424.906.424s.658-.138.906-.413l17.954-17.875c2.356-2.618,3.654-6.095,3.654-9.794.01-3.699-1.278-7.176-3.635-9.794Z'
+		);
 
 		// Draw a heart shape in the center of the highlighted section
-		this.ctx.fillStyle = selected ? 'rgba(255, 0, 0, .5)' : 'rgba(255, 255, 255, .5)';
+		this.ctx.fill(path);
 
-		// Begin drawing the heart shape
-		this.ctx.beginPath();
-
-		// Draw the left lobe of the heart
-		this.ctx.arc(realX - 10, realY - 8, 10, Math.PI, 0, false);
-
-		// Draw the right lobe of the heart
-		this.ctx.arc(realX + 10, realY - 8, 10, Math.PI, 0, false);
-
-		// Draw the right side of the heart
-		this.ctx.quadraticCurveTo(realX + 20, realY + 5, realX, realY + 16);
-
-		// Draw the left side of the heart
-		this.ctx.quadraticCurveTo(realX - 20, realY + 5, realX - 20, realY - 8);
-
-		// Close the path and fill the heart
-		this.ctx.closePath();
-		this.ctx.fill();
+		this.ctx.restore();
 
 	}
 
