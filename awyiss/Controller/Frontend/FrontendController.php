@@ -55,13 +55,18 @@ class FrontendController extends AppController {
 
 		$this->viewBuilder()->setClassName('Frontend');
 
-		$this->previewMode = !!$this->request->getSession()->read('previewMode.enabled', false);
+		$this->previewMode = !!$this->getRequest()->getSession()->read('previewMode.enabled', false);
 	}
 
 
 	/**
-	 * This method is called when a page with the page role "page" is requested
+	 * This method is called when a page with the page role "news" is requested
 	 * and after the page has been found and checked for its status.
+	 *
+	 * It conveniently fetches the news category and the newer and older news items,
+	 * as well as the title media for the page.
+	 *
+	 * The method also sets the og:image meta tag for the page.
 	 *
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return void
@@ -117,12 +122,12 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	public function index(): void {
-		$ls_slug = $this->request->getParam('slug');
+		$ls_slug = $this->getRequest()->getParam('slug');
 		$ls_slug = $ls_slug ? rtrim($ls_slug, '/') : null;
 
 		// Find the first page for the current language
 		$lo_page = $this->findPage(
-			$this->request->getParam('lang'),
+			$this->getRequest()->getParam('lang'),
 			$ls_slug
 		);
 
@@ -139,9 +144,9 @@ class FrontendController extends AppController {
 	 * @noinspection PhpUnused
 	 */
 	public function incompleteUrl(): void {
-		$ls_language = $this->request->getParam('lang');
+		$ls_language = $this->getRequest()->getParam('lang');
 
-		$ls_slug = $this->request->getParam('slug');
+		$ls_slug = $this->getRequest()->getParam('slug');
 		$ls_slug = $ls_slug ? rtrim($ls_slug, '/') : null;
 
 		if ($ls_slug) {
@@ -238,12 +243,12 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function handlePage(?Page $page): void {
-		$lb_isErrorPage = false;
+		$li_errorCode = null;
 		$lo_page = $page;
 
 		if (!$lo_page) {
 			// Try to find an entry in the slug history
-			$this->historyRedirect(trim($this->request->getPath(), '/'));
+			$this->historyRedirect(trim($this->getRequest()->getPath(), '/'));
 		}
 
 		/*
@@ -260,8 +265,18 @@ class FrontendController extends AppController {
 			$this->track404();
 
 			// Find the 410 page for the current language
-			$lo_page = $this->findPage($lo_page->languageShortcode, '410', ['active' => true, 'deleted' => false]);
-			$lb_isErrorPage = true;
+			$ls_statusCode = '410';
+
+			// If the page or the language was deleted more than 6 months ago, use the 404 instead
+			if (
+				($lo_page->deletedOn && $lo_page->deletedOn->diff(new DateTime())->days > 180) ||
+				($lo_page->language->deletedOn && $lo_page->language->deletedOn->diff(new DateTime())->days > 180)
+			) {
+				$ls_statusCode = '404';
+			}
+
+			$lo_page = $this->findPage($lo_page->languageShortcode, $ls_statusCode, ['active' => true, 'deleted' => false]);
+			$li_errorCode = (int)$ls_statusCode;
 
 			if (!$lo_page) {
 				throw new NotFoundException();
@@ -272,19 +287,29 @@ class FrontendController extends AppController {
 		 * If no page was found or the page is not active or the parents are not active,
 		 * find the 404 page for the current language.
 		 */
-		if (!$lo_page || ((!$lo_page->active || !$lo_page->parentsActive || !$lo_page->language->active) && !$this->previewMode)) {
+		if (
+			!$lo_page ||
+			(
+				(
+					!$lo_page->active ||
+					!$lo_page->parentsActive ||
+					!$lo_page->language->active
+				) &&
+				!$this->previewMode
+			)
+		) {
 			$this->track404();
 
 			// Find the 404 page for the current language
 			$lo_page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, '404', ['active' => true, 'deleted' => false]);
-			$lb_isErrorPage = true;
+			$li_errorCode = 404;
 
 			if (!$lo_page) {
 				throw new NotFoundException();
 			}
 		}
 
-		if (!$lb_isErrorPage) {
+		if (!$li_errorCode) {
 			// Redirect to a normalized URL if the current URL does not match the normalized URL
 			$this->redirectIfNotNormalized($lo_page);
 		}
@@ -322,16 +347,22 @@ class FrontendController extends AppController {
 		);
 
 		$this->set([
-			'isErrorPage' => $lb_isErrorPage,
+			'isErrorPage' => !!$li_errorCode,
 			'page' => $lo_page,
 			'pageRoleEnum' => $ls_pageRoleEnum,
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
 
-		$lo_request = $this->request->withAttribute('currentPage', $lo_page);
+		$lo_request = $this->getRequest()->withAttribute('currentPage', $lo_page);
+
+		if ($li_errorCode) {
+			$lo_response = $this->getResponse()->withStatus($li_errorCode);
+			$this->setResponse($lo_response);
+		}
+
 		$this->setRequest($lo_request);
 
-		if ($this->request->getSession()->read('Auth')) {
+		if ($this->getRequest()->getSession()->read('Auth')) {
 			$this->loadFrontendEditor($lo_page);
 		}
 
@@ -368,9 +399,9 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function redirectIfNotNormalized(Page $page): void {
-		$ls_languageShortcode = $this->request->getParam('lang');
-		$ls_slug = $this->request->getParam('slug');
-		$la_params = $this->request->getQueryParams();
+		$ls_languageShortcode = $this->getRequest()->getParam('lang');
+		$ls_slug = $this->getRequest()->getParam('slug');
+		$la_params = $this->getRequest()->getQueryParams();
 		if ($la_params && $ls_slug) {
 			$ls_slug = rtrim($ls_slug, '/') . '/';
 		}
@@ -382,17 +413,17 @@ class FrontendController extends AppController {
 				 * If it is, redirect to the domain without the language.
 				 */
 				if ($ls_languageShortcode === LocaleMiddleware::getDefaultLanguage()->shortcode) {
-					$ls_url = Router::url(['_name' => 'FrontendRoot', ...$this->request->getQueryParams(), '?' => $this->request->getParam('?'),], true);
+					$ls_url = Router::url(['_name' => 'FrontendRoot', ...$this->getRequest()->getQueryParams(), '?' => $this->getRequest()->getParam('?'),], true);
 
 					throw new RedirectException($ls_url, 301);
 				}
 
-				if (!str_ends_with($this->request->getPath(), '/')) {
+				if (!str_ends_with($this->getRequest()->getPath(), '/')) {
 					$ls_url = Router::url([
 						'_name' => 'FrontendLanguageRoot',
 						'lang' => $ls_languageShortcode,
-						'?' => $this->request->getParam('?'),
-						...$this->request->getQueryParams(),
+						'?' => $this->getRequest()->getParam('?'),
+						...$this->getRequest()->getQueryParams(),
 					], true);
 
 					throw new RedirectException($ls_url, 301);
@@ -411,15 +442,15 @@ class FrontendController extends AppController {
 					$la_url = [
 						'_name' => 'FrontendLanguageRoot',
 						'lang' => $ls_languageShortcode,
-						'?' => $this->request->getParam('?'),
-						...$this->request->getQueryParams(),
+						'?' => $this->getRequest()->getParam('?'),
+						...$this->getRequest()->getQueryParams(),
 					];
 
 					// For the default language, the language is not included in the URL
 					if ($ls_languageShortcode === LocaleMiddleware::getDefaultLanguage()->shortcode) {
 						$la_url = [
-							'?' => $this->request->getParam('?'),
-							...$this->request->getQueryParams(),
+							'?' => $this->getRequest()->getParam('?'),
+							...$this->getRequest()->getQueryParams(),
 							'_name' => 'FrontendRoot',
 						];
 					}
@@ -434,7 +465,7 @@ class FrontendController extends AppController {
 
 		// If the URL does not match the normalized URL, redirect to the normalized URL
 		if (
-			!str_ends_with($this->request->getPath(), '/') ||
+			!str_ends_with($this->getRequest()->getPath(), '/') ||
 			(
 				$ls_testUrl !== $ls_currentUrl &&
 				$ls_currentUrl !== '/' &&
@@ -443,8 +474,8 @@ class FrontendController extends AppController {
 		) {
 			if (!trim($ls_currentUrl, '/')) {
 				$ls_realUrl = Router::url([
-					'?' => $this->request->getParam('?'),
-					...$this->request->getQueryParams(),
+					'?' => $this->getRequest()->getParam('?'),
+					...$this->getRequest()->getQueryParams(),
 					'_name' => 'FrontendRoot',
 				]);
 			}
@@ -452,8 +483,8 @@ class FrontendController extends AppController {
 				$ls_realUrl = Router::url([
 					'lang' => $page->languageShortcode,
 					'slug' => $page->slug,
-					'?' => $this->request->getParam('?'),
-					...$this->request->getQueryParams(),
+					'?' => $this->getRequest()->getParam('?'),
+					...$this->getRequest()->getQueryParams(),
 				]);
 			}
 
@@ -564,20 +595,20 @@ class FrontendController extends AppController {
 	 * @return array
 	 */
 	protected function loadDesignPreview(): array {
-		if ($this->request->getParam('designPreview')) {
-			$this->request->getSession()->write('designPreviewIdentifier', $this->request->getParam('designPreview'));
+		if ($this->getRequest()->getParam('designPreview')) {
+			$this->getRequest()->getSession()->write('designPreviewIdentifier', $this->getRequest()->getParam('designPreview'));
 		}
 
-		$ls_designPreviewIdentifier = $this->request->getSession()->read('designPreviewIdentifier');
+		$ls_designPreviewIdentifier = $this->getRequest()->getSession()->read('designPreviewIdentifier');
 
 		if (!$ls_designPreviewIdentifier) {
 			return [];
 		}
 
-		if ($this->request->getData('awyiss_design_preview') === 'cancel') {
-			$this->request->getSession()->delete('designPreviewIdentifier');
+		if ($this->getRequest()->getData('awyiss_design_preview') === 'cancel') {
+			$this->getRequest()->getSession()->delete('designPreviewIdentifier');
 
-			throw new RedirectException(Router::url(['_name' => $this->request->getParam('_name')]));
+			throw new RedirectException(Router::url(['_name' => $this->getRequest()->getParam('_name')]));
 		}
 
 		$lo_designTable = $this->fetchTable('Designs');
@@ -619,7 +650,7 @@ class FrontendController extends AppController {
 			return;
 		}
 
-		$lo_identity = $this->request->getSession()->read('Auth');
+		$lo_identity = $this->getRequest()->getSession()->read('Auth');
 
 		if (!$lo_identity instanceof IdentityPermissionsInterface) {
 			return;
@@ -655,7 +686,7 @@ class FrontendController extends AppController {
 	 * @return void
 	 */
 	protected function loadFrontendPreview(Page $page): void {
-		$lo_session = $this->request->getSession();
+		$lo_session = $this->getRequest()->getSession();
 		$this->set([
 			'frontendPreviewConfig' => [
 				'enabled' => $lo_session->read('previewMode.enabled', false),
@@ -689,8 +720,8 @@ class FrontendController extends AppController {
 			return;
 		}
 
-		$ls_languageShortcode = $this->request->getParam('lang');
-		$ls_slug = $ls_languageShortcode . '/' . $this->request->getParam('slug');
+		$ls_languageShortcode = $this->getRequest()->getParam('lang');
+		$ls_slug = $ls_languageShortcode . '/' . $this->getRequest()->getParam('slug');
 		$ls_slug = '/' . trim($ls_slug, '/');
 
 		// Don't track resized and preview images and assets
@@ -730,7 +761,7 @@ class FrontendController extends AppController {
 
 		$lo_notFound = $lo_urlsNotFoundTable->newDefaultEntity([
 			'url' => $ls_slug,
-			'referrer' => $this->request->referer(),
+			'referrer' => $this->getRequest()->referer(),
 			'isRobot' => $lb_isRobot,
 		]);
 
@@ -742,7 +773,7 @@ class FrontendController extends AppController {
 	 * @return bool
 	 */
 	protected function isRobot(): bool {
-		$ls_userAgent = $this->request->getHeaderLine('User-Agent');
+		$ls_userAgent = $this->getRequest()->getHeaderLine('User-Agent');
 		$lo_crawlerDetect = new CrawlerDetect();
 
 		return $lo_crawlerDetect->isCrawler($ls_userAgent);
