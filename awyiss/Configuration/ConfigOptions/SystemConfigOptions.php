@@ -50,6 +50,15 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					identifier: 'titleSeparator',
 				),
 			],
+			'publication' => [
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'checkAncestorPagesPublicationStatus',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+			],
 		]);
 
 

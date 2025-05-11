@@ -41,7 +41,7 @@ class FrontendController extends AppController {
 	 *
 	 * @var bool $previewMode
 	 */
-	protected bool $previewMode = false;
+	protected readonly bool $previewMode;
 
 
 	/**
@@ -293,7 +293,8 @@ class FrontendController extends AppController {
 				(
 					!$lo_page->active ||
 					!$lo_page->parentsActive ||
-					!$lo_page->language->active
+					!$lo_page->language->active ||
+					!$this->parentsArePublished($lo_page)
 				) &&
 				!$this->previewMode
 			)
@@ -777,5 +778,47 @@ class FrontendController extends AppController {
 		$lo_crawlerDetect = new CrawlerDetect();
 
 		return $lo_crawlerDetect->isCrawler($ls_userAgent);
+	}
+
+
+	/**
+	 * Check if the parents of the page are published
+	 *
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @return bool
+	 */
+	protected function parentsArePublished(Page $page): bool {
+		if (!$page->parentId) {
+			return true;
+		}
+
+		$lb_checkAncestorPagesPublicationStatus = Configure::read('Awyiss.System.Frontend.publication.checkAncestorPagesPublicationStatus', true);
+		if (!$lb_checkAncestorPagesPublicationStatus) {
+			return true;
+		}
+
+		$la_parts = explode('/', $page->slug);
+		// Remove the last part
+		array_pop($la_parts);
+
+		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
+		$lo_pagesTable = $this->fetchTable('Pages');
+
+		$lo_query = $lo_pagesTable->find(!$this->previewMode ? 'published' : 'all', skipPageRoleCheck: true);
+
+		$la_slugs = [];
+		$ls_lastPart = '';
+		// Create an array of slugs. Each item is the previous slug + the current slug
+		foreach ($la_parts as $ls_part) {
+			$la_slugs[] = $ls_lastPart . $ls_part;
+			$ls_lastPart .= $ls_part . '/';
+		}
+
+		$lo_query->where([
+			'slug IN' => $la_slugs,
+			'language_shortcode' => $page->languageShortcode,
+		]);
+
+		return $lo_query->count() === count($la_slugs);
 	}
 }

@@ -469,6 +469,12 @@ msgstr "Separator"
 msgid "configuration_identifier_frontend_ors_api_key"
 msgstr "OpenRouteService API Schlüssel"
 
+msgid "configuration_category_frontend_publication"
+msgstr "Veröffentlichung"
+
+msgid "configuration_identifier_frontend_publication_check_ancestor_pages_publication_status"
+msgstr "Veröffentlichungsstatus der übergeordneten Seiten prüfen"
+
 msgid "button_area_toggle"
 msgstr "Aktionsbereich anzeigen"
 
