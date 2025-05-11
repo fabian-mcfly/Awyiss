@@ -6,10 +6,9 @@ namespace Awyiss\Controller\Frontend;
 
 use Awyiss\Awyiss;
 use Awyiss\Controller\AppController;
-use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
-use Awyiss\Utility\Inflector;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\XmlView;
@@ -25,34 +24,32 @@ class SitemapController extends AppController {
 	 * @return void
 	 */
 	public function index(): void {
-		/** @var \Cake\Datasource\ResultSetInterface $lo_pages */
-		$lo_pages = null;
+		$lo_pagesTable = $this->fetchTable('Pages');
 
-		/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
-			$lo_pagesTable = $this->fetchTable(Inflector::pluralize($le_pageRole->name));
+		$lo_query = $lo_pagesTable->find('threaded', skipPageRoleCheck: true)
+			->find('published')
+			->where([
+				'active' => true,
+				'parents_active' => true,
+				'robots_index' => true,
+			])
+			->contain([
+				'Contents' => function (SelectQuery $query) {
+					return $query->find('latestForPages');
+				},
+			]);
 
-			$lo_query = $lo_pagesTable->find('threaded')
-				->find('published')
-				->where([
-					'active' => true,
-					'parents_active' => true,
-					'robots_index' => true,
-				])
-				->contain([
-					'Contents' => function (SelectQuery $query) {
-						return $query->find('latestForPages');
-					},
-				]);
+		$lo_pages = $lo_query->all();
 
-			if ($lo_pages) {
-				$lo_pages = $lo_pages->append($lo_query->all());
-			}
-			else {
-				$lo_pages = $lo_query->all();
-			}
-		}
+		/**
+		 * Filter out all records with a parent_id that is not null
+		 * This is necessary because the threaded finder
+		 * returns all records in the tree, even if a record's
+		 * parent is not active or not published.
+		 */
+		$lo_pages = $lo_pages->filter(function (Page $page): bool {
+			return $page->parentId === null;
+		});
 
 		$lo_pages = $lo_pages->listNested()->indexBy('id');
 
