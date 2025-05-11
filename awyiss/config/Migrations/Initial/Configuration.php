@@ -48,7 +48,7 @@ class Configuration {
 			'null' => false,
 		])->addColumn('identifier', 'string', [
 			'default' => null,
-			'limit' => 50,
+			'limit' => 255,
 			'null' => false,
 		])->addColumn('value', 'string', [
 			'default' => null,

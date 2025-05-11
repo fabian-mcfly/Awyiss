@@ -154,7 +154,7 @@ class ConfigurationTable extends Table {
 
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
-			'maxLength' => ['rule' => ['maxLength', 50]],
+			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
