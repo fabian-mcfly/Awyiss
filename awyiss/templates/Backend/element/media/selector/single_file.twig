@@ -20,13 +20,23 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
+{# @var mediaItem \Awyiss\Model\Entity\Media #}
+{% set mediaItem = entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].media ?? null %}
+{% set mediaFolderId = mediaItem.mediaFolderId ?? null %}
+{% if entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId %}
+	{% set mediaFolderId = entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId %}
+{% endif %}
+
+{% if entity is instanceOf('\\Awyiss\\Model\\Entity\\Content') and entity.page.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId %}
+	{% set mediaFolderId = entity.page.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId %}
+{% endif %}
+
 <div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-SingleFile ColumnSpan-{{ columnSpan }}">
 	<label class="Label">{{ label }}</label>
 
-	<div class="MediaSelector-Preview">
+	<div class="MediaSelector-Preview"{% if mediaFolderId %} data-media-folder-id="{{ mediaFolderId }}"{% endif %}>
 		<span class="MediaSelector-MediaSelect">{{ __d('media', 'select_file') }}</span>
 
-		{% set mediaItem = entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].media ?? null %}
 		{% if mediaItem %}
 			{% set imageSizeInfo = '' %}
 			{% if mediaItem.mimeType in ['image/gif', 'image/jpeg', 'image/png', 'image/webp'] or mediaItem.preview %}

@@ -176,8 +176,9 @@ export default class Overlay {
 	 * If the overlay element doesn't exist yet, fetch it.
 	 *
 	 * @param {MouseEvent} event
+	 * @param {int|null} mediaFolderId
 	 */
-	initOverlay(event) {
+	initOverlay(event, mediaFolderId = null) {
 		// Maybe it already exists in the DOM. If not, we'll fetch it later.
 		this.element = document.querySelector('#MediaOverlay');
 
@@ -200,6 +201,10 @@ export default class Overlay {
 		let url = `${baseUrl}backend/${languageShortcode}/media/overview/paginate:false/`
 		if (event?.target && event.target.matches('a[href]')) {
 			url = event.target.href + 'paginate:false/';
+		}
+
+		if (mediaFolderId) {
+			url += `media-folder-id:${mediaFolderId}/`;
 		}
 
 		if (event.ctrlKey || event.metaKey) {
@@ -442,8 +447,9 @@ export default class Overlay {
 	 * If the overlay element doesn't exist yet, fetch it.
 	 *
 	 * @param {MouseEvent|object} event
+	 * @param {int|null} mediaFolderId
 	 */
-	openOverlay(event) {
+	openOverlay(event, mediaFolderId = null) {
 		event.preventDefault();
 
 		// noinspection JSUnresolvedReference
@@ -451,7 +457,7 @@ export default class Overlay {
 
 		if (!this.element) {
 			// noinspection JSIgnoredPromiseFromCall
-			this.initOverlay(event);
+			this.initOverlay(event, mediaFolderId);
 		}
 		else {
 			// Show the overlay
@@ -470,8 +476,8 @@ export default class Overlay {
 
 			this.sortable.toggleButtonState(this.sortable.multiSelection.getSelectedItems().length);
 
-			if (event.target?.matches('a[href]')) {
-				this.ensureFolderIsVisible(event.target);
+			if (mediaFolderId || event.target?.matches('a[href]')) {
+				this.ensureFolderIsVisible(mediaFolderId || event.target?.matches('a[href]'));
 			}
 
 			if (
@@ -575,34 +581,44 @@ export default class Overlay {
 	}
 
 	/**
-	 * Ensure that the folder of the clicked link is visible
+	 * Ensure that the folder of the clicked target is visible
 	 * in the folder list.
 	 * If it isn't, fetch the folder list again.
 	 *
-	 * @param {HTMLAnchorElement} link
+	 * @param {HTMLAnchorElement|int} target
 	 *
 	 * @return {void}
 	 */
-	ensureFolderIsVisible(link) {
-		// Get the folder ID from the link
-		const url = new URL(link.href);
-		const parts = url.pathname.split('/');
-		const part = parts.filter(part => part.includes('media-folder-id:'));
+	ensureFolderIsVisible(target) {
+		let folderId;
 
-		if (part.length === 0) {
-			return;
+		if (typeof target === 'number') {
+			folderId = target;
 		}
+		else {
+			// Get the folder ID from the link
+			const url = new URL(target.href);
+			const parts = url.pathname.split('/');
+			const part = parts.filter(part => part.includes('media-folder-id:'));
 
-		const folderId = parseInt(part[0].replace('media-folder-id:', ''));
-		if (folderId === this.activeFolderId) {
-			return;
+			if (part.length === 0) {
+				return;
+			}
+
+			folderId = parseInt(part[0].replace('media-folder-id:', ''));
+
+			if (folderId === this.activeFolderId) {
+				return;
+			}
 		}
 
 		const folder = this.folderList.querySelector(`#MediaFolders-ListItem${folderId}`);
 		if (folder) {
-			if (!folder.classList.contains('Active')) {
+			if (typeof target !== 'number' && !folder.classList.contains('Active')) {
 				folder.dispatchEvent(new Event('click'));
 			}
+
+			return;
 		}
 
 		// If the folder doesn't exist, fetch the folder list again
@@ -644,6 +660,7 @@ export default class Overlay {
 	 * @returns {Promise<void>}
 	 */
 	fetchFolderList(folderId, languageShortcode, includeHidden = false) {
+		// noinspection JSValidateTypes
 		includeHidden = includeHidden ? 'include-hidden:1/' : '';
 
 		// noinspection JSValidateTypes

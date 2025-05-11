@@ -1139,6 +1139,8 @@ class ContentsController extends Controller {
 			}
 		}
 
+		$content->page = $this->page;
+
 		$this->set([
 			'content' => $content,
 			'contentTemplates' => $lo_contentTemplates,

@@ -42,40 +42,16 @@ export default class Selectors {
 	 */
 	initSelector(element) {
 		const preview = element.querySelector('.MediaSelector-Preview');
+		element.preview = preview;
 
 		if (element.matches(this.singleFileSelector)) {
-			this.eventHandler.add('click', this.openOverlay.bind(this), preview);
+			this.eventHandler.add('click', event => this.openOverlay(event, preview.dataset.mediaFolderId), preview);
 
 			// Bind the remove handler
 			const removeButton = element.querySelector('.MediaSelector-Remove');
 			if (removeButton) {
 				this.eventHandler.add('click', this.removeMedia.bind(this, element), removeButton);
 			}
-		}
-		else {
-			const selector = element.querySelector('.MediaSelector-MediaSelect');
-			this.eventHandler.add('click', this.openOverlay.bind(this), selector);
-			this.eventHandler.add('click', this.removeMedia.bind(this, element), preview);
-
-			element.sortable = Sortable.create(preview, {
-				chosenClass: 'SortableChosen',
-				filter: '.MediaSelector-MediaSelect',
-				ghostClass: 'SortableGhost',
-				swapThreshold: .6,
-				onEnd: () => {
-					if (typeof window.formLeaveConfirmation === 'object') {
-						window.formLeaveConfirmation.formChanged();
-					}
-				},
-				onMove: event => {
-					if (event.related.matches('.MediaSelector-MediaSelect')) {
-						return false;
-					}
-				},
-			});
-		}
-
-		if (element.matches(this.singleFileSelector)) {
 			element.useMedia = this.useMedia.bind(this, element);
 
 			if (element.dataset.mediaIdInputSelector) {
@@ -88,19 +64,40 @@ export default class Selectors {
 			if (!element.mediaIdInput) {
 				element.mediaIdInput = element.querySelector('.MediaSelector-MediaId') || element.querySelector('input[type="text"]');
 			}
-		}
-		else {
-			element.useMedia = this.addMedia.bind(this, element);
-			element.selector = element.querySelector('.MediaSelector-MediaSelect');
+
+			return;
 		}
 
-		element.preview = preview;
+		const selector = element.querySelector('.MediaSelector-MediaSelect');
+		this.eventHandler.add('click', this.openOverlay.bind(this), selector);
+		this.eventHandler.add('click', this.removeMedia.bind(this, element), preview);
+
+		element.sortable = Sortable.create(preview, {
+			chosenClass: 'SortableChosen',
+			filter: '.MediaSelector-MediaSelect',
+			ghostClass: 'SortableGhost',
+			swapThreshold: .6,
+			onEnd: () => {
+				if (typeof window.formLeaveConfirmation === 'object') {
+					window.formLeaveConfirmation.formChanged();
+				}
+			},
+			onMove: event => {
+				if (event.related.matches('.MediaSelector-MediaSelect')) {
+					return false;
+				}
+			},
+		});
+
+		element.useMedia = this.addMedia.bind(this, element);
+		element.selector = element.querySelector('.MediaSelector-MediaSelect');
 	}
 
 	/**
 	 * @param {MouseEvent} event - The event that triggered the overlay.
+	 * @param {string|null} mediaFolderId - The ID of the media folder.
 	 */
-	openOverlay(event) {
+	openOverlay(event, mediaFolderId = null) {
 		if (event.target.closest('.MediaSelector-Remove')) {
 			return;
 		}
@@ -111,7 +108,7 @@ export default class Selectors {
 			},
 		});
 
-		this.overlay.openOverlay(openEvent);
+		this.overlay.openOverlay(openEvent, mediaFolderId ? parseInt(mediaFolderId) : null);
 	}
 
 	/**
