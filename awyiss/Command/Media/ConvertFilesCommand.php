@@ -55,6 +55,7 @@ class ConvertFilesCommand extends Command {
 
 	/**
 	 * @inheritDoc
+	 * @throws \Exception
 	 */
 	public function __construct(?CommandFactoryInterface $factory = null) {
 		parent::__construct($factory);
@@ -72,6 +73,15 @@ class ConvertFilesCommand extends Command {
 		}
 
 		$ls_driver = Configure::read('Awyiss.Media.Frontend.resizing.driver', 'imagick');
+		if ($ls_driver === 'imagick' && !extension_loaded('Imagick')) {
+			// Try to fall back to GD if Imagick is not available
+			$ls_driver = 'gd';
+		}
+
+		if ($ls_driver === 'gd' && !extension_loaded('gd')) {
+			throw new Exception('The GD extension is not loaded. Please install the GD extension to use this command.');
+		}
+
 		$this->imageManager = $ls_driver === 'gd' ? ImageManager::gd(autoOrientation: false) : ImageManager::imagick(autoOrientation: false);
 
 		$this->quality = Configure::read('Awyiss.Media.Frontend.resizing.quality', 70);
