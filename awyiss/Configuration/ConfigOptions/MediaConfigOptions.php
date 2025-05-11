@@ -94,10 +94,19 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					localizable: false,
 					nullable: false,
 					type: ConfigOptionType::ListKey,
-					values: [
-						'imagick' => __d(Inflector::underscore(static::getScope()), 'driver_imagick'),
-						'gd' => __d(Inflector::underscore(static::getScope()), 'driver_gd'),
-					],
+					values: function (): array {
+						$la_drivers = [];
+
+						if (extension_loaded('Imagick')) {
+							$la_drivers['imagick'] = __d(Inflector::underscore(static::getScope()), 'driver_imagick');
+						}
+
+						if (extension_loaded('gd')) {
+							$la_drivers['gd'] = __d(Inflector::underscore(static::getScope()), 'driver_gd');
+						}
+
+						return $la_drivers;
+					}
 				),
 				new ConfigOption(
 					defaultValue: static::RESIZE_MEDIA_FILE_TYPE_AVIF,
