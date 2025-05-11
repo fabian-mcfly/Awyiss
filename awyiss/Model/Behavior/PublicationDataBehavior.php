@@ -5,6 +5,7 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\PublicationData;
 use Awyiss\Model\Enum\PublicationDataType;
 use Awyiss\Model\Table;
@@ -208,9 +209,23 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			}
 
 			$la_conditions = [
-				$ls_name . '.scope' => $this->getConfig('referenceName'),
 				$ls_name . '.type' => $ls_identifier,
 			];
+
+			$ls_scope = $this->getConfig('referenceName');
+			if ($this->getConfig('referenceName') === 'pages') {
+				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+				$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+				$la_scope = array_map(function ($pageRole) {
+					return Inflector::underscore(Inflector::pluralize($pageRole->name));
+				}, $ls_pageRoleEnum::cases());
+				$la_conditions[ $ls_name . '.scope IN' ] = $la_scope;
+			}
+			else {
+				$la_conditions[ $ls_name . '.scope' ] = $ls_scope;
+			}
+
+
 
 			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
 			$this->_table->hasOne($ls_name, [
