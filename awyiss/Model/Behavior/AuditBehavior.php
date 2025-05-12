@@ -148,6 +148,7 @@ class AuditBehavior extends Behavior {
 	 *
 	 * @param SelectQuery $query The query to modify.
 	 * @return SelectQuery The modified query.
+	 * @noinspection PhpUnused
 	 */
 	public function findWithAuditUsers(SelectQuery $query): SelectQuery {
 		// Enable auto fields for the query if they are not already enabled
@@ -204,6 +205,7 @@ class AuditBehavior extends Behavior {
 	 *
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return int
+	 * @noinspection PhpUnused
 	 */
 	public function countAuditData(EntityInterface $entity): int {
 		return $this->auditDataQuery($entity)->count();
@@ -308,7 +310,7 @@ class AuditBehavior extends Behavior {
 	 * @param Entity $entity
 	 * @param ArrayObject $options
 	 * @throws \Exception
-	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpUnusedParameterInspection,PhpUnused
 	 */
 	public function beforeCopy(EventInterface $event, Entity $entity, ArrayObject $options): void {
 		$entity->unset(['createdOn', 'changedOn', 'changedBy', 'changedOn']);
@@ -477,7 +479,7 @@ class AuditBehavior extends Behavior {
 			/**
 			 * No association (set to false in getAssociations) or one with cascadeCallbacks = true
 			 * means that property must not be part of the audit data.
-			 * Assocations with cascadeCallbacks set to true will have their own `afterSave`-event, creating a separat audit
+			 * Associations with cascadeCallbacks set to true will have their own `afterSave`-event, creating a separate audit
 			 */
 			unset($la_entityData['old'][ $field ], $la_entityData['new'][ $field ]);
 
@@ -537,31 +539,12 @@ class AuditBehavior extends Behavior {
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			foreach ($lo_clonedEntity->mediaAssignments as $ls_elementIdentifier => $la_elementAssignments) {
-				foreach ($la_elementAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
-					if ($lx_selectorAssignments instanceof Entity) {
-						$la_values = $lx_selectorAssignments->extract(null, false, false);
-
-						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
-
-						ksort($la_values);
-
-						$la_newData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ] = $la_values;
-
-						continue;
-					}
-
-					foreach ($lx_selectorAssignments as $li_key => $lo_mediaAssignment) {
-						$la_values = $lo_mediaAssignment->extract(null, false, false);
-
-						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
-
-						ksort($la_values);
-
-						$la_newData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $la_values;
-					}
-				}
-
-				ksort($la_newData[ $ls_elementIdentifier ]);
+				$la_newData = $this->buildMediaAssignment(
+					$la_newData,
+					$ls_elementIdentifier,
+					$la_elementAssignments,
+					$la_blocklistedFields
+				);
 			}
 		}
 
@@ -572,31 +555,12 @@ class AuditBehavior extends Behavior {
 		if ($entity->hasOriginal('mediaAssignments')) {
 			/** @var Entity $lo_mediaAssignment */
 			foreach ($entity->getOriginal('mediaAssignments') as $ls_elementIdentifier => $la_elementAssignments) {
-				foreach ($la_elementAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
-					if ($lx_selectorAssignments instanceof Entity) {
-						$la_values = $lx_selectorAssignments->extract(null, false, false);
-
-						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
-
-						ksort($la_values);
-
-						$la_oldData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ] = $la_values;
-
-						continue;
-					}
-
-					foreach ($lx_selectorAssignments as $li_key => $lo_mediaAssignment) {
-						$la_values = $lo_mediaAssignment->extract(null, false, false);
-
-						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
-
-						ksort($la_values);
-
-						$la_oldData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $la_values;
-					}
-				}
-
-				ksort($la_oldData[ $ls_elementIdentifier ]);
+				$la_oldData = $this->buildMediaAssignment(
+					$la_oldData,
+					$ls_elementIdentifier,
+					$la_elementAssignments,
+					$la_blocklistedFields
+				);
 			}
 		}
 
@@ -643,7 +607,10 @@ class AuditBehavior extends Behavior {
 			}
 		}
 
-		/** @var \Awyiss\Model\Entity\PublicationData $lo_publicationData */
+		/**
+		 * @var \Awyiss\Model\Entity\PublicationData $lo_publicationData
+		 * @noinspection PhpUndefinedFieldInspection
+		 */
 		foreach ($entity->_publicationData as $lo_publicationData) {
 			$lx_date = $lo_publicationData->has('dateTime') ? $lo_publicationData->get('dateTime') : null;
 
@@ -702,7 +669,10 @@ class AuditBehavior extends Behavior {
 		}
 
 		$la_newTranslations = [];
-		/** @var Entity $lo_translatedEntity */
+		/**
+		 * @var Entity $lo_translatedEntity
+		 * @noinspection PhpLoopCanBeConvertedToArrayMapInspection
+		 */
 		foreach (($entity->_translations ?? []) as $ls_languageShortcode => $lo_translatedEntity) {
 			$la_newTranslations[ $ls_languageShortcode ] = $lo_translatedEntity->extract($la_translateFields, false, false);
 		}
@@ -856,6 +826,7 @@ class AuditBehavior extends Behavior {
 	 * @return array
 	 */
 	protected function cleanHasOneAssociationData(Entity $entity, string $field, Association|HasOne $association, array $entityData): array {
+		/** @noinspection DuplicatedCode */
 		$la_keys = (array)$association->getBindingKey();
 		/** @var Entity $ls_entityClass */
 		$ls_entityClass = $association->getSource()->getEntityClass();
@@ -931,7 +902,7 @@ class AuditBehavior extends Behavior {
 
 		unset($la_oldData['_locale'], $la_newData['_locale']);
 
-		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
+		/** @noinspection DuplicatedCode */
 		$la_entityData['old'][ $field ] = $la_oldData;
 		$la_entityData['new'][ $field ] = $la_newData;
 
@@ -955,6 +926,7 @@ class AuditBehavior extends Behavior {
 	 * @return array
 	 */
 	protected function cleanHasManyAssociationData(Entity $entity, string $field, Association|HasMany $association, array $entityData): array {
+		/** @noinspection DuplicatedCode */
 		$la_keys = (array)$association->getBindingKey();
 		/** @var Entity $ls_entityClass */
 		$ls_entityClass = $association->getSource()->getEntityClass();
@@ -1006,6 +978,7 @@ class AuditBehavior extends Behavior {
 			}
 		}
 
+		/** @noinspection DuplicatedCode */
 		$la_entityData = $entityData;
 
 		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
@@ -1111,12 +1084,8 @@ class AuditBehavior extends Behavior {
 			$la_oldData = ['_ids' => array_column($la_oldData, 'id')];
 			$la_newData = ['_ids' => array_column($la_newData, 'id')];
 		}
-		/*else {
-			uasort($la_oldData, function($a, $b) use ($la_keys) {
-				return $a[ $la_keys[0] ] <=> $b[ $la_keys[0] ];
-			});
-		}*/
 
+		/** @noinspection DuplicatedCode */
 		$la_entityData = $entityData;
 
 		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
@@ -1221,5 +1190,47 @@ class AuditBehavior extends Behavior {
 		uksort($la_entityData['changes']['new'], $lc_sort);
 
 		return $la_entityData;
+	}
+
+
+	/**
+	 * @param array $data
+	 * @param string|int $elementIdentifier
+	 * @param mixed $elementAssignments
+	 * @param array $blocklistedFields
+	 * @return array
+	 */
+	protected function buildMediaAssignment(array $data, string|int $elementIdentifier, mixed $elementAssignments, array $blocklistedFields): array {
+		foreach ($elementAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
+			if ($lx_selectorAssignments instanceof Entity) {
+				$la_values = $lx_selectorAssignments->extract(null, false, false);
+
+				$la_values = array_diff_key($la_values, array_flip($blocklistedFields));
+
+				ksort($la_values);
+
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$data[ $elementIdentifier ][ $ls_selectorIdentifier ] = $la_values;
+
+				continue;
+			}
+
+			foreach ($lx_selectorAssignments as $li_key => $lo_mediaAssignment) {
+				$la_values = $lo_mediaAssignment->extract(null, false, false);
+
+				$la_values = array_diff_key($la_values, array_flip($blocklistedFields));
+
+				ksort($la_values);
+
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$data[ $elementIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $la_values;
+			}
+		}
+
+		if (is_array($data[ $elementIdentifier ] ?? null)) {
+			ksort($data[ $elementIdentifier ]);
+		}
+
+		return $data;
 	}
 }
