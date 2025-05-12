@@ -121,7 +121,7 @@ class DatatablesTable extends Table {
 		$rules->add(
 			function (Datatable $entity, array $options) use ($lo_rules): bool|string {
 				if (
-					$options['isCopy'] === false &&
+					($options['isCopy'] ?? false) === false &&
 					$entity->hasOriginal('identifier') &&
 					$entity->get('identifier') !== $entity->getOriginal('identifier')
 				) {

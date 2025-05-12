@@ -127,7 +127,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 
 		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
 
-		if (!$options['isCopy'] && $entity->hasOriginal('fileName') && $entity->fileName != $entity->getOriginal('fileName')) {
+		if (!($options['isCopy'] ?? false) && $entity->hasOriginal('fileName') && $entity->fileName != $entity->getOriginal('fileName')) {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
 			$ls_currentFileName = Text::slug($entity->getOriginal('fileName'), ['replacement' => '_']);
 			$ls_currentFilePath = $ls_folderPath . $ls_currentFileName . $ls_extension;

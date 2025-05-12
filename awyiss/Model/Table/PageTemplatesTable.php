@@ -192,7 +192,7 @@ class PageTemplatesTable extends Table {
 		$lo_rules = $rules;
 		$rules->addUpdate(function (PageTemplate $entity, array $options) use ($lo_rules): bool {
 			if (
-				$options['isCopy'] === true ||
+				($options['isCopy'] ?? false) === true ||
 				!$entity->hasOriginal('pageRoleId') ||
 				$entity->get('pageRoleId') === $entity->getOriginal('pageRoleId')
 			) {

@@ -160,7 +160,7 @@ class PageRolesTable extends Table {
 		$rules->add(
 			function (PageRole $entity, array $options) use ($lo_rules): bool|string {
 				if (
-					$options['isCopy'] === false &&
+					($options['isCopy'] ?? false) === false &&
 					$entity->hasOriginal('identifier') &&
 					$entity->get('identifier') !== $entity->getOriginal('identifier')
 				) {
