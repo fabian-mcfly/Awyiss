@@ -35,7 +35,6 @@ class SeedCommand extends BaseBakeSeedCommand {
 		$lo_parser->addOption('truncate', [
 			'boolean' => true,
 			'help' => 'Add the truncate command in the seed.',
-			'short' => 't',
 		]);
 
 
