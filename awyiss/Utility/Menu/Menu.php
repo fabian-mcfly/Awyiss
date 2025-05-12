@@ -111,10 +111,10 @@ class Menu {
 			$lo_item->setChildren($entries);
 		}
 		else {
-			$lo_subMenu->insertEntriesAfter($entries);
+			$lo_subMenu->insertEntriesAfter($entries, null, false);
 		}
 
-		if ($determineVisibility) {
+		if ($determineVisibility && $this->identity) {
 			//Only after all elements are updated, the visibility can be calculated
 			$this->determineVisibility();
 		}
@@ -192,7 +192,7 @@ class Menu {
 		if (!$identifier) {
 			$this->items = $lo_newMenu->getItems() + $this->getItems();
 
-			if ($determineVisibility) {
+			if ($determineVisibility && $this->identity) {
 				//Only after all elements are updated, the visibility can be calculated
 				$this->determineVisibility();
 			}
@@ -219,7 +219,7 @@ class Menu {
 				}
 			}
 
-			if ($determineVisibility) {
+			if ($determineVisibility && $this->identity) {
 				//Only after all elements are updated, the visibility can be calculated
 				$this->determineVisibility();
 			}
@@ -239,7 +239,7 @@ class Menu {
 
 		$this->items = array_slice($la_items, 0, $li_count + 1, true) + $lo_newMenu->getItems() + array_slice($la_items, $li_count, null, true);
 
-		if ($determineVisibility) {
+		if ($determineVisibility && $this->identity) {
 			//Only after all elements are updated, the visibility can be calculated
 			$this->determineVisibility();
 		}
