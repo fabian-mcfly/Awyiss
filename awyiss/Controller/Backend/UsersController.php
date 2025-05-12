@@ -209,7 +209,7 @@ class UsersController extends Controller {
 
 				if ($lo_user instanceof User) {
 					//Track lastLogin and reset the failed login attempts
-					$lo_user->set([
+					$lo_user->patch([
 						'failedAttempts' => 0,
 						'lastLogin' => DateTime::now(),
 					], ['guard' => false]);
