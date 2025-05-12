@@ -64,8 +64,6 @@ class MediaElementsCell extends Cell {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->fetchTable($entity->getSource());
 		if (!$lo_table->hasBehavior('MediaElementAssignment') || !$lo_identity->scopeIsAccessible('media', [], 'read')) {
-			$this->viewBuilder()->setTemplate('element_disabled');
-
 			return;
 		}
 
@@ -90,8 +88,6 @@ class MediaElementsCell extends Cell {
 		$lo_assignedElements = $lo_assignedElements->compile();
 
 		if (!$lo_assignedElements->count()) {
-			$this->viewBuilder()->setTemplate('element_disabled');
-
 			return;
 		}
 
@@ -139,7 +135,6 @@ class MediaElementsCell extends Cell {
 		$la_assignedElements = $entity->mediaElementAssignments ?? false;
 
 		if ($la_assignedElements === false) {
-			$this->viewBuilder()->setTemplate('element_assignments_disabled');
 			return;
 		}
 
@@ -179,7 +174,7 @@ class MediaElementsCell extends Cell {
 
 	/**
 	 * Find all assigned elements to related entities
-	 * Find all belongsTo associations of the table
+	 * in belongsTo associations
 	 *
 	 * @param \Awyiss\Model\Table $table
 	 * @param \Cake\Datasource\EntityInterface $entity

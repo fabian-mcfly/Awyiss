@@ -127,7 +127,7 @@ class MediaElementsCellTest extends TestCase {
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/MediaElements', [$entity]);
+		$output = trim((string)$this->view->cell('Backend/MediaElements', [$entity]));
 
 		$this->assertSame('', $output);
 	}
@@ -147,7 +147,7 @@ class MediaElementsCellTest extends TestCase {
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/MediaElements', [$entity]);
+		$output = trim((string)$this->view->cell('Backend/MediaElements', [$entity]));
 
 		if ($type === 'multi') {
 			$this->assertStringContainsString('<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-MultiFile', $output);
@@ -179,7 +179,7 @@ class MediaElementsCellTest extends TestCase {
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/MediaElements', [$entity]);
+		$output = trim((string)$this->view->cell('Backend/MediaElements', [$entity]));
 
 		$this->assertSame('', $output);
 	}
@@ -251,7 +251,7 @@ class MediaElementsCellTest extends TestCase {
 	public function testElementAssignments(Entity $entity, bool $assignmentsAvailable) {
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/MediaElements::elementAssignments', [$entity]);
+		$output = trim((string)$this->view->cell('Backend/MediaElements::elementAssignments', [$entity]));
 
 		if ($assignmentsAvailable) {
 			$this->assertStringContainsString('<fieldset class="Fieldset-MediaElementAssignments">', $output);

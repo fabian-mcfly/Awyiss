@@ -18,61 +18,63 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{% set assignedElements = combine(assignedElements|column('media_element_id'), assignedElements) %}
+{% set assignedElements = assignedElements ? combine(assignedElements|column('media_element_id'), assignedElements) : [] %}
 
-<fieldset class="Fieldset-MediaElementAssignments">
-	{% block formControlMediaElements %}
-		{% set assignedElementIds = assignedElements|column('media_element_id') %}
-		{% set elementCounter = 0 %}
-		{% set fieldsetElements = {} %}
+{% if availableElements %}
+	<fieldset class="Fieldset-MediaElementAssignments">
+		{% block formControlMediaElements %}
+			{% set assignedElementIds = assignedElements|column('media_element_id') %}
+			{% set elementCounter = 0 %}
+			{% set fieldsetElements = {} %}
 
-		<fieldset class="Fieldset-MediaElements-Available Collapsible">
-			<legend>{{ __('media_elements_available') }}</legend>
-			<ul class="List MediaElements-List SortableList">
-				{% for availableElement in availableElements %}
-					{% if availableElement.id not in assignedElementIds %}
-						<li class="Item MediaElement">
-							<span class="Title">
-								{{ FormHelper.checkbox('media_element_assignments[' ~ loop.index0 ~ '][media_element_id]', {
-									checked: false,
-									hiddenField: false,
-									id: 'MediaElement-Element-' ~ availableElement.identifier|camelize,
-									value: availableElement.id,
-								}) }}
+			<fieldset class="Fieldset-MediaElements-Available Collapsible">
+				<legend>{{ __('media_elements_available') }}</legend>
+				<ul class="List MediaElements-List SortableList">
+					{% for availableElement in availableElements %}
+						{% if availableElement.id not in assignedElementIds %}
+							<li class="Item MediaElement">
+								<span class="Title">
+									{{ FormHelper.checkbox('media_element_assignments[' ~ loop.index0 ~ '][media_element_id]', {
+										checked: false,
+										hiddenField: false,
+										id: 'MediaElement-Element-' ~ availableElement.identifier|camelize,
+										value: availableElement.id,
+									}) }}
 
-								{{ availableElement.label }}
-							</span>
-						</li>
-					{% endif %}
-				{% endfor %}
-			</ul>
-		</fieldset>
+									{{ availableElement.label }}
+								</span>
+							</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</fieldset>
 
-		<fieldset class="Fieldset-MediaElements-Assigned Collapsible">
-			<legend>{{ __('media_elements_assigned') }}</legend>
+			<fieldset class="Fieldset-MediaElements-Assigned Collapsible">
+				<legend>{{ __('media_elements_assigned') }}</legend>
 
-			<ul class="List MediaElements-List SortableList">
-				{% for availableElement in availableElements %}
-					{% if availableElement.id in assignedElementIds %}
-						{% set assignedElement = assignedElements[ availableElement.id ] %}
-						<li class="Item MediaElement">
-							<span class="Title">
-								{{ FormHelper.checkbox('media_element_assignments[' ~ loop.index0 ~ '][media_element_id]', {
-									checked: true,
-									id: 'MediaElement-Element-' ~ availableElement.identifier|camelize,
-									value: availableElement.id,
-								}) }}
+				<ul class="List MediaElements-List SortableList">
+					{% for availableElement in availableElements %}
+						{% if availableElement.id in assignedElementIds %}
+							{% set assignedElement = assignedElements[ availableElement.id ] %}
+							<li class="Item MediaElement">
+								<span class="Title">
+									{{ FormHelper.checkbox('media_element_assignments[' ~ loop.index0 ~ '][media_element_id]', {
+										checked: true,
+										id: 'MediaElement-Element-' ~ availableElement.identifier|camelize,
+										value: availableElement.id,
+									}) }}
 
-								{{ FormHelper.hidden('media_element_assignments[' ~ loop.index0 ~ '][id]', {
-									value: assignedElement.id,
-								}) }}
+									{{ FormHelper.hidden('media_element_assignments[' ~ loop.index0 ~ '][id]', {
+										value: assignedElement.id,
+									}) }}
 
-								{{ availableElement.label }}
-							</span>
-						</li>
-					{% endif %}
-				{% endfor %}
-			</ul>
-		</fieldset>
-	{% endblock %}
-</fieldset>
+									{{ availableElement.label }}
+								</span>
+							</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</fieldset>
+		{% endblock %}
+	</fieldset>
+{% endif %}
