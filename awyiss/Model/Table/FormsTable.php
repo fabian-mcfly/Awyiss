@@ -10,6 +10,7 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
+use Cake\Validation\Validation;
 use Cake\Validation\Validator;
 
 
@@ -155,6 +156,7 @@ class FormsTable extends Table {
 		});
 		$validator->add('owner_email', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'email' => ['rule' => 'email'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -165,8 +167,36 @@ class FormsTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('user_email', null, function (array $context): bool {
+			return !empty($context['data']['send_email']) || !empty($context['data']['send_confirmation_email']);
+		});
 		$validator->add('user_email', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'email' => ['rule' => function (string $value): bool {
+				/**
+				 * String must be a valid email address or a placeholder like:
+				 * - `$identifier`
+				 * * - `{{$identifier}}`
+				 * * - `{{$identifier|Alternative Text}}`
+				 * * - `{{$identifier1 $identifier 2|Alternative Text}}`
+				 */
+				if (Validation::email($value)) {
+					return true;
+				}
+
+				if (
+					preg_match('/^\{\{(?<identifiers>[^\|\}]*?)(?:\|(?<alternative>[^\}]*?))?\}\}$/', $value, $la_matches) ||
+					preg_match('/^(\$(?<identifier>[A-Za-z0-9_]+))$/', $value, $la_matches)
+				) {
+					if (!empty($la_matches['alternative'])) {
+						return Validation::email($la_matches['alternative']);
+					}
+
+					return true;
+				}
+
+				return false;
+			}],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -179,6 +209,19 @@ class FormsTable extends Table {
 
 		$validator->add('cc', [
 			'isArray' => ['rule' => 'isArray'],
+			'email' => ['rule' => function (array $value): bool {
+				foreach ($value as $la_cc) {
+					if (
+						empty($la_cc['email']) ||
+						!is_string($la_cc['email']) ||
+						!Validation::email($la_cc['email'])
+					) {
+						return false;
+					}
+				}
+
+				return true;
+			}],
 			'maxLengthBytes' => [
 				'rule' => function (array $value): bool {
 					return strlen(json_encode($value)) <= 65535;
@@ -189,6 +232,19 @@ class FormsTable extends Table {
 
 		$validator->add('bcc', [
 			'isArray' => ['rule' => 'isArray'],
+			'email' => ['rule' => function (array $value): bool {
+				foreach ($value as $la_bcc) {
+					if (
+						empty($la_bcc['email']) ||
+						!is_string($la_bcc['email']) ||
+						!Validation::email($la_bcc['email'])
+					) {
+						return false;
+					}
+				}
+
+				return true;
+			}],
 			'maxLengthBytes' => [
 				'rule' => function (array $value): bool {
 					return strlen(json_encode($value)) <= 65535;
@@ -213,15 +269,6 @@ class FormsTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
-
-
-		/*$validator->notEmptyString('salutation', null, function (array $context): bool {
-			return !empty($context['data']['send_email']);
-		});
-		$validator->add('salutation', [
-			'isScalar' => ['rule' => 'isScalar'],
-			'maxLength' => ['rule' => ['maxLength', 255]],
-		]);*/
 
 
 		$validator->notEmptyString('salutation_confirmation', null, function (array $context): bool {

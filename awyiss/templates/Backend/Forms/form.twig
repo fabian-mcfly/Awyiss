@@ -1,5 +1,5 @@
 {#
-@var form Awyiss\Model\Entity\Form
+@var form \Awyiss\Model\Entity\Form
 @var emailTemplates \Awyiss\Model\Entity\EmailTemplate[]
 @var formConditionalRecipientTypes array
 @var formConditionalRecipientOperators array
@@ -92,8 +92,8 @@
 										<fieldset class="EmailDetails Grid-12">
 											{% block formControlCc %}
 												<div
-														class="FormInput FormInputType-List FormInputName-Cc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}"
-														data-list-item-remove="{{ __('list_item_remove') }}">
+													class="FormInput FormInputType-List FormInputName-Cc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}"
+													data-list-item-remove="{{ __('list_item_remove') }}">
 													<label class="Label">{{ __('cc') }}</label>
 
 													{% set counter = 0 %}
@@ -120,6 +120,14 @@
 															label: __('cc_name'),
 														}) }}
 													</div>
+
+													{% if form.error('cc') %}
+														{% for error in form.error('cc') %}
+															<div class="Error">
+																{{ error }}
+															</div>
+														{% endfor %}
+													{% endif %}
 												</div>
 											{% endblock %}
 
@@ -154,6 +162,14 @@
 															label: __('bcc_name'),
 														}) }}
 													</div>
+
+													{% if form.error('bcc') %}
+														{% for error in form.error('bcc') %}
+															<div class="Error">
+																{{ error }}
+															</div>
+														{% endfor %}
+													{% endif %}
 												</div>
 											{% endblock %}
 

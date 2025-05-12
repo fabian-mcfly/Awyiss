@@ -226,7 +226,7 @@ class FormsController extends Controller {
 
 			$la_options[] = [
 				'email' => $lx_value['email'],
-				'name' => $lx_value['name'],
+				'name' => $lx_value['name'] ?? '',
 			];
 		}
 

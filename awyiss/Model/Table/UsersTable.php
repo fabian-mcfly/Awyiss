@@ -134,6 +134,7 @@ class UsersTable extends Table {
 
 		$validator->add('email', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'email' => ['rule' => 'email'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
