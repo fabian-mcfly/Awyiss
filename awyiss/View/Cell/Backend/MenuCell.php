@@ -94,25 +94,27 @@ class MenuCell extends Cell {
 			/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
 			$ls_className = App::className('BackendMenu', 'Utility/Menu');
 
-			$lo_menu = new $ls_className($lo_identity);
-			$la_menuData = $lo_menu->getDynamicMenu();
+			$lo_menu = new $ls_className();
+			$lo_menu = $lo_menu->getDynamicMenu();
 
 			// Cache the menu data and the time it was cached
 			$lo_session->write($ls_sessionIdentifier, json_encode([
-				'menuData' => serialize($la_menuData),
+				'menuData' => serialize($lo_menu),
 				'time' => new DateTime(),
 			]));
 		}
 		else {
 			// If the menu data is in the session and is not outdated, use the cached menu data
-			$la_menuData = unserialize($la_menuData['menuData']);
+			$lo_menu = unserialize($la_menuData['menuData']);
 		}
+
+		$lo_menu->setIdentity($lo_identity);
 
 		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_className */
 		$ls_className = App::className('MenuRenderer', 'Utility/Menu');
 
 		// Create a new menu renderer with the menu data
-		$lo_renderer = new $ls_className($la_menuData, $this->rendererOptions);
+		$lo_renderer = new $ls_className($lo_menu, $this->rendererOptions);
 
 		// Set the current route in the menu renderer
 		$ls_url = '/backend/' . $this->request->getParam('lang') . '/';
