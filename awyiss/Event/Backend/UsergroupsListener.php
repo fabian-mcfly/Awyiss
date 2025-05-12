@@ -48,6 +48,7 @@ class UsergroupsListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Usergroup $entity
 	 * @return void
 	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function afterSave(Event $event, Usergroup $entity): void {
 		$lo_usersTable = $this->fetchTable('Users');
@@ -59,21 +60,25 @@ class UsergroupsListener implements EventListenerInterface {
 
 		$lo_users = $lo_query->all();
 
+		/** @var \Awyiss\Model\Entity\User $lo_currentUser */
+		$lo_currentUser = $this->getIdentity();
+
 		if (!$lo_users->count()) {
+			$lo_currentUser->unset('usergroups');
+			$lo_currentUser->unsetPermissionCollection();
+
 			//No records found? The item is alone in its scope.
 			return;
 		}
 
-		/** @var \Awyiss\Model\Entity\User $lo_currentUser */
-		$lo_currentUser = $this->getIdentity();
-
 		$lo_now = DateTime::now();
 		//Decrease the system order of all records
-		$lo_users->each(function (User $user) use ($lo_now, $lo_currentUser): void {
+		$lo_users = $lo_users->compile()->each(function (User $user) use ($entity, $lo_now, $lo_currentUser): void {
 			$user->changedOn = $lo_now;
 
 			if ($user->id === $lo_currentUser->id) {
-				$lo_currentUser->usergroups = null;
+				$lo_currentUser->unset('usergroups');
+				$lo_currentUser->unsetPermissionCollection();
 			}
 		});
 
