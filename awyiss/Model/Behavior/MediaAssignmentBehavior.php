@@ -418,9 +418,25 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			unset($entity->mediaAssignments);
 		}
 
+		/**
+		 * Make sure media assignments in the wrong format
+		 * are removed from the entity.
+		 *
+		 * This happens when no media element was assigned but
+		 * a media assignment is part of the entity/patched data.
+		 */
+		$la_mediaAssignments = $entity->get('mediaAssignments') ?? [];
+		foreach ($la_mediaAssignments as $lx_key => $lo_mediaAssignment) {
+			if (!is_null($lx_key) || !$lo_mediaAssignment instanceof MediaAssignment) {
+				unset($la_mediaAssignments[$lx_key]);
+			}
+		}
+
+		$entity->set('mediaAssignments', $la_mediaAssignments);
+
 		if (($options['isCopy'] ?? false) === true) {
 			// If the entity is a copy, we need to set the media assignments as new
-			foreach (($entity->get('mediaAssignments') ?? []) as $lo_mediaAssignment) {
+			foreach ($la_mediaAssignments as $lo_mediaAssignment) {
 				if (!$lo_mediaAssignment instanceof MediaAssignment) {
 					continue;
 				}
