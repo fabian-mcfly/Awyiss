@@ -82,9 +82,17 @@ class PageRolesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, PageRole $entity): void {
-		$this->bakePageRoleEnum();
+		if (
+			$entity->isNew() ||
+			(
+				$entity->hasOriginal('identifier') &&
+				$entity->get('identifier') !== $entity->getOriginal('identifier')
+			)
+		) {
+			$this->bakePageRoleEnum();
 
-		$this->bakePageRoleModel($entity);
+			$this->bakePageRoleModel($entity);
+		}
 	}
 
 
@@ -225,7 +233,7 @@ class PageRolesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	private function bakePageRoleModel(PageRole $entity): void {
-		if ($entity->identifier === 'page' || !$entity->isNew()) {
+		if ($entity->identifier === 'page') {
 			return;
 		}
 

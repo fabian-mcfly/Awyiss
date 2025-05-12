@@ -36,7 +36,10 @@
 							{% endblock %}
 
 							{% block formControlIdentifier %}
-								{{ FormHelper.control('identifier', {'data-autofill-from': 'title'}) }}
+								{{ FormHelper.control('identifier', {
+									readonly: pageRole.isNew() ? false : true,
+									'data-autofill-from': 'title',
+								}) }}
 							{% endblock %}
 
 							{% block fieldsetGeneralAttributes %}
@@ -86,7 +89,10 @@
 
 						{% block fieldsetPresentationInner %}
 							{% block formControlActive %}
-								{{ FormHelper.control('active', {columnSpan: 6}) }}
+								{{ FormHelper.control('active', {
+									columnSpan: 6,
+									disabled: pageRole.identifier == 'page',
+								}) }}
 							{% endblock %}
 
 							{% block formControlIncludeInLinklist %}
