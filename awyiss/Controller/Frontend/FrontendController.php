@@ -657,10 +657,11 @@ class FrontendController extends AppController {
 			return;
 		}
 
-		$lb_contentsEditable = $lo_identity->get('permissionCollection')->scopeIsAccessible($page->pageRoleId->name, [], 'contents');
-		$lb_formElementsEditable = $lo_identity->get('permissionCollection')->scopeIsAccessible('Forms', [], 'update');
-		$lb_menuEntriesEditable = $lo_identity->get('permissionCollection')->scopeIsAccessible('Menus', [], 'read');
-		$lb_widgetsEditable = $lo_identity->get('permissionCollection')->scopeIsAccessible('Widgets', [], 'update');
+		$lo_permissionCollection = $lo_identity->getPermissionCollection();
+		$lb_contentsEditable = $lo_permissionCollection->scopeIsAccessible($page->pageRoleId->name, [], 'contents');
+		$lb_formElementsEditable = $lo_permissionCollection->scopeIsAccessible('Forms', [], 'update');
+		$lb_menuEntriesEditable = $lo_permissionCollection->scopeIsAccessible('Menus', [], 'read');
+		$lb_widgetsEditable = $lo_permissionCollection->scopeIsAccessible('Widgets', [], 'update');
 
 		if (
 			!$lb_contentsEditable &&
