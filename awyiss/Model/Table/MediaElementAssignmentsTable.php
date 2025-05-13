@@ -33,10 +33,10 @@ class MediaElementAssignmentsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->hasMany('MediaAssignments', [
-			'bindingKey' => 'media_element_id',
+			'bindingKey' => ['media_element_id', 'scope'],
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'media_element_id',
+			'foreignKey' => ['media_element_id', 'scope'],
 			'saveStrategy' => 'replace',
 		]);
 
