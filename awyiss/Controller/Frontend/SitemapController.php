@@ -31,7 +31,6 @@ class SitemapController extends AppController {
 			->where([
 				'active' => true,
 				'parents_active' => true,
-				'robots_index' => true,
 			])
 			->contain([
 				'Contents' => function (SelectQuery $query) {
@@ -63,6 +62,11 @@ class SitemapController extends AppController {
 		$la_urls = [];
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
 		foreach ($lo_pages as $lo_page) {
+			// Skip pages that are not indexable
+			if (!$lo_page->robotsIndex) {
+				continue;
+			}
+
 			$lo_lastMod = $lo_page->changedOn ?? $lo_page->createdOn;
 
 			if (isset($lo_page->contents[0])) {
