@@ -241,52 +241,52 @@ class Awyiss extends BaseApplication {
 
 	/**
 	 * @inheritDoc
-	 * @param RouteBuilder $routes A route builder to add routes into.
-	 * @return void
 	 */
 	public function routes(RouteBuilder $routes): void {
 		// Only load routes if the router is empty
-		if (!Router::routes()) {
-			/**
-			 * Load the general routes
-			 * - for the environment
-			 * - for the custom_dir
-			 * - for Awyiss
-			 */
-			if (defined('CUSTOM_CONFIG')) {
-				$ls_file = ENV_CUSTOM_CONFIG . 'routes.php';
-				if (is_file($ls_file)) {
-					require_once $ls_file;
-				}
-
-				$ls_file = CUSTOM_CONFIG . 'routes.php';
-				if (is_file($ls_file)) {
-					require_once $ls_file;
-				}
-			}
-
-			require $this->configDir . 'routes.php';
-
-			/**
-			 * Load the backend-related routes
-			 * - for the environment
-			 * - for the custom_dir
-			 * - for Awyiss
-			 */
-			if (defined('CUSTOM_CONFIG')) {
-				$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
-				if (is_file($ls_file)) {
-					require_once $ls_file;
-				}
-
-				$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
-				if (is_file($ls_file)) {
-					require_once $ls_file;
-				}
-			}
-
-			require $this->configDir . 'routes_backend.php';
+		if (Router::routes()) {
+			return;
 		}
+
+		/**
+		 * Load the general routes
+		 * - for the environment
+		 * - for the custom_dir
+		 * - for Awyiss
+		 */
+		if (defined('CUSTOM_CONFIG')) {
+			$ls_file = ENV_CUSTOM_CONFIG . 'routes.php';
+			if (is_file($ls_file)) {
+				include $ls_file;
+			}
+
+			$ls_file = CUSTOM_CONFIG . 'routes.php';
+			if (is_file($ls_file)) {
+				include $ls_file;
+			}
+		}
+
+		require $this->configDir . 'routes.php';
+
+		/**
+		 * Load the backend-related routes
+		 * - for the environment
+		 * - for the custom_dir
+		 * - for Awyiss
+		 */
+		if (defined('CUSTOM_CONFIG')) {
+			$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
+			if (is_file($ls_file)) {
+				include $ls_file;
+			}
+
+			$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
+			if (is_file($ls_file)) {
+				include $ls_file;
+			}
+		}
+
+		require $this->configDir . 'routes_backend.php';
 	}
 
 
