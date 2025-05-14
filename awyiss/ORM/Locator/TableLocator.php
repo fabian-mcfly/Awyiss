@@ -47,13 +47,23 @@ class TableLocator extends BaseTableLocator {
 
 	/**
 	 * @inheritDoc
-	 * @throws \ReflectionException
 	 */
 	protected function createInstance(string $alias, array $options): BaseTable {
 		EventListenersProvider::loadListener($alias, 'Global');
 
 
 		return parent::createInstance($alias, $options + ['translateLanguage' => $this->getTranslateLanguage()]);
+	}
+
+
+	/**
+	 * Returns an array of all the instances
+	 * created by this locator.
+	 *
+	 * @return array<string, \Cake\ORM\Table>
+	 */
+	public function getInstances(): array {
+		return $this->instances;
 	}
 
 
