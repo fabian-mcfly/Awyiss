@@ -129,6 +129,11 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 		'POST',
 	]);
 
+	/**
+	 * Form and route planner routes always
+	 * include the language shortcode as it is
+	 * the only way to identify the language
+	 */
 	$routeBuilder->connect(
 		'/{lang}/_form/*',
 		['prefix' => 'Frontend', 'controller' => 'Form', 'action' => 'antiSpam'],
@@ -168,33 +173,44 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 		'lang' => '[a-z]{2}',
 	])->setPersist(['lang']);
 
-	$routeBuilder->connect(
-		'/{lang}/{slug}/*',
-		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
-		['_name' => Awyiss::REALM_FRONTEND]
-	)->setPatterns([
-		'lang' => '[a-z]{2}',
-		'slug' => '[^:]{3,}',
-	])->setPersist(['lang', 'slug']);
+	if (Configure::read('Route.includeLanguageShortcode')) {
+		$routeBuilder->connect(
+			'/{lang}/{slug}/*',
+			['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
+			['_name' => Awyiss::REALM_FRONTEND]
+		)->setPatterns([
+			'lang' => '[a-z]{2}',
+			'slug' => '[^:]{3,}',
+		])->setPersist(['lang', 'slug']);
 
-	$routeBuilder->connect(
-		'/{lang}/*',
-		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'incompleteUrl'],
-		['_name' => Awyiss::REALM_FRONTEND . 'LanguageRoot']
-	)->setPatterns([
-		'lang' => '[a-z]{2}',
-	])->setPersist(['lang']);
+		$routeBuilder->connect(
+			'/{lang}/*',
+			['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
+			['_name' => Awyiss::REALM_FRONTEND . 'LanguageRoot']
+		)->setPatterns([
+			'lang' => '[a-z]{2}',
+		])->setPersist(['lang']);
 
-	$routeBuilder->connect(
-		'/{slug}/*',
-		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'incompleteUrl'],
-	)->setPatterns([
-		'slug' => '[^:]{3,}',
-	])->setPersist(['slug']);
+		$routeBuilder->connect(
+			'/{slug}/*',
+			['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
+		)->setPatterns([
+			'slug' => '[^:]{3,}',
+		])->setPersist(['slug']);
+	}
+	else {
+		$routeBuilder->connect(
+			'/{slug}/*',
+			['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
+			['_name' => Awyiss::REALM_FRONTEND]
+		)->setPatterns([
+			'slug' => '[^:]{3,}',
+		])->setPersist(['slug']);
+	}
 
 	$routeBuilder->connect(
 		'/*',
-		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'incompleteUrl'],
+		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
 		['_name' => Awyiss::REALM_FRONTEND . 'Root']
 	);
 });

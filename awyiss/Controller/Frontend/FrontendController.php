@@ -122,28 +122,6 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	public function index(): void {
-		$ls_slug = $this->getRequest()->getParam('slug');
-		$ls_slug = $ls_slug ? rtrim($ls_slug, '/') : null;
-
-		// Find the first page for the current language
-		$lo_page = $this->findPage(
-			$this->getRequest()->getParam('lang'),
-			$ls_slug
-		);
-
-		$this->handlePage($lo_page);
-	}
-
-
-	/**
-	 * Action for incomplete URLs.
-	 * This action is called when the URL does not contain a language or a slug.
-	 *
-	 * @return void
-	 * @throws \Exception
-	 * @noinspection PhpUnused
-	 */
-	public function incompleteUrl(): void {
 		$ls_language = $this->getRequest()->getParam('lang');
 
 		$ls_slug = $this->getRequest()->getParam('slug');
@@ -319,7 +297,13 @@ class FrontendController extends AppController {
 
 		if (!$li_errorCode) {
 			// Redirect to a normalized URL if the current URL does not match the normalized URL
-			$this->redirectIfNotNormalized($lo_page);
+			if (Configure::read('Route.includeLanguageShortcode')) {
+				$this->redirectIfNotNormalized($lo_page);
+			}
+			else {
+				// Redirect to a normalized URL if the current URL does not match the normalized URL
+				$this->redirectIfNotNormalizedNoLanguage($lo_page);
+			}
 		}
 
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
@@ -390,7 +374,8 @@ class FrontendController extends AppController {
 
 
 	/**
-	 * Redirects to a normalized URL if the current URL does not match the normalized URL
+	 * Redirects to a normalized URL if the current URL does not match the normalized URL,
+	 * when the configuration option "includeLanguageShortcode" is set to true.
 	 *
 	 * Normalized URLs without a slug:
 	 * - If the language is the default language, the language is not included in the URL
@@ -411,6 +396,7 @@ class FrontendController extends AppController {
 		$ls_languageShortcode = $this->getRequest()->getParam('lang');
 		$ls_slug = $this->getRequest()->getParam('slug');
 		$la_params = $this->getRequest()->getQueryParams();
+
 		if ($la_params && $ls_slug) {
 			$ls_slug = rtrim($ls_slug, '/') . '/';
 		}
@@ -422,7 +408,11 @@ class FrontendController extends AppController {
 				 * If it is, redirect to the domain without the language.
 				 */
 				if ($ls_languageShortcode === LocaleMiddleware::getDefaultLanguage()->shortcode) {
-					$ls_url = Router::url(['_name' => 'FrontendRoot', ...$this->getRequest()->getQueryParams(), '?' => $this->getRequest()->getParam('?'),], true);
+					$ls_url = Router::url([
+						'_name' => 'FrontendRoot',
+						...$this->getRequest()->getQueryParams(),
+						'?' => $this->getRequest()->getParam('?'),
+					], true);
 
 					throw new RedirectException($ls_url, 301);
 				}
@@ -437,9 +427,8 @@ class FrontendController extends AppController {
 
 					throw new RedirectException($ls_url, 301);
 				}
-				else {
-					return;
-				}
+
+				return;
 			}
 			else {
 				$lo_firstPage = $this->findPage($ls_languageShortcode);
@@ -477,8 +466,7 @@ class FrontendController extends AppController {
 			!str_ends_with($this->getRequest()->getPath(), '/') ||
 			(
 				$ls_testUrl !== $ls_currentUrl &&
-				$ls_currentUrl !== '/' &&
-				$ls_currentUrl !== '//'
+				!in_array($ls_currentUrl, ['', '/', '//'], true)
 			)
 		) {
 			if (!trim($ls_currentUrl, '/')) {
@@ -490,7 +478,7 @@ class FrontendController extends AppController {
 			}
 			else {
 				$ls_realUrl = Router::url([
-					'lang' => $page->languageShortcode,
+					'lang' => Configure::read('Route.includeLanguageShortcode') ? $page->languageShortcode : null,
 					'slug' => $page->slug,
 					'?' => $this->getRequest()->getParam('?'),
 					...$this->getRequest()->getQueryParams(),
@@ -498,6 +486,54 @@ class FrontendController extends AppController {
 			}
 
 			throw new RedirectException($ls_realUrl, 301);
+		}
+	}
+
+
+	/**
+	 * Redirects to a normalized URL if the current URL does not match the normalized URL,
+	 * when the configuration option "includeLanguageShortcode" is set to false.
+	 *
+	 * - If the slug is the first page, the slug is not included in the URL
+	 *
+	 * All URLs end with a slash
+	 *
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function redirectIfNotNormalizedNoLanguage(Page $page): void {
+		$ls_slug = $this->getRequest()->getParam('slug');
+		$la_params = $this->getRequest()->getQueryParams();
+
+		if ($la_params && $ls_slug) {
+			$ls_slug = rtrim($ls_slug, '/') . '/';
+		}
+
+		if (!$ls_slug) {
+			if (!str_ends_with($this->getRequest()->getPath(), '/')) {
+				$ls_url = Router::url([
+					'_name' => 'FrontendRoot',
+					...$this->getRequest()->getQueryParams(),
+					'?' => $this->getRequest()->getParam('?'),
+				], true);
+
+				throw new RedirectException($ls_url, 301);
+			}
+
+			return;
+		}
+
+		$lo_firstPage = $this->findPage();
+
+		if ($lo_firstPage->id === $page->id) {
+			$la_url = [
+				'?' => $this->getRequest()->getParam('?'),
+				...$this->getRequest()->getQueryParams(),
+				'_name' => 'FrontendRoot',
+			];
+
+			throw new RedirectException(Router::url($la_url, true), 301);
 		}
 	}
 
@@ -653,6 +689,7 @@ class FrontendController extends AppController {
 	/**
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	protected function loadFrontendEditor(Page $page): void {
 		if (!Configure::read('Awyiss.System.Frontend.editor')) {

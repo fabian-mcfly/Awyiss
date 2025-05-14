@@ -8,6 +8,7 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Cake\Collection\CollectionInterface;
+use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Text;
 
@@ -51,6 +52,10 @@ use Cake\Utility\Text;
  * @property array<int, int> $addMenuEntry
  */
 class Page extends Entity {
+	/**
+	 * @var string
+	 */
+	protected static bool $includeLanguageShortcode;
 	/**
 	 * @inheritDoc
 	 */
@@ -102,6 +107,18 @@ class Page extends Entity {
 		'active' => true,
 		'addMenuEntry' => true,
 	];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function __construct(array $properties = [], array $options = []) {
+		parent::__construct($properties, $options);
+
+		if (!isset(static::$includeLanguageShortcode)) {
+			static::$includeLanguageShortcode = Configure::read('Route.includeLanguageShortcode');
+		}
+	}
 
 
 	/**
@@ -164,6 +181,10 @@ class Page extends Entity {
 	 * @return string|null
 	 */
 	protected function _getLink(): ?string {
+		if (!static::$includeLanguageShortcode) {
+			return $this->slug;
+		}
+
 		return $this->languageShortcode . '/' . $this->slug;
 	}
 

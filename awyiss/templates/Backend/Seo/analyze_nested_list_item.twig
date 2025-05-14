@@ -47,8 +47,8 @@
 
 						{% block nestedListItemDataSlug %}
 							<li class="DataItem DataItem-Slug">
-								{{ HtmlHelper.link(entity.languageShortcode ~ '/' ~ entity.slug, {
-									lang: entity.languageShortcode,
+								{{ HtmlHelper.link((config.Route.includeLanguageShortcode ? entity.languageShortcode ~ '/' : null) ~ entity.slug, {
+									lang: config.Route.includeLanguageShortcode ? entity.languageShortcode : null,
 									slug: entity.slug,
 									_name: 'Frontend',
 								}, {

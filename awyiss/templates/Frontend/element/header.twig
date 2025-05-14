@@ -19,7 +19,7 @@
 #}
 
 {% set logoLink = baseUrl %}
-{% if languageShortcode != (languages.Frontend|first).shortcode %}
+{% if languageShortcode != (languages.Frontend|first).shortcode and config.Route.includeLanguageShortcode %}
 	{% set logoLink = logoLink ~ languageShortcode ~ '/' %}
 {% endif %}
 

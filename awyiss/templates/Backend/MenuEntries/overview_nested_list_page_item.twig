@@ -24,7 +24,7 @@
 	{{ parent() }}
 	data-collapsed-initial="true"
 	data-title="{{ entity.title }}"
-	data-link="{{ entity.languageShortcode }}/{{ entity.slug }}"
+	data-link="{{ config.Route.includeLanguageShortcode ? entity.languageShortcode ~ '/' : null }}{{ entity.slug }}"
 {% endblock %}
 
 {% block nestedListItemDataDefaultFields %}{% endblock %}

@@ -8,6 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\FrontendView;
 use Awyiss\View\Helper\UrlHelper;
+use Cake\Core\Configure;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\TestSuite\IntegrationTestTrait;
 use ReflectionClass;
@@ -53,8 +54,6 @@ class UrlHelperTest extends TestCase {
 
 		parent::setUp();
 
-		$this->loadRoutes();
-
 		Awyiss::setRealm('Frontend');
 
 		$view = new FrontendView();
@@ -63,10 +62,25 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
+	 * @return array<string, bool>
+	 */
+	public static function configProvider(): array {
+		return [
+			'enabled' => [true],
+			'disabled' => [false],
+		];
+	}
+
+
+	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testBuildUrlWithoutNameUsesSetRealm(): void {
+	public function testBuildUrlWithoutNameUsesSetRealm(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$url = [
 			'_host' => 'cms.de',
 			'_https' => true,
@@ -78,15 +92,25 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/de/testslug/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/de/testslug/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/testslug/', $result);
+		}
 	}
 
 
 	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testBuildUrlWithFrontendName(): void {
+	public function testBuildUrlWithFrontendName(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$url = [
 			'_host' => 'cms.de',
 			'_https' => true,
@@ -99,7 +123,13 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/en/test-route/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/en/test-route/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/test-route/', $result);
+		}
 	}
 
 
@@ -109,6 +139,8 @@ class UrlHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testBuildUrlWithFrontendNameWithoutSlugThrowsException(): void {
+		$this->loadRoutes();
+
 		$url = [
 			'_host' => 'cms.de',
 			'_https' => true,
@@ -123,11 +155,15 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testBuildUrlWithFrontendNameAndAdditionalParameter(): void {
+	public function testBuildUrlWithFrontendNameAndAdditionalParameter(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$url = [
 			'_host' => 'cms.de',
 			'_https' => true,
@@ -141,7 +177,13 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/en/test-route/additional-parameter:unused-value/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/en/test-route/additional-parameter:unused-value/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/test-route/additional-parameter:unused-value/', $result);
+		}
 	}
 
 
@@ -150,6 +192,8 @@ class UrlHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithInvalidRoute(): void {
+		$this->loadRoutes();
+
 		$url = ['_name' => 'invalid_route'];
 		$options = ['fullBase' => true, 'escape' => false];
 
@@ -159,10 +203,14 @@ class UrlHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testBuildUrlWithOptionWithParams(): void {
+	public function testBuildUrlWithOptionWithParams(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$view = $this->urlHelper->getView();
 		$request = $view->getRequest()->withParam('parts', [
 			'lang' => 'en',
@@ -190,15 +238,25 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/en/test-route/param1:value1/param2:value2/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/en/test-route/param1:value1/param2:value2/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/test-route/param1:value1/param2:value2/', $result);
+		}
 	}
 
 
 	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testBuildUrlWithOptionWithParamsAll(): void {
+	public function testBuildUrlWithOptionWithParamsAll(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$view = $this->urlHelper->getView();
 		$request = $view->getRequest()->withParam('parts', [
 			'lang' => 'en',
@@ -226,15 +284,25 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/en/test-route/param1:value1/param2:value2/param3:value3/param4:value4/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/en/test-route/param1:value1/param2:value2/param3:value3/param4:value4/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/test-route/param1:value1/param2:value2/param3:value3/param4:value4/', $result);
+		}
 	}
 
 
 	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testBuildUrlWithOptionWithParamsString(): void {
+	public function testBuildUrlWithOptionWithParamsString(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$view = $this->urlHelper->getView();
 		$request = $view->getRequest()->withParam('parts', [
 			'lang' => 'en',
@@ -262,15 +330,25 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/en/test-route/param3:value3/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/en/test-route/param3:value3/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/test-route/param3:value3/', $result);
+		}
 	}
 
 
 	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testBuildUrlWithoutOptionWithParams(): void {
+	public function testBuildUrlWithoutOptionWithParams(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$view = $this->urlHelper->getView();
 		$request = $view->getRequest()->withParam('parts', [
 			'lang' => 'en',
@@ -298,15 +376,25 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/en/test-route/param4:value4/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/en/test-route/param4:value4/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/test-route/param4:value4/', $result);
+		}
 	}
 
 
 	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testBuildUrlWithOptionWithoutParams(): void {
+	public function testBuildUrlWithOptionWithoutParams(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$view = $this->urlHelper->getView();
 		$request = $view->getRequest()->withParam('parts', [
 			'lang' => 'en',
@@ -338,16 +426,26 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/en/test-route/param1:value1/param2:value2/param4:value4/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/en/test-route/param1:value1/param2:value2/param4:value4/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/test-route/param1:value1/param2:value2/param4:value4/', $result);
+		}
 	}
 
 
 	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testBuildUrlWithOptionWithoutParamsString(): void {
+	public function testBuildUrlWithOptionWithoutParamsString(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$view = $this->urlHelper->getView();
 		$request = $view->getRequest()->withParam('parts', [
 			'lang' => 'en',
@@ -379,16 +477,26 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/en/test-route/param1:value1/param2:value2/param4:value4/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/en/test-route/param1:value1/param2:value2/param4:value4/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/test-route/param1:value1/param2:value2/param4:value4/', $result);
+		}
 	}
 
 
 	/**
+	 * @dataProvider configProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testBuildUrlWithOptionWithoutParamsAll(): void {
+	public function testBuildUrlWithOptionWithoutParamsAll(bool $includeLanguageShortcode): void {
+		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
+		$this->loadRoutes();
+
 		$view = $this->urlHelper->getView();
 		$request = $view->getRequest()->withParam('parts', [
 			'lang' => 'en',
@@ -420,6 +528,12 @@ class UrlHelperTest extends TestCase {
 		$result = $this->urlHelper->build($url, $options);
 
 		$this->assertIsString($result);
-		$this->assertSame('https://cms.de/en/test-route/', $result);
+
+		if ($includeLanguageShortcode) {
+			$this->assertSame('https://cms.de/en/test-route/', $result);
+		}
+		else {
+			$this->assertSame('https://cms.de/test-route/', $result);
+		}
 	}
 }

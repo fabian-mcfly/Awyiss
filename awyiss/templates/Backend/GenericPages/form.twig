@@ -67,7 +67,9 @@
 									label: __df(pageRoleName, 'generic_pages', 'slug'),
 									required: false,
 									templateVars: {
-										additionalContent: '<span class="PrePath">' ~ page.languageShortcode ~ '/' ~ (parentRecord.slug ? (parentRecord.slug ~ '/') : '') ~ '</span>',
+										additionalContent: (config.Route.includeLanguageShortcode or parentRecord.slug)
+											? '<span class="PrePath">' ~ (config.Route.includeLanguageShortcode ? page.languageShortcode ~ '/' : null) ~ (parentRecord.slug ? (parentRecord.slug ~ '/') : '') ~ '</span>'
+											: '',
 									},
 									val: page.slug|split('/')|last,
 									'data-autofill-from': 'title',

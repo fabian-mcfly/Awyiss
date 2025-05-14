@@ -45,7 +45,7 @@ class MediaElementsTable extends Table {
 	 */
 	protected array $columnSpans;
 	/**
-	 * @inheritdDc
+	 * @inheritDoc
 	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['internal'],

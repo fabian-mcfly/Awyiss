@@ -39,8 +39,8 @@
 			<td class="TableCell-ForeignKey">
 				{% if entity.page %}
 					{{ entity.page.title }}<br>
-					{{ HtmlHelper.link(entity.page.languageShortcode ~ '/' ~ entity.page.slug, {
-						lang: entity.page.languageShortcode,
+					{{ HtmlHelper.link((config.Route.includeLanguageShortcode ? entity.page.languageShortcode ~ '/' : null) ~ entity.page.slug, {
+						lang: config.Route.includeLanguageShortcode ? entity.page.languageShortcode : null,
 						slug: entity.page.slug,
 						_name: 'Frontend',
 					}, {

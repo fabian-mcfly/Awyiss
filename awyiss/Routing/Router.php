@@ -5,6 +5,7 @@ namespace Awyiss\Routing;
 
 
 use Awyiss\Awyiss;
+use Cake\Core\Configure;
 use Cake\Routing\Router as BaseRouter;
 use Psr\Http\Message\UriInterface;
 
@@ -48,6 +49,15 @@ class Router extends BaseRouter {
 		 */
 		if (($lx_url['_name'] ?? null) === Awyiss::REALM_BACKEND && empty($lx_url['action'])) {
 			$lx_url['action'] = static::getRequest()->getParam('action');
+		}
+
+		/**
+		 * If the route name is given and the realm is the frontend,
+		 * remove the language shortcode from the URL if the config
+		 * `Route.includeLanguageShortcode` is set to false.
+		 */
+		if (($lx_url['_name'] ?? null) === Awyiss::REALM_FRONTEND && !Configure::read('Route.includeLanguageShortcode')) {
+			unset($lx_url['lang']);
 		}
 
 		return parent::url($lx_url, $full);

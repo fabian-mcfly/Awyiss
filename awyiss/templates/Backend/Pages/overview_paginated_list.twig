@@ -40,8 +40,8 @@
 	<td class="TableCell-Title">
 		{{ entity.title }}
 		<br>
-		<span class="Slug">{{ HtmlHelper.link(entity.languageShortcode ~ '/' ~ entity.slug, {
-			lang: entity.languageShortcode,
+		<span class="Slug">{{ HtmlHelper.link((config.Route.includeLanguageShortcode ? entity.languageShortcode ~ '/' : null) ~ entity.slug, {
+			lang: config.Route.includeLanguageShortcode ? entity.languageShortcode : null,
 			slug: entity.slug,
 			_name: 'Frontend',
 		}, {

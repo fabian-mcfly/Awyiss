@@ -9,6 +9,7 @@ use Awyiss\Controller\AppController;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
+use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\XmlView;
@@ -57,6 +58,7 @@ class SitemapController extends AppController {
 		/** @var \Awyiss\Model\Entity\Language $lo_firstLanguage */
 		$lo_firstLanguage = reset($la_languages);
 
+		$lb_includeLanguageShortcode = Configure::read('Route.includeLanguageShortcode');
 		$la_firstPagesOfLanguage = [];
 
 		$la_urls = [];
@@ -74,7 +76,12 @@ class SitemapController extends AppController {
 			}
 
 			if (isset($la_firstPagesOfLanguage[ $lo_page->languageShortcode ])) {
-				$ls_url = Router::url(['lang' => $lo_page->languageShortcode, 'slug' => $lo_page->slug, '_full' => true]);
+				if ($lb_includeLanguageShortcode) {
+					$ls_url = Router::url(['lang' => $lo_page->languageShortcode, 'slug' => $lo_page->slug, '_full' => true]);
+				}
+				else {
+					$ls_url = Router::url(['slug' => $lo_page->slug, '_full' => true]);
+				}
 			}
 			else {
 				$la_firstPagesOfLanguage[ $lo_page->languageShortcode ] = true;
@@ -82,8 +89,11 @@ class SitemapController extends AppController {
 				if ($lo_page->languageShortcode === $lo_firstLanguage->shortcode) {
 					$ls_url = Router::url(['_full' => true, '_name' => 'FrontendRoot']);
 				}
-				else {
+				elseif ($lb_includeLanguageShortcode) {
 					$ls_url = Router::url(['lang' => $lo_page->languageShortcode, '_full' => true, '_name' => 'FrontendLanguageRoot']);
+				}
+				else {
+					$ls_url = Router::url(['slug' => $lo_page->slug, '_full' => true]);
 				}
 			}
 

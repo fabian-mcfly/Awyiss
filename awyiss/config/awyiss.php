@@ -308,6 +308,23 @@ return [
 	],
 
 
+	'Route' => [
+		/**
+		 * If set to true, the route will be generated with the language code,
+		 * e.g. `/en/company/foo:bar`. Slugs are not unique across languages,
+		 * so the language code is required to find the correct route.
+		 *
+		 * If set to false, the route will be generated without the language code,
+		 * e.g. `/company/foo:bar`. Slugs are unique across languages, so the language code
+		 * is not required to find the correct route.
+		 *
+		 * Caution: Changing this option might break existing links or make
+		 * pages unreachable if the same slug exists in different languages.
+		 */
+		'includeLanguageShortcode' => true,
+	],
+
+
 	'Security' => [
 		'salt' => env('SECURITY_SALT', 'dummy-salt'),
 	],

@@ -22,7 +22,6 @@
 {% block nestedListItemAuditInfo %}
 	<div class="Audit-Preview">
 		{{ parent() }}
-
 		{{ HtmlHelper.link(__('preview'), {action: 'preview', id: entity.id}, {class: 'Button Button-Small Button-Subtle Button-Preview'}) }}
 	</div>
 {% endblock %}
@@ -30,13 +29,17 @@
 {% block nestedListItemDataDefaultFields %}
 	<li class="DataItem DataItem-Slug">
 		<span class="Label">{{ __('slug') }}:</span>
-		{{ HtmlHelper.link(entity.languageShortcode ~ '/' ~ entity.slug, {
-			lang: entity.languageShortcode,
-			slug: entity.slug,
-			_name: 'Frontend',
-		}, {
-			target: '_blank',
-		}) }}
+		{{ HtmlHelper.link(
+			(config.Route.includeLanguageShortcode ? entity.languageShortcode ~ '/' : null) ~ entity.slug,
+			{
+				lang: config.Route.includeLanguageShortcode ? entity.languageShortcode : null,
+				slug: entity.slug,
+				_name: 'Frontend',
+			},
+			{
+				target: '_blank',
+			}
+		) }}
 	</li>
 {% endblock %}
 
