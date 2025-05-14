@@ -222,7 +222,16 @@ class AwyissModule {
 			return false;
 		}
 
-		// Get the form data for all elements starting with `settings[` and create a JSON object
+		/**
+		 * Get the form data for all elements starting with `settings[` and create a JSON object.
+		 *
+		 * Manually build the object instead of using FormData because:
+		 *
+		 * - FormData returns the values `as-is`, so checkboxes are not converted to booleans.
+		 * A manual lookup for the input type would be needed.
+		 *
+		 * - FormData does not support nested objects/the array notation. `setting[foo]` would be `settings[foo]` in the object
+		 */
 		const settings = {};
 
 		const formElements = this.dialog.querySelectorAll('input[name^="settings["], select[name^="settings["], textarea[name^="settings["]');
