@@ -427,7 +427,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		 */
 		$la_mediaAssignments = $entity->get('mediaAssignments') ?? [];
 		foreach ($la_mediaAssignments as $lx_key => $lo_mediaAssignment) {
-			if (!is_null($lx_key) || !$lo_mediaAssignment instanceof MediaAssignment) {
+			if (!is_numeric($lx_key) || !$lo_mediaAssignment instanceof MediaAssignment) {
 				unset($la_mediaAssignments[$lx_key]);
 			}
 		}
