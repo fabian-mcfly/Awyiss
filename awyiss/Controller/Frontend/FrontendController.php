@@ -296,6 +296,16 @@ class FrontendController extends AppController {
 		}
 
 		if (!$li_errorCode) {
+			// If the page has a redirect, redirect to the target
+			if ($lo_page->redirectLink) {
+				$ls_url = $lo_page->redirectLink;
+				if (!str_contains($ls_url, '//')) {
+					$ls_url = Router::url($ls_url, true);
+				}
+
+				throw new RedirectException($ls_url, 303);
+			}
+
 			// Redirect to a normalized URL if the current URL does not match the normalized URL
 			if (Configure::read('Route.includeLanguageShortcode')) {
 				$this->redirectIfNotNormalized($lo_page);
