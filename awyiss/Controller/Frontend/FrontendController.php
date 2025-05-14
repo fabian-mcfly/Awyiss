@@ -26,7 +26,7 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
  * Frontend Controller that handles all page requests
  *
  * For every found, active and published page, the controller will call
- * a method with the name of the page role in snake_case.
+ * a method with the name of the page role in camelBacked form.
  *
  * @see \Awyiss\Controller\Frontend\FrontendController::news()
  */
@@ -382,7 +382,7 @@ class FrontendController extends AppController {
 		->setTemplatePath('Frontend/page');
 
 		// Call the page role specific method
-		$ls_methodName = Inflector::underscore($lo_page->pageRoleId->name);
+		$ls_methodName = Inflector::variable($lo_page->pageRoleId->name);
 		if (method_exists($this, $ls_methodName)) {
 			$this->{$ls_methodName}($lo_page);
 		}
