@@ -185,7 +185,7 @@ class PageRolesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'system::bake_page_roles_seed',
+			'reference' => 'page_roles::bake_seed',
 		]);
 	}
 

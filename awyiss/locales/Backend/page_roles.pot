@@ -71,7 +71,7 @@ msgstr "Show in link list"
 msgid "create_enum"
 msgstr "Create Page Role Enum"
 
-msgid "bake_page_roles_seed"
+msgid "bake_seed"
 msgstr "Create database dump of page roles"
 
 msgid "create_page_role_model"
