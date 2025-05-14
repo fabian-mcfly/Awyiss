@@ -246,9 +246,16 @@ class FrontendController extends AppController {
 		$li_errorCode = null;
 		$lo_page = $page;
 
+		$lo_request = $this->getRequest();
+
 		if (!$lo_page) {
 			// Try to find an entry in the slug history
 			$this->historyRedirect(trim($this->getRequest()->getPath(), '/'));
+		}
+
+		if ($lo_page?->language && $lo_page->languageShortcode !== LocaleMiddleware::getLanguage()->shortcode) {
+			$lo_request = $lo_request->withParam('lang', $lo_page->languageShortcode);
+			LocaleMiddleware::useLanguage($lo_page->language);
 		}
 
 		/*
@@ -354,7 +361,7 @@ class FrontendController extends AppController {
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
 
-		$lo_request = $this->getRequest()->withAttribute('currentPage', $lo_page);
+		$lo_request = $lo_request->withAttribute('currentPage', $lo_page);
 
 		if ($li_errorCode) {
 			$lo_response = $this->getResponse()->withStatus($li_errorCode);
@@ -362,6 +369,7 @@ class FrontendController extends AppController {
 		}
 
 		$this->setRequest($lo_request);
+		Router::setRequest($lo_request);
 
 		if ($this->getRequest()->getSession()->read('Auth')) {
 			$this->loadFrontendEditor($lo_page);
