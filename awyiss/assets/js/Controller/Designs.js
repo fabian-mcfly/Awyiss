@@ -67,6 +67,7 @@ export default class DesignsController {
 		fontSelect.dispatchEvent(new Event('input'));
 	}
 
+
 	/**
 	 * Initialize a range input
 	 * @param {HTMLElement} rangeInput
@@ -80,31 +81,91 @@ export default class DesignsController {
 
 		const formInput = rangeInput.closest('.FormInputType-Range');
 		const input = formInput?.querySelector(`input[name="${name}"][type="text"]`);
-
 		if (!input) {
 			return;
 		}
+
+		const unitSelect = formInput.querySelector(`select[name="${name}_unit"]`);
 
 		this.eventHandler.add('input', () => {
 			input.value = rangeInput.value;
 		}, rangeInput);
 
 		this.eventHandler.add('input', () => {
-			input.value = input.value.replace(/,/g, '.');
-			input.value = input.value.replace(/[^0-9.]/g, '');
-			rangeInput.value = input.value;
+			clearTimeout(input.inputTimeout);
+
+			input.inputTimeout = setTimeout(() => {
+				let value = input.value;
+
+				// Remove all non-numeric characters except for the decimal separator
+				value = value.replace(/,/g, '.');
+				value = value.replace(/[^0-9.]/g, '');
+
+				// If the original value has a unit, select it in the unit dropdown (if it exists)
+				if (unitSelect) {
+					const unit = input.value.replace(/[^a-zA-Z]/g, '').toLowerCase();
+					const option = unitSelect.querySelector(`option[value="${unit}"]`);
+					if (option) {
+						unitSelect.value = option.value;
+
+						// Update the range input's attributes
+						this.updateRangeInput(unitSelect, rangeInput);
+					}
+				}
+
+				value = this.normalizeRangeValue(rangeInput, value);
+
+				input.value = value;
+				rangeInput.value = value;
+			}, 500);
 		}, input);
 
-		const unitSelect = formInput.querySelector(`select[name="${name}_unit"]`);
 		if (unitSelect) {
 			this.eventHandler.add('input', () => {
 				this.updateRangeInput(unitSelect, rangeInput);
+
+				let value = rangeInput.value;
+
+				value = this.normalizeRangeValue(rangeInput, value);
+
+				input.value = value;
+				rangeInput.value = value;
 			}, unitSelect);
 
 			// Trigger update
 			this.updateRangeInput(unitSelect, rangeInput);
 		}
 	}
+
+
+	/**
+	 * Normalize a range input value
+	 * @param {HTMLElement} rangeInput
+	 * @param {number | string} value
+	 * @returns {number}
+	 */
+	normalizeRangeValue = (rangeInput, value) => {
+		// Check if the value is in the range of the range input
+		const min = parseFloat(rangeInput.min);
+		const max = parseFloat(rangeInput.max);
+
+		value = Math.max(min, Math.min(max, value));
+
+		// Round the value, according to the range input's step
+		const step = parseFloat(rangeInput.step);
+		if (step > 0) {
+			const decimalPlaces = step.toString().split('.')[1]?.length || 0;
+			value = parseFloat(value).toFixed(decimalPlaces);
+
+			// If the value is a whole number, remove the decimal part
+			if (value.includes('.0')) {
+				value = value.split('.')[0];
+			}
+		}
+
+		return value;
+	}
+
 
 	/**
 	 * Init the save dialog
@@ -121,6 +182,7 @@ export default class DesignsController {
 			saveDialog.close();
 		}, closeButton);
 	}
+
 
 	/**
 	 * Update a range input
