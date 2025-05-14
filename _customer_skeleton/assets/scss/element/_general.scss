@@ -18,12 +18,8 @@ html {
 	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackFallbackMain);
 	font-size:var(--fontSizeMain);
-	@if ($fontStyleMain != 'normal') {
-		font-style:var(--fontStyleMain);
-	}
-	@if ($fontWeightMain != '400') {
-		font-weight:var(--fontWeightMain);
-	}
+	font-style:var(--fontStyleMain);
+	font-weight:var(--fontWeightMain);
 	letter-spacing:-.5px;
 	scrollbar-width:thin;
 	scroll-behavior:smooth;

@@ -2,18 +2,10 @@
 	@if variable-exists(fontNameAlternative) and $fontNameAlternative != '' {
 		//noinspection CssNoGenericFontName
 		font-family:var(--fontStackFallbackAlternative);
-		@if ($fontSizeAlternative != '') {
-			font-size:var(--fontSizeAlternative);
-		}
-		@if ($fontStyleAlternative != 'normal' or $fontStyleMain != 'normal') {
-			font-style:var(--fontStyleAlternative);
-		}
-		@if ($fontWeightAlternative != '400' or $fontWeightMain != '400') {
-			font-weight:var(--fontWeightAlternative);
-		}
-		@if ($lineHeightAlternative != '') {
-			line-height:var(--lineHeightAlternative);
-		}
+		font-size:var(--fontSizeAlternative, var(--fontSizeMain));
+		font-style:var(--fontStyleAlternative, var(--fontStyleMain));
+		font-weight:var(--fontWeightAlternative, var(--fontWeightMain));
+		line-height:var(--lineHeightAlternative, var(--lineHeightMain));
 
 		:where(
 			.wf-active,

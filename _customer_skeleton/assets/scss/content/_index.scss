@@ -1,9 +1,9 @@
 .ContentRow {
 	margin-top:var(--contentRowGap);
-}
 
-:nth-child(1 of .ContentRow) {
-	margin-top:0;
+	&:where(:nth-child(1 of .ContentRow)) {
+		margin-top:0;
+	}
 }
 
 :is(
@@ -61,7 +61,7 @@
 		--textColor:var(--colorBright);
 	}
 
-	&:is(
+	&:where(
 		:nth-child(1 of .ContentElement),
 		:nth-child(1 of .FormElement),
 		:nth-child(1 of .WidgetElement)
