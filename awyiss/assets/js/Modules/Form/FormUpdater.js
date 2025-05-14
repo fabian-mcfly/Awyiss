@@ -140,11 +140,11 @@ export default class FormUpdater {
 		if (!hiddenInput) {
 			hiddenInput = document.createElement('input');
 			hiddenInput.type = 'hidden';
-			hiddenInput.name = 'submit_type';
 			form.appendChild(hiddenInput);
 		}
 
 		const submitter = event.submitter;
+		hiddenInput.name = submitter?.name ?? 'submit_type';
 		hiddenInput.value = submitter?.value ?? '';
 
 		//form.noValidate = false;
