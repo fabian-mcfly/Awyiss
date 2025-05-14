@@ -225,15 +225,19 @@
 }
 
 .Overview-List {
-	padding-top:20px;
+	padding-block:20px;
 
 	@media screen and (width <= 768px) {
-		padding-top:20px;
+		padding-block:20px;
+	}
+
+	@media screen and (width <= 540px) {
+		padding-block:10px;
 	}
 
 	html.Scale-Small & {
 		@media screen and (width > 768px) {
-			padding-top:20px;
+			padding-block:20px;
 		}
 	}
 

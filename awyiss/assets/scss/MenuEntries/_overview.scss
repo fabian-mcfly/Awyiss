@@ -1,4 +1,16 @@
 .MenuEntries.Overview {
+	&:has(.SortableChosen) {
+		.Entries-List {
+			&:not(:has(.ListItem)) {
+				background-color:color-mix(in srgb, var(--colorSuccess) 20%, #FFFFFF);
+
+				html.🌚 & {
+					background-color:var(--colorSemiDark)
+				}
+			}
+		}
+	}
+
 	#Lists {
 		display:grid;
 		align-items:start;

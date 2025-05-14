@@ -15,10 +15,6 @@
 		grid-column:1 / -1;
 
 		&:not(.Collapsed) {
-			&:not(:has(legend)) {
-				padding-top:20px;
-			}
-
 			&:not(:has(.ListItem)) {
 				padding-bottom:40px;
 
