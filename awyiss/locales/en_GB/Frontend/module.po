@@ -29,6 +29,9 @@ msgstr "Offset"
 msgid "categories"
 msgstr "Categories"
 
+msgid "read_more"
+msgstr "Read more"
+
 msgid "no_records"
 msgstr "No records"
 
