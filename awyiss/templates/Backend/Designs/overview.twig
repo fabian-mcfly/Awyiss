@@ -114,7 +114,7 @@
 	{% endblock %}
 
 	{% block previewOverview %}
-		<iframe src="{{ baseUrl }}" id="Preview"></iframe>
+		<iframe src="{{ baseUrl }}" id="Preview" data-allow-google-fonts="{{ config.Design.allowGoogleFonts ? 'true' : 'false' }}"></iframe>
 	{% endblock %}
 
 	{% block formInputReloadForm %}

@@ -51,7 +51,7 @@
 
 	#}
 	{% block designPreviewWebfontLoader %}
-		{% if designPreviewWebfonts is not empty %}
+		{% if designPreviewWebfonts is not empty and config.Design.allowGoogleFonts %}
 			{% set webfontFamilies = '' %}
 			{% for webfont in designPreviewWebfonts %}
 				{% set webfontFamilies = webfontFamilies ~ '|' ~ webfont.name %}

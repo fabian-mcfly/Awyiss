@@ -8,6 +8,15 @@ export default class DesignsController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		const form = document.querySelector('#DesignForm');
+		this.eventHandler.add('input', (event) => {
+			clearTimeout(form.inputTimeout);
+
+			form.inputTimeout = setTimeout(() => {
+				this.handleFormInput(form, event);
+			}, 500);
+		}, form);
+
 		const rangeInputs = document.querySelectorAll('input[type="range"]');
 		rangeInputs.forEach((rangeInput) => {
 			this.initRangeInput(rangeInput);
@@ -23,6 +32,108 @@ export default class DesignsController {
 			this.initSaveDialog(saveDialog);
 		}
 	}
+
+
+	/**
+	 * Handle form input
+	 *
+	 * @param {HTMLFormElement} form
+	 * @param {Event} event
+	 */
+	handleFormInput(form, event) {
+		// Get the complete form data
+		const formData = new FormData(form);
+		const previewFrame = document.querySelector('#Preview');
+		const allowGoogleFonts = previewFrame.dataset.allowGoogleFonts === 'true';
+		const previewDoc = previewFrame.contentDocument;
+		const fontFamilies = [];
+
+		// Convert FormData to a plain object
+		formData.forEach((value, key) => {
+			if (
+				key.includes('[') ||
+				['save_as_copy', 'reload_form'].includes(key) ||
+				key.endsWith('_unit')
+			) {
+				return;
+			}
+
+			// If a key exists with the current name plus '_unit', add the unit to the value
+			const unitKey = key + '_unit';
+			if (formData.has(unitKey)) {
+				const unit = formData.get(unitKey);
+				if (unit) {
+					value += unit;
+				}
+			}
+
+			// Transform the key to camelBack case
+			const property = key.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+
+			if (key.startsWith('font_name_')) {
+				if (!allowGoogleFonts) {
+					return;
+				}
+
+				if (formData.has(`custom[${key}]`) && formData.get(`custom[${key}]`)) {
+					value = formData.get(`custom[${key}]`);
+				}
+				else {
+					// Check if the input for key is a select, if so, get the selected option and its title
+					const fontSelect = form.querySelector(`select[name="${key}"]`);
+					if (fontSelect) {
+						const selectedOption = fontSelect.selectedOptions[0];
+						if (selectedOption) {
+							value = selectedOption.title;
+							fontFamilies.push(value);
+						}
+					}
+				}
+			}
+
+			previewDoc.documentElement.style.setProperty(`--${property}`, value);
+
+			if (key.startsWith('font_name_')) {
+				let fontCategory = key.replace('font_name_', '');
+				fontCategory = fontCategory.charAt(0).toUpperCase() + fontCategory.slice(1);
+				fontCategory = fontCategory.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+
+				const property = `fontStack${fontCategory}`;
+
+				let fallbackKey = key.replace('font_name_', 'font_stack_fallback_');
+				if (formData.has(fallbackKey)) {
+					value += `, ${formData.get(fallbackKey)}`;
+				}
+
+				previewDoc.documentElement.style.setProperty(`--${property}`, value);
+			}
+		});
+
+		if (!allowGoogleFonts) {
+			return;
+		}
+
+		// Get the fonts preview style tag
+		let googleFontsPreviewStyle = previewDoc.getElementById('GoogleFontsPreviewStyle');
+		if (!googleFontsPreviewStyle) {
+			googleFontsPreviewStyle = previewDoc.createElement('link');
+			googleFontsPreviewStyle.id = 'GoogleFontsPreviewStyle';
+			googleFontsPreviewStyle.rel = 'stylesheet';
+			previewDoc.head.appendChild(googleFontsPreviewStyle);
+		}
+
+		// Get the fonts preview style href
+		let googleFontsPreviewStyleHref = '';
+		if (fontFamilies.length) {
+			googleFontsPreviewStyleHref = 'https://fonts.googleapis.com/css2?family=' + fontFamilies.join('&family=') + '&display=swap';
+		}
+
+		// Update the href of the fonts preview style tag
+		if (googleFontsPreviewStyle.href !== googleFontsPreviewStyleHref) {
+			googleFontsPreviewStyle.href = googleFontsPreviewStyleHref;
+		}
+	}
+
 
 	/**
 	 * Initialize a font input
@@ -186,8 +297,8 @@ export default class DesignsController {
 
 	/**
 	 * Update a range input
-	 * @param unitSelect
-	 * @param rangeInput
+	 * @param {HTMLSelectElement} unitSelect
+	 * @param {HTMLInputElement} rangeInput
 	 */
 	updateRangeInput(unitSelect, rangeInput) {
 		const selectedUnit = unitSelect.value;

@@ -2,9 +2,13 @@
 	> form {
 		grid-column:1 / -1;
 
-		@media screen and (width > 1920px) {
+		@media screen and (width > 1280px) {
 			display:grid;
 			gap:0 var(--lineHeightMain);
+			grid-template-columns:1fr 2fr;
+		}
+
+		@media screen and (width > 1920px) {
 			grid-template-columns:1fr 1fr;
 		}
 	}
@@ -23,15 +27,15 @@
 		.Fieldsets,
 		#Preview
 	) {
-		container-type:inline-size;
+		container:container / inline-size;
 
-		@media screen and (width > 1920px) {
+		@media screen and (width > 1280px) {
 			position:sticky;
 			top:120px;
 		}
 
 		html.👀 & {
-			@media screen and (width > 1920px) {
+			@media screen and (width > 1280px) {
 				top:40px;
 			}
 		}
@@ -46,12 +50,12 @@
 		background-color:var(--colorBright);
 		align-self:start;
 
-		@media screen and (width > 1920px) {
+		@media screen and (width > 1280px) {
 			height:calc(100dvh - 150px);
 		}
 
 		html.👀 & {
-			@media screen and (width > 1920px) {
+			@media screen and (width > 1280px) {
 				height:calc(100dvh - 70px);
 			}
 		}
@@ -64,21 +68,21 @@
 		grid-template-columns:1fr;
 		align-self:start;
 
-		@media screen and (width > 1920px) {
+		@media screen and (width > 1280px) {
 			margin-bottom:0;
 		}
 	}
 
 	.Overview-Fieldset {
-		@container (width <= 1200px) {
+		@container container (width <= 1200px) {
 			grid-template-columns:repeat(8, 1fr);
 		}
 		
-		@container (width <= 860px) {
+		@container container (width <= 860px) {
 			grid-template-columns:repeat(4, 1fr);
 		}
 
-		@container (width <= 480px) {
+		@container container (width <= 640px) {
 			grid-template-columns:1fr;
 		}
 
@@ -89,7 +93,7 @@
 		}
 
 		&:last-child {
-			@media screen and (width > 1920px) {
+			@media screen and (width > 1280px) {
 				margin-bottom:0;
 			}
 		}
@@ -100,7 +104,7 @@
 		padding-bottom:40px;
 		border-bottom:1px solid rgba(0, 0, 0, .1);
 
-		@container (width <= 900px) {
+		@container container (width <= 900px) {
 			grid-template-columns:1fr;
 		}
 
@@ -114,8 +118,8 @@
 	.FormInputType-Color {
 		grid-column:auto / span 2;
 
-		@container (width <= 480px) {
-			grid-column:auto / -1;
+		@container container (width <= 480px) {
+			grid-column:auto / auto;
 		}
 	}
 
@@ -125,7 +129,7 @@
 	) {
 		grid-column:auto / span 4;
 
-		@container (width <= 480px) {
+		@container container (width <= 480px) {
 			grid-column:auto / -1;
 		}
 
@@ -191,31 +195,33 @@
 	}
 
 	.FormInputType-AdditionalVariables {
-		@container (width <= 1200px) {
+		container-type:inline-size;
+
+		@container container (width <= 1200px) {
 			grid-template-columns:repeat(8, 1fr);
 		}
 
-		@container (width <= 860px) {
+		@container container (width <= 860px) {
 			grid-template-columns:repeat(4, 1fr);
 		}
 
-		@container (width <= 480px) {
-			grid-template-columns:1fr;
+		@container container (width <= 480px) {
+			grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
 		}
 
 		> .FormInput {
 			grid-column:auto / span 6;
 
-			@container (width <= 1200px) {
+			@container container (width <= 1200px) {
 				grid-column:auto / span 4;
 			}
 
-			@container (width <= 860px) {
+			@container container (width <= 860px) {
 				grid-column:auto / span 2;
 			}
 
-			@container (width <= 480px) {
-				grid-column:1 / -1;
+			@container container (width <= 480px) {
+				grid-column:auto / auto;
 			}
 
 			&[class*="FormInputName-FontStack"] {

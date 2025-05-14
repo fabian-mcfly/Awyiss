@@ -134,6 +134,17 @@ return [
 		 */
 		'allowCompile' => true,
 		/**
+		 * If set to true, the preview mode and the live preview in the backend
+		 * will load the selected font files using Google Fonts.
+		 *
+		 * If set to false, no fonts will be loaded except those defined
+		 * in your webfonts.scss file.
+		 *
+		 * Disable this if you need the preview mode and/or the backend preview
+		 * to be GDPR-compliant.
+		 */
+		'allowGoogleFonts' => true,
+		/**
 		 * If set to true, the SCSS files will be compiled automatically
 		 * if the environment is neither 'production', 'prod' nor 'live'.
 		 */
