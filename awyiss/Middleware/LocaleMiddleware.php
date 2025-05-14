@@ -93,35 +93,54 @@ class LocaleMiddleware implements MiddlewareInterface {
 		$lo_language = static::getLanguage(static::getRealm());
 
 		if ($lo_language) {
-			ini_set('intl.default_locale', $lo_language->locale);
-			I18n::setLocale($lo_language->locale);
-			setlocale(LC_ALL, $lo_language->locale . '.utf8');
-
-			if ($lo_language->dateFormat && $lo_language->timeFormat) {
-				DateTime::$niceFormat = $lo_language->dateFormat . ' ' . $lo_language->timeFormat;
-			}
-
-			$ls_timezone = Configure::read('Awyiss.System.' . static::getRealm() . '.timezone');
-			if ($ls_timezone !== 'auto') {
-				TypeFactory::build('datetime')->setUserTimezone($ls_timezone);
-			}
-			else {
-				TypeFactory::build('datetime')->setUserTimezone($lo_language->timezone);
-			}
-
-			$lo_tableLocator = FactoryLocator::get('Table');
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_tableLocator->setTranslateLanguage($lo_language);
-
-			// Add the TranslateBehavior to the LanguagesTable as it's not set on instantiation
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_tableLocator->get('Languages')->addTranslateBehavior($lo_language);
+			static::useLanguage($lo_language);
 		}
 
 		$lo_request = $request->withAttribute('locale', $this);
 
 
 		return $handler->handle($lo_request);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Language $language
+	 * @return void
+	 */
+	public static function useLanguage(Language $language): void {
+		ini_set('intl.default_locale', $language->locale);
+		I18n::setLocale($language->locale);
+		setlocale(LC_ALL, $language->locale . '.utf8');
+
+		if ($language->dateFormat && $language->timeFormat) {
+			DateTime::$niceFormat = $language->dateFormat . ' ' . $language->timeFormat;
+		}
+
+		$ls_timezone = Configure::read('Awyiss.System.' . static::getRealm() . '.timezone');
+		if ($ls_timezone !== 'auto') {
+			TypeFactory::build('datetime')->setUserTimezone($ls_timezone);
+		}
+		else {
+			TypeFactory::build('datetime')->setUserTimezone($language->timezone);
+		}
+
+		/** @var \Awyiss\ORM\Locator\TableLocator $lo_tableLocator */
+		$lo_tableLocator = FactoryLocator::get('Table');
+		$lo_tableLocator->setTranslateLanguage($language);
+
+		// Check all loaded instances of the TableLocator
+		// and set the TranslateBehavior's locale
+		foreach ($lo_tableLocator->getInstances() as $lo_table) {
+			if ($lo_table->hasBehavior('Translate')) {
+				$lo_table->getBehavior('Translate')->setLocale($language->shortcode);
+			}
+		}
+
+		// Add the TranslateBehavior to the LanguagesTable as it's not set on instantiation
+		$lo_languagesTable = $lo_tableLocator->get('Languages');
+		if (!$lo_languagesTable->hasBehavior('Translate')) {
+			$lo_languagesTable->addTranslateBehavior($language);
+		}
 	}
 
 
