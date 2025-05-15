@@ -19,9 +19,9 @@ export default class Loader {
 	isModuleLoading = false;
 	/**
 	 * The link list for the TinyMCE editor
-	 * @type {Array}
+	 * @type {Object}
 	 */
-	linkList = null;
+	linkList = {};
 	/**
 	 * The selector for the TinyMCE editor
 	 * @type {string}
@@ -53,10 +53,6 @@ export default class Loader {
 		image_dimensions: false,
 		license_key: 'gpl',
 		link_context_toolbar: true,
-		link_list: async(success) => { // called on link dialog open
-			const links = await this.fetchPageLinks();
-			success(links);
-		},
 		link_rel_list: [
 			{title: ' ', value: ''},
 			{title: 'Lightbox', value: 'lightbox'},
@@ -228,6 +224,11 @@ export default class Loader {
 		});
 
 		editor.options.set('file_picker_callback', (callback) => this.filePickerCallback(editor, callback));
+		editor.options.set('link_list', async(success) => {
+			// called on link dialog open
+			const links = await this.fetchPageLinks(editor);
+			success(links);
+		});
 	};
 
 	/**
@@ -478,15 +479,30 @@ export default class Loader {
 
 	/**
 	 * Fetch the page links for the link dialog
+	 *
+	 * @param {tinymce.Editor} editor - The TinyMCE editor instance
 	 * @returns {Object}
 	 */
-	async fetchPageLinks() {
-		if (this.linkList) {
-			return this.linkList;
+	async fetchPageLinks(editor) {
+		let language = languageShortcode;
+		if (
+			editor.targetElm.closest('.TranslatableTexts') ||
+			editor.targetElm.closest('#TranslationDialog')
+		) {
+			/**
+			 * The editor is inside a translatable text or translation dialog.
+			 * The language of the field dictates the language of the link list,
+			 * and can be found inside the [] of the element id.
+			 */
+			language = editor.targetElm.id.match(/\[(.*?)\]/)[1];
+		}
+
+		if (this.linkList[language]) {
+			return this.linkList[language];
 		}
 
 		const response = await fetch(
-			`${baseUrl}backend/${languageShortcode}/pages/link-list/`,
+			`${baseUrl}backend/${language}/pages/link-list/`,
 			{
 				method: 'GET',
 				headers: {
@@ -514,7 +530,7 @@ export default class Loader {
 					};
 				})
 
-				this.linkList = links;
+				this.linkList[language] = links;
 
 				return links;
 			}
@@ -536,7 +552,7 @@ export default class Loader {
 				links.push(pageRole);
 			});
 
-			this.linkList = links;
+			this.linkList[language] = links;
 
 			return links;
 		}
