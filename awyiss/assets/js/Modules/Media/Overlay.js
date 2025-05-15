@@ -477,7 +477,7 @@ export default class Overlay {
 			this.sortable.toggleButtonState(this.sortable.multiSelection.getSelectedItems().length);
 
 			if (mediaFolderId || event.target?.matches('a[href]')) {
-				this.ensureFolderIsVisible(mediaFolderId || event.target?.matches('a[href]'));
+				this.ensureFolderIsVisible(mediaFolderId ? parseInt(mediaFolderId) : event.target);
 			}
 
 			if (
