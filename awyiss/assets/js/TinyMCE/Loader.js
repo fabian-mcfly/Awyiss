@@ -460,7 +460,7 @@ export default class Loader {
 			},
 		});
 
-		const hidden = editor.formElement.querySelector('input[type="hidden"][name="page.hiddenFolderId"]');
+		const hidden = editor.formElement?.querySelector('input[type="hidden"][name="page.hiddenFolderId"], input[type="hidden"][name="media_assignments[1][hidden_folder][media_folder_id]"]');
 		let mediaFolderId = null;
 		if (hidden) {
 			mediaFolderId = hidden.value;
