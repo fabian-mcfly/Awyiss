@@ -29,7 +29,7 @@ export default class Overlay {
 	closeButton;
 	/**
 	 * The overlay element
-	 * @type {HTMLElement}
+	 * @type {HTMLDialogElement}
 	 */
 	element;
 	/**
@@ -149,7 +149,7 @@ export default class Overlay {
 
 		// Bind a click event to the close button
 		window.eventHandler.add('click', () => {
-			this.element.classList.remove('Visible');
+			this.element.close();
 
 			// If the url contains the media hash, remove it by going back to the previous state
 			if (window.location.hash === '#Media') {
@@ -190,13 +190,12 @@ export default class Overlay {
 		}
 
 		// Create a new overlay element
-		const overlayPlaceholder = document.createElement('div');
+		const overlayPlaceholder = document.createElement('dialog');
 		overlayPlaceholder.id = 'MediaOverlay';
+		overlayPlaceholder.classList.add('FetchInProgress');
 		document.body.appendChild(overlayPlaceholder);
 
-		setTimeout(() => {
-			overlayPlaceholder.classList.add('FetchInProgress');
-		}, 100);
+		overlayPlaceholder.showModal();
 
 		let url = `${baseUrl}backend/${languageShortcode}/media/overview/paginate:false/`
 		if (event?.target && event.target.matches('a[href]')) {
@@ -238,7 +237,8 @@ export default class Overlay {
 			this.folderList.dataset.includeHidden = event.ctrlKey || event.metaKey ? 'true' : 'false';
 
 			// Focus the overlay
-			this.element.focus();
+			this.element.showModal();
+			//this.element.focus();
 
 			return html;
 		});
@@ -261,6 +261,10 @@ export default class Overlay {
 		// Bind the click event to the folder list items
 		this.bindFolderListItemClick();
 
+		this.eventHandler.add('cancel', (event) => {
+			event.preventDefault();
+			event.stopPropagation();
+		}, this.element);
 		this.eventHandler.add('click', this.handleMediaItemClick.bind(this), this.mediaList);
 		this.eventHandler.add('dblclick', this.handleMediaItemDoubleClick.bind(this), this.mediaList);
 
@@ -461,7 +465,7 @@ export default class Overlay {
 		}
 		else {
 			// Show the overlay
-			this.element.classList.add('Visible');
+			this.element.showModal();
 
 			// If the opener exists, select the media item in the overlay
 			// noinspection JSUnresolvedReference
@@ -977,8 +981,8 @@ export default class Overlay {
 		}
 		else {
 			// If the media overlay is open, close it
-			if (this.element && this.element.classList.contains('Visible')) {
-				this.element.classList.remove('Visible');
+			if (this.element?.open) {
+				this.element.close();
 				this.closeButton.dispatchEvent(new MouseEvent('click'));
 			}
 		}

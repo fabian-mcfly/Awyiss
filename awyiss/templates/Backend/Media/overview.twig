@@ -141,7 +141,7 @@
 		{% endblock %}
 	{% else %}
 		{% if isAjax %}
-			<div id="MediaOverlay" class="Visible" tabindex="-1">
+			<dialog id="MediaOverlay" tabindex="-1">
 				<div class="ButtonArea">
 					{{ block('overviewButtonAutoOverwritePreferenceInput') }}
 
@@ -254,7 +254,7 @@
 				{% do AuthorizationHelper.resetScope() %}
 
 				<div id="UploadQueue-DropZone">{{ __('dropzone_drop_to_upload') }}</div>
-			</div>
+			</dialog>
 		{% endif %}
 	{% endif %}
 
