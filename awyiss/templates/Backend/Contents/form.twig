@@ -180,4 +180,8 @@
 	{{ element('lock_dialog', {entity: content}) }}
 {% endblock %}
 
+{% if content.page.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId %}
+	<input type="hidden" name="page.hiddenFolderId" value="{{ content.page.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId }}">
+{% endif %}
+
 {{ FormHelper.end() }}

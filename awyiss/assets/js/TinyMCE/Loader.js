@@ -39,7 +39,7 @@ export default class Loader {
 		},
 		fix_list_elements: true,
 		branding: false,
-		file_picker_callback: callback => this.filePickerCallback(callback),
+		//file_picker_callback: callback => this.filePickerCallback(callback),
 		init_instance_callback: editor => this.initInstanceCallback(editor),
 		image_caption: true,
 		image_dimensions: false,
@@ -216,14 +216,12 @@ export default class Loader {
 			editor.targetElm.innerHTML = editor.getContent();
 		});
 
-		editor.on('focus', function () {
-			// noinspection JSUnresolvedReference
-			if (!this.wasFocusedBefore) {
-				this.execCommand('mceVisualChars');
-				this.wasFocusedBefore = true;
-			}
-		}.bind(editor));
-	}
+		editor.once('focus', () => {
+			editor.execCommand('mceVisualChars');
+		});
+
+		editor.options.set('file_picker_callback', (callback) => this.filePickerCallback(editor, callback));
+	};
 
 	/**
 	 * Initialize the settings for the TinyMCE editor
@@ -428,9 +426,11 @@ export default class Loader {
 
 	/**
 	 * Callback for the file picker
+	 *
+	 * @param {tinymce.Editor} editor - The TinyMCE editor instance
 	 * @param {function} callback
 	 */
-	filePickerCallback(callback) {
+	filePickerCallback(editor, callback) {
 		const fileSelection = filepath => {
 			const dialog = document.querySelector('.tox-dialog');
 			const urlInput = dialog?.querySelector('input[type="url"]');
@@ -448,8 +448,15 @@ export default class Loader {
 			},
 		});
 
-		// noinspection JSUnresolvedReference
-		window.mediaOverlay.openOverlay(openEvent)
+		const hidden = editor.formElement.querySelector('input[type="hidden"][name="page.hiddenFolderId"]');
+		let mediaFolderId = null;
+		if (hidden) {
+			mediaFolderId = hidden.value;
+		}
+
+		/** @type {MediaOverlay} */
+		const mediaOverlay = window.mediaOverlay;
+		mediaOverlay.openOverlay(openEvent, mediaFolderId);
 	}
 
 	/**
