@@ -76,7 +76,7 @@ export default class DesignsController {
 				}
 
 				if (formData.has(`custom[${key}]`) && formData.get(`custom[${key}]`)) {
-					value = formData.get(`custom[${key}]`);
+					value = '"' + formData.get(`custom[${key}]`) + '"';
 				}
 				else {
 					// Check if the input for key is a select, if so, get the selected option and its title
@@ -84,8 +84,8 @@ export default class DesignsController {
 					if (fontSelect) {
 						const selectedOption = fontSelect.selectedOptions[0];
 						if (selectedOption) {
-							value = selectedOption.title;
-							fontFamilies.push(value);
+							value = '"' + selectedOption.title + '"';
+							fontFamilies.push(selectedOption.title);
 						}
 					}
 				}
