@@ -78,7 +78,10 @@ export default class PlaceholderHelper {
 		const input = event.target;
 		let applyButton = input.applyButton;
 
-		if (!input.placeholder) {
+		if (
+			!input.placeholder ||
+			input.closest('.jodit-ui-input__wrapper')
+		) {
 			return;
 		}
 
