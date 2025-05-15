@@ -22,7 +22,13 @@ export default class CustomSettings {
 	 */
 	userLanguage;
 
-	constructor(language, userLanguage) {
+	/**
+	 * @param {HTMLElement} element
+	 * @param {string} language
+	 * @param {string} userLanguage
+	 * @param {Object} designVariables
+	 */
+	constructor(element, language, userLanguage, designVariables) {
 
 	}
 

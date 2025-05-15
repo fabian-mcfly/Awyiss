@@ -183,7 +183,7 @@ export default class Loader {
 			return;
 		}
 
-		await this.initSettings();
+		await this.initSettings(element);
 
 		const settings = {...this.settings};
 
@@ -206,9 +206,10 @@ export default class Loader {
 	/**
 	 * Initialize the settings for the Jodit editor
 	 *
+	 * @param {HTMLElement} element
 	 * @returns {Promise<void>}
 	 */
-	async initSettings() {
+	async initSettings(element) {
 		if (this.isModuleLoading || this.settingsSet) {
 			return;
 		}
@@ -222,9 +223,9 @@ export default class Loader {
 			const {default: CustomSettings} = await import('Jodit/CustomSettings');
 
 			if (CustomSettings) {
-				const customSettings = new CustomSettings(language, userLanguage);
-				this.settings = customSettings.getSettings(this.settings);
-				this.styleFormats = customSettings.getStyleFormats(this.styleFormats);
+				const customSettings = new CustomSettings(element, language, userLanguage, designVariables);
+				this.settings = customSettings.getSettings(this.settings, designVariables);
+				this.styleFormats = customSettings.getStyleFormats(this.styleFormats, designVariables);
 			}
 
 			this.settings.controls.classSpan.list = this.styleFormats;

@@ -61,12 +61,12 @@ export default class CustomSettings {
 	userLanguage;
 
 	/**
-	 *
+	 * @param {HTMLElement} element
 	 * @param {string} language
 	 * @param {string} userLanguage
 	 * @param {Object} designVariables
 	 */
-	constructor(language, userLanguage, designVariables) {
+	constructor(element, language, userLanguage, designVariables) {
 		/*
 		 * Insert alternative font at offset 1 in styleFormats[0].items
 		 * if `fontNameAlternative` is set in designVariables and not empty

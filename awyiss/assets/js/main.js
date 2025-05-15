@@ -542,6 +542,7 @@ if (!window.mainJsIsImported) {
 	window.addEventListener('load', initMainOnLoad);
 }
 
+// noinspection JSUnresolvedReference
 console.log(
 	'%cAW%cYISS%cVersion %s "%s"',
 	'padding-left:20px; border-radius:5px 0 0 5px; background-color:#131a21; color:#FFFFFF; font-family:\'2f media\', Bebas Neue, Arial Display, Tahoma, Helvetica, sans-serif; font-size:30px; line-height:45px; text-transform:uppercase;',

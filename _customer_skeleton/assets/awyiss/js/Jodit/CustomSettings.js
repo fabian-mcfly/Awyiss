@@ -27,7 +27,13 @@ export default class CustomSettings {
 	 */
 	userLanguage;
 
-	constructor(language, userLanguage) {
+	/**
+	 * @param {HTMLElement} element
+	 * @param {string} language
+	 * @param {string} userLanguage
+	 * @param {Object} designVariables
+	 */
+	constructor(element, language, userLanguage, designVariables) {
 
 	}
 
@@ -35,9 +41,10 @@ export default class CustomSettings {
 	 * Returns the custom settings, merged with the default settings
 	 *
 	 * @param defaultSettings
+	 * @param {Object} designVariables
 	 * @returns {*}
 	 */
-	getSettings(defaultSettings) {
+	getSettings(defaultSettings, designVariables) {
 		return {...defaultSettings, ...this.settings};
 	}
 
@@ -45,9 +52,10 @@ export default class CustomSettings {
 	 * Returns the custom style formats, merged with the default style formats
 	 *
 	 * @param {Object} defaultStyleFormats
+	 * @param {Object} designVariables
 	 * @returns {Object}
 	 */
-	getStyleFormats(defaultStyleFormats) {
+	getStyleFormats(defaultStyleFormats, designVariables) {
 		return {...defaultStyleFormats, ...this.styleFormats};
 	}
 

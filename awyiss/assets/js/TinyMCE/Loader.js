@@ -1,5 +1,13 @@
 // noinspection JSUnusedGlobalSymbols
 
+
+/**
+ * @typedef {{ [key: string]: string | { [key: string]: string } }} AvailablePlaceholders
+ * @typedef {import('../Modules/Media/Overlay').default} MediaOverlay
+ * @typedef {import('./tinymce/tinymce').default} tinymce
+ */
+
+
 /**
  * TinyMCE Loader class
  */
@@ -90,7 +98,6 @@ export default class Loader {
 		toolbar_sticky_offset: document.documentElement.classList.contains('👀')
 			|| document.body.clientWidth <= 768
 			? 0 : 105,
-		//visualchars_default_state: true,
 	}
 	/**
 	 * If the settings are already set (merged defaults with custom settings)
@@ -209,7 +216,7 @@ export default class Loader {
 	/**
 	 * Callback for the TinyMCE editor's init_instance_callback event
 	 *
-	 * @param editor
+	 * @param {tinymce.Editor} editor - The TinyMCE editor instance
 	 */
 	initInstanceCallback(editor) {
 		editor.on('blur', function () {
@@ -226,6 +233,7 @@ export default class Loader {
 	/**
 	 * Initialize the settings for the TinyMCE editor
 	 *
+	 * @param {HTMLElement} element
 	 * @returns {Promise<void>}
 	 */
 	async initSettings(element) {
@@ -245,7 +253,7 @@ export default class Loader {
 			const {default: CustomSettings} = await import('TinyMCE/CustomSettings');
 
 			if (CustomSettings) {
-				const customSettings = new CustomSettings(language, userLanguage, designVariables, designVariables);
+				const customSettings = new CustomSettings(element, language, userLanguage, designVariables);
 				this.settings = customSettings.getSettings(this.settings, designVariables);
 				this.styleFormats = customSettings.getStyleFormats(this.styleFormats, designVariables);
 			}
@@ -271,7 +279,7 @@ export default class Loader {
 	/**
 	 * Set up the TinyMCE editor
 	 *
-	 * @param editor
+	 * @param {tinymce.Editor} editor - The TinyMCE editor instance
 	 */
 	setup(editor) {
 		editor.once('Dirty', () => {
@@ -280,22 +288,24 @@ export default class Loader {
 			}
 		});
 
-		editor.on('keydown', function (e) {
-			if (e.keyCode === 9) { // Tab key
-				let content = this.getContent({format: 'text'}).trim();
-				if (content === 'lorem') {
-					e.preventDefault();
-					let dummyText = `<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et expedita impedit libero magni, modi nulla, quae quia quibusdam quis rem
-						suscipit tempora vero voluptatem?</p>
-						<p>Aliquam consectetur delectus maiores voluptates. Ad aliquid commodi ea, est impedit incidunt ipsam iusto laudantium maxime modi mollitia nostrum odio officia optio
-						pariatur perspiciatis quo, sint tenetur ullam unde voluptatibus?</p>`;
-					this.setContent(dummyText);
+		editor.on('keydown', function (event) {
+			if (event.key !== 'Tab') {
+				return;
+			}
 
-					// Move the cursor to the end
-					let lastNode = this.getBody().lastChild;
-					this.selection.select(lastNode);
-					this.selection.collapse(false);
-				}
+			let content = this.getContent({format: 'text'}).trim();
+			if (content === 'lorem') {
+				event.preventDefault();
+				let dummyText = `<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et expedita impedit libero magni, modi nulla, quae quia quibusdam quis rem
+					suscipit tempora vero voluptatem?</p>
+					<p>Aliquam consectetur delectus maiores voluptates. Ad aliquid commodi ea, est impedit incidunt ipsam iusto laudantium maxime modi mollitia nostrum odio officia optio
+					pariatur perspiciatis quo, sint tenetur ullam unde voluptatibus?</p>`;
+				this.setContent(dummyText);
+
+				// Move the cursor to the end
+				let lastNode = this.getBody().lastChild;
+				this.selection.select(lastNode);
+				this.selection.collapse(false);
 			}
 		});
 
@@ -349,9 +359,10 @@ export default class Loader {
 	/**
 	 * Extend the TinyMCE editor's native functions
 	 *
-	 * @param {Object} editor
+	 * @param {tinymce.Editor} editor - The TinyMCE editor instance
 	 */
 	extendTinyMCE(editor) {
+		// noinspection JSUndefinedPropertyAssignment
 		editor.windowManager._originalOpen = editor.windowManager.open;
 
 		editor.windowManager.open = function (config, params) {
@@ -392,6 +403,7 @@ export default class Loader {
 				}
 			}
 
+			// noinspection JSUnresolvedReference
 			const instance = editor.windowManager._originalOpen(config, params);
 
 			const dialog = document.querySelector('.tox-dialog');
@@ -525,10 +537,18 @@ export default class Loader {
 		}
 	}
 
+	/**
+	 * Add the email templates placeholder options to the TinyMCE editor
+	 *
+	 * @param {tinymce.Editor} editor - The TinyMCE editor instance
+	 */
 	addEmailTemplatesPlaceholderOptions(editor) {
-		if (!availablePlaceholders) {
+		if (!window.availablePlaceholders) {
 			return;
 		}
+
+		/** @type {AvailablePlaceholders} */
+		const availablePlaceholders = window.availablePlaceholders;
 
 		/* example, adding a toolbar menu button */
 		editor.ui.registry.addMenuButton('formPlaceholders', {
@@ -539,7 +559,7 @@ export default class Loader {
 				// Traverse availablePlaceholders
 				for (const [key, value] of Object.entries(availablePlaceholders)) {
 					if (typeof(value) === 'object') {
-						// Traverse the subelements
+						// Traverse the sub-elements
 						const submenu = [];
 						for (const [subKey, subValue] of Object.entries(value)) {
 							submenu.push({
