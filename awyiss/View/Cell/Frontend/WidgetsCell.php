@@ -62,6 +62,7 @@ class WidgetsCell extends Cell {
 	 * @param string $children
 	 * @return string
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
 		/**

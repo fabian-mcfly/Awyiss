@@ -67,7 +67,6 @@ class MenuCell extends Cell {
 	 * @param string $languageShortcode
 	 * @param array $options
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	public function display(string $identifier, string $languageShortcode, array $options = []): void {
 		$la_options = $options + [
@@ -95,6 +94,7 @@ class MenuCell extends Cell {
 			$lb_active = $lo_menuRecord->active;
 
 			$ld_now = new DateTime();
+			/** @noinspection PhpUndefinedFieldInspection */
 			if (
 				($lo_menuRecord->publicationStart && $lo_menuRecord->publicationStart > $ld_now) ||
 				($lo_menuRecord->publicationEnd && $lo_menuRecord->publicationEnd < $ld_now)
@@ -133,7 +133,7 @@ class MenuCell extends Cell {
 
 	/**
 	 * @param string $identifier
-	 * @return MenuEntity
+	 * @return \Awyiss\Model\Entity\Menu|null
 	 */
 	protected function getMenu(string $identifier): ?MenuEntity {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_menusTable */

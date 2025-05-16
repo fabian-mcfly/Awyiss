@@ -69,6 +69,7 @@ class ContentsCell extends Cell {
 	 * @param string $children
 	 * @return string
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
 		/**
@@ -183,7 +184,6 @@ class ContentsCell extends Cell {
 
 	/**
 	 * @param \Awyiss\Model\Entity\Content $entity
-	 * @param array $blocklistedKeys
 	 * @return void
 	 */
 	protected function applyDuplicateData(Entity $entity): void {
