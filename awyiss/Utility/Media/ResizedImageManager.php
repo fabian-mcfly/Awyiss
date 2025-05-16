@@ -66,7 +66,10 @@ class ResizedImageManager {
 		static::$mediaItems[ $mediaItem->id ] = $mediaItem;
 
 		if ($mediaItem->mediaResizedImages) {
-			static::$resizedRecords[ $mediaItem->id ] = $mediaItem->mediaResizedImages;
+			/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
+			foreach ($mediaItem->mediaResizedImages as $lo_resizedImage) {
+				static::$resizedRecords[ $mediaItem->id ][ $lo_resizedImage->id ] = $lo_resizedImage;
+			}
 		}
 	}
 
@@ -133,7 +136,10 @@ class ResizedImageManager {
 				static::$mediaItems[ $lx_mediaItem->id ] = $lx_mediaItem;
 
 				if ($lx_mediaItem->mediaResizedImages) {
-					static::$resizedRecords[ $lx_mediaItem->id ] = $lx_mediaItem->mediaResizedImages;
+					/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
+					foreach ($lx_mediaItem->mediaResizedImages as $lo_resizedImage) {
+						static::$resizedRecords[ $lx_mediaItem->id ][ $lo_resizedImage->id ] = $lo_resizedImage;
+					}
 				}
 
 				continue;
@@ -248,7 +254,7 @@ class ResizedImageManager {
 			return null;
 		}
 
-		static::$resizedRecords[ $media->id ][] = $lo_resizedImage;
+		static::$resizedRecords[ $media->id ][ $lo_resizedImage->id ] = $lo_resizedImage;
 
 		return $lo_resizedImage;
 	}
@@ -271,9 +277,13 @@ class ResizedImageManager {
 
 			$lo_resizedRecords = static::$mediaResizedImagesTable->find()->where(['media_id IN' => $la_missingMediaIds])->all();
 
-			// Group the fetched records by media id
+			/**
+			 * Group the fetched records by media id
+			 *
+			 * @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedRecord
+			 */
 			foreach ($lo_resizedRecords as $lo_resizedRecord) {
-				static::$resizedRecords[ $lo_resizedRecord->media_id ][] = $lo_resizedRecord;
+				static::$resizedRecords[ $lo_resizedRecord->media_id ][ $lo_resizedRecord->id ] = $lo_resizedRecord;
 			}
 		}
 
@@ -299,7 +309,7 @@ class ResizedImageManager {
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 */
 	public static function findWithinThreshold(Media $media, float|int|null $width, float|int|null $height, string $format, ResizeStrategy|string|int|null $strategy = null): ?MediaResizedImage {
-		$lo_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
+		$la_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
 
 		$li_widthThreshold = $width ? ceil($width * 1.1) : null;
 		$li_heightThreshold = $height ? ceil($height * 1.1) : null;
@@ -307,7 +317,7 @@ class ResizedImageManager {
 		$le_strategy = $strategy ? ResizeStrategy::normalize($strategy) : null;
 
 		/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
-		foreach ($lo_resizedImages as $lo_resizedImage) {
+		foreach ($la_resizedImages as $lo_resizedImage) {
 			if ($le_strategy && $lo_resizedImage->strategy !== $le_strategy) {
 				continue;
 			}
@@ -357,12 +367,12 @@ class ResizedImageManager {
 		string $format,
 		bool $strictSize = false,
 	): ?MediaResizedImage {
-		$lo_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
+		$la_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
 
 		$le_strategy = ResizeStrategy::normalize($strategy);
 
 		/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
-		foreach ($lo_resizedImages as $lo_resizedImage) {
+		foreach ($la_resizedImages as $lo_resizedImage) {
 			if (
 				$lo_resizedImage->width == $width &&
 				$lo_resizedImage->height == $height &&
@@ -420,7 +430,7 @@ class ResizedImageManager {
 	 * @param float|int|null $height
 	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $strategy
 	 * @param bool $allowUpscale
-	 * @return void
+	 * @return bool
 	 */
 	protected static function fileCanBeResized(
 		Media $media,
