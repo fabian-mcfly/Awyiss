@@ -295,7 +295,7 @@ class MediaHelper extends Helper {
 				'height' => $media->height,
 			];
 
-			return $this->simpleImageTag($media->path, $la_attributes, $media->averageColor, $lo_mediaRenderOptions);
+			return $this->simpleImageTag($media->path, $la_attributes, $media, $lo_mediaRenderOptions);
 		}
 
 		// If responsive is set, use the column width
@@ -335,7 +335,7 @@ class MediaHelper extends Helper {
 			}
 		}
 
-		return $this->simpleImageTag($ls_path, $la_attributes, $media->averageColor, $lo_mediaRenderOptions);
+		return $this->simpleImageTag($ls_path, $la_attributes, $media, $lo_mediaRenderOptions);
 	}
 
 
@@ -362,7 +362,11 @@ class MediaHelper extends Helper {
 		$la_breakpointFiles = array_reverse($la_breakpointFiles, true);
 
 		$ls_sources = PHP_EOL;
-		foreach ($la_breakpointFiles as $li_breakpoint => $lo_file) {
+		foreach ($la_breakpointFiles as $lx_breakpoint => $lo_file) {
+			if (is_string($lx_breakpoint)) {
+				continue;
+			}
+
 			$ls_path = $lo_file->path;
 
 			$ls_mimeType = $media->mimeType;
@@ -373,7 +377,13 @@ class MediaHelper extends Helper {
 				$ls_mimeType = 'image/webp';
 			}
 
-			$ls_sources .= '<source media="(max-width:' . $li_breakpoint . 'px)" data-srcset="' . $ls_path . '" type="' . $ls_mimeType . '">' . PHP_EOL;
+			$li_breakpoint = $lx_breakpoint;
+			if (isset($la_breakpointFiles[ $li_breakpoint . 'x2' ])) {
+				$ls_path .= ' 1x, ' . $la_breakpointFiles[ $li_breakpoint . 'x2' ]->path . ' 2x';
+			}
+
+			$ls_mediaQuery = '(width <= ' . $li_breakpoint . 'px)';
+			$ls_sources .= '<source media="' . $ls_mediaQuery . '" data-srcset="' . $ls_path . '" type="' . $ls_mimeType . '">' . PHP_EOL;
 		}
 
 		return '<picture>' . $ls_sources . $ls_imageTag . '</picture>';
@@ -565,7 +575,7 @@ class MediaHelper extends Helper {
 	 * @param float|int|null $height
 	 * @param float|int|null $aspectRatio
 	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $strategy
-	 * @param string $format
+	 * @param string|null $format
 	 * @param bool $strictSize
 	 * @param bool $allowUpscale
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $renderOptions
@@ -637,9 +647,10 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param bool $removeDuplicates
-	 * @return array<int, \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media>
+	 * @param bool $remove2xDuplicates
+	 * @return array<string|int, \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media>
 	 */
-	public function getResponsiveImages(Media $media, MediaRenderOptions $mediaRenderOptions, bool $removeDuplicates = false): array {
+	public function getResponsiveImages(Media $media, MediaRenderOptions $mediaRenderOptions, bool $removeDuplicates = false, bool $remove2xDuplicates = false): array {
 		if (
 			// If the media item is an SVG,
 			$media->mimeType === 'image/svg+xml' ||
@@ -652,7 +663,45 @@ class MediaHelper extends Helper {
 		$la_breakpoints = array_reverse($mediaRenderOptions->getBreakpoints());
 		$la_breakpoints = $this->addSingleColumnBreakpoint($la_breakpoints, $mediaRenderOptions);
 
-		return $this->getBreakpointFiles($media, $mediaRenderOptions, $la_breakpoints, $removeDuplicates);
+		if ($mediaRenderOptions->getInclude2x()) {
+			// Add 2x breakpoints for all breakpoints
+			foreach ($la_breakpoints as $la_breakpoint) {
+				$la_breakpoint['is2x'] = true;
+				$la_breakpoints[] = $la_breakpoint;
+			}
+
+			// Sort breakpoints by breakpoint value
+			usort($la_breakpoints, function (array $a, array $b): int {
+				if ($a['breakpoint'] === $b['breakpoint']) {
+					return $a['is2x'] <=> $b['is2x'];
+				}
+
+				return $b['breakpoint'] <=> $a['breakpoint'];
+			});
+		}
+
+		$la_breakpointFiles = $this->getBreakpointFiles($media, $mediaRenderOptions, $la_breakpoints, $removeDuplicates, $remove2xDuplicates);
+
+		if (!$la_breakpointFiles || !$mediaRenderOptions->getInclude2x()) {
+			return $la_breakpointFiles;
+		}
+
+		uksort($la_breakpointFiles, function ($a, $b) {
+			if (is_string($a) && is_string($b)) {
+				return (int)$b <=> (int)$a;
+			}
+
+			if (is_string($a)) {
+				return 1;
+			}
+			if (is_string($b)) {
+				return -1;
+			}
+
+			return $b <=> $a;
+		});
+
+		return $la_breakpointFiles;
 	}
 
 
@@ -762,16 +811,17 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param array $breakpoints
 	 * @param bool $removeDuplicates
+	 * @param bool $remove2xDuplicates
 	 * @return array
 	 */
-	protected function getBreakpointFiles(Media $media, MediaRenderOptions $mediaRenderOptions, array $breakpoints, bool $removeDuplicates): array {
+	protected function getBreakpointFiles(Media $media, MediaRenderOptions $mediaRenderOptions, array $breakpoints, bool $removeDuplicates, bool $remove2xDuplicates = false): array {
 		$la_breakpointFiles = [];
 
 		$lo_file = $this->getMediaResizedImage($media, $mediaRenderOptions);
 
-		$ls_lastPath = $lo_file?->path;
+		$ls_lastPath = $ls_last2xPath = $lo_file?->path;
 		if (!$ls_lastPath) {
-			$ls_lastPath = $media->isImage() ? $this->getTargetPath($media) : $media->previewPath;
+			$ls_lastPath = $ls_last2xPath = $media->isImage() ? $this->getTargetPath($media) : $media->previewPath;
 		}
 
 		$la_overrideOptions = [
@@ -790,6 +840,21 @@ class MediaHelper extends Helper {
 
 			$lo_mediaRenderOptions = $this->getBreakpointRenderOptions($la_breakpoint, $mediaRenderOptions, $la_overrideOptions);
 
+			$lb_is2x = ($la_breakpoint['is2x'] ?? false) === true;
+			$la_with = [];
+			if ($lb_is2x) {
+				if ($lo_mediaRenderOptions->getWidth()) {
+					$la_with['width'] = $lo_mediaRenderOptions->getWidth() * 2;
+				}
+				if ($lo_mediaRenderOptions->getHeight()) {
+					$la_with['height'] = $lo_mediaRenderOptions->getHeight() * 2;
+				}
+			}
+			if ($la_with) {
+				$lo_mediaRenderOptions = $lo_mediaRenderOptions->with($la_with);
+			}
+
+
 			$lo_resizedImage = $this->resize(
 				$media,
 				renderOptions: $lo_mediaRenderOptions,
@@ -802,17 +867,50 @@ class MediaHelper extends Helper {
 				$ls_path = $media->isImage() ? $this->getTargetPath($media) : $media->previewPath;
 			}
 
-			if (!$removeDuplicates || $ls_lastPath !== $ls_path) {
+			if (
+				!$lb_is2x &&
+				(
+					!$removeDuplicates ||
+					$ls_lastPath !== $ls_path
+				)
+			) {
 				$la_breakpointFiles[ $la_breakpoint['breakpoint'] ] = $lo_resizedImage ?? $media;
 			}
+			elseif (
+				$lb_is2x &&
+				(
+					!$remove2xDuplicates ||
+					$ls_last2xPath !== $ls_path
+				)
+			) {
+				$la_breakpointFiles[ $la_breakpoint['breakpoint'] . 'x2' ] = $lo_resizedImage ?? $media;
+			}
 
+			// Use the value from the breakpoint if the value is not set to preserve
 			foreach ($la_overrideOptions as $lx_key => $lx_value) {
+				/**
+				 * If the value is not set to preserve, and the value is not equal to the current value
+				 * use the value from the breakpoint.
+				 *
+				 * This forces breakpoints to use the value of its predecessor if no own value is set.
+				 *
+				 * For example:
+				 * - If a `columnWidth` is set for a breakpoint, all following breakpoints will use this value instead of the
+				 *   `columnWidth` of the media item.
+				 * - If a `width` is set for a breakpoint, all following breakpoints will use this value instead of the
+				 *  `width` of the media item.
+				 */
 				if (!in_array($la_breakpoint[ $lx_key ], [$lx_value, MediaRenderOptions::PRESERVE_VALUE], true)) {
 					$la_overrideOptions[ $lx_key ] = $la_breakpoint[ $lx_key ];
 				}
 			}
 
-			$ls_lastPath = $ls_path;
+			if ($lb_is2x) {
+				$ls_last2xPath = $ls_path;
+			}
+			else {
+				$ls_lastPath = $ls_path;
+			}
 		}
 
 		return $la_breakpointFiles;
@@ -929,11 +1027,11 @@ class MediaHelper extends Helper {
 	/**
 	 * @param string $path
 	 * @param array $attributes
-	 * @param string|null $averageColor
+	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return string
 	 */
-	protected function simpleImageTag(string $path, array $attributes, ?string $averageColor, MediaRenderOptions $mediaRenderOptions): string {
+	protected function simpleImageTag(string $path, array $attributes, Media $media, MediaRenderOptions $mediaRenderOptions): string {
 		$la_attributes = $attributes;
 		$la_attributes['class'] = trim($this->lazyLoadClass . ' ' . ($la_attributes['class'] ?? ''));
 		$ls_attributes = $this->Html->templater()->formatAttributes($la_attributes);
@@ -958,13 +1056,23 @@ class MediaHelper extends Helper {
 			$attributes['id'],
 			$lf_width,
 			$lf_height,
-			$averageColor,
+			$media->averageColor,
 			$mediaRenderOptions,
 		);
 
+		$ls_srcSet = $ls_noScriptSrcSet = '';
+		if ($mediaRenderOptions->getInclude2x()) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$lo_2xFile = $this->get2xFile($media, $mediaRenderOptions);
+			if ($lo_2xFile) {
+				$ls_srcSet = ' data-srcset="' . $lo_2xFile->path . ' 2x"';
+				$ls_noScriptSrcSet = ' srcset="' . $lo_2xFile->path . ' 2x"';
+			}
+		}
+
 		/** @noinspection HtmlRequiredAltAttribute */
-		return '<img data-src="' . $path . '"' . $ls_attributes . '>' . PHP_EOL .
-			   '<noscript><img src="' . $path . '"' . $ls_noScriptAttributes . '></noscript>' . PHP_EOL .
+		return '<img data-src="' . $path . '"' . $ls_srcSet . $ls_attributes . '>' . PHP_EOL .
+			   '<noscript><img src="' . $path . '"' . $ls_noScriptSrcSet . $ls_noScriptAttributes . '></noscript>' . PHP_EOL .
 			   $ls_placeholderStyleTag . PHP_EOL;
 	}
 
@@ -1023,10 +1131,20 @@ class MediaHelper extends Helper {
 
 		$la_breakpointFiles = [];
 		if ($mediaRenderOptions->getResponsive()) {
-			$la_breakpointFiles = $this->getResponsiveImages($media, $mediaRenderOptions, true);
+			$la_breakpointFiles = $this->getResponsiveImages($media, $mediaRenderOptions, true, true);
+		}
+		elseif ($mediaRenderOptions->getInclude2x()) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$lo_2xFile = $this->get2xFile($media, $mediaRenderOptions);
+
+			if ($lo_2xFile) {
+				$ls_output = PHP_EOL . '@media only screen and (min-resolution: 192dpi) { ';
+				$ls_output .= $mediaRenderOptions->getSelector() . ' {';
+				$ls_output .= ' background-image:url(\'' . $lo_2xFile->path . '\'); } }';
+			}
 		}
 
-		foreach ($la_breakpointFiles as $li_breakpoint => $lo_file) {
+		foreach ($la_breakpointFiles as $lx_breakpoint => $lo_file) {
 			$ls_filePath = $lo_file->path;
 
 			$lf_aspectRatio = 1;
@@ -1044,11 +1162,21 @@ class MediaHelper extends Helper {
 				$lf_aspectRatio = round($lf_width / $lf_height, 2);
 			}
 
-			$ls_output .= PHP_EOL . '@media (max-width:' . $li_breakpoint . 'px) { ';
+			$lb_is2x = is_string($lx_breakpoint) && str_ends_with($lx_breakpoint, 'x2');
+			$li_breakpoint = (int)$lx_breakpoint;
+
+			if ($lb_is2x) {
+				$ls_output .= PHP_EOL . '@media only screen and (width <= ' . $li_breakpoint . 'px) ';
+				$ls_output .= 'and (min-resolution: 192dpi) { ';
+			}
+			else {
+				$ls_output .= PHP_EOL . '@media (width <= ' . $li_breakpoint . 'px) { ';
+			}
+
 			$ls_output .= $mediaRenderOptions->getSelector() . ' {';
-			if ($lf_width && $lf_height) {
+			if ($lf_width && $lf_height && !$lb_is2x) {
 				$ls_output .= ' --backgroundAspectRatio:' . $lf_aspectRatio . ';';
-				$ls_output .= ' --backgroundImageHeight:' . $lo_file->height . 'px;';
+				$ls_output .= ' --backgroundImageHeight:' . $lf_height . 'px;';
 			}
 			$ls_output .= ' background-image:url(\'' . $ls_filePath . '\'); } }';
 		}
@@ -1146,5 +1274,31 @@ class MediaHelper extends Helper {
 			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_WEBP => $media->webpPath,
 			default => $media->path,
 		};
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
+	 */
+	protected function get2xFile(Media $media, MediaRenderOptions $mediaRenderOptions): ?MediaResizedImage {
+		$lo_mediaRenderOptions = $mediaRenderOptions->withBaseWidth(
+			$mediaRenderOptions->getBaseWidth() * 2,
+		);
+
+		if ($lo_mediaRenderOptions->getWidth()) {
+			$lo_mediaRenderOptions = $lo_mediaRenderOptions->withWidth(
+				$lo_mediaRenderOptions->getWidth() * 2,
+			);
+		}
+
+		if ($lo_mediaRenderOptions->getHeight()) {
+			$lo_mediaRenderOptions = $lo_mediaRenderOptions->withHeight(
+				$lo_mediaRenderOptions->getHeight() * 2,
+			);
+		}
+
+		return $this->getMediaResizedImage($media, $lo_mediaRenderOptions);
 	}
 }

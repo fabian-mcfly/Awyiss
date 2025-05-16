@@ -486,7 +486,7 @@ class ContentsCellTest extends TestCase {
 		$resizedFiles = ResizedImageManager::getResizedItems();
 
 		$this->assertArrayHasKey(4, $resizedFiles);
-		$this->assertCount(16, $resizedFiles[4]);
+		$this->assertCount(27, $resizedFiles[4]);
 	}
 
 
@@ -1192,8 +1192,8 @@ class ContentsCellTest extends TestCase {
 			],
 		]);
 
-		$this->assertStringNotContainsString('data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $output);
-		$this->assertStringContainsString('data-src="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w864].avif"', $output);
+		$this->assertStringNotContainsString('logo-awyiss-[w1440]', $output);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w925].avif" data-srcset="_resized/dummypath/logo-awyiss-[w1728].avif 2x" alt="logo-awyiss.png"', $output);
 		$this->assertStringContainsString('ColumnWidth of the content 10: 30', $output);
 		$this->assertStringContainsString('ColumnWidth of the content 12: 24', $output);
 	}

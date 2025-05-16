@@ -77,6 +77,17 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @return array<string, bool>
+	 */
+	public static function include2xProvider(): array {
+		return [
+			'enabled' => [true],
+			'disabled' => [false],
+		];
+	}
+
+
+	/**
 	 * @return void
 	 */
 	public function testGetMediaRenderOptions(): void {
@@ -208,15 +219,15 @@ class MediaHelperTest extends TestCase {
 
 		$this->assertStringContainsString('<style>.selector', $result);
 		$this->assertStringContainsString('background-image:url(\'_resized/dummypath/logo-awyiss-[w1024].avif\');', $result);
-		$this->assertStringContainsString('@media (max-width:1234px) { .selector', $result);
-		$this->assertStringContainsString('@media (max-width:768px) { .selector', $result);
-		$this->assertStringContainsString('@media (max-width:640px) { .selector', $result);
-		$this->assertStringContainsString('@media (max-width:480px) { .selector', $result);
-		$this->assertStringContainsString('@media (max-width:320px) { .selector', $result);
+		$this->assertStringContainsString('@media (width <= 1234px) { .selector', $result);
+		$this->assertStringContainsString('@media (width <= 768px) { .selector', $result);
+		$this->assertStringContainsString('@media (width <= 640px) { .selector', $result);
+		$this->assertStringContainsString('@media (width <= 480px) { .selector', $result);
+		$this->assertStringContainsString('@media (width <= 320px) { .selector', $result);
 
 		// Make sure breakpoints above the base width are not included
-		$this->assertStringNotContainsString('@media (max-width:1920px) { .selector', $result);
-		$this->assertStringNotContainsString('@media (max-width:1440px) { .selector', $result);
+		$this->assertStringNotContainsString('@media (width <= 1920px) { .selector', $result);
+		$this->assertStringNotContainsString('@media (width <= 1440px) { .selector', $result);
 
 		/**
 		 * Make sure all breakpoints are in the correct order
@@ -228,11 +239,11 @@ class MediaHelperTest extends TestCase {
 		 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries
 		 */
 		$this->assertMatchesRegularExpression(
-			'/@media \(max-width:1234px\) \{ \.selector.*' .
-			'@media \(max-width:768px\) \{ \.selector.*' .
-			'@media \(max-width:640px\) \{ \.selector.*' .
-			'@media \(max-width:480px\) \{ \.selector.*' .
-			'@media \(max-width:320px\) \{ \.selector/s',
+			'/@media \(width <= 1234px\) \{ \.selector.*' .
+			'@media \(width <= 768px\) \{ \.selector.*' .
+			'@media \(width <= 640px\) \{ \.selector.*' .
+			'@media \(width <= 480px\) \{ \.selector.*' .
+			'@media \(width <= 320px\) \{ \.selector/s',
 			$result
 		);
 	}
@@ -388,7 +399,7 @@ class MediaHelperTest extends TestCase {
 
 		$result = $this->callProtectedMethod($this->mediaHelper, 'getBackgroundStyleTag', null, $media, $mediaRenderOptions, null, 1.78, '');
 
-		$this->assertStringContainsString('@media (max-width:320px) { #Foo { background-image:', $result);
+		$this->assertStringContainsString('@media (width <= 320px) { #Foo { background-image:', $result);
 	}
 
 
@@ -601,16 +612,18 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider include2xProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testHtmlTagForImageResponsive(): void {
+	public function testHtmlTagForImageResponsive(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
 
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
 			'baseWidth' => 1280.00,
 			'columnWidth' => 75.00,
+			'include2x' => $include2x,
 			'responsive' => true,
 			'singleColumnBreakpoint' => 640,
 			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
@@ -621,19 +634,29 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('<picture', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 
-		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].avif"', $result);
+		if ($include2x) {
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif 1x, _resized/dummypath/logo-awyiss-[w640].avif 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif 1x, _resized/dummypath/logo-awyiss-[w1024].avif 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif 1x, _resized/dummypath/logo-awyiss-[w1280].avif 2x', $result);
+			$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif 1x, _resized/dummypath/logo-awyiss-[w1152].avif 2x', $result);
+			$this->assertStringContainsString('<source media="(width <= 1234px)" data-srcset="_resized/dummypath/logo-awyiss-[w925].avif 1x, _resized/dummypath/logo-awyiss-[w1920].avif 2x', $result);
+		}
+		else {
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif"', $result);
+			$this->assertStringContainsString('<source media="(width <= 640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif"', $result);
+			$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif"', $result);
+			$this->assertStringContainsString('<source media="(width <= 1234px)" data-srcset="_resized/dummypath/logo-awyiss-[w925].avif"', $result);
+		}
+
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
 
 		$this->assertStringContainsString('<noscript', $result);
 		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
 
-		$this->assertStringNotContainsString('(max-width:1920px)', $result);
-		$this->assertStringNotContainsString('(max-width:1440px)', $result);
-		$this->assertStringNotContainsString('(max-width:1280px)', $result);
+		$this->assertStringNotContainsString('(width <= 1920px)', $result);
+		$this->assertStringNotContainsString('(width <= 1440px)', $result);
+		$this->assertStringNotContainsString('(width <= 1280px)', $result);
 
 		/**
 		 * Make sure all breakpoints are in the correct order
@@ -644,11 +667,11 @@ class MediaHelperTest extends TestCase {
 		 * @noinspection RegExpRedundantEscape
 		 */
 		$this->assertMatchesRegularExpression(
-			'/<source media="\(max-width:320px\)".*' .
-			'<source media="\(max-width:480px\)".*' .
-			'<source media="\(max-width:640px\)".*' .
-			'<source media="\(max-width:768px\)".*' .
-			'<source media="\(max-width:1234px\)".*' .
+			'/<source media="\(width <= 320px\)".*' .
+			'<source media="\(width <= 480px\)".*' .
+			'<source media="\(width <= 640px\)".*' .
+			'<source media="\(width <= 768px\)".*' .
+			'<source media="\(width <= 1234px\)".*' .
 			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].avif"/s',
 			$result
 		);
@@ -923,10 +946,11 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider include2xProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testPictureTag(): void {
+	public function testPictureTag(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(4);
 
@@ -935,6 +959,7 @@ class MediaHelperTest extends TestCase {
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
 			'baseWidth' => 1280.00,
 			'columnWidth' => 75.00,
+			'include2x' => $include2x,
 			'responsive' => true,
 			'singleColumnBreakpoint' => 640,
 			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
@@ -945,20 +970,30 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('<picture', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 
-		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].avif"', $result);
+		if ($include2x) {
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif 1x, _resized/dummypath/logo-awyiss-[w640].avif 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif 1x, _resized/dummypath/logo-awyiss-[w1024].avif 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif 1x, _resized/dummypath/logo-awyiss-[w1280].avif 2x', $result);
+			$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif 1x, _resized/dummypath/logo-awyiss-[w1152].avif 2x', $result);
+			$this->assertStringContainsString('<source media="(width <= 1234px)" data-srcset="_resized/dummypath/logo-awyiss-[w925].avif 1x, _resized/dummypath/logo-awyiss-[w1920].avif 2x', $result);
+		}
+		else {
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif"', $result);
+			$this->assertStringContainsString('<source media="(width <= 640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif"', $result);
+			$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif"', $result);
+			$this->assertStringContainsString('<source media="(width <= 1234px)" data-srcset="_resized/dummypath/logo-awyiss-[w925].avif"', $result);
+		}
+
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
 		$this->assertStringContainsString('--imageBackgroundColor:#00ff00;', $result);
 
 		$this->assertStringContainsString('<noscript', $result);
 		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
 
-		$this->assertStringNotContainsString('(max-width:1920px)', $result);
-		$this->assertStringNotContainsString('(max-width:1440px)', $result);
-		$this->assertStringNotContainsString('(max-width:1280px)', $result);
+		$this->assertStringNotContainsString('(width <= 1920px)', $result);
+		$this->assertStringNotContainsString('(width <= 1440px)', $result);
+		$this->assertStringNotContainsString('(width <= 1280px)', $result);
 
 		/**
 		 * Make sure all breakpoints are in the correct order
@@ -968,11 +1003,11 @@ class MediaHelperTest extends TestCase {
 		 * @noinspection RegExpRedundantEscape
 		 */
 		$this->assertMatchesRegularExpression(
-			'/<source media="\(max-width:320px\)".*' .
-			'<source media="\(max-width:480px\)".*' .
-			'<source media="\(max-width:640px\)".*' .
-			'<source media="\(max-width:768px\)".*' .
-			'<source media="\(max-width:1234px\)".*' .
+			'/<source media="\(width <= 320px\)".*' .
+			'<source media="\(width <= 480px\)".*' .
+			'<source media="\(width <= 640px\)".*' .
+			'<source media="\(width <= 768px\)".*' .
+			'<source media="\(width <= 1234px\)".*' .
 			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].avif"/s',
 			$result
 		);
@@ -980,10 +1015,11 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider include2xProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testPictureTagWithWebpResizeFileType(): void {
+	public function testPictureTagWithWebpResizeFileType(bool $include2x): void {
 		Configure::write('Awyiss.Media.Frontend.resizing.fileType', 'webp');
 
 		$this->mediaHelper = new MediaHelper($this->view);
@@ -997,6 +1033,7 @@ class MediaHelperTest extends TestCase {
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
 			'baseWidth' => 1280.00,
 			'columnWidth' => 75.00,
+			'include2x' => $include2x,
 			'responsive' => true,
 			'singleColumnBreakpoint' => 640,
 			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
@@ -1007,20 +1044,30 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('<picture', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 
-		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].webp"', $result);
+		if ($include2x) {
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp 1x, _resized/dummypath/logo-awyiss-[w640].webp 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp 1x, _resized/dummypath/logo-awyiss-[w1024].webp 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp 1x, _resized/dummypath/logo-awyiss-[w1280].webp 2x', $result);
+			$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].webp 1x, _resized/dummypath/logo-awyiss-[w1152].webp 2x', $result);
+			$this->assertStringContainsString('<source media="(width <= 1234px)" data-srcset="_resized/dummypath/logo-awyiss-[w925].webp 1x, _resized/dummypath/logo-awyiss-[w1920].webp 2x', $result);
+		}
+		else {
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp"', $result);
+			$this->assertStringContainsString('<source media="(width <= 640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp"', $result);
+			$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].webp"', $result);
+			$this->assertStringContainsString('<source media="(width <= 1234px)" data-srcset="_resized/dummypath/logo-awyiss-[w925].webp"', $result);
+		}
+
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].webp"', $result);
 		$this->assertStringContainsString('--imageBackgroundColor:#00ff00;', $result);
 
 		$this->assertStringContainsString('<noscript', $result);
 		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].webp"', $result);
 
-		$this->assertStringNotContainsString('(max-width:1920px)', $result);
-		$this->assertStringNotContainsString('(max-width:1440px)', $result);
-		$this->assertStringNotContainsString('(max-width:1280px)', $result);
+		$this->assertStringNotContainsString('(width <= 1920px)', $result);
+		$this->assertStringNotContainsString('(width <= 1440px)', $result);
+		$this->assertStringNotContainsString('(width <= 1280px)', $result);
 
 		/**
 		 * Make sure all breakpoints are in the correct order
@@ -1030,11 +1077,11 @@ class MediaHelperTest extends TestCase {
 		 * @noinspection RegExpRedundantEscape
 		 */
 		$this->assertMatchesRegularExpression(
-			'/<source media="\(max-width:320px\)".*' .
-			'<source media="\(max-width:480px\)".*' .
-			'<source media="\(max-width:640px\)".*' .
-			'<source media="\(max-width:768px\)".*' .
-			'<source media="\(max-width:1234px\)".*' .
+			'/<source media="\(width <= 320px\)".*' .
+			'<source media="\(width <= 480px\)".*' .
+			'<source media="\(width <= 640px\)".*' .
+			'<source media="\(width <= 768px\)".*' .
+			'<source media="\(width <= 1234px\)".*' .
 			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].webp"/s',
 			$result
 		);
@@ -1042,10 +1089,11 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider include2xProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testPictureTagWithWebpResizeFileTypePerConfig(): void {
+	public function testPictureTagWithWebpResizeFileTypePerConfig(bool $include2x): void {
 		$this->mediaHelper = new MediaHelper($this->view);
 		$this->mediaHelper->initialize([
 			'resizeMediaFileType' => 'webp',
@@ -1059,6 +1107,7 @@ class MediaHelperTest extends TestCase {
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
 			'baseWidth' => 1280.00,
 			'columnWidth' => 75.00,
+			'include2x' => $include2x,
 			'responsive' => true,
 			'singleColumnBreakpoint' => 640,
 			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
@@ -1069,20 +1118,30 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('<picture', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 
-		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].webp"', $result);
-		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].webp"', $result);
+		if ($include2x) {
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp 1x, _resized/dummypath/logo-awyiss-[w640].webp 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp 1x, _resized/dummypath/logo-awyiss-[w1024].webp 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp 1x, _resized/dummypath/logo-awyiss-[w1280].webp 2x', $result);
+			$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].webp 1x, _resized/dummypath/logo-awyiss-[w1152].webp 2x', $result);
+			$this->assertStringContainsString('<source media="(width <= 1234px)" data-srcset="_resized/dummypath/logo-awyiss-[w925].webp 1x, _resized/dummypath/logo-awyiss-[w1920].webp 2x', $result);
+		}
+		else {
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp"', $result);
+			$this->assertStringContainsString('<source media="(width <= 640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp"', $result);
+			$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].webp"', $result);
+			$this->assertStringContainsString('<source media="(width <= 1234px)" data-srcset="_resized/dummypath/logo-awyiss-[w925].webp"', $result);
+		}
+
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].webp"', $result);
 		$this->assertStringContainsString('--imageBackgroundColor:#00ff00;', $result);
 
 		$this->assertStringContainsString('<noscript', $result);
 		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].webp"', $result);
 
-		$this->assertStringNotContainsString('(max-width:1920px)', $result);
-		$this->assertStringNotContainsString('(max-width:1440px)', $result);
-		$this->assertStringNotContainsString('(max-width:1280px)', $result);
+		$this->assertStringNotContainsString('(width <= 1920px)', $result);
+		$this->assertStringNotContainsString('(width <= 1440px)', $result);
+		$this->assertStringNotContainsString('(width <= 1280px)', $result);
 
 		/**
 		 * Make sure all breakpoints are in the correct order
@@ -1092,11 +1151,11 @@ class MediaHelperTest extends TestCase {
 		 * @noinspection RegExpRedundantEscape
 		 */
 		$this->assertMatchesRegularExpression(
-			'/<source media="\(max-width:320px\)".*' .
-			'<source media="\(max-width:480px\)".*' .
-			'<source media="\(max-width:640px\)".*' .
-			'<source media="\(max-width:768px\)".*' .
-			'<source media="\(max-width:1234px\)".*' .
+			'/<source media="\(width <= 320px\)".*' .
+			'<source media="\(width <= 480px\)".*' .
+			'<source media="\(width <= 640px\)".*' .
+			'<source media="\(width <= 768px\)".*' .
+			'<source media="\(width <= 1234px\)".*' .
 			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].webp"/s',
 			$result
 		);
@@ -1138,6 +1197,7 @@ class MediaHelperTest extends TestCase {
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
 			'baseWidth' => 1280.00,
 			'columnWidth' => 75.00,
+			'include2x' => false,
 			'responsive' => true,
 			'singleColumnBreakpoint' => 640,
 			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
@@ -1148,19 +1208,19 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('<picture', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 
-		$this->assertStringContainsString('<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif"', $result);
-		$this->assertStringContainsString('<source media="(max-width:1234px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w925].avif"', $result);
+		$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif"', $result);
+		$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif"', $result);
+		$this->assertStringContainsString('<source media="(width <= 640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].avif"', $result);
+		$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w576].avif"', $result);
+		$this->assertStringContainsString('<source media="(width <= 1234px)" data-srcset="_resized/dummypath/logo-awyiss-[w925].avif"', $result);
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].avif" alt="Test alt" ', $result);
 
 		$this->assertStringContainsString('<noscript', $result);
 		$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
 
-		$this->assertStringNotContainsString('(max-width:1920px)', $result);
-		$this->assertStringNotContainsString('(max-width:1440px)', $result);
-		$this->assertStringNotContainsString('(max-width:1280px)', $result);
+		$this->assertStringNotContainsString('(width <= 1920px)', $result);
+		$this->assertStringNotContainsString('(width <= 1440px)', $result);
+		$this->assertStringNotContainsString('(width <= 1280px)', $result);
 
 		/**
 		 * Make sure all breakpoints are in the correct order
@@ -1170,11 +1230,11 @@ class MediaHelperTest extends TestCase {
 		 * @noinspection RegExpRedundantEscape
 		 */
 		$this->assertMatchesRegularExpression(
-			'/<source media="\(max-width:320px\)".*' .
-			'<source media="\(max-width:480px\)".*' .
-			'<source media="\(max-width:640px\)".*' .
-			'<source media="\(max-width:768px\)".*' .
-			'<source media="\(max-width:1234px\)".*' .
+			'/<source media="\(width <= 320px\)".*' .
+			'<source media="\(width <= 480px\)".*' .
+			'<source media="\(width <= 640px\)".*' .
+			'<source media="\(width <= 768px\)".*' .
+			'<source media="\(width <= 1234px\)".*' .
 			'<img data-src="_resized\/dummypath\/logo-awyiss-\[w1024\].avif"/s',
 			$result
 		);
@@ -1182,16 +1242,18 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider include2xProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testPictureTagForSvg(): void {
+	public function testPictureTagForSvg(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(7);
 
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
 			'baseWidth' => 1280.00,
 			'columnWidth' => 75.00,
+			'include2x' => $include2x,
 			'responsive' => true,
 			'singleColumnBreakpoint' => 640,
 			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
@@ -1208,16 +1270,18 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider include2xProvider
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testPictureTagWithoutResiz(): void {
+	public function testPictureTagWithoutResize(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
 		$media = $this->fetchTable('Media')->get(2);
 
 		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
 			'baseWidth' => 1280.00,
 			'columnWidth' => 75.00,
+			'include2x' => $include2x,
 			'responsive' => true,
 			'singleColumnBreakpoint' => 640,
 			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],

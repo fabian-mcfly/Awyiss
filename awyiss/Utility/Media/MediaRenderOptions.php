@@ -28,6 +28,7 @@ class MediaRenderOptions {
 	 * @param array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
 	 * @param float|int $columnWidth
 	 * @param float|int|null $height
+	 * @param bool $include2x
 	 * @param float|null $minBreakpoint
 	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $resizeStrategy
 	 * @param bool $responsive
@@ -45,6 +46,7 @@ class MediaRenderOptions {
 		protected array $breakpoints = [],
 		protected float|int $columnWidth = 100.00,
 		protected float|int|null $height = null,
+		protected bool $include2x = true,
 		protected ?float $minBreakpoint = null,
 		protected ResizeStrategy|string|int $resizeStrategy = ResizeStrategy::Contain,
 		protected bool $responsive = true,
@@ -145,6 +147,14 @@ class MediaRenderOptions {
 	 */
 	public function getHeight(): ?float {
 		return $this->height;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function getInclude2x(): bool {
+		return $this->include2x;
 	}
 
 
@@ -290,6 +300,15 @@ class MediaRenderOptions {
 
 
 	/**
+	 * @param bool $include2x
+	 * @return $this
+	 */
+	public function withInclude2x(bool $include2x): static {
+		return $this->with(['include2x' => $include2x]);
+	}
+
+
+	/**
 	 * @param float|null $minBreakpoint
 	 * @return $this
 	 */
@@ -375,7 +394,7 @@ class MediaRenderOptions {
 	 *
 	 * @param string|float|int $key
 	 * @param array|float|int $value
-	 * @return @array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
+	 * @return array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
 	 */
 	public static function normalizeBreakpoint(string|float|int $key, array|float|int $value): array {
 		$la_options = [
@@ -384,6 +403,7 @@ class MediaRenderOptions {
 			'breakpoint' => (float)$key,
 			'columnWidth' => self::PRESERVE_VALUE,
 			'height' => self::PRESERVE_VALUE,
+			'is2x' => false,
 			'resizeStrategy' => self::PRESERVE_VALUE,
 			'width' => self::PRESERVE_VALUE,
 		];
@@ -425,6 +445,10 @@ class MediaRenderOptions {
 
 		// Sort breakpoints by breakpoint value
 		usort($la_breakpoints, function (array $a, array $b): int {
+			if ($a['breakpoint'] === $b['breakpoint']) {
+				return $b['is2x'] <=> $a['is2x'];
+			}
+
 			return $a['breakpoint'] <=> $b['breakpoint'];
 		});
 

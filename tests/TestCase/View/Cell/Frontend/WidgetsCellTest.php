@@ -377,7 +377,7 @@ class WidgetsCellTest extends TestCase {
 		$resizedFiles = ResizedImageManager::getResizedItems();
 
 		$this->assertArrayHasKey(4, $resizedFiles);
-		$this->assertCount(18, $resizedFiles[4]);
+		$this->assertCount(27, $resizedFiles[4]);
 	}
 
 
