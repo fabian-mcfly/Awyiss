@@ -316,6 +316,7 @@ class ConfigurationController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
+	#[NoDirectAccess]
 	public function requestLock(string $method = 'update'): void {
 		$li_configId = (int)$this->request->getData('id');
 
@@ -343,6 +344,7 @@ class ConfigurationController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
+	#[NoDirectAccess]
 	public function releaseLock(string $method = 'update'): void {
 		$li_configId = (int)$this->request->getData('id');
 

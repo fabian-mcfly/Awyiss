@@ -660,6 +660,7 @@ class MediaController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
+	#[NoDirectAccess]
 	public function requestLock(string $method = 'create'): void {
 		parent::requestLock($method);
 	}
@@ -673,6 +674,7 @@ class MediaController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
+	#[NoDirectAccess]
 	public function releaseLock(string $method = 'create'): void {
 		parent::releaseLock($method);
 	}

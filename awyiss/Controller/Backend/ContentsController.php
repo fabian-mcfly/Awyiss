@@ -605,6 +605,7 @@ class ContentsController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
+	#[NoDirectAccess]
 	public function requestLock(string $method = 'update'): void {
 		$li_contentId = (int)$this->request->getData('id');
 
@@ -634,6 +635,7 @@ class ContentsController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
+	#[NoDirectAccess]
 	public function releaseLock(string $method = 'update'): void {
 		$li_contentId = (int)$this->request->getData('id');
 
