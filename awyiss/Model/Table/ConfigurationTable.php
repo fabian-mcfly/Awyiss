@@ -58,6 +58,7 @@ class ConfigurationTable extends Table {
 	/**
 	 * @return array
 	 * @throws \ReflectionException
+	 * @noinspection DuplicatedCode
 	 */
 	public function buildCategories(): array {
 		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */

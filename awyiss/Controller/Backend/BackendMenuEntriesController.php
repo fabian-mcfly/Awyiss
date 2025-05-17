@@ -32,6 +32,27 @@ use ReflectionMethod;
  */
 class BackendMenuEntriesController extends Controller {
 	/**
+	 * A list of methods that should not be listed as possible link target actions
+	 *
+	 * @var array
+	 */
+	protected static array $blocklistedMethods = [
+		'initialize',
+		'beforeFilter',
+		'beforeRender',
+		'render',
+		'setEventManager',
+		'dispatchEvent',
+	];
+	/**
+	 * An array of all controllers found
+	 *
+	 * @var array
+	 */
+	protected static array $controllers;
+
+
+	/**
 	 * @var string|null Session identifier for the selected insert_after_id
 	 */
 	protected ?string $selectedInsertAfterIdSessionIdentifier = null;
@@ -374,14 +395,11 @@ class BackendMenuEntriesController extends Controller {
 	protected function setViewVars(BackendMenuEntry $menuEntry): void {
 		/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
 		$ls_className = App::className('BackendMenu', 'Utility/Menu');
-
 		$lo_menu = new $ls_className();
 
 		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
 
 		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($menuEntry, $lo_menu->getDynamicMenu());
-
-		$la_controllers = $this->getControllers();
 
 		$this->set([
 			'menu' => $lo_menu,
@@ -389,7 +407,7 @@ class BackendMenuEntriesController extends Controller {
 			'backendMenuEntry' => $menuEntry,
 			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
 			'attributes' => $this->BackendMenuEntries->getAttributes(),
-			'controllers' => $la_controllers,
+			'controllers' => $this->getControllers(),
 			'policies' => $this->getPolicies(),
 		]);
 	}
@@ -400,93 +418,63 @@ class BackendMenuEntriesController extends Controller {
 	 * @throws \ReflectionException
 	 */
 	protected function getControllers(): array {
-		static $la_controllers = [];
-		static $la_blocklistedMethods = [
-			'initialize',
-			'beforeFilter',
-			'beforeRender',
-			'render',
-			'setEventManager',
-			'dispatchEvent',
-		];
-
-		if (!empty($la_controllers)) {
-			return $la_controllers;
+		if (!empty(static::$controllers)) {
+			return static::$controllers;
 		}
 
-		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Controller\Backend\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Controller', 'Backend', '*Controller.php',]),
-			'\Awyiss\Controller\Backend\\' => implode(DS, [ROOT, APP_DIR, 'Controller', 'Backend', '*Controller.php']),
-		];
+		$la_classes = App::classes('*', 'Controller/Backend', 'Controller');
 
-		//Traverse both namespaces
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			//Look for files with name "*Table.php"
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_controllerName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -14);
+		foreach ($la_classes as $ls_controllerName => $ls_className) {
+			$lo_reflection = new ReflectionClass($ls_className);
 
-				//If an entry exists or if the table does not allow attributes, skip it
-				if (isset($la_controllers[ $ls_controllerName ])) {
-					continue;
+			$la_methods = array_filter($lo_reflection->getMethods(ReflectionMethod::IS_PUBLIC), function ($method) use ($ls_controllerName) {
+				if (in_array($method->getName(), static::$blocklistedMethods)) {
+					return false;
 				}
 
-				$ls_controllerClass = $ls_namespace . $ls_controllerName . 'Controller';
-
-				$lo_reflection = new ReflectionClass($ls_controllerClass);
-
-				$la_methods = array_filter($lo_reflection->getMethods(ReflectionMethod::IS_PUBLIC), function ($method) use ($ls_controllerName, $la_blocklistedMethods) {
-					if (in_array($method->getName(), $la_blocklistedMethods)) {
-						return false;
-					}
-
-					// Check for the NoDirectAccess attribute
-					$la_attributes = $method->getAttributes(NoDirectAccess::class);
-					if (!empty($la_attributes)) {
-						return false;
-					}
-
-					return str_ends_with($method->getDeclaringClass()->getName(), $ls_controllerName . 'Controller');
-				});
-
-				if (empty($la_methods)) {
-					continue;
+				// Check for the NoDirectAccess attribute
+				$la_attributes = $method->getAttributes(NoDirectAccess::class);
+				if (!empty($la_attributes)) {
+					return false;
 				}
 
-				array_walk($la_methods, function (ReflectionMethod &$method) use (&$la_methods) {
-					/** @noinspection PhpVariableNamingConventionInspection */
-					$method = $method->getName();
-				});
+				return str_ends_with($method->getDeclaringClass()->getName(), $ls_controllerName);
+			});
 
-				$la_controllers[ $ls_controllerName ] = $la_methods;
+			if (empty($la_methods)) {
+				continue;
 			}
+
+			array_walk($la_methods, function (ReflectionMethod &$method) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$method = $method->getName();
+			});
+
+			$ls_controllerName = substr($ls_controllerName, 0, -10);
+
+			static::$controllers[ $ls_controllerName ] = $la_methods;
 		}
 
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
 			$ls_name = Inflector::pluralize($le_pageRole->name);
-			if (isset($la_controllers[ $ls_name ])) {
-				continue;
-			}
 
-			$la_controllers[ $ls_name ] = $la_controllers['Pages'];
+			static::$controllers[ $ls_name ] ??= static::$controllers['Pages'];
 		}
 
 		/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get('Datatables');
-		$lo_table->findAllAndCache()->each(function (Datatable $datatable) use (&$la_controllers) {
+		$lo_table->findAllAndCache()->each(function (Datatable $datatable) {
 			$ls_name = Inflector::camelize($datatable->identifier);
 
-			if (!isset($la_controllers[ $ls_name ])) {
-				$la_controllers[ $ls_name ] = $la_controllers['GenericDatatables'];
-			}
+			static::$controllers[ $ls_name ] ??= static::$controllers['GenericDatatables'];
 		});
+		unset(static::$controllers['GenericDatatables']);
 
-		unset($la_controllers['GenericDatatables']);
+		ksort(static::$controllers);
 
-		ksort($la_controllers);
-
-		return $la_controllers;
+		return static::$controllers;
 	}
 
 

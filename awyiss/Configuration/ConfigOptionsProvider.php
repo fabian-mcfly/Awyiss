@@ -257,6 +257,22 @@ class ConfigOptionsProvider {
 	 * @return void
 	 */
 	protected static function findConfigOptionsFile(string $scope): void {
+		$la_classes = App::classes(
+			$scope,
+			'Configuration/ConfigOptions',
+			'ConfigOptions',
+			ConfigOptionsInterface::class,
+			null,
+			['GenericDatatablesConfigOptions', 'GenericPagesConfigOptions']
+		);
+
+		/** @var class-string<\Awyiss\Configuration\ConfigOptionsInterface> $ls_className */
+		foreach ($la_classes as $ls_className) {
+			$ls_configScope = static::sanitizeScope($ls_className::getScope());
+
+			static::$configOptions[ $ls_configScope ] ??= $ls_className;
+		}
+
 		$ls_scope = null;
 		$ls_className = $scope;
 		if ($ls_className !== '*') {
@@ -264,53 +280,19 @@ class ConfigOptionsProvider {
 			$ls_className = Inflector::camelize($ls_scope);
 		}
 
-		$la_paths = [];
-
-		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths[ '\\' . CUSTOM_NAMESPACE . '\Configuration\ConfigOptions\\' ] = implode(
-				DS,
-				[ROOT, CUSTOM_DIR, 'Configuration', 'ConfigOptions', $ls_className . 'ConfigOptions.php',]
-			);
-		}
-
-		$la_paths['\Awyiss\Configuration\ConfigOptions\\'] = implode(DS, [ROOT, APP_DIR, 'Configuration', 'ConfigOptions', $ls_className . 'ConfigOptions.php']);
-
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_configurationName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-
-				if (
-					str_starts_with($ls_configurationName, '_') ||
-					str_starts_with($ls_configurationName, 'Abstract') ||
-					in_array($ls_configurationName, ['GenericDatatablesConfigOptions', 'GenericPagesConfigOptions'])
-				) {
-					continue;
-				}
-
-				/** @var class-string<\Awyiss\Configuration\ConfigOptionsInterface> $ls_configurationClass */
-				$ls_configurationClass = $ls_namespace . $ls_configurationName;
-
-				if (!in_array(ConfigOptionsInterface::class, class_implements($ls_configurationClass))) {
-					throw new RuntimeException(
-						sprintf('The provided Configuration class `%s` does not implement `%s`.', $ls_configurationClass, ConfigOptionsInterface::class)
-					);
-				}
-
-				$ls_configScope = static::sanitizeScope($ls_configurationClass::getScope());
-
-				static::$configOptions[ $ls_configScope ] ??= $ls_configurationClass;
-			}
-		}
-
-
 		/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
 			$ls_configScope = static::sanitizeScope($le_pageRole->name);
 
 			if (
+				//Skip if the config scope is already set
 				isset(static::$configOptions[ $ls_configScope ]) ||
-				($ls_className !== '*' && $ls_configScope !== $ls_scope)
+				(
+					// or if the config scope is not the same as the provided scope
+					$ls_className !== '*' &&
+					$ls_configScope !== $ls_scope
+				)
 			) {
 				continue;
 			}
@@ -320,10 +302,11 @@ class ConfigOptionsProvider {
 
 
 		if (!isset(static::$datatables)) {
-			/*
-			 * Get all datatables from the database because we want them to have a generic policy too
-			 * Use a raw query to avoid the need for a model which would in return again try to load the config options
-			 * due to the UserConfiguration.
+			/**
+			 * Get all datatables from the database because we want them to have a generic policy too.
+			 *
+			 * Use a raw query to avoid the need for a model which would in return again try to
+			 * load the config options due to the UserConfiguration.
 			 */
 			$lo_connection = ConnectionManager::get('default');
 			$la_results = $lo_connection->selectQuery('*', 'datatables')->where(['deleted' => 0])->execute()->fetchAll('assoc');
@@ -336,7 +319,10 @@ class ConfigOptionsProvider {
 		}
 
 		if ($ls_scope) {
-			if (!isset(static::$configOptions[ $ls_scope ]) && isset(static::$datatables[ $ls_scope ])) {
+			if (
+				!isset(static::$configOptions[ $ls_scope ]) &&
+				isset(static::$datatables[ $ls_scope ])
+			) {
 				static::$configOptions[ $ls_scope ] = static::$datatables[ $ls_scope ];
 			}
 		}

@@ -6,6 +6,7 @@ namespace Awyiss;
 
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\ControllerFactory;
+use Awyiss\Core\App;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Event\EventManager;
 use Awyiss\Middleware\RoutingMiddleware;
@@ -14,6 +15,7 @@ use Awyiss\ORM\Locator\TableLocator;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Console\CommandCollection;
+use Cake\Console\CommandInterface;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Core\Plugin;
@@ -175,34 +177,23 @@ class Awyiss extends BaseApplication {
 	 * @return \Cake\Console\CommandCollection
 	 */
 	public function console(CommandCollection $commands): CommandCollection {
-		$la_paths = [];
-
-		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths[ implode('\\', [CUSTOM_NAMESPACE, 'Command']) ] = implode(DS, [ROOT, CUSTOM_DIR, 'Command', '*', '*' . 'Command.php']);
-		}
-
-		$la_paths[ implode('\\', ['Awyiss', 'Command']) ] = implode(DS, [ROOT, APP_DIR, 'Command', '*', '*' . 'Command.php']);
+		$la_classes = App::classes('*', 'Command', 'Command', CommandInterface::class, '*');
 
 		$la_commands = [];
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$la_parts = explode(DS, $ls_filePath);
+		/** @var class-string<\Cake\Console\CommandInterface::class> $ls_commandClass */
+		foreach ($la_classes as $ls_subNamespace => $ls_commandClass) {
+			$ls_command = $ls_commandClass::defaultName();
 
-				$ls_commandName = array_pop($la_parts);
-				$ls_subPath = array_pop($la_parts);
-
-				/** @var class-string<\Cake\Console\BaseCommand> $ls_className */
-				$ls_className = $ls_namespace . '\\' . $ls_subPath . '\\' . substr($ls_commandName, 0, -4);
-				$ls_command = $ls_className::defaultName();
-
+			if (str_contains($ls_subNamespace, '\\')) {
+				$ls_subPath = substr($ls_subNamespace, 0, strpos($ls_subNamespace, '\\'));
 				$ls_subPath = Inflector::underscore($ls_subPath);
 				if (!str_starts_with($ls_command, $ls_subPath . ' ')) {
 					$ls_command = $ls_subPath . ' ' . $ls_command;
 				}
+			}
 
-				if (!isset($la_commands[ $ls_command ])) {
-					$la_commands[ $ls_command ] = $ls_className;
-				}
+			if (!isset($la_commands[ $ls_command ])) {
+				$la_commands[ $ls_command ] = $ls_commandClass;
 			}
 		}
 

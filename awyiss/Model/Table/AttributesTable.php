@@ -127,6 +127,7 @@ class AttributesTable extends Table {
 
 	/**
 	 * @return array
+	 * @noinspection DuplicatedCode
 	 */
 	public function buildCategories(): array {
 		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
@@ -172,6 +173,7 @@ class AttributesTable extends Table {
 	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
@@ -411,52 +413,33 @@ class AttributesTable extends Table {
 			return $this->attributeScopes;
 		}
 
-		$this->attributeScopes = [];
+		$la_classes = App::classes('*', 'Model/Table', 'Table', null, null, ['GenericDatatablesTable']);
 
-		$la_paths = [];
-
-		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths['\\' . CUSTOM_NAMESPACE . '\Model\Table\\'] = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', '*Table.php']);
-		}
-
-		$la_paths['\Awyiss\Model\Table\\'] = implode(DS, [ROOT, APP_DIR, 'Model', 'Table', '*Table.php']);
-
-		//Traverse both namespaces
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			//Look for files with name "*Table.php"
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_tableName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-
-				if ($ls_tableName === 'GenericDatatablesTable') {
-					continue;
-				}
-
-				/** @var class-string<\Awyiss\Model\Table> $ls_tableClass */
-				$ls_tableClass = $ls_namespace . $ls_tableName;
-
-				/**
-				 * If an entry exists or if the table does not allow attributes, skip it
-				 *
-				 * @noinspection PhpIllegalArrayKeyTypeInspection
-				 */
-				if (isset($this->attributeScopes[ $ls_tableClass::TABLE ]) || !$ls_tableClass::ATTRIBUTABLE) {
-					continue;
-				}
-
-				//If the given table is not a subclass of \Awyiss\Model\Table, skip it
-				if (!is_subclass_of($ls_tableClass, Table::class)) {
-					continue;
-				}
-
-				/** @noinspection PhpIllegalArrayKeyTypeInspection */
-				$this->attributeScopes[ $ls_tableClass::TABLE ] = $ls_tableClass;
+		/** @var class-string<\Awyiss\Model\Table> $ls_className */
+		foreach ($la_classes as $ls_className) {
+			/**
+			 * If an entry exists or if the table does not allow attributes, skip it
+			 *
+			 * @noinspection PhpIllegalArrayKeyTypeInspection
+			 */
+			if (isset($this->attributeScopes[ $ls_className::TABLE ]) || !$ls_className::ATTRIBUTABLE) {
+				continue;
 			}
-		}
 
-		//Get all page roles because we want them to have attributes too
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+			//If the given table is not a subclass of \Awyiss\Model\Table, skip it
+			if (!is_subclass_of($ls_className, Table::class)) {
+				continue;
+			}
+
+			/** @noinspection PhpIllegalArrayKeyTypeInspection */
+			$this->attributeScopes[ $ls_className::TABLE ] = $ls_className;
+		}
+		/**
+		 * Get all page roles because we want them to have attributes too
+		 *
+		 * @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum
+		 */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_table */
 		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
 			$ls_identifier = Inflector::pluralize(Inflector::underscore($le_pageRole->name));
 

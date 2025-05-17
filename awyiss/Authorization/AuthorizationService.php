@@ -14,11 +14,10 @@ use Awyiss\Model\Entity\Datatable;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Text;
-use RuntimeException;
 
 
 /**
- * Provides access to an instance of `AuthenticationService` and allows retreiving policies
+ * Provides access to an instance of `AuthenticationService` and allows retrieving policies
  *
  * @see AuthorizationServiceInterface
  */
@@ -114,6 +113,21 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @return array<string, \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>>
 	 */
 	protected function findPolicy(string $scope, string $realm): void {
+		$la_classes = App::classes(
+			$scope,
+			'Authorization/Policy/' . $realm,
+			'Policy',
+			PolicyInterface::class,
+			null,
+			['GenericDatatablesPolicy', 'GenericPagesPolicy']
+		);
+
+		/** @var class-string<\Awyiss\Authorization\Policy\PolicyInterface> $ls_className */
+		foreach ($la_classes as $ls_className) {
+			$ls_scope = static::sanitizeScope($ls_className::getScope());
+			$this->policies[ $realm ][ $ls_scope ] ??= $ls_className;
+		}
+
 		$ls_scope = null;
 		$ls_className = $scope;
 		if ($ls_className !== '*') {
@@ -121,58 +135,19 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			$ls_className = Inflector::camelize($ls_scope);
 		}
 
-		$la_paths = [];
-
-		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths[ '\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $realm . '\\' ] = implode(DS, [
-				ROOT,
-				CUSTOM_DIR,
-				'Authorization',
-				'Policy',
-				$realm,
-				$ls_className . 'Policy.php',
-			]);
-		}
-
-		$la_paths['\Awyiss\Authorization\Policy\\' . $realm . '\\'] = implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $realm, $ls_className . 'Policy.php']);
-
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_policyName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-
-				if (
-					(
-						$ls_className === '*' &&
-						in_array($ls_policyName, ['GenericDatatablesPolicy', 'GenericPagesPolicy'])
-					) ||
-					str_starts_with($ls_policyName, '_') ||
-					str_starts_with($ls_policyName, 'Abstract')
-				) {
-					continue;
-				}
-
-				/** @var class-string<\Awyiss\Authorization\Policy\PolicyInterface> $ls_policyClass */
-				$ls_policyClass = $ls_namespace . $ls_policyName;
-
-				if (!in_array(PolicyInterface::class, class_implements($ls_policyClass))) {
-					throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ls_policyClass, PolicyInterface::class));
-				}
-
-				$ls_policyScope = $ls_policyClass::getScope();
-
-				$this->policies[ $realm ][ $ls_policyScope ] ??= $ls_policyClass;
-			}
-		}
-
-
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
 			$ls_policyScope = static::sanitizeScope($le_pageRole->name);
 
 			if (
+				// Skip if the policy is already set
 				isset($this->policies[ $realm ][ $ls_policyScope ]) ||
-				($ls_className !== '*' && $ls_policyScope !== $ls_scope)
+				(
+					// or if the policy scope is not the same as the provided scope
+					$ls_className !== '*' &&
+					$ls_policyScope !== $ls_scope
+				)
 			) {
 				continue;
 			}
@@ -182,8 +157,11 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 
 		if (!isset($this->datatables)) {
-			//Get all datatables from the database because we want them to have a generic policy too
-			/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
+			/**
+			 * Get all datatables from the database because we want them to have a generic policy too
+			 *
+			 * @var \Awyiss\Model\Table\DatatablesTable $lo_table
+			 */
 			$lo_table = FactoryLocator::get('Table')->get('Datatables');
 			$this->datatables = $lo_table->findAllAndCache()->indexBy(function (Datatable $datatable) {
 				return static::sanitizeScope($datatable->identifier);
@@ -194,7 +172,10 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 
 		if ($ls_scope) {
-			if (!isset($this->policies[ $realm ][ $ls_scope ]) && isset($this->datatables[ $ls_scope ])) {
+			if (
+				!isset($this->policies[ $realm ][ $ls_scope ]) &&
+				isset($this->datatables[ $ls_scope ])
+			) {
 				$this->policies[ $realm ][ $ls_scope ] = $this->datatables[ $ls_scope ];
 			}
 		}

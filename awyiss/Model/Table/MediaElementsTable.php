@@ -5,6 +5,7 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Annotation\MediaElementAssignable;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
@@ -23,7 +24,7 @@ use ReflectionClass;
  * @property \Awyiss\Model\Table\MediaAssignmentsTable&\Awyiss\ORM\Association\HasMany $MediaAssignments
  * @property \Awyiss\Model\Table\MediaElementSelectorsTable&\Awyiss\ORM\Association\HasMany $MediaElementAssignments
  * @property \Awyiss\Model\Table\MediaElementSelectorsTable&\Awyiss\ORM\Association\HasMany $MediaElementSelectors
- * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MediaElementsTable extends Table {
 	/**
@@ -98,6 +99,7 @@ class MediaElementsTable extends Table {
 	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
@@ -235,75 +237,61 @@ class MediaElementsTable extends Table {
 		$lo_pageRoles = $lo_pageRoles->map(fn($pageRole) => $pageRole->label);
 		$la_pageRoles = $lo_pageRoles->toArray();
 
-		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Model\Table\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', '*Table.php',]),
-			'\Awyiss\Model\Table\\' => implode(DS, [ROOT, APP_DIR, 'Model', 'Table', '*Table.php']),
-		];
+		$la_classes = App::classes('*', 'Model/Table', 'Table', null, null, ['GenericDatatablesTable']);
 
-		//Traverse both namespaces
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			//Look for files with name "*Table.php"
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_tableName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
+		/** @var class-string<\Awyiss\Model\Table> $ls_className */
+		foreach ($la_classes as $ls_className) {
+			/** @var string $ls_tableName */
+			$ls_tableName = $ls_className::TABLE;
 
-				if ($ls_tableName === 'GenericDatatablesTable') {
-					continue;
-				}
-
-				/** @var class-string<\Awyiss\Model\Table> $ls_tableClass */
-				$ls_tableClass = $ls_namespace . $ls_tableName;
-				/** @var string $ls_tableName */
-				$ls_tableName = $ls_tableClass::TABLE;
-
-				if (isset($this->availableModels[ $ls_tableName ])) {
-					continue;
-				}
-
-				$lo_reflection = new ReflectionClass($ls_tableClass);
-
-				$la_attributes = $lo_reflection->getAttributes(MediaElementAssignable::class);
-
-				if (!$la_attributes) {
-					continue;
-				}
-
-				$lo_attributeInstance = $la_attributes[0]->newInstance();
-
-				$lb_entityLevel = (bool)($lo_attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL);
-
-				$la_entities = false;
-				if ($includeEntities && $lb_entityLevel) {
-					$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ls_tableName));
-					$lo_entities = $lo_table->find()->all()->indexBy('id');
-
-					if ($allowGrouping && $ls_tableName === 'page_templates') {
-						$lo_entities = $lo_entities->groupBy(function ($entity) use ($la_pageRoles) {
-							return $la_pageRoles[ $entity->pageRoleId->value ];
-						});
-
-						$lo_entities = $lo_entities->map(fn ($entities) => collection($entities)->indexBy('id')->map(function ($entity) {
-							return $entity->label;
-						})->toArray());
-
-						$la_entities = $lo_entities->toArray();
-
-						uksort($la_entities, function ($key1, $key2) use ($la_pageRoles) {
-							return array_search($key1, $la_pageRoles) <=> array_search($key2, $la_pageRoles);
-						});
-					}
-					else {
-						$lo_entities = $lo_entities->map(fn ($entity) => $entity->label);
-						$la_entities = $lo_entities->toArray();
-					}
-				}
-
-				$this->availableModels[ $ls_tableName ] = [
-					'entityLevel' => $lb_entityLevel,
-					'modelLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
-					'label' => isset($la_datatables[ $ls_tableName ]) ? $la_datatables[ $ls_tableName ]->label : __d($ls_tableName, 'headline_overview'),
-					'entities' => $la_entities,
-				];
+			if (isset($this->availableModels[ $ls_tableName ])) {
+				continue;
 			}
+
+			$lo_reflection = new ReflectionClass($ls_className);
+
+			$la_attributes = $lo_reflection->getAttributes(MediaElementAssignable::class);
+
+			if (!$la_attributes) {
+				continue;
+			}
+
+			$lo_attributeInstance = $la_attributes[0]->newInstance();
+
+			$lb_entityLevel = (bool)($lo_attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL);
+
+			$la_entities = false;
+			if ($includeEntities && $lb_entityLevel) {
+				$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ls_tableName));
+				$lo_entities = $lo_table->find()->all()->indexBy('id');
+
+				if ($allowGrouping && $ls_tableName === 'page_templates') {
+					$lo_entities = $lo_entities->groupBy(function ($entity) use ($la_pageRoles) {
+						return $la_pageRoles[ $entity->pageRoleId->value ];
+					});
+
+					$lo_entities = $lo_entities->map(fn ($entities) => collection($entities)->indexBy('id')->map(function ($entity) {
+						return $entity->label;
+					})->toArray());
+
+					$la_entities = $lo_entities->toArray();
+
+					uksort($la_entities, function ($key1, $key2) use ($la_pageRoles) {
+						return array_search($key1, $la_pageRoles) <=> array_search($key2, $la_pageRoles);
+					});
+				}
+				else {
+					$lo_entities = $lo_entities->map(fn ($entity) => $entity->label);
+					$la_entities = $lo_entities->toArray();
+				}
+			}
+
+			$this->availableModels[ $ls_tableName ] = [
+				'entityLevel' => $lb_entityLevel,
+				'modelLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
+				'label' => isset($la_datatables[ $ls_tableName ]) ? $la_datatables[ $ls_tableName ]->label : __d($ls_tableName, 'headline_overview'),
+				'entities' => $la_entities,
+			];
 		}
 
 		uasort($this->availableModels, fn($a, $b) => strcasecmp($a['label'], $b['label']));

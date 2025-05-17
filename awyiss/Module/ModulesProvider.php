@@ -4,6 +4,7 @@
 namespace Awyiss\Module;
 
 
+use Awyiss\Core\App;
 use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
 use RuntimeException;
@@ -89,51 +90,21 @@ class ModulesProvider {
 	 * @return void
 	 */
 	protected static function findModuleFile(string $identifier): void {
-		$ls_className = $identifier;
-		if ($ls_className !== '*') {
-			$ls_identifier = static::sanitizeIdentifier($identifier);
-			$ls_className = Inflector::camelize($ls_identifier);
-		}
+		$la_modules = App::classes($identifier, 'Module', 'Module', ModuleInterface::class);
 
-		$la_paths = [];
-
-		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths[ '\\' . CUSTOM_NAMESPACE . '\Module\\' ] = implode(DS, [ROOT, CUSTOM_DIR, 'Module', $ls_className . 'Module.php']);
-		}
-
-		$la_paths['\Awyiss\Module\\'] = implode(DS, [ROOT, APP_DIR, 'Module', $ls_className . 'Module.php']);
-
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_moduleName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if (
-					str_starts_with($ls_moduleName, '_') ||
-					str_starts_with($ls_moduleName, 'Abstract')
-				) {
-					continue;
-				}
-
-				/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
-				$ls_moduleClass = $ls_namespace . $ls_moduleName;
-
-				if (!in_array(ModuleInterface::class, class_implements($ls_moduleClass))) {
-					throw new RuntimeException(
-						sprintf('The provided Module class `%s` does not implement `%s`.', $ls_moduleClass, ModuleInterface::class)
-					);
-				}
-
-				if (!$ls_moduleClass::isAvailable()) {
-					continue;
-				}
-
-				$ls_identifier = static::sanitizeIdentifier($ls_moduleClass::getIdentifier());
-
-				if (isset(static::$modules[ $ls_identifier ])) {
-					continue;
-				}
-
-				static::$modules[ $ls_identifier ] = $ls_moduleClass;
+		/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
+		foreach ($la_modules as $ls_moduleClass) {
+			if (!$ls_moduleClass::isAvailable()) {
+				continue;
 			}
+
+			$ls_identifier = static::sanitizeIdentifier($ls_moduleClass::getIdentifier());
+
+			if (isset(static::$modules[ $ls_identifier ])) {
+				continue;
+			}
+
+			static::$modules[ $ls_identifier ] = $ls_moduleClass;
 		}
 	}
 }

@@ -4,6 +4,7 @@
 namespace Awyiss\Event;
 
 
+use Awyiss\Core\App;
 use Awyiss\Utility\Inflector;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
@@ -13,7 +14,7 @@ use RuntimeException;
 
 /**
  * Provider of EventListeners
- * This is used to retreive or load the EventListeners for a specific scope and area
+ * This is used to retrieve or load the EventListeners for a specific scope and area
  * Controller:
  * - `EventListenersProvider::loadListener($this->getName(), Awyiss::REALM_BACKEND);`
  * CLI:
@@ -133,39 +134,16 @@ class EventListenersProvider {
 	 * @return array
 	 */
 	protected static function findListener(string $scope, string $realm): array {
-		$la_paths = [];
-
-		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths['\\' . CUSTOM_NAMESPACE . '\Event\\' . $realm . '\\'] = implode(DS, [ROOT, CUSTOM_DIR, 'Event', $realm, $scope . 'Listener.php']);
-		}
-
-		$la_paths['\Awyiss\Event\\' . $realm . '\\'] = implode(DS, [ROOT, APP_DIR, 'Event', $realm, $scope . 'Listener.php']);
+		$la_classes = App::classes($scope, 'Event/' . $realm, 'Listener', EventListenerInterface::class);
 
 		$la_listeners = [];
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_listenerName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
 
-				if (
-					str_starts_with($ls_listenerName, '_') ||
-					str_starts_with($ls_listenerName, 'Abstract')
-				) {
-					continue;
-				}
+		/** @var class-string<\Cake\Event\EventListenerInterface> $ls_className */
+		foreach ($la_classes as $ls_className) {
+			$ls_scope = static::sanitizeScope($ls_className::getScope());
 
-				/** @var class-string<\Cake\Event\EventListenerInterface> $ls_listenerClass */
-				$ls_listenerClass = $ls_namespace . $ls_listenerName;
-
-				if (!in_array(EventListenerInterface::class, class_implements($ls_listenerClass))) {
-					throw new RuntimeException(sprintf('The provided Listener class `%s` does not extend the `%s` class.', $ls_listenerClass, EventListenerInterface::class));
-				}
-
-				$ls_scope = $ls_listenerClass::getScope();
-
-				$la_listeners[ $ls_scope ] ??= $ls_listenerClass;
-			}
+			$la_listeners[ $ls_scope ] ??= $ls_className;
 		}
-
 
 		return $la_listeners;
 	}

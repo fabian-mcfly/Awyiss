@@ -4,6 +4,7 @@
 namespace Awyiss\Attribute;
 
 
+use Awyiss\Core\App;
 use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
 use RuntimeException;
@@ -172,68 +173,19 @@ class AttributeOptionsProvider {
 	 * @throws \ReflectionException
 	 */
 	protected static function findAttributeOptionsFiles(string $scope, bool $load = false): array {
+		$la_classes = App::classes($scope, 'Attribute/AttributeOptionsCollection', 'AttributeOptionsCollection', AttributeOptionsInterface::class);
+
 		$la_attributeOptionFiles = [];
+		/** @var class-string<\Awyiss\Attribute\AttributeOptionsCollection> $ls_className */
+		foreach ($la_classes as $ls_className) {
+			$ls_scope = $ls_className::getScope();
 
-		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Attribute\AttributeOptionsCollection\\' => implode(
-				DS,
-				[
-					ROOT,
-					CUSTOM_DIR,
-					'Attribute',
-					'AttributeOptionsCollection',
-					$scope . 'AttributeOptionsCollection.php',
-				]
-			),
-			'\Awyiss\Attribute\AttributeOptionsCollection\\' => implode(
-				DS,
-				[
-					ROOT,
-					APP_DIR,
-					'Attribute',
-					'AttributeOptionsCollection',
-					$scope . 'AttributeOptionsCollection.php',
-				]
-			),
-		];
-
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_attributeOptionsName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-
-				if (
-					str_starts_with($ls_attributeOptionsName, '_') ||
-					str_starts_with($ls_attributeOptionsName, 'Abstract')
-				) {
-					continue;
-				}
-
-				/** @var class-string<\Awyiss\Attribute\AttributeOptionsInterface> $ls_attributeOptionsClass */
-				$ls_attributeOptionsClass = $ls_namespace . $ls_attributeOptionsName;
-
-				if (!in_array(AttributeOptionsInterface::class, class_implements($ls_attributeOptionsClass))) {
-					throw new RuntimeException(
-						sprintf('The provided Attributes class `%s` does not extend the `%s` class.', $ls_attributeOptionsClass, AttributeOptionsInterface::class)
-					);
-				}
-
-				/**
-				 * @var AttributeOptionsInterface $ls_attributeOptionsClass
-				 */
-				$ls_scope = $ls_attributeOptionsClass::getScope();
-
-				if (isset($la_attributeOptionFiles[ $ls_scope ])) {
-					continue;
-				}
-
-				if ($load) {
-					static::loadAttributeOptions($ls_attributeOptionsClass);
-				}
-
-				$la_attributeOptionFiles[ $ls_scope ] = $ls_attributeOptionsClass;
+			if ($load) {
+				static::loadAttributeOptions($ls_className);
 			}
-		}
 
+			$la_attributeOptionFiles[ $ls_scope ] ??= $ls_className;
+		}
 
 		return $la_attributeOptionFiles;
 	}

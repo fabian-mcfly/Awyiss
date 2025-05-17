@@ -4,6 +4,7 @@
 namespace Awyiss\Form\Protection;
 
 
+use Awyiss\Core\App;
 use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
 use RuntimeException;
@@ -89,44 +90,13 @@ class FormProtectionProvider {
 	 * @return void
 	 */
 	protected static function findFormProtectionFile(string $identifier): void {
-		$ls_className = $identifier;
-		if ($ls_className !== '*') {
-			$ls_identifier = static::sanitizeIdentifier($identifier);
-			$ls_className = Inflector::camelize($ls_identifier);
-		}
+		$ls_classes = App::classes($identifier, 'Form/Protection', 'FormProtection', FormProtectionInterface::class);
 
-		$la_paths = [];
+		/** @var class-string<\Awyiss\Form\Protection\FormProtectionInterface> $ls_className */
+		foreach ($ls_classes as $ls_protectionName => $ls_className) {
+			$ls_identifier = static::sanitizeIdentifier(substr($ls_protectionName, 0, -14));
 
-		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths[ '\\' . CUSTOM_NAMESPACE . '\Form\Protection\\' ] = implode(DS, [ROOT, CUSTOM_DIR, 'Form', 'Protection', $ls_className . 'FormProtection.php']);
-		}
-
-		$la_paths['\Awyiss\Form\Protection\\'] = implode(DS, [ROOT, APP_DIR, 'Form', 'Protection', $ls_className . 'FormProtection.php']);
-
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_protectionName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-
-				if (
-					str_starts_with($ls_protectionName, '_') ||
-					str_starts_with($ls_protectionName, 'Abstract')
-				) {
-					continue;
-				}
-
-				/** @var class-string<\Awyiss\Form\Protection\FormProtectionInterface> $ls_formProtectionClass */
-				$ls_formProtectionClass = $ls_namespace . $ls_protectionName;
-
-				if (!in_array(FormProtectionInterface::class, class_implements($ls_formProtectionClass))) {
-					throw new RuntimeException(
-						sprintf('The provided FormProtection class `%s` does not implement `%s`.', $ls_formProtectionClass, FormProtectionInterface::class)
-					);
-				}
-
-				$ls_identifier = static::sanitizeIdentifier(substr($ls_protectionName, 0, -14));
-
-				static::$classes[ $ls_identifier ] = $ls_formProtectionClass;
-			}
+			static::$classes[ $ls_identifier ] = $ls_className;
 		}
 	}
 }
