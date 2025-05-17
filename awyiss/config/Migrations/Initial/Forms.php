@@ -115,6 +115,10 @@ class Forms {
 			'default' => 'match_first',
 			'limit' => 20,
 			'null' => false,
+		])->addColumn('transport_profile', 'string', [
+			'default' => false,
+			'limit' => 50,
+			'null' => false,
 		])->addColumn('active', 'boolean', [
 			'default' => true,
 			'limit' => null,

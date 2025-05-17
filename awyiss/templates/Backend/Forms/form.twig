@@ -4,6 +4,7 @@
 @var formConditionalRecipientTypes array
 @var formConditionalRecipientOperators array
 @var pageProperties array
+@var transportProfiles array
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -133,8 +134,8 @@
 
 											{% block formControlBcc %}
 												<div
-														class="FormInput FormInputType-List FormInputName-Bcc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}"
-														data-list-item-remove="{{ __('list_item_remove') }}">
+													class="FormInput FormInputType-List FormInputName-Bcc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}"
+													data-list-item-remove="{{ __('list_item_remove') }}">
 													<label class="Label">{{ __('bcc') }}</label>
 
 													{% set counter = 0 %}
@@ -175,8 +176,8 @@
 
 											{% block formControlFormConditionalRecipients %}
 												<div
-														class="FormInput FormInputType-List FormInputName-FormConditionalRecipients" data-list-item-add="{{ __('list_item_add') }}"
-														data-list-item-remove="{{ __('list_item_remove') }}">
+													class="FormInput FormInputType-List FormInputName-FormConditionalRecipients" data-list-item-add="{{ __('list_item_add') }}"
+													data-list-item-remove="{{ __('list_item_remove') }}">
 
 													<label class="Label">{{ __('form_conditional_recipients') }}</label>
 
@@ -292,6 +293,13 @@
 														{{ FormHelper.select('_current_page_options', pageProperties) }}
 													</template>
 												</div>
+											{% endblock %}
+
+											{% block formControlTransportProfile %}
+												{{ FormHelper.control('transport_profile', {
+													empty: false,
+													options: transportProfiles,
+												}) }}
 											{% endblock %}
 										</fieldset>
 									{% endblock %}

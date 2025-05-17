@@ -178,6 +178,7 @@ class FormsController extends Controller {
 			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
 			if ($this->Forms->save($form, ['asCopy' => $lb_saveAsCopy])) {
+				/** @noinspection DuplicatedCode */
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
@@ -326,6 +327,7 @@ class FormsController extends Controller {
 			'formConditionalRecipientOperators' => $la_formConditionalRecipientOperators,
 			'pageProperties' => $la_pageProperties,
 			'conditionalRecipientsStrategies' => $la_conditionalRecipientsStrategies,
+			'transportProfiles' => $this->Forms->getTransportProfiles(),
 		]);
 	}
 }

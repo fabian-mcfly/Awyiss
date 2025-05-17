@@ -22,6 +22,7 @@
 	<exclude-pattern>./awyiss/templates/*</exclude-pattern>
 	<exclude-pattern>./tmp/*</exclude-pattern>
 	<exclude-pattern>./tests/bootstrap.php</exclude-pattern>
+	<exclude-pattern>./tests/customer/config/awyiss.php</exclude-pattern>
 	<exclude-pattern>./vendor/*</exclude-pattern>
 
 	<rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">

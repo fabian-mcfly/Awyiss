@@ -54,10 +54,6 @@ class FormSender {
 	 */
 	protected readonly Form $form;
 	/**
-	 * @var \Awyiss\Form\FormOptionsInterface $formOptions
-	 */
-	protected FormOptionsInterface $formOptions;
-	/**
 	 * @var \Awyiss\Model\Table\FormEntriesTable $formEntriesTable
 	 */
 	protected FormEntriesTable $formEntriesTable;
@@ -73,9 +69,7 @@ class FormSender {
 
 	/**
 	 * @param \Awyiss\Model\Entity\Form $form
-	 * @param array $formData
-	 * @param \Awyiss\Form\FormOptionsInterface $formOptions
-	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param \Awyiss\Model\Entity\Page|null $page
 	 */
 	public function __construct(Form $form, ?Page $page = null) {
 		$lo_form = $form;
@@ -186,7 +180,9 @@ class FormSender {
 
 		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
 		$ls_className = App::className('Mailer', 'Mailer');
-		$lo_mailer = new $ls_className('default');
+		$lo_mailer = new $ls_className('form');
+
+		$lo_mailer->setTransport($this->form->transportProfile);
 
 		$lo_mailer->setSubject(html_entity_decode($this->form->subject))
 		->setFrom(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName))
@@ -235,7 +231,7 @@ class FormSender {
 			return false;
 		}
 
-		$lb_sent = $this->_send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain);
+		$lb_sent = $this->send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain);
 
 		// Dispatch a new event for the form afterEmailDeliver
 		$lo_event = new Event('FormSender.afterEmailDeliver', $this->form, [
@@ -279,7 +275,9 @@ class FormSender {
 
 		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
 		$ls_className = App::className('Mailer', 'Mailer');
-		$lo_mailer = new $ls_className('default');
+		$lo_mailer = new $ls_className('form');
+
+		$lo_mailer->setTransport($this->form->transportProfile);
 
 		$lo_mailer->setSubject(html_entity_decode($this->form->subjectConfirmation))
 		->setFrom(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')))
@@ -314,7 +312,7 @@ class FormSender {
 			return false;
 		}
 
-		$lb_sent = $this->_send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain, 'confirmation');
+		$lb_sent = $this->send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain, 'confirmation');
 
 		// Dispatch a new event for the form afterConfirmationEmailDeliver
 		$lo_event = new Event('FormSender.afterConfirmationEmailDeliver', $this->form, [
@@ -332,7 +330,7 @@ class FormSender {
 	/**
 	 * Save the form entry in the database
 	 *
-	 * @return void
+	 * @return bool
 	 */
 	protected function saveFormEntry(): bool {
 		$ls_ipHash = $this->createIpHash();
@@ -603,7 +601,7 @@ class FormSender {
 	 * @param array $match
 	 * @param array $values
 	 * @param array $safeList
-	 * @return void
+	 * @return string
 	 */
 	protected function replacedPlaceholdersOrAlternative(array $match, array $values, array $safeList = []): string {
 		$ls_string = $match['identifiers'] ?? '';
@@ -655,7 +653,7 @@ class FormSender {
 	 * @param string $type
 	 * @return bool
 	 */
-	protected function _send(Mailer $mailer, ?string $bodyHtml, ?string $bodyPlain, string $type = 'email'): bool {
+	protected function send(Mailer $mailer, ?string $bodyHtml, ?string $bodyPlain, string $type = 'email'): bool {
 		$lo_template = $type === 'email' ? $this->form->emailTemplate : $this->form->confirmationEmailTemplate;
 
 		$mailer->setRenderer(new FormMailRenderer());

@@ -229,28 +229,32 @@ return [
 		],
 	],
 
-	'Email' => [
-		'default' => [],
-	],
+	/**
+	 * Email profiles
+	 *
+	 * @see https://book.cakephp.org/5/en/core-libraries/email.html#configuration-profiles
+	 */
+	'Email' => [],
 
-	/*
-	 * Email configuration.
+	/**
+	 * Email transport profiles.
 	 *
-	 * Host and credential configuration in case you are using SmtpTransport
-	 *
-	 * See awyiss/config/awyiss.php for more configuration options.
+	 * @see https://book.cakephp.org/5/en/core-libraries/email.html#email-transport
 	 */
 	'EmailTransport' => [
 		'default' => [
-			//'className' => \Cake\Mailer\Transport\DebugTransport::class, //To not send any mails
-			'className' => MailTransport::class, //To use the default php mail()
-			//'className' => \Cake\Mailer\Transport\SmtpTransport::class, //To use a smtp server
-			'client' => null,
-			'host' => 'localhost',
-			'password' => null,
+			'className' => \Cake\Mailer\Transport\MailTransport::class,
+		],
+		'smtp' => [
+			'className' => \Cake\Mailer\Transport\SmtpTransport::class, //To use a smtp server
+			'host' => '',
+			'password' => '',
 			'port' => 25,
 			'tls' => true,
-			'username' => null,
+			'username' => '',
+		],
+		'debug' => [
+			'className' => \Cake\Mailer\Transport\DebugTransport::class, //To not send any mails
 		],
 	],
 

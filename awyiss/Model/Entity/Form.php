@@ -40,6 +40,7 @@ use Cake\View\View;
  * @property string|null $successMessage
  * @property bool $multistep
  * @property string $conditionalRecipientsStrategy
+ * @property string $transportProfile
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
@@ -74,6 +75,7 @@ class Form extends Entity {
 		'salutation_confirmation' => 'salutationConfirmation',
 		'success_message' => 'successMessage',
 		'conditional_recipients_strategy' => 'conditionalRecipientsStrategy',
+		'transport_profile' => 'transportProfile',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
 		'changed_by' => 'changedBy',
@@ -111,6 +113,7 @@ class Form extends Entity {
 		'successMessage' => true,
 		'multistep' => true,
 		'conditionalRecipientsStrategy' => true,
+		'transportProfile' => true,
 		'active' => true,
 		'formConditionalRecipients' => true,
 	];
@@ -322,7 +325,7 @@ class Form extends Entity {
 
 
 	/**
-	 * @param array $formData
+	 * @param array|null $formData
 	 * @param \Awyiss\Validation\Validator|null $validator
 	 * @param bool|null $validateProtection
 	 * @return \Awyiss\Model\Entity\Form
@@ -415,7 +418,7 @@ class Form extends Entity {
 
 	/**
 	 * @param array $formData
-	 * @return void
+	 * @return \Awyiss\Model\Entity\Form
 	 */
 	public function validateProtection(array $formData): static {
 		if (!$this->getProtectionMethods()) {

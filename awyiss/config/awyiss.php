@@ -160,8 +160,10 @@ return [
 		'variableMapping' => [],
 	],
 
-	/*
-	 * See `\Cake\Mailer\Email` for more information.
+	/**
+	 * Email profiles
+	 *
+	 * @see https://book.cakephp.org/5/en/core-libraries/email.html#configuration-profiles
 	 */
 	'Email' => [
 		'default' => [
@@ -170,16 +172,20 @@ return [
 			'priority' => 3,
 			'transport' => 'default',
 		],
-	],
-
-	/*
-	 * The keys host, port, timeout, username, password, client and tls are used in SMTP transports
-	 */
-	'EmailTransport' => [
-		'default' => [
-			'className' => MailTransport::class,
+		'form' => [
+			'emailFormat' => 'both',
+			'emailPattern' => null,
+			'priority' => 3,
+			'transport' => 'default',
 		],
 	],
+
+	/**
+	 * Email transport profiles.
+	 *
+	 * @see https://book.cakephp.org/5/en/core-libraries/email.html#email-transport
+	 */
+	'EmailTransport' => [],
 
 	/*
 	 * - `skipLog` - List of exceptions to skip for logging. Exceptions that

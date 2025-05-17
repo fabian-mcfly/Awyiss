@@ -207,3 +207,18 @@ msgstr "Duplicate Check"
 
 msgid "protection_method_ip_check"
 msgstr "IP Check"
+
+msgid "transport_profile"
+msgstr "Profil"
+
+msgid "error_transport_profile_exists"
+msgstr "The transport profile does not exist"
+
+msgid "transport_profile_default"
+msgstr "Standard"
+
+msgid "transport_profile_debug"
+msgstr "Debug"
+
+msgid "transport_profile_smtp"
+msgstr "SMTP ({username})"

@@ -6,9 +6,11 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Awyiss;
 use Awyiss\Form\FormConditionalRecipients;
+use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Mailer\TransportFactory;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validation;
 use Cake\Validation\Validator;
@@ -22,7 +24,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\FormElementsTable&\Awyiss\ORM\Association\HasMany $FormElements
  * @property \Awyiss\Model\Table\FormEntriesTable&\Awyiss\ORM\Association\HasMany $FormEntries
  * @method \Awyiss\Model\Entity\Form newDefaultEntity(array $additionalData = [], array $options = [])
- * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class FormsTable extends Table {
 	/**
@@ -91,6 +93,7 @@ class FormsTable extends Table {
 	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return \Cake\Validation\Validator
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
@@ -184,6 +187,7 @@ class FormsTable extends Table {
 					return true;
 				}
 
+				/** @noinspection RegExpRedundantEscape */
 				if (
 					preg_match('/^\{\{(?<identifiers>[^\|\}]*?)(?:\|(?<alternative>[^\}]*?))?\}\}$/', $value, $la_matches) ||
 					preg_match('/^(\$(?<identifier>[A-Za-z0-9_]+))$/', $value, $la_matches)
@@ -303,6 +307,12 @@ class FormsTable extends Table {
 		]);
 
 
+		$validator->add('transport_profile', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+		]);
+
+
 		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
@@ -346,7 +356,33 @@ class FormsTable extends Table {
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
 		]);
 
+		$rules->add(function (Form $entity): bool {
+			return array_key_exists($entity->transportProfile, $this->getTransportProfiles());
+		},
+		'transportProfileExists', [
+			'errorField' => 'transportProfile',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_transport_profile_exists'),
+		]);
+
 		return $rules;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getTransportProfiles(): array {
+		$la_profiles = [];
+
+		foreach (TransportFactory::configured() ?: [] as $ls_profile) {
+			$la_config = TransportFactory::get($ls_profile)->getConfig();
+			unset($la_config['url'], $la_config['password']);
+
+			$ls_label = __d('forms', 'transport_profile_' . $ls_profile, $la_config);
+			$la_profiles[ $ls_profile ] = str_contains($ls_label, '::') ? $ls_profile : $ls_label;
+		}
+
+		return $la_profiles;
 	}
 
 

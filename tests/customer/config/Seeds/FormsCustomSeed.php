@@ -34,6 +34,7 @@ class FormsCustomSeed extends AbstractSeed {
 				'success_message' => '<h1 style="text-align: center;">Vielen Dank für Ihre Anfrage{{,<br>$firstname $lastname|}}.</h1>
 <p style="text-align: center;">Wir werden uns zeitnah mit Ihnen, {{$vorname $nachname|lieber Kunde oder Kunde-to-be}}, in Verbindung setzen. Versprochen.</p>',
 				'multistep' => 0,
+				'transport_profile' => 'debug',
 				'active' => 1,
 				'deleted' => 0,
 				'created_by' => 1,
