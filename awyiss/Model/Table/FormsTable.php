@@ -56,6 +56,11 @@ class FormsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
+		$this->hasMany('Contents', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+		]);
+
 		$this->belongsTo('EmailTemplates', [
 			'className' => 'EmailTemplates',
 			'foreignKey' => 'email_template_id',
@@ -83,6 +88,11 @@ class FormsTable extends Table {
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'form_id',
+		]);
+
+		$this->hasMany('Pages', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 		]);
 	}
 
@@ -368,6 +378,24 @@ class FormsTable extends Table {
 			'errorField' => 'transportProfile',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_transport_profile_exists'),
 		]);
+
+		$rules->addDelete(
+			$rules->isNotLinkedTo('Contents', 'contents'),
+			'noLinkedContents',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_contents'),
+			]
+		);
+
+		$rules->addDelete(
+			$rules->isNotLinkedTo('Pages', 'pages'),
+			'noLinkedPages',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_pages'),
+			]
+		);
 
 		return $rules;
 	}
