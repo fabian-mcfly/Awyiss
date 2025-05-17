@@ -1,6 +1,7 @@
 {#
 @var contents string
 @var form \Awyiss\Model\Entity\Form
+@var formElements \Awyiss\Model\Entity\FormElement[]
 @var formElementsChecksum string
 @var page \Awyiss\Model\Entity\Page
 @var sent bool
@@ -35,14 +36,22 @@ after a short delay to prevent spam bots from submitting the form directly.
 	{% else %}
 		{% set errorMessages %}
 			{% block formErrorMessage %}
-				{% if form.errors or sendErrors %}
+				{% if form.errors %}
 					<div class="Form-ErrorMessage">
 						{% if form.errors['_general'] %}
 							{% for message in form.errors['_general'] %}
 								{{ message|raw }}
 							{% endfor %}
 						{% else %}
-							{{ __d('validation', 'form_has_errors')|raw }}
+							<p>{{ __d('validation', 'form_has_errors')|raw }}</p>
+
+							{% if form.summarizeErrors and form.errors %}
+								<ul>
+									{% for field, messages in form.errors %}
+										<li><strong>{{ formElements[ field ].title }}:</strong> {{ messages|first }}</li>
+									{% endfor %}
+								</ul>
+							{% endif %}
 						{% endif %}
 					</div>
 				{% endif %}

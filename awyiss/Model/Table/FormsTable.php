@@ -284,6 +284,11 @@ class FormsTable extends Table {
 		]);
 
 
+		$validator->add('summarize_errors', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
 		$validator->add('success_message', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],

@@ -1,4 +1,5 @@
 {#
+@var form \Awyiss\Model\Entity\Form
 @var formElement \Awyiss\Model\Entity\FormElement
 @var children string
 @var formData array
@@ -218,7 +219,7 @@
 			{% endblock %}
 
 			{% block formElementError %}
-				{% if formErrors[ formElement.identifier ] %}
+				{% if form.summarizeErrors == false and formErrors[ formElement.identifier ] is not empty %}
 					<div class="FormElement-Error">{{ formErrors[ formElement.identifier ]|first }}</div>
 				{% endif %}
 			{% endblock %}

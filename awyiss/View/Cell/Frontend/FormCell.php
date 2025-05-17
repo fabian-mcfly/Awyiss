@@ -6,6 +6,7 @@ namespace Awyiss\View\Cell\Frontend;
 
 use Awyiss\Core\App;
 use Awyiss\Model\Entity;
+use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Cake\Http\Exception\RedirectException;
@@ -65,10 +66,15 @@ class FormCell extends Cell {
 			$lo_formRenderer->processFormEntryFromHash($this->request->getParam('formEntry'));
 		}
 
+		$la_formElements = $lo_formRenderer->getForm()->getFormElements()->listNested()->filter(function (FormElement $element): bool {
+			return !empty($element->identifier);
+		})->indexBy('identifier')->toArray();
+
 		// Set the view variables
 		$this->set([
 			'contents' => $lo_formRenderer->getFormBody($la_options),
 			'form' => $lo_form,
+			'formElements' => $la_formElements,
 			'formElementsChecksum' => $lo_form->getFormElementsChecksum(),
 			'page' => $this->page,
 			'sent' => $lo_formRenderer->isSent(),

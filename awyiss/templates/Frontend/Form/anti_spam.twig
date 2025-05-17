@@ -1,7 +1,7 @@
 {#
 @var captcha string
 @var form \Awyiss\Model\Entity\Form
-@var formElements \Awyiss\Model\Entity\FormElement[]|\Cake\Collection\CollectionInterface
+@var formElements \Awyiss\Model\Entity\FormElement[]
 @var formElementsChecksum string
 @var formData array
 @var formErrors array
@@ -42,17 +42,27 @@
 									</div>
 								{% else %}
 									<div class="Form Form-{{ form.identifier|ucparts(false) }}">
-										{% if formErrors %}
-											<div class="Form-ErrorMessage">
-												{% if formErrors._general %}
-													{% for message in formErrors._general %}
-														{{ message|raw }}
-													{% endfor %}
-												{% else %}
-													{{ __d('validation', 'form_has_errors')|raw }}
-												{% endif %}
-											</div>
-										{% endif %}
+										{% block formErrorMessage %}
+											{% if formErrors %}
+												<div class="Form-ErrorMessage">
+													{% if formErrors._general %}
+														{% for message in formErrors._general %}
+															{{ message|raw }}
+														{% endfor %}
+													{% else %}
+														<p>{{ __d('validation', 'form_has_errors')|raw }}</p>
+
+														{% if form.summarizeErrors and form.errors %}
+															<ul>
+																{% for field, messages in form.errors %}
+																	<li><strong>{{ formElements[ field ].title }}:</strong> {{ messages|first }}</li>
+																{% endfor %}
+															</ul>
+														{% endif %}
+													{% endif %}
+												</div>
+											{% endif %}
+										{% endblock %}
 
 										<form
 											{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}

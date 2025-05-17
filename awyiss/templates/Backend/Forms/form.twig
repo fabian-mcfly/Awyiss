@@ -387,7 +387,11 @@
 
 						{% block fieldsetPresentationInner %}
 							{% block formControl_Active %}
-								{{ FormHelper.control('active', {columnSpan: 6}) }}
+								{{ FormHelper.control('active', {columnSpan: 4}) }}
+							{% endblock %}
+
+							{% block formControlSummarizeErrors %}
+								{{ FormHelper.control('summarize_errors', {columnSpan: 8}) }}
 							{% endblock %}
 
 							{#% block formControlMultistep %}

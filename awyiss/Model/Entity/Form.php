@@ -37,6 +37,7 @@ use Cake\View\View;
  * @property string|null $subjectConfirmation
  * @property string|null $salutation
  * @property string|null $salutationConfirmation
+ * @property bool $summarizeErrors
  * @property string|null $successMessage
  * @property bool $multistep
  * @property string $conditionalRecipientsStrategy
@@ -73,6 +74,7 @@ class Form extends Entity {
 		'user_name' => 'userName',
 		'subject_confirmation' => 'subjectConfirmation',
 		'salutation_confirmation' => 'salutationConfirmation',
+		'summarize_errors' => 'summarizeErrors',
 		'success_message' => 'successMessage',
 		'conditional_recipients_strategy' => 'conditionalRecipientsStrategy',
 		'transport_profile' => 'transportProfile',
@@ -110,6 +112,7 @@ class Form extends Entity {
 		'subjectConfirmation' => true,
 		'salutation' => true,
 		'salutationConfirmation' => true,
+		'summarizeErrors' => true,
 		'successMessage' => true,
 		'multistep' => true,
 		'conditionalRecipientsStrategy' => true,

@@ -103,6 +103,10 @@ class Forms {
 			'default' => null,
 			'limit' => 255,
 			'null' => true,
+		])->addColumn('summarize_errors', 'boolean', [
+			'default' => false,
+			'limit' => null,
+			'null' => false,
 		])->addColumn('success_message', 'text', [
 			'default' => null,
 			'limit' => null,

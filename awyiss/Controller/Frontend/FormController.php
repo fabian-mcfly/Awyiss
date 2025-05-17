@@ -6,6 +6,7 @@ namespace Awyiss\Controller\Frontend;
 
 use Awyiss\Controller\AppController;
 use Awyiss\Core\App;
+use Awyiss\Model\Entity\FormElement;
 use Awyiss\View\Cell\Frontend\FormCell;
 use Awyiss\View\FrontendView;
 use Cake\Http\Exception\NotFoundException;
@@ -198,12 +199,16 @@ class FormController extends AppController {
 			$la_formErrors = $lo_form->getErrors();
 		}
 
+		$la_formElements = $lo_formRenderer->getForm()->getFormElements()->listNested()->filter(function (FormElement $element): bool {
+			return !empty($element->identifier);
+		})->indexBy('identifier')->toArray();
+
 		// Set the view variables
 		$this->set([
 			'captcha' => $ls_captcha ?? '',
 			'contents' => $lo_formRenderer->getFormBody($la_options),
 			'form' => $lo_formRenderer->getForm(),
-			'formElements' => $lo_formRenderer->getForm()->getFormElements(),
+			'formElements' => $la_formElements,
 			'formElementsChecksum' => $lo_formRenderer->getForm()->getFormElementsChecksum(),
 			'formData' => $lo_form->getFormData(),
 			'formErrors' => $la_formErrors ?? [],

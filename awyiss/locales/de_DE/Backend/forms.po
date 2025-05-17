@@ -222,3 +222,6 @@ msgstr "Debug"
 
 msgid "transport_profile_smtp"
 msgstr "SMTP ({username})"
+
+msgid "summarize_errors"
+msgstr "Fehler zusammenfassen"
