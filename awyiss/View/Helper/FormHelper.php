@@ -203,9 +203,8 @@ class FormHelper extends BaseFormHelper {
 		$la_options = $this->setTimezoneOptions($fieldName, $la_options);
 
 		$la_options['templateVars'] ??= [];
+		$la_options['templateVars']['containerAttrs'] ??= [];
 		if (in_array(($la_options['type'] ?? null), ['input_list', 'input_key_value_list'])) {
-			$la_options['templateVars']['containerAttrs'] ??= [];
-
 			$la_options['templateVars']['containerAttrs']['data-list-item-add'] = __('list_item_add');
 			$la_options['templateVars']['containerAttrs']['data-list-item-remove'] = __('list_item_remove');
 		}
