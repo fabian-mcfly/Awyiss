@@ -63,6 +63,7 @@ class NestBehavior extends Behavior {
 		'implementedEvents' => [
 			'buildRules',
 			'beforeCopy',
+			'beforeSaveAssociations',
 			'beforeSave',
 			'afterSave',
 		],
@@ -575,6 +576,54 @@ class NestBehavior extends Behavior {
 			$entity->extractOriginalChanged($la_relatedColumns),
 			$entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true) ?? []
 		);
+	}
+
+
+	/**
+	 * When the option `relatedColumns` is set and one those columns/properties of the entity is dirty,
+	 * the entity was moved to a new scope.
+	 * This method handles this change and also moves all nested children to the new scope.
+	 *
+	 * For example:
+	 * - Moving a page from one language to another one results in all children pages also being moved to the new language
+	 * - Moving a content from one contentAreas to another one results in all children contents also being moved to the new contentArea
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \Exception
+	 */
+	public function beforeSaveAssociations(
+		EventInterface $event,
+		EntityInterface $entity,
+		ArrayObject $options
+	): void {
+		if (
+			!$this->getConfig('enabled') ||
+			!$entity->isNew() ||
+			!$this->getConfig('children.associationName') ||
+			!$this->getConfig('relatedColumns')
+		) {
+			return;
+		}
+
+		$lo_table = $this->table();
+		$ls_property = $lo_table->{$this->getConfig('children.associationName')}->getProperty();
+
+		if (
+			!$entity->has($ls_property) ||
+			!$entity->isDirty($ls_property)
+		) {
+			return;
+		}
+
+		$la_relatedColumnValues = $entity->extract($this->getConfig('relatedColumns'));
+		$la_children = $entity->get($ls_property);
+
+		/** @var \Cake\Datasource\EntityInterface $lo_child */
+		foreach ($la_children as $lo_child) {
+			if ($lo_child instanceof EntityInterface && $entity->isNew()) {
+				$lo_child->patch($la_relatedColumnValues);
+			}
+		}
 	}
 
 
