@@ -36,6 +36,8 @@ class EventTriggerBehavior extends Behavior {
 			'beforeSave',
 			'afterSave',
 			'afterSaveCommit',
+			'beforeSaveAssociations',
+			'afterSaveAssociations',
 			'beforeDelete',
 			'afterDelete',
 			'afterDeleteCommit',
