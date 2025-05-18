@@ -52,7 +52,6 @@ class BackendView extends AppView {
 
 		$this->addHelper('Form', [
 			'autoSetCustomValidity' => false,
-			'errorClass' => 'Error',
 			'templates' => 'form_templates_backend',
 		]);
 

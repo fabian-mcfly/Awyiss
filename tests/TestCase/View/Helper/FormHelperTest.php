@@ -77,7 +77,6 @@ class FormHelperTest extends TestCase {
 
 		$this->formHelper = new FormHelper(new BackendView(), [
 			'autoSetCustomValidity' => false,
-			'errorClass' => 'Error',
 			'templates' => 'form_templates_backend',
 		]);
 	}

@@ -42,6 +42,8 @@ return [
 	'translatableText' => '<div class="TranslatableTexts" data-button-title="{{buttonTitle}}"  data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
 	// Container for submit buttons.
 	'submitContainer' => '<div class="Submit">{{content}}</div>',
+	// Error
+	'errorClass' => 'Error',
 	// selected class
 	'selectedClass' => 'Selected',
 ];

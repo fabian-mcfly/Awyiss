@@ -74,7 +74,6 @@ class FrontendView extends AppView {
 		$this->addHelper('Asset');
 		$this->addHelper('Form', [
 			'autoSetCustomValidity' => false,
-			'errorClass' => 'Error',
 			'templates' => 'form_templates',
 		]);
 		$this->addHelper('Html');

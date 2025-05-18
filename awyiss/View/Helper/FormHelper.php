@@ -275,7 +275,7 @@ class FormHelper extends BaseFormHelper {
 		}
 
 		if ($this->error($fieldName)) {
-			$la_options = $this->removeClass($la_options, $this->_config['errorClass']);
+			$la_options = $this->removeClass($la_options, $this->templater()->getConfig('errorClass'));
 		}
 
 		if (!empty($la_options['controls'])) {

@@ -54,7 +54,6 @@ class LocaleHelperTest extends TestCase {
 
 		$this->formHelper = new FormHelper($view, [
 			'autoSetCustomValidity' => false,
-			'errorClass' => 'Error',
 			'templates' => 'form_templates_backend',
 		]);
 
