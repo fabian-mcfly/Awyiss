@@ -277,7 +277,7 @@ class ContentTemplatesTable extends Table {
 			$lb_valid = true;
 
 			$la_availableAttributes = array_column($this->getAvailableContentAttributes(), 'identifier');
-			foreach ($entity->contentTemplateElements as $lo_assignedContentElement) {
+			foreach (($entity->contentTemplateElements ?? []) as $lo_assignedContentElement) {
 				if (str_starts_with($lo_assignedContentElement->identifier, 'attributes.')) {
 					$ls_identifier = substr($lo_assignedContentElement->identifier, 11);
 
