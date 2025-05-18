@@ -888,6 +888,10 @@ class Table extends BaseTable {
 	 * @return bool
 	 */
 	protected function _onSaveSuccess(EntityInterface $entity, ArrayObject $options): bool {
+		if ($options['associated'] ?? []) {
+			$this->dispatchEvent('Model.beforeSaveAssociations', ['entity' => $entity, 'options' => clone $options]);
+		}
+
 		$lx_success = $this->_associations->saveChildren(
 			$this,
 			$entity,
@@ -898,6 +902,10 @@ class Table extends BaseTable {
 
 		if (!$lx_success && $options['atomic']) {
 			return false;
+		}
+
+		if ($options['associated'] ?? []) {
+			$this->dispatchEvent('Model.afterSaveAssociations', ['entity' => $entity, 'options' => clone $options]);
 		}
 
 		$lo_event = $this->dispatchEvent('Model.afterSave', ['entity' => $entity, 'options' => $options]);
