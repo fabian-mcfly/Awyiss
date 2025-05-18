@@ -260,7 +260,7 @@ class FormElementsTable extends Table {
 
 
 		$validator->notEmptyString('identifier', null, function (array $context): bool {
-			return ($context['data']['type'] ?? '') !== 'free_text';
+			return !in_array($context['data']['type'] ?? '', ['free_text', 'submit']);
 		});
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
