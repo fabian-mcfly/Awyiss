@@ -51,7 +51,7 @@ abstract class GenericDatatablesController extends Controller {
 	 */
 	protected CollectionInterface $threadedRecords;
 	/**
-	 * @var bool Translation of datatabe records enabled
+	 * @var bool Translation of datatable records enabled
 	 */
 	protected bool $translatable;
 
@@ -219,6 +219,7 @@ abstract class GenericDatatablesController extends Controller {
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $method
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function save(Entity $entity, string $method = 'add'): void {
 		$la_associated = [];
@@ -232,11 +233,19 @@ abstract class GenericDatatablesController extends Controller {
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
-		$this->Categories->setConfig('finder', [
-			'forCurrentLanguage' => [
-				'entity' => $entity,
-			],
-		]);
+		if (LocalConfig::read('splitIntoLanguages')) {
+			$this->Categories->setConfig('finder', [
+				'forCurrentLanguage' => [
+					'entity' => $entity,
+				],
+			]);
+		}
+		else {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			if ($entity->languageShortcode) {
+				$entity->set('languageShortcode');
+			}
+		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
@@ -275,9 +284,11 @@ abstract class GenericDatatablesController extends Controller {
 		}
 		elseif ($this->Datatable->hasBehavior('SystemOrder')) {
 			if ($this->Datatable->getSystemOrderRelatedColumns($entity)) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$entity->systemOrder = null;
 			}
 			else {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$entity->systemOrder = $entity->hasOriginal('systemOrder') ? $entity->getOriginal('systemOrder') : $entity->get('systemOrder');
 			}
 
@@ -289,7 +300,7 @@ abstract class GenericDatatablesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $record
+	 * @param \Awyiss\Model\Entity $entity
 	 * @return void
 	 */
 	protected function setViewVars(Entity $entity): void {
@@ -323,8 +334,9 @@ abstract class GenericDatatablesController extends Controller {
 
 	/**
 	 * @param \Awyiss\Model\Entity $entity
-	 * @param \Cake\Collection\CollectionInterface $threadedContents
+	 * @param \Cake\Collection\CollectionInterface $threadedRecords
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function ensurePossibleParentId(Entity $entity, CollectionInterface $threadedRecords): void {
 		if ($this->Categories->getConfig('enabled') && $this->Categories->getConfig('field') === 'parentId') {
@@ -353,7 +365,7 @@ abstract class GenericDatatablesController extends Controller {
 	 * @param \Awyiss\Model\Entity\Datatable $datatable
 	 * @param string $identifier
 	 * @return \Awyiss\Controller\Backend\GenericDatatablesController
-	 * @throws \ReflectionException
+	 * @noinspection DuplicatedCode
 	 */
 	#[NoDirectAccess]
 	public function forDatatable(Datatable $datatable, string $identifier): static {
