@@ -60,13 +60,26 @@ class TranslateBehavior extends BaseTranslateBehavior {
 	 */
 	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
 		$ls_firstLanguageShortcode = array_key_first($this->languages);
+		$ls_currentLanguageShortcode = LocaleMiddleware::getLanguage($this->getConfig('realm'))->shortcode;
 
 		if (empty($data['_translations'])) {
 			return;
 		}
 
+		// Alle Energie auf die Deflektorschilde
+		$la_forcedFields = $this->getConfig('forcedFields', ['title']);
+
 		foreach ($this->getConfig('fields') as $ls_field) {
 			$ls_defaultTranslation = $data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? null;
+
+			if (
+				!$ls_defaultTranslation &&
+				$ls_firstLanguageShortcode !== $ls_currentLanguageShortcode &&
+				in_array($ls_field, $la_forcedFields)
+			) {
+				$ls_defaultTranslation = $data['_translations'][ $ls_currentLanguageShortcode ][ $ls_field ] ?? null;
+			}
+
 			/** @noinspection PhpVariableNamingConventionInspection */
 			$data[ $ls_field ] = $ls_defaultTranslation;
 
