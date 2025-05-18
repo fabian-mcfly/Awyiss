@@ -5,8 +5,11 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Annotation\NoDirectAccess;
+use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Core\App;
 use Awyiss\Form\FormConditionalRecipients;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Enum\ComparisonOperator;
@@ -169,6 +172,20 @@ class FormsController extends Controller {
 		$la_data = $this->formatCcBcc($la_data, 'bcc');
 		$la_data = $this->formatConditionalRecipients($la_data);
 
+		if (isset($la_data['form_template'])) {
+			$form->setAccess('formElements', true);
+			$la_data = $this->buildElementsFromTemplate($la_data['form_template'], $la_data);
+			$la_associated['FormElements'] = [
+				'accessibleFields' => ['childFormElements' => true],
+				'associated' => [
+					'ChildFormElements' => [
+						'validate' => false,
+					],
+				],
+				'validate' => false,
+			];
+		}
+
 		$this->Forms->patchEntity($form, $la_data, [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
@@ -327,7 +344,29 @@ class FormsController extends Controller {
 			'formConditionalRecipientOperators' => $la_formConditionalRecipientOperators,
 			'pageProperties' => $la_pageProperties,
 			'conditionalRecipientsStrategies' => $la_conditionalRecipientsStrategies,
+			'formTemplates' => $form->isNew() ? $this->Forms->getFormTemplates() : [],
 			'transportProfiles' => $this->Forms->getTransportProfiles(),
+		]);
+	}
+
+
+	/**
+	 * @param string $formTemplate
+	 * @param array $data
+	 * @return array
+	 */
+	protected function buildElementsFromTemplate(string $formTemplate, array $data): array {
+		/** @var class-string<\Awyiss\Utility\Form\Templates\FormTemplateInterface>|null $ls_class */
+		$ls_class = App::className($formTemplate, 'Utility\Form\Templates');
+
+		if (!$ls_class) {
+			return $data;
+		}
+
+		$la_formElements = $ls_class::getElements(LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND));
+
+		return array_merge($data, [
+			'form_elements' => $la_formElements,
 		]);
 	}
 }

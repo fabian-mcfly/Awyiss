@@ -5,10 +5,12 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Form\FormConditionalRecipients;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Form\Templates\FormTemplateInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Mailer\TransportFactory;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -398,6 +400,28 @@ class FormsTable extends Table {
 		);
 
 		return $rules;
+	}
+
+
+	/**
+	 * @return array
+	 * @throws \Exception
+	 */
+	public function getFormTemplates(): array {
+		$la_classes = App::classes('*', 'Utility/Form/Templates', 'FormTemplate', FormTemplateInterface::class);
+
+		$la_templates = [];
+
+		/** @var class-string<\Awyiss\Utility\Form\Templates\FormTemplateInterface> $ls_className */
+		foreach ($la_classes as $ls_templateName => $ls_className) {
+			$la_templates[ $ls_templateName ] = $ls_className::getTitle();
+		}
+
+		uasort($la_templates, function ($a, $b) {
+			return strnatcasecmp($a, $b);
+		});
+
+		return $la_templates;
 	}
 
 

@@ -225,3 +225,72 @@ msgstr "SMTP ({username})"
 
 msgid "summarize_errors"
 msgstr "Summarize Errors"
+
+msgid "form_template"
+msgstr "Create elements from template"
+
+msgid "form_template_appointment_form"
+msgstr "Appointment"
+
+msgid "form_template_contact_form"
+msgstr "Contact"
+
+msgid "form_template_job_application_form"
+msgstr "Job Application"
+
+msgid "form_template_callback_form"
+msgstr "Callback"
+
+msgid "form_template_title"
+msgstr "Title"
+
+msgid "form_template_title_mr"
+msgstr "Mr."
+
+msgid "form_template_title_ms"
+msgstr "Ms."
+
+msgid "form_template_title_diverse"
+msgstr "Diverse"
+
+msgid "form_template_firstname"
+msgstr "Firstname"
+
+msgid "form_template_lastname"
+msgstr "Lastname"
+
+msgid "form_template_name"
+msgstr "Name"
+
+msgid "form_template_email"
+msgstr "Email"
+
+msgid "form_template_phone"
+msgstr "Phone"
+
+msgid "form_template_datetime"
+msgstr "Date and Time"
+
+msgid "form_template_message"
+msgstr "Message"
+
+msgid "form_template_privacy_accepted"
+msgstr "Privacy accepted"
+
+msgid "form_template_privacy_accepted_yes"
+msgstr "Yes"
+
+msgid "form_template_privacy_accepted_text"
+msgstr "I have read the privacy policy and accept it."
+
+msgid "form_template_submit"
+msgstr "Submit"
+
+msgid "form_template_optional_placeholder"
+msgstr "(optional)"
+
+msgid "form_template_job_application_files_text"
+msgstr "<strong>Application Documents</strong><br>Space for CV, certificates, and an optional cover letter"
+
+msgid "form_template_job_application_file"
+msgstr "File"

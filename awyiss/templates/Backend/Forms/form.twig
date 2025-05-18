@@ -4,6 +4,7 @@
 @var formConditionalRecipientTypes array
 @var formConditionalRecipientOperators array
 @var pageProperties array
+@var formTemplates array
 @var transportProfiles array
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
@@ -46,6 +47,14 @@
 
 							{% block formControlSuccessMessage %}
 								{{ FormHelper.control('success_message', {'data-editor': true}) }}
+							{% endblock %}
+
+							{% block formControlFormTemplate %}
+								{% if formTemplates %}
+									{{ FormHelper.control('form_template', {
+										options: formTemplates,
+									}) }}
+								{% endif %}
 							{% endblock %}
 
 							{% block fieldsetGeneralAttributes %}

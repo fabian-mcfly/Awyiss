@@ -225,3 +225,72 @@ msgstr "SMTP ({username})"
 
 msgid "summarize_errors"
 msgstr "Fehler zusammenfassen"
+
+msgid "form_template"
+msgstr "Elemente aus Vorlage erstellen"
+
+msgid "form_template_appointment_form"
+msgstr "Termin"
+
+msgid "form_template_contact_form"
+msgstr "Kontakt"
+
+msgid "form_template_job_application_form"
+msgstr "Bewerbung"
+
+msgid "form_template_callback_form"
+msgstr "Rückruf"
+
+msgid "form_template_title"
+msgstr "Titel"
+
+msgid "form_template_title_mr"
+msgstr "Herr"
+
+msgid "form_template_title_ms"
+msgstr "Frau"
+
+msgid "form_template_title_diverse"
+msgstr "Divers"
+
+msgid "form_template_firstname"
+msgstr "Vorname"
+
+msgid "form_template_lastname"
+msgstr "Nachname"
+
+msgid "form_template_name"
+msgstr "Name"
+
+msgid "form_template_email"
+msgstr "E-Mail"
+
+msgid "form_template_phone"
+msgstr "Telefon"
+
+msgid "form_template_datetime"
+msgstr "Datum/Uhrzeit"
+
+msgid "form_template_message"
+msgstr "Nachricht"
+
+msgid "form_template_privacy_accepted"
+msgstr "Datenschutz akzeptiert"
+
+msgid "form_template_privacy_accepted_yes"
+msgstr "Ja"
+
+msgid "form_template_privacy_accepted_text"
+msgstr "Ich habe die Datenschutzerklärung gelesen und akzeptiert."
+
+msgid "form_template_submit"
+msgstr "Absenden"
+
+msgid "form_template_optional_placeholder"
+msgstr "(optional)"
+
+msgid "form_template_job_application_files_text"
+msgstr "<strong>Bewerbungsunterlagen</strong><br>Platz für Lebenslauf, Zeugnisse und ein optionales Anschreiben"
+
+msgid "form_template_job_application_file"
+msgstr "Datei"
