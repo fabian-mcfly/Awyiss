@@ -63,6 +63,10 @@
 			top:calc((var(--fontSizeHeading) - 30px) / 2 - 2px);
 			right:0;
 
+			@media screen and (width <= 540px) {
+				top:0;
+			}
+
 			&:hover {
 				color:var(--colorBright);
 			}
