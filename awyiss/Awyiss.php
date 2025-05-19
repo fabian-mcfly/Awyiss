@@ -336,6 +336,14 @@ class Awyiss extends BaseApplication {
 
 
 	/**
+	 * return bool
+	 */
+	public static function hasRealm(): bool {
+		return isset(static::$realm);
+	}
+
+
+	/**
 	 * @return string|null
 	 */
 	public static function getRealm(): ?string {

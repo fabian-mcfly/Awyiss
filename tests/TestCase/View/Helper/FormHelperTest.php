@@ -5,12 +5,10 @@ namespace Awyiss\Test\TestCase\View\Helper;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
 use Awyiss\View\Helper\FormHelper;
-use Cake\Datasource\FactoryLocator;
 use Cake\I18n\DateTime;
 use Cake\View\Form\EntityContext;
 use ReflectionClass;
@@ -29,21 +27,6 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @throws \Exception
-	 */
-	public static function setUpBeforeClass(): void {
-		LocaleMiddleware::setRealm(Awyiss::REALM_BACKEND);
-
-		$lo_language = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
-
-		$lo_tableLocator = FactoryLocator::get('Table');
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_tableLocator->setTranslateLanguage($lo_language);
-	}
-
-
-	/**
-	 * @inheritDoc
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
@@ -57,10 +40,6 @@ class FormHelperTest extends TestCase {
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
 		$property->setValue(false);
-
-		$lo_tableLocator = FactoryLocator::get('Table');
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_tableLocator->setTranslateLanguage(null);
 	}
 
 

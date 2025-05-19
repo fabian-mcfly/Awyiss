@@ -50,8 +50,6 @@ class AssetHelperTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		Awyiss::setRealm(Awyiss::REALM_BACKEND);
-
 		Configure::write('debug', false);
 
 		$view = new BackendView();

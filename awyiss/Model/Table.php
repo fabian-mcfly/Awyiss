@@ -288,8 +288,8 @@ class Table extends BaseTable {
 
 		$this->addBehavior('Search', $this->search);
 
-		if (!empty($config['translateLanguage']) && !empty($this->translate['fields'])) {
-			$this->addTranslateBehavior($config['translateLanguage']);
+		if (!empty($this->translate['fields'])) {
+			$this->addTranslateBehavior();
 		}
 
 		$this->initializeSchema($lo_schema);
@@ -1061,10 +1061,24 @@ class Table extends BaseTable {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Language $translateLanguage
+	 * @param \Awyiss\Model\Entity\Language|null $translateLanguage
 	 * @return void
 	 */
-	public function addTranslateBehavior(Language $translateLanguage): void {
+	public function addTranslateBehavior(?Language $translateLanguage = null): void {
+		if (
+			!$translateLanguage &&
+			$this->getTable() !== 'languages'
+		) {
+			if (Awyiss::hasRealm()) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$translateLanguage = LocaleMiddleware::getLanguage($this->translate['realm'] ?? Awyiss::getRealm());
+			}
+		}
+
+		if (!$translateLanguage) {
+			return;
+		}
+
 		$this->addBehavior(
 			'Translate',
 			$this->translate + [

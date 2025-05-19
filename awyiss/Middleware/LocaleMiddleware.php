@@ -90,10 +90,12 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 		static::loadLanguages();
 
-		$lo_language = static::getLanguage(static::getRealm());
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		$lo_frontendLanguage = static::getLanguage(Awyiss::REALM_FRONTEND);
+		$lo_backendLanguage = static::getLanguage(Awyiss::REALM_BACKEND);
 
-		if ($lo_language) {
-			static::useLanguage($lo_language);
+		if ($lo_frontendLanguage || $lo_backendLanguage) {
+			static::useLanguage($lo_frontendLanguage, $lo_backendLanguage);
 		}
 
 		$lo_request = $request->withAttribute('locale', $this);
@@ -104,16 +106,26 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Language $language
+	 * @param \Awyiss\Model\Entity\Language|null $frontendLanguage
+	 * @param \Awyiss\Model\Entity\Language|null $backendLanguage
 	 * @return void
 	 */
-	public static function useLanguage(Language $language): void {
-		ini_set('intl.default_locale', $language->locale);
-		I18n::setLocale($language->locale);
-		setlocale(LC_ALL, $language->locale . '.utf8');
+	public static function useLanguage(?Language $frontendLanguage = null, ?Language $backendLanguage = null): void {
+		$lo_mainLanguage = $frontendLanguage;
+		if ($backendLanguage && Awyiss::getRealm() === Awyiss::REALM_BACKEND) {
+			$lo_mainLanguage = $backendLanguage;
+		}
 
-		if ($language->dateFormat && $language->timeFormat) {
-			DateTime::$niceFormat = $language->dateFormat . ' ' . $language->timeFormat;
+		if (!$lo_mainLanguage) {
+			return;
+		}
+
+		ini_set('intl.default_locale', $lo_mainLanguage->locale);
+		I18n::setLocale($lo_mainLanguage->locale);
+		setlocale(LC_ALL, $lo_mainLanguage->locale . '.utf8');
+
+		if ($lo_mainLanguage->dateFormat && $lo_mainLanguage->timeFormat) {
+			DateTime::$niceFormat = $lo_mainLanguage->dateFormat . ' ' . $lo_mainLanguage->timeFormat;
 		}
 
 		$ls_timezone = Configure::read('Awyiss.System.' . static::getRealm() . '.timezone');
@@ -121,25 +133,40 @@ class LocaleMiddleware implements MiddlewareInterface {
 			TypeFactory::build('datetime')->setUserTimezone($ls_timezone);
 		}
 		else {
-			TypeFactory::build('datetime')->setUserTimezone($language->timezone);
+			TypeFactory::build('datetime')->setUserTimezone($lo_mainLanguage->timezone);
 		}
 
 		/** @var \Awyiss\ORM\Locator\TableLocator $lo_tableLocator */
 		$lo_tableLocator = FactoryLocator::get('Table');
-		$lo_tableLocator->setTranslateLanguage($language);
 
 		// Check all loaded instances of the TableLocator
 		// and set the TranslateBehavior's locale
 		foreach ($lo_tableLocator->getInstances() as $lo_table) {
-			if ($lo_table->hasBehavior('Translate')) {
-				$lo_table->getBehavior('Translate')->setLocale($language->shortcode);
+			if (!$lo_table->hasBehavior('Translate')) {
+				continue;
+			}
+
+			$lo_behavior = $lo_table->getBehavior('Translate');
+
+			if (
+				$frontendLanguage &&
+				$lo_behavior->getConfig('realm') === Awyiss::REALM_FRONTEND
+			) {
+				$lo_behavior->setLocale($frontendLanguage->shortcode);
+			}
+
+			if (
+				$backendLanguage &&
+				$lo_behavior->getConfig('realm') === Awyiss::REALM_BACKEND
+			) {
+				$lo_behavior->setLocale($backendLanguage->shortcode);
 			}
 		}
 
 		// Add the TranslateBehavior to the LanguagesTable as it's not set on instantiation
 		$lo_languagesTable = $lo_tableLocator->get('Languages');
 		if (!$lo_languagesTable->hasBehavior('Translate')) {
-			$lo_languagesTable->addTranslateBehavior($language);
+			$lo_languagesTable->addTranslateBehavior($lo_mainLanguage);
 		}
 	}
 

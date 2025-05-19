@@ -6,6 +6,7 @@ namespace Awyiss\Test\TestCase\View\Cell\Backend;
 
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Awyiss;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
@@ -48,8 +49,6 @@ class MediaElementsCellTest extends TestCase {
 
 		$this->configApplication(Awyiss::class, []);
 
-		Awyiss::setRealm(Awyiss::REALM_BACKEND);
-
 		$this->loadRoutes();
 
 		$this->request = new ServerRequest([
@@ -80,6 +79,10 @@ class MediaElementsCellTest extends TestCase {
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public static function displayDataProvider(): array {
+		// Required because this method is called before setUpBeforeClass()
+		Awyiss::setRealm(Awyiss::REALM_BACKEND);
+		LocaleMiddleware::setRealm(Awyiss::REALM_BACKEND);
+
 		return [
 			[FactoryLocator::get('Table')->get('Contents')->get(1, 'mediaAssignments'), 'multi'],
 			[FactoryLocator::get('Table')->get('Contents')->get(9, 'mediaAssignments'), 'single'],
@@ -225,7 +228,9 @@ class MediaElementsCellTest extends TestCase {
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public static function elementAssignmentsDataProvider(): array {
-		Awyiss::setRealm(Awyiss::REALM_BACKEND);
+		//Awyiss::setRealm(Awyiss::REALM_BACKEND);
+
+		dump(Awyiss::getRealm());
 
 		return [
 			[FactoryLocator::get('Table')->get('ContentTemplates')->get(1, 'mediaElementAssignments'), true],

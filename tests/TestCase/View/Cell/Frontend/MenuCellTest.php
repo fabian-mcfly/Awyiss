@@ -5,6 +5,7 @@ namespace Awyiss\Test\TestCase\View\Cell\Frontend;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Menu;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Test\TestSuite\TestCase;
@@ -38,6 +39,9 @@ class MenuCellTest extends TestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
+
+		Awyiss::setRealm('Frontend');
+		LocaleMiddleware::setRealm(Awyiss::REALM_FRONTEND);
 
 		Awyiss::loadConfiguration('xy', 'yx');
 

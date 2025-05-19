@@ -6,7 +6,6 @@ namespace Awyiss\ORM\Locator;
 
 use Awyiss\Core\App;
 use Awyiss\Event\EventListenersProvider;
-use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Table;
 use Cake\ORM\Locator\TableLocator as BaseTableLocator;
 use Cake\ORM\Table as BaseTable;
@@ -19,30 +18,9 @@ class TableLocator extends BaseTableLocator {
 	/**
 	 * Fallback class to use
 	 *
-	 * @var class-string<Table>
+	 * @var class-string<\Awyiss\Model\Table>
 	 */
 	protected string $fallbackClassName = Table::class;
-	protected ?Language $translateLanguage = null;
-
-
-	/**
-	 * @return Language|null
-	 */
-	public function getTranslateLanguage(): ?Language {
-		return $this->translateLanguage;
-	}
-
-
-	/**
-	 * @param Language|null $language
-	 * @return TableLocator
-	 */
-	public function setTranslateLanguage(?Language $language): static {
-		$this->translateLanguage = $language;
-
-
-		return $this;
-	}
 
 
 	/**
@@ -51,8 +29,7 @@ class TableLocator extends BaseTableLocator {
 	protected function createInstance(string $alias, array $options): BaseTable {
 		EventListenersProvider::loadListener($alias, 'Global');
 
-
-		return parent::createInstance($alias, $options + ['translateLanguage' => $this->getTranslateLanguage()]);
+		return parent::createInstance($alias, $options);
 	}
 
 

@@ -6,7 +6,9 @@ namespace Awyiss\Test\TestSuite;
 
 use Awyiss\Authentication\Authenticator\SessionAuthenticator;
 use Awyiss\Authentication\Identifier\IdentifierCollection;
+use Awyiss\Awyiss;
 use Awyiss\Event\EventManager;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\User;
 use Awyiss\Routing\Router;
 use Cake\Core\Configure;
@@ -38,6 +40,16 @@ class TestCase extends BaseTestCase {
 		/** @noinspection PhpVariableNamingConventionInspection */
 		$request = new ServerRequest();
 		Router::setRequest($request);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @throws \Exception
+	 */
+	public static function setUpBeforeClass(): void {
+		Awyiss::setRealm(Awyiss::REALM_BACKEND);
+		LocaleMiddleware::setRealm(Awyiss::REALM_BACKEND);
 	}
 
 

@@ -4,12 +4,10 @@
 namespace Awyiss\Test\TestCase\View\Helper;
 
 
-use Awyiss\Awyiss;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
 use Awyiss\View\Helper\FlashHelper;
-use Cake\Datasource\FactoryLocator;
 use Cake\Http\ServerRequest;
 use ReflectionClass;
 
@@ -30,8 +28,6 @@ class FlashHelperTest extends TestCase {
 	 */
 	public function setUp(): void {
 		parent::setUp();
-
-		Awyiss::setRealm(Awyiss::REALM_BACKEND);
 
 		$request = new ServerRequest([
 			'url' => '/dummy',
@@ -67,10 +63,6 @@ class FlashHelperTest extends TestCase {
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
 		$property->setValue(false);
-
-		$lo_tableLocator = FactoryLocator::get('Table');
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_tableLocator->setTranslateLanguage(null);
 	}
 
 

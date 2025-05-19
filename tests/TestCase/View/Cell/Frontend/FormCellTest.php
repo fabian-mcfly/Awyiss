@@ -5,6 +5,7 @@ namespace Awyiss\Test\TestCase\View\Cell\Frontend;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Test\TestSuite\TestCase;
 use Cake\Core\Configure;
 use Cake\Http\Response;
@@ -33,6 +34,7 @@ class FormCellTest extends TestCase {
 		$this->configApplication(Awyiss::class, []);
 
 		Awyiss::setRealm('Frontend');
+		LocaleMiddleware::setRealm(Awyiss::REALM_FRONTEND);
 		Awyiss::loadConfiguration('xy', 'yx');
 
 		$this->loadRoutes();

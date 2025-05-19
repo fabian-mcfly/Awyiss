@@ -12,7 +12,6 @@ use Awyiss\View\BackendView;
 use Awyiss\View\Helper\CategoriesHelper;
 use Awyiss\View\Widget\LinkSelectWidget;
 use Cake\Collection\Collection;
-use Cake\Datasource\FactoryLocator;
 use Cake\Http\ServerRequest;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
@@ -57,10 +56,6 @@ class CategoriesHelperTest extends TestCase {
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
 		$property->setValue(false);
-
-		$lo_tableLocator = FactoryLocator::get('Table');
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_tableLocator->setTranslateLanguage(null);
 	}
 
 
@@ -73,8 +68,6 @@ class CategoriesHelperTest extends TestCase {
 		$this->configApplication(Awyiss::class, []);
 
 		parent::setUp();
-
-		Awyiss::setRealm(Awyiss::REALM_BACKEND);
 
 		$this->loadRoutes();
 

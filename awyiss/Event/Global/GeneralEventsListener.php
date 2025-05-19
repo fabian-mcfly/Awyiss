@@ -64,10 +64,6 @@ class GeneralEventsListener implements EventListenerInterface {
 	public function awyissSetRealm(Event $event): void {
 		$this->realm = $event->getData('realm');
 
-		if ($this->initializedModels) {
-			dd(__LINE__, __FILE__, debug_backtrace(2), $this->initializedModels);
-		}
-
 		/** @var Table $lo_model */
 		foreach ($this->initializedModels as $lo_model) {
 			EventListenersProvider::loadListener($lo_model->getAlias(), $this->realm);

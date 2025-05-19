@@ -5,6 +5,7 @@ namespace Awyiss\Test\TestCase\View\Cell\Frontend;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Media\MediaRenderOptions;
@@ -42,7 +43,8 @@ class WidgetsCellTest extends TestCase {
 
 		$this->configApplication(Awyiss::class, []);
 
-		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
+		Awyiss::setRealm('Frontend');
+		LocaleMiddleware::setRealm(Awyiss::REALM_FRONTEND);
 		Awyiss::loadConfiguration('xy', 'yx');
 
 		$this->loadRoutes();

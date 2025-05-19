@@ -49,7 +49,6 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 
 		$this->configApplication(Awyiss::class, []);
 
-		Awyiss::setRealm(Awyiss::REALM_BACKEND);
 		Awyiss::loadConfiguration('xy', 'yx');
 
 		$this->loadRoutes();

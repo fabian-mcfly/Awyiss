@@ -6,7 +6,6 @@ namespace Awyiss\Test\TestCase\View\Helper;
 
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Awyiss;
-use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
@@ -52,10 +51,6 @@ class AttributesHelperTest extends TestCase {
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
 		$property->setValue(false);
-
-		$lo_tableLocator = FactoryLocator::get('Table');
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_tableLocator->setTranslateLanguage(null);
 	}
 
 
@@ -68,13 +63,6 @@ class AttributesHelperTest extends TestCase {
 		$this->configApplication(Awyiss::class, []);
 
 		parent::setUp();
-
-		Awyiss::setRealm(Awyiss::REALM_BACKEND);
-		LocaleMiddleware::setRealm(Awyiss::REALM_BACKEND);
-
-		$lo_tableLocator = FactoryLocator::get('Table');
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_tableLocator->setTranslateLanguage(LocaleMiddleware::getLanguage());
 
 		$this->loadRoutes();
 
