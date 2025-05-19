@@ -66,14 +66,14 @@ class ModelCommand extends BaseModelCommand {
 		}
 
 		$la_data = $data + [
-				'fieldMap' => [],
-				'name' => $ls_name,
-				'namespace' => $ls_namespace,
-				'plugin' => $this->plugin,
-				'pluginPath' => $ls_pluginPath,
-				'primaryKey' => [],
-				'fileBuilder' => new FileBuilder($io, $ls_namespace . '\Model\Entity', $lo_parsedFile),
-			];
+			'fieldMap' => [],
+			'name' => $ls_name,
+			'namespace' => $ls_namespace,
+			'plugin' => $this->plugin,
+			'pluginPath' => $ls_pluginPath,
+			'primaryKey' => [],
+			'fileBuilder' => new FileBuilder($io, $ls_namespace . '\Model\Entity', $lo_parsedFile),
+		];
 
 		foreach ($la_data['fields'] as &$ls_field) {
 			$ls_variable = Inflector::variable($ls_field);
@@ -84,7 +84,10 @@ class ModelCommand extends BaseModelCommand {
 
 			$ls_field = $ls_variable;
 		}
-		unset($ls_field);
+		unset($la_data['fieldMap']['media_element_assignments'], $ls_field);
+		$la_data['fields'] = array_filter($la_data['fields'], function (string $field): bool {
+			return $field !== 'mediaElementAssignments';
+		});
 
 		foreach ($la_data['hidden'] as &$ls_field) {
 			$ls_field = Inflector::variable($ls_field);
