@@ -39,51 +39,6 @@
 	}
 }
 
-%ColumnList {
-	display:flex;
-	flex-wrap:wrap;
-
-	.ListItem {
-		@each $columnWidth in $columnWidths {
-			&.#{map-get($columnWidth, 'class')} {
-				$numerator:map-get($columnWidth, 'numerator');
-				$denominator:map-get($columnWidth, 'denominator');
-				$width:round(($numerator / $denominator) * 1000000) / 1000000;
-				width:#{percentage($width)};
-				flex:0 0 #{percentage($width)};
-
-				@if $width < .5 {
-					:is(
-						.Title,
-						.ListItem-Inner .Title
-					) {
-						font-size:.6rem;
-					}
-				} @else if $width < 1 {
-					.Title {
-						font-size:.8rem;
-					}
-				}
-			}
-		}
-
-		@each $column in $columnIndents {
-			&.#{map-get($column, 'class')} {
-				$numerator:map-get($column, 'numerator');
-				$denominator:map-get($column, 'denominator');
-				$width:round(($numerator / $denominator) * 1000000) / 1000000;
-				margin-left:#{percentage($width)};
-			}
-		}
-
-		&.Narrow {
-			width:100%;
-			margin-left:0;
-			flex-basis:auto;
-		}
-	}
-}
-
 %EmptyList {
 	content:'';
 	border-radius:5px;
@@ -101,7 +56,6 @@
 	background-image:url($relativePath + 'img/preloader-ghost-dark2.gif');
 	opacity:.1;
 }
-
 
 %ListData {
 	display:grid;

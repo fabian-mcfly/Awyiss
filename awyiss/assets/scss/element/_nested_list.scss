@@ -81,8 +81,11 @@
 
 	&#{&}-Compact {
 		--emptyListHeight:20px;
+		//display:flex;
 		margin-inline:25px -5px;
 		padding-top:.25rem;
+		overflow:hidden;
+		//flex-wrap:wrap;
 
 		&.Level1 {
 			padding-block:.5rem .25rem;
@@ -163,6 +166,7 @@
 			margin:0 0 .25rem 0;
 			padding:0 5px;
 			container:listItem / inline-size;
+			float:left;
 
 			@media screen and (width <= 768px) {
 				padding:0 5px;
@@ -228,6 +232,44 @@
 
 			&:has(.ListItem) {
 				background-image:none;
+			}
+
+			@each $columnWidth in $columnWidths {
+				&.#{map-get($columnWidth, 'class')} {
+					$numerator:map-get($columnWidth, 'numerator');
+					$denominator:map-get($columnWidth, 'denominator');
+					$width:round(($numerator / $denominator) * 1000000) / 1000000;
+					width:#{percentage($width)};
+					flex:0 0 #{percentage($width)};
+
+					@if $width < .5 {
+						:is(
+						.Title,
+						.ListItem-Inner .Title
+					) {
+							font-size:.6rem;
+						}
+					} @else if $width < 1 {
+						.Title {
+							font-size:.8rem;
+						}
+					}
+				}
+			}
+
+			@each $column in $columnIndents {
+				&.#{map-get($column, 'class')} {
+					$numerator:map-get($column, 'numerator');
+					$denominator:map-get($column, 'denominator');
+					$width:round(($numerator / $denominator) * 1000000) / 1000000;
+					margin-left:#{percentage($width)};
+				}
+			}
+
+			&.Column-Last {
+				+ .ListItem {
+					clear:left;
+				}
 			}
 
 			&-Inner {
