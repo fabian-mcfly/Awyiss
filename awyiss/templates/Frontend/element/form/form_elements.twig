@@ -52,6 +52,45 @@
 							class="FormInputType-Input">
 					{% endblock %}
 
+				{% elseif formElement.type == 'tel' %}
+
+					{% block formElementTelephone %}
+						<label for="FormInput-{{ formElement.identifier|ucparts(false) }}" class="FormElement-Label">{{ formElement.title }}</label>
+						<input id="FormInput-{{ formElement.identifier|ucparts(false) }}" type="tel" name="{{ formElement.identifier }}"
+							value="{{ submitted ? formData[ formElement.identifier ] : formElement.get('value') }}"
+							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
+							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
+							{% if formElement.required %} required{% endif %}
+							{% if formElement.placeholder %}placeholder="{{ formElement.placeholder }}"{% endif %}
+							class="FormInputType-Input">
+					{% endblock %}
+
+				{% elseif formElement.type == 'url' %}
+
+					{% block formElementUrl %}
+						<label for="FormInput-{{ formElement.identifier|ucparts(false) }}" class="FormElement-Label">{{ formElement.title }}</label>
+						<input id="FormInput-{{ formElement.identifier|ucparts(false) }}" type="url" name="{{ formElement.identifier }}"
+							value="{{ submitted ? formData[ formElement.identifier ] : formElement.get('value') }}"
+							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
+							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
+							{% if formElement.required %} required{% endif %}
+							{% if formElement.placeholder %}placeholder="{{ formElement.placeholder }}"{% endif %}
+							class="FormInputType-Input">
+					{% endblock %}
+
+				{% elseif formElement.type == 'number' %}
+
+					{% block formElementNumber %}
+						<label for="FormInput-{{ formElement.identifier|ucparts(false) }}" class="FormElement-Label">{{ formElement.title }}</label>
+						<input id="FormInput-{{ formElement.identifier|ucparts(false) }}" type="number" name="{{ formElement.identifier }}"
+							value="{{ submitted ? formData[ formElement.identifier ] : formElement.get('value') }}"
+							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
+							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
+							{% if formElement.required %} required{% endif %}
+							{% if formElement.placeholder %}placeholder="{{ formElement.placeholder }}"{% endif %}
+							class="FormInputType-Input">
+					{% endblock %}
+
 				{% elseif formElement.type == 'textarea' %}
 
 					{% block formElementTextarea %}
