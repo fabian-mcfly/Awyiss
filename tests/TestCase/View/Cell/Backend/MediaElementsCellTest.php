@@ -228,10 +228,6 @@ class MediaElementsCellTest extends TestCase {
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public static function elementAssignmentsDataProvider(): array {
-		//Awyiss::setRealm(Awyiss::REALM_BACKEND);
-
-		dump(Awyiss::getRealm());
-
 		return [
 			[FactoryLocator::get('Table')->get('ContentTemplates')->get(1, 'mediaElementAssignments'), true],
 			[FactoryLocator::get('Table')->get('ContentTemplates')->newDefaultEntity(), false],
