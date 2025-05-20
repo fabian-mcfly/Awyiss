@@ -127,6 +127,7 @@ class FrontendViewTest extends TestCase {
 				'prefix' => 'Frontend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 

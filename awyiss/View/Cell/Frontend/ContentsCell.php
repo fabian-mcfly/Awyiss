@@ -117,7 +117,7 @@ class ContentsCell extends Cell {
 		$la_duplicatingEntities = [];
 		/** @var \Awyiss\Model\Entity\Content $lo_entity */
 		foreach ($lo_contents as $lo_entity) {
-			if ($lo_entity->duplicateOf) {
+			if ($lo_entity->duplicateOf ?? null) {
 				$la_duplicatingEntities[] = $lo_entity;
 			}
 		}

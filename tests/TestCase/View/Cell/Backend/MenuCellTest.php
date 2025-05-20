@@ -61,6 +61,7 @@ class MenuCellTest extends TestCase {
 				'prefix' => 'Backend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]))->withAttribute('authorization', new AuthorizationService('Backend'));
 
@@ -105,9 +106,10 @@ class MenuCellTest extends TestCase {
 	public function testDisplayWithoutUser(): void {
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/Menu');
-
-		$this->assertSame('', $output);
+		$this->captureError(E_USER_WARNING, function () {
+			$output = (string)$this->view->cell('Backend/Menu');
+			$this->assertSame('', $output);
+		});
 	}
 
 
@@ -276,6 +278,7 @@ class MenuCellTest extends TestCase {
 				'prefix' => 'Backend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 
@@ -316,6 +319,7 @@ class MenuCellTest extends TestCase {
 				'prefix' => 'Backend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 

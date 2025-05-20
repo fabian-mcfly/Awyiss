@@ -77,7 +77,11 @@
 		</properties>
 	</rule>
 
-	<rule ref="Generic.Formatting.NoSpaceAfterCast"/>
+	<rule ref="Generic.Formatting.SpaceAfterCast">
+		<properties>
+			<property name="spacing" value="0"/>
+		</properties>
+	</rule>
 	<rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie"/>
 
 	<rule ref="Generic.PHP.DeprecatedFunctions"/>
@@ -87,11 +91,11 @@
 	</rule>
 	<rule ref="Generic.PHP.NoSilencedErrors"/>
 	<rule ref="Generic.PHP.RequireStrictTypes"/>
-
 	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent">
 		<exclude-pattern>*/tests/comparisons/config/Migrations/*</exclude-pattern>
 		<exclude-pattern>*/tests/comparisons/config/Seeds/*</exclude-pattern>
 	</rule>
+	<rule ref="Generic.WhiteSpace.LanguageConstructSpacing"/>
 	<rule ref="Generic.WhiteSpace.ScopeIndent">
 		<properties>
 			<property name="tabIndent" value="true"/>
@@ -123,7 +127,6 @@
 	<rule ref="Squiz.Scope.MemberVarScope"/>
 	<rule ref="Squiz.Scope.StaticThisUsage"/>
 	<rule ref="Squiz.WhiteSpace.CastSpacing"/>
-	<rule ref="Squiz.WhiteSpace.LanguageConstructSpacing"/>
 	<rule ref="Squiz.WhiteSpace.LogicalOperatorSpacing">
 		<exclude-pattern>*.js</exclude-pattern>
 	</rule>
@@ -248,10 +251,10 @@
 		<exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.UselessAnnotation"/>
 		<exclude-pattern>*/tests/*</exclude-pattern>
 	</rule>
-	<rule ref="SlevomatCodingStandard.TypeHints.UnionTypeHintFormat">
+	<rule ref="SlevomatCodingStandard.TypeHints.DNFTypeHintFormat">
 		<properties>
 			<property name="enable" type="boolean" value="true"/>
-			<property name="withSpaces" value="no"/>
+			<property name="withSpacesAroundOperators" value="no"/>
 			<property name="shortNullable" value="yes"/>
 			<property name="nullPosition" value="last"/>
 		</properties>

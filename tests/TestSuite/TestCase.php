@@ -20,6 +20,7 @@ use Cake\TestSuite\TestCase as BaseTestCase;
 use LogicException;
 use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\Process\Process;
 
 
 /**
@@ -50,6 +51,18 @@ class TestCase extends BaseTestCase {
 	public static function setUpBeforeClass(): void {
 		Awyiss::setRealm(Awyiss::REALM_BACKEND);
 		LocaleMiddleware::setRealm(Awyiss::REALM_BACKEND);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function tearDown(): void {
+		parent::tearDown();
+
+		if (is_dir(TESTS . 'customer' . DS . 'config' . DS . CONFIG_ENV)) {
+			(new Process(['rm', '-rf', TESTS . 'customer' . DS . 'config' . DS . CONFIG_ENV]))->run();
+		}
 	}
 
 

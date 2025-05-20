@@ -24,7 +24,7 @@ class BackendMenuItem extends MenuItem {
 	 *
 	 * @var string|null
 	 */
-	protected static $testUrl = null;
+	protected static ?string $testUrl = null;
 
 
 	/**

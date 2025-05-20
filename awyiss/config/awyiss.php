@@ -197,7 +197,7 @@ return [
 		'exceptionRenderer' => WebExceptionRenderer::class,
 		//'extraFatalErrorMemory' => 4,
 		'ignoredDeprecationPaths' => [
-			'vendor/cakephp/cakephp/src/Controller/ComponentRegistry.php',
+			'vendor/cakephp/migrations/src/Command/BakeSimpleMigrationCommand.php',
 		],
 		'log' => true,
 		'skipLog' => [],

@@ -235,7 +235,7 @@ class MediaHelper extends Helper {
 		$ls_sources = $ls_subtitles = '';
 
 		/** @var \Awyiss\Model\Entity\Media $lo_alternative */
-		foreach ($media->findAlternatives() as $lo_alternative) {
+		foreach (($media->findAlternatives() ?? []) as $lo_alternative) {
 			// If the mimetype of the alternative is an audio file, set the source
 			if ($lo_alternative->isAudio()) {
 				$ls_sources .= PHP_EOL . '<source src="' . $lo_alternative->path . '" type="' . $lo_alternative->mimeType . '">';
@@ -425,7 +425,7 @@ class MediaHelper extends Helper {
 		$ls_sources = $ls_subtitles = '';
 
 		/** @var \Awyiss\Model\Entity\Media $lo_alternative */
-		foreach ($media->findAlternatives() as $lo_alternative) {
+		foreach (($media->findAlternatives() ?? []) as $lo_alternative) {
 			// If the mimetype of the alternative is a video, set the source
 			if ($lo_alternative->isVideo()) {
 				$ls_sources .= PHP_EOL . '<source src="' . $lo_alternative->path . '" type="' . $lo_alternative->mimeType . '">';

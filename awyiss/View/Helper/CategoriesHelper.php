@@ -259,7 +259,7 @@ class CategoriesHelper extends Helper {
 		$ls_identifier = Inflector::underscore($identifier);
 		$la_config = $this->getConfiguration($ls_identifier);
 
-		if (empty($la_config) || !$la_config['enabled']) {
+		if (empty($la_config) || ($la_config['enabled'] ?? false) === false) {
 			return '';
 		}
 
@@ -380,12 +380,12 @@ class CategoriesHelper extends Helper {
 		$la_categories = $this->getView()->get('_categories', [])[ $ls_name ] ?? [];
 
 		if ($preferRaw) {
-			$lx_return = $la_categories['raw'];
+			$lx_return = $la_categories['raw'] ?? null;
 		}
 
 		//Empty means no prefered raw format or prefered raw but empty
 		if (empty($lx_return)) {
-			$lx_return = $la_categories['simple'];
+			$lx_return = $la_categories['simple'] ?? null;
 		}
 
 		return $lx_return ?? [];

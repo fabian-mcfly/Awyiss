@@ -248,7 +248,7 @@ class FormHelper extends BaseFormHelper {
 
 		$la_options = $options;
 
-		$ls_realType = $la_options['realType'] ?? $la_options['type'];
+		$ls_realType = $la_options['realType'] ?? $la_options['type'] ?? null;
 		unset($la_options['realType']);
 		if ($ls_realType === 'translatableText') {
 			unset($ls_realType);
@@ -608,7 +608,10 @@ class FormHelper extends BaseFormHelper {
 	 * @throws \Exception
 	 */
 	protected function processMultiLanguageControls(string $fieldName, array $options, array $baseOptions, string $realType, ?array $values = null): array {
-		$la_options = $options;
+		$la_options = $options + [
+			'placeholder' => null,
+			'required' => null,
+		];
 
 		$ls_association = '';
 

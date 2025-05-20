@@ -23,6 +23,16 @@ class FormCellTest extends TestCase {
 
 
 	/**
+	 * @var mixed
+	 */
+	protected mixed $response;
+	/**
+	 * @var \Cake\Http\ServerRequest
+	 */
+	protected ServerRequest $request;
+
+
+	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
@@ -48,6 +58,7 @@ class FormCellTest extends TestCase {
 				'prefix' => 'Frontend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 

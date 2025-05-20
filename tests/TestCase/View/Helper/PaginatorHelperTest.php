@@ -83,6 +83,7 @@ class PaginatorHelperTest extends TestCase {
 					'directionDefault' => 'default_direction',
 				],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 

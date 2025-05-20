@@ -22,6 +22,12 @@ class IntegrityCheckCommandTest extends TestCase {
 
 
 	/**
+	 * @var string|false
+	 */
+	protected string|false $fileHashesConfig;
+
+
+	/**
 	 * @inheritDoc
 	 */
 	public function setUp(): void {

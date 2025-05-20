@@ -178,6 +178,10 @@ trait EntityAttributesTrait {
 			}
 		}
 
+		if (is_array($lx_field)) {
+			/** @noinspection PhpIncompatibleReturnTypeInspection */
+			return parent::patch($lx_field, $options);
+		}
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::set($lx_field, $value, $options);

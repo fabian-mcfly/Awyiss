@@ -18,6 +18,10 @@ use ReflectionClass;
  */
 class LocaleHelperTest extends TestCase {
 	/**
+	 * @var \Awyiss\View\Helper\FormHelper
+	 */
+	protected FormHelper $formHelper;
+	/**
 	 * @var \Awyiss\View\Helper\LocaleHelper
 	 */
 	protected LocaleHelper $locale;

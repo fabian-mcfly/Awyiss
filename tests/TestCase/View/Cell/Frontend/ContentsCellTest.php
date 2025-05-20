@@ -30,6 +30,14 @@ class ContentsCellTest extends TestCase {
 	 * @var \Awyiss\View\Cell\Frontend\ContentsCell
 	 */
 	protected ContentsCell $cell;
+	/**
+	 * @var mixed
+	 */
+	protected mixed $response;
+	/**
+	 * @var \Cake\Http\ServerRequest
+	 */
+	protected ServerRequest $request;
 
 
 	/**
@@ -59,6 +67,7 @@ class ContentsCellTest extends TestCase {
 				'prefix' => 'Frontend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 
@@ -522,7 +531,9 @@ class ContentsCellTest extends TestCase {
 
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $contents->first();
-		$content->children = [(object)['id' => 123]];
+		$content->children = [
+			$this->fetchTable('Contents')->newEntity([])->set('id', 123),
+		];
 		$this->assertSame(123, $content->children[0]->id);
 
 		$this->callProtectedMethod($this->cell, 'addDuplicates', $contents);

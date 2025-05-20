@@ -248,7 +248,7 @@ class AuthorizationHelper extends Helper {
 		$ls_fileName = $fileName;
 		if (empty($ls_fileName)) {
 			$ls_fileName = $permission->getType();
-			$ls_fileName .= '_' . $permission->getConfig('preferredInput')->value;
+			$ls_fileName .= '_' . ($permission->getConfig('preferredInput')?->value ?? 'radio');
 		}
 
 		//This should never happen, but you never know.

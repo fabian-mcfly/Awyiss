@@ -99,7 +99,7 @@ class SystemOrderHelper extends Helper {
 		}
 
 		//If the options are not in array-form, make 'em!
-		if (!is_array($la_attributes['options'])) {
+		if (!is_array($la_attributes['options'] ?? [])) {
 			$la_attributes['options'] = $this->buildSystemOrderOptions($la_attributes['options'], $la_attributes, $lo_entity);
 		}
 

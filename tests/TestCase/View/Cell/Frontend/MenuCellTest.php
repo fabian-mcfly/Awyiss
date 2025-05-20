@@ -29,6 +29,14 @@ class MenuCellTest extends TestCase {
 	 * @var \Awyiss\View\Cell\Frontend\MenuCell
 	 */
 	protected MenuCell $cell;
+	/**
+	 * @var mixed
+	 */
+	protected mixed $response;
+	/**
+	 * @var \Cake\Http\ServerRequest
+	 */
+	protected ServerRequest $request;
 
 
 	/**
@@ -55,6 +63,7 @@ class MenuCellTest extends TestCase {
 				'prefix' => 'Frontend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 

@@ -61,6 +61,7 @@ class MediaElementsCellTest extends TestCase {
 				'prefix' => 'Backend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 
@@ -110,9 +111,10 @@ class MediaElementsCellTest extends TestCase {
 	public function testDisplayWithoutUser(Entity $entity, string|false $type): void {
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/MediaElements', [$entity]);
-
-		$this->assertSame('', $output);
+		$this->captureError(E_USER_WARNING, function () use ($entity) {
+			$output = (string)$this->view->cell('Backend/MediaElements', [$entity]);
+			$this->assertSame('', $output);
+		});
 	}
 
 
@@ -128,6 +130,7 @@ class MediaElementsCellTest extends TestCase {
 		$user = $this->login(2);
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
+
 		$this->view = new BackendView($this->request, $this->response);
 
 		$output = trim((string)$this->view->cell('Backend/MediaElements', [$entity]));

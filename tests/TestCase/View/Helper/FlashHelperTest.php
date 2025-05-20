@@ -39,6 +39,7 @@ class FlashHelperTest extends TestCase {
 				'prefix' => 'Backend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 

@@ -22,8 +22,10 @@ class TranslatableTextWidget extends BasicWidget {
 	 */
 	protected array $defaults = [
 		'escape' => true,
+		'input' => null,
 		'name' => '',
 		'templateVars' => [],
+		'type' => null,
 		'val' => '',
 	];
 

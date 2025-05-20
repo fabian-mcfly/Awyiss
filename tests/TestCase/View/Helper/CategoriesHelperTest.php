@@ -81,6 +81,7 @@ class CategoriesHelperTest extends TestCase {
 				'prefix' => 'Backend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 

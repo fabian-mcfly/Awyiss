@@ -63,6 +63,7 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 				'prefix' => 'Backend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]))->withAttribute('authorization', new AuthorizationService('Backend'));
 
@@ -106,9 +107,10 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 	public function testDisplayWithoutUser(): void {
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
-
-		$this->assertSame('', $output);
+		$this->captureError(E_USER_WARNING, function () {
+			$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
+			$this->assertSame('', $output);
+		});
 	}
 
 

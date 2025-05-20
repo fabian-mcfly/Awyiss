@@ -104,10 +104,10 @@
 		&.BackToOverview {
 			display:block;
 			width:fit-content;
-			border-bottom-width:0;
 			color:var(--colorMedium);
 			font-size:.8rem;
 			line-height:1;
+			text-decoration:none;
 			position:relative;
 			z-index:1;
 			white-space:nowrap;

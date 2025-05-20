@@ -350,6 +350,14 @@ class LinkSelectWidget extends BasicWidget {
 			$ls_template = 'groupLabel';
 		}
 
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$optionAttributes += [
+			'link' => '',
+			'levelPrefix' => '',
+			'isGroupLabel' => false,
+			'groupLabels' => [],
+		];
+
 		return $this->_templates->format($ls_template, [
 			'attrs' => $this->_templates->formatAttributes($optionAttributes, ['title', 'value', 'link', 'levelPrefix', 'isGroupLabel', 'groupLabels']),
 			'templateVars' => $optionAttributes['templateVars'],

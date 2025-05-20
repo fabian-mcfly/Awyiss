@@ -41,7 +41,7 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 		/** @var \Awyiss\Model\Entity\User $lo_user */
 		$lo_user = $lo_session->read($ls_sessionKey);
 
-		if (empty($lo_user)) {
+		if (!$lo_user) {
 			return new Result(null, ResultInterface::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
@@ -62,7 +62,7 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 			/** @var \Awyiss\Model\Entity\User $lo_reidentifiedUser */
 			$lo_reidentifiedUser = $this->_identifier->reidentify($la_credentials);
 
-			if (empty($lo_reidentifiedUser)) {
+			if (!$lo_reidentifiedUser) {
 				// If the user is not found, redirect to the login
 				$lo_session->delete($ls_sessionKey);
 

@@ -228,7 +228,7 @@ class MediaElementsCell extends Cell {
 
 
 	/**
-	 * Retreive the identity attribute from the current request
+	 * Retrieve the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */

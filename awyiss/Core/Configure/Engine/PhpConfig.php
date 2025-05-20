@@ -112,6 +112,10 @@ class PhpConfig extends BasePhpConfig {
 
 		$ls_filePath = $ls_folder . $ls_key . $this->_extension;
 
+		if (!is_dir($ls_folder)) {
+			mkdir($ls_folder, 0750, true);
+		}
+
 		if (file_put_contents($ls_filePath, $ls_contents)) {
 			chmod($ls_filePath, 0660);
 

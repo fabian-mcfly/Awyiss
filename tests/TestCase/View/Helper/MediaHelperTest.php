@@ -755,6 +755,7 @@ class MediaHelperTest extends TestCase {
 				'prefix' => 'Frontend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 		Router::setRequest($request);
@@ -807,6 +808,7 @@ class MediaHelperTest extends TestCase {
 				'prefix' => 'Frontend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 		Router::setRequest($request);
@@ -1375,6 +1377,7 @@ class MediaHelperTest extends TestCase {
 				'prefix' => 'Frontend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 		Router::setRequest($request);
@@ -1406,6 +1409,7 @@ class MediaHelperTest extends TestCase {
 				'prefix' => 'Frontend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 		Router::setRequest($request);
@@ -1510,6 +1514,7 @@ class MediaHelperTest extends TestCase {
 				'prefix' => 'Backend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 

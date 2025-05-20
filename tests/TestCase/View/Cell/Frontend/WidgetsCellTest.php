@@ -30,6 +30,14 @@ class WidgetsCellTest extends TestCase {
 	 * @var \Awyiss\View\Cell\Frontend\WidgetsCell
 	 */
 	protected WidgetsCell $cell;
+	/**
+	 * @var mixed
+	 */
+	protected mixed $response;
+	/**
+	 * @var \Cake\Http\ServerRequest
+	 */
+	protected ServerRequest $request;
 
 
 	/**
@@ -59,6 +67,7 @@ class WidgetsCellTest extends TestCase {
 				'prefix' => 'Frontend',
 				'parts' => [],
 				'pass' => [],
+				'plugin' => null,
 			],
 		]);
 

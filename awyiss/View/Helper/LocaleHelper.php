@@ -40,7 +40,7 @@ class LocaleHelper extends Helper {
 		}
 
 
-		return ($la_languages [ $shortcode ][ Awyiss::REALM_FRONTEND ] ?? $la_languages [ $shortcode ][ Awyiss::REALM_BACKEND ])?->title ?? null;
+		return ($la_languages [ $shortcode ][ Awyiss::REALM_FRONTEND ] ?? $la_languages [ $shortcode ][ Awyiss::REALM_BACKEND ] ?? null)?->title ?? null;
 	}
 
 
