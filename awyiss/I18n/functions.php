@@ -33,7 +33,13 @@ if (!function_exists('__')) {
 
 			$ls_return = __d($ls_controller, $string, $la_args);
 		}
-		else {
+		elseif (
+			!in_array($string, [
+				'meta_title_overview',
+				'menu_title',
+				'headline_overview',
+			])
+		) {
 			$ls_return = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
 		}
 
@@ -74,7 +80,14 @@ if (!function_exists('__d')) {
 			$ls_return = $domain . '::' . $string;
 
 			// Fallback to system domain
-			if ($domain !== 'system') {
+			if (
+				$domain !== 'system' &&
+				!in_array($string, [
+					'meta_title_overview',
+					'menu_title',
+					'headline_overview',
+				])
+			) {
 				$ls_fallback = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
 
 				if ($ls_fallback !== $string && !empty($ls_fallback)) {
