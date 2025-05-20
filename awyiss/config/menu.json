@@ -229,22 +229,6 @@
 							"identifier": "create"
 						}
 					},
-					"media_elements_configure": {
-						"title": {
-							"translate": ["media_elements", "menu_configure"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview",
-								"scope": "media-elements"
-							}
-						},
-						"access": {
-							"scope": "media_elements",
-							"identifier": "configure"
-						}
-					},
 					"media_selectors": {
 						"title": {
 							"translate": ["media_selectors", "menu_title"]
@@ -307,6 +291,22 @@
 								}
 							}
 						}
+					},
+					"media_elements_configure": {
+						"title": {
+							"translate": ["media_elements", "menu_configure"]
+						},
+						"link": {
+							"url": {
+								"controller": "Configuration",
+								"action": "overview",
+								"scope": "media-elements"
+							}
+						},
+						"access": {
+							"scope": "media_elements",
+							"identifier": "configure"
+						}
 					}
 				}
 			},
@@ -328,24 +328,33 @@
 			}
 		}
 	},
-	"menus": {
+	"system": {
 		"title": {
-			"translate": ["menus", "menu_title"]
+			"translate": ["system", "menu_title"]
 		},
 		"link": {
 			"url": {
-				"controller": "Menus",
+				"controller": "System",
 				"action": "overview"
 			}
 		},
-		"access": {
-			"scope": "menus",
-			"identifier": "read"
-		},
+		"access": null,
 		"children": {
-			"menus_overview": {
+			"system_overview": {
 				"title": {
-					"translate": ["menus", "menu_overview"]
+					"translate": ["system", "menu_overview"]
+				},
+				"link": {
+					"url": {
+						"controller": "System",
+						"action": "overview"
+					}
+				},
+				"access": null
+			},
+			"menus": {
+				"title": {
+					"translate": ["menus", "menu_title"]
 				},
 				"link": {
 					"url": {
@@ -355,42 +364,42 @@
 				},
 				"access": {
 					"scope": "menus",
-					"identifier": "read"
-				}
-			},
-			"menus_add": {
-				"title": {
-					"translate": ["menus", "menu_add"]
-				},
-				"link": {
-					"url": {
-						"controller": "Menus",
-						"action": "add"
-					}
-				},
-				"access": {
-					"scope": "menus",
-					"identifier": "create"
-				}
-			},
-			"backend_menu_entries": {
-				"title": {
-					"translate": ["backend_menu_entries", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "BackendMenuEntries",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "backend_menu_entries",
 					"identifier": "read"
 				},
 				"children": {
-					"backend_menu_entries_overview": {
+					"menus_overview": {
 						"title": {
-							"translate": ["backend_menu_entries", "menu_overview"]
+							"translate": ["menus", "menu_overview"]
+						},
+						"link": {
+							"url": {
+								"controller": "Menus",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "menus",
+							"identifier": "read"
+						}
+					},
+					"menus_add": {
+						"title": {
+							"translate": ["menus", "menu_add"]
+						},
+						"link": {
+							"url": {
+								"controller": "Menus",
+								"action": "add"
+							}
+						},
+						"access": {
+							"scope": "menus",
+							"identifier": "create"
+						}
+					},
+					"backend_menu_entries": {
+						"title": {
+							"translate": ["backend_menu_entries", "menu_title"]
 						},
 						"link": {
 							"url": {
@@ -399,123 +408,139 @@
 							}
 						},
 						"access": {
-							"scope": "BackendMenuEntries",
+							"scope": "backend_menu_entries",
 							"identifier": "read"
+						},
+						"children": {
+							"backend_menu_entries_overview": {
+								"title": {
+									"translate": ["backend_menu_entries", "menu_overview"]
+								},
+								"link": {
+									"url": {
+										"controller": "BackendMenuEntries",
+										"action": "overview"
+									}
+								},
+								"access": {
+									"scope": "BackendMenuEntries",
+									"identifier": "read"
+								}
+							},
+							"backend_menu_entries_add": {
+								"title": {
+									"translate": ["backend_menu_entries", "menu_add"]
+								},
+								"link": {
+									"url": {
+										"controller": "BackendMenuEntries",
+										"action": "add"
+									}
+								},
+								"access": {
+									"scope": "backend_menu_entries",
+									"identifier": "create"
+								}
+							}
 						}
 					},
-					"backend_menu_entries_add": {
+					"menus_configure": {
 						"title": {
-							"translate": ["backend_menu_entries", "menu_add"]
+							"translate": ["menus", "menu_configure"]
 						},
 						"link": {
 							"url": {
-								"controller": "BackendMenuEntries",
+								"controller": "Configuration",
+								"action": "overview",
+								"scope": "menus"
+							}
+						},
+						"access": {
+							"scope": "menus",
+							"identifier": "configure"
+						}
+					}
+				}
+			},
+			"forms": {
+				"title": {
+					"translate": ["forms", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "Forms",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "forms",
+					"identifier": "read"
+				},
+				"children": {
+					"forms_overview": {
+						"title": {
+							"translate": ["forms", "menu_overview"]
+						},
+						"link": {
+							"url": {
+								"controller": "Forms",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "forms",
+							"identifier": "read"
+						}
+					},
+					"forms_add": {
+						"title": {
+							"translate": ["forms", "menu_add"]
+						},
+						"link": {
+							"url": {
+								"controller": "Forms",
 								"action": "add"
 							}
 						},
 						"access": {
-							"scope": "backend_menu_entries",
+							"scope": "forms",
 							"identifier": "create"
+						}
+					},
+					"form_entries": {
+						"title": {
+							"translate": ["form_entries", "menu_title"]
+						},
+						"link": {
+							"url": {
+								"controller": "FormEntries",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "form_entries",
+							"identifier": "read"
+						},
+						"children": null
+					},
+					"forms_configure": {
+						"title": {
+							"translate": ["forms", "menu_configure"]
+						},
+						"link": {
+							"url": {
+								"controller": "Configuration",
+								"action": "overview",
+								"scope": "forms"
+							}
+						},
+						"access": {
+							"scope": "forms",
+							"identifier": "configure"
 						}
 					}
 				}
-			}
-		}
-	},
-	"forms": {
-		"title": {
-			"translate": ["forms", "menu_title"]
-		},
-		"link": {
-			"url": {
-				"controller": "Forms",
-				"action": "overview"
-			}
-		},
-		"access": {
-			"scope": "forms",
-			"identifier": "read"
-		},
-		"children": {
-			"forms_overview": {
-				"title": {
-					"translate": ["forms", "menu_overview"]
-				},
-				"link": {
-					"url": {
-						"controller": "Forms",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "forms",
-					"identifier": "read"
-				}
 			},
-			"forms_add": {
-				"title": {
-					"translate": ["forms", "menu_add"]
-				},
-				"link": {
-					"url": {
-						"controller": "Forms",
-						"action": "add"
-					}
-				},
-				"access": {
-					"scope": "forms",
-					"identifier": "create"
-				}
-			},
-			"form_entries": {
-				"title": {
-					"translate": ["form_entries", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "FormEntries",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "form_entries",
-					"identifier": "read"
-				},
-				"children": null
-			},
-			"forms_configure": {
-				"title": {
-					"translate": ["forms", "menu_configure"]
-				},
-				"link": {
-					"url": {
-						"controller": "Configuration",
-						"action": "overview",
-						"scope": "forms"
-					}
-				},
-				"access": {
-					"scope": "forms",
-					"identifier": "configure"
-				}
-			}
-		}
-	},
-	"system": {
-		"title": {
-			"translate": ["system", "menu_title"]
-		},
-		"link": {
-			"url": {
-				"controller": "System",
-				"action": "analyze"
-			}
-		},
-		"access": {
-			"scope": "system",
-			"identifier": "analyze"
-		},
-		"children": {
 			"widgets": {
 				"title": {
 					"translate": ["widgets", "menu_title"]
@@ -529,51 +554,52 @@
 				"access": {
 					"scope": "widgets",
 					"identifier": "read"
-				}
-			},
-			"seo_analyze": {
-				"title": {
-					"translate": ["seo", "menu_analyze"]
-				},
-				"link": {
-					"url": {
-						"controller": "Seo",
-						"action": "analyze"
-					}
-				},
-				"access": {
-					"scope": "seo",
-					"identifier": "analyze"
-				}
-			},
-			"url_history": {
-				"title": {
-					"translate": ["url_history", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "UrlHistory",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "url_history",
-					"identifier": "read"
 				},
 				"children": {
-					"urls_not_found": {
+					"widgets_overview": {
 						"title": {
-							"translate": ["urls_not_found", "menu_title"]
+							"translate": ["widgets", "menu_overview"]
 						},
 						"link": {
 							"url": {
-								"controller": "UrlsNotFound",
+								"controller": "Widgets",
 								"action": "overview"
 							}
 						},
 						"access": {
-							"scope": "urls_not_found",
+							"scope": "widgets",
 							"identifier": "read"
+						}
+					},
+					"widgets_add": {
+						"title": {
+							"translate": ["widgets", "menu_add"]
+						},
+						"link": {
+							"url": {
+								"controller": "Widgets",
+								"action": "add"
+							}
+						},
+						"access": {
+							"scope": "widgets",
+							"identifier": "create"
+						}
+					},
+					"widgets_configure": {
+						"title": {
+							"translate": ["widgets", "menu_configure"]
+						},
+						"link": {
+							"url": {
+								"controller": "Configuration",
+								"action": "overview",
+								"scope": "widgets"
+							}
+						},
+						"access": {
+							"scope": "widgets",
+							"identifier": "configure"
 						}
 					}
 				}
@@ -591,744 +617,6 @@
 				"access": {
 					"scope": "designs",
 					"identifier": "read"
-				}
-			},
-			"languages": {
-				"title": {
-					"translate": ["languages", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "Languages",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "languages",
-					"identifier": "read"
-				},
-				"children": {
-					"languages_overview": {
-						"title": {
-							"translate": ["languages", "menu_overview"]
-						},
-						"link": {
-							"url": {
-								"controller": "Languages",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "Languages",
-							"identifier": "read"
-						}
-					},
-					"languages_add": {
-						"title": {
-							"translate": ["languages", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "Languages",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "languages",
-							"identifier": "create"
-						}
-					},
-					"languages_configure": {
-						"title": {
-							"translate": ["languages", "menu_configure"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview",
-								"scope": "languages"
-							}
-						},
-						"access": {
-							"scope": "languages",
-							"identifier": "configure"
-						}
-					}
-				}
-			},
-			"page_roles": {
-				"title": {
-					"translate": ["page_roles", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "PageRoles",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "page_roles",
-					"identifier": "read"
-				},
-				"children": {
-					"page_roles_overview": {
-						"title": {
-							"translate": ["page_roles", "menu_overview"]
-						},
-						"link": {
-							"url": {
-								"controller": "PageRoles",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "PageRoles",
-							"identifier": "read"
-						}
-					},
-					"page_roles_add": {
-						"title": {
-							"translate": ["page_roles", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "PageRoles",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "page_roles",
-							"identifier": "create"
-						}
-					},
-					"page_roles_configure": {
-						"title": {
-							"translate": ["page_roles", "menu_configure"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview",
-								"scope": "page-roles"
-							}
-						},
-						"access": {
-							"scope": "page_roles",
-							"identifier": "configure"
-						}
-					}
-				}
-			},
-			"templates": {
-				"title": {
-					"translate": ["system", "menu_title_templates"]
-				},
-				"link": null,
-				"access": null,
-				"children": {
-					"page_templates": {
-						"title": {
-							"translate": ["page_templates", "menu_title"]
-						},
-						"link": {
-							"url": {
-								"controller": "PageTemplates",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "page_templates",
-							"identifier": "read"
-						},
-						"children": {
-							"page_templates_overview": {
-								"title": {
-									"translate": ["page_templates", "menu_overview"]
-								},
-								"link": {
-									"url": {
-										"controller": "PageTemplates",
-										"action": "overview"
-									}
-								},
-								"access": {
-									"scope": "PageTemplates",
-									"identifier": "read"
-								}
-							},
-							"page_templates_add": {
-								"title": {
-									"translate": ["page_templates", "menu_add"]
-								},
-								"link": {
-									"url": {
-										"controller": "PageTemplates",
-										"action": "add"
-									}
-								},
-								"access": {
-									"scope": "page_templates",
-									"identifier": "create"
-								}
-							},
-							"page_templates_configure": {
-								"title": {
-									"translate": ["page_templates", "menu_configure"]
-								},
-								"link": {
-									"url": {
-										"controller": "Configuration",
-										"action": "overview",
-										"scope": "page-templates"
-									}
-								},
-								"access": {
-									"scope": "page_templates",
-									"identifier": "configure"
-								}
-							}
-						}
-					},
-					"content_templates": {
-						"title": {
-							"translate": ["content_templates", "menu_title"]
-						},
-						"link": {
-							"url": {
-								"controller": "ContentTemplates",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "content_templates",
-							"identifier": "read"
-						},
-						"children": {
-							"content_templates_overview": {
-								"title": {
-									"translate": ["content_templates", "menu_overview"]
-								},
-								"link": {
-									"url": {
-										"controller": "ContentTemplates",
-										"action": "overview"
-									}
-								},
-								"access": {
-									"scope": "ContentTemplates",
-									"identifier": "read"
-								}
-							},
-							"content_templates_add": {
-								"title": {
-									"translate": ["content_templates", "menu_add"]
-								},
-								"link": {
-									"url": {
-										"controller": "ContentTemplates",
-										"action": "add"
-									}
-								},
-								"access": {
-									"scope": "content_templates",
-									"identifier": "create"
-								}
-							},
-							"content_templates_configure": {
-								"title": {
-									"translate": ["content_templates", "menu_configure"]
-								},
-								"link": {
-									"url": {
-										"controller": "Configuration",
-										"action": "overview",
-										"scope": "content-templates"
-									}
-								},
-								"access": {
-									"scope": "content_templates",
-									"identifier": "configure"
-								}
-							}
-						}
-					},
-					"email_templates": {
-						"title": {
-							"translate": ["email_templates", "menu_title"]
-						},
-						"link": {
-							"url": {
-								"controller": "EmailTemplates",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "email_templates",
-							"identifier": "read"
-						},
-						"children": {
-							"email_templates_overview": {
-								"title": {
-									"translate": ["email_templates", "menu_overview"]
-								},
-								"link": {
-									"url": {
-										"controller": "EmailTemplates",
-										"action": "overview"
-									}
-								},
-								"access": {
-									"scope": "EmailTemplates",
-									"identifier": "read"
-								}
-							},
-							"email_templates_add": {
-								"title": {
-									"translate": ["email_templates", "menu_add"]
-								},
-								"link": {
-									"url": {
-										"controller": "EmailTemplates",
-										"action": "add"
-									}
-								},
-								"access": {
-									"scope": "email_templates",
-									"identifier": "create"
-								}
-							},
-							"email_templates_configure": {
-								"title": {
-									"translate": ["email_templates", "menu_configure"]
-								},
-								"link": {
-									"url": {
-										"controller": "Configuration",
-										"action": "overview",
-										"scope": "email-templates"
-									}
-								},
-								"access": {
-									"scope": "email_templates",
-									"identifier": "configure"
-								}
-							}
-						}
-					},
-					"widget_templates": {
-						"title": {
-							"translate": ["widget_templates", "menu_title"]
-						},
-						"link": {
-							"url": {
-								"controller": "WidgetTemplates",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "widget_templates",
-							"identifier": "read"
-						},
-						"children": {
-							"widget_templates_overview": {
-								"title": {
-									"translate": ["widget_templates", "menu_overview"]
-								},
-								"link": {
-									"url": {
-										"controller": "WidgetTemplates",
-										"action": "overview"
-									}
-								},
-								"access": {
-									"scope": "WidgetTemplates",
-									"identifier": "read"
-								}
-							},
-							"widget_templates_add": {
-								"title": {
-									"translate": ["widget_templates", "menu_add"]
-								},
-								"link": {
-									"url": {
-										"controller": "WidgetTemplates",
-										"action": "add"
-									}
-								},
-								"access": {
-									"scope": "widget_templates",
-									"identifier": "create"
-								}
-							},
-							"widget_templates_configure": {
-								"title": {
-									"translate": ["widget_templates", "menu_configure"]
-								},
-								"link": {
-									"url": {
-										"controller": "Configuration",
-										"action": "overview",
-										"scope": "widget-templates"
-									}
-								},
-								"access": {
-									"scope": "widget_templates",
-									"identifier": "configure"
-								}
-							}
-						}
-					}
-				}
-			},
-			"attributes": {
-				"title": {
-					"translate": ["attributes", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "Attributes",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "attributes",
-					"identifier": "read"
-				},
-				"children": {
-					"attributes_overview": {
-						"title": {
-							"translate": ["attributes", "menu_overview"]
-						},
-						"link": {
-							"url": {
-								"controller": "Attributes",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "Attributes",
-							"identifier": "read"
-						}
-					},
-					"attributes_add": {
-						"title": {
-							"translate": ["attributes", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "Attributes",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "attributes",
-							"identifier": "create"
-						}
-					}
-				}
-			},
-			"datatables": {
-				"title": {
-					"translate": ["datatables", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "Datatables",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "datatables",
-					"identifier": "read"
-				},
-				"children": {
-					"datatables_overview": {
-						"title": {
-							"translate": ["datatables", "menu_overview"]
-						},
-						"link": {
-							"url": {
-								"controller": "Datatables",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "Datatables",
-							"identifier": "read"
-						}
-					},
-					"datatables_add": {
-						"title": {
-							"translate": ["datatables", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "Datatables",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "datatables",
-							"identifier": "create"
-						}
-					},
-					"datatables_configure": {
-						"title": {
-							"translate": ["datatables", "menu_configure"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview",
-								"scope": "datatables"
-							}
-						},
-						"access": {
-							"scope": "datatables",
-							"identifier": "configure"
-						}
-					}
-				}
-			},
-			"users": {
-				"title": {
-					"translate": ["users", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "Users",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "users",
-					"identifier": "read"
-				},
-				"children": {
-					"users_overview": {
-						"title": {
-							"translate": ["users", "menu_overview"]
-						},
-						"link": {
-							"url": {
-								"controller": "Users",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "Users",
-							"identifier": "read"
-						}
-					},
-					"users_add": {
-						"title": {
-							"translate": ["users", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "Users",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "users",
-							"identifier": "create"
-						}
-					},
-					"usergroups": {
-						"title": {
-							"translate": ["usergroups", "menu_title"]
-						},
-						"link": {
-							"url": {
-								"controller": "Usergroups",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "usergroups",
-							"identifier": "read"
-						},
-						"children": {
-							"usergroups_overview": {
-								"title": {
-									"translate": ["usergroups", "menu_overview"]
-								},
-								"link": {
-									"url": {
-										"controller": "Usergroups",
-										"action": "overview"
-									}
-								},
-								"access": {
-									"scope": "Usergroups",
-									"identifier": "read"
-								}
-							},
-							"usergroups_add": {
-								"title": {
-									"translate": ["usergroups", "menu_add"]
-								},
-								"link": {
-									"url": {
-										"controller": "Usergroups",
-										"action": "add"
-									}
-								},
-								"access": {
-									"scope": "usergroups",
-									"identifier": "create"
-								}
-							},
-							"usergroups_configure": {
-								"title": {
-									"translate": ["usergroups", "menu_configure"]
-								},
-								"link": {
-									"url": {
-										"controller": "Configuration",
-										"action": "overview",
-										"scope": "usergroups"
-									}
-								},
-								"access": {
-									"scope": "usergroups",
-									"identifier": "configure"
-								}
-							}
-						}
-					},
-					"users_configure": {
-						"title": {
-							"translate": ["users", "menu_configure"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview",
-								"scope": "users"
-							}
-						},
-						"access": {
-							"scope": "users",
-							"identifier": "configure"
-						}
-					}
-				}
-			},
-			"queued_jobs": {
-				"title": {
-					"translate": ["queued_jobs", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "QueuedJobs",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "queued_jobs",
-					"identifier": "read"
-				}
-			},
-			"configuration": {
-				"title": {
-					"translate": ["configuration", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "Configuration",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "configuration",
-					"identifier": "read",
-					"additionalData": {"scope": ""}
-				},
-				"children": {
-					"configuration_overview": {
-						"title": {
-							"translate": ["configuration", "menu_overview"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "Configuration",
-							"identifier": "read",
-							"additionalData": {"scope": ""}
-						}
-					},
-					"configuration_add": {
-						"title": {
-							"translate": ["configuration", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "configuration",
-							"identifier": "create",
-							"additionalData": {"scope": ""}
-						}
-					},
-					"user_configuration": {
-						"title": {
-							"translate": ["user_configuration", "menu_title"]
-						},
-						"link": {
-							"url": {
-								"controller": "UserConfiguration",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "user_configuration",
-							"identifier": "read",
-							"additionalData": {"scope": ""}
-						},
-						"children": {
-							"user_configuration_overview": {
-								"title": {
-									"translate": ["user_configuration", "menu_overview"]
-								},
-								"link": {
-									"url": {
-										"controller": "UserConfiguration",
-										"action": "overview"
-									}
-								},
-								"access": {
-									"scope": "UserConfiguration",
-									"identifier": "read",
-									"additionalData": {"scope": ""}
-								}
-							},
-							"user_configuration_add": {
-								"title": {
-									"translate": ["user_configuration", "menu_add"]
-								},
-								"link": {
-									"url": {
-										"controller": "UserConfiguration",
-										"action": "add"
-									}
-								},
-								"access": {
-									"scope": "user_configuration",
-									"identifier": "create",
-									"additionalData": {"scope": ""}
-								}
-							}
-						}
-					}
 				}
 			}
 		}

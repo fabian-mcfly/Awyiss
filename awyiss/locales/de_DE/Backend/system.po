@@ -26,6 +26,18 @@ msgstr "Templates"
 msgid "menu_configure"
 msgstr "Konfiguration"
 
+msgid "headline_overview"
+msgstr "Systemübersicht"
+
+msgid "meta_title_overview"
+msgstr "Systemübersicht"
+
+msgid "headline_analyze"
+msgstr "System-Analyse"
+
+msgid "meta_title_analyze"
+msgstr "System-Analyse"
+
 msgid "id"
 msgstr "ID"
 
@@ -284,12 +296,6 @@ msgstr "Moderat"
 msgid "html_cleaning_strict"
 msgstr "Strikt"
 
-msgid "headline_analyze"
-msgstr "System-Analyse"
-
-msgid "meta_title_analyze"
-msgstr "System-Analyse"
-
 msgid "analyze_fix"
 msgstr "Beheben"
 
@@ -480,3 +486,18 @@ msgstr "Aktionsbereich anzeigen"
 
 msgid "sidebar_toggle"
 msgstr "Weitere Eigenschaften"
+
+msgid "system_overview_category_extend"
+msgstr "Awyiss erweitern"
+
+msgid "system_overview_category_templates"
+msgstr "Templates"
+
+msgid "system_overview_category_analyze"
+msgstr "Analyse"
+
+msgid "system_overview_category_users_usergroups"
+msgstr "Benutzer & Benutzergruppen"
+
+msgid "system_overview_category_configuration"
+msgstr "Konfiguration"

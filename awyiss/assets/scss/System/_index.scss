@@ -1,2 +1,42 @@
 @import 'analyze';
 @import 'clear_cache';
+@import 'overview';
+
+.Button-ClearCache {
+	&.FetchInProgress {
+		pointer-events:none;
+
+		.Loading {
+			opacity:1;
+		}
+	}
+
+	.Loading {
+		background-color:var(--colorMedium);
+		position:absolute;
+		inset:0;
+		z-index:2;
+		opacity:0;
+		transition:opacity .3s ease-in-out;
+		pointer-events:none;
+
+		&::after {
+			content:'';
+			width:30px;
+			height:30px;
+			margin:auto;
+			border-radius:50%;
+			border:3px solid var(--colorBright);
+			border-top-color:transparent;
+			position:absolute;
+			inset:0;
+			animation:spin 1s linear infinite;
+
+			@keyframes spin {
+				to {
+					transform:rotate(360deg);
+				}
+			}
+		}
+	}
+}

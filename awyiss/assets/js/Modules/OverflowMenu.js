@@ -217,7 +217,7 @@ export default class OverflowMenu {
 		const rightPosition = this.overflowContainer.getBoundingClientRect().right;
 
 		// If the overflow container is wider than the available space to the left, add the "Narrow" class
-		if (rightPosition <= (this.overflowContainer.clientWidth + 40)) {
+		if (rightPosition <= (this.overflowContainer.clientWidth + 30)) {
 			this.overflowContainer.classList.add('Narrow');
 		}
 	}

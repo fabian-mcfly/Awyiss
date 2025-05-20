@@ -128,7 +128,8 @@ class MenuCellTest extends TestCase {
 		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
 		$this->assertStringContainsString('<li class="Level1 HasSubmenu MenuItem-System">', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/system/analyze/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="http://localhost/backend/xy/system/overview/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="http://localhost/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
 		$this->assertStringContainsString('<ul class="Level2">', $output);
 	}
 
@@ -149,7 +150,7 @@ class MenuCellTest extends TestCase {
 		$this->assertStringContainsString('<li class="Level1 MenuItem-Dashboard">', $output);
 		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
-		$this->assertStringNotContainsString('<a href="http://localhost/backend/xy/system/analyze/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
+		$this->assertStringNotContainsString('<a href="http://localhost/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
 	}
 
 
@@ -169,7 +170,7 @@ class MenuCellTest extends TestCase {
 		$this->assertStringContainsString('<li class="Level1 MenuItem-Dashboard">', $output);
 		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
-		$this->assertStringNotContainsString('<a href="http://localhost/backend/xy/system/analyze/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
+		$this->assertStringNotContainsString('<a href="http://localhost/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
 	}
 
 
@@ -291,7 +292,8 @@ class MenuCellTest extends TestCase {
 		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 Active MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
 		$this->assertStringContainsString('<li class="Level1 HasSubmenu MenuItem-System">', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/system/analyze/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="http://localhost/backend/xy/system/overview/" class="Level2 MenuItem-SystemOverview">system::menu_overview</a>', $output);
+		$this->assertStringContainsString('<a href="http://localhost/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
 		$this->assertStringContainsString('<ul class="Level2">', $output);
 	}
 

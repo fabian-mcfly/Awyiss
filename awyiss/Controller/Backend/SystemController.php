@@ -30,6 +30,16 @@ class SystemController extends Controller {
 
 
 	/**
+	 * Shows the system overview.
+	 * Access check is handled in the view
+	 *
+	 * @return void
+	 */
+	public function overview(): void {
+	}
+
+
+	/**
 	 * Analyze method checks if the system is set up correctly
 	 *
 	 * @return void
@@ -104,7 +114,7 @@ class SystemController extends Controller {
 	 * @throws \Exception
 	 */
 	public function clearCache(): void {
-		$this->Authorization->ensure('analyze');
+		$this->Authorization->ensure(['overview', 'analyze']);
 
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = $this->fetchTable('Queue.QueuedJobs');

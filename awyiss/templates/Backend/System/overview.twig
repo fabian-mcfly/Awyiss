@@ -1,0 +1,267 @@
+{#
+@var anyAccessible callable
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="System Overview">
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{{ HtmlHelper.link(__('clear_cache'), {action: 'clear-cache'}, {class: 'Button Button-Delete Button-ClearCache'}) }}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block fieldsetOverview %}
+		<fieldset class="Overview-Fieldsets">
+			{% block fieldsetExtend %}
+				{% if (AuthorizationHelper.anyIsAccessible(
+					{scope: 'attributes', identifier: 'read'},
+					{scope: 'datatables', identifier: 'read'},
+					{scope: 'page_roles', identifier: 'read'}
+				)) %}
+					<fieldset class="Fieldset-Extend ColumnSpan-4">
+						<legend>{{ __('system_overview_category_extend') }}</legend>
+
+						{% block fieldsetExtendInner %}
+							<ul class="NoList">
+								{% block listItemAttributesOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('attributes', [], 'read') %}
+										<li>
+											{{ HtmlHelper.link(__d('attributes', 'headline_overview'), {controller: 'Attributes', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemDatatablesOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('datatables', [], 'read') %}
+										<li>
+											{{ HtmlHelper.link(__d('datatables', 'headline_overview'), {controller: 'Datatables', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemPageRolesOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('page_roles', [], 'read') %}
+										<li>
+											{{ HtmlHelper.link(__d('page_roles', 'headline_overview'), {controller: 'PageRoles', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+							</ul>
+						{% endblock %}
+					</fieldset>
+				{% endif %}
+			{% endblock %}
+
+			{% block fieldsetTemplates %}
+				{% if (AuthorizationHelper.anyIsAccessible(
+					{scope: 'page_templates', identifier: 'read'},
+					{scope: 'content_templates', identifier: 'read'},
+					{scope: 'email_templates', identifier: 'read'},
+					{scope: 'widget_templates', identifier: 'read'}
+				)) %}
+					<fieldset class="Fieldset-Templates ColumnSpan-4">
+						<legend>{{ __('system_overview_category_templates') }}</legend>
+
+						{% block fieldsetTemplatesInner %}
+							<ul class="NoList">
+								{% block listItemTemplatesOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('page_templates', [], 'read') %}
+										<li class="ListItem-PageTemplates">
+											{{ HtmlHelper.link(__d('page_templates', 'headline_overview'), {controller: 'PageTemplates', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemContentTemplatesOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('content_templates', [], 'read') %}
+										<li class="ListItem-ContentTemplates">
+											{{ HtmlHelper.link(__d('content_templates', 'headline_overview'), {controller: 'ContentTemplates', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemEmailTemplatesOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('email_templates', [], 'read') %}
+										<li class="ListItem-EmailTemplates">
+											{{ HtmlHelper.link(__d('email_templates', 'headline_overview'), {controller: 'EmailTemplates', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemWidgetTemplatesOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('widget_templates', [], 'read') %}
+										<li class="ListItem-WidgetTemplates">
+											{{ HtmlHelper.link(__d('widget_templates', 'headline_overview'), {controller: 'WidgetTemplates', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+							</ul>
+						{% endblock %}
+					</fieldset>
+				{% endif %}
+			{% endblock %}
+
+			{% block fieldsetAnalyze %}
+				{% if (AuthorizationHelper.anyIsAccessible(
+					{scope: 'system', identifier: 'analyze'},
+					{scope: 'queued_jobs', identifier: 'read'},
+					{scope: 'seo', identifier: 'analyze'},
+					{scope: 'urls_not_found', identifier: 'read'},
+					{scope: 'url_history', identifier: 'read'}
+				)) %}
+					<fieldset class="Fieldset-Analyze ColumnSpan-4">
+						<legend>{{ __('system_overview_category_analyze') }}</legend>
+
+						{% block fieldsetAnalyzeInner %}
+							<ul class="NoList">
+								{% block listItemSystemAnalyze %}
+									{% if AuthorizationHelper.scopeIsAccessible('system', [], 'analyze') %}
+										<li class="ListItem-SystemAnalyze">
+											{{ HtmlHelper.link(__d('system', 'headline_analyze'), {controller: 'System', action: 'analyze'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemQueuedJobsOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('queued_jobs', [], 'read') %}
+										<li class="ListItem-QueuedJobs">
+											{{ HtmlHelper.link(__d('queued_jobs', 'headline_overview'), {controller: 'QueuedJobs', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemSeoAnalyze %}
+									{% if AuthorizationHelper.scopeIsAccessible('seo', [], 'analyze') %}
+										<li class="ListItem-SeoAnalyze">
+											{{ HtmlHelper.link(__d('seo', 'headline_analyze'), {controller: 'Seo', action: 'analyze'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemUrlsNotFoundOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('urls_not_found', [], 'read') %}
+										<li class="ListItem-UrlsNotFound">
+											{{ HtmlHelper.link(__d('urls_not_found', 'headline_overview'), {controller: 'UrlsNotFound', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemUrlHistoryOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('url_history', [], 'read') %}
+										<li class="ListItem-UrlHistory">
+											{{ HtmlHelper.link(__d('url_history', 'headline_overview'), {controller: 'UrlHistory', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+							</ul>
+						{% endblock %}
+					</fieldset>
+				{% endif %}
+			{% endblock %}
+
+			{% block fieldsetUsers %}
+				{% if (AuthorizationHelper.anyIsAccessible(
+					{scope: 'users', identifier: 'read'},
+					{scope: 'usergroups', identifier: 'read'}
+				)) %}
+					<fieldset class="Fieldset-Users ColumnSpan-4">
+						<legend>{{ __('system_overview_category_users_usergroups') }}</legend>
+
+						{% block fieldsetUsersInner %}
+							<ul class="NoList">
+								{% block listItemUsersOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('users', [], 'read') %}
+										<li class="ListItem-Users">
+											{{ HtmlHelper.link(__d('users', 'headline_overview'), {controller: 'Users', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemUsergroupsOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('usergroups', [], 'read') %}
+										<li class="ListItem-Usergroups">
+											{{ HtmlHelper.link(__d('usergroups', 'headline_overview'), {controller: 'Usergroups', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+							</ul>
+						{% endblock %}
+					</fieldset>
+				{% endif %}
+			{% endblock %}
+
+			{% block fieldsetConfiguration %}
+				<fieldset class="Fieldset-Configuration ColumnSpan-4">
+					<legend>{{ __('system_overview_category_configuration') }}</legend>
+
+					{% block fieldsetConfigurationInner %}
+						<ul class="NoList">
+							{% block listItemDesignsOverview %}
+								{% if AuthorizationHelper.scopeIsAccessible('designs', [], 'read') %}
+									<li class="ListItem-Designs">
+										{{ HtmlHelper.link(__d('designs', 'headline_overview'), {controller: 'designs', action: 'overview'}) }}
+									</li>
+								{% endif %}
+							{% endblock %}
+
+							{% block listItemLanguagesOverview %}
+								{% if AuthorizationHelper.scopeIsAccessible('languages', [], 'read') %}
+									<li class="ListItem-Languages">
+										{{ HtmlHelper.link(__d('languages', 'headline_overview'), {controller: 'Languages', action: 'overview'}) }}
+									</li>
+								{% endif %}
+							{% endblock %}
+
+							{% block listItemConfigurationOverview %}
+								{% if AuthorizationHelper.scopeIsAccessible('configuration', {scope: system}, 'read') %}
+									<li class="ListItem-Configuration">
+										{{ HtmlHelper.link(__d('configuration', 'headline_overview'), {controller: 'Configuration', action: 'overview', scope: 'system'}) }}
+									</li>
+								{% endif %}
+							{% endblock %}
+
+							{% block listItemUserConfigurationOverview %}
+								<li class="ListItem-UserConfiguration">
+									{{ HtmlHelper.link(__d('user_configuration', 'headline_overview'), {controller: 'UserConfiguration', action: 'overview', scope: 'system'}) }}
+								</li>
+							{% endblock %}
+						</ul>
+					{% endblock %}
+				</fieldset>
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
+</div>
