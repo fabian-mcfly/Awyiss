@@ -9,6 +9,7 @@ use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 use Awyiss\Model\Entity;
 use Awyiss\Utility\Inflector;
 use Cake\View\Helper;
+use InvalidArgumentException;
 use RuntimeException;
 
 
@@ -190,6 +191,38 @@ class AuthorizationHelper extends Helper {
 		$lo_identity = $this->getIdentity();
 
 		return $lo_identity->scopeIsAccessible($scope, $additionalData, ...$identifier);
+	}
+
+
+	/**
+	 * @param array{scope: string, identifier: string|array<string>, additionalData?: array} ...$actions
+	 * @return bool
+	 * @noinspection PhpUnused
+	 */
+	public function anyIsAccessible(array ...$actions): bool {
+		foreach ($actions as $la_action) {
+			if (
+				!is_array($la_action) ||
+				!isset($la_action['scope']) ||
+				!isset($la_action['identifier'])
+			) {
+				throw new InvalidArgumentException('Invalid action provided. Must be an array with keys `scope` and `identifier`.');
+			}
+
+			if (!is_array($la_action['identifier'])) {
+				$la_action['identifier'] = [$la_action['identifier']];
+			}
+
+			if (!is_array($la_action['additionalData'] ?? null)) {
+				$la_action['additionalData'] = isset($la_action['additionalData']) ? [$la_action['additionalData']] : [];
+			}
+
+			if ($this->scopeIsAccessible($la_action['scope'], $la_action['additionalData'], ...$la_action['identifier'])) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 

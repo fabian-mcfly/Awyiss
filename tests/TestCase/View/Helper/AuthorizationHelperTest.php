@@ -16,6 +16,8 @@ use Awyiss\View\BackendView;
 use Awyiss\View\Helper\AuthorizationHelper;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
+use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\TestWith;
 use ReflectionClass;
 use RuntimeException;
 
@@ -370,6 +372,125 @@ class AuthorizationHelperTest extends TestCase {
 		$this->helper->setConfig('identity', $identity);
 
 		$this->assertTrue($this->helper->scopeIsAccessible('scope', ['foo' => 'bar'], 'identifier1', 'identifier2'));
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAnyIsAccessibleReturnsTrueForOneAvailable(): void {
+		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity->expects($this->once())->method('scopeIsAccessible')->willReturnOnConsecutiveCalls(true, false, false);
+
+		$this->helper->setConfig('identity', $identity);
+
+		$this->assertTrue($this->helper->anyIsAccessible(
+			['scope' => 'foo', 'identifier' => 'bar1'],
+			['scope' => 'foo2', 'identifier' => 'bar2'],
+			['scope' => 'foo3', 'identifier' => 'bar3'],
+		));
+
+
+		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity->expects($this->exactly(2))->method('scopeIsAccessible')->willReturnOnConsecutiveCalls(false, true, false);
+
+		$this->helper->setConfig('identity', $identity);
+
+		$this->assertTrue($this->helper->anyIsAccessible(
+			['scope' => 'foo', 'identifier' => 'bar1'],
+			['scope' => 'foo2', 'identifier' => 'bar2'],
+			['scope' => 'foo3', 'identifier' => 'bar3'],
+		));
+
+		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity->expects($this->exactly(3))->method('scopeIsAccessible')->willReturnOnConsecutiveCalls(false, false, true);
+
+		$this->helper->setConfig('identity', $identity);
+
+		$this->assertTrue($this->helper->anyIsAccessible(
+			['scope' => 'foo', 'identifier' => 'bar1'],
+			['scope' => 'foo2', 'identifier' => 'bar2'],
+			['scope' => 'foo3', 'identifier' => 'bar3'],
+		));
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAnyIsAccessibleReturnsFalseIfNoneAvailable(): void {
+		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity->expects($this->exactly(3))->method('scopeIsAccessible')->willReturn(false);
+
+		$this->helper->setConfig('identity', $identity);
+
+		$this->assertFalse($this->helper->anyIsAccessible(
+			['scope' => 'foo', 'identifier' => 'bar1'],
+			['scope' => 'foo2', 'identifier' => 'bar2'],
+			['scope' => 'foo3', 'identifier' => 'bar3'],
+		));
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAnyIsAccessiblePassesSpreadIdentifiers(): void {
+		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity->expects($this->once())->method('scopeIsAccessible')
+			->with('scope', [], 'identifier1', 'identifier2')
+			->willReturn(true);
+
+		$this->helper->setConfig('identity', $identity);
+
+		$this->assertTrue($this->helper->anyIsAccessible(
+			['scope' => 'scope', 'identifier' => ['identifier1', 'identifier2']],
+			['scope' => 'scope', 'identifier' => ['identifier1', 'identifier2']],
+		));
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAnyIsAccessiblePassesSpreadIdentifiersWithAdditionalData(): void {
+		$identity = $this->createMock(IdentityPermissionsInterface::class);
+		$identity->expects($this->once())->method('scopeIsAccessible')
+			->with('scope', ['foo' => 'bar'], 'identifier1', 'identifier2')
+			->willReturn(true);
+
+		$this->helper->setConfig('identity', $identity);
+
+		$this->assertTrue($this->helper->anyIsAccessible(
+			['scope' => 'scope', 'identifier' => ['identifier1', 'identifier2'], 'additionalData' => ['foo' => 'bar']],
+			['scope' => 'scope', 'identifier' => ['identifier1', 'identifier2'], 'additionalData' => ['foo' => 'bar']],
+		));
+	}
+
+
+	/**
+	 * @return void
+	 */
+	#[TestWith([['foo']])]
+	#[TestWith([['foo' => 'bar']])]
+	#[TestWith([['scope' => 'foo']])]
+	#[TestWith([['identifier' => 'bar']])]
+	public function testAnyIsAccessibleThrowsExceptionIfInvalidArray(array $data): void {
+		$this->expectException(InvalidArgumentException::class);
+
+		$this->helper->anyIsAccessible($data);
 	}
 
 
