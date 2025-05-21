@@ -1,0 +1,94 @@
+# Survey Question translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-05-21 13:55+0000\n"
+"PO-Revision-Date: 2025-05-21 13:55+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+
+msgid "meta_title_overview"
+msgstr "Umfrage-Fragen"
+
+msgid "meta_title_add"
+msgstr "Frage hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Frage bearbeiten"
+
+msgid "menu_title"
+msgstr "Umfrage-Fragen"
+
+msgid "menu_add"
+msgstr "Neue Frage"
+
+msgid "headline_overview"
+msgstr "Umfrage-Fragen"
+
+msgid "create"
+msgstr "Neue Frage"
+
+msgid "headline_add"
+msgstr "Frage hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Die Frage wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Die Frage konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Frage bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Die Frage wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Die Frage konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Die Frage wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diese Frage (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Die Frage wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Die Frage konnte nicht gelöscht werden"
+
+msgid "view_answers"
+msgstr "Antworten anzeigen"
+
+msgid "subtitle"
+msgstr "Untertitel"
+
+msgid "text"
+msgstr "Text"
+
+msgid "type"
+msgstr "Typ"
+
+msgid "question_type_single_choice"
+msgstr "Einzelauswahl"
+
+msgid "question_type_multiple_choice"
+msgstr "Mehrfachauswahl"
+
+msgid "question_type_free_text"
+msgstr "Freitext"
+
+msgid "question_type_info_text"
+msgstr "Infotext"
+
+msgid "fieldset_answers"
+msgstr "Antworten"
+
+msgid "answers"
+msgstr "Antworten"

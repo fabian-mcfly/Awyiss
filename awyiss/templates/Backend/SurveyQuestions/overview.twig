@@ -1,6 +1,6 @@
-{{ '{#' }}
-@var {{ pluralVar }} {{ entityClass }}[]
-@var _view \{{ namespace }}\View\BackendView
+{#
+@var surveyQuestions Awyiss\Model\Entity\SurveyQuestion[]
+@var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
 @var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
@@ -14,11 +14,10 @@
 @var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
 @var TimeHelper \Cake\View\Helper\TimeHelper
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
-{{ '#}' }}
+#}
 
-<div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Overview">
-{% set fields = Bake.filterFields(fields, schema, modelObject, indexColumns, ['binary', 'text']) %}
-	{% verbatim %}{% block headlinesOverview %}
+<div class="SurveyQuestions Overview">
+	{% block headlinesOverview %}
 		<div class="Headlines">
 			{% block headlineOverview %}
 				<h1>{{ __('headline_overview') }}</h1>
@@ -40,19 +39,19 @@
 				{% endblock %}
 
 				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: '{% endverbatim %}{{ pluralVar }}{% verbatim %}'}) }}
+					{{ element('search/filter_button', {scope: 'surveyQuestions'}) }}
 				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: {% endverbatim %}{{ pluralVar }}{% verbatim %}.items().toArray()}) %}
+		{% include '@Backend/SurveyQuestions/overview_paginated_list.twig' with _context|merge({records: surveyQuestions.items().toArray()}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('overviewButtons') }}
 		</div>
-	{% endblock %}{% endverbatim %}
+	{% endblock %}
 </div>

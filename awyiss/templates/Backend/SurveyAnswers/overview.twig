@@ -1,0 +1,100 @@
+{#
+@var surveyAnswers Awyiss\Model\Entity\SurveyAnswer[]
+@var surveyQuestion Awyiss\Model\Entity\SurveyQuestion
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% set selectedSurveyQuestionId = CategoriesHelper.getSelectedCategory('question') %}
+
+<div class="SurveyAnswers Overview">
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('survey_questions_overview'), {controller: 'SurveyQuestions', action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
+
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
+			{% endblock %}
+
+			{% block subheadlineOverview %}
+				<h2>
+					{{ surveyQuestion.title }}
+
+					{% block buttonEdit %}
+						{% if AuthorizationHelper.scopeIsAccessible('SurveyQuestions', [], 'update') %}
+							{{ HtmlHelper.link(__('edit'), {controller: 'SurveyQuestions', action: 'edit', id: surveyQuestion.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+						{% endif %}
+					{% endblock %}
+				</h2>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('question', naturalSort(CategoriesHelper.getCategories('question')), {
+					disabled: disabledSurveyQuestions,
+				}) }}
+			{% endblock %}
+
+			{% block overviewButtons %}
+				{% block overviewButtonSaveSystemOrder %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+				{% endblock %}
+
+				{% block overviewButtonAdd %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{{ HtmlHelper.link(__('create'), {action: 'add', questionId: selectedSurveyQuestionId}, {class : 'Button Button-Add'}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'surveyAnswers'}) }}
+				{% endblock %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block listOverview %}
+		<div class="Overview-List">
+			{% from '@Backend/macro/nested_list.twig' import nestedList %}
+			{{ nestedList(surveyAnswers, _context|merge({
+				data: {
+					'question-id': selectedQuestionId,
+					sortable: _filter['form_elements']['active'] == false,
+					nestable: false
+				},
+				displayedFields: localConfig.overview.displayedFields,
+				identifier: 'SurveyAnswer',
+				template: '@Backend/SurveyAnswers/overview_nested_list_item.twig',
+			})) }}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterOverview') }}
+
+			{{ block('overviewButtons') }}
+		</div>
+	{% endblock %}
+</div>

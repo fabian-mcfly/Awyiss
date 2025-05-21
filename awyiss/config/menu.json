@@ -541,6 +541,101 @@
 					}
 				}
 			},
+			"surveys": {
+				"title": {
+					"translate": ["surveys", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "Surveys",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "surveys",
+					"identifier": "read"
+				},
+				"children": {
+					"surveys_overview": {
+						"title": {
+							"translate": ["surveys", "menu_overview"]
+						},
+						"link": {
+							"url": {
+								"controller": "Surveys",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "surveys",
+							"identifier": "read"
+						}
+					},
+					"surveys_add": {
+						"title": {
+							"translate": ["surveys", "menu_add"]
+						},
+						"link": {
+							"url": {
+								"controller": "Surveys",
+								"action": "add"
+							}
+						},
+						"access": {
+							"scope": "surveys",
+							"identifier": "create"
+						}
+					},
+					"survey_questions": {
+						"title": {
+							"translate": ["survey_questions", "menu_title"]
+						},
+						"link": {
+							"url": {
+								"controller": "SurveyQuestions",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "survey_questions",
+							"identifier": "read"
+						},
+						"children": null
+					},
+					"survey_answers": {
+						"title": {
+							"translate": ["survey_answers", "menu_title"]
+						},
+						"link": {
+							"url": {
+								"controller": "SurveyAnswers",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "survey_answers",
+							"identifier": "read"
+						},
+						"children": null
+					},
+					"surveys_configure": {
+						"title": {
+							"translate": ["surveys", "menu_configure"]
+						},
+						"link": {
+							"url": {
+								"controller": "Configuration",
+								"action": "overview",
+								"scope": "surveys"
+							}
+						},
+						"access": {
+							"scope": "surveys",
+							"identifier": "configure"
+						}
+					}
+				}
+			},
 			"widgets": {
 				"title": {
 					"translate": ["widgets", "menu_title"]

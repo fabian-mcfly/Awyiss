@@ -1,6 +1,6 @@
-{{ '{#' }}
-@var {{ pluralVar }} {{ entityClass }}[]
-@var _view \{{ namespace }}\View\BackendView
+{#
+@var surveyQuestion Awyiss\Model\Entity\SurveyQuestion
+@var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
 @var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
@@ -14,14 +14,17 @@
 @var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
 @var TimeHelper \Cake\View\Helper\TimeHelper
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
-{{ '#}' }}
+#}
 
-<div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Overview">
-{% set fields = Bake.filterFields(fields, schema, modelObject, indexColumns, ['binary', 'text']) %}
-	{% verbatim %}{% block headlinesOverview %}
+<div class="SurveyQuestions Form Add">
+	{% block headlinesAdd %}
 		<div class="Headlines">
-			{% block headlineOverview %}
-				<h1>{{ __('headline_overview') }}</h1>
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
+
+			{% block headlineAdd %}
+				<h1>{{ __('headline_add') }}</h1>
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -32,27 +35,27 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% block overviewButtons %}
-				{% block overviewButtonAdd %}
-					{% if AuthorizationHelper.isAccessible('create') %}
-						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
-					{% endif %}
+			{% block formAddButtons %}
+				{% block formAddButtonSave %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'SurveyQuestionForm' }) }}
 				{% endblock %}
 
-				{% block overviewButtonFilter %}
-					{{ element('search/filter_button', {scope: '{% endverbatim %}{{ pluralVar }}{% verbatim %}'}) }}
+				{% block formAddButtonSaveClose %}
+					{% if AuthorizationHelper.isAccessible('read') %}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'SurveyQuestionForm', name: 'submit_type', value: 'submit_close'}) }}
+					{% endif %}
 				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
 
-	{% block paginatedOverview %}
-		{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: {% endverbatim %}{{ pluralVar }}{% verbatim %}.items().toArray()}) %}
+	{% block formAdd %}
+		{% include('@Backend/SurveyQuestions/form.twig') %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('overviewButtons') }}
+			{{ block('formAddButtons') }}
 		</div>
-	{% endblock %}{% endverbatim %}
+	{% endblock %}
 </div>
