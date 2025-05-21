@@ -279,6 +279,7 @@
 		font-size:1rem;
 		line-height:var(--lineHeightMain);
 		list-style-type:none;
+		cursor:default;
 
 		&.Active {
 			a {
@@ -294,6 +295,24 @@
 
 		&.IsGrouped {
 			padding-left:30px;
+		}
+
+		&.Disabled {
+			color:color-mix(in srgb, var(--colorText) 25%, transparent 75%);
+		}
+
+		&:not(:has(a)) {
+			padding-block:10px;
+
+			@media screen and (width <= 768px) {
+				padding-block:5px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-block:5px;
+				}
+			}
 		}
 
 		&:is(
