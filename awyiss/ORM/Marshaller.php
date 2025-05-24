@@ -154,6 +154,23 @@ class Marshaller extends BaseMarshaller {
 			$this->_table->dispatchEvent('Model.beforeMarshal', compact('data', 'options'));
 		}
 
-		return [(array)$data, (array)$options];
+		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
+		$ls_entityClass = $this->_table->getEntityClass();
+
+		$la_data = (array)$data;
+		if (method_exists($ls_entityClass, 'unmapField')) {
+			foreach ($data as $ls_field => $lx_value) {
+				$ls_unmappedField = $ls_entityClass::unmapField($ls_field);
+
+				if ($ls_unmappedField === $ls_field) {
+					continue;
+				}
+
+				$la_data[ $ls_unmappedField ] = $lx_value;
+				unset($la_data[ $ls_field ]);
+			}
+		}
+
+		return [$la_data, (array)$options];
 	}
 }

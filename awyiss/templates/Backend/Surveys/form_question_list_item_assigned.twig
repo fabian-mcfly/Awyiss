@@ -1,0 +1,120 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
+@var entity \Awyiss\Model\Entity\SurveySurveyQuestion
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block listItem %}
+	{% set index = loop.index0 + availableQuestions|length %}
+
+	<li
+		{% block listItemId -%}
+			id="{{ settings.identifier|pluralize }}-ListItem{{ entity.id }}"
+		{%- endblock %}
+		{% block listItemClass -%}
+			class="ListItem {{ settings.identifier }}-ListItem {{ settings.identifier }}-ListItem{{ entity.id -}}
+				{%- if entity.class is defined %} {{ entity.class }}{% endif -%}
+				{%- if entity.active is defined and entity.active == false %} Inactive{% endif -%}
+			"
+		{%- endblock %}
+		{% block listItemTitle -%}
+			title="{{ entity.title }}"
+		{%- endblock %}
+	>
+		{% block listItemInner %}
+			<div class="ListItem-Inner">
+				{% block listItemLabel %}
+					<span class="Label">{{ entity.title ? entity.label : entity.surveyQuestion.label }}</span>
+				{% endblock %}
+
+				{% block listItemType %}
+					<span class="Type">{{ entity.surveyQuestion.type.label }}</span>
+				{% endblock %}
+			</div>
+
+			{% block listItemRemove %}
+				<button type="button" class="Button Button-Remove">{{ __('remove_question') }}</button>
+			{% endblock %}
+
+			{% block listItemErrors %}
+				{% if entity.errors() %}
+					<div class="Error">
+						{% for error in entity.errors() %}
+							<p>{{ error|join('<br>')|raw }}</p>
+						{% endfor %}
+					</div>
+				{% endif %}
+			{% endblock %}
+
+			{% block answersList %}
+				{% if
+					entity.surveyQuestion.type == enum('Awyiss\\Model\\Enum\\SurveyQuestionType').SingleChoice or
+					entity.surveyQuestion.type == enum('Awyiss\\Model\\Enum\\SurveyQuestionType').MultiChoice
+				%}
+					<ul class="Answers-List">
+						{% for answer in entity.surveyQuestion.surveyAnswers %}
+							{% set checked = entity.surveySurveyAnswers[ answer.id ] is defined %}
+							{% block answersListItem %}
+								<li class="Answers-ListItem">
+									{% block answersListItemInner %}
+										<div class="Answers-ListItem-Inner">
+											{% block answersListItemLabel %}
+												<span class="Label">{{ answer.label }}</span>
+											{% endblock %}
+										</div>
+
+										{% block answerListItemRemove %}
+											<button type="button" class="Button Button-Remove">{{ __('remove_answer') }}</button>
+										{% endblock %}
+
+										{% block answersListItemInputs %}
+											{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][survey_survey_answers][' ~ loop.index0 ~ '][survey_answer_id]', {
+												val: answer.id
+											}) }}
+
+											{{ FormHelper.control('survey_survey_questions[' ~ index ~'][survey_survey_answers][' ~ loop.index0 ~ '][active]', {
+												checked: entity.surveySurveyAnswers[ answer.id ].active,
+											}) }}
+
+											{% if checked %}
+												{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][survey_survey_answers][' ~ loop.index0 ~ '][id]', {
+													val: entity.surveySurveyAnswers[ answer.id ].id
+												}) }}
+											{% endif %}
+										{% endblock %}
+									{% endblock %}
+								</li>
+							{% endblock %}
+						{% endfor %}
+					</ul>
+				{% endif %}
+			{% endblock %}
+
+			{% block listItemInputs %}
+				{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][id]', {
+					val: entity.id,
+				}) }}
+				{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][identifier]', {
+					val: entity.identifier,
+				}) }}
+				{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][survey_question_id]', {
+					val: entity.surveyQuestionId,
+				}) }}
+			{% endblock %}
+		{% endblock %}
+	</li>
+{% endblock %}

@@ -186,6 +186,12 @@ class Pages {
 			], [
 				'name' => 'PAGES_DELETED',
 			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'PAGES_SYSTEM_ORDER',
+			]
 		)->create();
 	}
 

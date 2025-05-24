@@ -148,6 +148,11 @@ export default class NestedListHandler {
 	 * @param {Object} options - The options for the SortableJS instance
 	 */
 	initSortable(elements, options) {
+		// If elements is a HTMLElement, convert it to an array
+		if (elements instanceof HTMLElement) {
+			elements = [elements];
+		}
+
 		if (!elements.length) {
 			return;
 		}

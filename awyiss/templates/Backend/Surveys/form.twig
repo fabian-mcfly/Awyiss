@@ -1,6 +1,6 @@
 {#
-@var surveyQuestion \Awyiss\Model\Entity\SurveyQuestion
-@var languageRealm string
+@var survey \Awyiss\Model\Entity\Survey
+@var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -17,9 +17,9 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{{ FormHelper.create(surveyQuestion, {
-	id: 'SurveyQuestionForm',
-	idPrefix: 'surveyQuestion',
+{{ FormHelper.create(survey, {
+	id: 'SurveyForm',
+	idPrefix: 'survey',
 	method: 'post',
 }) }}
 
@@ -40,14 +40,8 @@
 								{{ FormHelper.control('title') }}
 							{% endblock %}
 
-							{% block formControlSubtitle %}
-								{{ FormHelper.control('subtitle') }}
-							{% endblock %}
-
-							{% block formControlText %}
-								{{ FormHelper.control('text', {
-									'data-editor': true,
-								}) }}
+							{% block formControlFormId %}
+								{{ FormHelper.control('form_id') }}
 							{% endblock %}
 
 							{% block fieldsetGeneralAttributes %}
@@ -55,26 +49,6 @@
 							{% endblock %}
 						{% endblock %}
 					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetAnswers %}
-					{% if
-						surveyQuestion.isNew() and
-						surveyQuestion.type.value in ['single_choice', 'multiple_choice'] and
-						AuthorizationHelper.scopeIsAccessible('SurveyAnswers', [], 'create')
-					%}
-						<fieldset class="Fieldset-Answers">
-							<legend>{{ __('fieldset_answers') }}</legend>
-
-							{% block fieldsetAnswersInner %}
-								{% block formControlAnswers %}
-									{{ FormHelper.control('answers', {
-										type: 'textarea',
-									}) }}
-								{% endblock %}
-							{% endblock %}
-						</fieldset>
-					{% endif %}
 				{% endblock %}
 
 				{% block fieldsetContent %}
@@ -94,7 +68,7 @@
 						<legend>{{ __('fieldset_media') }}</legend>
 
 						{% block fieldsetMediaInner %}
-							{{ cell('Backend/MediaElements', [surveyQuestion]) }}
+							{{ cell('Backend/MediaElements', [survey]) }}
 
 							{% block fieldsetMediaAttributes %}
 								{{ AttributesHelper.allControls('media') }}
@@ -104,7 +78,7 @@
 				{% endblock %}
 
 				{% block fieldsetMediaElementAssignments %}
-					{{ cell('Backend/MediaElements::elementAssignments', [surveyQuestion]) }}
+					{{ cell('Backend/MediaElements::elementAssignments', [survey]) }}
 				{% endblock %}
 			</div>
 		{% endblock %}
@@ -160,6 +134,51 @@
 			</div>
 		{% endblock %}
 
+		{% block fieldsetQuestions %}
+			<fieldset class="Fieldset-Questions">
+				{% block fieldsetQuestionsInner %}
+					{% block fieldsetQuestionsAvailable %}
+						<fieldset class="Fieldset-Questions-Available">
+							<legend>{{ __('fieldset_questions_available') }}</legend>
+
+							{% block fieldsetQuestionsAvailableInner %}
+								{% from '@Backend/macro/nested_list.twig' import nestedList %}
+								{{ nestedList(availableQuestions, _context|merge({
+									identifier: 'AvailableQuestion',
+									template: '@Backend/Surveys/form_question_list_item_available.twig',
+									data: {
+										nestable: false,
+										sortable: false,
+									},
+									assignedQuestionIds: survey.surveySurveyQuestions and survey.type == enum('Awyiss\\Model\\Enum\\SurveyType').Linear ? survey.surveySurveyQuestions|column('surveyQuestionId') : [],
+								})) }}
+							{% endblock %}
+						</fieldset>
+					{% endblock %}
+
+					{% block fieldsetQuestionsAssigned%}
+						<fieldset class="Fieldset-Questions-Assigned">
+							<legend>{{ __('fieldset_questions_assigned') }}</legend>
+
+							{% block fieldsetQuestionsAssignedInner %}
+								{% from '@Backend/macro/nested_list.twig' import nestedList %}
+								{{ nestedList(survey.surveySurveyQuestions, _context|merge({
+									identifier: 'AssignedQuestion',
+									template: '@Backend/Surveys/form_question_list_item_assigned.twig',
+									data: {
+										nestable: false,
+										sortable: false,
+										'repeated-questions': survey.type == enum('Awyiss\\Model\\Enum\\SurveyType').Configurator,
+										'next-index': availableQuestions|length + survey.surveySurveyQuestions|length,
+									},
+								})) }}
+							{% endblock %}
+						</fieldset>
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
 		{% block formInputReloadForm %}
 			{{ FormHelper.hidden('reload_form', {val: 0}) }}
 		{% endblock %}
@@ -167,7 +186,7 @@
 {% endblock %}
 
 {% block lockDialog %}
-	{{ element('lock_dialog', {entity: surveyQuestion}) }}
+	{{ element('lock_dialog', {entity: survey}) }}
 {% endblock %}
 
 {{ FormHelper.end() }}

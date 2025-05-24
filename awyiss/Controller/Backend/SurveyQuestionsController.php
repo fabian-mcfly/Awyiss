@@ -240,6 +240,7 @@ class SurveyQuestionsController extends Controller {
 			];
 
 			if (count($la_languages) > 1) {
+				/** @noinspection PhpVariableNamingConventionInspection */
 				$value['_translations'][ $lo_currentLanguage->shortcode ] = [
 					'title' => $value['title'],
 				];

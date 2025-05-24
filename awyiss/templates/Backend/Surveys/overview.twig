@@ -1,0 +1,57 @@
+{#
+@var surveys Awyiss\Model\Entity\Survey[]
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Surveys Overview">
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block overviewButtons %}
+				{% block overviewButtonAdd %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'surveys'}) }}
+				{% endblock %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block paginatedOverview %}
+		{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: surveys.items().toArray()}) %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('overviewButtons') }}
+		</div>
+	{% endblock %}
+</div>

@@ -44,7 +44,7 @@ class SurveyQuestions {
 		])->addColumn('title', 'string', [
 			'default' => null,
 			'limit' => 255,
-			'null' => true,
+			'null' => false,
 		])->addColumn('subtitle', 'string', [
 			'default' => null,
 			'limit' => 255,

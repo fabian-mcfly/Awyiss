@@ -37,12 +37,7 @@ class SurveySurveyAnswers {
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('survey_id', 'integer', [
-			'default' => null,
-			'limit' => null,
-			'null' => false,
-			'signed' => true,
-		])->addColumn('survey_answer_id', 'integer', [
+		])->addPrimaryKey(['id'])->addColumn('survey_answer_id', 'integer', [
 			'default' => null,
 			'limit' => null,
 			'null' => false,
@@ -106,12 +101,6 @@ class SurveySurveyAnswers {
 			'null' => true,
 		])->addIndex(
 			[
-				'survey_id',
-			], [
-				'name' => 'SURVEY_SURVEY_ANSWERS_SURVEY_ID',
-			]
-		)->addIndex(
-			[
 				'survey_answer_id',
 			], [
 				'name' => 'SURVEY_SURVEY_ANSWERS_SURVEY_ANSWER_ID',
@@ -132,13 +121,13 @@ class SurveySurveyAnswers {
 			[
 				'active',
 			], [
-				'name' => 'SURVEY_ANSWERS_ACTIVE',
+				'name' => 'SURVEY_SURVEY_ANSWERS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'SURVEY_ANSWERS_DELETED',
+				'name' => 'SURVEY_SURVEY_ANSWERS_DELETED',
 			]
 		)->create();
 	}

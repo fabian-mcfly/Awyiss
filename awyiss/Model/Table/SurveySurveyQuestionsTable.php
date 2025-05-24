@@ -5,21 +5,22 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Core\App;
 use Awyiss\Model\Table;
+use Awyiss\ORM\RulesChecker;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
- * SurveyAnswers Model
+ * SurveySurveyQuestions Model
  *
+ * @property \Awyiss\Model\Table\SurveysTable&\Awyiss\ORM\Association\BelongsTo $Surveys
  * @property \Awyiss\Model\Table\SurveyQuestionsTable&\Awyiss\ORM\Association\BelongsTo $SurveyQuestions
  * @property \Awyiss\Model\Table\SurveySurveyAnswersTable&\Awyiss\ORM\Association\HasMany $SurveySurveyAnswers
- * @property \Awyiss\Model\Table\SurveySurveyQuestionsTable&\Awyiss\ORM\Association\BelongsTo $SurveySurveyQuestions
- * @method \Awyiss\Model\Entity\SurveyAnswer newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Awyiss\Model\Entity\SurveySurveyQuestion newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
-class SurveyAnswersTable extends Table {
+class SurveySurveyQuestionsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -27,30 +28,9 @@ class SurveyAnswersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'survey_answers';
+	public const TABLE = 'survey_survey_questions';
 
 
-	/**
-	 * @inheritDoc
-	 */
-	protected array $categories = [
-		'allowAggregation' => false,
-		'associationName' => 'SurveyQuestions',
-		'enabled' => true,
-		'identifier' => 'question',
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected array $search = [
-		'blocklistedColumns' => ['survey_question_id'],
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected array $systemOrder = [
-		'relatedColumns' => ['surveyQuestionId'],
-	];
 	/**
 	 * @inheritDoc
 	 */
@@ -63,11 +43,15 @@ class SurveyAnswersTable extends Table {
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
 
-
 	/**
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
+		$this->belongsTo('Surveys', [
+			'foreignKey' => 'survey_id',
+			'joinType' => 'INNER',
+		]);
+
 		$this->belongsTo('SurveyQuestions', [
 			'foreignKey' => 'survey_question_id',
 			'joinType' => 'INNER',
@@ -76,13 +60,8 @@ class SurveyAnswersTable extends Table {
 		$this->hasMany('SurveySurveyAnswers', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'survey_answer_id',
-			'saveStrategy' => 'replace',
-		]);
-
-		$this->belongsTo('SurveySurveyQuestions', [
 			'foreignKey' => 'survey_survey_question_id',
-			'joinType' => 'INNER',
+			'saveStrategy' => 'replace',
 		]);
 	}
 
@@ -98,12 +77,20 @@ class SurveyAnswersTable extends Table {
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
 
+
 		$validator->requirePresence([
-			'title',
+			'identifier',
 		], 'create');
 
 
 		$validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$validator->notEmptyString('surveyId');
+		$validator->add('surveyId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
@@ -158,27 +145,35 @@ class SurveyAnswersTable extends Table {
 
 
 	/**
-	 * @return array
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
-	public function getDisabledQuestions(): array {
-		$la_disabled = [];
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add($rules->isUnique(['identifier']), 'identifierUnique', [
+			'errorField' => 'identifier',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+		]);
 
-		/** @var class-string<\Awyiss\Model\Enum\SurveyQuestionType> $ls_surveyQuestionTypeEnum */
-		$ls_surveyQuestionTypeEnum = App::className('SurveyQuestionType', 'Model/Enum');
+		$rules->add(
+			$rules->existsIn('surveyId', 'Surveys'),
+			'validSurveyId',
+			[
+				'errorField' => 'surveyId',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_survey_id'),
+			]
+		);
 
-		/**
-		 * @var \Awyiss\Model\Entity\SurveyQuestion $lo_category
-		 * @noinspection PhpPossiblePolymorphicInvocationInspection
-		 */
-		foreach ($this->getBehavior('Categories')->getCategories(true) as $lo_category) {
-			if (
-				$lo_category->type === $ls_surveyQuestionTypeEnum::FreeText ||
-				$lo_category->type === $ls_surveyQuestionTypeEnum::InfoText
-			) {
-				$la_disabled[] = $lo_category->id;
-			}
-		}
+		$rules->add(
+			$rules->existsIn('surveyQuestionId', 'SurveyQuestions'),
+			'validSurveyQuestionId',
+			[
+				'errorField' => 'surveyQuestionId',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_survey_question_id'),
+			]
+		);
 
-		return $la_disabled;
+		return $rules;
 	}
 }

@@ -47,6 +47,10 @@ class SurveySurveyQuestions {
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
+		])->addColumn('title', 'char', [
+			'default' => null,
+			'limit' => 8,
+			'null' => false,
 		])->addColumn('title', 'string', [
 			'default' => null,
 			'limit' => 255,
@@ -121,13 +125,13 @@ class SurveySurveyQuestions {
 			[
 				'active',
 			], [
-				'name' => 'SURVEY_QUESTIONS_ACTIVE',
+				'name' => 'SURVEY_SURVEY_QUESTIONS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'SURVEY_QUESTIONS_DELETED',
+				'name' => 'SURVEY_SURVEY_QUESTIONS_DELETED',
 			]
 		)->create();
 	}

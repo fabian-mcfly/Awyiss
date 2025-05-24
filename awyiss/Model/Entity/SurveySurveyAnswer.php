@@ -8,10 +8,11 @@ use Awyiss\Model\Entity;
 
 
 /**
- * SurveyAnswer Entity
+ * SurveySurveyAnswer Entity
  *
  * @property int $id
- * @property int $surveyQuestionId
+ * @property int $surveyAnswerId
+ * @property int $surveySurveyQuestionId
  * @property string|null $title
  * @property string|null $subtitle
  * @property string|null $text
@@ -24,16 +25,16 @@ use Awyiss\Model\Entity;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property \Awyiss\Model\Entity\SurveyQuestion $surveyQuestion
- * @property \Awyiss\Model\Entity\SurveySurveyAnswer[]|\Cake\Collection\CollectionInterface $surveySurveyAnswers
+ * @property \Awyiss\Model\Entity\SurveyAnswer $surveyAnswer
  * @property \Awyiss\Model\Entity\SurveySurveyQuestion $surveySurveyQuestion
  */
-class SurveyAnswer extends Entity {
+class SurveySurveyAnswer extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
-		'survey_question_id' => 'surveyQuestionId',
+		'survey_answer_id' => 'surveyAnswerId',
+		'survey_survey_question_id' => 'surveySurveyQuestionId',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
@@ -41,8 +42,7 @@ class SurveyAnswer extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
-		'survey_question' => 'surveyQuestion',
-		'survey_survey_answers' => 'surveySurveyAnswers',
+		'survey_answer' => 'surveyAnswer',
 		'survey_survey_question' => 'surveySurveyQuestion',
 	];
 
@@ -51,7 +51,8 @@ class SurveyAnswer extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'surveyQuestionId' => true,
+		'surveyAnswerId' => true,
+		'surveySurveyQuestionId' => true,
 		'title' => true,
 		'subtitle' => true,
 		'text' => true,

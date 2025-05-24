@@ -12,8 +12,8 @@ use Cake\Database\Type\EnumLabelInterface;
  * SurveyQuestionType Enum
  */
 enum SurveyQuestionType: string implements EnumLabelInterface {
-	case SingleAnswer = 'single_choice';
-	case MultiAnswer = 'multiple_choice';
+	case SingleChoice = 'single_choice';
+	case MultiChoice = 'multiple_choice';
 	case FreeText = 'free_text';
 	case InfoText = 'info_text';
 

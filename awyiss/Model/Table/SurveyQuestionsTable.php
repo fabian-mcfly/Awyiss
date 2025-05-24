@@ -16,6 +16,7 @@ use Cake\Validation\Validator;
  * SurveyQuestions Model
  *
  * @property \Awyiss\Model\Table\SurveyAnswersTable&\Awyiss\ORM\Association\HasMany $SurveyAnswers
+ * @property \Awyiss\Model\Table\SurveySurveyQuestionsTable&\Awyiss\ORM\Association\HasMany $SurveySurveyQuestions
  * @method \Awyiss\Model\Entity\SurveyQuestion newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
@@ -51,6 +52,14 @@ class SurveyQuestionsTable extends Table {
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'survey_question_id',
+			'saveStrategy' => 'replace',
+		]);
+
+		$this->hasMany('SurveySurveyQuestions', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+			'foreignKey' => 'survey_question_id',
+			'saveStrategy' => 'replace',
 		]);
 	}
 

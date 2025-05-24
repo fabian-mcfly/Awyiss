@@ -5,17 +5,16 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Enum\SurveyType;
 
 
 /**
- * SurveyAnswer Entity
+ * Survey Entity
  *
  * @property int $id
- * @property int $surveyQuestionId
+ * @property \Awyiss\Model\Enum\SurveyType $type
  * @property string|null $title
- * @property string|null $subtitle
- * @property string|null $text
- * @property int|null $systemOrder
+ * @property int|null $formId
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
@@ -24,26 +23,22 @@ use Awyiss\Model\Entity;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property \Awyiss\Model\Entity\SurveyQuestion $surveyQuestion
- * @property \Awyiss\Model\Entity\SurveySurveyAnswer[]|\Cake\Collection\CollectionInterface $surveySurveyAnswers
- * @property \Awyiss\Model\Entity\SurveySurveyQuestion $surveySurveyQuestion
+ * @property \Awyiss\Model\Entity\Form $form
+ * @property \Awyiss\Model\Entity\SurveySurveyQuestion[]|\Cake\Collection\CollectionInterface $surveySurveyQuestions
  */
-class SurveyAnswer extends Entity {
+class Survey extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
-		'survey_question_id' => 'surveyQuestionId',
-		'system_order' => 'systemOrder',
+		'form_id' => 'formId',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
 		'changed_by' => 'changedBy',
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
-		'survey_question' => 'surveyQuestion',
-		'survey_survey_answers' => 'surveySurveyAnswers',
-		'survey_survey_question' => 'surveySurveyQuestion',
+		'survey_survey_questions' => 'surveySurveyQuestions',
 	];
 
 
@@ -51,11 +46,15 @@ class SurveyAnswer extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'surveyQuestionId' => true,
+		'type' => true,
 		'title' => true,
-		'subtitle' => true,
-		'text' => true,
-		'systemOrder' => true,
+		'formId' => true,
 		'active' => true,
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $defaultValues = [
+		'type' => SurveyType::Linear,
 	];
 }

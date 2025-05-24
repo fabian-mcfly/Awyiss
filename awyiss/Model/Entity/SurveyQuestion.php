@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Enum\SurveyQuestionType;
 
 
 /**
@@ -24,6 +25,7 @@ use Awyiss\Model\Entity;
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\SurveyAnswer[]|\Cake\Collection\CollectionInterface $surveyAnswers
+ * @property \Awyiss\Model\Entity\SurveySurveyQuestion[]|\Cake\Collection\CollectionInterface $surveySurveyQuestions
  */
 class SurveyQuestion extends Entity {
 	/**
@@ -37,6 +39,7 @@ class SurveyQuestion extends Entity {
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
 		'survey_answers' => 'surveyAnswers',
+		'survey_survey_questions' => 'surveySurveyQuestions',
 	];
 
 
@@ -49,5 +52,11 @@ class SurveyQuestion extends Entity {
 		'subtitle' => true,
 		'text' => true,
 		'active' => true,
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $defaultValues = [
+		'type' => SurveyQuestionType::SingleChoice,
 	];
 }

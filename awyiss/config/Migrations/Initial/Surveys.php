@@ -37,10 +37,14 @@ class Surveys {
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('title', 'string', [
+		])->addPrimaryKey(['id'])->addColumn('type', 'string', [
+			'default' => null,
+			'limit' => 20,
+			'null' => false,
+		])->addColumn('title', 'string', [
 			'default' => null,
 			'limit' => 255,
-			'null' => true,
+			'null' => false,
 		])->addColumn('form_id', 'integer', [
 			'default' => null,
 			'limit' => null,
