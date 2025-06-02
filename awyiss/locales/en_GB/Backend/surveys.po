@@ -50,6 +50,12 @@ msgstr "The survey was successfully updated"
 msgid "edit_failed"
 msgstr "The survey could not be updated"
 
+msgid "headline_diagram"
+msgstr "Diagram"
+
+msgid "surveys_overview"
+msgstr "Surveys Overview"
+
 msgid "record_not_found"
 msgstr "The survey was not found"
 
@@ -62,14 +68,17 @@ msgstr "The survey was successfully deleted"
 msgid "delete_failed"
 msgstr "The survey could not be deleted"
 
+msgid "show_diagram"
+msgstr "Diagram"
+
 msgid "type"
 msgstr "Type"
 
 msgid "survey_type_linear"
-msgstr "Linear (Question by Question)"
+msgstr "Linear"
 
 msgid "survey_type_configurator"
-msgstr "Configurator (Follow-up Questions based on Answers)"
+msgstr "Configurator"
 
 msgid "remove_question"
 msgstr "Remove Question"
@@ -83,5 +92,95 @@ msgstr "Available Questions"
 msgid "fieldset_questions_assigned"
 msgstr "Assigned Questions"
 
+msgid "error_valid_form_id"
+msgstr "The form does not exist"
+
+msgid "error_form_id_set_when_required"
+msgstr "A form must be set"
+
+msgid "error_form_id_set_when_required"
+msgstr "A form must be set when any question requires a form."
+
 msgid "error_no_repeated_questions_in_linear_survey"
 msgstr "Linear surveys cannot have repeated questions."
+
+msgid "error_no_circular_references"
+msgstr "Questions must not create loops"
+
+msgid "custom_answer"
+msgstr "Custom Answer"
+
+msgid "allow_custom_answer"
+msgstr "Allow Custom Answer"
+
+msgid "next_action"
+msgstr "Next Action"
+
+msgid "next_action_next_question"
+msgstr "Next Question"
+
+msgid "next_action_specific_question"
+msgstr "Specified Question"
+
+msgid "next_action_abort"
+msgstr "Abort Survey"
+
+msgid "next_action_show_form"
+msgstr "Show Form"
+
+msgid "next_action_save_and_end"
+msgstr "Save and End Survey"
+
+msgid "next_action_save_and_show_form"
+msgstr "Save and show Form"
+
+msgid "next_action_show_form_and_save"
+msgstr "Show Form and save after form submission"
+
+msgid "next_action_inherit_form"
+msgstr "Inherit from Survey"
+
+msgid "final_action"
+msgstr "Final Action"
+
+msgid "next_action_form"
+msgstr "Form"
+
+msgid "next_action_question"
+msgstr "Question"
+
+msgid "toggle_configuration"
+msgstr "Show/Hide Configuration"
+
+msgid "pick_question"
+msgstr "Pick Question"
+
+msgid "questions_diagram"
+msgstr "Flow Diagram"
+
+msgid "unused_questions"
+msgstr "Unreached Questions"
+
+msgid "zoom_in"
+msgstr "Zoom In"
+
+msgid "zoom_out"
+msgstr "Zoom Out"
+
+msgid "error_no_invalid_next_actions"
+msgstr "The action is not valid"
+
+msgid "error_valid_final_action"
+msgstr "The final action is not valid"
+
+msgid "error_valid_survey_answer_id"
+msgstr "The answer does not exist"
+
+msgid "error_valid_survey_survey_question_id"
+msgstr "The survey question does not exist"
+
+msgid "error_valid_survey_id"
+msgstr "The survey does not exist"
+
+msgid "error_valid_survey_question_id"
+msgstr "The survey question does not exist"
