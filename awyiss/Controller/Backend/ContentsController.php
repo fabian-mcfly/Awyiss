@@ -1157,6 +1157,7 @@ class ContentsController extends Controller {
 			'columnWidths' => $la_columnWidths,
 			'columnIndents' => $la_columnIndents,
 			'forms' => $this->Contents->Forms->find('active')->orderByAsc('title')->all(),
+			'surveys' => $this->Contents->Surveys->find('active')->orderByAsc('title')->all(),
 			'allowedKeys' => $la_allowedKeys,
 			'expertMode' => $this->request->getParam('expertMode'),
 		]);

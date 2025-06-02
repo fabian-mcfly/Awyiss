@@ -35,6 +35,7 @@ use RuntimeException;
  * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\BelongsTo $Forms
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\BelongsTo $ParentContents
+ * @property \Awyiss\Model\Table\SurveysTable&\Awyiss\ORM\Association\BelongsTo $Surveys
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $ChildContents
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $DuplicatingContents
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\BelongsTo $DuplicateOfContents
@@ -140,6 +141,8 @@ class ContentsTable extends Table {
 		]);
 
 		$this->belongsTo('Forms');
+
+		$this->belongsTo('Surveys');
 	}
 
 
@@ -353,6 +356,12 @@ class ContentsTable extends Table {
 		]);
 
 
+		$validator->add('surveyId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
@@ -476,6 +485,9 @@ class ContentsTable extends Table {
 
 
 		$rules->add($rules->existsIn(['formId'], 'Forms', ['allowNullableNulls' => true]), 'validFormId', ['errorField' => 'formId']);
+
+
+		$rules->add($rules->existsIn(['surveyId'], 'Surveys', ['allowNullableNulls' => true]), 'validSurveyId', ['errorField' => 'surveyId']);
 
 
 		$rules->add(function (Content $entity): bool {
@@ -1088,6 +1100,9 @@ class ContentsTable extends Table {
 			return $this->getAssociation('ContentTemplates')->find('list', valueField: 'label')->toArray();
 		}
 
+		if ($column === 'survey_id') {
+			return $this->getAssociation('Surveys')->find('list', valueField: 'label')->toArray();
+		}
 
 		return $this->getBehavior('Search')->getPossibleFieldValues($column, $type);
 	}

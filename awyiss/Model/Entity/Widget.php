@@ -30,6 +30,7 @@ use Cake\Datasource\FactoryLocator;
  * @property string|null $cssClass
  * @property string|null $data
  * @property int|null $formId
+ * @property int|null $surveyId
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -43,6 +44,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\Widget $parentWidget
  * @property \Awyiss\Model\Entity\Widget[] $childWidgets
  * @property \Awyiss\Model\Entity\Form|null $form
+ * @property \Awyiss\Model\Entity\Survey|null $survey
  * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
  * @property array|null $parentWidgets
  * @property float|null $realColumnWidth
@@ -73,6 +75,7 @@ class Widget extends Entity {
 		'column_last' => 'columnLast',
 		'column_rtl' => 'columnRtl',
 		'form_id' => 'formId',
+		'survey_id' => 'surveyId',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
@@ -104,6 +107,7 @@ class Widget extends Entity {
 		'cssClass' => true,
 		'data' => true,
 		'formId' => true,
+		'surveyId' => true,
 		'systemOrder' => true,
 		'active' => true,
 	];

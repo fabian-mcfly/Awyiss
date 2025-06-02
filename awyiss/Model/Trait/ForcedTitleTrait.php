@@ -8,6 +8,7 @@ use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\Media;
+use Awyiss\Model\Entity\Survey;
 use Awyiss\Model\Entity\WidgetTemplate;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\FactoryLocator;
@@ -36,7 +37,7 @@ trait ForcedTitleTrait {
 	 * @noinspection DuplicatedCode
 	 */
 	public function getForcedTitle(bool $includeHtml = true): string {
-		$la_fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'mediaAssignments', 'formId', 'cssClass'];
+		$la_fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'mediaAssignments', 'formId', 'surveyId', 'cssClass'];
 
 		if ($this->_registryAlias === 'Widgets') {
 			$la_fields[] = 'widgetTemplateId';
@@ -77,6 +78,7 @@ trait ForcedTitleTrait {
 		return match ($column) {
 			'mediaAssignments' => $this->processMediaAssignments(),
 			'formId' => $this->processFormId($includeHtml),
+			'surveyId' => $this->processSurveyId($includeHtml),
 			'duplicateOf' => $this->processDuplicateOf(),
 			'contentTemplateId' => $this->processContentTemplateId($includeHtml),
 			'widgetTemplateId' => $this->processWidgetTemplateId($includeHtml),
@@ -105,7 +107,18 @@ trait ForcedTitleTrait {
 	protected function processFormId(bool $includeHtml): ?string {
 		$lo_form = $this->form ?? $this->getForm();
 
-		return $lo_form ? 'Template: ' . ($includeHtml ? '<em>' . $lo_form->label . '</em>' : $lo_form->label) : null;
+		return $lo_form ? __d('contents', 'form_id') . ': ' . ($includeHtml ? '<em>' . $lo_form->label . '</em>' : $lo_form->label) : null;
+	}
+
+
+	/**
+	 * @param bool $includeHtml
+	 * @return string|null
+	 */
+	protected function processSurveyId(bool $includeHtml): ?string {
+		$lo_survey = $this->survey ?? $this->getSurvey();
+
+		return $lo_survey ? __d('contents', 'survey_id') . ': ' . ($includeHtml ? '<em>' . $lo_survey->label . '</em>' : $lo_survey->label) : null;
 	}
 
 
@@ -150,8 +163,8 @@ trait ForcedTitleTrait {
 
 
 	/**
-	 * @param string $ls_column
-	 * @return string
+	 * @param string $column
+	 * @return string|null
 	 */
 	protected function processDefaultField(string $column): ?string {
 		$ls_title = $this->cleanTitle((string)$this->$column);
@@ -298,5 +311,26 @@ trait ForcedTitleTrait {
 		}
 
 		return $lo_form;
+	}
+
+
+	/**
+	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $this
+	 * @return \Awyiss\Model\Entity\Survey|null
+	 */
+	protected function getSurvey(): ?Survey {
+		if (!$this->surveyId) {
+			return null;
+		}
+
+		try {
+			/** @var \Awyiss\Model\Entity\Survey $lo_survey */
+			$lo_survey = FactoryLocator::get('Table')->get('Surveys')->get($this->surveyId);
+		}
+		catch (RecordNotFoundException) {
+			return null;
+		}
+
+		return $lo_survey;
 	}
 }

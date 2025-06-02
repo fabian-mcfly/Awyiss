@@ -32,6 +32,7 @@ use Cake\Datasource\FactoryLocator;
  * @property int|null $duplicateOf
  * @property string|null $data
  * @property int|null $formId
+ * @property int|null $surveyId
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -49,6 +50,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\Content $parentContent
  * @property \Awyiss\Model\Entity\Content[] $childContents
  * @property \Awyiss\Model\Entity\Form|null $form
+ * @property \Awyiss\Model\Entity\Survey|null $survey
  * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
  * @property array|null $parentContents
  * @property float|null $realColumnWidth
@@ -82,6 +84,7 @@ class Content extends Entity {
 		'column_rtl' => 'columnRtl',
 		'duplicate_of' => 'duplicateOf',
 		'form_id' => 'formId',
+		'survey_id' => 'surveyId',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
@@ -118,6 +121,7 @@ class Content extends Entity {
 		'duplicateOf' => true,
 		'data' => true,
 		'formId' => true,
+		'surveyId' => true,
 		'systemOrder' => true,
 		'active' => true,
 	];

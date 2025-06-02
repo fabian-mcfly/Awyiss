@@ -94,6 +94,10 @@ class Pages {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
+		])->addColumn('survey_id', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
 		])->addColumn('system_order', 'integer', [
 			'default' => '0',
 			'limit' => null,
