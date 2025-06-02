@@ -1,5 +1,9 @@
 {#
-@var survey Awyiss\Model\Entity\Survey
+@var survey \Awyiss\Model\Entity\Survey
+@var availableActions \Awyiss\Model\Enum\Survey\NextAction[]
+@var availableForms \Awyiss\Model\Entity\Form[]
+@var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -36,6 +40,10 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formAddButtons %}
+				{% block formAddButtonShowDiagram %}
+					{{ FormHelper.button(__('show_diagram'), {class: 'Button Button-Diagram Button-ShowDiagram', form: 'SurveyForm', type: 'button'}) }}
+				{% endblock %}
+
 				{% block formAddButtonSave %}
 					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'SurveyForm' }) }}
 				{% endblock %}

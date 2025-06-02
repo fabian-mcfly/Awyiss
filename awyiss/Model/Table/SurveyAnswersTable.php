@@ -163,8 +163,8 @@ class SurveyAnswersTable extends Table {
 	public function getDisabledQuestions(): array {
 		$la_disabled = [];
 
-		/** @var class-string<\Awyiss\Model\Enum\SurveyQuestionType> $ls_surveyQuestionTypeEnum */
-		$ls_surveyQuestionTypeEnum = App::className('SurveyQuestionType', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_surveyQuestionTypeEnum */
+		$ls_surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 
 		/**
 		 * @var \Awyiss\Model\Entity\SurveyQuestion $lo_category

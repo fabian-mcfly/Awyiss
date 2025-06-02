@@ -150,7 +150,8 @@ class SurveyQuestionsController extends Controller {
 	 * @param SurveyQuestion $surveyQuestion
 	 * @param string $method
 	 * @return void
-	 * @throws \Cake\Http\Exception\RedirectException
+	 * @throws \Cake\Http\Exception\RedirectException|\Exception
+	 * @noinspection DuplicatedCode
 	 */
 	protected function save(SurveyQuestion $surveyQuestion, string $method = 'add'): void {
 		$la_associated = [];
@@ -202,9 +203,11 @@ class SurveyQuestionsController extends Controller {
 		}
 		elseif ($this->SurveyQuestions->hasBehavior('SystemOrder')) {
 			if ($this->SurveyQuestions->getSystemOrderRelatedColumns($surveyQuestion)) {
+				/** @noinspection PhpUndefinedFieldInspection */
 				$surveyQuestion->systemOrder = null;
 			}
 			else {
+				/** @noinspection PhpUndefinedFieldInspection */
 				$surveyQuestion->systemOrder = $surveyQuestion->hasOriginal('systemOrder') ? $surveyQuestion->getOriginal('systemOrder') : $surveyQuestion->get('systemOrder');
 			}
 
@@ -218,6 +221,7 @@ class SurveyQuestionsController extends Controller {
 	/**
 	 * @param mixed $answers
 	 * @return array
+	 * @throws \Exception
 	 */
 	protected function buildAnswersData(mixed $answers): array {
 		if (!is_string($answers)) {
@@ -232,7 +236,7 @@ class SurveyQuestionsController extends Controller {
 		$la_answers = array_map('trim', $la_answers);
 		$la_answers = array_values(array_filter($la_answers));
 
-		array_walk($la_answers, function (&$value, int $key) use($la_languages, $lo_currentLanguage) {
+		array_walk($la_answers, function (&$value, int $key) use ($la_languages, $lo_currentLanguage) {
 			/** @noinspection PhpVariableNamingConventionInspection */
 			$value = [
 				'title' => $value,

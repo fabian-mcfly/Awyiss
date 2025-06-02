@@ -136,8 +136,8 @@ class SurveyQuestionsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\SurveyQuestionType> $ls_surveyQuestionTypeEnum */
-		$ls_surveyQuestionTypeEnum = App::className('SurveyQuestionType', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_surveyQuestionTypeEnum */
+		$ls_surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 
 		$schema->setColumnType('type', EnumType::from($ls_surveyQuestionTypeEnum));
 	}

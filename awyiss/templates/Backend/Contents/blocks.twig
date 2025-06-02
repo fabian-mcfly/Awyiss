@@ -252,3 +252,13 @@
 		required: contentTemplateElement.required,
 	}) }}
 {% endblock %}
+
+
+{% block formControlSurveyId %}
+	{{ FormHelper.control('survey_id', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
+		options: hashPrinter(settings.surveys, 'label', 'id', '- '),
+		required: contentTemplateElement.required,
+	}) }}
+{% endblock %}

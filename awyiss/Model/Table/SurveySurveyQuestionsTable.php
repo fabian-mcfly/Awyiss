@@ -5,8 +5,11 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Database\Type\EnumType;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -39,6 +42,7 @@ class SurveySurveyQuestionsTable extends Table {
 			'title',
 			'subtitle',
 			'text',
+			'customAnswerTitle',
 		],
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
@@ -126,6 +130,33 @@ class SurveySurveyQuestionsTable extends Table {
 		]);
 
 
+		$validator->add('nextAction', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->add('nextActionTarget', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->add('allowCustomAnswer', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$validator->allowEmptyString('customAnswerTitle');
+		$validator->add('customAnswerTitle', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
@@ -151,9 +182,9 @@ class SurveySurveyQuestionsTable extends Table {
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$rules->add($rules->isUnique(['identifier']), 'identifierUnique', [
+		$rules->add($rules->isUnique(['identifier', 'surveyId']), 'identifierUnique', [
 			'errorField' => 'identifier',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+			'message' => __df('surveys', 'validation', 'error_identifier_unique'),
 		]);
 
 		$rules->add(
@@ -161,7 +192,7 @@ class SurveySurveyQuestionsTable extends Table {
 			'validSurveyId',
 			[
 				'errorField' => 'surveyId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_survey_id'),
+				'message' => __df('surveys', 'validation', 'error_valid_survey_id'),
 			]
 		);
 
@@ -170,10 +201,23 @@ class SurveySurveyQuestionsTable extends Table {
 			'validSurveyQuestionId',
 			[
 				'errorField' => 'surveyQuestionId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_survey_question_id'),
+				'message' => __df('surveys', 'validation', 'error_valid_survey_question_id'),
 			]
 		);
 
 		return $rules;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
+
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
+		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+
+		$schema->setColumnType('next_action', EnumType::from($ls_surveyNextActionEnum));
 	}
 }

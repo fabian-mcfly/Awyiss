@@ -9,7 +9,8 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Survey;
 use Awyiss\Model\Entity\SurveyAnswer;
-use Awyiss\Model\Enum\SurveyType;
+use Awyiss\Model\Entity\SurveySurveyAnswer;
+use Awyiss\Model\Entity\SurveySurveyQuestion;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -29,6 +30,29 @@ class SurveysController extends Controller {
 	protected array $paginate = [
 		'enabled' => true,
 	];
+	/**
+	 * All available survey questions
+	 * indexed by their ID
+	 *
+	 * @var array<int, \Awyiss\Model\Entity\SurveyQuestion>
+	 */
+	protected array $surveyQuestions = [];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	#[NoDirectAccess]
+	public function initialize(): void {
+		parent::initialize();
+
+		$this->surveyQuestions = $this->fetchTable('SurveyQuestions')
+			->find('all')
+			->contain(['SurveyAnswers'])
+			->all()
+			->indexBy('id')
+			->toArray();
+	}
 
 
 	/**
@@ -160,10 +184,45 @@ class SurveysController extends Controller {
 
 
 	/**
+	 * Add method
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function diagram(): void {
+		$this->Authorization->ensure('read');
+
+		/** @var Survey $lo_survey */
+		$lo_survey = $this->Surveys->findById($this->request->getParam('id'))
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain([
+				'SurveySurveyQuestions' => [
+					'SurveyQuestions' => [
+						'SurveyAnswers',
+					],
+					'SurveySurveyAnswers' => [
+						'SurveyAnswers',
+					],
+				],
+			])
+			->first();
+
+		if (!$lo_survey) {
+			$this->Flash->error(__('record_not_found'));
+			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+		}
+
+		$this->setViewVars($lo_survey);
+	}
+
+	/**
 	 * @param Survey $survey
 	 * @param string $method
 	 * @return void
 	 * @throws \Cake\Http\Exception\RedirectException
+	 * @noinspection DuplicatedCode
 	 */
 	protected function save(Survey $survey, string $method = 'add'): void {
 		$la_associated = [
@@ -184,12 +243,10 @@ class SurveysController extends Controller {
 
 		$la_data = $this->request->getData();
 		$la_data = $this->buildQuestionsData($la_data);
-
 		$this->Surveys->patchEntity($survey, $la_data, [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
-
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
@@ -218,9 +275,11 @@ class SurveysController extends Controller {
 		}
 		elseif ($this->Surveys->hasBehavior('SystemOrder')) {
 			if ($this->Surveys->getSystemOrderRelatedColumns($survey)) {
+				/** @noinspection PhpUndefinedFieldInspection */
 				$survey->systemOrder = null;
 			}
 			else {
+				/** @noinspection PhpUndefinedFieldInspection */
 				$survey->systemOrder = $survey->hasOriginal('systemOrder') ? $survey->getOriginal('systemOrder') : $survey->get('systemOrder');
 			}
 
@@ -231,32 +290,44 @@ class SurveysController extends Controller {
 
 		if ($survey->surveySurveyQuestions) {
 			$la_surveyQuestionIds = array_column($survey->surveySurveyQuestions, 'surveyQuestionId');
-			$la_surveyQuestions = $this->fetchTable('SurveyQuestions')
-				->find('all')
-				->contain(['SurveyAnswers'])
-				->where(['SurveyQuestions.id IN' => $la_surveyQuestionIds])
-				->all()
-				->indexBy('id')
-				->toArray();
 
-			$lb_hasError = false;
-			/** @var class-string<\Awyiss\Model\Enum\SurveyType> $ls_surveyTypeEnum */
-			$ls_surveyTypeEnum = App::className('SurveyType', 'Model/Enum');
+			/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
+			$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 			foreach ($survey->surveySurveyQuestions as $li_key => $lo_surveySurveyQuestion) {
-				$survey->surveySurveyQuestions[ $li_key ]->surveyQuestion = $la_surveyQuestions[ $lo_surveySurveyQuestion->surveyQuestionId ] ?? null;
+				$survey->surveySurveyQuestions[ $li_key ]->surveyQuestion = $this->surveyQuestions[ $lo_surveySurveyQuestion->surveyQuestionId ] ?? null;
 
+				// If any question is repeated in a linear survey, set an error.
 				if (
 					$survey->type === $ls_surveyTypeEnum::Linear &&
 					array_count_values($la_surveyQuestionIds)[ $lo_surveySurveyQuestion->surveyQuestionId ] > 1
 				) {
-					$lb_hasError = true;
+					$survey->setError('surveySurveyQuestions', __('error_no_repeated_questions_in_linear_survey'));
 					$lo_surveySurveyQuestion->setError('surveyQuestionId', __('error_no_repeated_questions_in_linear_survey'));
+				}
+
+				// Build the answers array for each question
+				$la_answers = $survey->surveySurveyQuestions[ $li_key ]->surveyQuestion?->surveyAnswers ?? [];
+				$la_answers = array_column($la_answers, null, 'id');
+
+				// Ensure that each surveySurveyAnswer has a surveyAnswer set. It gets lost in the patchEntity process.
+				// since it is not part of the request data.
+				foreach ($lo_surveySurveyQuestion->surveySurveyAnswers as $lo_surveySurveyAnswer) {
+					$lo_surveySurveyAnswer->surveyAnswer = $la_answers[ $lo_surveySurveyAnswer->surveyAnswerId ] ?? null;
 				}
 			}
 
-			$survey->surveySurveyQuestions = array_values(array_filter($survey->surveySurveyQuestions ?? []));
-			if ($lb_hasError) {
-				$survey->setError('surveySurveyQuestions', __('error_no_repeated_questions_in_linear_survey'));
+			$la_errors = $survey->getError('surveySurveyQuestions');
+
+			// Remove empty questions
+			$survey->surveySurveyQuestions = array_filter($survey->surveySurveyQuestions ?? []);
+
+			// Sort the questions by system order as the order of the entities might be based on the old db order
+			usort($survey->surveySurveyQuestions, function (SurveySurveyQuestion $a, SurveySurveyQuestion $b) {
+				return $a->systemOrder <=> $b->systemOrder;
+			});
+
+			if ($la_errors) {
+				$survey->setError('surveySurveyQuestions', $la_errors);
 			}
 		}
 	}
@@ -267,16 +338,14 @@ class SurveysController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(Survey $survey): void {
-		$la_availableQuestions = $this->fetchTable('SurveyQuestions')->find('all')
-			->contain(['SurveyAnswers'])
-			->all()
-			->indexBy('id')
-			->toArray();
-
-
+		$la_specifyQuestionOptions = [];
 		if ($survey->surveySurveyQuestions) {
-			/** @var \Awyiss\Model\Entity\SurveySurveyQuestion $lo_question */
 			foreach ($survey->surveySurveyQuestions as $lo_question) {
+				$la_specifyQuestionOptions[] = [
+					'text' => $lo_question->label,
+					'value' => $lo_question->identifier,
+				];
+
 				if (
 					!$lo_question->surveySurveyAnswers ||
 					!$lo_question->surveyQuestion?->surveyAnswers
@@ -284,33 +353,28 @@ class SurveysController extends Controller {
 					continue;
 				}
 
-				$lo_question->surveySurveyAnswers = array_combine(
-					array_column($lo_question->surveySurveyAnswers, 'surveyAnswerId'),
-					$lo_question->surveySurveyAnswers
-				);
+				$this->sortAnswers($lo_question);
+			}
 
-				$la_answerKeys = array_keys($lo_question->surveySurveyAnswers);
-				$la_defaultAnswers = $lo_question->surveyQuestion?->surveyAnswers;
+			/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
+			$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 
-				usort($la_defaultAnswers, function (SurveyAnswer $a, SurveyAnswer $b) use ($la_answerKeys): int {
-					$li_posA = array_search($a->id, $la_answerKeys);
-					$li_posB = array_search($b->id, $la_answerKeys);
-
-					return match (true) {
-						$li_posA === false && $li_posB === false => 0,
-						$li_posA === false => 1,
-						$li_posB === false => -1,
-						default => $li_posA <=> $li_posB,
-					};
-				});
-
-				$lo_question->surveyQuestion->surveyAnswers = $la_defaultAnswers;
+			if ($survey->type !== $ls_surveyTypeEnum::Linear) {
+				$this->markUnreachableQuestions($survey->surveySurveyQuestions, $survey);
 			}
 		}
 
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
+		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+
 		$this->set([
 			'survey' => $survey,
-			'availableQuestions' => $la_availableQuestions,
+			'availableQuestions' => $this->surveyQuestions,
+			'availableActions' => $this->Surveys->availableNextActions(),
+			'availableForms' => $this->fetchTable('Forms')->find()->all()->indexBy('id')->toArray(),
+			'finalActions' => $this->Surveys->availableFinalActions(),
+			'specifyQuestionOptions' => $la_specifyQuestionOptions,
+			'nextActionEnum' => $ls_surveyNextActionEnum,
 		]);
 	}
 
@@ -342,11 +406,21 @@ class SurveysController extends Controller {
 
 			$la_questionData = $this->buildAnswersData($la_questionData);
 
+			$ls_identifier = $la_questionData['identifier'] ?? null;
+			if (!$ls_identifier) {
+				// Create a random hexadecimal identifier with 8 characters
+				$ls_identifier = Security::randomBytes(4);
+				$ls_identifier = bin2hex($ls_identifier);
+			}
+
 			/** @noinspection PhpVariableNamingConventionInspection */
 			$data['survey_survey_questions'][ $lx_key ] = [
 				'id' => $la_questionData['id'] ?? null,
 				'surveyQuestionId' => $la_questionData['survey_question_id'],
-				'identifier' => $la_questionData['identifier'] ?: Security::randomString(8),
+				'identifier' => $ls_identifier,
+				'nextAction' => $la_questionData['next_action'] ?? null,
+				'nextActionTarget' => $la_questionData['next_action_target'] ?? null,
+				'allowCustomAnswer' => $la_questionData['allow_custom_answer'] ?? null,
 				'systemOrder' => $li_count + 1,
 				'surveySurveyAnswers' => $la_questionData['survey_survey_answers'] ?? [],
 			];
@@ -373,7 +447,7 @@ class SurveysController extends Controller {
 			$data['survey_survey_answers'] = [];
 		}
 
-		foreach (($data['survey_survey_answers'] ?? []) as $lx_key => $la_answerData) {
+		foreach ($data['survey_survey_answers'] as $lx_key => $la_answerData) {
 			if (
 				!is_array($la_answerData) ||
 				!isset($la_answerData['survey_answer_id'])
@@ -387,6 +461,8 @@ class SurveysController extends Controller {
 			$data['survey_survey_answers'][ $lx_key ] = [
 				'id' => $la_answerData['id'] ?? null,
 				'surveyAnswerId' => $la_answerData['survey_answer_id'],
+				'nextAction' => $la_answerData['next_action'] ?? null,
+				'nextActionTarget' => $la_answerData['next_action_target'] ?? null,
 				'systemOrder' => $li_count + 1,
 				'active' => $la_answerData['active'] ?? false,
 			];
@@ -395,5 +471,133 @@ class SurveysController extends Controller {
 		}
 
 		return $data;
+	}
+
+
+	/**
+	 * Recursively finds all nodes reachable from a starting node
+	 *
+	 * @param string $startId The identifier of the starting node
+	 * @param array $graph The graph representation
+	 * @param array &$reachable Reference to array storing reachable nodes
+	 * @param array $visited Optional array to track visited nodes
+	 * @return void
+	 */
+	protected function findReachableNodes(
+		string $startId,
+		array $graph,
+		array &$reachable,
+		array $visited = []
+	): void {
+		// Prevent infinite loops
+		if (in_array($startId, $visited, true)) {
+			return;
+		}
+
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$visited[] = $startId;
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$reachable[] = $startId;
+
+		// If this node has outgoing edges
+		if (!isset($graph[ $startId ])) {
+			return;
+		}
+
+		foreach ($graph[ $startId ] as $ls_nextId) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$this->findReachableNodes($ls_nextId, $graph, $reachable, $visited);
+		}
+	}
+
+
+	/**
+	 * @param mixed $question
+	 * @return void
+	 */
+	protected function sortAnswers(SurveySurveyQuestion $question): void {
+		// Index the SurveySurveyAnswers by their surveyAnswerId
+		$question->surveySurveyAnswers = array_column($question->surveySurveyAnswers, null, 'surveyAnswerId');
+
+		// Sort the answers by system order as the order of the entities might be based on the old db order
+		uasort($question->surveySurveyAnswers, function (SurveySurveyAnswer $a, SurveySurveyAnswer $b) {
+			return $a->systemOrder <=> $b->systemOrder;
+		});
+
+		$la_answerKeys = array_keys($question->surveySurveyAnswers);
+		$la_defaultAnswers = $question->surveyQuestion->surveyAnswers;
+
+		usort($la_defaultAnswers, function (SurveyAnswer $a, SurveyAnswer $b) use ($la_answerKeys): int {
+			$li_posA = array_search($a->id, $la_answerKeys);
+			$li_posB = array_search($b->id, $la_answerKeys);
+
+			return match (true) {
+				$li_posA === false && $li_posB === false => 0,
+				$li_posA === false => 1,
+				$li_posB === false => -1,
+				default => $li_posA <=> $li_posB,
+			};
+		});
+
+		$question->surveyQuestion->surveyAnswers = $la_defaultAnswers;
+	}
+
+
+	/**
+	 * @param array<SurveySurveyQuestion> $surveySurveyQuestions
+	 * @param Survey $survey
+	 * @return void
+	 */
+	protected function markUnreachableQuestions(array $surveySurveyQuestions, Survey $survey): void {
+		$la_entryPoints = $la_unusedQuestions = [];
+		$la_questionsGraph = $survey->buildQuestionsGraph();
+
+		foreach ($surveySurveyQuestions as $li_key => $lo_question) {
+			if ($li_key === 0) {
+				$la_entryPoints[] = $lo_question->identifier;
+			}
+			else {
+				// Check if the question is somewhere used in the graph
+				$lb_usedInGraph = false;
+
+				foreach ($la_questionsGraph as $la_nextQuestions) {
+					if (in_array($lo_question->identifier, $la_nextQuestions, true)) {
+						$lb_usedInGraph = true;
+						break;
+					}
+				}
+
+				$lo_question->set('unused', !$lb_usedInGraph);
+				$lo_question->setVirtual(['unused']);
+
+				if (!$lb_usedInGraph) {
+					$la_unusedQuestions[] = $lo_question->identifier;
+				}
+			}
+		}
+
+		$la_reachableFromEntryPoints = [];
+		$la_reachableFromUnused = [];
+
+		// Find all nodes reachable from valid entry points
+		foreach ($la_entryPoints as $ls_entryPoint) {
+			$this->findReachableNodes($ls_entryPoint, $la_questionsGraph, $la_reachableFromEntryPoints);
+		}
+
+		// Find all nodes reachable from unused questions
+		foreach ($la_unusedQuestions as $ls_unusedId) {
+			$this->findReachableNodes($ls_unusedId, $la_questionsGraph, $la_reachableFromUnused);
+		}
+
+		// Find nodes only reachable from unused questions
+		$la_onlyReachableFromUnused = array_diff($la_reachableFromUnused, $la_reachableFromEntryPoints);
+
+		// Mark questions that are only reachable from unused questions
+		foreach ($survey->surveySurveyQuestions as $lo_question) {
+			if (in_array($lo_question->identifier, $la_onlyReachableFromUnused, true)) {
+				$lo_question->set('onlyReachableFromUnused', true);
+				$lo_question->setVirtual(['onlyReachableFromUnused']);
+			}
+		}
 	}
 }

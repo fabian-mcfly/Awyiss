@@ -45,6 +45,10 @@ class Surveys {
 			'default' => null,
 			'limit' => 255,
 			'null' => false,
+		])->addColumn('final_action', 'string', [
+			'default' => null,
+			'limit' => 20,
+			'null' => false,
 		])->addColumn('form_id', 'integer', [
 			'default' => null,
 			'limit' => null,

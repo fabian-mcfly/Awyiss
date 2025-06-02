@@ -47,7 +47,7 @@ class SurveySurveyQuestions {
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
-		])->addColumn('title', 'char', [
+		])->addColumn('identifier', 'char', [
 			'default' => null,
 			'limit' => 8,
 			'null' => false,
@@ -62,6 +62,22 @@ class SurveySurveyQuestions {
 		])->addColumn('text', 'text', [
 			'default' => null,
 			'limit' => null,
+			'null' => true,
+		])->addColumn('next_action', 'string', [
+			'default' => null,
+			'limit' => 20,
+			'null' => true,
+		])->addColumn('next_action_target', 'string', [
+			'default' => null,
+			'limit' => 20,
+			'null' => true,
+		])->addColumn('allow_custom_answer', 'boolean', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('custom_answer_title', 'string', [
+			'default' => false,
+			'limit' => 255,
 			'null' => true,
 		])->addColumn('system_order', 'integer', [
 			'default' => '0',

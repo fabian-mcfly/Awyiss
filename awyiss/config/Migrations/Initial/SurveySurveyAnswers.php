@@ -59,6 +59,14 @@ class SurveySurveyAnswers {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
+		])->addColumn('next_action', 'string', [
+			'default' => null,
+			'limit' => 20,
+			'null' => true,
+		])->addColumn('next_action_target', 'string', [
+			'default' => null,
+			'limit' => 20,
+			'null' => true,
 		])->addColumn('system_order', 'integer', [
 			'default' => '0',
 			'limit' => null,

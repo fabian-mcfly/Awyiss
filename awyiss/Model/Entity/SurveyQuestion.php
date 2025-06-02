@@ -5,14 +5,14 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Awyiss\Model\Enum\SurveyQuestionType;
+use Awyiss\Model\Enum\Survey\QuestionType;
 
 
 /**
  * SurveyQuestion Entity
  *
  * @property int $id
- * @property \Awyiss\Model\Enum\SurveyQuestionType $type
+ * @property \Awyiss\Model\Enum\Survey\QuestionType $type
  * @property string|null $title
  * @property string|null $subtitle
  * @property string|null $text
@@ -57,6 +57,6 @@ class SurveyQuestion extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $defaultValues = [
-		'type' => SurveyQuestionType::SingleChoice,
+		'type' => QuestionType::SingleChoice,
 	];
 }

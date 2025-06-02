@@ -5,8 +5,11 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Database\Type\EnumType;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -112,6 +115,20 @@ class SurveySurveyAnswersTable extends Table {
 		]);
 
 
+		$validator->add('nextAction', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->add('nextActionTarget', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
@@ -142,7 +159,7 @@ class SurveySurveyAnswersTable extends Table {
 			'validSurveyAnswerId',
 			[
 				'errorField' => 'surveyAnswerId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_survey_answer_id'),
+				'message' => __df('surveys', 'validation', 'error_valid_survey_answer_id'),
 			]
 		);
 
@@ -151,10 +168,23 @@ class SurveySurveyAnswersTable extends Table {
 			'validSurveySurveyQuestionId',
 			[
 				'errorField' => 'surveySurveyQuestionId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_survey_survey_question_id'),
+				'message' => __df('surveys', 'validation', 'error_valid_survey_survey_question_id'),
 			]
 		);
 
 		return $rules;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
+
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
+		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+
+		$schema->setColumnType('next_action', EnumType::from($ls_surveyNextActionEnum));
 	}
 }

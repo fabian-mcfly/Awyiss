@@ -6,7 +6,6 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
-use Awyiss\Core\App;
 use Awyiss\Model\Entity\SurveyAnswer;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
@@ -52,6 +51,7 @@ class SurveyAnswersController extends Controller {
 		$lo_query = $this->getOverviewQuery();
 		$lo_surveyAnswers = $lo_query->all();
 
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$lo_question = $this->fetchTable('SurveyQuestions')->findById($this->Categories->getSelectedCategory())->first();
 
 		$this->set([

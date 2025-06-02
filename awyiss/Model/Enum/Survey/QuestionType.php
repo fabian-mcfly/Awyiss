@@ -1,17 +1,16 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Model\Enum;
+namespace Awyiss\Model\Enum\Survey;
 
 
-use Awyiss\Utility\Inflector;
 use Cake\Database\Type\EnumLabelInterface;
 
 
 /**
- * SurveyQuestionType Enum
+ * Survey QuestionType Enum
  */
-enum SurveyQuestionType: string implements EnumLabelInterface {
+enum QuestionType: string implements EnumLabelInterface {
 	case SingleChoice = 'single_choice';
 	case MultiChoice = 'multiple_choice';
 	case FreeText = 'free_text';

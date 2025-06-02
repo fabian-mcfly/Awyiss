@@ -32,7 +32,6 @@
 
 {% block scriptsAdd %}
 	{% do AssetHelper.addJsModule([
-		'AirDatepicker/AirDatepicker.js',
 		'Modules/AssignableTemplateElements.js',
 		'Modules/Audit/Audit.js',
 		'Modules/Audit/History.js',
@@ -75,6 +74,8 @@
 		'Modules/SeoSnippet.js',
 		'Modules/TitleSetter.js',
 		'Controller/' ~ controller ~ '.js',
+		'AirDatepicker/AirDatepicker.js',
+		'Panzoom/panzoom.js',
 		'Coloris/Coloris.js',
 		'SortableJS/sortable.js',
 	]) %}

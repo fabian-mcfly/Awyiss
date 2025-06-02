@@ -17,6 +17,10 @@ use Awyiss\Model\Entity;
  * @property string|null $title
  * @property string|null $subtitle
  * @property string|null $text
+ * @property \Awyiss\Model\Enum\Survey\NextAction|null $nextAction
+ * @property string|null $nextActionTarget
+ * @property bool|null $allowCustomAnswer
+ * @property string|null $customAnswerTitle
  * @property int|null $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -37,6 +41,10 @@ class SurveySurveyQuestion extends Entity {
 	protected static array $fieldMap = [
 		'survey_id' => 'surveyId',
 		'survey_question_id' => 'surveyQuestionId',
+		'next_action' => 'nextAction',
+		'next_action_target' => 'nextActionTarget',
+		'allow_custom_answer' => 'allowCustomAnswer',
+		'custom_answer_title' => 'customAnswerTitle',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
@@ -59,7 +67,31 @@ class SurveySurveyQuestion extends Entity {
 		'title' => true,
 		'subtitle' => true,
 		'text' => true,
+		'nextAction' => true,
+		'nextActionTarget' => true,
+		'allowCustomAnswer' => true,
+		'customAnswerTitle' => true,
 		'systemOrder' => true,
 		'active' => true,
 	];
+
+
+	/**
+	 * @return string
+	 */
+	protected function _getLabel(): string {
+		$ls_title = $this->title;
+
+		$ls_inactive = '';
+
+		if (empty($ls_title) && isset($this->surveyQuestion)) {
+			$ls_title = $this->surveyQuestion->title;
+
+			if (!$this->surveyQuestion->active) {
+				$ls_inactive = __d('survey_questions', 'inactive') . ' ';
+			}
+		}
+
+		return $ls_inactive . $ls_title . ' (' . $this->identifier . ')';
+	}
 }

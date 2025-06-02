@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Model\Enum;
+namespace Awyiss\Model\Enum\Survey;
 
 
 use Cake\Database\Type\EnumLabelInterface;
 
 
 /**
- * SurveyType Enum
+ * Survey Type Enum
  */
-enum SurveyType: string implements EnumLabelInterface {
+enum Type: string implements EnumLabelInterface {
 	case Linear = 'linear';
 	case Configurator = 'configurator';
 
