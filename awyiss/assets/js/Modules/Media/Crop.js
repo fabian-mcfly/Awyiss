@@ -177,7 +177,7 @@ export default class ImageCropper {
 		const fullscreenButton = document.createElement('button');
 		fullscreenButton.type = 'button';
 		fullscreenButton.textContent = 'Fullscreen';
-		fullscreenButton.classList.add('Button', 'Button-Fullscreen');
+		fullscreenButton.classList.add('Button', 'Button-Small', 'Button-Fullscreen');
 		fullscreenButton.addEventListener('click', () => {
 			if (document.fullscreenElement) {
 				// noinspection JSIgnoredPromiseFromCall
