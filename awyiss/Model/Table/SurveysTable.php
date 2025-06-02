@@ -302,6 +302,35 @@ class SurveysTable extends Table {
 		);
 
 
+		$rules->addDelete(
+			$rules->isNotLinkedTo('Contents', 'contents'),
+			'noLinkedContents',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_contents'),
+			]
+		);
+
+		$rules->addDelete(
+			$rules->isNotLinkedTo('Pages', 'pages'),
+			'noLinkedPages',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_pages'),
+			]
+		);
+
+
+		$rules->addDelete(
+			$rules->isNotLinkedTo('Widgets', 'widgets'),
+			'noLinkedWidgets',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_widgets'),
+			]
+		);
+
+
 		return $rules;
 	}
 
