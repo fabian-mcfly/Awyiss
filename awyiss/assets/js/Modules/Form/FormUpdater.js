@@ -274,10 +274,11 @@ export default class FormUpdater {
 	 * Sends a request with the form data, then replaces the form with the new form from the server response.
 	 * Re-attaches event listeners to the new form and re-enables the form inputs.
 	 * @param {HTMLFormElement} form - The form to send the request from.
+	 * @return {Promise<boolean>} A Promise that resolves to true if the request was sent, false if the form is locked.
 	 */
 	sendRequest(form) {
 		if (form.dataset.locked === 'true') {
-			return false;
+			return Promise.resolve(false); // Always return a Promise
 		}
 
 		const formData = new FormData(form);
@@ -290,7 +291,7 @@ export default class FormUpdater {
 		// Add a class to the body to show that a reload operation is in progress
 		document.body.classList.add('FetchInProgress');
 
-		fetch(form.action, {
+		return fetch(form.action, {
 			method: form.method,
 			headers: {
 				'X-Requested-With': 'XMLHttpRequest'
