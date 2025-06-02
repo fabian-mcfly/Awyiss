@@ -96,6 +96,9 @@ export default class NestedListHandler {
 		this.saveOrderButtons.forEach(button => {
 			this.eventHandler.add('click', (event) => this.saveOrderButtonHandler(event), button);
 		});
+
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**
@@ -911,5 +914,26 @@ export default class NestedListHandler {
 		});
 
 		return order;
+	}
+
+	/**
+	 * Observe mutations.
+	 * @param {MutationRecord} mutation
+	 */
+	observeMutations(mutation) {
+		mutation.addedNodes.forEach(node => {
+			if (!(node instanceof HTMLElement)) {
+				return;
+			}
+
+			if (node.matches(this.selector)) {
+				this.initList(node);
+			}
+
+			const availableQuestionsLists = node.querySelectorAll(this.selector);
+			availableQuestionsLists.forEach(availableQuestionsList => {
+				this.initList(availableQuestionsList);
+			});
+		})
 	}
 }
