@@ -173,6 +173,16 @@
 		}
 	}
 
+	g.Inactive {
+		path {
+			stroke:var(--colorMedium);
+
+			&:first-child {
+				stroke:color-mix(in srgb, var(--colorMedium), transparent 90%);
+			}
+		}
+	}
+
 	span.Identifier {
 		display:block;
 		width:fit-content;

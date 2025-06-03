@@ -33,7 +33,7 @@
 		{% block listItemClass -%}
 			class="ListItem {{ settings.identifier }}-ListItem {{ settings.identifier }}-ListItem{{ entity.id -}}
 				{%- if entity.class is defined %} {{ entity.class }}{% endif -%}
-				{%- if entity.active is defined and entity.active == false %} Inactive{% endif -%}
+				{%- if entity.active == false or entity.surveyQuestion.active == false %} Inactive{% endif -%}
 			"
 		{%- endblock %}
 		{% block listItemTitle -%}

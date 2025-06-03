@@ -206,6 +206,9 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 						{%~ if question.onlyReachableFromUnused -%}
 class {{ question.identifier }} Unreachable
 						{%~ endif %}
+						{%~ if question.active == false or question.surveyQuestion.active == false %}
+							class {{ question.identifier }} Inactive
+						{%~ endif %}
 					{%~ endfor -%}
 					{%~ if finalActionUsed == false %}
 						{{~ finalAction }}
