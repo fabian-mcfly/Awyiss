@@ -21,6 +21,9 @@ msgstr "Umfrage hinzufügen"
 msgid "meta_title_edit"
 msgstr "Umfrage bearbeiten"
 
+msgid "meta_title_diagram"
+msgstr "Diagramm"
+
 msgid "menu_title"
 msgstr "Umfragen"
 

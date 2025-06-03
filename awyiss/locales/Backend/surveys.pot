@@ -20,6 +20,9 @@ msgstr "Add Survey"
 msgid "meta_title_edit"
 msgstr "Edit Survey"
 
+msgid "meta_title_diagram"
+msgstr "Diagram"
+
 msgid "menu_title"
 msgstr "Surveys"
 
