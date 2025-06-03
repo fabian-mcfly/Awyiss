@@ -41,7 +41,11 @@
 
 						{% block fieldsetGeneralInner %}
 							{% block formControlTitle %}
-								{{ FormHelper.control('title') }}
+								{{ FormHelper.control('title', {columnSpan: 6}) }}
+							{% endblock %}
+
+							{% block formControlIdentifier %}
+								{{ FormHelper.control('identifier', {columnSpan: 6, 'data-autofill-from': 'title'}) }}
 							{% endblock %}
 
 							{% block fieldsetGeneralAttributes %}

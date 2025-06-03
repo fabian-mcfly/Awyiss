@@ -82,6 +82,7 @@ class SurveysTable extends Table {
 
 		$validator->requirePresence([
 			'title',
+			'identifier',
 		], 'create');
 
 
@@ -95,6 +96,14 @@ class SurveysTable extends Table {
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->notEmptyString('identifier');
+		$validator->add('identifier', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
@@ -132,6 +141,11 @@ class SurveysTable extends Table {
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add($rules->isUnique(['identifier']), 'identifierUnique', [
+			'errorField' => 'identifier',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
+		]);
+
 		$rules->add(
 			$rules->existsIn('formId', 'Forms', ['allowNullableNulls' => true]),
 			'validFormId',

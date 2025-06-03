@@ -45,6 +45,10 @@ class Surveys {
 			'default' => null,
 			'limit' => 255,
 			'null' => false,
+		])->addColumn('identifier', 'string', [
+			'default' => null,
+			'limit' => 50,
+			'null' => false,
 		])->addColumn('final_action', 'string', [
 			'default' => null,
 			'limit' => 20,

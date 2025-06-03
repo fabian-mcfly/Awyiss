@@ -8,6 +8,7 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Enum\Survey\NextAction;
 use Awyiss\Model\Enum\Survey\Type;
+use Cake\Utility\Text;
 
 
 /**
@@ -15,7 +16,8 @@ use Awyiss\Model\Enum\Survey\Type;
  *
  * @property int $id
  * @property \Awyiss\Model\Enum\Survey\Type $type
- * @property string|null $title
+ * @property string $title
+ * @property string $identifier
  * @property \Awyiss\Model\Enum\Survey\NextAction $finalAction
  * @property int|null $formId
  * @property bool $active
@@ -51,6 +53,7 @@ class Survey extends Entity {
 	 */
 	protected array $_accessible = [
 		'type' => true,
+		'identifier' => true,
 		'title' => true,
 		'finalAction' => true,
 		'formId' => true,
@@ -63,6 +66,24 @@ class Survey extends Entity {
 		'type' => Type::Linear,
 		'finalAction' => NextAction::SaveAndEnd,
 	];
+
+
+	/**
+	 * Make sure the identifier is always lowercase, underscored and free of special characters
+	 *
+	 * @param string|null $identifier
+	 * @return string|null
+	 * @see \Awyiss\Model\Entity\Form::$identifier
+	 */
+	protected function _setIdentifier(?string $identifier): ?string {
+		if ($identifier === null) {
+			return null;
+		}
+
+		$ls_identifier = Text::slug($identifier, ['replacement' => '_']);
+
+		return mb_strtolower($ls_identifier);
+	}
 
 
 	/**
