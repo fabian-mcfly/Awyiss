@@ -194,7 +194,9 @@
 			{{ FormHelper.hidden('reload_form', {val: 0}) }}
 		{% endblock %}
 
-		{% include '@Backend/Surveys/diagram.twig' %}
+		{% block questionsDiagram %}
+			{% include '@Backend/Surveys/mermaid_flowchart.twig' %}
+		{% endblock %}
 	</div>
 {% endblock %}
 
