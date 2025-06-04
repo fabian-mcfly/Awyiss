@@ -416,6 +416,7 @@ class SurveysController extends Controller {
 			/** @noinspection PhpVariableNamingConventionInspection */
 			$data['survey_survey_questions'][ $lx_key ] = [
 				'id' => $la_questionData['id'] ?? null,
+				'active' => $la_questionData['active'] ?? true,
 				'surveyQuestionId' => $la_questionData['survey_question_id'],
 				'identifier' => $ls_identifier,
 				'nextAction' => $la_questionData['next_action'] ?? null,
