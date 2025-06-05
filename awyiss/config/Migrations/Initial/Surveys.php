@@ -49,6 +49,14 @@ class Surveys {
 			'default' => null,
 			'limit' => 50,
 			'null' => false,
+		])->addColumn('success_message', 'text', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('failure_message', 'text', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
 		])->addColumn('final_action', 'string', [
 			'default' => null,
 			'limit' => 20,

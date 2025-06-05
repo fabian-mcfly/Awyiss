@@ -42,6 +42,8 @@ class SurveysTable extends Table {
 	protected array $translate = [
 		'fields' => [
 			'title',
+			'success_message',
+			'failure_message',
 		],
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
@@ -105,6 +107,18 @@ class SurveysTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->add('successMessage', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
+		]);
+
+
+		$validator->add('failureMessage', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 

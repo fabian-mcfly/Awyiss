@@ -75,6 +75,12 @@ msgstr "Die Umfrage konnte nicht gelöscht werden"
 msgid "show_diagram"
 msgstr "Diagramm"
 
+msgid "success_message"
+msgstr "Bestätigungstext"
+
+msgid "failure_message"
+msgstr "Abbruchtext"
+
 msgid "type"
 msgstr "Typ"
 

@@ -48,6 +48,14 @@
 								{{ FormHelper.control('identifier', {columnSpan: 6, 'data-autofill-from': 'title'}) }}
 							{% endblock %}
 
+							{% block formControlSuccessMessage %}
+								{{ FormHelper.control('success_message', {'data-editor': true}) }}
+							{% endblock %}
+
+							{% block formControlFailureMessage %}
+								{{ FormHelper.control('failure_message', {'data-editor': true}) }}
+							{% endblock %}
+
 							{% block fieldsetGeneralAttributes %}
 								{{ AttributesHelper.allControls('general') }}
 							{% endblock %}

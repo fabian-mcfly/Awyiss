@@ -19,6 +19,8 @@ use Cake\Utility\Text;
  * @property string $title
  * @property string $identifier
  * @property \Awyiss\Model\Enum\Survey\NextAction $finalAction
+ * @property string|null $successMessage
+ * @property string|null $failureMessage
  * @property int|null $formId
  * @property bool $active
  * @property bool $deleted
@@ -36,6 +38,8 @@ class Survey extends Entity {
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
+		'success_message' => 'successMessage',
+		'failure_message' => 'failureMessage',
 		'final_action' => 'finalAction',
 		'form_id' => 'formId',
 		'created_by' => 'createdBy',
@@ -53,8 +57,10 @@ class Survey extends Entity {
 	 */
 	protected array $_accessible = [
 		'type' => true,
-		'identifier' => true,
 		'title' => true,
+		'identifier' => true,
+		'successMessage' => true,
+		'failureMessage' => true,
 		'finalAction' => true,
 		'formId' => true,
 		'active' => true,

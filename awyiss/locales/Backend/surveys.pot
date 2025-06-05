@@ -74,6 +74,12 @@ msgstr "The survey could not be deleted"
 msgid "show_diagram"
 msgstr "Diagram"
 
+msgid "success_message"
+msgstr "Success Message"
+
+msgid "failure_message"
+msgstr "Failure Message"
+
 msgid "type"
 msgstr "Type"
 
