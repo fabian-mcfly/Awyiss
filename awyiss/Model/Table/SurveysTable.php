@@ -22,6 +22,7 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\BelongsTo $Forms
  * @property \Awyiss\Model\Table\SurveySurveyQuestionsTable&\Awyiss\ORM\Association\HasMany $SurveySurveyQuestions
+ * @property \Awyiss\Model\Table\SurveyEntriesTable&\Awyiss\ORM\Association\HasMany $SurveyEntries
  * @method \Awyiss\Model\Entity\Survey newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
@@ -60,6 +61,12 @@ class SurveysTable extends Table {
 		]);
 
 		$this->hasMany('Pages');
+
+		$this->hasMany('SurveyEntries', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+			'foreignKey' => 'survey_id',
+		]);
 
 		$this->hasMany('SurveySurveyQuestions', [
 			'cascadeCallbacks' => true,

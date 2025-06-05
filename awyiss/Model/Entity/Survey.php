@@ -32,6 +32,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\Form $form
  * @property \Awyiss\Model\Entity\SurveySurveyQuestion[]|\Cake\Collection\CollectionInterface $surveySurveyQuestions
+ * @property \Awyiss\Model\Entity\SurveyEntry[]|\Cake\Collection\CollectionInterface $surveyEntries
  */
 class Survey extends Entity {
 	/**
@@ -49,6 +50,7 @@ class Survey extends Entity {
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
 		'survey_survey_questions' => 'surveySurveyQuestions',
+		'survey_entries' => 'surveyEntries',
 	];
 
 
