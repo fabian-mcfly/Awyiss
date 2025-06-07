@@ -88,13 +88,13 @@ class FormRenderer {
 
 
 	/**
-	 * @param string|int $identifier
+	 * @param string|int Form
 	 * @param array $requestData
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @return $this
 	 */
-	public function initForm(string|int $identifier, array $requestData, ?Page $page = null): static {
-		$this->form = $this->getFormByIdentifier($identifier);
+	public function initForm(Form|string|int $form, array $requestData, ?Page $page = null): static {
+		$this->form = $form instanceof Form ? $form : $this->getFormByIdentifier($form);
 		$this->page = $page;
 
 		if (!$this->form) {
@@ -122,6 +122,7 @@ class FormRenderer {
 		if (!$this->form) {
 			throw new RuntimeException('No form was initialized.');
 		}
+
 		// Validate the form
 		if (!$this->form->isSubmitted()) {
 			return null;
