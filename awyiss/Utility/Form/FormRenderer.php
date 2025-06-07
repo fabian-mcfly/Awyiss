@@ -320,14 +320,13 @@ class FormRenderer {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Form $form
 	 * @return string|false
 	 */
-	protected function sendForm(Form $form): string|false {
+	public function sendForm(): string|false {
 		/** @var \Awyiss\Utility\Form\FormSender $ls_formSenderClass */
 		$ls_formSenderClass = App::className('FormSender', 'Utility/Form');
 
-		$lo_formSender = new $ls_formSenderClass($form, $this->page);
+		$lo_formSender = new $ls_formSenderClass($this->form, $this->page);
 		$this->formSent = $lo_formSender->handle();
 
 		if (!$this->formSent) {
@@ -349,7 +348,7 @@ class FormRenderer {
 			throw new RuntimeException('No form was initialized.');
 		}
 
-		$ls_responseCode = $this->sendForm($this->form);
+		$ls_responseCode = $this->sendForm();
 
 		if ($ls_responseCode !== false) {
 			$la_url = [
