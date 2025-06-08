@@ -186,6 +186,21 @@ class AwyissExtension extends AbstractExtension {
 			}),
 
 			new TwigFunction(
+				'survey',
+				function (array $context, string|int $identifier, array $options = []) {
+					if (!($context['page'] ?? null) instanceof Page) {
+						throw new InvalidArgumentException('The "content" function requires a Page entity in the context.');
+					}
+
+					$la_options = ['viewVars' => $context];
+					$la_options = Hash::merge($la_options, $options);
+
+					return $context['_view']->cell('Frontend/Survey', [$identifier, $context['page'], $la_options]);
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
+
+			new TwigFunction(
 				'widget',
 				function (array $context, string $name, array $options = []) {
 					$la_options = ['viewVars' => $context];
@@ -289,7 +304,6 @@ class AwyissExtension extends AbstractExtension {
 	 * @param string $name
 	 * @param array $options
 	 * @return string
-	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	public function moduleFunction(array $context, string $name, array $options = []): string {

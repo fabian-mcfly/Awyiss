@@ -1,0 +1,85 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var currentAction \Awyiss\Model\Entity\SurveySurveyQuestion|(\Awyiss\Model\Enum\Survey\NextAction|\BackedEnum)|false|null
+@var questionTypeEnum class-string<\Awyiss\Model\Enum\Survey\QuestionType>
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var customAnswers array<string, string>
+@var progress array<string, int>
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block survey %}
+	<div class="Survey" id="Survey-{{ survey.identifier|ucparts(false) }}">
+		{% if savedEntry == true and currentAction in [enum(nextActionEnum).SaveAndEnd, enum(nextActionEnum).SaveAndShowForm] %}
+			{#
+			SaveAndShowForm will end up here when the entry was saved
+			but no form was found (most likely because its inactive).
+			#}
+			{% block surveySuccessMessage %}
+				<div class="Survey-SuccessMessage">
+					{{- survey.successMessage|raw -}}
+				</div>
+			{% endblock %}
+		{% else %}
+			{% block surveyForm %}
+				{% if hasNextAction %}
+					<form method="post">
+				{% endif %}
+			{% endblock %}
+
+			{% block surveyFailureEnding %}
+				{% if currentAction == false %}
+					<div class="Survey-FailureMessage">
+						{{- survey.failureMessage|raw -}}
+					</div>
+				{% endif %}
+			{% endblock %}
+
+			{% block surveyErrorMessage %}
+				{% if survey.error('_general') %}
+					<div class="Survey-FailureMessage">
+						{% for error in survey.error('_general') %}
+							<p>{{- error -}}</p>
+						{% endfor %}
+					</div>
+				{% endif %}
+			{% endblock %}
+
+			{% block surveyPreviousAnswers %}
+				{% include '@Frontend/element/survey/progress.twig' %}
+			{% endblock %}
+
+			{% block surveyBody %}
+				{{ currentQuestion|raw }}
+			{% endblock %}
+
+			{% block surveyActions %}
+				{% block surveyActionProceed %}
+					{% if hasNextAction %}
+						<button type="submit" name="survey_action" value="proceed" class="Button Survey-NextAction">{{ __d('survey', 'next') }}</button>
+					{% endif %}
+				{% endblock %}
+			{% endblock %}
+
+			{% block surveyIdentifier %}
+				{% if hasNextAction %}
+					<input type="hidden" name="_survey_identifier" value="{{ survey.identifier }}">
+				{% endif %}
+			{% endblock %}
+
+			{% block surveyFormEnd %}
+				{% if hasNextAction %}
+					</form>
+				{% endif %}
+			{% endblock %}
+		{% endif %}
+	</div>
+{% endblock %}

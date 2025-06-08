@@ -1,0 +1,28 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var question \Awyiss\Model\Entity\SurveySurveyQuestion
+@var page \Awyiss\Model\Entity\Page
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% extends '@Frontend/element/survey/question.twig' %}
+
+{% block answers %}
+	<label for="SurveyAnswer-Input">{{ __d('surveys', 'free_answer_label') }}</label>
+	<textarea name="survey[{{ survey.identifier }}][{{ question.identifier }}]" id="SurveyAnswer-Input"></textarea>
+{% endblock %}

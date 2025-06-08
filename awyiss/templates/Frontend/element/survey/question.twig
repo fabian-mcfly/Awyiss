@@ -1,0 +1,100 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var question \Awyiss\Model\Entity\SurveySurveyQuestion
+@var page \Awyiss\Model\Entity\Page
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block questionSingleChoice %}
+	<div class="SurveyQuestion SurveyQuestionType-SingleChoice" id="SurveyQuestion-{{ question.identifier|ucparts(false) }}">
+		{% block questionTitle %}
+			{% if question.surveyQuestion.title %}
+				<p class="Title SurveyQuestion-Title">
+					{{- question.surveyQuestion.title -}}
+				</p>
+			{% endif %}
+		{% endblock %}
+
+		{% block questionSubtitle %}
+			{% if question.surveyQuestion.subtitle %}
+				<p class="Subtitle SurveyQuestion-Subtitle">
+					{{- question.surveyQuestion.subtitle -}}
+				</p>
+			{% endif %}
+		{% endblock %}
+
+		{% block questionText %}
+			{% if question.surveyQuestion.text %}
+				<div class="Text SurveyQuestion-Text">
+					{{- question.surveyQuestion.text|raw -}}
+				</div>
+			{% endif %}
+		{% endblock %}
+
+		{% block answers %}
+			<ol class="SurveyAnswers" id="SurveyAnswers-{{ question.identifier }}">
+				{% for answer in question.surveySurveyAnswers %}
+					{% block answer %}
+						<li class="SurveyAnswer" id="SurveyAnswer-{{ answer.id }}">
+							{% block answerInput %}
+								<input type="radio" name="survey[{{ survey.identifier }}][{{ question.identifier }}]" value="{{ answer.id }}" id="SurveyAnswer-Input{{ answer.id }}">
+							{% endblock %}
+
+							{% block answerLabel %}
+								<label for="SurveyAnswer-Input{{ answer.id }}">
+									{% block answerTitle %}
+										{% if answer.surveyAnswer.title %}
+											<span class="Title SurveyAnswer-Title">{{ answer.surveyAnswer.title }}</span>
+										{% endif %}
+									{% endblock %}
+
+									{% block answerSubtitle %}
+										{% if answer.surveyAnswer.subtitle %}
+											<span class="Subtitle SurveyAnswer-Subtitle">{{ answer.surveyAnswer.subtitle }}</span>
+										{% endif %}
+									{% endblock %}
+								</label>
+							{% endblock %}
+
+							{% block answerText %}
+								{% if answer.surveyAnswer.text %}
+									<span class="Text SurveyAnswer-Text">{{ answer.surveyAnswer.text|raw }}</span>
+								{% endif %}
+							{% endblock %}
+						</li>
+					{% endblock %}
+				{% endfor %}
+
+				{% block customAnswer %}
+					{% if question.allowCustomAnswer %}
+						<li class="SurveyAnswer" id="SurveyAnswer-Custom{{ question.identifier|ucparts }}">
+							{% block customAnswerInput %}
+								<input type="radio" name="survey[{{ survey.identifier }}][{{ question.identifier }}]" value="custom" id="SurveyAnswer-InputCustom">
+							{% endblock %}
+							{% block customAnswerLabel %}
+								<label for="SurveyAnswer-InputCustom">{{ __d('survey', 'custom_answer_label') }}</label>
+							{% endblock %}
+							{% block customAnswerInputField %}
+								<input type="text" name="survey[{{ survey.identifier }}][custom][{{ question.identifier }}]">
+							{% endblock %}
+					{% endif %}
+				{% endblock %}
+			</ol>
+		{% endblock %}
+	</div>
+{% endblock %}

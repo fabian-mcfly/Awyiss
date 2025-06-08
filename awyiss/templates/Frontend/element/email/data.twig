@@ -13,96 +13,108 @@
 #}
 {% block dataTable %}
 	<table class="Data">
-		<colgroup>
-			<col style="width:30%;">
-			<col>
-		</colgroup>
-		{% for formElement in formElements %}
-			{% block formElement %}
-				{% if formElement.type in ['hidden', 'submit'] %}
-					{# Don't show submit buttons in the confirmation mail. #}
-				{% elseif formElement.type == 'fieldset' %}
-					{% block formElementRowFieldset %}
-						<tr class="DataRowType-Fieldset DataRowIdentifier-{{ formElement.identifier|ucparts(false) }}">
-							<td colspan="2" >{{ formElement.titleEmail ?: formElement.title }}</td>
-						</tr>
-					{% endblock %}
-				{% elseif formElement.type == 'free_text' %}
-					{% block formElementRowFreeText %}
-						{% if formElement.showInEmail %}
-							<tr class="DataRowType-FreeText DataRowIdentifier-{{ formElement.id }}">
-								<td colspan="2" >{{ formElement.text|raw }}</td>
-							</tr>
-						{% endif %}
-					{% endblock %}
-				{% else %}
-					{% block formElementRow %}
-						<tr class="DataRowType-{{ formElement.type|ucparts(false) }} DataRowIdentifier-{{ formElement.identifier|ucparts(false) }}">
-							<td>
-								{% block formElementLabel %}
-									{{ formElement.titleEmail ?: formElement.title }}
-								{% endblock %}
-							</td>
-							<td>
-								{% block formElementValue %}
-									{% if formElement.type == 'file' %}
-										{% block formElementValueFile %}
-											{# @var file \Laminas\Diactoros\UploadedFile #}
-											{% set file = formData[ formElement.identifier ] ?? null %}
-											{{ file.getClientFilename() ?: '&ndash;' }}
-										{% endblock %}
-									{% else %}
-										{% set value = formData[ formElement.identifier ] %}
-										{% if value is array %}
-											{% block formElementValueArray %}
-												<ul>
-													{% for singleValue in value %}
-														{% block formElementValueArrayRow %}
-															<li>{{ formElement.showValueInEmail ? formElement.options[ singleValue ] : singleValue }}</li>
-														{% endblock %}
-													{% endfor %}
-												</ul>
-											{% endblock %}
-										{% elseif value %}
-											{% block formElementNotEmptyValue %}
-												{% if formElement.type == 'checkbox' %}
-													{% block formElementValueCheckbox %}
-														{{ formElement.showValueInEmail ? formElement.options[ value ] : value }}
-													{% endblock %}
-												{% elseif formElement.type == 'date' %}
-													{% block formElementValueDate %}
-														{{ TimeHelper.i18nFormat(value, dateFormat) }}
-													{% endblock %}
-												{% elseif formElement.type == 'time' %}
-													{% block formElementValueTime %}
-														{{ TimeHelper.i18nFormat(value, timeFormat) }}
-													{% endblock %}
-												{% elseif formElement.type == 'datetime' %}
-													{% block formElementValueDateTime %}
-														{{ TimeHelper.nice(value) }}
-													{% endblock %}
-												{% elseif formElement.type == 'textarea' %}
-													{% block formElementValueTextarea %}
-														{{ value|nl2br }}
-													{% endblock %}
-												{% else %}
-													{% block formElementValueOther %}
-														{{ value }}
-													{% endblock %}
-												{% endif %}
-											{% endblock %}
-										{% else %}
-											{% block formElementEmptyValue %}
-												&ndash;
-											{% endblock %}
+		{% block dataTableColGroup %}
+			<colgroup>
+				<col style="width:30%;">
+				<col>
+			</colgroup>
+		{% endblock %}
+		{% block dataTableBody %}
+			<tbody>
+				{% block dataTableBodyInner %}
+					{% block additionalRowsAbove %}{% endblock %}
+					{% block formElements %}
+						{% for formElement in formElements %}
+							{% block formElement %}
+								{% if formElement.type in ['hidden', 'submit'] %}
+									{# Don't show submit buttons in the confirmation mail. #}
+								{% elseif formElement.type == 'fieldset' %}
+									{% block formElementRowFieldset %}
+										<tr class="DataRowType-Fieldset DataRowIdentifier-{{ formElement.identifier|ucparts(false) }}">
+											<td colspan="2" ><strong>{{ formElement.titleEmail ?: formElement.title }}</strong></td>
+										</tr>
+									{% endblock %}
+								{% elseif formElement.type == 'free_text' %}
+									{% block formElementRowFreeText %}
+										{% if formElement.showInEmail %}
+											<tr class="DataRowType-FreeText DataRowIdentifier-{{ formElement.id }}">
+												<td colspan="2" >{{ formElement.text|raw }}</td>
+											</tr>
 										{% endif %}
-									{% endif %}
-								{% endblock %}
-							</td>
-						</tr>
+									{% endblock %}
+								{% else %}
+									{% block formElementRow %}
+										<tr class="DataRowType-{{ formElement.type|ucparts(false) }} DataRowIdentifier-{{ formElement.identifier|ucparts(false) }}">
+											<td>
+												{% block formElementLabel %}
+													{{ formElement.titleEmail ?: formElement.title }}
+												{% endblock %}
+											</td>
+											<td>
+												{% block formElementValue %}
+													{% if formElement.type == 'file' %}
+														{% block formElementValueFile %}
+															{# @var file \Laminas\Diactoros\UploadedFile #}
+															{% set file = formData[ formElement.identifier ] ?? null %}
+															{{ file.getClientFilename() ?: '&ndash;' }}
+														{% endblock %}
+													{% else %}
+														{% set value = formData[ formElement.identifier ] %}
+														{% if value is array %}
+															{% block formElementValueArray %}
+																<ul>
+																	{% for singleValue in value %}
+																		{% block formElementValueArrayRow %}
+																			<li>{{ formElement.showValueInEmail ? formElement.options[ singleValue ] : singleValue }}</li>
+																		{% endblock %}
+																	{% endfor %}
+																</ul>
+															{% endblock %}
+														{% elseif value %}
+															{% block formElementNotEmptyValue %}
+																{% if formElement.type == 'checkbox' %}
+																	{% block formElementValueCheckbox %}
+																		{{ formElement.showValueInEmail ? formElement.options[ value ] : value }}
+																	{% endblock %}
+																{% elseif formElement.type == 'date' %}
+																	{% block formElementValueDate %}
+																		{{ TimeHelper.i18nFormat(value, dateFormat) }}
+																	{% endblock %}
+																{% elseif formElement.type == 'time' %}
+																	{% block formElementValueTime %}
+																		{{ TimeHelper.i18nFormat(value, timeFormat) }}
+																	{% endblock %}
+																{% elseif formElement.type == 'datetime' %}
+																	{% block formElementValueDateTime %}
+																		{{ TimeHelper.nice(value) }}
+																	{% endblock %}
+																{% elseif formElement.type == 'textarea' %}
+																	{% block formElementValueTextarea %}
+																		{{ value|nl2br }}
+																	{% endblock %}
+																{% else %}
+																	{% block formElementValueOther %}
+																		{{ value }}
+																	{% endblock %}
+																{% endif %}
+															{% endblock %}
+														{% else %}
+															{% block formElementEmptyValue %}
+																&ndash;
+															{% endblock %}
+														{% endif %}
+													{% endif %}
+												{% endblock %}
+											</td>
+										</tr>
+									{% endblock %}
+								{% endif %}
+							{% endblock %}
+						{% endfor %}
 					{% endblock %}
-				{% endif %}
-			{% endblock %}
-		{% endfor %}
+					{% block additionalRowsBelow %}{% endblock %}
+				{% endblock %}
+			</tbody>
+		{% endblock %}
 	</table>
 {% endblock %}
