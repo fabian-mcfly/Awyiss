@@ -45,10 +45,6 @@ class TranslateBehavior extends BaseTranslateBehavior {
 				$this->languages[ $lo_language->shortcode ] = $lo_language;
 			}
 		}
-
-		if (!$this->getConfig('realm')) {
-			$this->setConfig('realm', LocaleMiddleware::getRealm());
-		}
 	}
 
 
@@ -60,7 +56,7 @@ class TranslateBehavior extends BaseTranslateBehavior {
 	 */
 	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
 		$ls_firstLanguageShortcode = array_key_first($this->languages);
-		$ls_currentLanguageShortcode = LocaleMiddleware::getLanguage($this->getConfig('realm'))->shortcode;
+		$ls_currentLanguageShortcode = LocaleMiddleware::getLanguage($this->getConfig('realm') ?? LocaleMiddleware::getRealm())->shortcode;
 
 		if (empty($data['_translations'])) {
 			return;
