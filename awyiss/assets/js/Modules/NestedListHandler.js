@@ -147,7 +147,7 @@ export default class NestedListHandler {
 
 	/**
 	 * Initialize the sortable list
-	 * @param {NodeListOf<Element>|HTMLElement} elements - The list elements to initialize
+	 * @param {NodeListOf<Element>|array|HTMLElement} elements - The list elements to initialize
 	 * @param {Object} options - The options for the SortableJS instance
 	 */
 	initSortable(elements, options) {
@@ -645,9 +645,9 @@ export default class NestedListHandler {
 	 *
 	 * @param {HTMLElement} listItem
 	 * @param {HTMLElement} childList
-	 * @param {string} forceState
+	 * @param {boolean|null} forceState
 	 */
-	toggleListState(listItem, childList, forceState) {
+	toggleListState(listItem, childList, forceState = null) {
 		// Toggle the visibility of the child list
 		childList.classList.toggle('Collapsed', forceState);
 
@@ -779,15 +779,15 @@ export default class NestedListHandler {
 	 * @param {HTMLElement} element - The element to get the order and controller name from
 	 * @returns {Promise<void>}
 	 */
-	saveSystemOrder(element) {
+	saveSystemOrder(element = null) {
 		// Get the current order of all list items
 		const order = this.getOrder();
 
 		if (order === false || !Object.keys(order).length) {
-			return;
+			return Promise.resolve();
 		}
 
-		element = element || document.querySelector(this.selector);
+		element ??= document.querySelector(this.selector);
 
 		// Get the controller name
 		let controller = element.dataset.controller;
@@ -853,10 +853,10 @@ export default class NestedListHandler {
 
 	/**
 	 * Get the order of all list items
-	 * @param {HTMLElement} element - The element to get the order from
+	 * @param {HTMLElement|null} element - The element to get the order from
 	 * @returns {Object}
 	 */
-	getOrder(element) {
+	getOrder(element = null) {
 		let order = {};
 
 		let lists;
