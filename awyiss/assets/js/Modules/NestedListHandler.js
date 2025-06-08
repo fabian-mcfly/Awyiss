@@ -96,6 +96,9 @@ export default class NestedListHandler {
 		this.saveOrderButtons.forEach(button => {
 			this.eventHandler.add('click', (event) => this.saveOrderButtonHandler(event), button);
 		});
+
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**
@@ -144,10 +147,15 @@ export default class NestedListHandler {
 
 	/**
 	 * Initialize the sortable list
-	 * @param {NodeListOf<Element>} elements - The list elements to initialize
+	 * @param {NodeListOf<Element>|HTMLElement} elements - The list elements to initialize
 	 * @param {Object} options - The options for the SortableJS instance
 	 */
 	initSortable(elements, options) {
+		// If elements is a HTMLElement, convert it to an array
+		if (elements instanceof HTMLElement) {
+			elements = [elements];
+		}
+
 		if (!elements.length) {
 			return;
 		}
@@ -161,22 +169,14 @@ export default class NestedListHandler {
 						return;
 					}
 
-					// Create a new handle
-					const handle = document.createElement('div');
-					handle.className = 'SortableHandle';
-					handle.textContent = '::'; // Or any other content you want the handle to have
-
-					// Select the .ListItem-Inner child of the list item
-					const listItemInner = item.querySelector('.ListItem-Inner');
-					if (listItemInner) {
-						// Prepend the handle to the .ListItem-Inner child
-						listItemInner.prepend(handle);
-					}
+					this.createSortableHandle(item);
 				});
 			}
 
 			// noinspection JSUnresolvedReference
 			const groupName = element.dataset.sortableGroup ?? options.groupName;
+			const invertSwap = !element.dataset.invertSwap || element.dataset.invertSwap === 'true';
+			const swapThreshold = element.dataset.swapThreshold ? parseFloat(element.dataset.swapThreshold) : .9;
 
 			element.sortable = Sortable.create(element, {
 				chosenClass: 'SortableChosen',
@@ -186,10 +186,10 @@ export default class NestedListHandler {
 				ghostClass: 'SortableGhost',
 				group: groupName,
 				handle: options.handle || false,
-				invertSwap: true,
+				invertSwap: invertSwap,
 				preventOnFilter: false,
 				sort: options.sort ?? true,
-				swapThreshold: .9,
+				swapThreshold: swapThreshold,
 				onAdd: (event) => {
 					return options.onAdd ? options.onAdd.call(this, event) : this.onAdd.call(this, event);
 				},
@@ -207,6 +207,29 @@ export default class NestedListHandler {
 				},
 			});
 		});
+	}
+
+	/**
+	 * Create a sortable handle for the list item
+	 * @param {HTMLLIElement} item - The list item to create the handle for
+	 */
+	createSortableHandle(item) {
+		// Create a new handle
+		const handle = document.createElement('div');
+		handle.className = 'SortableHandle';
+		handle.textContent = '::'; // Or any other content you want the handle to have
+
+		// Select the .ListItem-Inner child of the list item
+		let listItemInner = item.querySelector(':scope > .ListItem-Inner');
+		if (!listItemInner) {
+			// If there is no .ListItem-Inner child, check if there is a child with '-Inner' in the class name
+			listItemInner = item.querySelector(':scope > [class*="-Inner"]');
+		}
+
+		if (listItemInner) {
+			// Prepend the handle to the .ListItem-Inner child
+			listItemInner.prepend(handle);
+		}
 	}
 
 	/**
@@ -393,9 +416,11 @@ export default class NestedListHandler {
 		clearTimeout(this.initTimeout);
 		this.sortingEnabled = true;
 
-		// Start adjusting the scroll position
-		// noinspection JSUnresolvedReference
-		this.adjustScrollPosition(event.item, false);
+		if (event.item.dataset.adjustScrollPosition !== 'false') {
+			// Start adjusting the scroll position
+			// noinspection JSUnresolvedReference
+			this.adjustScrollPosition(event.item, false);
+		}
 
 		// Enable or disable the save buttons based on the current order
 		const isDefaultOrder = this.isDefaultOrder();
@@ -511,9 +536,11 @@ export default class NestedListHandler {
 			this.sortingEnabled = true;
 		}, 500);
 
-		// Start adjusting the scroll position
-		// noinspection JSUnresolvedReference
-		this.adjustScrollPosition(event.item, true);
+		if (event.item.dataset.adjustScrollPosition !== 'false') {
+			// Start adjusting the scroll position
+			// noinspection JSUnresolvedReference
+			this.adjustScrollPosition(event.item, true);
+		}
 	}
 
 
@@ -906,5 +933,26 @@ export default class NestedListHandler {
 		});
 
 		return order;
+	}
+
+	/**
+	 * Observe mutations.
+	 * @param {MutationRecord} mutation
+	 */
+	observeMutations(mutation) {
+		mutation.addedNodes.forEach(node => {
+			if (!(node instanceof HTMLElement)) {
+				return;
+			}
+
+			if (node.matches(this.selector)) {
+				this.initList(node);
+			}
+
+			const availableQuestionsLists = node.querySelectorAll(this.selector);
+			availableQuestionsLists.forEach(availableQuestionsList => {
+				this.initList(availableQuestionsList);
+			});
+		})
 	}
 }

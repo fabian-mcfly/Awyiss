@@ -1,0 +1,68 @@
+{#
+@var form \Awyiss\Model\Entity\Form
+@var formData array
+@var formElements \Awyiss\Model\Entity\FormElement[]
+@var survey \Awyiss\Model\Entity\Survey
+@var surveyProgress array<string, array|int|string>
+@var surveyCustomAnswers array<string, string>
+@var questionTypeEnum class-string<\Awyiss\Model\Enum\Survey\QuestionType>
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% extends '@Frontend/element/email/data_plain.twig' %}
+
+{% block data %}
+	{%- block surveyTitle %}
+		{{- survey.title }}
+-------------
+
+	{%~ endblock %}
+	{%- block surveyProgress %}
+		{%- set questionsByIdentifier = survey.getQuestions().toArray()|column(null, 'identifier') %}
+		{%- for questionIdentifier, answer in surveyProgress %}
+			{%- set question = questionsByIdentifier[ questionIdentifier ] %}
+			{%- if question.surveyQuestion.type == enum(questionTypeEnum).InfoText %}
+				{%- block surveyProgressInfoTextRow %}
+					{#- Do nothing with info text questions #}
+				{%- endblock %}
+			{%- else %}
+				{%- block surveyProgressRow %}
+					{%- block surveyProgressRowQuestion %}
+						{{- question.title ?? question.surveyQuestion.title }}
+					{%- endblock %}
+
+					{%~ block surveyProgressRowAnswer %}
+						{%~ if answer is array %}
+							{%~ for answerId in answer %}
+								{{~ '– ' ~ question.surveySurveyAnswers[ answerId ].label }}
+							{%~ endfor %}
+
+						{%~ else %}
+							{%~ if surveyCustomAnswers[ questionIdentifier ] is defined %}
+								{{~ '– ' ~ surveyCustomAnswers[ questionIdentifier ] }}
+
+							{%~ elseif answer is string %}
+								{{~ '– ' ~ answer }}
+
+							{%~ else %}
+								{{~ '– ' ~ question.surveySurveyAnswers[ answer ].label }}
+
+							{%~ endif %}
+						{%- endif %}
+					{%- endblock %}
+				{%~ endblock %}
+			{%~ endif %}
+		{%~ endfor %}
+	{%~ endblock %}
+-------------
+
+	{{~ parent() }}
+{% endblock %}

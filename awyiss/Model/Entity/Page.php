@@ -30,6 +30,7 @@ use Cake\Utility\Text;
  * @property bool $robotsFollow
  * @property int|null $duplicateOf
  * @property int|null $formId
+ * @property int|null $surveyId
  * @property int $systemOrder
  * @property bool $active
  * @property bool $parentsActive
@@ -48,6 +49,7 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\Page[] $childPages
  * @property \Awyiss\Model\Entity\Content[] $contents
  * @property \Awyiss\Model\Entity\Form|null $form
+ * @property \Awyiss\Model\Entity\Survey|null $survey
  * @property \Awyiss\Model\Entity\Language $language
  * @property array<int, int> $addMenuEntry
  */
@@ -71,6 +73,7 @@ class Page extends Entity {
 		'page_template_id' => 'pageTemplateId',
 		'duplicate_of' => 'duplicateOf',
 		'form_id' => 'formId',
+		'survey_id' => 'surveyId',
 		'system_order' => 'systemOrder',
 		'parents_active' => 'parentsActive',
 		'created_by' => 'createdBy',
@@ -103,6 +106,7 @@ class Page extends Entity {
 		'pageTemplateId' => true,
 		'duplicateOf' => true,
 		'formId' => true,
+		'surveyId' => true,
 		'systemOrder' => true,
 		'active' => true,
 		'addMenuEntry' => true,

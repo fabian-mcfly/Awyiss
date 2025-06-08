@@ -58,10 +58,7 @@ class FormsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->hasMany('Contents', [
-			'cascadeCallbacks' => true,
-			'dependent' => true,
-		]);
+		$this->hasMany('Contents');
 
 		$this->belongsTo('EmailTemplates', [
 			'className' => 'EmailTemplates',
@@ -92,10 +89,9 @@ class FormsTable extends Table {
 			'foreignKey' => 'form_id',
 		]);
 
-		$this->hasMany('Pages', [
-			'cascadeCallbacks' => true,
-			'dependent' => true,
-		]);
+		$this->hasMany('Pages');
+
+		$this->hasMany('Surveys');
 	}
 
 

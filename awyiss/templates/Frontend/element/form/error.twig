@@ -1,0 +1,35 @@
+{#
+@var contents string
+@var form \Awyiss\Model\Entity\Form
+@var formElements \Awyiss\Model\Entity\FormElement[]
+@var formElementsChecksum string
+@var page \Awyiss\Model\Entity\Page
+@var sent bool
+@var includeWrapper bool
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Form-ErrorMessage">
+	{% if form.errors['_general'] %}
+		{% for message in form.errors['_general'] %}
+			{{ message|raw }}<br>
+		{% endfor %}
+	{% else %}
+		<p>{{ __d('validation', 'form_has_errors')|raw }}</p>
+
+		{% if form.summarizeErrors and form.errors %}
+			<ul>
+				{% for field, messages in form.errors %}
+					<li><strong>{{ formElements[ field ].title }}:</strong> {{ messages|first }}</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+	{% endif %}
+</div>

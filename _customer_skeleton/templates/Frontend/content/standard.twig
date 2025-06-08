@@ -70,6 +70,10 @@
 				{{ form(content.formId) }}
 			{% endif %}
 
+			{% if content.surveyId %}
+				{{ survey(content.surveyId) }}
+			{% endif %}
+
 			{% if children %}
 				<div class="Children">
 					{{ children|raw }}

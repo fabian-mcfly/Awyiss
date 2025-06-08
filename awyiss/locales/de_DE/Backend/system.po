@@ -397,6 +397,9 @@ msgstr "Vorschau"
 msgid "form_id"
 msgstr "Formular"
 
+msgid "survey_id"
+msgstr "Umfrage"
+
 msgid "true"
 msgstr "Ja"
 

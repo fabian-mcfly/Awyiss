@@ -60,6 +60,7 @@ class ContentTemplatesTable extends Table {
 		'link' => true,
 		'duplicate_of' => true,
 		'form_id' => true,
+		'survey_id' => true,
 	];
 	/**
 	 * @var array<int, string>

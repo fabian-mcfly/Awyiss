@@ -32,7 +32,7 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% block buttonsOverview %}
+			{% block overviewButtons %}
 				{% block overviewButtonAdd %}
 					{% if AuthorizationHelper.isAccessible('create') %}
 						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
@@ -52,7 +52,7 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}{% endverbatim %}
 </div>

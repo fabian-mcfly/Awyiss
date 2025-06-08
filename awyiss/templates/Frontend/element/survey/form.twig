@@ -1,0 +1,92 @@
+{#
+@var form \Awyiss\Model\Entity\Form
+@var formBody string
+@var formElements \Awyiss\Model\Entity\FormElement[]
+@var formSent bool
+@var survey \Awyiss\Model\Entity\Survey
+@var currentAction \Awyiss\Model\Entity\SurveySurveyQuestion|(\Awyiss\Model\Enum\Survey\NextAction|\BackedEnum)|false|null
+@var questionTypeEnum class-string<\Awyiss\Model\Enum\Survey\QuestionType>
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var currentQuestion string
+@var customAnswers array<string, string>
+@var hasNextAction bool
+@var progress array<string, int>
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block survey %}
+	<div class="Survey" id="Survey-{{ survey.identifier|ucparts(false) }}">
+		{% if formSent %}
+			{% block formSuccessMessage %}
+				<div class="Form Form-SuccessMessage" id="Form-{{ form.identifier|ucparts(false) }}">
+					{{ form.successMessage|raw }}
+				</div>
+			{% endblock %}
+		{% else %}
+			{% block surveyForm %}
+				{% block surveyFormOpen %}
+					<form method="post"{% if form.enctype %} enctype="{{ form.enctype }}"{% endif %} id="Form-{{ form.identifier|ucparts(false) }}">
+				{% endblock %}
+
+				<div class="Form Form-{{ form.identifier|ucparts(false) }}">
+					{% block formErrorMessage %}
+						{% if form.errors %}
+							{% include '@Frontend/element/form/error.twig' %}
+						{% endif %}
+					{% endblock %}
+
+					{% block formProtectionBefore %}
+						{{ FormHelper.renderFormProtection(form, 'before') }}
+					{% endblock %}
+
+					{% block surveyPreviousAnswers %}
+						{% include '@Frontend/element/survey/progress.twig' %}
+					{% endblock %}
+
+					{{ formBody|raw }}
+
+					{% block formProtectionAfter %}
+						{{ FormHelper.renderFormProtection(form, 'after') }}
+					{% endblock %}
+
+					<input type="hidden" name="_form_identifier" value="{{ form.identifier }}">
+					<input type="hidden" name="_page_id" value="{{ page.id }}">
+
+					{% block surveyIdentifier %}
+						{% if hasNextAction %}
+							<input type="hidden" name="_survey_identifier" value="{{ survey.identifier }}">
+						{% endif %}
+					{% endblock %}
+				</div>
+
+				{% block surveyActions %}
+					<div class="Survey-Actions">
+						{% block surveyActionGoBack %}
+							{% if currentAction in [
+								enum(nextActionEnum).ShowForm,
+								enum(nextActionEnum).ShowFormAndSave,
+							] %}
+								<div class="SurveyAction-GoBack">
+									<input type="hidden" name="survey[{{ survey.identifier }}][last_action]" value="{{ progress|keys|last }}">
+									<button type="submit" name="survey[{{ survey.identifier }}][action]" value="go_back" class="Button Survey-GoBack" formnovalidate>{{ __d('surveys', 'back') }}</button>
+								</div>
+							{% endif %}
+						{% endblock %}
+					</div>
+				{% endblock %}
+
+				{% block surveyFormEnd %}
+					</form>
+				{% endblock %}
+			{% endblock %}
+		{% endif %}
+	</div>
+{% endblock %}

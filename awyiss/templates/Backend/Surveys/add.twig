@@ -1,0 +1,69 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var availableActions \Awyiss\Model\Enum\Survey\NextAction[]
+@var availableForms \Awyiss\Model\Entity\Form[]
+@var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Surveys Form Add">
+	{% block headlinesAdd %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
+
+			{% block headlineAdd %}
+				<h1>{{ __('headline_add') }}</h1>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{% block formAddButtonShowDiagram %}
+					{{ FormHelper.button(__('show_diagram'), {class: 'Button Button-Diagram Button-ShowDiagram', form: 'SurveyForm', type: 'button'}) }}
+				{% endblock %}
+
+				{% block formAddButtonSave %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'SurveyForm' }) }}
+				{% endblock %}
+
+				{% block formAddButtonSaveClose %}
+					{% if AuthorizationHelper.isAccessible('read') %}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'SurveyForm', name: 'submit_type', value: 'submit_close'}) }}
+					{% endif %}
+				{% endblock %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block formAdd %}
+		{% include('@Backend/Surveys/form.twig') %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
+	{% endblock %}
+</div>

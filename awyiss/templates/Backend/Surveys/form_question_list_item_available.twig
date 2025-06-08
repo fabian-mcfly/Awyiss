@@ -1,0 +1,141 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var assignedQuestionIds array<int>
+@var entity \Awyiss\Model\Entity\SurveyQuestion
+@var availableActions \Awyiss\Model\Enum\Survey\NextAction[]
+@var availableForms \Awyiss\Model\Entity\Form[]
+@var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block listItem %}
+	{% set index = loop.index0 %}
+
+	<li
+		{% block listItemId -%}
+			id="{{ settings.identifier|pluralize }}-ListItem{{ entity.id }}"
+		{%- endblock %}
+		{% block listItemClass -%}
+			class="ListItem {{ settings.identifier }}-ListItem {{ settings.identifier }}-ListItem{{ entity.id -}}
+				{%- if entity.class is defined %} {{ entity.class }}{% endif -%}
+				{%- if entity.active == false %} Inactive{% endif -%}
+			"
+		{%- endblock %}
+		{% block listItemTitle -%}
+			title="{{ entity.title }}"
+		{%- endblock %}
+		{% block listItemSortableDisabled -%}
+			{%- if entity.id in assignedQuestionIds %}
+				data-sortable="false"
+			{%- endif %}
+		{%- endblock %}
+		data-adjust-scroll-position="false"
+	>
+		{% block listItemInner %}
+			<div class="ListItem-Inner">
+				{% block listItemLabel %}
+					<span class="Label">{{ entity.label }}</span>
+				{% endblock %}
+
+				{% block listItemType %}
+					<span class="Type">{{ entity.type.label }}</span>
+				{% endblock %}
+
+				{% block listItemIdentifier %}
+					{% if survey.type != enum('Awyiss\\Model\\Enum\\Survey\\Type').Linear %}
+						<code class="Identifier"></code>
+					{% endif %}
+				{% endblock %}
+
+				{% block listItemActions %}
+					<span class="Actions">
+						{% block listItemConfig %}
+							{% if survey.type != enum('Awyiss\\Model\\Enum\\Survey\\Type').Linear %}
+								{{ FormHelper.button(__('toggle_configuration'), {
+									class: 'Button Button-Small Button-Configure',
+									type: 'button',
+								}) }}
+							{% endif %}
+						{% endblock %}
+
+						{% block listItemRemove %}
+							{{ FormHelper.button(__('remove_question'), {
+								class: 'Button Button-Small Button-Delete',
+								type: 'button',
+								'data-confirm-title': __d('survey_questions', 'confirm_delete_title'),
+								'data-confirm-yes': __d('survey_questions', 'confirm_delete_yes'),
+								'data-confirm-yes-class': 'Button-Delete',
+								'data-confirm-no': __d('survey_questions', 'confirm_delete_no'),
+								'data-confirm': __d('survey_questions', 'confirm_delete', entity.id)
+							}) }}
+						{% endblock %}
+					</span>
+				{% endblock %}
+
+				{% block listItemInputs %}
+					{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][identifier]', {
+						disabled: true,
+					}) }}
+					{{ FormHelper.hidden('survey_survey_questions[' ~ index ~'][survey_question_id]', {
+						disabled: true,
+						val: entity.id,
+					}) }}
+				{% endblock %}
+			</div>
+
+			{% block listItemAnswersSettings %}
+				<div class="ListItem-AnswersSettings">
+					{% block listItemSettings %}
+						{% if survey.type != enum('Awyiss\\Model\\Enum\\Survey\\Type').Linear %}
+							<div class="Settings">
+								{% block listItemSettingsInner %}
+									<div class="NextAction">
+										{% block listItemNextAction %}
+											{{ FormHelper.control('survey_survey_questions[' ~ index ~'][next_action]', {
+												disabled: true,
+												empty: false,
+												label: __('next_action'),
+												options: availableActions,
+												type: 'select',
+												'data-form-updater': true,
+											}) }}
+										{% endblock %}
+									</div>
+								{% endblock %}
+							</div>
+						{% endif %}
+					{% endblock %}
+
+					{% block answersList %}
+						{% if
+							entity.type == enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').SingleChoice or
+							entity.type == enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').MultiChoice %}
+							<ul class="Answers-List">
+								{% set answerType = 'available' %}
+								{% for answer in entity.surveyAnswers %}
+									{% include '@Backend/Surveys/form_answer_list_item.twig' %}
+								{% endfor %}
+
+								{% include '@Backend/Surveys/form_answer_list_item_custom_answer.twig' %}
+							</ul>
+						{% endif %}
+					{% endblock %}
+				</div>
+			{% endblock %}
+		{% endblock %}
+	</li>
+{% endblock %}

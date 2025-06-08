@@ -1,0 +1,190 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\Model\Table;
+
+
+use Awyiss\Awyiss;
+use Awyiss\Core\App;
+use Awyiss\Model\Table;
+use Awyiss\ORM\RulesChecker;
+use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Database\Type\EnumType;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
+use Cake\Validation\Validator;
+
+
+/**
+ * SurveySurveyAnswers Model
+ *
+ * @property \Awyiss\Model\Table\SurveyAnswersTable&\Awyiss\ORM\Association\BelongsTo $SurveyAnswers
+ * @property \Awyiss\Model\Table\SurveySurveyQuestionsTable&\Awyiss\ORM\Association\BelongsTo $SurveySurveyQuestions
+ * @method \Awyiss\Model\Entity\SurveySurveyAnswer newDefaultEntity(array $additionalData = [], array $options = [])
+ * @noinspection PhpFullyQualifiedNameUsageInspection
+ */
+class SurveySurveyAnswersTable extends Table {
+	/**
+	 * @inheritDoc
+	 */
+	public const ATTRIBUTABLE = true;
+	/**
+	 * @inheritDoc
+	 */
+	public const TABLE = 'survey_survey_answers';
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => [
+			'title',
+			'subtitle',
+			'text',
+		],
+		'realm' => Awyiss::REALM_FRONTEND,
+	];
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initializeAssociations(): void {
+		$this->belongsTo('SurveyAnswers', [
+			'foreignKey' => 'survey_answer_id',
+			'joinType' => 'INNER',
+		]);
+
+		$this->belongsTo('SurveySurveyQuestions', [
+			'foreignKey' => 'survey_survey_question_id',
+			'joinType' => 'INNER',
+		]);
+	}
+
+
+	/**
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
+	 * add some rules to it.
+	 * @return \Cake\Validation\Validator
+	 * @noinspection DuplicatedCode
+	 */
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
+
+		$validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$validator->notEmptyString('surveyAnswerId');
+		$validator->add('surveyAnswerId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$validator->notEmptyString('surveySurveyQuestionId');
+		$validator->add('surveySurveyQuestionId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$validator->notEmptyString('title');
+		$validator->add('title', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->allowEmptyString('subtitle');
+		$validator->add('subtitle', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->allowEmptyString('text');
+		$validator->add('text', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
+		]);
+
+
+		$validator->add('nextAction', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->add('nextActionTarget', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->add('systemOrder', [
+			'isInteger' => ['rule' => 'isInteger'],
+		]);
+
+
+		$validator->add('active', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$validator->add('deleted', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+		return $validator;
+	}
+
+
+	/**
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
+	 */
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			$rules->existsIn('surveyAnswerId', 'SurveyAnswers'),
+			'validSurveyAnswerId',
+			[
+				'errorField' => 'surveyAnswerId',
+				'message' => __df('surveys', 'validation', 'error_valid_survey_answer_id'),
+			]
+		);
+
+		$rules->add(
+			$rules->existsIn('surveySurveyQuestionId', 'SurveySurveyQuestions'),
+			'validSurveySurveyQuestionId',
+			[
+				'errorField' => 'surveySurveyQuestionId',
+				'message' => __df('surveys', 'validation', 'error_valid_survey_survey_question_id'),
+			]
+		);
+
+		return $rules;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
+
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
+		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+
+		$schema->setColumnType('next_action', EnumType::from($ls_surveyNextActionEnum));
+	}
+}

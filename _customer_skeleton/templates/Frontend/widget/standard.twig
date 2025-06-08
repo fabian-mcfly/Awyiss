@@ -50,6 +50,10 @@
 		{{ form(widget.formId) }}
 	{% endif %}
 
+	{% if widget.surveyId %}
+		{{ survey(widget.surveyId) }}
+	{% endif %}
+
 	{% if children %}
 		<div class="Children">
 			{{ children|raw }}

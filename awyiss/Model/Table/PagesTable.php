@@ -32,6 +32,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\BelongsTo $Forms
+ * @property \Awyiss\Model\Table\SurveysTable&\Awyiss\ORM\Association\BelongsTo $Surveys
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $UrlHistory
  * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $additionalData = [], array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Awyiss\Model\Entity\Page $entity, array $options = [], int $currentLevel = 0)
@@ -128,6 +129,8 @@ class PagesTable extends Table {
 				'page_role_id',
 			],
 		]);
+
+		$this->belongsTo('Surveys');
 
 		$this->hasMany('UrlHistory', [
 			'cascadeCallbacks' => true,
@@ -268,6 +271,12 @@ class PagesTable extends Table {
 		]);
 
 
+		$validator->add('surveyId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
@@ -333,6 +342,9 @@ class PagesTable extends Table {
 
 
 		$rules->add($rules->existsIn(['formId'], 'Forms', ['allowNullableNulls' => true]), 'validFormId', ['errorField' => 'formId']);
+
+
+		$rules->add($rules->existsIn(['surveyId'], 'Surveys', ['allowNullableNulls' => true]), 'validSurveyId', ['errorField' => 'surveyId']);
 
 
 		$rules->add(function (Page $entity): bool|string {
@@ -553,6 +565,10 @@ class PagesTable extends Table {
 			return $this->getAssociation('PageTemplates')->find('list', valueField: 'label')->where([
 				'page_role_id' => $this->getPageRole()->value,
 			])->toArray();
+		}
+
+		if ($column === 'survey_id') {
+			return $this->getAssociation('Surveys')->find('list', valueField: 'label')->toArray();
 		}
 
 

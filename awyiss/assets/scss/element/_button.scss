@@ -200,9 +200,11 @@
 		&-Close,
 		&-Configure,
 		&-Delete,
+		&-Diagram,
 		&-Edit,
 		&-Folder,
 		&-Filter,
+		&-Fullscreen,
 		&-Geocode,
 		&-History,
 		&-Leave,
@@ -212,11 +214,13 @@
 		&-Save,
 		&-SaveClose,
 		&-SaveSystemOrder,
+		&-Target,
 		&-View,
 		&-ViewContents,
 		&-ViewElements,
 		&-ViewEntries,
-		&-ViewMenuEntries
+		&-ViewMenuEntries,
+		&-Zoom
 	) {
 		&.Button-Small {
 			&::after {
@@ -307,6 +311,12 @@
 		}
 	}
 
+	&-Diagram {
+		&::after {
+			content:'\f542';
+		}
+	}
+
 	&-Edit {
 		&::after {
 			content:'\f304';
@@ -322,6 +332,12 @@
 	&-Filter {
 		&::after {
 			content:'\f0b0';
+		}
+	}
+
+	&-Fullscreen {
+		&::after {
+			content:'\f065';
 		}
 	}
 
@@ -461,6 +477,12 @@
 		transition:outline-color 0.1s ease-in-out;
 	}
 
+	&-Target {
+		&::after {
+			content:'\f05b';
+		}
+	}
+
 	&-Toggle {
 		padding-left:50px;
 
@@ -514,6 +536,19 @@
 	&-ViewEntries {
 		&::after {
 			content:'\f15c';
+		}
+	}
+
+	&-Zoom,
+	&-ZoomIn {
+		&::after {
+			content:'\f00e';
+		}
+	}
+
+	&-ZoomOut {
+		&::after {
+			content:'\f010';
 		}
 	}
 }

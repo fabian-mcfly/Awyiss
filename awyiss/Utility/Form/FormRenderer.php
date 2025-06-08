@@ -88,13 +88,13 @@ class FormRenderer {
 
 
 	/**
-	 * @param string|int $identifier
+	 * @param string|int Form
 	 * @param array $requestData
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @return $this
 	 */
-	public function initForm(string|int $identifier, array $requestData, ?Page $page = null): static {
-		$this->form = $this->getFormByIdentifier($identifier);
+	public function initForm(Form|string|int $form, array $requestData, ?Page $page = null): static {
+		$this->form = $form instanceof Form ? $form : $this->getFormByIdentifier($form);
 		$this->page = $page;
 
 		if (!$this->form) {
@@ -122,6 +122,7 @@ class FormRenderer {
 		if (!$this->form) {
 			throw new RuntimeException('No form was initialized.');
 		}
+
 		// Validate the form
 		if (!$this->form->isSubmitted()) {
 			return null;
@@ -319,14 +320,13 @@ class FormRenderer {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Form $form
 	 * @return string|false
 	 */
-	protected function sendForm(Form $form): string|false {
+	public function sendForm(): string|false {
 		/** @var \Awyiss\Utility\Form\FormSender $ls_formSenderClass */
 		$ls_formSenderClass = App::className('FormSender', 'Utility/Form');
 
-		$lo_formSender = new $ls_formSenderClass($form, $this->page);
+		$lo_formSender = new $ls_formSenderClass($this->form, $this->page);
 		$this->formSent = $lo_formSender->handle();
 
 		if (!$this->formSent) {
@@ -348,7 +348,7 @@ class FormRenderer {
 			throw new RuntimeException('No form was initialized.');
 		}
 
-		$ls_responseCode = $this->sendForm($this->form);
+		$ls_responseCode = $this->sendForm();
 
 		if ($ls_responseCode !== false) {
 			$la_url = [

@@ -1,0 +1,505 @@
+html.PickQuestionMode {
+	body {
+		&::after {
+			opacity:inherit;
+			visibility:inherit;
+			transition-delay:0s;
+		}
+	}
+
+	.Surveys.Form {
+		.Fieldset-Questions-Assigned {
+			z-index:auto;
+		}
+
+		.ListItem {
+			&:not(:has(.Button-PickQuestion.Active)) {
+				grid-template-rows:auto 0fr;
+			}
+
+			&.AssignedQuestions-ListItem {
+				&:not(.Disabled) {
+					.ListItem-Inner {
+						&:hover {
+							background-color:var(--colorSuccess);
+							cursor:pointer;
+						}
+					}
+				}
+
+				&.Disabled {
+					.ListItem-AnswersSettings {
+						> .Settings {
+							&:has(.Button-PickQuestion.Active) {
+								transition-delay:0s;
+								z-index:2030;
+							}
+						}
+					}
+				}
+
+				.ListItem-Inner {
+					transition-delay:0s;
+					z-index:2030;
+
+					&:has(+ .ListItem-AnswersSettings .Button-PickQuestion.Active) {
+						cursor:not-allowed;
+					}
+
+					* {
+						pointer-events:none;
+					}
+				}
+			}
+		}
+
+		.FormInput {
+			opacity:.5;
+			pointer-events:none;
+		}
+
+		.Answers-ListItem {
+			&:has(.Button-PickQuestion.Active) {
+				transition-delay:0s;
+				z-index:2030;
+			}
+		}
+
+		.SortableHandle,
+		.Actions,
+		.Button-Delete {
+			content-visibility:hidden;
+			pointer-events:none;
+			visibility:hidden;
+		}
+	}
+}
+
+.Surveys.Form {
+	&:has(.SortableDragging) {
+		&:has(.AssignedQuestions-ListItem.SortableChosen) {
+			.ListItem {
+				grid-template-rows:auto 0fr;
+			}
+		}
+
+		.Fieldset-Questions-Assigned {
+			&:not(:has(.ListItem)) {
+				background-color:color-mix(in srgb, var(--colorSuccess) 20%, #FFFFFF);
+
+				html.🌚 & {
+					background-color:var(--colorSemiDark)
+				}
+			}
+		}
+	}
+
+	:where(
+		.Fieldset-Questions-Available,
+		.Fieldset-Questions-Assigned
+	) {
+		&:not(:has(.ListItem)) {
+			height:80px;
+
+			&::before {
+				@extend %EmptyList;
+			}
+		}
+
+		.NestedListToggle {
+			display:none;
+		}
+
+		.ListItem-Inner {
+			position:relative;
+
+			> .Label {
+				display:-webkit-box;
+				font-style:italic;
+				line-height:1.1;
+				-webkit-box-orient:vertical;
+				-webkit-line-clamp:2;
+				line-clamp:2;
+				text-overflow:ellipsis;
+				overflow:hidden;
+			}
+
+			> .Type {
+				display:block;
+				color:var(--colorMedium);
+				font-size:.8rem;
+				line-height:1;
+			}
+		}
+	}
+
+	.Fieldset-Questions-Available {
+		display:block;
+		padding:20px 0 0;
+		position:sticky;
+		top:110px;
+
+		html.👀 & {
+			max-height:calc(100dvh - 60px);
+		}
+
+		.AvailableQuestions-List {
+			width:100%;
+			max-height:calc(100dvh - 160px);
+			margin:0;
+			padding:10px;
+			border:10px solid transparent;
+			grid-column:1 / 2;
+			overscroll-behavior:contain;
+			overflow-y:auto;
+			scrollbar-color:var(--scrollbarColor);
+			scrollbar-width:thin;
+
+			html.🌚 & {
+				--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
+			}
+		}
+
+		.ListItem {
+			margin-inline:0;
+			padding:0;
+
+			&[data-sortable="false"] {
+				opacity:.5;
+				pointer-events:none;
+			}
+
+			&-Inner {
+				display:block;
+				padding:12px 20px 13px;
+				cursor:move;
+			}
+		}
+
+		.Identifier,
+		.Actions,
+		.ListItem-AnswersSettings {
+			display:none;
+		}
+	}
+
+	.Fieldset-Questions-Assigned {
+		display:block;
+		padding:20px 0 0;
+
+		&:has(.Error) {
+			> legend {
+				box-shadow:0 0 10px var(--colorError);
+				background-color:var(--colorError);
+				color:var(--colorBright);
+			}
+		}
+
+		.AssignedQuestions-List {
+			margin:0;
+			padding:20px 0;
+		}
+
+		.ListItem {
+			display:grid;
+			margin-inline:-32px 0;
+			grid-template-rows:auto 1fr;
+			transition:grid-template-rows .3s ease-in-out;
+
+			&:nth-child(even) {
+				--backgroundColorOdd:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
+
+				html.🌚 & {
+					--backgroundColorOdd:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
+				}
+
+				.ListItem-Inner {
+					&:hover {
+						background-color:oklch(from var(--colorLight) calc(l - 0.1176) calc(c + 0.018) calc(h + 1.05));
+
+						html.🌚 & {
+							background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0779) calc(c + 0.004) calc(h - 0.55));
+						}
+					}
+				}
+			}
+
+			&.SortableGhost.AvailableQuestions-ListItem {
+				.ListItem-AnswersSettings {
+					display:none;
+				}
+			}
+
+			&:has(> .Error) {
+				.ListItem-Inner {
+					border-color:var(--colorError);
+					box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
+				}
+
+				.ListItem-AnswersSettings {
+					> .Settings {
+						padding-top:20px;
+						border-radius:5px;
+					}
+				}
+			}
+
+			&:has(.Settings.Visible) {
+				.Actions {
+					opacity:inherit;
+				}
+
+				.Button-Configure {
+					background-color:var(--colorSuccess);
+				}
+			}
+
+			&:last-child {
+				.Answers-List {
+					margin-bottom:0;
+				}
+			}
+
+			> .Error {
+				margin-top:0;
+				border-top-left-radius:0;
+				border-top-right-radius:0;
+			}
+
+			&-Inner {
+				padding:14px 20px 16px;
+				border:2px solid transparent;
+				cursor:default;
+				align-items:start;
+				grid-template-columns:auto 120px;
+				row-gap:15px;
+				transition:background-color .3s ease-in-out, z-index 0s linear 2s;
+				z-index:1;
+
+				&:has(.Identifier) {
+					padding-block:14px;
+					grid-template-columns:auto 120px 100px 36px;
+
+					> .Type {
+						text-align:inherit;
+					}
+				}
+
+				> .Type {
+					line-height:1.1rem;
+					text-align:right;
+				}
+			}
+		}
+
+		.SortableHandle {
+			transform:translateX(-2px);
+		}
+
+		.Error {
+			width:fit-content;
+			margin:20px 10px;
+			padding:3px 10px 7px;
+			border-radius:5px;
+			box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
+			background-color:var(--colorError);
+			color:var(--colorBright);
+			font-size:.8rem;
+			line-height:1.5;
+		}
+
+		.Identifier {
+			margin-block:-5px;
+			padding:5px;
+			background-color:var(--identifierColor, var(--colorDark));
+			font-size:12px;
+			line-height:26px;
+			text-align:center;
+			text-shadow:0 0 5px color-mix(in srgb, var(--colorDark), transparent 50%);
+			align-self:start;
+			transition:opacity .3s ease-in-out;
+
+			&:empty {
+				opacity:0;
+			}
+		}
+
+		.Actions {
+			width:0;
+			height:36px;
+			margin:auto;
+			position:absolute;
+			top:9px;
+			right:10px;
+
+			&:has(.Button-Configure) {
+				width:36px;
+			}
+
+			.Button-Configure {
+				aspect-ratio:1;
+				margin-left:-10px;
+				padding:0;
+				font-size:0;
+				line-height:0;
+
+				&::after {
+					margin:0;
+					line-height:36px;
+				}
+			}
+
+			.Button-Delete {
+				margin-left:0;
+			}
+		}
+
+		.ListItem-AnswersSettings {
+			margin-right:-20px;
+			padding-right:30px;
+			overflow:hidden;
+		}
+
+		.Answers-List {
+			margin:10px 0 20px 60px;
+
+			&Item {
+				margin:2px 0 2px -32px;
+				padding:0 0 0 32px;
+				list-style-type:none;
+				position:relative;
+				transition:z-index 0s linear 2s;
+				z-index:1;
+
+				&:not(:has(
+					input[type="checkbox"][name$="][active]"]:checked,
+					input[type="checkbox"][name$="][allow_custom_answer]"]:checked
+				)) {
+					&:where(:not(:hover)) {
+						.Answers-ListItem-Inner {
+							opacity:.25;
+						}
+					}
+				}
+
+				&.SortableGhost {
+					> .Answers-ListItem-Inner {
+						background-color:var(--colorSuccess);
+						outline:2px solid var(--colorSuccess);
+						outline-offset:-2px;
+
+						html.🌚 & {
+							background-color:var(--colorSuccess);
+						}
+					}
+				}
+
+				&-Inner {
+					padding:9px 20px 9px 60px;
+					border-radius:5px;
+					border:2px solid transparent;
+					background-color:var(--backgroundColorOdd);
+					position:relative;
+					transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
+
+					html.🌚 & {
+						--backgroundColor:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
+					}
+
+					&:hover {
+						background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
+
+						html.🌚 & {
+							background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0779) calc(c + 0.004) calc(h - 0.55));
+						}
+
+						.SortableHandle {
+							opacity:1;
+						}
+
+						.Actions {
+							@extend %ActionsHover;
+						}
+					}
+				}
+			}
+
+			.Settings {
+				margin-right:10px;
+			}
+
+			.Actions {
+				top:6px;
+			}
+
+			.FormInputType-Checkbox {
+				position:absolute;
+				top:13px;
+				left:20px;
+
+				.Label {
+					padding-left:0;
+					font-size:0;
+					line-height:0;
+
+					&::before {
+						position:relative;
+						top:0;
+					}
+				}
+			}
+
+			input[type="checkbox"][name$="][active]"] {
+				display:none;
+			}
+		}
+
+		.Settings {
+			margin:0 0 20px 60px;
+			padding:5px 20px 20px 20px;
+			border-radius:0 0 5px 5px;
+			background-color:var(--backgroundColorOdd);
+			position:relative;
+			transition:z-index 0s linear 2s;
+			z-index:1;
+
+			&:not(.Visible) {
+				display:none;
+			}
+
+			.NextAction {
+				display:grid;
+				gap:10px;
+				grid-template-columns:1fr 1fr;
+
+				&:has(.Button-PickQuestion) {
+					grid-template-columns:1fr 1fr 52px;
+				}
+
+				.FormInput {
+					grid-column:auto / auto;
+				}
+			}
+
+			.Button-PickQuestion {
+				--backgroundColor:var(--colorMedium);
+
+				aspect-ratio:1;
+				padding:0;
+				font-size:0;
+				line-height:0;
+				align-self:end;
+
+				&.Active {
+					--backgroundColor:var(--colorSuccess);
+				}
+
+				&::after {
+					margin:0;
+					font-size:30px;
+					transform:translateY(1px);
+				}
+			}
+		}
+	}
+}

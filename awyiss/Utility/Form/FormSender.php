@@ -435,28 +435,7 @@ class FormSender {
 			$ls_fileName .= '_plain';
 		}
 
-		$la_formData = $this->getFormData();
-		$la_formElements = $this->form->formElements->listNested()->toList();
-		foreach ($la_formElements as $lo_formElement) {
-			if (
-				isset($la_formData[ $lo_formElement->identifier ]) &&
-				in_array($lo_formElement->type, ['date', 'time', 'datetime'])
-			) {
-				$lo_date = new DateTime($la_formData[ $lo_formElement->identifier ]);
-
-				if ($lo_formElement->type === 'datetime') {
-					$lo_date->setTimezone(new DateTimeZone('UTC'));
-				}
-
-				$la_formData[ $lo_formElement->identifier ] = $lo_date;
-			}
-		}
-
-		return $lo_view->element('email/' . $ls_fileName, [
-			'form' => $this->form,
-			'formData' => $la_formData,
-			'formElements' => $la_formElements,
-		]);
+		return $lo_view->element('email/' . $ls_fileName, $this->templateData());
 	}
 
 
@@ -774,5 +753,35 @@ class FormSender {
 		}
 
 		return $ls_result;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	protected function templateData(): array {
+		$la_formData = $this->getFormData();
+		$la_formElements = $this->form->formElements->listNested()->toList();
+
+		foreach ($la_formElements as $lo_formElement) {
+			if (
+				isset($la_formData[ $lo_formElement->identifier ]) &&
+				in_array($lo_formElement->type, ['date', 'time', 'datetime'])
+			) {
+				$lo_date = new DateTime($la_formData[ $lo_formElement->identifier ]);
+
+				if ($lo_formElement->type === 'datetime') {
+					$lo_date->setTimezone(new DateTimeZone('UTC'));
+				}
+
+				$la_formData[ $lo_formElement->identifier ] = $lo_date;
+			}
+		}
+
+		return [
+			'form' => $this->form,
+			'formData' => $la_formData,
+			'formElements' => $la_formElements,
+		];
 	}
 }

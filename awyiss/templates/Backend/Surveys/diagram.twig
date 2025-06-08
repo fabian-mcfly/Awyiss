@@ -1,0 +1,52 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var availableActions \Awyiss\Model\Enum\Survey\NextAction[]
+@var availableForms \Awyiss\Model\Entity\Form[]
+@var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var finalActions array<string, string>
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Surveys Diagram">
+	{% block headlinesDiagram %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('surveys_overview'), {controller: 'surveys', action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
+
+			{% block headlineDiagram %}
+				<h1>{{ __('headline_diagram') }}</h1>
+			{% endblock %}
+
+			{% block subheadlineDiagram %}
+				<h2>
+					{{ survey.title }}
+
+					{% block buttonEdit %}
+						{% if AuthorizationHelper.isAccessible('update') %}
+							{{ HtmlHelper.link(__('edit'), {controller: 'surveys', action: 'edit', id: survey.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+						{% endif %}
+					{% endblock %}
+				</h2>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block questionsDiagram %}
+		{% include '@Backend/Surveys/mermaid_flowchart.twig' %}
+	{% endblock %}
+</div>

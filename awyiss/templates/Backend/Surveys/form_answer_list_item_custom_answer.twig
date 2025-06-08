@@ -1,0 +1,60 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var entity \Awyiss\Model\Entity\SurveySurveyQuestion
+@var availableActions \Awyiss\Model\Enum\Survey\NextAction[]
+@var availableForms \Awyiss\Model\Entity\Form[]
+@var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block answersListItemCustomAnswer %}
+	{% if entity.allowCustomAnswer is defined or answerType == 'available' %}
+		<li class="Answers-ListItem Answers-ListItem-CustomAnswer">
+			{% block answersListItemCustomAnswerInner %}
+				<div class="Answers-ListItem-Inner">
+					{% block answersListItemCustomAnswerLabel %}
+						<span class="Label">{{ __('allow_custom_answer') }}</span>
+					{% endblock %}
+
+					{% block answersListItemActions %}
+						<span class="Actions">
+							{% block answersListItemRemove %}
+								{{ FormHelper.button(__('remove_answer'), {
+									class: 'Button Button-Small Button-Delete',
+									type: 'button',
+									'data-confirm-title': __d('survey_answers', 'confirm_delete_title'),
+									'data-confirm-yes': __d('survey_answers', 'confirm_delete_yes'),
+									'data-confirm-yes-class': 'Button-Delete',
+									'data-confirm-no': __d('survey_answers', 'confirm_delete_no'),
+									'data-confirm': __d('survey_answers', 'confirm_delete', entity.id)
+								}) }}
+							{% endblock %}
+						</span>
+					{% endblock %}
+
+					{% block answersListItemInputs %}
+						{{ FormHelper.control('survey_survey_questions[' ~ index ~'][allow_custom_answer]', {
+							checked: entity.allowCustomAnswer == true,
+							disabled: answerType == 'available',
+							type: 'checkbox',
+						}) }}
+					{% endblock %}
+				</div>
+			{% endblock %}
+		</li>
+	{% endif %}
+{% endblock %}

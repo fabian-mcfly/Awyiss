@@ -1,0 +1,193 @@
+# Survey Question translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-05-21 13:55+0000\n"
+"PO-Revision-Date: 2025-05-21 13:55+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+
+msgid "meta_title_overview"
+msgstr "Umfragen"
+
+msgid "meta_title_add"
+msgstr "Umfrage hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Umfrage bearbeiten"
+
+msgid "meta_title_diagram"
+msgstr "Diagramm"
+
+msgid "menu_title"
+msgstr "Umfragen"
+
+msgid "menu_add"
+msgstr "Neue Umfrage"
+
+msgid "headline_overview"
+msgstr "Umfragen"
+
+msgid "create"
+msgstr "Neue Umfrage"
+
+msgid "headline_add"
+msgstr "Umfrage hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Die Umfrage wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Die Umfrage konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Umfrage bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Die Umfrage wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Die Umfrage konnte nicht aktualisiert werden"
+
+msgid "headline_diagram"
+msgstr "Diagram"
+
+msgid "surveys_overview"
+msgstr "Umfragen Übersicht"
+
+msgid "record_not_found"
+msgstr "Die Umfrage wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diese Umfrage (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Die Umfrage wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Die Umfrage konnte nicht gelöscht werden"
+
+msgid "show_diagram"
+msgstr "Diagramm"
+
+msgid "success_message"
+msgstr "Bestätigungstext"
+
+msgid "failure_message"
+msgstr "Abbruchtext"
+
+msgid "type"
+msgstr "Typ"
+
+msgid "survey_type_linear"
+msgstr "Linear"
+
+msgid "survey_type_configurator"
+msgstr "Konfigurator"
+
+msgid "remove_question"
+msgstr "Frage entfernen"
+
+msgid "remove_answer"
+msgstr "Antwort entfernen"
+
+msgid "fieldset_questions_available"
+msgstr "Verfügbare Fragen"
+
+msgid "fieldset_questions_assigned"
+msgstr "Zugewiesene Fragen"
+
+msgid "error_valid_form_id"
+msgstr "Das Formular existiert nicht"
+
+msgid "error_form_id_set_when_required"
+msgstr "Ein Formular muss ausgewählt werden"
+
+msgid "error_no_repeated_questions_in_linear_survey"
+msgstr "Fragen dürfen in linearen Umfragen nicht wiederholt werden"
+
+msgid "error_no_circular_references"
+msgstr "Fragen dürfen keine Schleifen erzeugen"
+
+msgid "custom_answer"
+msgstr "Eigene Antwort"
+
+msgid "allow_custom_answer"
+msgstr "Eigene Antwort zulassen"
+
+msgid "next_action"
+msgstr "Nächste Aktion"
+
+msgid "next_action_next_question"
+msgstr "Nächste Frage"
+
+msgid "next_action_specific_question"
+msgstr "Festgelegte Frage"
+
+msgid "next_action_abort"
+msgstr "Umfrage abbrechen"
+
+msgid "next_action_show_form"
+msgstr "Formular anzeigen"
+
+msgid "next_action_save_and_end"
+msgstr "Speichern und Umfrage beenden"
+
+msgid "next_action_save_and_show_form"
+msgstr "Speichern und Formular anzeigen"
+
+msgid "next_action_show_form_and_save"
+msgstr "Formular anzeigen und nach dem Absenden speichern"
+
+msgid "next_action_inherit_form"
+msgstr "Aus Umfrage übernehmen"
+
+msgid "final_action"
+msgstr "Abschlussaktion"
+
+msgid "next_action_form"
+msgstr "Formular"
+
+msgid "next_action_question"
+msgstr "Frage"
+
+msgid "toggle_configuration"
+msgstr "Konfiguration ein-/ausblenden"
+
+msgid "pick_question"
+msgstr "Frage auswählen"
+
+msgid "questions_diagram"
+msgstr "Ablaufdiagramm"
+
+msgid "unused_questions"
+msgstr "Nicht erreichbare Fragen"
+
+msgid "zoom_in"
+msgstr "Vergrößern"
+
+msgid "zoom_out"
+msgstr "Verkleinern"
+
+msgid "error_no_invalid_next_actions"
+msgstr "Die Aktion ist ungültig"
+
+msgid "error_valid_final_action"
+msgstr "Die Abschlussaktion ist ungültig"
+
+msgid "error_valid_survey_answer_id"
+msgstr "Die Antwort existiert nicht"
+
+msgid "error_valid_survey_survey_question_id"
+msgstr "Die Umfrage-Frage existiert nicht"
+
+msgid "error_valid_survey_id"
+msgstr "Die Umfrage existiert nicht"
+
+msgid "error_valid_survey_question_id"
+msgstr "Die Umfrage-Frage existiert nicht"

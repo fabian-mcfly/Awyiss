@@ -16,6 +16,7 @@
 	<exclude-pattern>./awyiss/assets/js/Frontend/CookieConsent/cookieconsent.js</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/SortableJS/*</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/Jodit/jodit/*</exclude-pattern>
+	<exclude-pattern>./awyiss/assets/js/Panzoom/*</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/TinyMCE/langs/*</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/TinyMCE/tinymce/*</exclude-pattern>
 	<exclude-pattern>./awyiss/config/*</exclude-pattern>

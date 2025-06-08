@@ -30,6 +30,7 @@ use Cake\Validation\Validator as BaseValidator;
  * @property \Awyiss\Model\Table\WidgetsTable&\Awyiss\ORM\Association\BelongsTo $ParentWidgets
  * @property \Awyiss\Model\Table\WidgetsTable&\Awyiss\ORM\Association\HasMany $ChildWidgets
  * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\BelongsTo $Forms
+ * @property \Awyiss\Model\Table\SurveysTable&\Awyiss\ORM\Association\BelongsTo $Surveys
  * @method \Awyiss\Model\Entity\Widget newDefaultEntity(array $additionalData = [], array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $entity, array $options = [])
@@ -110,6 +111,8 @@ class WidgetsTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Forms');
+
+		$this->belongsTo('Surveys');
 
 		$this->belongsTo('WidgetTemplates');
 	}
@@ -265,6 +268,12 @@ class WidgetsTable extends Table {
 		]);
 
 
+		$validator->add('surveyId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
@@ -346,6 +355,9 @@ class WidgetsTable extends Table {
 
 
 		$rules->add($rules->existsIn(['formId'], 'Forms', ['allowNullableNulls' => true]), 'validFormId', ['errorField' => 'formId']);
+
+
+		$rules->add($rules->existsIn(['surveyId'], 'Surveys', ['allowNullableNulls' => true]), 'validSurveyId', ['errorField' => 'surveyId']);
 
 
 		$rules->add(function (Widget $entity): bool {
@@ -591,6 +603,10 @@ class WidgetsTable extends Table {
 
 		if ($column === 'widget_template_id') {
 			return $this->getAssociation('WidgetTemplates')->find('list', valueField: 'label')->toArray();
+		}
+
+		if ($column === 'survey_id') {
+			return $this->getAssociation('Surveys')->find('list', valueField: 'label')->toArray();
 		}
 
 

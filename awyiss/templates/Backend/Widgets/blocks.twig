@@ -213,3 +213,13 @@
 		required: widgetTemplateElement.required,
 	}) }}
 {% endblock %}
+
+
+{% block formControlSurveyId %}
+	{{ FormHelper.control('survey_id', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		label: widgetTemplateElement.title,
+		options: hashPrinter(settings.surveys, 'label', 'id', '- '),
+		required: widgetTemplateElement.required,
+	}) }}
+{% endblock %}

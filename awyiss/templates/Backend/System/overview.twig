@@ -31,7 +31,7 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% block buttonsOverview %}
+			{% block overviewButtons %}
 				{{ HtmlHelper.link(__('clear_cache'), {action: 'clear-cache'}, {class: 'Button Button-Delete Button-ClearCache'}) }}
 			{% endblock %}
 		</div>
@@ -261,7 +261,7 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 </div>

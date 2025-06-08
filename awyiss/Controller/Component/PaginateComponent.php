@@ -196,7 +196,7 @@ class PaginateComponent extends Component {
 			$li_key++;
 		}
 
-		$li_page = (int)ceil($li_key / $this->getConfig('limit'));
+		$li_page = (int)ceil($li_key / $this->getConfig('limit', 20));
 
 		return $li_page > 1 ? $li_page : null;
 	}

@@ -1,0 +1,227 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var availableActions \Awyiss\Model\Enum\Survey\NextAction[]
+@var availableForms \Awyiss\Model\Entity\Form[]
+@var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var finalActions array<string, string>
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% set baseColor = (config.Awyiss.System.Backend.interface.highlightColor ?? '#63d1a5')|substr(1, 6) %}
+{% set baseForm = survey.formId ? availableForms[ survey.formId ].label %}
+{% set finalAction = 'SaveAndEnd[("' ~ __('next_action_save_and_end') ~ '")]' %}
+{% set shortFinalAction = finalAction %}
+{% set finalActionUsed = false %}
+{% if survey.finalAction in [
+	enum(nextActionEnum).ShowForm,
+	enum(nextActionEnum).SaveAndShowForm,
+	enum(nextActionEnum).ShowFormAndSave,
+] %}
+	{% set saveStepBeforeForm, saveStepAfterFormSubmit, hasSaveStepAfter = '', '', '' %}
+	{% set shortFinalAction = 'ShowForm' %}
+	{% if survey.finalAction == enum(nextActionEnum).SaveAndShowForm %}
+		{% set shortFinalAction = 'SaveAndShowForm'  %}
+		{% set saveStepBeforeForm = shortFinalAction ~ '[("' ~ __('save') ~ '")]--> ' %}
+	{% elseif survey.finalAction == enum(nextActionEnum).ShowFormAndSave %}
+		{% set saveStepAfterFormSubmit = '--> ShowFormAndSave[("' ~ __('save') ~ '")]' %}
+		{% set hasSaveStepAfter = 'AndSaveAfterSubmit' %}
+		{% set shortFinalAction = shortFinalAction ~ hasSaveStepAfter %}
+	{% endif %}
+	{% set finalAction %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ baseForm }})"}{{ saveStepAfterFormSubmit }}{% endset %}
+{% endif %}
+{% set questionsByIdentifier = survey.surveySurveyQuestions ? survey.surveySurveyQuestions|column(null, 'identifier') : [] %}
+{% if survey.surveySurveyQuestions %}
+	<dialog class="Questions-Diagram" data-title="{{ __('questions_diagram') }} {{ survey.title }}" id="Surveys-Diagram">
+		<div class="Inner">
+			<div class="Diagram">---
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    fontFamily: Lato
+    primaryColor: '#{{ baseColor }}22'
+    primaryTextColor: '#{{ config.Awyiss.System.Backend.interface.darkMode == true ? 'FFFFFF' : '202C39' }}'
+    primaryBorderColor: '#{{ baseColor }}'
+    lineColor: '#{{ baseColor }}'
+    secondaryColor: '#{{ config.Awyiss.System.Backend.interface.darkMode == true ? '202C39' : 'FFFFFF' }}'
+  look: handDrawn
+---
+flowchart TD
+				{%~ block diagramQuestions %}
+					{#~ No additional blocks are used in this monster since set calls are limited to the block it is in #}
+StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestions|first.identifier }}
+					{%~ for key, question in survey.surveySurveyQuestions %}
+						{%- set inheritingAnswers = [] %}
+						{%~ set inactive = question.unused or question.onlyReachableFromUnused %}
+						{%~ set questionLabel = question.label|substr(0, -10) ~ '<span class="Identifier Id' ~ question.identifier ~ '" style="--identifierColor:#' ~ question.identifier|substr(0, 6) ~ ';">' ~ question.identifier ~ '</span>' %}
+						{%~ if question.surveySurveyAnswers|length %}
+							{%~ for answer in question.surveySurveyAnswers %}
+								{%~ set link = '--"' ~ answer.label ~ '"-->' %}
+								{%~ if answer.nextAction == enum(nextActionEnum).SpecificQuestion and answer.nextActionTarget %}
+									{%~ if inactive and questionsByIdentifier[ answer.nextActionTarget ].onlyReachableFromUnused != true %}
+										{%~ set link = 'x-."' ~ answer.label ~ '".-x' %}
+									{%~ endif %}
+									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ answer.nextActionTarget }}
+								{%~ elseif answer.nextAction in [
+									enum(nextActionEnum).ShowForm,
+									enum(nextActionEnum).SaveAndShowForm,
+									enum(nextActionEnum).ShowFormAndSave,
+								] %}
+									{%~ set shortFinalAction = 'ShowForm' ~ answer.nextActionTarget %}
+									{%~ set saveStepBeforeForm, saveStepAfterFormSubmit, hasSaveStepAfter = '', '', '' %}
+									{%~ if answer.nextAction == enum(nextActionEnum).SaveAndShowForm %}
+										{%~ set shortFinalAction = 'SaveAndShowForm' ~ answer.nextActionTarget  %}
+										{%~ set saveStepBeforeForm = shortFinalAction ~ '[("' ~ __('save') ~ '")]--> ' %}
+									{%~ elseif answer.nextAction == enum(nextActionEnum).ShowFormAndSave %}
+										{%~ set saveStepAfterFormSubmit = '--> ShowFormAndSave' ~ answer.nextActionTarget ~ '[("' ~ __('save') ~ '")]' %}
+										{%~ set hasSaveStepAfter = 'AndSaveAfterSubmit' %}
+										{%~ set shortFinalAction = shortFinalAction ~ hasSaveStepAfter %}
+									{%~ endif %}
+									{%~ set end %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}{{ answer.nextActionTarget }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ availableForms[answer.nextActionTarget].label ?? baseForm }})"}{{ saveStepAfterFormSubmit }}{% endset %}
+									{%~ if inactive %}
+										{%~ set link = 'x-."' ~ answer.label ~ '".-x' %}
+										{%~ set end = shortFinalAction %}
+									{%~ elseif end == finalAction %}
+										{%~ if finalActionUsed == true %}
+											{%~ set end = shortFinalAction %}
+										{%~ endif %}
+										{%~ set finalActionUsed = true %}
+									{%~ endif %}
+									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ end }}
+								{%~ elseif answer.nextAction == enum(nextActionEnum).Abort %}
+									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} Abort@{ shape: diamond, label: "{{ __('next_action_abort') }}"}
+								{%~ elseif answer.nextAction == enum(nextActionEnum).SaveAndEnd %}
+									{%~ if inactive %}
+										{%~ set link = 'x-."' ~ answer.label ~ '".-x' %}
+									{%~ endif %}
+									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} SaveAndEnd[("{{ __('next_action_save_and_end') }}")]
+								{%~ elseif answer.nextAction == enum(nextActionEnum).NextQuestion %}
+									{%~ if inactive and survey.surveySurveyQuestions[key + 1].onlyReachableFromUnused != true %}
+										{%~ set link = 'x-."' ~ answer.label ~ '".-x' %}
+									{%~ endif %}
+									{%~ if loop.parent.loop.last %}
+										{%~ set end = finalAction %}
+										{%~ if inactive or finalActionUsed == true %}
+											{%~ set end = shortFinalAction %}
+										{%~ else %}
+											{%~ set finalActionUsed = true %}
+										{%~ endif %}
+										{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ end }}
+									{%~ else %}
+										{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ survey.surveySurveyQuestions[key + 1].identifier }}
+									{%~ endif %}
+								{%~ else %}
+									{%- set inheritingAnswers = inheritingAnswers|merge([answer.label]) %}
+								{%~ endif %}
+							{%~ endfor %}
+						{%~ endif %}
+						{%~ if
+							question.surveyQuestion.type in [
+								enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').FreeText,
+								enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').InfoText,
+							] or
+							inheritingAnswers|length or
+							question.surveySurveyAnswers is empty or
+							question.allowCustomAnswer == true
+						%}
+							{%~ if inheritingAnswers|length == question.surveySurveyAnswers|length %}
+								{%~ set inheritingAnswers = [] %}
+							{%~ elseif question.allowCustomAnswer == true %}
+								{%~ set inheritingAnswers = inheritingAnswers is empty ? [ '<em>' ~ __('custom_answer') ~ '</em>' ] : inheritingAnswers|merge([ '<em>' ~ __('custom_answer') ~ '</em>' ]) %}
+							{%~ endif %}
+							{%~ set link = (inheritingAnswers ? ('--"' ~ inheritingAnswers|join('<br>') ~ '"') : '') ~ '-->' %}
+							{%~ if question.nextAction == enum(nextActionEnum).SpecificQuestion and question.nextActionTarget %}
+								{%~ if inactive and questionsByIdentifier[ question.nextActionTarget ].onlyReachableFromUnused != true %}
+									{%~ set link = 'x-.' ~ (inheritingAnswers ? ('"' ~ inheritingAnswers|join('<br>')) ~ '"' : '') ~ '.-x' %}
+								{%~ endif %}
+								{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ question.nextActionTarget }}
+							{%~ elseif question.nextAction in [
+								enum(nextActionEnum).ShowForm,
+								enum(nextActionEnum).SaveAndShowForm,
+								enum(nextActionEnum).ShowFormAndSave,
+							] %}
+								{%~ set shortFinalAction = 'ShowForm' %}
+									{%~ set saveStepBeforeForm, saveStepAfterFormSubmit, hasSaveStepAfter = '', '', '' %}
+								{%~ if question.nextAction == enum(nextActionEnum).SaveAndShowForm %}
+									{%~ set shortFinalAction = 'SaveAndShowForm' ~ question.nextActionTarget %}
+									{%~ set saveStepBeforeForm = shortFinalAction ~ '[("' ~ __('save') ~ '")]--> ' %}
+								{%~ elseif question.nextAction == enum(nextActionEnum).ShowFormAndSave %}
+									{%~ set saveStepAfterFormSubmit = '--> ShowFormAndSave' ~ question.nextActionTarget ~ '[("' ~ __('save') ~ '")]' %}
+									{%~ set hasSaveStepAfter = 'AndSaveAfterSubmit' %}
+									{%~ set shortFinalAction = shortFinalAction ~ hasSaveStepAfter %}
+								{%~ endif %}
+								{%~ set end %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}{{ question.nextActionTarget }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ availableForms[question.nextActionTarget].label ?? baseForm }})"}{{ saveStepAfterFormSubmit }}{% endset %}
+								{%~ if inactive %}
+									{%~ set link = 'x-.' ~ (inheritingAnswers ? ('"' ~ inheritingAnswers|join('<br>') ~ '"') : '') ~ '.-x' %}
+									{%~ set end = shortFinalAction %}
+								{%~ elseif end == finalAction %}
+									{%~ if finalActionUsed == true %}
+										{%~ set end = shortFinalAction %}
+									{%~ endif %}
+									{%~ set finalActionUsed = true %}
+								{%~ endif %}
+								{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ end }}
+							{%~ elseif question.nextAction == enum(nextActionEnum).Abort %}
+								{%~ if question.surveyQuestion.type == enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').InfoText %}
+									{{~ question.identifier }}@{ shape: diamond, label: "{{ questionLabel }}"}
+								{%~ else %}
+									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} Abort@{ shape: diamond, label: "{{ __('next_action_abort') }}"}
+								{%~ endif  %}
+							{%~ elseif question.nextAction == enum(nextActionEnum).SaveAndEnd %}
+								{%~ if inactive %}
+									{%~ set link = 'x-.' ~ (inheritingAnswers ? ('"' ~ inheritingAnswers|join('<br>')) ~ '"' : '') ~ '.-x' %}
+								{%~ endif %}
+								{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} SaveAndEnd[("{{ __('next_action_save_and_end') }}")]
+							{%~ else %}
+								{%~ if inactive and survey.surveySurveyQuestions[key + 1].onlyReachableFromUnused != true %}
+									{%~ set link = 'x-.' ~ (inheritingAnswers ? ('"' ~ inheritingAnswers|join('<br>') ~ '"') : '') ~ '.-x' %}
+								{%~ endif %}
+								{%~ if loop.last %}
+									{%~ set end = finalAction %}
+									{%~ if inactive or finalActionUsed == true %}
+										{%~ set end = shortFinalAction %}
+									{%~ else %}
+										{%~ set finalActionUsed = true %}
+									{%~ endif %}
+									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ end }}
+								{%~ else %}
+									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ survey.surveySurveyQuestions[key + 1].identifier }}
+								{%~ endif %}
+							{%~ endif %}
+						{%~ endif %}
+						{%~ if question.onlyReachableFromUnused -%}
+class {{ question.identifier }} Unreachable
+						{%~ endif %}
+						{%~ if question.active == false or question.surveyQuestion.active == false %}
+							class {{ question.identifier }} Inactive
+						{%~ endif %}
+					{%~ endfor -%}
+					{%~ if finalActionUsed == false %}
+						{{~ finalAction }}
+					{%~ endif %}
+				{%~ endblock %}
+class Abort,None Unused
+			</div>
+			<button class="Button Button-Small Button-Zoom Button-ZoomIn" type="button">{{ __('zoom_in') }}</button>
+			<button class="Button Button-Small Button-Zoom Button-ZoomOut" type="button">{{ __('zoom_out') }}</button>
+			<button class="Button Button-Small Button-Fullscreen" type="button">{{ __('fullscreen') }}</button>
+		</div>
+		<div class="ButtonArea">
+			<button class="Button Button-Close Button-Cancel" type="button">{{ __('close') }}</button>
+		</div>
+	</dialog>
+{% endif %}

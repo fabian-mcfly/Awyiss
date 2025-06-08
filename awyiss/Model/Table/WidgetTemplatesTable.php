@@ -56,6 +56,7 @@ class WidgetTemplatesTable extends Table {
 		'text' => true,
 		'link' => true,
 		'form_id' => true,
+		'survey_id' => true,
 	];
 	/**
 	 * @var array<int, string>
