@@ -798,7 +798,7 @@ class MediaController extends Controller {
 			}
 		}
 		else {
-			if ($this->Media->getSystemOrderRelatedColumns($media)) {
+			if ($this->Media->hasDirtyRelatedSystemOrderColumns($media)) {
 				$media->systemOrder = null;
 			}
 			else {

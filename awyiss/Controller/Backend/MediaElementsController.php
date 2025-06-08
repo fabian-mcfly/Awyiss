@@ -252,7 +252,7 @@ class MediaElementsController extends Controller {
 			}
 		}
 		else {
-			if ($this->MediaElements->getSystemOrderRelatedColumns($mediaElement)) {
+			if ($this->MediaElements->hasDirtyRelatedSystemOrderColumns($mediaElement)) {
 				$mediaElement->systemOrder = null;
 			}
 			else {

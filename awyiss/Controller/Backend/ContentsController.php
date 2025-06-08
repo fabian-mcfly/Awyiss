@@ -578,7 +578,7 @@ class ContentsController extends Controller {
 			}
 		}
 		else {
-			if ($this->Contents->getSystemOrderRelatedColumns($content)) {
+			if ($this->Contents->hasDirtyRelatedSystemOrderColumns($content)) {
 				$content->systemOrder = null;
 			}
 			else {

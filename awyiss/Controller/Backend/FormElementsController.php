@@ -361,7 +361,7 @@ class FormElementsController extends Controller {
 			}
 		}
 		else {
-			if ($this->FormElements->getSystemOrderRelatedColumns($formElement)) {
+			if ($this->FormElements->hasDirtyRelatedSystemOrderColumns($formElement)) {
 				$formElement->systemOrder = null;
 			}
 			else {

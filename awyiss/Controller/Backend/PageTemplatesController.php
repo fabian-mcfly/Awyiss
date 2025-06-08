@@ -260,7 +260,7 @@ class PageTemplatesController extends Controller {
 			}
 		}
 		else {
-			if ($this->PageTemplates->getSystemOrderRelatedColumns($pageTemplate)) {
+			if ($this->PageTemplates->hasDirtyRelatedSystemOrderColumns($pageTemplate)) {
 				$pageTemplate->systemOrder = null;
 			}
 			else {

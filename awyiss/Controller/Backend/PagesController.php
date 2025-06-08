@@ -254,7 +254,7 @@ class PagesController extends Controller {
 				}
 			}
 			else {
-				if ($this->Pages->getSystemOrderRelatedColumns($lo_page)) {
+				if ($this->Pages->hasDirtyRelatedSystemOrderColumns($lo_page)) {
 					$lo_page->systemOrder = null;
 				}
 				else {
@@ -559,7 +559,7 @@ class PagesController extends Controller {
 			}
 		}
 		elseif ($this->request->getData('reload_form')) {
-			if ($this->Pages->getSystemOrderRelatedColumns($page)) {
+			if ($this->Pages->hasDirtyRelatedSystemOrderColumns($page)) {
 				$page->systemOrder = null;
 			}
 			else {

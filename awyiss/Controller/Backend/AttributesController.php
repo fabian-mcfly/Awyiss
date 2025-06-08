@@ -228,7 +228,7 @@ class AttributesController extends Controller {
 			}
 		}
 		else {
-			if ($this->Attributes->getSystemOrderRelatedColumns($attribute)) {
+			if ($this->Attributes->hasDirtyRelatedSystemOrderColumns($attribute)) {
 				$attribute->systemOrder = null;
 			}
 			else {

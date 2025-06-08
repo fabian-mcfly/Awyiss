@@ -274,7 +274,7 @@ class SurveysController extends Controller {
 			}
 		}
 		elseif ($this->Surveys->hasBehavior('SystemOrder')) {
-			if ($this->Surveys->getSystemOrderRelatedColumns($survey)) {
+			if ($this->Surveys->hasDirtyRelatedSystemOrderColumns($survey)) {
 				/** @noinspection PhpUndefinedFieldInspection */
 				$survey->systemOrder = null;
 			}

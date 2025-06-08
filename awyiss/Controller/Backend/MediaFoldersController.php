@@ -302,7 +302,7 @@ class MediaFoldersController extends Controller {
 			}
 		}
 		else {
-			if ($this->MediaFolders->getSystemOrderRelatedColumns($mediaFolder)) {
+			if ($this->MediaFolders->hasDirtyRelatedSystemOrderColumns($mediaFolder)) {
 				$mediaFolder->systemOrder = null;
 			}
 			else {

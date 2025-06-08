@@ -182,7 +182,7 @@ class UsersController extends Controller {
 			}
 		}
 		elseif ($this->Users->hasBehavior('SystemOrder')) {
-			if ($this->Users->getSystemOrderRelatedColumns($user)) {
+			if ($this->Users->hasDirtyRelatedSystemOrderColumns($user)) {
 				$user->systemOrder = null;
 			}
 			else {

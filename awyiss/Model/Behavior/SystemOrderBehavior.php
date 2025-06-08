@@ -63,6 +63,7 @@ class SystemOrderBehavior extends Behavior {
 			'addSystemOrderQueryConditions' => 'addQueryConditions',
 			'getHighestSystemOrder' => 'getHighestSystemOrder',
 			'getSystemOrderRelatedColumns' => 'getRelatedColumns',
+			'hasDirtyRelatedSystemOrderColumns' => 'hasDirtyRelatedColumns',
 		],
 		'relatedColumns' => [],
 		'skip' => false,
@@ -604,6 +605,39 @@ class SystemOrderBehavior extends Behavior {
 
 
 		return array_intersect($la_dirty, $this->table()->extractAttributeFields($la_relatedColumns, true));
+	}
+
+
+	/**
+	 * Returns whether the entity has dirty related columns.
+	 * Dirty requires the column to be an original as well.
+	 *
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return bool
+	 * @noinspection PhpUnused
+	 */
+	public function hasDirtyRelatedColumns(EntityInterface $entity): bool {
+		if (!$this->getConfig('enabled')) {
+			return false;
+		}
+
+		$la_relatedColumns = $this->getRelatedColumns($entity);
+
+		foreach ($la_relatedColumns as $ls_column) {
+			if ($entity->isDirty($ls_column) && $entity->hasOriginal($ls_column)) {
+				return true;
+			}
+
+			if (
+				$entity->get('attributes') instanceof EntityInterface &&
+				$entity->get('attributes')->isDirty($ls_column) &&
+				$entity->get('attributes')->hasOriginal($ls_column)
+			) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 

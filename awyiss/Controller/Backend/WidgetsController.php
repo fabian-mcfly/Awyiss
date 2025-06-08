@@ -371,7 +371,7 @@ class WidgetsController extends Controller {
 			}
 		}
 		else {
-			if ($this->Widgets->getSystemOrderRelatedColumns($widget)) {
+			if ($this->Widgets->hasDirtyRelatedSystemOrderColumns($widget)) {
 				$widget->systemOrder = null;
 			}
 			else {

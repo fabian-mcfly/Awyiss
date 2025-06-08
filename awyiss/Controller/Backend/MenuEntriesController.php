@@ -285,7 +285,7 @@ class MenuEntriesController extends Controller {
 			}
 		}
 		else {
-			if ($this->MenuEntries->getSystemOrderRelatedColumns($menuEntry)) {
+			if ($this->MenuEntries->hasDirtyRelatedSystemOrderColumns($menuEntry)) {
 				$menuEntry->systemOrder = null;
 			}
 			else {

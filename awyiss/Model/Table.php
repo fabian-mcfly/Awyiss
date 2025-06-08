@@ -51,6 +51,7 @@ use RuntimeException;
  * @method int getHighestSystemOrder(\Cake\Datasource\EntityInterface $entity)
  * @method string|\Awyiss\Authorization\Policy\AbstractGenericPolicy|null getPolicyClass()
  * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $entity = null)
+ * @method array hasDirtyRelatedSystemOrderColumns(?\Cake\Datasource\EntityInterface $entity = null)
  * @method array extractAttributeFields(array $fields, bool $inlcudeBaseFields = false)
  * @method \Awyiss\Model\Entity\Attribute[] getAttributes()
  * @method \Awyiss\Model\Table getAttributesTable()

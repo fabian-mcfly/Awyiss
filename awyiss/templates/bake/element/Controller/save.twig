@@ -43,7 +43,7 @@
 			}
 		}
 		elseif ($this->{{ currentModelName }}->hasBehavior('SystemOrder')) {
-			if ($this->{{ currentModelName }}->getSystemOrderRelatedColumns(${{ singularName }})) {
+			if ($this->{{ currentModelName }}->hasDirtyRelatedSystemOrderColumns(${{ singularName }})) {
 				${{ singularName }}->systemOrder = null;
 			}
 			else {
