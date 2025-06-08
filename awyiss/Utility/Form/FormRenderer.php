@@ -103,10 +103,21 @@ class FormRenderer {
 
 		$this->form->initialize(
 			$this->View,
-			$requestData,
 			$this->page,
 			$this->isPreview(),
 		);
+
+		if ($this->form->identifier === ($requestData['_form_identifier'] ?? null)) {
+			$this->form->submitted();
+
+			$this->form->setFormData($requestData);
+		}
+
+		$this->form->getFormOptions()->modifyForm($this->form, $this->page);
+
+		if ($this->form->isSubmitted()) {
+			$this->form->getFormOptions()->setConditionalRecipient($this->form, $this->page);
+		}
 
 		return $this;
 	}

@@ -159,32 +159,19 @@ class Form extends Entity {
 	 * and used to send emails and/or save data
 	 *
 	 * @param \Cake\View\View $view
-	 * @param array $requestData
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @param bool $isPreview
 	 * @return $this
 	 */
-	public function initialize(View $view, array $requestData = [], ?Page $page = null, bool $isPreview = false): static {
+	public function initialize(View $view, ?Page $page = null, bool $isPreview = false): static {
 		$this->view = $view;
 		$this->isPreview = $isPreview;
 		$this->sourcePage = $page;
 
-		if ($this->identifier === ($requestData['_form_identifier'] ?? null)) {
-			$this->formSubmitted = true;
-			$this->setFormData($requestData);
-		}
-
 		$this
 			->loadFormOptions()
 			->loadFormElements()
-			->setFormData($requestData)
 			->initProtectionMethods();
-
-		$this->getFormOptions()->modifyForm($this, $this->sourcePage);
-
-		if ($this->isSubmitted()) {
-			$this->getFormOptions()->setConditionalRecipient($this, $this->sourcePage);
-		}
 
 		return $this;
 	}
@@ -301,6 +288,17 @@ class Form extends Entity {
 
 			$this->formOptions = new $ls_className();
 		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @param bool $submitted
+	 * @return $this
+	 */
+	public function submitted(bool $submitted = true) {
+		$this->formSubmitted = $submitted;
 
 		return $this;
 	}
