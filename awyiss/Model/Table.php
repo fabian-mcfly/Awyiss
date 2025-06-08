@@ -1143,6 +1143,11 @@ class Table extends BaseTable {
 			return;
 		}
 
+		if ($entity->get('deleted') === true) {
+			// If the entity is deleted, we don't want to clean the HTML
+			return;
+		}
+
 		// Convert image tags to the custom format
 		if (Configure::read('Awyiss.Media.Backend.handleImagesInHtml')) {
 			/** @var \Awyiss\Utility\Content\ImageHandler $ls_className */
