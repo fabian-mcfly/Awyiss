@@ -91,14 +91,14 @@ class FormEntriesTable extends Table {
 		]);
 
 
-		$validator->notEmptyString('subject');
+		$validator->allowEmptyString('subject');
 		$validator->add('subject', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		$validator->notEmptyString('subjectConfirmation');
+		$validator->allowEmptyString('subjectConfirmation');
 		$validator->add('subjectConfirmation', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
