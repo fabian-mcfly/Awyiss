@@ -491,7 +491,12 @@ class ImageHandler {
 			// Copy the original assignment ID if it exists, but only if the entity is not new
 			// If it is new, it's a copy, and we don't want to steal the assignment from the original content
 			if (!$entity->isNew() && isset($la_originalInlineAssignments[ $lo_media->id ])) {
-				$lo_assignment->set('id', $la_originalInlineAssignments[ $lo_media->id ]->id);
+				$lo_original = $la_originalInlineAssignments[ $lo_media->id ];
+
+				$lo_assignment->set('id', $lo_original->id);
+				$lo_assignment->set('createdBy', $lo_original->createdBy);
+				$lo_assignment->set('createdOn', $lo_original->createdOn);
+
 				$lo_assignment->setNew(false);
 			}
 
