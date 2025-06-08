@@ -338,6 +338,7 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	protected static function getOptions(string $field, array $options, array $languages): array {
 		$lb_i18n = count($languages) > 1;
 		$ls_mainLocale = current($languages)->locale;
+		$lb_isList = array_is_list($options);
 
 		$la_options = [];
 
@@ -347,7 +348,7 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 				$ls_translation = static::$translations['en_GB'][ $field . '_' . $ls_value ];
 			}
 
-			$ls_key = $lx_key;
+			$ls_key = $lb_isList ? null : $lx_key;
 			if ($lx_key && is_string($lx_key)) {
 				$ls_key = static::$translations[ $ls_mainLocale ][ $field . '_' . $lx_key ];
 				if ($ls_key === null) {
@@ -368,7 +369,7 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 						$ls_translation = static::$translations['en_GB'][ $field . '_' . $ls_value ];
 					}
 
-					$ls_key = $lx_key;
+					$ls_key = $lb_isList ? null : $lx_key;
 					if ($lx_key && is_string($lx_key)) {
 						$ls_key = static::$translations[ $lo_language->locale ][ $field . '_' . $lx_key ];
 						if ($ls_key === null) {
