@@ -269,7 +269,12 @@ class Table extends BaseTable {
 				$this->addBehavior('SystemOrder', $this->systemOrder);
 			}
 
-			if (!str_starts_with($this->getTable(), 'media')) {
+			if (
+				!str_starts_with($this->getTable(), 'media') &&
+				!in_array($this->getTable(), [
+					'publication_data',
+				])
+			) {
 				$this->addBehavior('MediaAssignment');
 				$this->addBehavior('MediaElementAssignment');
 			}
