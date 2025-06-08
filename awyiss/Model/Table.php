@@ -723,9 +723,13 @@ class Table extends BaseTable {
 				}
 
 				if ($lo_association instanceof HasMany) {
-					foreach (($entity->get($ls_property) ?? []) as $lo_associated) {
-						$lo_associated->unset((array)$lo_association->getPrimaryKey());
-						$lo_associated->setNew(true);
+					foreach (($entity->get($ls_property) ?? []) as $lx_associated) {
+						if (!($lx_associated instanceof EntityInterface)) {
+							continue;
+						}
+
+						$lx_associated->unset((array)$lo_association->getPrimaryKey());
+						$lx_associated->setNew(true);
 					}
 				}
 
@@ -813,7 +817,6 @@ class Table extends BaseTable {
 					$la_isNew[ $lx_key ] = $lo_entity->isNew();
 					if ($this->save($lo_entity, $la_options) === false) {
 						$lo_failed = $lo_entity;
-
 
 						return false;
 					}
