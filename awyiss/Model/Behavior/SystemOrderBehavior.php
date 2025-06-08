@@ -19,7 +19,7 @@ use Cake\Utility\Hash;
 
 /**
  * SystemOrderBehavior handles records and tables that have a `systemOrder` column.
- * It changes the position of other records after changing the positition of one record.
+ * It changes the position of other records after changing the position of one record.
  *
  * It also guarantees the `systemOrder`-column to have a valid value (no gaps, no duplicates)
  *
@@ -118,6 +118,7 @@ class SystemOrderBehavior extends Behavior {
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpUnused
 	 */
 	public function beforeCopy(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if ($options['_primary'] === false) {
@@ -304,7 +305,7 @@ class SystemOrderBehavior extends Behavior {
 			$li_systemOrderOld = $entity->getOriginal('systemOrder');
 
 			//Create a new query and get all records inside the entity's scope, without the entity itself
-			$lo_query = $this->addQueryConditions($lo_table->find(), $entity);
+			$lo_query = $this->addQueryConditions($lo_table->find(), $entity, false, false);
 			$lo_query->where([
 				$ls_tableAlias . '.id !=' => $entity->get('id'),
 			]);
@@ -424,7 +425,7 @@ class SystemOrderBehavior extends Behavior {
 		$lo_options = new ArrayObject(Hash::merge($this->getConfig(), Hash::get($options, 'systemOrder')));
 		if ($lo_options['skip'] === true) {
 			/*
-			 * If the system order behavior is skipped, remember the orignal values of the related columns for the given entity
+			 * If the system order behavior is skipped, remember the original values of the related columns for the given entity
 			 * and handle them in the afterDeleteCommit event.
 			 *
 			 * This will make sure that the update will not run on entities that will be deleted inside the same transaction
@@ -489,9 +490,10 @@ class SystemOrderBehavior extends Behavior {
 	 * @param SelectQuery|null $query
 	 * @param EntityInterface $entity
 	 * @param bool $preferOriginal
+	 * @param bool $includeMediaAssignments
 	 * @return SelectQuery|false
 	 */
-	public function addQueryConditions(?SelectQuery $query, EntityInterface $entity, bool $preferOriginal = false): SelectQuery|false {
+	public function addQueryConditions(?SelectQuery $query, EntityInterface $entity, bool $preferOriginal = false, bool $includeMediaAssignments = true): SelectQuery|false {
 		if (!$this->getConfig('enabled')) {
 			return false;
 		}
@@ -506,7 +508,7 @@ class SystemOrderBehavior extends Behavior {
 			//If no query was provided, create one
 			$lo_query = $this->table()->find();
 
-			if (in_array($ls_tableAlias, ['Contents', 'Widgets'])) {
+			if ($includeMediaAssignments && in_array($ls_tableAlias, ['Contents', 'Widgets'])) {
 				$lo_query->find('mediaAssignments', useMediaEntity: true);
 			}
 		}
@@ -554,7 +556,7 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
-	 * Retreive the current highest system order for the scope of the provided entity
+	 * Retrieve the current highest system order for the scope of the provided entity
 	 *
 	 * @param EntityInterface $entity
 	 * @return int
@@ -566,7 +568,7 @@ class SystemOrderBehavior extends Behavior {
 
 		$lo_table = $this->table();
 
-		$lo_query = $this->addQueryConditions($lo_table->find(), $entity);
+		$lo_query = $this->addQueryConditions($lo_table->find(), $entity, false, false);
 
 		$lo_record = $lo_query->select('system_order')->orderByDesc('system_order')->first();
 
@@ -659,8 +661,8 @@ class SystemOrderBehavior extends Behavior {
 		$lo_table = $this->table();
 		$ls_tableAlias = $lo_table->getAlias();
 
-		//Retreive all records in the same scope of the entity
-		$lo_query = $this->addQueryConditions($lo_table->find(), $entity);
+		//Retrieve all records in the same scope of the entity
+		$lo_query = $this->addQueryConditions($lo_table->find(), $entity, false, false);
 		//that are not the entity itself and have a systemOrder larger than or equal the entity's.
 		$lo_query->where([
 			$ls_tableAlias . '.id !=' => $entity->get('id'),
@@ -699,6 +701,7 @@ class SystemOrderBehavior extends Behavior {
 	 * @param EntityInterface $entity
 	 * @param array $originalData
 	 * @throws \Exception
+	 * @noinspection DuplicatedCode
 	 */
 	protected function updateAfterRemove(EventInterface $event, EntityInterface $entity, array $originalData = []): void {
 		$lo_table = $this->table();
@@ -719,7 +722,7 @@ class SystemOrderBehavior extends Behavior {
 		 *
 		 * This is necessary since related entities (the attribute in this case) will be saved and marked as clean
 		 * before the main entity, so attributes, at this point, have no original values and cannot be used
-		 * to retreive the records of the old scope.
+		 * to retrieve the records of the old scope.
 		 */
 		if (
 			$originalData &&
@@ -743,8 +746,8 @@ class SystemOrderBehavior extends Behavior {
 			}
 		}
 
-		//Retreive all records in the same scope of the entity
-		$lo_query = $this->addQueryConditions($lo_table->find(), $lo_entity, true);
+		//Retrieve all records in the same scope of the entity
+		$lo_query = $this->addQueryConditions($lo_table->find(), $lo_entity, true, false);
 		//that are not the entity itself and have a systemOrder larger than or equal the entity's old position.
 		$lo_query->where([
 			$ls_tableAlias . '.id !=' => $lo_entity->get('id'),
@@ -785,7 +788,7 @@ class SystemOrderBehavior extends Behavior {
 	protected function setSystemOrderByField(EntityInterface $entity, string $field): void {
 		$lo_table = $this->table();
 		$ls_fieldType = $lo_table->getSchema()->getColumnType($field);
-		$lo_query = $this->addQueryConditions($lo_table->find(), $entity);
+		$lo_query = $this->addQueryConditions($lo_table->find(), $entity, false, false);
 
 		$ls_field = $field;
 		if (str_starts_with($ls_field, 'attributes.')) {
