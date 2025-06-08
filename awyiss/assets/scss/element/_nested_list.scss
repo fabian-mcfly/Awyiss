@@ -43,6 +43,7 @@
 	&.Level1 {
 		margin:0 -20px;
 		grid-column:1 / span 12;
+		container:listItem / inline-size;
 
 		@media screen and (width <= 1280px) {
 			margin-inline:0;
