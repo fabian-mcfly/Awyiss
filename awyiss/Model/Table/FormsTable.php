@@ -92,6 +92,8 @@ class FormsTable extends Table {
 		$this->hasMany('Pages');
 
 		$this->hasMany('Surveys');
+
+		$this->hasMany('Widgets');
 	}
 
 
@@ -392,6 +394,24 @@ class FormsTable extends Table {
 			[
 				'errorField' => '_general',
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_pages'),
+			]
+		);
+
+		$rules->addDelete(
+			$rules->isNotLinkedTo('Surveys', 'surveys'),
+			'noLinkedSurveys',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_surveys'),
+			]
+		);
+
+		$rules->addDelete(
+			$rules->isNotLinkedTo('Widgets', 'widgets'),
+			'noLinkedWidgets',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_widgets'),
 			]
 		);
 
