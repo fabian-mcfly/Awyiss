@@ -48,15 +48,20 @@ class SurveyCell extends Cell {
 		$ls_className = App::className('SurveyRenderer', 'Utility/Survey');
 		$lo_surveyRenderer = new $ls_className($this->getView());
 
+		$la_requestData = $this->request->getData();
 		$lo_surveyRenderer->initSurvey(
 			$identifier,
-			$this->request->getData(),
+			$la_requestData,
 			$this->page
 		);
 
 		$lo_survey = $lo_surveyRenderer->getSurvey();
 		if (!$lo_survey) {
 			return;
+		}
+
+		if (($la_requestData['survey'][ $lo_survey->identifier ]['action'] ?? null) === 'go_back') {
+			$lo_survey->goToStep($la_requestData['survey'][ $lo_survey->identifier ]['last_action']);
 		}
 
 		$lo_surveyRenderer->process(

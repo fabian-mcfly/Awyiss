@@ -30,9 +30,7 @@
 			{% endblock %}
 		{% else %}
 			{% block surveyForm %}
-				{% if hasNextAction %}
-					<form method="post">
-				{% endif %}
+				<form method="post">
 			{% endblock %}
 
 			{% block surveyFailureEnding %}
@@ -62,11 +60,24 @@
 			{% endblock %}
 
 			{% block surveyActions %}
-				{% block surveyActionProceed %}
-					{% if hasNextAction %}
-						<button type="submit" name="survey_action" value="proceed" class="Button Survey-NextAction">{{ __d('surveys', 'next') }}</button>
-					{% endif %}
-				{% endblock %}
+				<div class="Survey-Actions">
+					{% block surveyActionProceed %}
+						{% if hasNextAction %}
+							<div class="SurveyAction-Proceed">
+								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="proceed" class="Button Survey-NextAction">{{ __d('surveys', 'next') }}</button>
+							</div>
+						{% endif %}
+					{% endblock %}
+
+					{% block surveyActionGoBack %}
+						{% if progress is not empty %}
+							<div class="SurveyAction-GoBack">
+								<input type="hidden" name="survey[{{ survey.identifier }}][last_action]" value="{{ progress|keys|last }}">
+								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="go_back" class="Button Survey-GoBack">{{ __d('surveys', 'back') }}</button>
+							</div>
+						{% endif %}
+					{% endblock %}
+				</div>
 			{% endblock %}
 
 			{% block surveyIdentifier %}
@@ -76,9 +87,7 @@
 			{% endblock %}
 
 			{% block surveyFormEnd %}
-				{% if hasNextAction %}
-					</form>
-				{% endif %}
+				</form>
 			{% endblock %}
 		{% endif %}
 	</div>

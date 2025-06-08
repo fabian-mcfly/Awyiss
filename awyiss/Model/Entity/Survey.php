@@ -159,12 +159,32 @@ class Survey extends Entity {
 		$this->loadQuestions()
 			->setProgress($progressData);
 
-		/*$this->loadFormOptions()
-			->loadFormElements()
-			->setFormData($progressData)
-			->initProtectionMethods();
+		return $this;
+	}
 
-		$this->getFormOptions()->modifyForm($this, $this->sourcePage);*/
+
+	/**
+	 * @param string $identifier
+	 * @return $this
+	 */
+	public function goToStep(string $identifier): static {
+		if (!$this->progressData) {
+			return $this;
+		}
+
+		if (
+			!isset($this->questionsByIdentifier[ $identifier ]) ||
+			!isset($this->progressData[ $identifier ])
+		) {
+			throw new InvalidArgumentException(sprintf('The question with identifier `%s` does not exist in the survey.', $identifier));
+		}
+
+		// Remove all progress data after the given identifier
+		$la_progress = array_keys($this->progressData);
+		$li_index = array_search($identifier, $la_progress, true);
+		$la_progress = array_slice($this->progressData, 0, $li_index);
+
+		$this->setProgress($la_progress);
 
 		return $this;
 	}
@@ -510,7 +530,7 @@ class Survey extends Entity {
 
 		$la_customData = $progressData['custom'] ?? [];
 		/** @noinspection PhpVariableNamingConventionInspection */
-		unset($progressData['custom']);
+		unset($progressData['custom'], $progressData['action'], $progressData['last_action']);
 
 		foreach ($progressData as $ls_identifier => $lx_answer) {
 			$lo_question = $this->questionsByIdentifier[ $ls_identifier ] ?? null;

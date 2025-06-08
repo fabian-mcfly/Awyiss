@@ -14,6 +14,9 @@ msgstr ""
 msgid "next"
 msgstr "Weiter"
 
+msgid "back"
+msgstr "Zurück"
+
 msgid "free_answer_label"
 msgstr "Anmerkung"
 

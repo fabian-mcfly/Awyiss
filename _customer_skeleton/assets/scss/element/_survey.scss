@@ -1,3 +1,24 @@
+.Survey {
+	.Form {
+		+ .Survey-Actions {
+			margin-top:-2.2em;
+
+			.Button {
+				position:relative;
+				z-index:1;
+			}
+		}
+	}
+
+	.FormElementType-Submit {
+		.FormInputType-Button {
+			display:block;
+			width:fit-content;
+			margin-left:auto;
+		}
+	}
+}
+
 .SurveyQuestion {
 	margin-bottom:1.5rem;
 
@@ -149,8 +170,17 @@
 	}
 }
 
-.Survey-NextAction {
+.Survey-Actions {
+	display:flex;
+	margin-top:1.5rem;
+}
+
+.SurveyAction-GoBack {
 	display:block;
-	width:fit-content;
+}
+
+.SurveyAction-Proceed {
+	display:block;
 	margin-left:auto;
+	order:2;
 }
