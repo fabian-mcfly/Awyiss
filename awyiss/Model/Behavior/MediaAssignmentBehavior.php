@@ -427,8 +427,13 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$lo_identity = $this->getIdentity();
 		// If the user doesn't have access to the media scope, remove the media assignments from the entity
-		if (!$lo_identity || !$lo_identity->scopeIsAccessible('Media', [], 'read')) {
+		if (
+			!$lo_identity ||
+			!$lo_identity->scopeIsAccessible('Media', [], 'read')
+		) {
 			unset($entity->mediaAssignments);
+			$entity->setDirty('mediaAssignments', false);
+			return;
 		}
 
 		/**
