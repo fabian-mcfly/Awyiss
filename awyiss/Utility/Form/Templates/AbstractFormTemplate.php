@@ -171,8 +171,9 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	protected static function addEmail(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
 			'identifier' => 'email',
-			'title' => static::$translations[ $mainLocale ]['email'],
 			'required' => true,
+			'title' => static::$translations[ $mainLocale ]['email'],
+			'type' => 'email',
 		];
 
 		if ($i18n) {
