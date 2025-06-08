@@ -341,8 +341,8 @@ class FormSender {
 		$la_data = [
 			'form_id' => $this->form->id,
 			'page_id' => $this->page?->id ?? null,
-			'subject' => html_entity_decode($this->form->subject),
-			'subject_confirmation' => html_entity_decode($this->form->subjectConfirmation),
+			'subject' => html_entity_decode($this->form->subject ?? ''),
+			'subject_confirmation' => html_entity_decode($this->form->subjectConfirmation ?? ''),
 			'body' => $this->emailBody['email'] ? base64_encode(gzcompress($this->emailBody['email'])) : null,
 			'body_confirmation' => $this->emailBody['confirmation'] ? base64_encode(gzcompress($this->emailBody['confirmation'])) : null,
 			'data' => base64_encode(gzcompress(json_encode($this->getFormData()))),
