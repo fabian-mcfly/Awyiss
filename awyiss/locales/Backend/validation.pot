@@ -98,6 +98,9 @@ msgstr "There are still contents that use this element"
 msgid "error_linked_widgets"
 msgstr "There are still widgets that use this element"
 
+msgid "error_linked_surveys"
+msgstr "There are still surveys that use this element"
+
 msgid "error_linked_pages"
 msgstr "There are still pages that use this element"
 

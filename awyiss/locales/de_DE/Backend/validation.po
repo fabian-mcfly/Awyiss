@@ -98,6 +98,9 @@ msgstr "Es existieren noch Inhalte, die dieses Element verwenden"
 msgid "error_linked_widgets"
 msgstr "Es existieren noch Widgets, die dieses Element verwenden"
 
+msgid "error_linked_surveys"
+msgstr "Es existieren noch Umfragen, die dieses Element verwenden"
+
 msgid "error_linked_pages"
 msgstr "Es existieren noch Seiten, die dieses Element verwenden"
 
