@@ -179,6 +179,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	public function rebuildMediaAssignments(EntityInterface|array $entity, bool $useMediaEntity = false): EntityInterface|array {
 		$la_mediaAssignments = [];
 
+		if (!isset(static::$mediaElements)) {
+			$this->buildElements();
+		}
+
 		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_mediaAssignment */
 		foreach (($entity['mediaAssignments'] ?? []) as $lo_mediaAssignment) {
 			if (is_array($lo_mediaAssignment)) {
