@@ -940,6 +940,10 @@ export default class NestedListHandler {
 	 * @param {MutationRecord} mutation
 	 */
 	observeMutations(mutation) {
+		if (document.querySelector('.SortableDragging')) {
+			return false;
+		}
+
 		mutation.addedNodes.forEach(node => {
 			if (!(node instanceof HTMLElement)) {
 				return;
