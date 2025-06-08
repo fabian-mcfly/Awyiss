@@ -23,6 +23,8 @@
 {% extends '@Frontend/element/survey/question.twig' %}
 
 {% block answers %}
-	<label for="SurveyAnswer-Input">{{ __d('surveys', 'free_answer_label') }}</label>
-	<textarea name="survey[{{ survey.identifier }}][{{ question.identifier }}]" id="SurveyAnswer-Input"></textarea>
+	<div class="SurveyAnswer-FreeText">
+		<label for="SurveyAnswer-Input">{{ __d('surveys', 'free_answer_label') }}</label>
+		<textarea name="survey[{{ survey.identifier }}][{{ question.identifier }}]" id="SurveyAnswer-Input"></textarea>
+	</div>
 {% endblock %}

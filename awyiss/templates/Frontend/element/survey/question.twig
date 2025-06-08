@@ -82,15 +82,15 @@
 
 				{% block customAnswer %}
 					{% if question.allowCustomAnswer %}
-						<li class="SurveyAnswer" id="SurveyAnswer-Custom{{ question.identifier|ucparts }}">
+						<li class="SurveyAnswer SurveyAnswer-Custom" id="SurveyAnswer-Custom{{ question.identifier|ucparts }}">
 							{% block customAnswerInput %}
 								<input type="radio" name="survey[{{ survey.identifier }}][{{ question.identifier }}]" value="custom" id="SurveyAnswer-InputCustom">
 							{% endblock %}
 							{% block customAnswerLabel %}
-								<label for="SurveyAnswer-InputCustom">{{ __d('survey', 'custom_answer_label') }}</label>
+								<label for="SurveyAnswer-InputCustom">{{ __d('surveys', 'custom_answer_label') }}</label>
 							{% endblock %}
 							{% block customAnswerInputField %}
-								<input type="text" name="survey[{{ survey.identifier }}][custom][{{ question.identifier }}]">
+								<input type="text" name="survey[{{ survey.identifier }}][custom][{{ question.identifier }}]" class="SurveyAnswer-CustomInput">
 							{% endblock %}
 					{% endif %}
 				{% endblock %}

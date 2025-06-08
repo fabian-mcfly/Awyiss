@@ -353,7 +353,7 @@ class SurveyRenderer {
 				$this->survey->getNextActionEnum()::SaveAndShowForm,
 			])
 		) {
-			$this->survey->setError('_general', __d('survey', 'save_entry_failed'));
+			$this->survey->setError('_general', __d('surveys', 'save_entry_failed'));
 		}
 
 		if ($this->processedForm) {
