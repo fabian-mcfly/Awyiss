@@ -19,6 +19,7 @@ use Awyiss\View\Cell\Frontend\Trait\FrontendRenderingTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\FrontendView;
 use BackedEnum;
+use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\RedirectException;
@@ -325,6 +326,8 @@ class SurveyRenderer {
 	 * @throws \ReflectionException
 	 */
 	public function getSurveyBody(array $options): string {
+		static $ls_templatePath;
+
 		if (!$this->survey) {
 			return '';
 		}
@@ -332,7 +335,26 @@ class SurveyRenderer {
 		$ls_currentQuestion = '';
 		$lb_hasNextAction = false;
 		if ($this->currentAction instanceof SurveySurveyQuestion) {
-			$ls_currentQuestion = $this->getView()->element('survey/' . $this->currentAction->surveyQuestion->type->value, [
+			if (!isset($ls_templatePath)) {
+				$ls_templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);
+			}
+
+			$ls_fileName = 'Question' . $this->currentAction->identifier;
+
+			$ls_filePath = implode(DS, [
+				$ls_templatePath,
+				'Frontend',
+				'element',
+				'survey',
+				$ls_fileName . '.twig',
+			]);
+
+			$ls_element = $this->currentAction->surveyQuestion->type->value;
+			if (file_exists($ls_filePath)) {
+				$ls_element = $ls_fileName;
+			}
+
+			$ls_currentQuestion = $this->getView()->element('survey/' . $ls_element, [
 				'survey' => $this->survey,
 				'question' => $this->currentAction,
 			]);
