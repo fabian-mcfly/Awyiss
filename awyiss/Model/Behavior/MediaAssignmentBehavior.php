@@ -416,6 +416,15 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		if (
+			// If no media assignments are set, skip the processing
+			!$entity->has('mediaAssignments') ||
+			// If the options explicitly state to skip media assignments, skip the processing
+			($options['mediaAssignments']['skip'] ?? false) === true
+		) {
+			return;
+		}
+
 		$lo_identity = $this->getIdentity();
 		// If the user doesn't have access to the media scope, remove the media assignments from the entity
 		if (!$lo_identity || !$lo_identity->scopeIsAccessible('Media', [], 'read')) {
