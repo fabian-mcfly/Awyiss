@@ -146,10 +146,10 @@ trait FrontendRenderingTrait {
 	/**
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param array $fields
 	 * @return void
-	 * @throws \Exception
 	 */
-	public function parseResponsiveImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions): void {
+	public function parseResponsiveImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
 		static $ls_imageHandlerClass;
 
@@ -157,22 +157,22 @@ trait FrontendRenderingTrait {
 			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
 		}
 
-		$ls_imageHandlerClass::replaceCustomImageTags($entity, $this->View, $mediaRenderOptions);
+		$ls_imageHandlerClass::replaceCustomImageTags($entity, $this->View, $mediaRenderOptions, $fields);
 	}
 
 
 	/**
 	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param string $field
 	 * @return void
-	 * @throws \ReflectionException
 	 * @throws \Exception
 	 * @noinspection PhpDocSignatureInspection
 	 */
-	public function parseModule(Entity $entity, MediaRenderOptions $mediaRenderOptions): void {
+	public function parseModule(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field = 'text'): void {
 		static $la_modules;
 
-		if (!str_contains($entity->text ?? '', '<module')) {
+		if (!str_contains($entity->get($field) ?? '', '<module')) {
 			return;
 		}
 
@@ -180,7 +180,7 @@ trait FrontendRenderingTrait {
 			$la_modules = ModulesProvider::getModuleFiles();
 		}
 
-		$lo_dom = $this->getDom($entity->text);
+		$lo_dom = $this->getDom($entity->get($field));
 
 		// Create an XPath instance
 		$lo_xpath = new DOMXPath($lo_dom);
@@ -212,10 +212,10 @@ trait FrontendRenderingTrait {
 			$lo_moduleTag->nodeValue = htmlentities($lo_moduleTag->textContent ?? '', ENT_NOQUOTES, 'UTF-8', false);
 
 			if ($ls_moduleOutput) {
-				$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), $ls_moduleOutput, $entity->text);
+				$entity->set($field, str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), $ls_moduleOutput, $entity->get($field)));
 			}
 			else {
-				$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), '', $entity->text);
+				$entity->set($field, str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), '', $entity->get($field)));
 			}
 		}
 	}
