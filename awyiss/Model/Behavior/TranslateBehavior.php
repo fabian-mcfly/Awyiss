@@ -49,6 +49,24 @@ class TranslateBehavior extends BaseTranslateBehavior {
 
 
 	/**
+	 * Gets the Model callbacks this behavior is interested in.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function implementedEvents(): array {
+		return [
+			'Model.beforeFind' => 'beforeFind',
+			'Model.beforeMarshal' => 'beforeMarshal',
+			'Model.beforeSave' => [
+				'callable' => 'beforeSave',
+				'priority' => 100,
+			],
+			'Model.afterSave' => 'afterSave',
+		];
+	}
+
+
+	/**
 	 * @param EventInterface $event
 	 * @param ArrayObject $data
 	 * @param ArrayObject $options
