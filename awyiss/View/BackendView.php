@@ -66,6 +66,8 @@ class BackendView extends AppView {
 			'templates' => 'paginator_templates',
 		]);
 
+		$this->addHelper('Survey');
+
 		$this->addHelper('SystemOrder', [
 			'field' => $this->viewVars['systemOrderField'] ?? null,
 			'relatedColumns' => $this->viewVars['systemOrderRelatedColumns'] ?? null,

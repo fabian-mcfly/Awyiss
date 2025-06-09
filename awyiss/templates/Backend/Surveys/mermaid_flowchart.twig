@@ -16,6 +16,7 @@
 @var LocaleHelper \Awyiss\View\Helper\LocaleHelper
 @var MediaHelper \Awyiss\View\Helper\MediaHelper
 @var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SurveyHelper \Awyiss\View\Helper\SurveyHelper
 @var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
 @var TimeHelper \Cake\View\Helper\TimeHelper
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
@@ -66,7 +67,7 @@ flowchart TD
 StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestions|first.identifier }}
 					{%~ for key, question in survey.surveySurveyQuestions %}
 						{%- set inheritingAnswers = [] %}
-						{%~ set inactive = question.unused or question.onlyReachableFromUnused %}
+						{%~ set inactive = question.unused or question.onlyReachableFromUnused or question.surveyQuestion.active == false %}
 						{%~ set questionLabel = question.label|substr(0, -10) ~ '<span class="Identifier Id' ~ question.identifier ~ '" style="--identifierColor:#' ~ question.identifier|substr(0, 6) ~ ';">' ~ question.identifier ~ '</span>' %}
 						{%~ if question.surveySurveyAnswers|length %}
 							{%~ for answer in question.surveySurveyAnswers %}
@@ -110,10 +111,11 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 									{%~ endif %}
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} SaveAndEnd[("{{ __('next_action_save_and_end') }}")]
 								{%~ elseif answer.nextAction == enum(nextActionEnum).NextQuestion %}
-									{%~ if inactive and survey.surveySurveyQuestions[key + 1].onlyReachableFromUnused != true %}
+									{%~ set realNextQuestion = SurveyHelper.realNextQuestion(survey.surveySurveyQuestions, key) %}
+									{%~ if inactive and (realNextQuestion == false or realNextQuestion.onlyReachableFromUnused != true) %}
 										{%~ set link = 'x-."' ~ answer.label ~ '".-x' %}
 									{%~ endif %}
-									{%~ if loop.parent.loop.last %}
+									{%~ if loop.parent.loop.last or realNextQuestion == false %}
 										{%~ set end = finalAction %}
 										{%~ if inactive or finalActionUsed == true %}
 											{%~ set end = shortFinalAction %}
@@ -122,7 +124,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 										{%~ endif %}
 										{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ end }}
 									{%~ else %}
-										{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ survey.surveySurveyQuestions[key + 1].identifier }}
+										{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ realNextQuestion.identifier }}
 									{%~ endif %}
 								{%~ else %}
 									{%- set inheritingAnswers = inheritingAnswers|merge([answer.label]) %}
@@ -187,10 +189,11 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 								{%~ endif %}
 								{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} SaveAndEnd[("{{ __('next_action_save_and_end') }}")]
 							{%~ else %}
-								{%~ if inactive and survey.surveySurveyQuestions[key + 1].onlyReachableFromUnused != true %}
+								{%~ set realNextQuestion = SurveyHelper.realNextQuestion(survey.surveySurveyQuestions, key) %}
+								{%~ if inactive and (realNextQuestion == false or realNextQuestion.onlyReachableFromUnused != true) %}
 									{%~ set link = 'x-.' ~ (inheritingAnswers ? ('"' ~ inheritingAnswers|join('<br>') ~ '"') : '') ~ '.-x' %}
 								{%~ endif %}
-								{%~ if loop.last %}
+								{%~ if loop.last or realNextQuestion == false %}
 									{%~ set end = finalAction %}
 									{%~ if inactive or finalActionUsed == true %}
 										{%~ set end = shortFinalAction %}
@@ -199,7 +202,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 									{%~ endif %}
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ end }}
 								{%~ else %}
-									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ survey.surveySurveyQuestions[key + 1].identifier }}
+									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ realNextQuestion.identifier }}
 								{%~ endif %}
 							{%~ endif %}
 						{%~ endif %}
