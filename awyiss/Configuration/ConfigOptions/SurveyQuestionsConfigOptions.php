@@ -31,9 +31,7 @@ class SurveyQuestionsConfigOptions extends AbstractConfigOptions {
 		$this->add(Awyiss::REALM_BACKEND, [
 			'overview' => [
 				new ConfigOption(
-					defaultValue: [
-						'identifier',
-					],
+					defaultValue: [],
 					identifier: 'displayedFields',
 					localizable: false,
 					personalizable: true,
