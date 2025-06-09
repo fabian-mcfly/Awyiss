@@ -8,6 +8,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
+use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\View\Cell;
@@ -21,6 +22,7 @@ use Cake\View\Cell;
 class WidgetsCell extends Cell {
 	use ContentElementTrait;
 	use PreviewTrait;
+	use RedirectAwareTrait;
 
 
 	/**
