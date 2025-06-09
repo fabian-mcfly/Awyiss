@@ -7,6 +7,8 @@ namespace Awyiss\Model\Table;
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Model\Table;
+use Awyiss\ORM\RulesChecker;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -154,6 +156,26 @@ class SurveyAnswersTable extends Table {
 		]);
 
 		return $validator;
+	}
+
+
+	/**
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return RulesChecker
+	 */
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->addDelete(
+			$rules->isNotLinkedTo('SurveySurveyAnswers', 'surveys'),
+			'noLinkedSurveys',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_surveys'),
+			]
+		);
+
+		return $rules;
 	}
 
 
