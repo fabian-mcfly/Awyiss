@@ -48,7 +48,7 @@
 	{% endif %}
 
 	{% if widget.formId %}
-		{{ form(widget.formId) }}
+		{{ form(widget.formId, {columnWidth: widget.realColumnWidth}) }}
 	{% endif %}
 
 	{% if children %}

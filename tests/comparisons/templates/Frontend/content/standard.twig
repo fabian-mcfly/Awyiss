@@ -46,11 +46,11 @@
 	{% endif %}
 
 	{% if content.formId %}
-		{{ form(content.formId) }}
+		{{ form(content.formId, {columnWidth: content.realColumnWidth}) }}
 	{% endif %}
 
 	{% if content.surveyId %}
-		{{ survey(content.surveyId) }}
+		{{ survey(content.surveyId, {columnWidth: content.realColumnWidth}) }}
 	{% endif %}
 
 	{% if children %}
