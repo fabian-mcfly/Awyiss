@@ -68,6 +68,7 @@ class TranslatableTextWidget extends BasicWidget {
 			'dialogApply' => __d('system', 'translations_dialog_apply'),
 			'dialogCancel' => __d('system', 'translations_dialog_cancel'),
 		];
+		unset($la_data['dialogTitle']);
 
 		return $this->_templates->format('translatableText', [
 			'name' => $la_data['name'],
