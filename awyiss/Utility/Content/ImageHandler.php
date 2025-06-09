@@ -39,12 +39,12 @@ class ImageHandler {
 
 	/**
 	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param string $method
 	 * @param array $fields
+	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return void
 	 * @throws \DOMException
 	 */
-	public static function replaceImageTags(EntityInterface $entity, array $fields = []): void {
+	public static function replaceImageTags(EntityInterface $entity, array $fields = [], ?EntityInterface $referenceEntity = null): void {
 		$la_fields = $fields ?: static::getDefaultFields($entity);
 
 		foreach ($la_fields as $ls_field) {
@@ -52,12 +52,12 @@ class ImageHandler {
 				continue;
 			}
 
-			static::replaceImageTagsInField($entity, $ls_field);
+			static::replaceImageTagsInField($entity, $ls_field, null, $referenceEntity);
 		}
 
 		if ($entity->has('_translations')) {
 			foreach ($entity->get('_translations') as $lo_translation) {
-				static::replaceImageTags($lo_translation, $fields);
+				static::replaceImageTags($lo_translation, $fields, $entity);
 			}
 		}
 	}
@@ -66,10 +66,11 @@ class ImageHandler {
 	/**
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param array $fields
+	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return void
 	 * @throws \DOMException
 	 */
-	public static function rebuildSimpleImageTags(EntityInterface $entity, array $fields = []): void {
+	public static function rebuildSimpleImageTags(EntityInterface $entity, array $fields = [], ?EntityInterface $referenceEntity = null): void {
 		$la_fields = $fields ?: static::getDefaultFields($entity);
 
 		foreach ($la_fields as $ls_field) {
@@ -77,12 +78,12 @@ class ImageHandler {
 				continue;
 			}
 
-			static::rebuildSimpleImageTagsInField($entity, $ls_field);
+			static::rebuildSimpleImageTagsInField($entity, $ls_field, null, $referenceEntity);
 		}
 
 		if ($entity->has('_translations')) {
 			foreach ($entity->get('_translations') as $lo_translation) {
-				static::rebuildSimpleImageTags($lo_translation, $fields);
+				static::rebuildSimpleImageTags($lo_translation, $fields, $entity);
 			}
 		}
 	}
@@ -93,9 +94,17 @@ class ImageHandler {
 	 * @param \Cake\View\View $view
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param array $fields
+	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return void
+	 * @throws \Exception
 	 */
-	public static function replaceCustomImageTags(EntityInterface $entity, View $view, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
+	public static function replaceCustomImageTags(
+		EntityInterface $entity,
+		View $view,
+		MediaRenderOptions $mediaRenderOptions,
+		array $fields = [],
+		?EntityInterface $referenceEntity = null
+	): void {
 		$la_fields = $fields ?: static::getDefaultFields($entity);
 
 		foreach ($la_fields as $ls_field) {
@@ -103,12 +112,12 @@ class ImageHandler {
 				continue;
 			}
 
-			static::replaceCustomImageTagsInField($entity, $view, $mediaRenderOptions, $ls_field);
+			static::replaceCustomImageTagsInField($entity, $view, $mediaRenderOptions, $ls_field, null, $referenceEntity);
 		}
 
 		if ($entity->has('_translations')) {
 			foreach ($entity->get('_translations') as $lo_translation) {
-				static::replaceCustomImageTags($lo_translation, $view, $mediaRenderOptions, $fields);
+				static::replaceCustomImageTags($lo_translation, $view, $mediaRenderOptions, $fields, $entity);
 			}
 		}
 	}
@@ -120,6 +129,7 @@ class ImageHandler {
 	 *
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return array
+	 * @noinspection DuplicatedCode
 	 */
 	public static function getDefaultFields(EntityInterface $entity): array {
 		/** @var \Awyiss\Model\Table $lo_table */
@@ -149,9 +159,18 @@ class ImageHandler {
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param string $field
 	 * @param string|null $value
+	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return string|null
+	 * @throws \Exception
 	 */
-	public static function replaceCustomImageTagsInField(EntityInterface $entity, View $view, MediaRenderOptions $mediaRenderOptions, string $field, ?string $value = null): ?string {
+	public static function replaceCustomImageTagsInField(
+		EntityInterface $entity,
+		View $view,
+		MediaRenderOptions $mediaRenderOptions,
+		string $field,
+		?string $value = null,
+		?EntityInterface $referenceEntity = null
+	): ?string {
 		$ls_value = $value ?? $entity->get($field) ?? '';
 		$lb_isDirty = $entity->isDirty($field);
 
@@ -171,7 +190,7 @@ class ImageHandler {
 		$lo_tags = $lo_xpath->query('//awyiss-responsive-image');
 
 		foreach ($lo_tags as $lo_tag) {
-			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $entity);
+			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $referenceEntity ?? $entity);
 			unset($la_attributes['mediaId']);
 
 			if (!$lo_media) {
@@ -206,12 +225,18 @@ class ImageHandler {
 	 * Rebuilds the image tags in the given entity
 	 *
 	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param array $fields
+	 * @param string $field
 	 * @param string|null $value
+	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return string|null
 	 * @throws \DOMException
 	 */
-	public static function rebuildSimpleImageTagsInField(EntityInterface $entity, string $field, ?string $value = null): ?string {
+	public static function rebuildSimpleImageTagsInField(
+		EntityInterface $entity,
+		string $field,
+		?string $value = null,
+		?EntityInterface $referenceEntity = null
+	): ?string {
 		$ls_value = $value ?? $entity->get($field) ?? '';
 		$lb_isDirty = $entity->isDirty($field);
 
@@ -228,7 +253,7 @@ class ImageHandler {
 		$lo_tags = $lo_xpath->query('//awyiss-responsive-image');
 
 		foreach ($lo_tags as $lo_tag) {
-			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $entity);
+			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $referenceEntity ?? $entity);
 
 			if (!$lo_media) {
 				continue;
@@ -317,10 +342,16 @@ class ImageHandler {
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param string $field
 	 * @param string|null $value
+	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return string|null
 	 * @throws \DOMException
 	 */
-	public static function replaceImageTagsInField(EntityInterface $entity, string $field, ?string $value = null): ?string {
+	public static function replaceImageTagsInField(
+		EntityInterface $entity,
+		string $field,
+		?string $value = null,
+		?EntityInterface $referenceEntity = null
+	): ?string {
 		$ls_value = $value ?? $entity->get($field) ?? '';
 
 		if (!is_string($ls_value) || !str_contains($ls_value, '<img')) {
@@ -391,7 +422,7 @@ class ImageHandler {
 		}
 
 		// Build media assignments
-		static::buildMediaAssignments($entity, $la_media);
+		static::buildMediaAssignments($referenceEntity ?? $entity, $la_media);
 
 		$entity->set($field, trim(static::getBody($lo_dom)) ?: null);
 
@@ -426,6 +457,7 @@ class ImageHandler {
 	 *
 	 * @param \DOMDocument $dom
 	 * @return string|false
+	 * @noinspection DuplicatedCode
 	 */
 	protected static function getBody(DOMDocument $dom): string|false {
 		if ($dom->doctype) {
