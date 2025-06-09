@@ -18,6 +18,8 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
+{% set scope = scope|underscore %}
+
 {% if _filter[ scope ]['columns'] is not empty %}
 	<button class="Button Button-Small Button-Filter Button-ShowFilter
 		{%- if _filter[ scope ]['active'] %} Button-Info{% endif %}"

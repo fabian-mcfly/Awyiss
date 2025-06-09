@@ -17,6 +17,8 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
+{% set scope = scope|underscore %}
+
 {% if _filter[ scope ]['columns'] is not empty %}
 	{% set operators = combine(
 		_filter.operators|column('value'),
