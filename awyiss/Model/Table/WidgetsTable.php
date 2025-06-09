@@ -416,10 +416,7 @@ class WidgetsTable extends Table {
 	 */
 	protected function validateInputFields(Widget $entity, Validator $validator, ?Validator $attributesValidator, WidgetTemplate $widgetTemplate): void {
 		$la_widgetAttributes = $this->WidgetTemplates->getAvailableWidgetAttributes();
-		$la_widgetAttributes = array_combine(
-			array_column($la_widgetAttributes, 'identifier'),
-			$la_widgetAttributes
-		);
+		$la_widgetAttributes = array_column($la_widgetAttributes, null, 'identifier');
 
 		$this->validateAssignedElements($widgetTemplate, $entity, $validator, $la_widgetAttributes, $attributesValidator);
 

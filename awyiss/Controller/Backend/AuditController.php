@@ -160,7 +160,7 @@ class AuditController extends Controller {
 		$la_translatableAttributes = [];
 		if ($lo_table->hasAttributes()) {
 			// Get all identifiers of translatable attributes
-			$la_translatableAttributes = array_combine(array_column($la_attributes, 'identifier'), $la_attributes);
+			$la_translatableAttributes = array_column($la_attributes, null, 'identifier');
 			$la_translatableAttributes = array_keys(array_filter($la_translatableAttributes, fn($lo_attribute) => $lo_attribute->translatable));
 		}
 

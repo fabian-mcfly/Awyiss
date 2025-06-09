@@ -139,7 +139,7 @@ class ContentsController extends Controller {
 
 		$la_contents = $lo_contents->groupBy('contentAreaId')->toArray();
 
-		$la_contentAreas = array_combine(array_column($this->page->pageTemplate->contentAreas, 'id'), array_column($this->page->pageTemplate->contentAreas, 'label'));
+		$la_contentAreas = array_column($this->page->pageTemplate->contentAreas, 'label', 'id');
 		$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
 		foreach ($la_unknownContentAreas as $li_contentAreaId => $lo_contents) {
 			$la_contentAreas[ $li_contentAreaId ] = null;
@@ -431,7 +431,7 @@ class ContentsController extends Controller {
 
 			$la_contents = $lo_contents->groupBy('contentAreaId')->toArray();
 
-			$la_contentAreas = array_combine(array_column($this->page->pageTemplate->contentAreas, 'id'), array_column($this->page->pageTemplate->contentAreas, 'label'));
+			$la_contentAreas = array_column($this->page->pageTemplate->contentAreas, 'label', 'id');
 			$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
 			foreach ($la_unknownContentAreas as $li_contentAreaId => $lo_contents) {
 				$la_contentAreas[ $li_contentAreaId ] = null;

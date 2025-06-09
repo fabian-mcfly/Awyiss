@@ -322,10 +322,7 @@ class AttributesBehavior extends Behavior {
 			// If the data isn't empty, combine the key and value into a single array
 			if ($data[ $lo_attribute->identifier ]) {
 				/** @noinspection PhpVariableNamingConventionInspection */
-				$data[ $lo_attribute->identifier ] = array_combine(
-					array_column($data[ $lo_attribute->identifier ], 'key'),
-					array_column($data[ $lo_attribute->identifier ], 'value')
-				);
+				$data[ $lo_attribute->identifier ] = array_column($data[ $lo_attribute->identifier ], 'value', 'key');
 			}
 		}
 	}

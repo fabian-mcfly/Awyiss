@@ -202,7 +202,7 @@ class SearchBehavior extends Behavior {
 		if ($column === 'language_shortcode') {
 			$la_languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
 
-			return array_combine(array_column($la_languages, 'shortcode'), array_column($la_languages, 'label'));
+			return array_column($la_languages, 'label', 'shortcode');
 		}
 
 		$lo_attributesBehavior = $this->table()->hasBehavior('Attributes') ? $lo_table->getBehavior('Attributes') : null;

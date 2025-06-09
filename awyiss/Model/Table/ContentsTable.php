@@ -826,10 +826,7 @@ class ContentsTable extends Table {
 	 */
 	protected function validateInputFields(Content $entity, Validator $validator, ?Validator $attributesValidator, ContentTemplate $contentTemplate): void {
 		$la_contentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
-		$la_contentAttributes = array_combine(
-			array_column($la_contentAttributes, 'identifier'),
-			$la_contentAttributes
-		);
+		$la_contentAttributes = array_column($la_contentAttributes, null, 'identifier');
 
 		$this->validateAssignedElements($contentTemplate, $entity, $validator, $la_contentAttributes, $attributesValidator);
 

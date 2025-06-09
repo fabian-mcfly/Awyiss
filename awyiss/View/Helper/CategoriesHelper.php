@@ -575,7 +575,7 @@ class CategoriesHelper extends Helper {
 	protected function formatTreeOptions(TreeIterator $options, array $attributes, bool $forLinkSelect): array {
 		if ($forLinkSelect) {
 			$la_options = $options->toList();
-			$la_options = array_combine(array_column($la_options, 'id'), $la_options);
+			$la_options = array_column($la_options, null, 'id');
 		}
 		else {
 			$la_options = $options->printer(...($attributes['printer'] ?? ['label', 'id', $attributes['levelPrefix'] ?? '- ']))->toArray();
