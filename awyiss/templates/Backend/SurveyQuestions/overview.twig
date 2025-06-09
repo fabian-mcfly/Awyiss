@@ -54,4 +54,8 @@
 			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'surveyQuestions'}) }}
+	{% endblock %}
 </div>
