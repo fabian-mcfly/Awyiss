@@ -163,6 +163,10 @@
 
 		.FormInput {
 			margin-bottom:0;
+
+			&Type-Radio {
+				display:flex;
+			}
 		}
 
 		.Button-Remove {
