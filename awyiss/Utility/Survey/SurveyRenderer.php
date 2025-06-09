@@ -128,6 +128,8 @@ class SurveyRenderer {
 			$lo_query = $lo_query->where(['Surveys.identifier' => $identifier]);
 		}
 
+		$lo_query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+
 		return $lo_query->first();
 	}
 
@@ -324,6 +326,7 @@ class SurveyRenderer {
 	 * @param array $options
 	 * @return string
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	public function getSurveyBody(array $options): string {
 		static $ls_templatePath;
@@ -331,6 +334,17 @@ class SurveyRenderer {
 		if (!$this->survey) {
 			return '';
 		}
+
+		/**
+		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
+			baseWidth: $this->View->get('fullWidth', 1920),
+			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
+			columnWidth: $options['columnWidth'] ?? 100.00,
+			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
+		);
 
 		$ls_currentQuestion = '';
 		$lb_hasNextAction = false;
@@ -353,6 +367,14 @@ class SurveyRenderer {
 			if (file_exists($ls_filePath)) {
 				$ls_element = $ls_fileName;
 			}
+
+			$lo_mediaRenderOptions = $lo_mediaRenderOptions->withSelector('#SurveyQuestion-' . Inflector::ucparts($this->currentAction->identifier));
+
+			// Parse the module
+			$this->parseResponsiveImageTags($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
+
+			// Parse the module
+			$this->parseModule($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
 
 			$ls_currentQuestion = $this->getView()->element('survey/' . $ls_element, [
 				'survey' => $this->survey,
@@ -382,6 +404,18 @@ class SurveyRenderer {
 			// If the form was processed, we don't need to render the survey body.
 			return $this->renderForm($options);
 		}
+
+		$lo_mediaRenderOptions = $lo_mediaRenderOptions->withSelector('#Survey-' . Inflector::ucparts($this->survey->identifier));
+
+		// Parse the module
+		$this->parseResponsiveImageTags($this->survey, $lo_mediaRenderOptions, [
+			'successMessage',
+			'failureMessage',
+		]);
+
+		// Parse the module
+		$this->parseModule($this->survey, $lo_mediaRenderOptions, 'successMessage');
+		$this->parseModule($this->survey, $lo_mediaRenderOptions, 'failureMessage');
 
 		return $this->getView()->element('survey/survey', [
 			'survey' => $this->survey,
