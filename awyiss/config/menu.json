@@ -328,30 +328,13 @@
 			}
 		}
 	},
-	"system": {
+	"components": {
 		"title": {
-			"translate": ["system", "menu_title"]
+			"translate": ["system", "components"]
 		},
-		"link": {
-			"url": {
-				"controller": "System",
-				"action": "overview"
-			}
-		},
+		"link": null,
 		"access": null,
 		"children": {
-			"system_overview": {
-				"title": {
-					"translate": ["system", "menu_overview"]
-				},
-				"link": {
-					"url": {
-						"controller": "System",
-						"action": "overview"
-					}
-				},
-				"access": null
-			},
 			"menus": {
 				"title": {
 					"translate": ["menus", "menu_title"]
@@ -715,5 +698,18 @@
 				}
 			}
 		}
+	},
+	"system": {
+		"title": {
+			"translate": ["system", "menu_title"]
+		},
+		"link": {
+			"url": {
+				"controller": "System",
+				"action": "overview"
+			}
+		},
+		"access": null,
+		"children": null
 	}
 }
