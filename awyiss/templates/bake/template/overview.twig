@@ -54,5 +54,9 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: '{% endverbatim %}{{ pluralVar }}{% verbatim %}'}) }}
 	{% endblock %}{% endverbatim %}
 </div>
