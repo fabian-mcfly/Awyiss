@@ -11,6 +11,7 @@ use Awyiss\Model\Enum\Survey\Type;
 use BackedEnum;
 use Cake\Collection\CollectionInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Text;
 use Cake\View\View;
 use InvalidArgumentException;
@@ -206,12 +207,18 @@ class Survey extends Entity {
 
 		$lo_query->contain([
 			'SurveyQuestions' => [
-				'finder' => $this->isPreview ? 'all' : 'active',
+				'queryBuilder' => function (SelectQuery $query): SelectQuery {
+					$query->find($this->isPreview ? 'all' : 'active');
+					return $query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+				},
 			],
 			'SurveySurveyAnswers' => [
 				'finder' => $this->isPreview ? 'all' : 'active',
 				'SurveyAnswers' => [
-					'finder' => $this->isPreview ? 'all' : 'active',
+					'queryBuilder' => function (SelectQuery $query): SelectQuery {
+						$query->find($this->isPreview ? 'all' : 'active');
+						return $query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+					},
 				],
 			],
 		]);
