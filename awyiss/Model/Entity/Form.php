@@ -227,7 +227,7 @@ class Form extends Entity {
 			$lo_query = $lo_formElementsTable->find('active')->find('published');
 		}
 
-		$lo_formElements = $lo_query->find('threaded')->where([
+		$lo_formElements = $lo_query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)->where([
 			'form_id' => $this->id,
 		])->all()->filter(function (FormElement $content) {
 			return $content->parentId === null;
