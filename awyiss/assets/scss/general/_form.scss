@@ -1053,6 +1053,12 @@ textarea {
 					.Label {
 						display:none;
 					}
+
+					> input {
+						&:first-of-type {
+							padding-right:60px;
+						}
+					}
 				}
 			}
 		}
