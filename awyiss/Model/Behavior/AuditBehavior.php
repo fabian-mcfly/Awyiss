@@ -96,23 +96,35 @@ class AuditBehavior extends Behavior {
 		$lo_table = $this->table();
 		$lo_schema = $lo_table->getSchema();
 
+		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
+		$ls_entityClass = $this->table()->getEntityClass();
+
 		// Check if the table has the required columns and add the corresponding associations
 		if ($lo_schema->hasColumn('created_by')) {
+			$ls_entityClass::addFieldMapping('created_by', 'createdBy');
 			$this->addAssociation('CreatedBy');
+		}
+		if ($lo_schema->hasColumn('created_on')) {
+			$ls_entityClass::addFieldMapping('created_on', 'createdOn');
 		}
 
 		if ($lo_schema->hasColumn('changed_by')) {
+			$ls_entityClass::addFieldMapping('changed_by', 'changedBy');
 			$this->addAssociation('ChangedBy');
+		}
+		if ($lo_schema->hasColumn('changed_on')) {
+			$ls_entityClass::addFieldMapping('changed_on', 'changedOn');
 		}
 
 		if ($lo_schema->hasColumn('deleted_by')) {
+			$ls_entityClass::addFieldMapping('deleted_by', 'deletedBy');
 			$this->addAssociation('DeletedBy');
+		}
+		if ($lo_schema->hasColumn('deleted_on')) {
+			$ls_entityClass::addFieldMapping('deleted_on', 'deletedOn');
 		}
 
 		if ($this->getConfig('historyFields') === null) {
-			/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-			$ls_entityClass = $this->table()->getEntityClass();
-
 			$la_fields = $ls_entityClass::mapFields($lo_schema->columns());
 
 			$la_fields = array_diff($la_fields, $this->getConfig('ignoredFields'), ['id']);

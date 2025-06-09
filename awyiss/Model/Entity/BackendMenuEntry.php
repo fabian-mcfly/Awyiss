@@ -52,12 +52,6 @@ class BackendMenuEntry extends Entity {
 		'parent_id' => 'parentId',
 		'insert_after_id' => 'insertAfterId',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 
 

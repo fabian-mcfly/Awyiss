@@ -52,12 +52,6 @@ class Survey extends Entity {
 		'failure_message' => 'failureMessage',
 		'final_action' => 'finalAction',
 		'form_id' => 'formId',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 		'survey_survey_questions' => 'surveySurveyQuestions',
 		'survey_entries' => 'surveyEntries',
 	];

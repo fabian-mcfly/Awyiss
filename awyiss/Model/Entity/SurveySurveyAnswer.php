@@ -40,12 +40,6 @@ class SurveySurveyAnswer extends Entity {
 		'next_action' => 'nextAction',
 		'next_action_target' => 'nextActionTarget',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 		'survey_answer' => 'surveyAnswer',
 		'survey_survey_question' => 'surveySurveyQuestion',
 	];

@@ -47,12 +47,6 @@ class WidgetTemplate extends Entity {
 		'widget_template_elements' => 'widgetTemplateElements',
 		'in_content_row' => 'inContentRow',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 		'used_for_widgets' => 'usedForWidgets',
 	];
 

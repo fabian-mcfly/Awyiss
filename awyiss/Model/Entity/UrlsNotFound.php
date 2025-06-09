@@ -22,7 +22,6 @@ class UrlsNotFound extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'is_robot' => 'isRobot',
-		'created_on' => 'createdOn',
 	];
 	/**
 	 * @inheritDoc

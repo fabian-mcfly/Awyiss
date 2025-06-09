@@ -33,12 +33,6 @@ use Awyiss\Utility\Inflector;
 class Configuration extends Entity {
 	protected static array $fieldMap = [
 		'language_shortcode' => 'languageShortcode',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 
 

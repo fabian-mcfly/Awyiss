@@ -55,12 +55,6 @@ class MenuEntry extends Entity {
 		'language_shortcode' => 'languageShortcode',
 		'parent_id' => 'parentId',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 
 

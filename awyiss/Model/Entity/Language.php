@@ -38,12 +38,6 @@ class Language extends Entity {
 		'date_format' => 'dateFormat',
 		'time_format' => 'timeFormat',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 
 

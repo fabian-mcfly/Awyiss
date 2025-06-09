@@ -26,7 +26,6 @@ class ThirdPartyConsent extends Entity {
 		'accept_type' => 'acceptType',
 		'accepted_categories' => 'acceptedCategories',
 		'rejected_categories' => 'rejectedCategories',
-		'created_on' => 'createdOn',
 	];
 
 

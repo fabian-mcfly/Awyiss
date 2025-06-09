@@ -34,16 +34,6 @@ class DummyUser extends Entity {
 	protected static array $fieldMap = [
 		'last_login' => 'lastLogin',
 		'failed_attempts' => 'failedAttempts',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
-		'created_by_user' => 'createdByUser',
-		'changed_by_user' => 'changedByUser',
-		'deleted_by_user' => 'deletedByUser',
-		'media_assignments' => 'mediaAssignments',
 	];
 
 
@@ -59,17 +49,6 @@ class DummyUser extends Entity {
 		'lastLogin' => true,
 		'failedAttempts' => true,
 		'active' => true,
-		'deleted' => true,
-		'createdBy' => true,
-		'createdOn' => true,
-		'changedBy' => true,
-		'changedOn' => true,
-		'deletedBy' => true,
-		'deletedOn' => true,
-		'createdByUser' => true,
-		'changedByUser' => true,
-		'deletedByUser' => true,
-		'mediaAssignments' => true,
 	];
 	/**
 	 * @inheritDoc

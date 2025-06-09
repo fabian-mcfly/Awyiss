@@ -56,12 +56,6 @@ class MediaFolder extends Entity {
 		'language_shortcode' => 'languageShortcode',
 		'system_order' => 'systemOrder',
 		'parents_active' => 'parentsActive',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 
 

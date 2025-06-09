@@ -35,12 +35,6 @@ class SurveyAnswer extends Entity {
 	protected static array $fieldMap = [
 		'survey_question_id' => 'surveyQuestionId',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 		'survey_question' => 'surveyQuestion',
 		'survey_survey_answers' => 'surveySurveyAnswers',
 		'survey_survey_question' => 'surveySurveyQuestion',

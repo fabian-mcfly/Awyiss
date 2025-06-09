@@ -46,12 +46,6 @@ class SurveySurveyQuestion extends Entity {
 		'allow_custom_answer' => 'allowCustomAnswer',
 		'custom_answer_title' => 'customAnswerTitle',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 		'survey_survey_answers' => 'surveySurveyAnswers',
 		'survey_question' => 'surveyQuestion',
 	];

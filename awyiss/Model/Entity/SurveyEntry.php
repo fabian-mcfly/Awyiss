@@ -30,9 +30,6 @@ class SurveyEntry extends Entity {
 		'page_id' => 'pageId',
 		'ip_hash' => 'ipHash',
 		'post_hash' => 'postHash',
-		'created_on' => 'createdOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 
 

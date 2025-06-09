@@ -34,13 +34,6 @@ class Car extends Entity {
 		'title' => true,
 		'systemOrder' => true,
 		'active' => true,
-		'deleted' => true,
-		'createdBy' => true,
-		'createdOn' => true,
-		'changedBy' => true,
-		'changedOn' => true,
-		'deletedBy' => true,
-		'deletedOn' => true,
 	];
 	/**
 	 * Entity to be passed to the validation of attributes
@@ -55,11 +48,5 @@ class Car extends Entity {
 		'parent_id' => 'parentId',
 		'language_shortcode' => 'languageShortcode',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 }

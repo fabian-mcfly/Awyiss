@@ -36,12 +36,6 @@ class EmailTemplate extends Entity {
 		'text_html' => 'textHtml',
 		'text_plain' => 'textPlain',
 		'file_name' => 'fileName',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 		'used_for_emails' => 'usedForEmails',
 		'used_for_confirmation_emails' => 'usedForConfirmationEmails',
 	];

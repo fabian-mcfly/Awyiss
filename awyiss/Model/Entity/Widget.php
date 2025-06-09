@@ -77,12 +77,6 @@ class Widget extends Entity {
 		'form_id' => 'formId',
 		'survey_id' => 'surveyId',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 		'widget_template' => 'widgetTemplate',
 	];
 

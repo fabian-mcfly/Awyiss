@@ -38,11 +38,5 @@ class Usergroup extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'usergroup_permissions' => 'usergroupPermissions',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 }

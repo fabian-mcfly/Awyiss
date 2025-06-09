@@ -42,12 +42,6 @@ class MediaElement extends Entity {
 		'identifier' => 'identifier',
 		'column_span' => 'columnSpan',
 		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 		'media_element_assignments' => 'mediaElementAssignments',
 		'media_element_selectors' => 'mediaElementSelectors',
 	];

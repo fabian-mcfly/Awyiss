@@ -41,12 +41,6 @@ class ContentArea extends Entity {
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 		'page_templates' => 'pageTemplates',
 		'content_templates' => 'contentTemplates',
 	];

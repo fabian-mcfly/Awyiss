@@ -29,8 +29,6 @@ class Lock extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'foreign_key' => 'foreignKey',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
 		'unique_id' => 'uniqueId',
 	];
 

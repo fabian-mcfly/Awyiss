@@ -37,9 +37,6 @@ class FormEntry extends Entity {
 		'body_confirmation' => 'bodyConfirmation',
 		'ip_hash' => 'ipHash',
 		'post_hash' => 'postHash',
-		'created_on' => 'createdOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 
 

@@ -75,13 +75,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 */
 	protected static array $fieldMap = [
 		'failed_attempts' => 'failedAttempts',
-		'last_login' => 'lastLogin',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 
 
