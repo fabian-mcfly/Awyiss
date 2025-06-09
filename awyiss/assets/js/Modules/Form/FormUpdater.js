@@ -116,11 +116,13 @@ export default class FormUpdater {
 			event.target.instantUpdate !== true
 		) {
 			this.timeoutId = setTimeout(() => {
+				// noinspection JSIgnoredPromiseFromCall
 				this.sendRequest(form);
 			}, 1000);
 		}
 		else {
 			// For other input types, send the request immediately
+			// noinspection JSIgnoredPromiseFromCall
 			this.sendRequest(form);
 		}
 	}
@@ -235,7 +237,7 @@ export default class FormUpdater {
 	 * @returns {void}
 	 */
 	hideFlashMessages(form) {
-		// Check if the main area has a flas message and remove it
+		// Check if the main area has a flash message and remove it
 		const formWrapper = form?.closest('.Form');
 		const flashMessages = formWrapper?.parentElement.querySelectorAll('.FlashMessage');
 		if (!flashMessages?.length) {
@@ -274,16 +276,21 @@ export default class FormUpdater {
 	 * Sends a request with the form data, then replaces the form with the new form from the server response.
 	 * Re-attaches event listeners to the new form and re-enables the form inputs.
 	 * @param {HTMLFormElement} form - The form to send the request from.
-	 * @return {Promise<boolean>} A Promise that resolves to true if the request was sent, false if the form is locked.
+	 * @return {Promise<void>} A Promise that resolves to true if the request was sent, false if the form is locked.
 	 */
 	sendRequest(form) {
 		if (form.dataset.locked === 'true') {
-			return Promise.resolve(false); // Always return a Promise
+			return Promise.resolve(void(0)); // Always return a Promise
 		}
 
 		const formData = new FormData(form);
 		// append "reload_form" key with value "1"
 		formData.append('reload_form', '1');
+
+		form.dispatchEvent(new CustomEvent('beforeUpdate', {
+			bubbles: false,
+			cancelable: false,
+		}));
 
 		// Add a class to the form to show that a reload operation is in progress
 		form.classList.add('FetchInProgress');
@@ -317,6 +324,11 @@ export default class FormUpdater {
 			catch (error) {
 				// Do nothing
 			}
+
+			form.dispatchEvent(new CustomEvent('afterUpdate', {
+				bubbles: false,
+				cancelable: false,
+			}));
 		})
 		.catch(error => console.error('Error:', error))
 		.finally(() => {
