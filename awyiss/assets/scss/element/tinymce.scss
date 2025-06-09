@@ -29,6 +29,12 @@ body {
 		}
 	}
 
+	&:has(.tox-fullscreen) {
+		.tox.tox-tinymce-aux {
+			z-index:4000;
+		}
+	}
+
 	fieldset {
 		&:has(.tox-fullscreen) {
 			z-index:3000;
