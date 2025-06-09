@@ -83,6 +83,16 @@ export default class SurveysController {
 	initForm() {
 		this.form = document.getElementById('SurveyForm');
 
+		this.eventHandler.add('beforeUpdate', () => {
+			this.form.scrollPosition = window.scrollY;
+		}, this.form);
+
+		this.eventHandler.add('afterUpdate', () => {
+			setTimeout(() => {
+				window.scrollTo(0, this.form.scrollPosition);
+			}, 400);
+		}, this.form);
+
 		// Load all config statuses from localStorage
 		this.configStatuses = JSON.parse(localStorage.getItem('questionConfigStatuses')) || {};
 
@@ -156,8 +166,7 @@ export default class SurveysController {
 
 				sortable.onEnd(event);
 
-				// noinspection JSIgnoredPromiseFromCall
-				window.formUpdater.sendRequest(this.form);
+				this.reloadForm();
 			}.bind(this)
 		});
 	}
@@ -346,8 +355,8 @@ export default class SurveysController {
 
 		question.remove();
 		window.formLeaveConfirmation.formChanged();
-		// noinspection JSIgnoredPromiseFromCall
-		window.formUpdater.sendRequest(this.form);
+
+		this.reloadForm();
 	}
 
 
@@ -384,7 +393,7 @@ export default class SurveysController {
 			button.classList.add('Disabled');
 		});
 
-		window.formUpdater.sendRequest(this.form).then(() => {
+		this.reloadForm(() => {
 			/** @type {EnhancedDialog} */
 			const dialog = document.getElementById('SurveyForm').querySelector('.Questions-Diagram');
 
@@ -453,6 +462,20 @@ export default class SurveysController {
 		})
 		.catch(error => {
 			console.error('There has been a problem with the fetch operation:', error);
+		});
+	}
+
+
+	/**
+	 * Reload the form and update the UI.
+	 * @param {Function|null} thenCallback - Optional callback to execute after the form is reloaded.
+	 */
+	reloadForm(thenCallback = null) {
+		// noinspection JSIgnoredPromiseFromCall
+		window.formUpdater.sendRequest(this.form).then(() => {
+			if (thenCallback) {
+				thenCallback();
+			}
 		});
 	}
 
