@@ -13,6 +13,8 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Cake\View\View;
+use DateInterval;
+use DateTimeImmutable;
 
 
 /**
@@ -73,17 +75,6 @@ class AltchaFormProtection implements FormProtectionInterface {
 		$this->formOptions = $formOptions;
 		$this->view = $view;
 
-		$this->defaultOptions['htmlAttributes']['strings'] = [
-			'ariaLinkLabel' => __d('form', 'altcha_aria_link_label'),
-			'error' => __d('form', 'altcha_error'),
-			'expired' => __d('form', 'altcha_expired'),
-			'footer' => __d('form', 'altcha_footer'),
-			'label' => __d('form', 'altcha_label'),
-			'verified' => __d('form', 'altcha_verified'),
-			'verifying' => __d('form', 'altcha_verifying'),
-			'waitAlert' => __d('form', 'altcha_wait_alert'),
-		];
-
 		$this->options = Hash::merge(
 			$this->formOptions->getProtectionOptions('altcha') ?? [],
 			$this->defaultOptions,
@@ -100,7 +91,7 @@ class AltchaFormProtection implements FormProtectionInterface {
 		if ($templatePosition === static::POSITION_BEFORE) {
 			/** @var \Awyiss\View\Helper\AssetHelper $lo_assetHelper */
 			$lo_assetHelper = $this->view->helpers()->get('Asset');
-			$lo_assetHelper->add('Frontend/Captcha/altcha.js', ['realm' => 'Backend', 'type' => 'module']);
+			$lo_assetHelper->add('Frontend/Captcha/altcha.i18n.js', ['realm' => 'Backend', 'type' => 'module']);
 		}
 
 		if ($templatePosition === static::POSITION_BEFORE_SUBMIT) {
@@ -112,6 +103,7 @@ class AltchaFormProtection implements FormProtectionInterface {
 
 				// Create a new challenge
 				$lo_options = new ChallengeOptions(
+					expires: (new DateTimeImmutable())->add(new DateInterval('PT20M')),
 					maxNumber: $this->options['maxNumber'] ?? 200_000,
 				);
 
@@ -119,11 +111,6 @@ class AltchaFormProtection implements FormProtectionInterface {
 			}
 			if (!is_string($this->options['htmlAttributes']['challengejson'])) {
 				$this->options['htmlAttributes']['challengejson'] = json_encode($this->options['htmlAttributes']['challengejson']);
-			}
-
-
-			if (is_array($this->options['htmlAttributes']['strings'])) {
-				$this->options['htmlAttributes']['strings'] = json_encode($this->options['htmlAttributes']['strings']);
 			}
 
 			$ls_attributes = $lo_helper->templater()->formatAttributes($this->options['htmlAttributes']);
