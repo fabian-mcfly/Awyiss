@@ -2043,6 +2043,366 @@ namespace PHPSTORM_META {
 	);
 
 	expectedArguments(
+		\Awyiss\Model\Entity\Survey::get(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\Survey::getError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\Survey::getInvalidField(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\Survey::getOriginal(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\Survey::has(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\Survey::hasValue(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\Survey::isDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\Survey::isEmpty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\Survey::setDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\Survey::setError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::get(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::getError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::getInvalidField(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::getOriginal(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::has(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::hasValue(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::isDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::isEmpty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::setDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyAnswer::setError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::get(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::getError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::getInvalidField(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::getOriginal(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::has(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::hasValue(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::isDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::isEmpty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::setDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyEntry::setError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::get(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::getError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::getInvalidField(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::getOriginal(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::has(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::hasValue(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::isDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::isEmpty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::setDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveyQuestion::setError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::get(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::getError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::getInvalidField(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::getOriginal(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::has(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::hasValue(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::isDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::isEmpty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::setDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyAnswer::setError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::get(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::getError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::getInvalidField(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::getOriginal(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::has(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::hasValue(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::isDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::isEmpty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::setDirty(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\SurveySurveyQuestion::setError(),
+		0,
+		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
 		\Awyiss\Model\Entity\ThirdPartyConsent::get(),
 		0,
 		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
@@ -2979,6 +3339,12 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Awyiss\Model\Table\PublicationDataTable::class,
 			'Queue.QueueProcesses' => \Queue\Model\Table\QueueProcessesTable::class,
 			'Queue.QueuedJobs' => \Queue\Model\Table\QueuedJobsTable::class,
+			'SurveyAnswers' => \Awyiss\Model\Table\SurveyAnswersTable::class,
+			'SurveyEntries' => \Awyiss\Model\Table\SurveyEntriesTable::class,
+			'SurveyQuestions' => \Awyiss\Model\Table\SurveyQuestionsTable::class,
+			'SurveySurveyAnswers' => \Awyiss\Model\Table\SurveySurveyAnswersTable::class,
+			'SurveySurveyQuestions' => \Awyiss\Model\Table\SurveySurveyQuestionsTable::class,
+			'Surveys' => \Awyiss\Model\Table\SurveysTable::class,
 			'ThirdPartyConsents' => \Awyiss\Model\Table\ThirdPartyConsentsTable::class,
 			'UrlHistory' => \Awyiss\Model\Table\UrlHistoryTable::class,
 			'UrlsNotFound' => \Awyiss\Model\Table\UrlsNotFoundTable::class,
@@ -3013,6 +3379,26 @@ namespace PHPSTORM_META {
 			'withDeleted' => \Cake\ORM\Query::class,
 			'withMatchingAttributes' => \Cake\ORM\Query::class,
 			'withUsages' => \Cake\ORM\Query::class,
+		]),
+	);
+
+	override(
+		\Cake\Http\ServerRequest::getAttribute(0),
+		map([
+			'authentication' => \Authentication\AuthenticationService::class,
+			'authenticationResult' => \Authentication\Authenticator\Result::class,
+			'base' => 'string',
+			'cspScriptNonce' => 'string',
+			'cspStyleNonce' => 'string',
+			'csrfToken' => 'string',
+			'formTokenData' => 'array',
+			'here' => 'string',
+			'identity' => \Authentication\IdentityInterface::class,
+			'paging' => 'array',
+			'params' => 'array',
+			'route' => \Cake\Routing\Route\Route::class,
+			'session' => \Cake\Http\Session::class,
+			'webroot' => 'string',
 		]),
 	);
 
@@ -3092,6 +3478,12 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Awyiss\Model\Table\PublicationDataTable::class,
 			'Queue.QueueProcesses' => \Queue\Model\Table\QueueProcessesTable::class,
 			'Queue.QueuedJobs' => \Queue\Model\Table\QueuedJobsTable::class,
+			'SurveyAnswers' => \Awyiss\Model\Table\SurveyAnswersTable::class,
+			'SurveyEntries' => \Awyiss\Model\Table\SurveyEntriesTable::class,
+			'SurveyQuestions' => \Awyiss\Model\Table\SurveyQuestionsTable::class,
+			'SurveySurveyAnswers' => \Awyiss\Model\Table\SurveySurveyAnswersTable::class,
+			'SurveySurveyQuestions' => \Awyiss\Model\Table\SurveySurveyQuestionsTable::class,
+			'Surveys' => \Awyiss\Model\Table\SurveysTable::class,
 			'ThirdPartyConsents' => \Awyiss\Model\Table\ThirdPartyConsentsTable::class,
 			'UrlHistory' => \Awyiss\Model\Table\UrlHistoryTable::class,
 			'UrlsNotFound' => \Awyiss\Model\Table\UrlsNotFoundTable::class,
@@ -3147,6 +3539,12 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Awyiss\Model\Table\PublicationDataTable::class,
 			'Queue.QueueProcesses' => \Queue\Model\Table\QueueProcessesTable::class,
 			'Queue.QueuedJobs' => \Queue\Model\Table\QueuedJobsTable::class,
+			'SurveyAnswers' => \Awyiss\Model\Table\SurveyAnswersTable::class,
+			'SurveyEntries' => \Awyiss\Model\Table\SurveyEntriesTable::class,
+			'SurveyQuestions' => \Awyiss\Model\Table\SurveyQuestionsTable::class,
+			'SurveySurveyAnswers' => \Awyiss\Model\Table\SurveySurveyAnswersTable::class,
+			'SurveySurveyQuestions' => \Awyiss\Model\Table\SurveySurveyQuestionsTable::class,
+			'Surveys' => \Awyiss\Model\Table\SurveysTable::class,
 			'ThirdPartyConsents' => \Awyiss\Model\Table\ThirdPartyConsentsTable::class,
 			'UrlHistory' => \Awyiss\Model\Table\UrlHistoryTable::class,
 			'UrlsNotFound' => \Awyiss\Model\Table\UrlsNotFoundTable::class,
@@ -3225,6 +3623,12 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Cake\ORM\Association\BelongsToMany::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\BelongsToMany::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\BelongsToMany::class,
+			'SurveyAnswers' => \Cake\ORM\Association\BelongsToMany::class,
+			'SurveyEntries' => \Cake\ORM\Association\BelongsToMany::class,
+			'SurveyQuestions' => \Cake\ORM\Association\BelongsToMany::class,
+			'SurveySurveyAnswers' => \Cake\ORM\Association\BelongsToMany::class,
+			'SurveySurveyQuestions' => \Cake\ORM\Association\BelongsToMany::class,
+			'Surveys' => \Cake\ORM\Association\BelongsToMany::class,
 			'ThirdPartyConsents' => \Cake\ORM\Association\BelongsToMany::class,
 			'UrlHistory' => \Cake\ORM\Association\BelongsToMany::class,
 			'UrlsNotFound' => \Cake\ORM\Association\BelongsToMany::class,
@@ -3280,6 +3684,12 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Cake\ORM\Association\BelongsTo::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\BelongsTo::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\BelongsTo::class,
+			'SurveyAnswers' => \Cake\ORM\Association\BelongsTo::class,
+			'SurveyEntries' => \Cake\ORM\Association\BelongsTo::class,
+			'SurveyQuestions' => \Cake\ORM\Association\BelongsTo::class,
+			'SurveySurveyAnswers' => \Cake\ORM\Association\BelongsTo::class,
+			'SurveySurveyQuestions' => \Cake\ORM\Association\BelongsTo::class,
+			'Surveys' => \Cake\ORM\Association\BelongsTo::class,
 			'ThirdPartyConsents' => \Cake\ORM\Association\BelongsTo::class,
 			'UrlHistory' => \Cake\ORM\Association\BelongsTo::class,
 			'UrlsNotFound' => \Cake\ORM\Association\BelongsTo::class,
@@ -3315,6 +3725,53 @@ namespace PHPSTORM_META {
 			'withMatchingAttributes' => \Cake\ORM\Query::class,
 			'withUsages' => \Cake\ORM\Query::class,
 		]),
+	);
+
+	override(
+		\Cake\ORM\Table::getBehavior(),
+		map([
+			'Attributes' => \Awyiss\Model\Behavior\AttributesBehavior::class,
+			'Audit' => \Awyiss\Model\Behavior\AuditBehavior::class,
+			'AutoPrefix' => \Awyiss\Model\Behavior\AutoPrefixBehavior::class,
+			'Categories' => \Awyiss\Model\Behavior\CategoriesBehavior::class,
+			'CounterCache' => \Cake\ORM\Behavior\CounterCacheBehavior::class,
+			'DefaultValues' => \Awyiss\Model\Behavior\DefaultValuesBehavior::class,
+			'EventTrigger' => \Awyiss\Model\Behavior\EventTriggerBehavior::class,
+			'MediaAssignment' => \Awyiss\Model\Behavior\MediaAssignmentBehavior::class,
+			'MediaElementAssignment' => \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::class,
+			'Nest' => \Awyiss\Model\Behavior\NestBehavior::class,
+			'PublicationData' => \Awyiss\Model\Behavior\PublicationDataBehavior::class,
+			'Search' => \Awyiss\Model\Behavior\SearchBehavior::class,
+			'SoftDelete' => \Awyiss\Model\Behavior\SoftDeleteBehavior::class,
+			'SystemOrder' => \Awyiss\Model\Behavior\SystemOrderBehavior::class,
+			'Timed' => \DebugKit\Model\Behavior\TimedBehavior::class,
+			'Timestamp' => \Cake\ORM\Behavior\TimestampBehavior::class,
+			'Translate' => \Awyiss\Model\Behavior\TranslateBehavior::class,
+			'Tree' => \Cake\ORM\Behavior\TreeBehavior::class,
+		]),
+	);
+
+	expectedArguments(
+		\Cake\ORM\Table::hasBehavior(),
+		0,
+		'Attributes',
+		'Audit',
+		'AutoPrefix',
+		'Categories',
+		'CounterCache',
+		'DefaultValues',
+		'EventTrigger',
+		'MediaAssignment',
+		'MediaElementAssignment',
+		'Nest',
+		'PublicationData',
+		'Search',
+		'SoftDelete',
+		'SystemOrder',
+		'Timed',
+		'Timestamp',
+		'Translate',
+		'Tree',
 	);
 
 	override(
@@ -3358,6 +3815,12 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Cake\ORM\Association\HasMany::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\HasMany::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\HasMany::class,
+			'SurveyAnswers' => \Cake\ORM\Association\HasMany::class,
+			'SurveyEntries' => \Cake\ORM\Association\HasMany::class,
+			'SurveyQuestions' => \Cake\ORM\Association\HasMany::class,
+			'SurveySurveyAnswers' => \Cake\ORM\Association\HasMany::class,
+			'SurveySurveyQuestions' => \Cake\ORM\Association\HasMany::class,
+			'Surveys' => \Cake\ORM\Association\HasMany::class,
 			'ThirdPartyConsents' => \Cake\ORM\Association\HasMany::class,
 			'UrlHistory' => \Cake\ORM\Association\HasMany::class,
 			'UrlsNotFound' => \Cake\ORM\Association\HasMany::class,
@@ -3413,6 +3876,12 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Cake\ORM\Association\HasOne::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\HasOne::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\HasOne::class,
+			'SurveyAnswers' => \Cake\ORM\Association\HasOne::class,
+			'SurveyEntries' => \Cake\ORM\Association\HasOne::class,
+			'SurveyQuestions' => \Cake\ORM\Association\HasOne::class,
+			'SurveySurveyAnswers' => \Cake\ORM\Association\HasOne::class,
+			'SurveySurveyQuestions' => \Cake\ORM\Association\HasOne::class,
+			'Surveys' => \Cake\ORM\Association\HasOne::class,
 			'ThirdPartyConsents' => \Cake\ORM\Association\HasOne::class,
 			'UrlHistory' => \Cake\ORM\Association\HasOne::class,
 			'UrlsNotFound' => \Cake\ORM\Association\HasOne::class,
@@ -3653,9 +4122,11 @@ namespace PHPSTORM_META {
 		'accepted_categories',
 		'access',
 		'active',
+		'allow_custom_answer',
 		'alt',
 		'attempts',
 		'average_color',
+		'avif',
 		'bcc',
 		'body',
 		'body_confirmation',
@@ -3681,6 +4152,7 @@ namespace PHPSTORM_META {
 		'crop',
 		'css',
 		'css_class',
+		'custom_answer_title',
 		'data',
 		'data_new',
 		'data_old',
@@ -3703,6 +4175,7 @@ namespace PHPSTORM_META {
 		'field',
 		'fieldset',
 		'file_name',
+		'final_action',
 		'firstname',
 		'focus_point',
 		'foreign_key',
@@ -3744,6 +4217,8 @@ namespace PHPSTORM_META {
 		'modified',
 		'multistep',
 		'name',
+		'next_action',
+		'next_action_target',
 		'notbefore',
 		'operator',
 		'options',
@@ -3793,7 +4268,12 @@ namespace PHPSTORM_META {
 		'subtitle',
 		'subtitle_tag',
 		'success_message',
+		'summarize_errors',
 		'summary',
+		'survey_answer_id',
+		'survey_id',
+		'survey_question_id',
+		'survey_survey_question_id',
 		'system_order',
 		'target',
 		'terminate',
@@ -3807,6 +4287,7 @@ namespace PHPSTORM_META {
 		'title_tag',
 		'transaction_id',
 		'translatable',
+		'transport_profile',
 		'type',
 		'unique_id',
 		'url',
@@ -3859,6 +4340,7 @@ namespace PHPSTORM_META {
 			'Paginator' => \Awyiss\View\Helper\PaginatorHelper::class,
 			'Queue.Queue' => \Queue\View\Helper\QueueHelper::class,
 			'Queue.QueueProgress' => \Queue\View\Helper\QueueProgressHelper::class,
+			'Survey' => \Awyiss\View\Helper\SurveyHelper::class,
 			'SystemOrder' => \Awyiss\View\Helper\SystemOrderHelper::class,
 			'Text' => \Cake\View\Helper\TextHelper::class,
 			'Time' => \Cake\View\Helper\TimeHelper::class,
@@ -3914,6 +4396,7 @@ namespace PHPSTORM_META {
 			'Paginator' => \Awyiss\View\Helper\PaginatorHelper::class,
 			'Queue.Queue' => \Queue\View\Helper\QueueHelper::class,
 			'Queue.QueueProgress' => \Queue\View\Helper\QueueProgressHelper::class,
+			'Survey' => \Awyiss\View\Helper\SurveyHelper::class,
 			'SystemOrder' => \Awyiss\View\Helper\SystemOrderHelper::class,
 			'Text' => \Cake\View\Helper\TextHelper::class,
 			'Time' => \Cake\View\Helper\TimeHelper::class,
@@ -3946,6 +4429,7 @@ namespace PHPSTORM_META {
 		'Paginator',
 		'Queue.Queue',
 		'Queue.QueueProgress',
+		'Survey',
 		'SystemOrder',
 		'Text',
 		'Time',
@@ -4082,69 +4566,63 @@ namespace PHPSTORM_META {
 	);
 
 	expectedArguments(
-		\Migrations\AbstractMigration::table(),
+		\Migrations\BaseMigration::table(),
 		0,
 		argumentsSet('tableNames'),
 	);
 
 	expectedArguments(
-		\Migrations\AbstractSeed::table(),
+		\Migrations\BaseSeed::table(),
 		0,
 		argumentsSet('tableNames'),
 	);
 
 	expectedArguments(
-		\Migrations\Table::addColumn(),
+		\Migrations\Db\Table::addColumn(),
 		0,
 		argumentsSet('columnNames'),
 	);
 
 	expectedArguments(
-		\Migrations\Table::addColumn(),
+		\Migrations\Db\Table::addColumn(),
 		1,
 		argumentsSet('columnTypes'),
 	);
 
 	expectedArguments(
-		\Migrations\Table::changeColumn(),
+		\Migrations\Db\Table::changeColumn(),
 		0,
 		argumentsSet('columnNames'),
 	);
 
 	expectedArguments(
-		\Migrations\Table::changeColumn(),
+		\Migrations\Db\Table::changeColumn(),
 		1,
 		argumentsSet('columnTypes'),
 	);
 
 	expectedArguments(
-		\Migrations\Table::hasColumn(),
+		\Migrations\Db\Table::hasColumn(),
 		0,
 		argumentsSet('columnNames'),
 	);
 
 	expectedArguments(
-		\Migrations\Table::removeColumn(),
+		\Migrations\Db\Table::removeColumn(),
 		0,
 		argumentsSet('columnNames'),
 	);
 
 	expectedArguments(
-		\Migrations\Table::renameColumn(),
+		\Migrations\Db\Table::renameColumn(),
 		0,
 		argumentsSet('columnNames'),
 	);
 
 	expectedArguments(
-		\Migrations\Table::renameColumn(),
+		\Migrations\Db\Table::renameColumn(),
 		1,
 		argumentsSet('columnNames'),
-	);
-
-	expectedArguments(
-		\Phinx\Seed\AbstractSeed::table(),
-		0,
-		argumentsSet('tableNames'),
 	);
 
 	expectedArguments(
@@ -4354,8 +4832,12 @@ namespace PHPSTORM_META {
 		'publication_data',
 		'queue',
 		'queued_jobs',
+		'route',
 		'search',
 		'seo',
+		'survey_answers',
+		'survey_questions',
+		'surveys',
 		'system',
 		'url_history',
 		'urls_not_found',
@@ -4385,16 +4867,11 @@ namespace PHPSTORM_META {
 		'add_files',
 		'add_succeeded',
 		'additional_email_settings',
+		'address',
 		'all',
+		'allow_custom_answer',
 		'alt',
-		'altcha_aria_link_label',
 		'altcha_error',
-		'altcha_expired',
-		'altcha_footer',
-		'altcha_label',
-		'altcha_verified',
-		'altcha_verifying',
-		'altcha_wait_alert',
 		'analyze_assets_css_writable',
 		'analyze_assets_css_writable_error_message',
 		'analyze_assets_font_writable',
@@ -4418,19 +4895,17 @@ namespace PHPSTORM_META {
 		'analyze_tmp_writable_error_message',
 		'analyze_webroot_not_in_url',
 		'analyze_webroot_not_in_url_error_message',
+		'answers',
 		'apply',
 		'as_copy',
 		'assigned_page_templates',
 		'average_color',
+		'back',
 		'back_to_overview',
-		'bake_page_roles_seed',
+		'bake_seed',
 		'bcc',
 		'bcc_email',
 		'bcc_name',
-		'breadcrumbs_homepage_id',
-		'breadcrumbs_include_current_page',
-		'breadcrumbs_include_homepage',
-		'breadcrumbs_show_on_homepage',
 		'button_area_toggle',
 		'button_request_extension',
 		'button_request_lock',
@@ -4443,6 +4918,7 @@ namespace PHPSTORM_META {
 		'captcha_label',
 		'captcha_legend',
 		'captcha_word_number',
+		'categories',
 		'category_filter_all',
 		'category_filter_label',
 		'category_filter_unassigned',
@@ -4466,6 +4942,7 @@ namespace PHPSTORM_META {
 		'column_width',
 		'column_width_full',
 		'completed',
+		'components',
 		'conditional_recipients_strategy',
 		'conditional_recipients_strategy_match_all',
 		'conditional_recipients_strategy_match_first',
@@ -4485,8 +4962,11 @@ namespace PHPSTORM_META {
 		'configuration_category_backend_system_order',
 		'configuration_category_backend_upload',
 		'configuration_category_frontend_categories',
+		'configuration_category_frontend_media_folders',
 		'configuration_category_frontend_meta',
 		'configuration_category_frontend_protection',
+		'configuration_category_frontend_publication',
+		'configuration_category_frontend_resizing',
 		'configuration_identifier_backend_auto_create_menu_entries',
 		'configuration_identifier_backend_categories_allow_aggregation',
 		'configuration_identifier_backend_categories_allow_unassigned',
@@ -4528,9 +5008,15 @@ namespace PHPSTORM_META {
 		'configuration_identifier_frontend_categories_forced_root_page_id',
 		'configuration_identifier_frontend_default_breakpoints',
 		'configuration_identifier_frontend_editor',
+		'configuration_identifier_frontend_media_folders_parent_folder_id',
 		'configuration_identifier_frontend_meta_title_appendix',
 		'configuration_identifier_frontend_meta_title_separator',
+		'configuration_identifier_frontend_ors_api_key',
 		'configuration_identifier_frontend_protection_methods',
+		'configuration_identifier_frontend_publication_check_ancestor_pages_publication_status',
+		'configuration_identifier_frontend_resizing_driver',
+		'configuration_identifier_frontend_resizing_file_type',
+		'configuration_identifier_frontend_resizing_quality',
 		'confirm_apply',
 		'confirm_apply_no',
 		'confirm_apply_title',
@@ -4541,13 +5027,18 @@ namespace PHPSTORM_META {
 		'confirm_delete_selected_title',
 		'confirm_delete_title',
 		'confirm_delete_yes',
+		'confirm_in_use',
+		'confirm_multiple_in_use',
 		'confirmation_email_template_id',
 		'content_area_id',
 		'content_areas[new][identifier][0]',
 		'content_areas[new][title][0]',
+		'content_areas_assigned',
+		'content_areas_available',
 		'content_elements_assigned',
 		'content_elements_available',
 		'content_template_id',
+		'content_templates',
 		'copy_descendants_with_different_page_role',
 		'copy_descendants_with_different_page_role_no',
 		'copy_descendants_with_different_page_role_yes',
@@ -4564,6 +5055,7 @@ namespace PHPSTORM_META {
 		'created_by',
 		'created_info_label',
 		'created_on',
+		'credentials_missing',
 		'crop',
 		'crop_height',
 		'crop_width',
@@ -4571,12 +5063,15 @@ namespace PHPSTORM_META {
 		'css_class',
 		'current_settings',
 		'current_value',
+		'custom_answer',
+		'custom_answer_label',
 		'custom_font_name',
 		'dark_mode_switch_off',
 		'dark_mode_switch_on',
 		'data',
 		'date_format',
 		'date_time_end',
+		'date_time_format_help_text',
 		'date_time_start',
 		'default',
 		'default_value',
@@ -4591,6 +5086,8 @@ namespace PHPSTORM_META {
 		'design_preview_mode_cancel',
 		'design_preview_mode_label',
 		'detect_available_commands',
+		'driver_gd',
+		'driver_imagick',
 		'drop_table',
 		'dropzone_drop_to_upload',
 		'duplicate_of',
@@ -4612,8 +5109,10 @@ namespace PHPSTORM_META {
 		'error_confirmation_email_template_exists',
 		'error_content_area_exists',
 		'error_content_template_exists',
-		'error_date_time',
+		'error_date',
+		'error_datetime',
 		'error_duplicate_not_on_same_page',
+		'error_email',
 		'error_email_send',
 		'error_email_template_exists',
 		'error_email_unique',
@@ -4621,12 +5120,15 @@ namespace PHPSTORM_META {
 		'error_exact_length',
 		'error_exists_in',
 		'error_file_name_unique',
+		'error_files_in_use',
+		'error_form_id_set_when_required',
 		'error_identifier_allowed',
 		'error_identifier_unchanged',
 		'error_identifier_unique',
 		'error_identifier_unique_for_media_element',
 		'error_identifier_unique_for_scope',
 		'error_in_list',
+		'error_in_use',
 		'error_is_integer',
 		'error_language_exists',
 		'error_link_constraint_rule',
@@ -4635,6 +5137,8 @@ namespace PHPSTORM_META {
 		'error_linked_form_emails',
 		'error_linked_media_assignments',
 		'error_linked_media_element_selectors',
+		'error_linked_pages',
+		'error_linked_surveys',
 		'error_linked_widgets',
 		'error_max_file_size',
 		'error_max_length',
@@ -4644,13 +5148,16 @@ namespace PHPSTORM_META {
 		'error_media_mime_type_matches_extension',
 		'error_mimetype_not_modified',
 		'error_min_length',
+		'error_no_circular_references',
 		'error_no_duplicated_children',
 		'error_no_duplicated_contents',
 		'error_no_duplicating_contents',
 		'error_no_duplicating_pages',
+		'error_no_invalid_next_actions',
 		'error_no_linked_page_templates',
 		'error_no_linked_pages',
 		'error_no_nested_children_with_different_page_role',
+		'error_no_repeated_questions_in_linear_survey',
 		'error_not_blank',
 		'error_not_default_element_deletion',
 		'error_not_default_selector_deletion',
@@ -4678,7 +5185,10 @@ namespace PHPSTORM_META {
 		'error_root_title_unchanged',
 		'error_same_as',
 		'error_shortcode_unique_for_realm',
+		'error_subfolders_hidden',
+		'error_time',
 		'error_title_unique',
+		'error_transport_profile_exists',
 		'error_unique',
 		'error_user_exists',
 		'error_user_id_unchanged',
@@ -4693,6 +5203,7 @@ namespace PHPSTORM_META {
 		'error_valid_count',
 		'error_valid_duplicate_of',
 		'error_valid_fieldset',
+		'error_valid_final_action',
 		'error_valid_foreign_key',
 		'error_valid_form_id',
 		'error_valid_input_type',
@@ -4705,14 +5216,20 @@ namespace PHPSTORM_META {
 		'error_valid_parent_id',
 		'error_valid_realm',
 		'error_valid_status',
+		'error_valid_survey_answer_id',
+		'error_valid_survey_id',
+		'error_valid_survey_question_id',
+		'error_valid_survey_survey_question_id',
 		'error_valid_timezone',
 		'error_valid_value',
 		'error_valid_width_indent_combination',
 		'external',
 		'failed_attempts',
+		'failure_message',
 		'false',
 		'field',
 		'fieldset',
+		'fieldset_answers',
 		'fieldset_assignable_models',
 		'fieldset_attributes',
 		'fieldset_backend',
@@ -4720,7 +5237,6 @@ namespace PHPSTORM_META {
 		'fieldset_conditions',
 		'fieldset_confirmation_email',
 		'fieldset_content',
-		'fieldset_content_areas',
 		'fieldset_crop',
 		'fieldset_data',
 		'fieldset_details',
@@ -4735,6 +5251,8 @@ namespace PHPSTORM_META {
 		'fieldset_permissions',
 		'fieldset_presentation',
 		'fieldset_publication',
+		'fieldset_questions_assigned',
+		'fieldset_questions_available',
 		'fieldset_quick_actions',
 		'fieldset_seo',
 		'fieldset_summary',
@@ -4754,6 +5272,7 @@ namespace PHPSTORM_META {
 		'filter_reset',
 		'filter_show',
 		'filter_submit',
+		'final_action',
 		'first',
 		'first_occurrence',
 		'firstname',
@@ -4779,8 +5298,38 @@ namespace PHPSTORM_META {
 		'form_leave_confirmation_dialog_confirm_stay',
 		'form_leave_confirmation_dialog_message',
 		'form_leave_confirmation_dialog_title',
+		'form_template',
+		'form_template_appointment_form',
+		'form_template_callback_form',
+		'form_template_contact_form',
+		'form_template_datetime',
+		'form_template_email',
+		'form_template_firstname',
+		'form_template_job_application_file',
+		'form_template_job_application_files_text',
+		'form_template_job_application_form',
+		'form_template_lastname',
+		'form_template_message',
+		'form_template_name',
+		'form_template_optional_placeholder',
+		'form_template_phone',
+		'form_template_privacy_accepted',
+		'form_template_privacy_accepted_text',
+		'form_template_privacy_accepted_yes',
+		'form_template_submit',
+		'form_template_title',
+		'form_template_title_diverse',
+		'form_template_title_mr',
+		'form_template_title_ms',
 		'forms_overview',
+		'free_answer_label',
 		'frontend_preview',
+		'geocode_address',
+		'geocode_address_found',
+		'geocode_error_address',
+		'geocode_error_api_key_missing',
+		'geocode_multiple_results_found',
+		'geocode_multiple_results_found_title',
 		'global',
 		'global_language',
 		'global_value',
@@ -4790,6 +5339,7 @@ namespace PHPSTORM_META {
 		'headline_add_batch',
 		'headline_analyze',
 		'headline_clear_cache',
+		'headline_diagram',
 		'headline_duplicate_configuration',
 		'headline_edit',
 		'headline_error_400',
@@ -4813,8 +5363,10 @@ namespace PHPSTORM_META {
 		'headline_structure_warning_multiple_h1',
 		'headline_structure_warning_too_many_h2',
 		'headline_structure_warning_wrong_headline_order',
+		'headline_usages',
 		'height',
 		'history_entry_info',
+		'homepage_id',
 		'html_cleaning_moderate',
 		'html_cleaning_none',
 		'html_cleaning_strict',
@@ -4824,16 +5376,17 @@ namespace PHPSTORM_META {
 		'in_content_row',
 		'in_use',
 		'inactive',
+		'include_current_page',
+		'include_homepage',
 		'include_in_linklist',
 		'input_type',
 		'input_type_bool_label',
 		'input_type_checkbox',
-		'input_type_custom_select',
-		'input_type_custom_select_multiple',
 		'input_type_date',
 		'input_type_datetime',
 		'input_type_hidden',
-		'input_type_media',
+		'input_type_input_key_value_list',
+		'input_type_input_list',
 		'input_type_multicheckbox',
 		'input_type_password',
 		'input_type_select',
@@ -4843,9 +5396,6 @@ namespace PHPSTORM_META {
 		'input_type_texteditor',
 		'input_type_time',
 		'insert_after_id',
-		'instagram_credentials_missing',
-		'instagram_items',
-		'instagram_profile_name',
 		'interface_editor_jodit',
 		'interface_editor_plain',
 		'interface_editor_tinymce',
@@ -4865,6 +5415,7 @@ namespace PHPSTORM_META {
 		'last_login',
 		'last_occurrence',
 		'lastname',
+		'lat',
 		'layout',
 		'legend_login',
 		'length',
@@ -4885,6 +5436,7 @@ namespace PHPSTORM_META {
 		'list_item_remove',
 		'list_nested',
 		'list_paginated',
+		'lng',
 		'load_settings',
 		'locale',
 		'lock_warning',
@@ -4897,6 +5449,8 @@ namespace PHPSTORM_META {
 		'login_failed',
 		'login_logo',
 		'logout',
+		'media_element',
+		'media_element_inline_img_tag',
 		'media_elements_assigned',
 		'media_elements_available',
 		'media_folder_filter_label',
@@ -4905,6 +5459,7 @@ namespace PHPSTORM_META {
 		'media_folder_id',
 		'media_folders_toggle',
 		'media_selector_id',
+		'media_usages_inaccessible',
 		'menu_add',
 		'menu_add_batch',
 		'menu_analyze',
@@ -4931,6 +5486,7 @@ namespace PHPSTORM_META {
 		'meta_title_analyze',
 		'meta_title_auto',
 		'meta_title_clear_cache',
+		'meta_title_diagram',
 		'meta_title_duplicate_configuration',
 		'meta_title_edit',
 		'meta_title_history',
@@ -4944,13 +5500,26 @@ namespace PHPSTORM_META {
 		'meta_title_preview',
 		'meta_title_summary_error',
 		'meta_title_summary_warning',
+		'meta_title_usages',
 		'meta_title_view',
+		'meta_title_view_confirmation',
 		'mime_type',
 		'module_identifier',
 		'multistep',
 		'name',
 		'next',
-		'no_news',
+		'next_action',
+		'next_action_abort',
+		'next_action_form',
+		'next_action_inherit_form',
+		'next_action_next_question',
+		'next_action_question',
+		'next_action_save_and_end',
+		'next_action_save_and_show_form',
+		'next_action_show_form',
+		'next_action_show_form_and_save',
+		'next_action_specific_question',
+		'no_records',
 		'normal',
 		'number_of_items',
 		'occurrences',
@@ -5016,6 +5585,7 @@ namespace PHPSTORM_META {
 		'permission_save',
 		'permission_update',
 		'permission_use',
+		'pick_question',
 		'placeholder',
 		'placeholder_data',
 		'placeholder_help_text',
@@ -5025,6 +5595,7 @@ namespace PHPSTORM_META {
 		'preview_mode_label',
 		'preview_mode_mark_inactive_elements',
 		'previous',
+		'profile_name',
 		'protection',
 		'protection_method_altcha',
 		'protection_method_duplicate_check',
@@ -5034,6 +5605,12 @@ namespace PHPSTORM_META {
 		'protection_method_ip_check',
 		'protection_method_ip_check_error_duplicate_found',
 		'protection_method_none',
+		'question_filter_label',
+		'question_type_free_text',
+		'question_type_info_text',
+		'question_type_multiple_choice',
+		'question_type_single_choice',
+		'questions_diagram',
 		'quick_action_add_page',
 		'quick_action_user_configuration',
 		'read_more',
@@ -5045,10 +5622,15 @@ namespace PHPSTORM_META {
 		'redirect_link',
 		'reference',
 		'referrer',
+		'remove_answer',
 		'remove_file',
+		'remove_question',
 		'required',
 		'reset',
 		'resize_height',
+		'resize_media_file_type_avif',
+		'resize_media_file_type_match_source',
+		'resize_media_file_type_webp',
 		'resize_width',
 		'restart_failed',
 		'restart_failed_not_failed',
@@ -5059,11 +5641,28 @@ namespace PHPSTORM_META {
 		'robots_index',
 		'robots_no_follow',
 		'robots_no_index',
+		'route_planner_calculate_route',
+		'route_planner_directions_found',
+		'route_planner_end',
+		'route_planner_error_api_key_missing',
+		'route_planner_error_end_coordinates',
+		'route_planner_error_start_coordinates',
+		'route_planner_multiple_results_found',
+		'route_planner_no_directions_found',
+		'route_planner_reset',
+		'route_planner_route_summary_distance',
+		'route_planner_route_summary_duration',
+		'route_planner_route_summary_end',
+		'route_planner_route_summary_start',
+		'route_planner_start',
+		'route_planner_start_choices_close',
+		'route_planner_start_placeholder',
 		'salutation',
 		'salutation_confirmation',
 		'salutation_confirmation_placeholder',
 		'save',
 		'save_close',
+		'save_entry_failed',
 		'save_failed',
 		'save_settings',
 		'save_settings_no',
@@ -5079,8 +5678,11 @@ namespace PHPSTORM_META {
 		'send_confirmation_email',
 		'send_email',
 		'shortcode',
+		'show_diagram',
 		'show_history',
+		'show_on_homepage',
 		'show_password',
+		'show_transportation_modes',
 		'sidebar_toggle',
 		'simple_permission_option_denied',
 		'simple_permission_option_granted',
@@ -5102,6 +5704,13 @@ namespace PHPSTORM_META {
 		'subtitle_error_500',
 		'subtitle_tag',
 		'success_message',
+		'summarize_errors',
+		'survey_id',
+		'survey_question_id',
+		'survey_questions_overview',
+		'survey_type_configurator',
+		'survey_type_linear',
+		'surveys_overview',
 		'system_order',
 		'system_order_after',
 		'system_order_first',
@@ -5109,6 +5718,11 @@ namespace PHPSTORM_META {
 		'system_order_not_enabled',
 		'system_order_not_saved',
 		'system_order_saved',
+		'system_overview_category_analyze',
+		'system_overview_category_configuration',
+		'system_overview_category_extend',
+		'system_overview_category_templates',
+		'system_overview_category_users_usergroups',
 		'table_changes',
 		'table_changes_in_progress',
 		'target',
@@ -5123,11 +5737,20 @@ namespace PHPSTORM_META {
 		'title_email',
 		'title_empty',
 		'title_tag',
+		'toggle_configuration',
 		'translatable',
 		'translations_button_title',
 		'translations_dialog_apply',
 		'translations_dialog_cancel',
 		'translations_dialog_title',
+		'transport_profile',
+		'transport_profile_debug',
+		'transport_profile_default',
+		'transport_profile_smtp',
+		'transportation_mode',
+		'transportation_mode_bike',
+		'transportation_mode_car',
+		'transportation_mode_foot',
 		'true',
 		'type',
 		'type_checkbox',
@@ -5154,6 +5777,7 @@ namespace PHPSTORM_META {
 		'unknown_content_area',
 		'unknown_entity',
 		'unknown_file',
+		'unused_questions',
 		'update_preview',
 		'upload_overwrite_existing_files',
 		'upload_overwrite_existing_files_active',
@@ -5180,6 +5804,7 @@ namespace PHPSTORM_META {
 		'usergroup_filter_unassigned',
 		'username',
 		'value',
+		'view_answers',
 		'view_confirmation_email',
 		'view_contents',
 		'view_data',
@@ -5194,6 +5819,8 @@ namespace PHPSTORM_META {
 		'widget_elements_available',
 		'widget_template_id',
 		'width',
+		'zoom_in',
+		'zoom_out',
 	);
 
 	expectedArguments(
@@ -5271,12 +5898,13 @@ namespace PHPSTORM_META {
 		'access',
 		'active',
 		'adresse',
-		'allow_own_option',
+		'allow_custom_answer',
 		'alt',
 		'asdfasdf',
 		'attempts',
 		'average_color',
 		'average_reading_time',
+		'avif',
 		'background_color',
 		'bcc',
 		'body',
@@ -5304,6 +5932,7 @@ namespace PHPSTORM_META {
 		'crop',
 		'css',
 		'css_class',
+		'custom_answer_title',
 		'data',
 		'data_new',
 		'data_old',
@@ -5330,6 +5959,7 @@ namespace PHPSTORM_META {
 		'field',
 		'fieldset',
 		'file_name',
+		'final_action',
 		'firstname',
 		'focus_point',
 		'foreign_key',
@@ -5370,10 +6000,11 @@ namespace PHPSTORM_META {
 		'modified',
 		'multistep',
 		'name',
+		'next_action',
+		'next_action_target',
 		'notbefore',
 		'operator',
 		'options',
-		'own_option_title',
 		'owner_email',
 		'owner_name',
 		'page_id',
@@ -5416,7 +6047,11 @@ namespace PHPSTORM_META {
 		'subtitle',
 		'subtitle_tag',
 		'success_message',
+		'summarize_errors',
+		'survey_answer_id',
+		'survey_id',
 		'survey_question_id',
+		'survey_survey_question_id',
 		'system_order',
 		'target',
 		'teaser',
@@ -5437,6 +6072,7 @@ namespace PHPSTORM_META {
 		'transaction_id',
 		'translatable',
 		'translatable_text',
+		'transport_profile',
 		'type',
 		'unique_id',
 		'url',
@@ -5521,6 +6157,7 @@ namespace PHPSTORM_META {
 		'AvailableCommands',
 		'AvailableCommands.ffmpeg',
 		'AvailableCommands.imageMagick',
+		'AvailableCommands.imageMagick.avif',
 		'AvailableCommands.imageMagick.doc',
 		'AvailableCommands.imageMagick.docx',
 		'AvailableCommands.imageMagick.pdf',
@@ -5528,9 +6165,12 @@ namespace PHPSTORM_META {
 		'AvailableCommands.imageMagick.pptx',
 		'AvailableCommands.imageMagick.psd',
 		'AvailableCommands.imageMagick.svg',
+		'AvailableCommands.imageMagick.webp',
 		'AvailableCommands.imageMagick.xls',
 		'AvailableCommands.imageMagick.xlsx',
 		'Csp',
+		'Csp.connectSrc',
+		'Csp.connectSrc.allow',
 		'Csp.fontSrc',
 		'Csp.fontSrc.allow',
 		'Csp.frameSrc',
@@ -5569,6 +6209,7 @@ namespace PHPSTORM_META {
 		'Debugger.editor',
 		'Design',
 		'Design.allowCompile',
+		'Design.allowGoogleFonts',
 		'Design.autoCompile',
 		'Design.blocklistedVariables',
 		'Design.fontStacks',
@@ -5744,6 +6385,7 @@ namespace PHPSTORM_META {
 		'MimeTypes.audio/mpeg',
 		'MimeTypes.audio/ogg',
 		'MimeTypes.binary/octet-stream',
+		'MimeTypes.image/avif',
 		'MimeTypes.image/gif',
 		'MimeTypes.image/jpeg',
 		'MimeTypes.image/png',
@@ -5756,14 +6398,18 @@ namespace PHPSTORM_META {
 		'MimeTypes.text/html',
 		'MimeTypes.text/javascript',
 		'MimeTypes.text/plain',
+		'MimeTypes.text/vtt',
 		'MimeTypes.text/x-comma-separated-values',
 		'MimeTypes.text/x-csv',
 		'MimeTypes.video/mp4',
+		'MimeTypes.video/webm',
 		'MimeTypes.video/x-msvideo',
 		'Queue',
 		'Queue.defaultworkertimeout',
 		'Queue.maxworkers',
 		'Queue.workermaxruntime',
+		'Route',
+		'Route.includeLanguageShortcode',
 		'Security',
 		'Session',
 		'Session.cookie',
@@ -5773,7 +6419,6 @@ namespace PHPSTORM_META {
 		'Session.ini.session.gc_divisor',
 		'Session.ini.session.gc_maxlifetime',
 		'Session.ini.session.gc_probability',
-		'Session.ini.session.save_path',
 		'Session.timeout',
 		'debug',
 		'plugins',
@@ -5925,6 +6570,8 @@ namespace PHPSTORM_META {
 		'parent_id',
 		'subtitle',
 		'subtitle_tag',
+		'survey',
+		'survey_id',
 		'system_order',
 		'text',
 		'title',
@@ -5974,6 +6621,7 @@ namespace PHPSTORM_META {
 		'in_content_row',
 		'label',
 		'media_assignments',
+		'page_templates',
 		'system_order',
 		'title',
 	);
@@ -6086,6 +6734,7 @@ namespace PHPSTORM_META {
 		'conditional_recipients_strategy',
 		'confirmation_email_template',
 		'confirmation_email_template_id',
+		'contents',
 		'created_by',
 		'created_by_user',
 		'created_on',
@@ -6105,6 +6754,7 @@ namespace PHPSTORM_META {
 		'multistep',
 		'owner_email',
 		'owner_name',
+		'pages',
 		'salutation',
 		'salutation_confirmation',
 		'send_confirmation_email',
@@ -6112,9 +6762,13 @@ namespace PHPSTORM_META {
 		'subject',
 		'subject_confirmation',
 		'success_message',
+		'summarize_errors',
+		'surveys',
 		'title',
+		'transport_profile',
 		'user_email',
 		'user_name',
+		'widgets',
 	);
 
 	registerArgumentsSet(
@@ -6260,6 +6914,10 @@ namespace PHPSTORM_META {
 		'entityFields:Awyiss\Model\Entity\Media',
 		'alt',
 		'average_color',
+		'avif',
+		'avifName',
+		'avifPath',
+		'avifPathAbsolute',
 		'changed_by',
 		'changed_by_user',
 		'changed_on',
@@ -6286,6 +6944,9 @@ namespace PHPSTORM_META {
 		'meta_data',
 		'mime_type',
 		'name',
+		'originalAvifName',
+		'originalAvifPath',
+		'originalAvifPathAbsolute',
 		'originalCleanName',
 		'originalExtension',
 		'originalPathAbsolute',
@@ -6550,6 +7211,8 @@ namespace PHPSTORM_META {
 		'robots_follow',
 		'robots_index',
 		'slug',
+		'survey',
+		'survey_id',
 		'system_order',
 		'title',
 		'url_history',
@@ -6586,6 +7249,7 @@ namespace PHPSTORM_META {
 		'changed_by_user',
 		'changed_on',
 		'content_areas',
+		'content_template_content_areas',
 		'created_by',
 		'created_by_user',
 		'created_on',
@@ -6621,9 +7285,168 @@ namespace PHPSTORM_META {
 		'foreign_key',
 		'id',
 		'label',
-		'media_assignments',
 		'scope',
 		'type',
+	);
+
+	registerArgumentsSet(
+		'entityFields:Awyiss\Model\Entity\Survey',
+		'active',
+		'changed_by',
+		'changed_by_user',
+		'changed_on',
+		'contents',
+		'created_by',
+		'created_by_user',
+		'created_on',
+		'deleted',
+		'deleted_by',
+		'deleted_by_user',
+		'deleted_on',
+		'failure_message',
+		'final_action',
+		'form',
+		'form_id',
+		'id',
+		'identifier',
+		'label',
+		'media_assignments',
+		'pages',
+		'success_message',
+		'survey_entries',
+		'survey_survey_questions',
+		'title',
+		'type',
+		'widgets',
+	);
+
+	registerArgumentsSet(
+		'entityFields:Awyiss\Model\Entity\SurveyAnswer',
+		'active',
+		'changed_by',
+		'changed_by_user',
+		'changed_on',
+		'created_by',
+		'created_by_user',
+		'created_on',
+		'deleted',
+		'deleted_by',
+		'deleted_by_user',
+		'deleted_on',
+		'id',
+		'label',
+		'media_assignments',
+		'subtitle',
+		'survey_question',
+		'survey_question_id',
+		'survey_survey_answers',
+		'survey_survey_question',
+		'system_order',
+		'text',
+		'title',
+	);
+
+	registerArgumentsSet(
+		'entityFields:Awyiss\Model\Entity\SurveyEntry',
+		'created_on',
+		'data',
+		'deleted',
+		'deleted_by',
+		'deleted_by_user',
+		'deleted_on',
+		'id',
+		'ip_hash',
+		'label',
+		'media_assignments',
+		'page',
+		'page_id',
+		'post_hash',
+		'survey',
+		'survey_id',
+	);
+
+	registerArgumentsSet(
+		'entityFields:Awyiss\Model\Entity\SurveyQuestion',
+		'active',
+		'changed_by',
+		'changed_by_user',
+		'changed_on',
+		'created_by',
+		'created_by_user',
+		'created_on',
+		'deleted',
+		'deleted_by',
+		'deleted_by_user',
+		'deleted_on',
+		'id',
+		'label',
+		'media_assignments',
+		'subtitle',
+		'survey_answers',
+		'survey_survey_questions',
+		'text',
+		'title',
+		'type',
+	);
+
+	registerArgumentsSet(
+		'entityFields:Awyiss\Model\Entity\SurveySurveyAnswer',
+		'active',
+		'changed_by',
+		'changed_by_user',
+		'changed_on',
+		'created_by',
+		'created_by_user',
+		'created_on',
+		'deleted',
+		'deleted_by',
+		'deleted_by_user',
+		'deleted_on',
+		'id',
+		'label',
+		'media_assignments',
+		'next_action',
+		'next_action_target',
+		'subtitle',
+		'survey_answer',
+		'survey_answer_id',
+		'survey_survey_question',
+		'survey_survey_question_id',
+		'system_order',
+		'text',
+		'title',
+	);
+
+	registerArgumentsSet(
+		'entityFields:Awyiss\Model\Entity\SurveySurveyQuestion',
+		'active',
+		'allow_custom_answer',
+		'changed_by',
+		'changed_by_user',
+		'changed_on',
+		'created_by',
+		'created_by_user',
+		'created_on',
+		'custom_answer_title',
+		'deleted',
+		'deleted_by',
+		'deleted_by_user',
+		'deleted_on',
+		'id',
+		'identifier',
+		'label',
+		'media_assignments',
+		'next_action',
+		'next_action_target',
+		'subtitle',
+		'survey',
+		'survey_id',
+		'survey_question',
+		'survey_question_id',
+		'survey_survey_answers',
+		'system_order',
+		'text',
+		'title',
 	);
 
 	registerArgumentsSet(
@@ -6788,6 +7611,8 @@ namespace PHPSTORM_META {
 		'parent_id',
 		'parent_widget',
 		'subtitle',
+		'survey',
+		'survey_id',
 		'system_order',
 		'text',
 		'title',
@@ -6944,7 +7769,11 @@ namespace PHPSTORM_META {
 		'queue_processes',
 		'queued_jobs',
 		'survey_answers',
+		'survey_entries',
 		'survey_questions',
+		'survey_survey_answers',
+		'survey_survey_questions',
+		'surveys',
 		'third_party_consents',
 		'url_history',
 		'urls_not_found',
