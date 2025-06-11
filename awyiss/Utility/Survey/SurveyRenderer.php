@@ -48,9 +48,9 @@ class SurveyRenderer {
 	 */
 	protected ?FormRenderer $formRenderer = null;
 	/**
-	 * @var bool
+	 * @var bool|null
 	 */
-	protected bool $formSent = false;
+	protected ?bool $formSent = false;
 	/**
 	 * The page the survey is on.
 	 * A form that might be shown by this survey
