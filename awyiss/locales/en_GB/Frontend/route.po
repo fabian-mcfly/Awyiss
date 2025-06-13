@@ -100,3 +100,6 @@ msgstr "Multiple results found"
 
 msgid "geocode_error_address"
 msgstr "The entered address is invalid"
+
+msgid "route_planner_error_access"
+msgstr "Forbidden"

@@ -8,6 +8,8 @@ use Awyiss\Controller\AppController;
 use Awyiss\Core\App;
 use Awyiss\Routing\Router;
 use Cake\Core\Configure;
+use Cake\Http\Exception\ForbiddenException;
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
 
 /**
@@ -17,14 +19,15 @@ class RouteController extends AppController {
 	/**
 	 * Tries to find the coordinates of a given address/search string
 	 * using the OpenRouteService API.
-	 *
 	 * If multiple results are found, the controller will return
 	 * a notice with the results and a 300 status code.
 	 *
 	 * @param string $search
-	 */
+	 * @noinspection PhpUnused*/
 	public function findCoordinates(string $search): void {
 		$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['status', 'data', 'title', 'message']);
+
+		$this->accessCheck();
 
 		$ls_orsApiKey = $this->getOrsApiKey();
 
@@ -91,6 +94,8 @@ class RouteController extends AppController {
 	 */
 	public function route(string $start, string $end): void {
 		$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['status', 'data', 'message']);
+
+		$this->accessCheck();
 
 		$ls_orsApiKey = $this->getOrsApiKey();
 
@@ -195,16 +200,31 @@ class RouteController extends AppController {
 
 
 	/**
-	 * @return mixed|null
+	 * @return string
 	 */
-	protected function getOrsApiKey(): mixed {
-		$ls_orsApiKey = Configure::read('Awyiss.System.Frontend.orsApiKey');
+	protected function getOrsApiKey(): string {
+		return Configure::read('Awyiss.System.Frontend.orsApiKey');
+	}
 
+
+	/**
+	 * @return void
+	 */
+	protected function accessCheck(): void {
 		$ls_referer = $this->request->getHeaderLine('Referer');
-		if (!str_starts_with($ls_referer, Router::url('/', true))) {
-			$ls_orsApiKey = null;
+		if (!str_starts_with($ls_referer, Router::fullBaseUrl())) {
+			throw new ForbiddenException(
+				__d('route', 'route_planner_error_access')
+			);
 		}
 
-		return $ls_orsApiKey;
+		$ls_userAgent = $this->getRequest()->getHeaderLine('User-Agent');
+		$lo_crawlerDetect = new CrawlerDetect();
+
+		if ($lo_crawlerDetect->isCrawler($ls_userAgent)) {
+			throw new ForbiddenException(
+				__d('route', 'route_planner_error_access')
+			);
+		}
 	}
 }
