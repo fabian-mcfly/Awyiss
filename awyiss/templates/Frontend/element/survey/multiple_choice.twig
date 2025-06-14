@@ -25,3 +25,7 @@
 {% block answerInput %}
 	<input type="checkbox" name="survey[{{ survey.identifier }}][{{ question.identifier }}][]" value="{{ answer.id }}" id="SurveyAnswer-Input{{ answer.id }}">
 {% endblock %}
+
+{% block customAnswerInput %}
+	<input type="radio" name="survey[{{ survey.identifier }}][{{ question.identifier }}][]" value="custom" id="SurveyAnswer-InputCustom">
+{% endblock %}

@@ -523,6 +523,7 @@ class Survey extends Entity {
 	 */
 	public function setProgress(array $progressData): static {
 		$this->progressData = [];
+		$this->customAnswers = [];
 		$this->currentAction = null;
 
 		if (!$progressData) {
@@ -539,7 +540,7 @@ class Survey extends Entity {
 			$lx_answer = match ($lo_question->surveyQuestion->type) {
 				$this->getQuestionTypeEnum()::SingleChoice => (int)$lx_answer,
 				$this->getQuestionTypeEnum()::MultiChoice => array_map(function (mixed $answer) {
-					return (int)$answer;
+					return $answer !== 'custom' ? (int)$answer : $answer;
 				}, (array)$lx_answer),
 				$this->getQuestionTypeEnum()::InfoText => null,
 				default => $lx_answer,
@@ -551,6 +552,8 @@ class Survey extends Entity {
 				isset($la_customData[ $ls_identifier ])
 			) {
 				// Treat the custom answer as if no answer was given.
+				// Treat the custom answer as if no answer was given
+				// since the question itself defines the next action.
 				$lx_answer = null;
 			}
 
@@ -564,6 +567,16 @@ class Survey extends Entity {
 				isset($la_customData[ $ls_identifier ])
 			) {
 				$this->customAnswers[ $ls_identifier ] = $la_customData[ $ls_identifier ];
+			}
+
+			if (
+				$lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::MultiChoice &&
+				in_array('custom', $lx_answer) &&
+				isset($la_customData[ $ls_identifier ])
+			) {
+				// If the multi-choice question has a custom answer,
+				// we store it in the custom answers array.
+				$this->customAnswers[ $ls_identifier ] = $la_customData[ $ls_identifier ] ?? '';
 			}
 
 			$this->currentAction = $lo_question;
@@ -627,7 +640,12 @@ class Survey extends Entity {
 				return false;
 			}
 
-			return empty(array_diff($answer, array_keys($lo_question->surveySurveyAnswers)));
+			$la_possibleAnswers = array_keys($lo_question->surveySurveyAnswers);
+			if ($lo_question->allowCustomAnswer) {
+				$la_possibleAnswers[] = 'custom';
+			}
+
+			return empty(array_diff($answer, $la_possibleAnswers));
 		}
 
 		// If the single choice question allows a custom answer,
