@@ -209,10 +209,13 @@ class SurveyRenderer {
 			 */
 			$lo_formRenderer = $this->getFormRenderer();
 			$lo_entry = $lo_formRenderer->loadFormEntryFromHash($formEntryHash);
-			$la_formData = json_decode(gzuncompress(base64_decode($lo_entry->data)), true);
 
-			if (isset($la_formData['survey'][ $this->survey->identifier ])) {
-				$this->processSurveyFromData($la_formData['survey'][ $this->survey->identifier ]);
+			if ($lo_entry) {
+				$la_formData = json_decode(gzuncompress(base64_decode($lo_entry->data)), true);
+
+				if (isset($la_formData['survey'][ $this->survey->identifier ])) {
+					$this->processSurveyFromData($la_formData['survey'][ $this->survey->identifier ]);
+				}
 			}
 		}
 
