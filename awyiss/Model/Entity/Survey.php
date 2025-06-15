@@ -408,7 +408,7 @@ class Survey extends Entity {
 					$this->getNextActionEnum()::ShowFormAndSave,
 				])
 			) {
-				$lo_query = $lo_formsTable->findById((int)$lo_answer->nextActionTarget);
+				$lo_query = $lo_formsTable->findById((int)($lo_answer->nextActionTarget ?? $this->formId));
 
 				$lo_query->find($this->isPreview ? 'all' : 'active');
 
@@ -424,7 +424,7 @@ class Survey extends Entity {
 				$this->getNextActionEnum()::ShowFormAndSave,
 			])
 		) {
-			$lo_query = $lo_formsTable->findById((int)$lo_question->nextActionTarget);
+			$lo_query = $lo_formsTable->findById((int)($lo_question->nextActionTarget ?? $this->formId));
 
 			$lo_query->find($this->isPreview ? 'all' : 'active');
 
