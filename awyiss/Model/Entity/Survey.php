@@ -169,7 +169,7 @@ class Survey extends Entity {
 
 		if (
 			!isset($this->questionsByIdentifier[ $identifier ]) ||
-			!isset($this->progressData[ $identifier ])
+			!array_key_exists($identifier, $this->progressData)
 		) {
 			throw new InvalidArgumentException(sprintf('The question with identifier `%s` does not exist in the survey.', $identifier));
 		}
