@@ -17,8 +17,15 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
+{% block surveyScript %}
+	{% do AssetHelper.addJsModule({'Frontend/Survey.js': {
+		as: 'Survey',
+		realm: 'Backend'
+	}}) %}
+{% endblock %}
+
 {% block survey %}
-	<div class="Survey" id="Survey-{{ survey.identifier|ucparts(false) }}">
+	<div class="Survey" id="Survey-{{ survey.identifier|ucparts(false) }}"{# data-ajax="false"#}>
 		{% if successMessage %}
 			{% block surveySuccessMessage %}
 				<div class="Survey-SuccessMessage">
@@ -27,7 +34,7 @@
 			{% endblock %}
 		{% else %}
 			{% block surveyForm %}
-				<form method="post">
+				<form method="post" action="#Survey-{{ survey.identifier|ucparts(false) }}">
 			{% endblock %}
 
 			{% block surveyFailureEnding %}

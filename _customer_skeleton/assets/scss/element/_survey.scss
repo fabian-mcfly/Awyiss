@@ -1,4 +1,20 @@
 .Survey {
+	&.FetchInProgress {
+		pointer-events:none;
+
+		> * {
+			opacity:.1;
+		}
+	}
+
+	> * {
+		transition:opacity .3s ease-in-out;
+
+		@starting-style {
+			opacity:.1;
+		}
+	}
+
 	.Form {
 		+ .Survey-Actions {
 			margin-top:-2.2em;
