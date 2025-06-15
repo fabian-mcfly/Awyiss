@@ -23,7 +23,7 @@ class MediaAssignmentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = true;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
