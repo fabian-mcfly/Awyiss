@@ -189,6 +189,12 @@ class Survey extends Entity {
 	 * @return $this
 	 */
 	public function loadQuestions(): static {
+		if (!$this->id) {
+			$this->questions = collection([]);
+
+			return $this;
+		}
+
 		/** @var \Awyiss\Model\Table\SurveySurveyQuestionsTable $lo_questionsTable */
 		$lo_questionsTable = $this->fetchTable('SurveySurveyQuestions');
 
