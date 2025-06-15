@@ -680,6 +680,7 @@ class Survey extends Entity {
 		);
 
 		foreach (array_keys($graph) as $ls_node) {
+			$ls_node = (string)$ls_node;
 			if ($this->detectCycle($ls_node, $graph, $la_visited, $la_stack)) {
 				// Find the question that has the node as nextActionTarget
 				$lo_question = collection($la_questionsByIdentifier)
