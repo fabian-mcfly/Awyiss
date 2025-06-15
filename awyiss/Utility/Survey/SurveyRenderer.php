@@ -16,6 +16,7 @@ use Awyiss\Routing\Router;
 use Awyiss\Survey\AbstractSurveyResults;
 use Awyiss\Utility\Form\FormRenderer;
 use Awyiss\Utility\Inflector;
+use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\View\Cell\Frontend\Trait\FrontendRenderingTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\FrontendView;
@@ -334,8 +335,6 @@ class SurveyRenderer {
 	 * @throws \Exception
 	 */
 	public function getSurveyBody(array $options): string {
-		static $ls_templatePath;
-
 		if (!$this->survey) {
 			return '';
 		}
@@ -356,43 +355,7 @@ class SurveyRenderer {
 		$ls_currentQuestion = '';
 		$lb_hasNextAction = false;
 		if ($this->currentAction instanceof SurveySurveyQuestion) {
-			if (!isset($ls_templatePath)) {
-				$ls_templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);
-			}
-
-			$ls_fileName = 'Question' . $this->currentAction->identifier;
-
-			$ls_filePath = implode(DS, [
-				$ls_templatePath,
-				'Frontend',
-				'element',
-				'survey',
-				$ls_fileName . '.twig',
-			]);
-
-			$ls_element = $this->currentAction->surveyQuestion->type->value;
-			if (file_exists($ls_filePath)) {
-				$ls_element = $ls_fileName;
-			}
-
-			$lo_mediaRenderOptions = $lo_mediaRenderOptions->withSelector('#SurveyQuestion-' . Inflector::ucparts($this->currentAction->identifier));
-
-			// Parse the module
-			$this->parseResponsiveImageTags($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
-
-			$ls_result = null;
-			if ($this->currentAction->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::InfoText && !$this->survey->hasNextAction()) {
-				$ls_result = $this->results->getStepResult($this->currentAction->identifier, $lo_mediaRenderOptions);
-			}
-
-			// Parse the module
-			$this->parseModule($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
-
-			$ls_currentQuestion = $this->getView()->element('survey/' . $ls_element, [
-				'survey' => $this->survey,
-				'question' => $this->currentAction,
-				'result' => $ls_result,
-			]);
+			$ls_currentQuestion = $this->renderQuestion($lo_mediaRenderOptions);
 
 			// Regular questions (single choice, multi choice, free user input) always have a next action.
 			// Other question types need to have a specific next action defined.
@@ -777,5 +740,53 @@ class SurveyRenderer {
 		}
 
 		return $lo_formSender->getFormEntryIdentifier();
+	}
+
+
+	/**
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @return string
+	 * @throws \Exception
+	 */
+	protected function renderQuestion(MediaRenderOptions $mediaRenderOptions): string {
+		static $ls_templatePath;
+
+		if (!isset($ls_templatePath)) {
+			$ls_templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);
+		}
+
+		$ls_fileName = 'Question' . $this->currentAction->identifier;
+
+		$ls_filePath = implode(DS, [
+			$ls_templatePath,
+			'Frontend',
+			'element',
+			'survey',
+			$ls_fileName . '.twig',
+		]);
+
+		$ls_element = $this->currentAction->surveyQuestion->type->value;
+		if (file_exists($ls_filePath)) {
+			$ls_element = $ls_fileName;
+		}
+
+		$lo_mediaRenderOptions = $mediaRenderOptions->withSelector('#SurveyQuestion-' . Inflector::ucparts($this->currentAction->identifier));
+
+		// Parse the module
+		$this->parseResponsiveImageTags($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
+
+		$ls_result = null;
+		if ($this->currentAction->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::InfoText && !$this->survey->hasNextAction()) {
+			$ls_result = $this->results->getStepResult($this->currentAction->identifier, $lo_mediaRenderOptions);
+		}
+
+		// Parse the module
+		$this->parseModule($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
+
+		return $this->getView()->element('survey/' . $ls_element, [
+			'survey' => $this->survey,
+			'question' => $this->currentAction,
+			'result' => $ls_result,
+		]);
 	}
 }
