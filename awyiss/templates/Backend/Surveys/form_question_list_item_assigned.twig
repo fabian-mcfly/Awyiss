@@ -166,8 +166,8 @@
 
 					{% block answersList %}
 						{% if
-							entity.surveyQuestion.type == enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').SingleChoice or
-							entity.surveyQuestion.type == enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').MultiChoice %}
+							entity.surveyQuestion.type == enum(questionTypeEnum).SingleChoice or
+							entity.surveyQuestion.type == enum(questionTypeEnum).MultiChoice %}
 							<ul class="Answers-List">
 								{% set answerType = 'assigned' %}
 								{% for answer in entity.surveyQuestion.surveyAnswers %}

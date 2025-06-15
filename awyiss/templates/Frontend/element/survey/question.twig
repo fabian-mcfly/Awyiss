@@ -1,5 +1,6 @@
 {#
 @var survey \Awyiss\Model\Entity\Survey
+@var result string
 @var question \Awyiss\Model\Entity\SurveySurveyQuestion
 @var page \Awyiss\Model\Entity\Page
 @var baseUrl string
@@ -38,13 +39,19 @@
 			{% endif %}
 		{% endblock %}
 
-		{% block questionText %}
-			{% if question.surveyQuestion.text %}
+		{% if result %}
+			{% block questionResult %}
+				<div class="Text SurveyQuestion-Result">
+					{{- result|raw -}}
+				</div>
+			{% endblock %}
+		{% elseif question.surveyQuestion.text %}
+			{% block questionText %}
 				<div class="Text SurveyQuestion-Text">
 					{{- question.surveyQuestion.text|raw -}}
 				</div>
-			{% endif %}
-		{% endblock %}
+			{% endblock %}
+		{% endif %}
 
 		{% block answers %}
 			<ol class="SurveyAnswers" id="SurveyAnswers-{{ question.identifier }}">

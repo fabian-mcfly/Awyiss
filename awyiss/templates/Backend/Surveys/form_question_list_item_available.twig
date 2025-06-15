@@ -122,8 +122,8 @@
 
 					{% block answersList %}
 						{% if
-							entity.type == enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').SingleChoice or
-							entity.type == enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').MultiChoice %}
+							entity.type == enum(questionTypeEnum).SingleChoice or
+							entity.type == enum(questionTypeEnum).MultiChoice %}
 							<ul class="Answers-List">
 								{% set answerType = 'available' %}
 								{% for answer in entity.surveyAnswers %}

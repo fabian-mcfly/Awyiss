@@ -502,4 +502,13 @@ html.PickQuestionMode {
 			}
 		}
 	}
+
+	.ResultsArray {
+		max-height:50dvh;
+		margin-top:var(--lineHeightMain);
+		white-space:pre;
+		grid-column:1 / -1;
+		overflow:auto;
+		user-select:all;
+	}
 }

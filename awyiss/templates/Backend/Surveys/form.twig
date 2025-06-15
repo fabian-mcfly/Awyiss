@@ -205,6 +205,37 @@
 		{% block questionsDiagram %}
 			{% include '@Backend/Surveys/mermaid_flowchart.twig' %}
 		{% endblock %}
+
+		{% block phpResult %}
+			{% if survey.surveySurveyQuestions %}
+				<details>
+					<summary>{{ __('php_array') }}</summary>
+					{% set questionsByIdentifier = survey.surveySurveyQuestions ? survey.surveySurveyQuestions|column(null, 'identifier') : [] %}
+				<code class="ResultsArray">// Results array for the survey {{ survey.identifier }}
+$paths = [
+{%~ for path in survey.buildResultsArray() %}
+	/**
+	{%~ for questionIdentifier, answerId in path %}
+		{%~ set question = questionsByIdentifier[ questionIdentifier ] %}
+		{%~ set answers = question.surveySurveyAnswers|column(null, 'id') %}
+	 * {{ question.surveyQuestion.title }}
+		{%- if question.surveyQuestion.type != enum(questionTypeEnum).InfoText %}
+		{%- if answerId is array %}
+			{%- for realAnswerId in answerId %}
+
+	 *        {{ ' -> ' }}{{ realAnswerId == '*' ? '*' : (realAnswerId != 'custom' ? answers[ realAnswerId ].surveyAnswer.title : 'custom') }}
+			{%- endfor %}
+		{%- else %}
+			{{- ' -> ' }}{{- answerId != 'custom' ? answers[ answerId ].surveyAnswer.title : 'custom' }}{% endif %}{% endif %}
+
+	{%~ endfor %}
+	 */
+	'{{ survey.buildResultPath(path) }}' => '',
+{% endfor %}
+];</code>
+				</details>
+			{% endif %}
+		{% endblock %}
 	</div>
 {% endblock %}
 
@@ -213,3 +244,4 @@
 {% endblock %}
 
 {{ FormHelper.end() }}
+

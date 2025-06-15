@@ -13,6 +13,7 @@ use Awyiss\Model\Entity\SurveyEntry;
 use Awyiss\Model\Entity\SurveySurveyQuestion;
 use Awyiss\Model\Table\SurveyEntriesTable;
 use Awyiss\Routing\Router;
+use Awyiss\Survey\AbstractSurveyResults;
 use Awyiss\Utility\Form\FormRenderer;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\FrontendRenderingTrait;
@@ -93,6 +94,10 @@ class SurveyRenderer {
 	 * @noinspection PhpPropertyNamingConventionInspection
 	 */
 	protected FrontendView $View;
+	/**
+	 * @var \Awyiss\Survey\AbstractSurveyResults|null
+	 */
+	protected ?AbstractSurveyResults $results;
 
 
 	/**
@@ -335,6 +340,8 @@ class SurveyRenderer {
 			return '';
 		}
 
+		$this->loadResultsClass();
+
 		/**
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
@@ -373,12 +380,18 @@ class SurveyRenderer {
 			// Parse the module
 			$this->parseResponsiveImageTags($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
 
+			$ls_result = null;
+			if ($this->currentAction->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::InfoText && !$this->survey->hasNextAction()) {
+				$ls_result = $this->results->getStepResult($this->currentAction->identifier, $lo_mediaRenderOptions);
+			}
+
 			// Parse the module
 			$this->parseModule($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
 
 			$ls_currentQuestion = $this->getView()->element('survey/' . $ls_element, [
 				'survey' => $this->survey,
 				'question' => $this->currentAction,
+				'result' => $ls_result,
 			]);
 
 			// Regular questions (single choice, multi choice, free user input) always have a next action.
@@ -414,8 +427,18 @@ class SurveyRenderer {
 		]);
 
 		// Parse the module
-		$this->parseModule($this->survey, $lo_mediaRenderOptions, 'successMessage');
 		$this->parseModule($this->survey, $lo_mediaRenderOptions, 'failureMessage');
+
+		$ls_successMessage = null;
+		if (
+			$this->savedEntry && in_array($this->currentAction, [
+				$this->survey->getNextActionEnum()::SaveAndEnd,
+				$this->survey->getNextActionEnum()::SaveAndShowForm,
+			])
+		) {
+			$this->parseModule($this->survey, $lo_mediaRenderOptions, 'successMessage');
+			$ls_successMessage = $this->results->getFinalResult($this->survey->successMessage, $lo_mediaRenderOptions);
+		}
 
 		return $this->getView()->element('survey/survey', [
 			'survey' => $this->survey,
@@ -424,6 +447,7 @@ class SurveyRenderer {
 			'hasNextAction' => $lb_hasNextAction,
 			'customAnswers' => $this->survey->getCustomAnswers(),
 			'progress' => $this->survey->getProgress(),
+			'successMessage' => $ls_successMessage,
 			'questionTypeEnum' => $this->survey->getQuestionTypeEnum(),
 			'nextActionEnum' => $this->survey->getNextActionEnum(),
 			'savedEntry' => $this->savedEntry,
@@ -661,6 +685,27 @@ class SurveyRenderer {
 		}
 
 		return $la_userData;
+	}
+
+
+	/**
+	 * @return $this
+	 */
+	protected function loadResultsClass(): static {
+		/** @var class-string<\Awyiss\Survey\AbstractSurveyResults> $ls_className */
+		$ls_className = App::className(Inflector::camelize($this->survey->identifier), 'Survey', 'SurveyResults');
+
+		if ($ls_className) {
+			/** @var \Awyiss\Survey\AbstractSurveyResults $lo_results */
+			$this->results = new $ls_className(
+				$this->survey,
+				$this->View,
+				$this->survey->getProgress(),
+				$this->survey->getCustomAnswers()
+			);
+		}
+
+		return $this;
 	}
 
 

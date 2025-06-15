@@ -4,6 +4,7 @@
 @var availableForms \Awyiss\Model\Entity\Form[]
 @var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
 @var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var questionTypeEnum class-string<\Awyiss\Model\Enum\Survey\QuestionType>
 @var finalActions array<string, string>
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
@@ -133,8 +134,8 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 						{%~ endif %}
 						{%~ if
 							question.surveyQuestion.type in [
-								enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').FreeText,
-								enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').InfoText,
+								enum(questionTypeEnum).FreeText,
+								enum(questionTypeEnum).InfoText,
 							] or
 							inheritingAnswers|length or
 							question.surveySurveyAnswers is empty or
@@ -178,7 +179,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 								{%~ endif %}
 								{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ end }}
 							{%~ elseif question.nextAction == enum(nextActionEnum).Abort %}
-								{%~ if question.surveyQuestion.type == enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').InfoText %}
+								{%~ if question.surveyQuestion.type == enum(questionTypeEnum).InfoText %}
 									{{~ question.identifier }}@{ shape: diamond, label: "{{ questionLabel }}"}
 								{%~ else %}
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} Abort@{ shape: diamond, label: "{{ __('next_action_abort') }}"}

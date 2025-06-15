@@ -69,7 +69,7 @@
 				</div>
 
 				{% block answerListItemSettings %}
-					{% if survey.type != enum('Awyiss\\Model\\Enum\\Survey\\Type').Linear and entity.surveyQuestion.type != enum('Awyiss\\Model\\Enum\\Survey\\QuestionType').MultiChoice %}
+					{% if survey.type != enum('Awyiss\\Model\\Enum\\Survey\\Type').Linear and entity.surveyQuestion.type != enum(questionTypeEnum).MultiChoice %}
 						<div class="Settings">
 							{% block answerListItemNextAction %}
 								<div class="NextAction">

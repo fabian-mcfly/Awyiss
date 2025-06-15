@@ -191,3 +191,6 @@ msgstr "Die Umfrage existiert nicht"
 
 msgid "error_valid_survey_question_id"
 msgstr "Die Umfrage-Frage existiert nicht"
+
+msgid "php_array"
+msgstr "Ergebnisse als PHP Array"

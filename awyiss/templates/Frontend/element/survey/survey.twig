@@ -5,6 +5,7 @@
 @var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
 @var customAnswers array<string, string>
 @var progress array<string, int>
+@var successMessage string|null
 @var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
 @var _view \Awyiss\View\FrontendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
@@ -18,14 +19,10 @@
 
 {% block survey %}
 	<div class="Survey" id="Survey-{{ survey.identifier|ucparts(false) }}">
-		{% if savedEntry == true and currentAction in [enum(nextActionEnum).SaveAndEnd, enum(nextActionEnum).SaveAndShowForm] %}
-			{#
-			SaveAndShowForm will end up here when the entry was saved
-			but no form was found (most likely because its inactive).
-			#}
+		{% if successMessage %}
 			{% block surveySuccessMessage %}
 				<div class="Survey-SuccessMessage">
-					{{- survey.successMessage|raw -}}
+					{{- successMessage|raw -}}
 				</div>
 			{% endblock %}
 		{% else %}
@@ -73,7 +70,7 @@
 						{% if progress is not empty %}
 							<div class="SurveyAction-GoBack">
 								<input type="hidden" name="survey[{{ survey.identifier }}][last_action]" value="{{ progress|keys|last }}">
-								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="go_back" class="Button Survey-GoBack">{{ __d('surveys', 'back') }}</button>
+								<button type="submit" name="survey[{{ survey.identifier }}][action]" value="go_back" class="Button Survey-GoBack" formnovalidate>{{ __d('surveys', 'back') }}</button>
 							</div>
 						{% endif %}
 					{% endblock %}

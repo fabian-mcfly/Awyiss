@@ -305,32 +305,39 @@ class Survey extends Entity {
 	 * @return \Awyiss\Model\Entity\SurveySurveyQuestion|(\Awyiss\Model\Enum\Survey\NextAction|\BackedEnum)|null
 	 */
 	public function getNextAction(?SurveySurveyQuestion $question = null, array|string|int|null $answer = null): SurveySurveyQuestion|BackedEnum|false|null {
-		$lo_question = $question ?? $this->getCurrentAction();
-		$lx_answer = $answer ?? $this->progressData[ $lo_question->identifier ] ?? null;
+		$lo_action = $question ?? $this->getCurrentAction();
+		$lx_answer = $answer ?? $this->progressData[ $lo_action->identifier ] ?? null;
 
-		if (!$lo_question) {
+		if (!$lo_action) {
+			// If no action is given, we cannot determine the next action.
+			return false;
+		}
+
+		// In case the current action is a NextAction enum,
+		// return false as there's no next action.
+		if ($lo_action instanceof BackedEnum) {
 			return false;
 		}
 
 		// For all question types except single choice,
 		// the next action is evaluated based on the question itself.
-		if ($lo_question->surveyQuestion->type !== $this->getQuestionTypeEnum()::SingleChoice) {
-			return $this->evaluateNextAction($lo_question);
+		if ($lo_action->surveyQuestion->type !== $this->getQuestionTypeEnum()::SingleChoice) {
+			return $this->evaluateNextAction($lo_action);
 		}
 
 		// Find the answer for the given question.
-		$lo_answer = $lx_answer ? ($lo_question->surveySurveyAnswers[ $lx_answer ] ?? null) : null;
+		$lo_answer = $lx_answer ? ($lo_action->surveySurveyAnswers[ $lx_answer ] ?? null) : null;
 
 		// If no answer is given yet, all answers can define the next action.
 		if (!$lo_answer) {
-			if ($lo_question->allowCustomAnswer) {
+			if ($lo_action->allowCustomAnswer) {
 				// If the question allows a custom answer, return the next action based on the question itself.
-				return $this->evaluateNextAction($lo_question);
+				return $this->evaluateNextAction($lo_action);
 			}
 
 			$la_nextActions = [];
-			foreach ($lo_question->surveySurveyAnswers as $lo_answer) {
-				$lx_nextQuestion = $this->evaluateNextAction($lo_question, $lo_answer);
+			foreach ($lo_action->surveySurveyAnswers as $lo_answer) {
+				$lx_nextQuestion = $this->evaluateNextAction($lo_action, $lo_answer);
 
 				if ($lx_nextQuestion instanceof SurveySurveyQuestion) {
 					// If the next action is a specific question, return that question.
@@ -354,10 +361,10 @@ class Survey extends Entity {
 		}
 		elseif ($lo_answer->nextAction) {
 			// If the given answer has a next action, evaluate it
-			return $this->evaluateNextAction($lo_question, $lo_question->surveySurveyAnswers[ $lx_answer ]);
+			return $this->evaluateNextAction($lo_action, $lo_action->surveySurveyAnswers[ $lx_answer ]);
 		}
 
-		return $this->evaluateNextAction($lo_question);
+		return $this->evaluateNextAction($lo_action);
 	}
 
 
@@ -526,10 +533,6 @@ class Survey extends Entity {
 		$this->customAnswers = [];
 		$this->currentAction = null;
 
-		if (!$progressData) {
-			return $this;
-		}
-
 		$la_customData = $progressData['custom'] ?? [];
 		/** @noinspection PhpVariableNamingConventionInspection */
 		unset($progressData['custom'], $progressData['action'], $progressData['last_action']);
@@ -538,7 +541,7 @@ class Survey extends Entity {
 			$lo_question = $this->questionsByIdentifier[ $ls_identifier ] ?? null;
 
 			$lx_answer = match ($lo_question->surveyQuestion->type) {
-				$this->getQuestionTypeEnum()::SingleChoice => (int)$lx_answer,
+				$this->getQuestionTypeEnum()::SingleChoice => $lx_answer !== 'custom' ? (int)$lx_answer : $lx_answer,
 				$this->getQuestionTypeEnum()::MultiChoice => array_map(function (mixed $answer) {
 					return $answer !== 'custom' ? (int)$answer : $answer;
 				}, (array)$lx_answer),
@@ -546,23 +549,12 @@ class Survey extends Entity {
 				default => $lx_answer,
 			};
 
-			if (
-				$lx_answer === 0 &&
-				$lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::SingleChoice &&
-				isset($la_customData[ $ls_identifier ])
-			) {
-				// Treat the custom answer as if no answer was given.
-				// Treat the custom answer as if no answer was given
-				// since the question itself defines the next action.
-				$lx_answer = null;
-			}
-
 			if (!$this->validateProgress($ls_identifier, $lx_answer, $this->currentAction)) {
 				break;
 			}
 
 			if (
-				$lx_answer === null &&
+				$lx_answer === 'custom' &&
 				$lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::SingleChoice &&
 				isset($la_customData[ $ls_identifier ])
 			) {
@@ -576,7 +568,7 @@ class Survey extends Entity {
 			) {
 				// If the multi-choice question has a custom answer,
 				// we store it in the custom answers array.
-				$this->customAnswers[ $ls_identifier ] = $la_customData[ $ls_identifier ] ?? '';
+				$this->customAnswers[ $ls_identifier ] = $la_customData[ $ls_identifier ];
 			}
 
 			$this->currentAction = $lo_question;
@@ -650,7 +642,7 @@ class Survey extends Entity {
 
 		// If the single choice question allows a custom answer,
 		// the answer can be null.
-		if ($lo_question->allowCustomAnswer && $answer === null) {
+		if ($lo_question->allowCustomAnswer && $answer === 'custom') {
 			return true;
 		}
 
@@ -851,6 +843,209 @@ class Survey extends Entity {
 		}
 
 		return $la_answersGraph;
+	}
+
+
+	/**
+	 * Build an array containing all possible paths in the form of
+	 * `[
+	 * 	[questionId => answerId, questionId => answerId, ...],
+	 * 	[questionId => answerId, questionId => answerId, ...],
+	 * 	...,
+	 * ]`
+	 *
+	 * @return array<int, array<int, int>>
+	 * @noinspection PhpUnused
+	 */
+	public function buildResultsArray(): array {
+		$la_results = [];
+
+		$this->loadQuestions();
+
+		$lo_first = $this->questions->first();
+
+		if ($lo_first) {
+			$this->traverseResultsPaths($lo_first, [], $la_results);
+		}
+
+		return $la_results;
+	}
+
+
+	/**
+	 * @param array|null $path
+	 * @return string
+	 * @noinspection PhpUnused
+	 */
+	public function buildResultPath(?array $path = null): string {
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$path ??= $this->progressData;
+
+		$ls_result = '';
+
+		foreach ($path as $ls_questionId => $lx_answer) {
+			if ($ls_result) {
+				$ls_result .= '-';
+			}
+
+			$ls_result .= $ls_questionId . ':';
+			if (is_array($lx_answer)) {
+				// If the answer is an array, join the values with a comma
+				$ls_result .= implode(',', array_map(
+					fn ($answer) => $answer ?? 'null',
+					$lx_answer
+				));
+			}
+			elseif ($lx_answer === null) {
+				// Skip null answers. Those are usually InfoText questions and have no
+				// influence on the result.
+				continue;
+			}
+			else {
+				// Otherwise, just append the answer value
+				$ls_result .= $lx_answer;
+			}
+		}
+
+		return $ls_result;
+	}
+
+
+	/**
+	 * Recursively traverses all possible answer paths through the survey,
+	 * building an array of all possible question/answer combinations.
+	 * Ensures that InfoText questions are not included as the last item in a path.
+	 *
+	 * @param \Awyiss\Model\Entity\SurveySurveyQuestion $question The current question entity.
+	 * @param array $path The current path of question identifier => answer(s).
+	 * @param array $results Reference to the results array to collect all paths.
+	 * @return void
+	 */
+	private function traverseResultsPaths(SurveySurveyQuestion $question, array $path, array &$results): void {
+		$ls_type = $question->surveyQuestion->type;
+		$la_answers = $question->surveySurveyAnswers ?? [];
+
+		// Handle MultiChoice questions: generate all non-empty combinations of answers
+		if ($ls_type === $this->getQuestionTypeEnum()::MultiChoice) {
+			$la_answerIds = array_keys($la_answers);
+			$la_combinations = $this->getNonEmptyCombinations($la_answerIds, $question->allowCustomAnswer);
+
+			$lo_next = $this->getNextAction($question);
+
+			foreach ($la_combinations as $la_combo) {
+				$la_newPath = $path;
+				$la_newPath[ $question->identifier ] = $la_combo;
+
+				if ($lo_next instanceof SurveySurveyQuestion) {
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$this->traverseResultsPaths($lo_next, $la_newPath, $results);
+				}
+				else {
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$results[] = $la_newPath;
+				}
+			}
+
+			return;
+		}
+
+		// Handle SingleChoice questions: iterate over all possible answers
+		if ($ls_type === $this->getQuestionTypeEnum()::SingleChoice) {
+			foreach ($la_answers as $li_answerId => $lo_answer) {
+				$la_newPath = $path;
+				$la_newPath[ $question->identifier ] = $li_answerId;
+				$lo_next = $this->getNextAction($question, $li_answerId);
+
+				if ($lo_next instanceof SurveySurveyQuestion) {
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$this->traverseResultsPaths($lo_next, $la_newPath, $results);
+				}
+				else {
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$results[] = $la_newPath;
+				}
+			}
+
+			// Handle custom answer if allowed
+			if ($question->allowCustomAnswer) {
+				$la_newPath = $path;
+				$la_newPath[ $question->identifier ] = 'custom';
+				/** @noinspection PhpRedundantOptionalArgumentInspection */
+				$lo_next = $this->getNextAction($question, null);
+
+				if ($lo_next instanceof SurveySurveyQuestion) {
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$this->traverseResultsPaths($lo_next, $la_newPath, $results);
+					return;
+				}
+
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$results[] = $la_newPath;
+			}
+
+			return;
+		}
+
+		// Handle InfoText with null, FreeText with 'custom' as answer
+		$la_newPath = $path;
+		$la_newPath[ $question->identifier ] = $ls_type === $this->getQuestionTypeEnum()::FreeText ? 'custom' : null;
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		$lo_next = $this->getNextAction($question, null);
+
+		if ($lo_next instanceof SurveySurveyQuestion) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$this->traverseResultsPaths($lo_next, $la_newPath, $results);
+			return;
+		}
+
+		// Remove last entry if this is an InfoText question
+		if ($ls_type === $this->getQuestionTypeEnum()::InfoText) {
+			unset($la_newPath[ $question->identifier ]);
+		}
+
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$results[] = $la_newPath;
+	}
+
+
+	/**
+	 * Returns all non-empty combinations of the given array values.
+	 *
+	 * @param array $values
+	 * @param bool $withCustomAnswer Whether to include custom answers in the combinations.
+	 * @return array
+	 */
+	private function getNonEmptyCombinations(array $values, bool $withCustomAnswer = false): array {
+		$la_result = [];
+
+		if ($withCustomAnswer) {
+			/**
+			 * Include a custom answer option
+			 *
+			 * @noinspection PhpVariableNamingConventionInspection
+			 */
+			$values[] = 'custom'; // Custom answer represented as 'custom'
+		}
+
+		$li_count = count($values);
+		$li_combinations = (1 << $li_count);
+
+		for ($li_i = 1; $li_i < $li_combinations; $li_i++) {
+			$la_combo = [];
+
+			for ($li_j = 0; $li_j < $li_count; $li_j++) {
+				if ($li_i & (1 << $li_j)) {
+					$la_combo[] = $values[ $li_j ];
+				}
+			}
+
+			$la_result[] = $la_combo;
+		}
+
+		// Add one entry where the answer is an asterisk, representing "any answer"
+		$la_result[] = ['*'];
+
+		return $la_result;
 	}
 
 

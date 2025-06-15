@@ -194,6 +194,7 @@ class SurveysController extends Controller {
 	 *
 	 * @return void
 	 * @throws \Exception
+	 * @noinspection PhpUnused
 	 */
 	public function diagram(): void {
 		$this->Authorization->ensure('read');
@@ -373,6 +374,9 @@ class SurveysController extends Controller {
 		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
 		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_questionTypeEnum */
+		$ls_questionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
+
 		$this->set([
 			'survey' => $survey,
 			'availableQuestions' => $this->surveyQuestions,
@@ -380,6 +384,7 @@ class SurveysController extends Controller {
 			'availableForms' => $this->fetchTable('Forms')->find()->all()->indexBy('id')->toArray(),
 			'finalActions' => $this->Surveys->availableFinalActions(),
 			'specifyQuestionOptions' => $la_specifyQuestionOptions,
+			'questionTypeEnum' => $ls_questionTypeEnum,
 			'nextActionEnum' => $ls_surveyNextActionEnum,
 		]);
 	}
