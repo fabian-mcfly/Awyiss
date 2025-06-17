@@ -289,7 +289,7 @@ trait ForcedTitleTrait {
 		}
 
 		/** @var \Awyiss\Model\Entity\Media $lo_media */
-		return $lo_media instanceof Media ? $lo_media->name : (string)$lo_media;
+		return $lo_media instanceof Media ? $lo_media->name : json_encode($lo_media);
 	}
 
 
