@@ -28,7 +28,7 @@ class StringTemplateTest extends TestCase {
 		$expectedTemplates = [
 			'checkboxWrapper' => '<figure>Totally different Checkbox-Wrapper</figure>',
 			'inputContainer' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}}"{{containerAttrs}}>{{content}}{{additionalContent}}</div>',
-			'translatableText' => '<div class="TranslatableTexts" data-button-title="{{buttonTitle}}"  data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
+			'translatableText' => '<div class="TranslatableTexts" data-button-title="{{buttonTitle}}" data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
 		];
 
 		foreach ($expectedTemplates as $key => $expectedTemplate) {

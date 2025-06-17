@@ -368,10 +368,10 @@ class CategoriesHelperTest extends TestCase {
 			],
 		]);
 
-		$this->assertStringContainsString('<optgroup label="Parent 1">', $result);
-		$this->assertStringNotContainsString('<optgroup label="Parent 2">', $result);
-		$this->assertStringContainsString('<optgroup label="Parent 3">', $result);
-		$this->assertStringContainsString('<optgroup label="Parent 4">', $result);
+		$this->assertStringContainsString('<optgroup label="Parent 1"', $result);
+		$this->assertStringNotContainsString('<optgroup label="Parent 2"', $result);
+		$this->assertStringContainsString('<optgroup label="Parent 3"', $result);
+		$this->assertStringContainsString('<optgroup label="Parent 4"', $result);
 	}
 
 
@@ -442,9 +442,9 @@ class CategoriesHelperTest extends TestCase {
 			'groupBy' => '_group',
 		]);
 
-		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_1">', $result);
-		$this->assertStringNotContainsString('<optgroup label="the_controller::media_folder_grouplabel_2">', $result);
-		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_3">', $result);
+		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_1"', $result);
+		$this->assertStringNotContainsString('<optgroup label="the_controller::media_folder_grouplabel_2"', $result);
+		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_3"', $result);
 	}
 
 
@@ -473,9 +473,9 @@ class CategoriesHelperTest extends TestCase {
 
 		$result = $this->helper->control('media_folders', ['options' => $options, 'groupBy' => '_group']);
 
-		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_general">', $result);
-		$this->assertStringContainsString('<optgroup label="1 - 2">', $result);
-		$this->assertStringContainsString('<optgroup label="8 - 9">', $result);
+		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_general"', $result);
+		$this->assertStringContainsString('<optgroup label="1 - 2"', $result);
+		$this->assertStringContainsString('<optgroup label="8 - 9"', $result);
 
 		$options = new Collection([
 			new MediaFolder(['id' => 1, 'title' => 'Parent 1', '_parents' => null]),
@@ -488,8 +488,8 @@ class CategoriesHelperTest extends TestCase {
 
 		$result = $this->helper->control('media_folders', ['options' => $options]);
 
-		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_general">', $result);
-		$this->assertStringContainsString('<optgroup label="5 - 3">', $result);
+		$this->assertStringContainsString('<optgroup label="the_controller::media_folder_grouplabel_general"', $result);
+		$this->assertStringContainsString('<optgroup label="5 - 3"', $result);
 	}
 
 

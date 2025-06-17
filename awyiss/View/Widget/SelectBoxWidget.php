@@ -4,6 +4,7 @@
 namespace Awyiss\View\Widget;
 
 
+use ArrayAccess;
 use Awyiss\Model\Entity;
 use Cake\View\Widget\SelectBoxWidget as BaseSelectBoxWidget;
 
@@ -94,5 +95,44 @@ class SelectBoxWidget extends BaseSelectBoxWidget {
 		}
 
 		return $out;
+	}
+
+
+	/**
+	 * Re-implemented to
+	 * - limit the length of the text
+	 * - add the original text as the title
+	 *
+	 * @inheritDoc
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	protected function _renderOptgroup(
+		string $label,
+		ArrayAccess|array $optgroup,
+		?array $disabled,
+		mixed $selected,
+		array $templateVars,
+		bool $escape,
+	): string {
+		$opts = $optgroup;
+		$attrs = [];
+		if (isset($optgroup['options'], $optgroup['text'])) {
+			$opts = $optgroup['options'];
+			$label = $optgroup['text'];
+			$attrs = (array)$optgroup;
+		}
+		$groupOptions = $this->_renderOptions($opts, $disabled, $selected, $templateVars, $escape);
+
+		// If the title is not a string, use the text as the title
+		if (!is_string($attrs['title'] ?? null)) {
+			$attrs['title'] = $label;
+		}
+
+		return $this->_templates->format('optgroup', [
+			'label' => mb_substr($escape ? h($label) : $label, 0, 100),
+			'content' => implode('', $groupOptions),
+			'templateVars' => $templateVars,
+			'attrs' => $this->_templates->formatAttributes($attrs, ['text', 'options']),
+		]);
 	}
 }

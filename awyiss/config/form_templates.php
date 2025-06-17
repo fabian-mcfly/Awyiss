@@ -39,7 +39,7 @@ return [
 	'radioWrapper' => '{{label}}',
 	// Textarea input element,
 	'textarea' => '<textarea name="{{name}}" {{attrs}}>{{value}}</textarea>',
-	'translatableText' => '<div class="TranslatableTexts" data-button-title="{{buttonTitle}}"  data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
+	'translatableText' => '<div class="TranslatableTexts" data-button-title="{{buttonTitle}}" data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
 	// Container for submit buttons.
 	'submitContainer' => '<div class="Submit">{{content}}</div>',
 	// Error

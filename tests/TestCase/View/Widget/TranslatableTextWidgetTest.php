@@ -21,7 +21,7 @@ class TranslatableTextWidgetTest extends TestCase {
 	 */
 	public function testRender(): void {
 		$template = new StringTemplate([
-			'translatableText' => '<div class="TranslatableTexts" data-button-title="{{buttonTitle}}"  data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
+			'translatableText' => '<div class="TranslatableTexts" data-button-title="{{buttonTitle}}" data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
 		]);
 
 		$context = $this->createMock(ContextInterface::class);
@@ -39,7 +39,7 @@ class TranslatableTextWidgetTest extends TestCase {
 			],
 		];
 
-		$expected = '<div class="TranslatableTexts" data-button-title="Test button title"  data-dialog-title="Test dialog title" data-dialog-apply="Test dialog apply" data-dialog-cancel="Test dialog cancel"><button>Control</button></div>';
+		$expected = '<div class="TranslatableTexts" data-button-title="Test button title" data-dialog-title="Test dialog title" data-dialog-apply="Test dialog apply" data-dialog-cancel="Test dialog cancel"><button>Control</button></div>';
 
 		$result = $widget->render($data, $context);
 

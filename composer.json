@@ -49,7 +49,6 @@
 	"autoload": {
 		"psr-4": {
 			"Awyiss\\": "awyiss/",
-			"AwyissBake\\": "awyiss/plugins/AwyissBake/src/"
 		}
 	},
 	"autoload-dev": {
