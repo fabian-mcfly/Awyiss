@@ -20,12 +20,11 @@ class TranslatableTextWidgetTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRender(): void {
-		$template = new StringTemplate([
-			'translatableText' => '<div class="TranslatableTexts" data-button-title="{{buttonTitle}}" data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
-		]);
+		$stringTemplate = new StringTemplate();
+		$stringTemplate->load('form_templates_backend');
 
 		$context = $this->createMock(ContextInterface::class);
-		$widget = new TranslatableTextWidget($template);
+		$widget = new TranslatableTextWidget($stringTemplate);
 
 		$data = [
 			'name' => 'test',

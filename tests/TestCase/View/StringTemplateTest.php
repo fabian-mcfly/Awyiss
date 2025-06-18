@@ -18,10 +18,8 @@ class StringTemplateTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadValidFile(): void {
-		$file = 'form_templates_backend';
-
 		$stringTemplate = new StringTemplate();
-		$stringTemplate->load($file);
+		$stringTemplate->load('form_templates_backend');
 
 		$result = $stringTemplate->getConfig();
 

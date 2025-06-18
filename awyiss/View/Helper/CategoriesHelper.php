@@ -36,13 +36,7 @@ class CategoriesHelper extends Helper {
 	 */
 	protected array $_defaultConfig = [
 		'templateClass' => StringTemplate::class,
-		'templates' => [
-			'linkSelect' => '<div{{attrs}}><label class="Label" tabindex="0"><strong>{{label}}:</strong> {{selectedOption}}</label><ul class="List">{{options}}</ul></div>',
-			'option' => '<li{{attrs}}><a href="{{link}}" title="{{title}}">{{levelPrefix}}{{title}}</a></li>',
-			'optionDisabled' => '<li{{attrs}} title="{{title}}">{{levelPrefix}}{{title}}</li>',
-			'groupLabel' => '<li{{attrs}} title="{{title}}"><strong>{{title}}</strong></li>',
-			'selectedOption' => '{{title}}',
-		],
+		'templates' => [],
 	];
 	/**
 	 * Default widgets

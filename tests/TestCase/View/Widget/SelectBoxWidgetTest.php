@@ -20,13 +20,11 @@ class SelectBoxWidgetTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithTextLimitation(): void {
-		$template = new StringTemplate([
-			'select' => '<select{{attrs}}>{{content}}</select>',
-			'option' => '<option{{attrs}}>{{text}}</option>',
-		]);
+		$stringTemplate = new StringTemplate();
+		$stringTemplate->load('form_templates_backend');
 
 		$context = $this->createMock(ContextInterface::class);
-		$widget = new SelectBoxWidget($template);
+		$widget = new SelectBoxWidget($stringTemplate);
 
 		// Create a long text that exceeds 100 characters
 		$longText = trim(str_repeat('Long Option Text ', 10));
@@ -54,14 +52,11 @@ class SelectBoxWidgetTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithOptionGroups(): void {
-		$template = new StringTemplate([
-			'select' => '<select{{attrs}}>{{content}}</select>',
-			'option' => '<option{{attrs}}>{{text}}</option>',
-			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
-		]);
+		$stringTemplate = new StringTemplate();
+		$stringTemplate->load('form_templates_backend');
 
 		$context = $this->createMock(ContextInterface::class);
-		$widget = new SelectBoxWidget($template);
+		$widget = new SelectBoxWidget($stringTemplate);
 
 		$longGroup = trim(str_repeat('Long Option Group Text ', 10));
 		$longText = trim(str_repeat('Long Option Text ', 10));
@@ -102,13 +97,11 @@ class SelectBoxWidgetTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCustomAttributes(): void {
-		$template = new StringTemplate([
-			'select' => '<select{{attrs}}>{{content}}</select>',
-			'option' => '<option{{attrs}}>{{text}}</option>',
-		]);
+		$stringTemplate = new StringTemplate();
+		$stringTemplate->load('form_templates_backend');
 
 		$context = $this->createMock(ContextInterface::class);
-		$widget = new SelectBoxWidget($template);
+		$widget = new SelectBoxWidget($stringTemplate);
 
 		$data = [
 			'name' => 'test',

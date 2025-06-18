@@ -48,7 +48,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Awyiss\\": "awyiss/",
+			"Awyiss\\": "awyiss/"
 		}
 	},
 	"autoload-dev": {

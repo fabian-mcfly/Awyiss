@@ -46,7 +46,9 @@ class BackendView extends AppView {
 
 		$this->addHelper('Authorization');
 
-		$this->addHelper('Categories');
+		$this->addHelper('Categories', [
+			'templates' => 'form_templates_backend',
+		]);
 
 		$this->addHelper('Flash');
 

@@ -89,7 +89,9 @@ class CategoriesHelperTest extends TestCase {
 
 		$this->view = new BackendView($request);
 
-		$this->helper = new CategoriesHelper($this->view);
+		$this->helper = new CategoriesHelper($this->view, [
+			'templates' => 'form_templates_backend',
+		]);
 
 		$entity = $this->fetchTable('Media')->get(2);
 

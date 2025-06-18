@@ -197,7 +197,7 @@ class LinkSelectWidget extends BasicWidget {
 		}
 
 		//Append the formatted template for this option
-		return $this->_templates->format('selectedOption', $la_selectedOption);
+		return $this->_templates->format('linkSelectSelectedOption', $la_selectedOption);
 	}
 
 
@@ -341,13 +341,13 @@ class LinkSelectWidget extends BasicWidget {
 	 * @return string
 	 */
 	protected function formatOption(array $optionAttributes, bool $escape, mixed $key, array|bool|null $disabled): string {
-		$ls_template = 'option';
+		$ls_template = 'linkSelectOption';
 		if ($this->isDisabled((string)$key, $disabled)) {
-			$ls_template = 'optionDisabled';
+			$ls_template = 'linkSelectOptionDisabled';
 		}
 
 		if ($optionAttributes['isGroupLabel'] ?? null === true) {
-			$ls_template = 'groupLabel';
+			$ls_template = 'linkSelectGroupLabel';
 		}
 
 		/** @noinspection PhpVariableNamingConventionInspection */
