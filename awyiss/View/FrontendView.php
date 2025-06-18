@@ -38,7 +38,7 @@ class FrontendView extends AppView {
 	 *
 	 * @var string $rowClass
 	 */
-	public static string $rowClass = '';
+	protected static string $rowClass = '';
 
 
 	/**

@@ -940,6 +940,57 @@ class ContentsCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testContentSpecificTemplate(): void {
+		$options = $this->cell->initCellOptions([
+			'fullWidth' => 1440.00,
+			'singleColumnBreakpoint' => 768.00,
+		]);
+
+		$this->callProtectedMethod($this->cell, 'setViewVars', $options);
+
+		$page = $this->getTableLocator()->get('Pages')->get(20);
+
+		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
+
+		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $contents->toArray());
+
+		$this->assertStringContainsString('<div class="ContentElement Template-Standard Column-100" id="Content44">CustomTemplate</div>', $contents);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testContentsCanSetContentRow(): void {
+		$options = $this->cell->initCellOptions([
+			'fullWidth' => 1440.00,
+			'singleColumnBreakpoint' => 768.00,
+		]);
+
+		$this->callProtectedMethod($this->cell, 'setViewVars', $options);
+
+		$page = $this->getTableLocator()->get('Pages')->get(20);
+
+		$contents = $this->callProtectedMethod($this->cell, 'getThreadedContents', $page, 'ContentArea', true);
+		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
+
+		$contents = $this->callProtectedMethod($this->cell, 'buildContents', $contents->toArray());
+
+		$this->assertStringContainsString('<div class="ContentRow FlexRow">', $contents);
+		$this->assertSame(1, substr_count($contents, 'FlexRow'));
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection

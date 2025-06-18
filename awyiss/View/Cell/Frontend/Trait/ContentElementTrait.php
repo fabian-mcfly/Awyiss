@@ -99,6 +99,7 @@ trait ContentElementTrait {
 		$ls_contentElements = '';
 		$lf_currentWidth = 0;
 		$ls_rowContent = '';
+		$la_contentRowClasses = [];
 
 		/**
 		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_entity
@@ -133,7 +134,7 @@ trait ContentElementTrait {
 			 */
 			if ($lb_noContentRow) {
 				if ($ls_rowContent) {
-					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement);
+					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement, $la_contentRowClasses);
 
 					// Reset the row contents
 					$lf_currentWidth = 0;
@@ -142,6 +143,9 @@ trait ContentElementTrait {
 
 				// Render the content. Adding the width is not necessary, as the content is rendered directly.
 				$ls_contentElements .= $ls_renderedContent;
+				// Unset the row class. Follow-up contents will start a new row and with a blank row class.
+				$la_contentRowClasses = [];
+				$this->getView()->setRowClass('');
 
 				continue;
 			}
@@ -161,11 +165,18 @@ trait ContentElementTrait {
 			 */
 			if ($lf_currentWidth > 100 || $lf_currentWidth + $lf_columnWidth > 100) {
 				if ($ls_rowContent) {
-					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement);
+					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement, $la_contentRowClasses);
+					// Unset the row class. Follow-up contents will start a new row and with a blank row class.
+					$la_contentRowClasses = [];
 				}
 
 				$lf_currentWidth = 0;
 				$ls_rowContent = '';
+			}
+
+			// If the row class is set, add it to the content row class
+			if ($this->getView()->getRowClass()) {
+				$la_contentRowClasses[] = $this->getView()->getRowClass();
 			}
 
 			// Add the content to the row contents
@@ -173,7 +184,9 @@ trait ContentElementTrait {
 
 			// If the content is a finisher, render the row and reset the row contents
 			if ($lo_entity->columnLast) {
-				$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement);
+				$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement, $la_contentRowClasses);
+				// Unset the row class. Follow-up contents will start a new row and with a blank row class.
+				$la_contentRowClasses = [];
 
 				$lf_currentWidth = 0;
 				$ls_rowContent = '';
@@ -182,13 +195,18 @@ trait ContentElementTrait {
 				// Add the width of the content to the current row width
 				$lf_currentWidth += $lf_columnWidth;
 			}
+
+			// Clear the row class for the next content element
+			$this->getView()->setRowClass('');
 		}
 
 		// Render the last row
 		if ($ls_rowContent) {
-			$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement);
+			$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement, $la_contentRowClasses);
 		}
 
+		// Unset the row class.
+		$this->getView()->setRowClass('');
 
 		return $ls_contentElements;
 	}
@@ -207,17 +225,15 @@ trait ContentElementTrait {
 	/**
 	 * @param string $contents
 	 * @param bool $isFormRow
+	 * @param array $rowClasses
 	 * @return string
 	 */
-	protected function renderContentRow(string $contents, bool $isFormRow = false): string {
+	protected function renderContentRow(string $contents, bool $isFormRow = false, array $rowClasses = []): string {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$ls_contentRow = $this->getView()->element($isFormRow ? 'form_row' : 'content_row', [
 			'contents' => $contents,
-			'class' => $this->getView()::$rowClass,
+			'class' => implode(' ', array_unique($rowClasses)),
 		]);
-
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$this->getView()::$rowClass = '';
 
 		return $ls_contentRow;
 	}
