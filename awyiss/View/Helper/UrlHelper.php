@@ -25,6 +25,8 @@ class UrlHelper extends BaseUrlHelper {
 		$la_options = $options + [
 			'fullBase' => false,
 			'escape' => true,
+			'withParams' => null,
+			'withoutParams' => null,
 		];
 
 		if (is_null($lx_url)) {
@@ -72,7 +74,6 @@ class UrlHelper extends BaseUrlHelper {
 
 	/**
 	 * @param array $options
-	 * @param mixed $params
 	 * @return array
 	 */
 	protected function buildParameters(array $options): array {
@@ -88,61 +89,102 @@ class UrlHelper extends BaseUrlHelper {
 			$la_currentParts[ Inflector::dasherize($lx_key) ] = $lx_value;
 		}
 
-		$la_withParams = $la_options['withParams'] ?? [];
-		if ($la_withParams) {
-			if (!is_array($la_withParams)) {
-				$la_withParams = [$la_withParams];
-			}
+		$this->addParams($la_params, $la_options['withParams'], $la_currentParts);
 
-			$la_withParams = Hash::flatten($la_withParams);
-
-			if (in_array(true, $la_withParams, true)) {
-				$la_params = $la_currentParts;
-			}
-			else {
-				foreach ($la_withParams as $ls_param) {
-					if (array_key_exists($ls_param, $la_currentParts)) {
-						$la_params[ $ls_param ] = $la_currentParts[ $ls_param ];
-					}
-				}
-			}
-		}
-
-		$la_withoutParams = $la_options['withoutParams'] ?? [];
-		if ($la_withoutParams) {
-			if (!is_array($la_withoutParams)) {
-				$la_withoutParams = [$la_withoutParams];
-			}
-
-			$la_withoutParams = Hash::flatten($la_withoutParams);
-
-			if (in_array(true, $la_withoutParams, true)) {
-				$la_params = [];
-			}
-			else {
-				if (empty($la_params)) {
-					$la_params = $la_currentParts;
-
-					foreach ($la_withoutParams as $ls_param) {
-						unset($la_params[ $ls_param ]);
-					}
-				}
-			}
-		}
-
-		if (empty($la_params) && !empty($la_withoutParams)) {
-			/**
-			 * This is a workaround for how Router::url() builds a URL:
-			 *
-			 * If the first parameter is empty, it'll use all existing values.
-			 *
-			 * This results in parameters in the URL even though we explicitly
-			 * said we didn't want them.
-			 */
-			$la_params[ reset($la_withoutParams) ] = false;
-		}
-
+		$this->removeParams($la_params, $la_options['withoutParams'], $la_currentParts);
 
 		return $la_params;
+	}
+
+
+	/**
+	 * Add all defined parameters to the URL.
+	 * If any of the passed values is `true`, all parameters will be added.
+	 *
+	 * If the `$withParams` parameter is empty, no parameters will be added.
+	 *
+	 * @param array $params
+	 * @param mixed $withParams
+	 * @param array $currentParts
+	 * @return void
+	 */
+	protected function addParams(array &$params, mixed $withParams, array $currentParts): void {
+		$la_withParams = $withParams ?? [];
+
+		if (!$la_withParams) {
+			return;
+		}
+
+		if (!is_array($la_withParams)) {
+			$la_withParams = [$la_withParams];
+		}
+
+		$la_withParams = Hash::flatten($la_withParams);
+
+		if (in_array(true, $la_withParams, true)) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$params = $currentParts;
+
+			return;
+		}
+
+		foreach ($la_withParams as $ls_param) {
+			if (array_key_exists($ls_param, $currentParts)) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$params[ $ls_param ] = $currentParts[ $ls_param ];
+			}
+		}
+	}
+
+
+	/**
+	 * Remove all defined parameters from the URL.
+	 * If any of the passed values is `true`, all parameters will be removed.
+	 *
+	 * If the `$withoutParams` parameter is empty, no parameters will be removed.
+	 *
+	 * @param array $params
+	 * @param mixed $withoutParams
+	 * @param array $currentParts
+	 * @return void
+	 */
+	protected function removeParams(array &$params, mixed $withoutParams, array $currentParts): void {
+		$la_withoutParams = $withoutParams ?? [];
+
+		if (!$la_withoutParams) {
+			return;
+		}
+
+		if (!is_array($la_withoutParams)) {
+			$la_withoutParams = [$la_withoutParams];
+		}
+
+		$la_withoutParams = Hash::flatten($la_withoutParams);
+
+		if (in_array(true, $la_withoutParams, true)) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$params = [];
+		}
+		else {
+			if (!$params) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$params = array_diff_key($currentParts, array_flip($la_withoutParams));
+			}
+		}
+
+		if (!$params) {
+			/**
+			 * This is a workaround for how Router::url() builds a URL:
+			 * If the first parameter is empty, it'll use all existing values.
+			 * This results in parameters in the URL even though we explicitly
+			 * said we didn't want them.
+			 *
+			 * The router will remove a parameter if its value is `false`,
+			 * so pass at least one parameter with `false`.
+			 *
+			 * @noinspection PhpVariableNamingConventionInspection
+			 */
+			$params[ reset($la_withoutParams) ] = false;
+		}
 	}
 }
