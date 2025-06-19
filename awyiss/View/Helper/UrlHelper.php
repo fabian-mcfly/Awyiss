@@ -15,12 +15,6 @@ use Cake\View\Helper\UrlHelper as BaseUrlHelper;
  */
 class UrlHelper extends BaseUrlHelper {
 	/**
-	 * An identifier to use all current parameters or none at all
-	 */
-	final public const PARAMS_ALL = '_all';
-
-
-	/**
 	 * @inheritDoc
 	 * @param array|string|null $url
 	 * @param array $options
@@ -102,7 +96,7 @@ class UrlHelper extends BaseUrlHelper {
 
 			$la_withParams = Hash::flatten($la_withParams);
 
-			if (in_array(static::PARAMS_ALL, $la_withParams)) {
+			if (in_array(true, $la_withParams, true)) {
 				$la_params = $la_currentParts;
 			}
 			else {
@@ -122,7 +116,7 @@ class UrlHelper extends BaseUrlHelper {
 
 			$la_withoutParams = Hash::flatten($la_withoutParams);
 
-			if (in_array(static::PARAMS_ALL, $la_withoutParams)) {
+			if (in_array(true, $la_withoutParams, true)) {
 				$la_params = [];
 			}
 			else {
@@ -140,9 +134,9 @@ class UrlHelper extends BaseUrlHelper {
 			/**
 			 * This is a workaround for how Router::url() builds a URL:
 			 *
-			 * If the first paramter is empty, it'll use all existing values.
+			 * If the first parameter is empty, it'll use all existing values.
 			 *
-			 * This results in parameters in the URL even though we explicitely
+			 * This results in parameters in the URL even though we explicitly
 			 * said we didn't want them.
 			 */
 			$la_params[ reset($la_withoutParams) ] = false;

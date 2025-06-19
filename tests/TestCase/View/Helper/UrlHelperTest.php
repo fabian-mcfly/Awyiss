@@ -276,7 +276,7 @@ class UrlHelperTest extends TestCase {
 			'slug' => 'test-route',
 		];
 		$options = [
-			'withParams' => $this->urlHelper::PARAMS_ALL,
+			'withParams' => true,
 			'fullBase' => true,
 			'escape' => false,
 		];
@@ -516,7 +516,7 @@ class UrlHelperTest extends TestCase {
 			'slug' => 'test-route',
 		];
 		$options = [
-			'withoutParams' => $this->urlHelper::PARAMS_ALL,
+			'withoutParams' => true,
 			'fullBase' => true,
 			'escape' => false,
 			'param1' => 'value1',
