@@ -559,15 +559,15 @@ class ImageHandler {
 		) {
 			// Replace the node with an empty string
 			$tag->parentNode->replaceChild($dom->createTextNode(''), $tag);
+
+			return [[], null];
 		}
 
-		// Get the media ID
-		$li_mediaId = $la_attributes['mediaId'];
 		/**
 		 * @var \Awyiss\Model\Entity\Media $lo_media
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_media = $entity->mediaAssignments['inlineImgTag'][ $li_mediaId ]->media;
+		$lo_media = $entity->mediaAssignments['inlineImgTag'][ $la_attributes['mediaId'] ]->media;
 
 		return [$la_attributes, $lo_media];
 	}
