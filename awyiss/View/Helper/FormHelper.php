@@ -91,6 +91,7 @@ class FormHelper extends BaseFormHelper {
 		}
 
 		$lo_context = $this->context();
+
 		if (!is_a($lo_context, EntityContext::class)) {
 			return $ls_form;
 		}
@@ -125,10 +126,10 @@ class FormHelper extends BaseFormHelper {
 		}
 
 		$la_options = $options;
-		if (isset($la_options['class'])) {
+		if (!empty($la_options['class'])) {
 			$la_options['templateVars']['labelClass'] = ' ' . trim($la_options['class']);
-			unset($la_options['class']);
 		}
+		unset($la_options['class']);
 
 		return parent::label($fieldName, $ls_text, $la_options);
 	}
@@ -165,7 +166,7 @@ class FormHelper extends BaseFormHelper {
 
 		unset($la_options['isCategory']);
 
-		if (isset($la_options['columnSpan'])) {
+		if (!empty($la_options['columnSpan'])) {
 			$la_options['templateVars']['columnSpan'] = ' ColumnSpan-' . $la_options['columnSpan'];
 			unset($la_options['columnSpan']);
 		}
