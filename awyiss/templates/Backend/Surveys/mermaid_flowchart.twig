@@ -66,6 +66,7 @@ flowchart TD
 				{%~ block diagramQuestions %}
 					{#~ No additional blocks are used in this monster since set calls are limited to the block it is in #}
 StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestions|first.identifier }}
+					{#~ @var question \Awyiss\Model\Entity\SurveySurveyQuestion #}
 					{%~ for key, question in survey.surveySurveyQuestions %}
 						{%- set inheritingAnswers = [] %}
 						{%~ set inactive = question.unused or question.onlyReachableFromUnused or question.surveyQuestion.active == false %}
@@ -112,7 +113,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 									{%~ endif %}
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} SaveAndEnd[("{{ __('next_action_save_and_end') }}")]
 								{%~ elseif answer.nextAction == enum(nextActionEnum).NextQuestion %}
-									{%~ set realNextQuestion = SurveyHelper.realNextQuestion(survey.surveySurveyQuestions, key) %}
+									{%~ set realNextQuestion = SurveyHelper.realNextQuestion(survey.surveySurveyQuestions, question.identifier) %}
 									{%~ if inactive and (realNextQuestion == false or realNextQuestion.onlyReachableFromUnused != true) %}
 										{%~ set link = 'x-."' ~ answer.label ~ '".-x' %}
 									{%~ endif %}
@@ -190,7 +191,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 								{%~ endif %}
 								{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} SaveAndEnd[("{{ __('next_action_save_and_end') }}")]
 							{%~ else %}
-								{%~ set realNextQuestion = SurveyHelper.realNextQuestion(survey.surveySurveyQuestions, key) %}
+								{%~ set realNextQuestion = SurveyHelper.realNextQuestion(survey.surveySurveyQuestions, question.identifier) %}
 								{%~ if inactive and (realNextQuestion == false or realNextQuestion.onlyReachableFromUnused != true) %}
 									{%~ set link = 'x-.' ~ (inheritingAnswers ? ('"' ~ inheritingAnswers|join('<br>') ~ '"') : '') ~ '.-x' %}
 								{%~ endif %}
