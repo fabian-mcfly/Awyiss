@@ -139,8 +139,32 @@ class SystemOrderHelperTest extends TestCase {
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $options]);
 
-		$this->assertStringContainsString('<option value="1" title="Option 2">', $result);
-		$this->assertStringContainsString('<option value="2" title="Option 3" selected="selected">', $result);
+		$this->assertStringContainsString('<option value="1" title="system_order_first">system_order_first</option>', $result);
+		$this->assertStringContainsString('<option value="2" title="-&gt; system_order_after Option 1" selected="selected">-&gt; system_order_after Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="3" title="system_order_after Option 2">system_order_after Option 2</option>', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testControlWithOptionsWithoutFirst(): void {
+		$entity = new News(['systemOrder' => 2]);
+
+		$options = [
+			new News(['systemOrder' => 1, 'title' => 'Option 1']),
+			new News(['systemOrder' => 2, 'title' => 'Option 2']),
+			new News(['systemOrder' => 3, 'title' => 'Option 3']),
+			new News(['systemOrder' => 4, 'title' => 'Option 4']),
+		];
+
+		$result = $this->helper->control(null, ['includeFirst' => false, 'entity' => $entity, 'options' => $options]);
+
+		$this->assertStringNotContainsString('<option value="1" title="system_order_first">system_order_first</option>', $result);
+		$this->assertStringContainsString('<option value="2" title="-&gt; system_order_after Option 1" selected="selected">-&gt; system_order_after Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="3" title="system_order_after Option 2">system_order_after Option 2</option>', $result);
 	}
 
 
@@ -368,7 +392,7 @@ class SystemOrderHelperTest extends TestCase {
 		$entity = new News(['systemOrder' => 1]);
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => []]);
-		$this->assertStringContainsString('<select name="system_order" id="SystemOrder"></select>', $result);
+		$this->assertStringContainsString('<select name="system_order" id="SystemOrder"><option value="1" title="-&gt; system_order_first" selected="selected">-&gt; system_order_first</option></select>', $result);
 	}
 
 

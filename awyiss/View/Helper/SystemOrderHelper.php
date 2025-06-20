@@ -13,6 +13,7 @@ use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\StringTemplateTrait;
 use RuntimeException;
+use Traversable;
 
 
 /**
@@ -33,6 +34,7 @@ class SystemOrderHelper extends Helper {
 		'field' => 'systemOrder',
 		'first' => null,
 		'includeFirst' => true,
+		'options' => [],
 		'templateClass' => StringTemplate::class,
 		'templates' => [
 			'titleOption' => '{{after}} {{label}}',
@@ -98,10 +100,7 @@ class SystemOrderHelper extends Helper {
 			throw new RuntimeException($ls_message);
 		}
 
-		//If the options are not in array-form, make 'em!
-		if (!is_array($la_attributes['options'] ?? [])) {
-			$la_attributes['options'] = $this->buildSystemOrderOptions($la_attributes['options'], $la_attributes, $lo_entity);
-		}
+		$la_attributes['options'] = $this->buildSystemOrderOptions($la_attributes['options'], $la_attributes, $lo_entity);
 
 		//Default input type, if none was provided
 		if (!array_key_exists('type', $la_attributes)) {
@@ -154,8 +153,13 @@ class SystemOrderHelper extends Helper {
 			);
 		}
 
+		if ($options instanceof Traversable) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$options = iterator_to_array($options);
+		}
+
 		$lb_reachedOriginalSystemOrder = false;
-		foreach (($options ?? []) as $lo_option) {
+		foreach ($options as $lx_option) {
 			/*
 			 * The option is the original when
 			 * - the entity is not new AND
@@ -164,10 +168,10 @@ class SystemOrderHelper extends Helper {
 			 */
 			$lb_isOriginalSystemOrder = false;
 			if (!$lb_isNew && !$la_dirtyRelatedColumns) {
-				if ($entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $entity->getOriginal('systemOrder'))) {
+				if ($entity->hasOriginal('systemOrder') && ($lx_option['systemOrder'] == $entity->getOriginal('systemOrder'))) {
 					$lb_isOriginalSystemOrder = true;
 				}
-				elseif (!$entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $entity->get('systemOrder'))) {
+				elseif (!$entity->hasOriginal('systemOrder') && ($lx_option['systemOrder'] == $entity->get('systemOrder'))) {
 					$lb_isOriginalSystemOrder = true;
 				}
 			}
@@ -178,7 +182,7 @@ class SystemOrderHelper extends Helper {
 			}
 
 			//The value should be the `system_order`-property of the option
-			$li_systemOrder = $lo_option->systemOrder;
+			$li_systemOrder = $lx_option['systemOrder'];
 			if (!$lb_reachedOriginalSystemOrder) {
 				/**
 				 * As long as we haven't reached the original system order in this loop,
@@ -211,7 +215,7 @@ class SystemOrderHelper extends Helper {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			//Append a new option with the system_order as its value.
 			$la_options[ $li_systemOrder ] = $this->formatTitle(
-				$lo_option,
+				$lx_option,
 				$attributes + [
 					'isOriginalSystemOrder' => $lb_isOriginalSystemOrder,
 					'isSelectedSystemOrder' => $li_systemOrder == $entity->systemOrder,
