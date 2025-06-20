@@ -168,19 +168,8 @@ class FormHelper extends BaseFormHelper {
 
 		if (!empty($la_options['columnSpan'])) {
 			$la_options['templateVars']['columnSpan'] = ' ColumnSpan-' . $la_options['columnSpan'];
-			unset($la_options['columnSpan']);
 		}
-
-		if (
-			($la_options['data-editor'] ?? null) === true &&
-			$this->_getContext() instanceof EntityContext
-		) {
-			$la_options['val'] ??= $this->getSourceValue($fieldName);
-			if (is_string($la_options['val'])) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$la_options['val'] = $this->Media->rebuildSimpleImageTagsInField($this->_getContext()->entity(), $fieldName, $la_options['val']);
-			}
-		}
+		unset($la_options['columnSpan']);
 
 		if (in_array($fieldName, $this->translatableFields) && count($this->languages) > 1) {
 			$ls_association = '';
@@ -227,6 +216,34 @@ class FormHelper extends BaseFormHelper {
 	 */
 	public function select(string $fieldName, iterable $options = [], array $attributes = []): string {
 		return parent::select($fieldName, $options, $attributes + ['empty' => !($attributes['multiple'] ?? false)]);
+	}
+
+
+	/**
+	 * Replace the default textarea method to rebuild simple image tags in the field
+	 * if the field is an entity context and the data-editor option is set to true.
+	 *
+	 * @param string $fieldName
+	 * @param array $options
+	 * @return string
+	 */
+	public function textarea(string $fieldName, array $options = []): string {
+		if (
+			($options['data-editor'] ?? null) === true &&
+			$this->_getContext() instanceof EntityContext
+		) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$options['val'] ??= $this->getSourceValue($fieldName);
+			if (is_string($options['val'])) {
+				/**
+				 * @noinspection PhpPossiblePolymorphicInvocationInspection
+				 * @noinspection PhpVariableNamingConventionInspection
+				 */
+				$options['val'] = $this->Media->rebuildSimpleImageTagsInField($this->_getContext()->entity(), $fieldName, $options['val']);
+			}
+		}
+
+		return parent::textarea($fieldName, $options);
 	}
 
 
