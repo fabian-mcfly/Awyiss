@@ -217,7 +217,7 @@ $paths = [
 	/**
 	{%~ for questionIdentifier, answerId in path %}
 		{%~ set question = questionsByIdentifier[ questionIdentifier ] %}
-		{%~ set answers = question.surveySurveyAnswers|column(null, 'id') %}
+		{%~ set answers = question.surveySurveyAnswers ? question.surveySurveyAnswers|column(null, 'id') : [] %}
 	 * {{ question.surveyQuestion.title }}
 		{%- if question.surveyQuestion.type != enum(questionTypeEnum).InfoText %}
 		{%- if answerId is array %}

@@ -228,6 +228,8 @@ class Survey extends Entity {
 		])->all()->compile();
 
 		if (!$lo_questions->count()) {
+			$this->questions = collection([]);
+
 			return $this;
 		}
 
@@ -454,6 +456,10 @@ class Survey extends Entity {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	public function getQuestions(): CollectionInterface {
+		if (!isset($this->questions)) {
+			$this->loadQuestions();
+		}
+
 		return $this->questions;
 	}
 
