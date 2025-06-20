@@ -84,6 +84,12 @@ class FormHelper extends BaseFormHelper {
 
 		$ls_form = parent::create($context, $options);
 
+
+		// Check if the form is locked
+		if ($la_lockData && !$la_lockData['isOwnLock']) {
+			$ls_form = str_replace(' action="', ' data-action="', $ls_form);
+		}
+
 		$lo_context = $this->context();
 		if (!is_a($lo_context, EntityContext::class)) {
 			return $ls_form;
@@ -101,11 +107,6 @@ class FormHelper extends BaseFormHelper {
 			}
 
 			$this->languages[ $lo_language->shortcode ] = $lo_language;
-		}
-
-		// Check if the form is locked
-		if ($la_lockData && !$la_lockData['isOwnLock']) {
-			return str_replace(' action="', ' data-action="', $ls_form);
 		}
 
 		return $ls_form;
