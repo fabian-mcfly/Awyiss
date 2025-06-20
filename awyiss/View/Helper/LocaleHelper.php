@@ -6,6 +6,7 @@ namespace Awyiss\View\Helper;
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Language;
 use Cake\View\Helper;
 
 
@@ -20,7 +21,7 @@ class LocaleHelper extends Helper {
 
 
 	/**
-	 * Returns the value of the `title`-property of a language with the given shorrtcode.
+	 * Returns the value of the `title`-property of a language with the given shortcode.
 	 *
 	 * It first looks for a frontend-language, then a backend-language and falls back to null.
 	 *
@@ -108,15 +109,11 @@ class LocaleHelper extends Helper {
 	 * @param string $realm
 	 * @param bool $raw
 	 * @return array
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function languagesForRealm(string $realm, bool $raw = false): array {
-		$la_languages = [];
-
-		foreach (LocaleMiddleware::getLanguages($realm) as $ls_shortcode => $lo_language) {
-			$la_languages[ $ls_shortcode ] = $raw ? $lo_language : $lo_language->title;
-		}
-
-
-		return $la_languages;
+		return array_map(function (Language $language) use ($raw) {
+			return $raw ? $language : $language->title;
+		}, LocaleMiddleware::getLanguages($realm));
 	}
 }
