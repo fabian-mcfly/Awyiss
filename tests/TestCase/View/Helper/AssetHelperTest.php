@@ -1568,13 +1568,87 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAddJsModuleWithMinified(): void {
+	public function testAddJsModuleWithAs(): void {
+		$this->helper->addJsModule(['dummy.js' => ['as' => 'DifferentName']]);
+
+		$modules = $this->helper->getJsModules();
+
+		$this->assertArrayHasKey('dummy.js', $modules);
+		$this->assertSame($modules['dummy.js']['as'], 'DifferentName');
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddJsModuleWithRealm(): void {
+		$this->helper->addJsModule(['dummy.js' => ['realm' => Awyiss::REALM_FRONTEND]]);
+
+		$modules = $this->helper->getJsModules();
+
+		$this->assertArrayHasKey('dummy.js', $modules);
+		$this->assertSame($modules['dummy.js']['realm'], Awyiss::REALM_FRONTEND);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddJsModuleUsesAutoMinify(): void {
+		$this->helper->setAutoMinify(false);
+
+		$this->helper->addJsModule('dummy.js');
+
+		$modules = $this->helper->getJsModules();
+		$this->assertArrayHasKey('dummy.js', $modules);
+
+		$this->assertFalse($modules['dummy.js']['minified']);
+
+		$this->helper->removeJsModule('dummy.js');
+
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		$this->helper->setAutoMinify(true);
+
+		$this->helper->addJsModule('dummy.js');
+
+		$modules = $this->helper->getJsModules();
+		$this->assertArrayHasKey('dummy.js', $modules);
+
+		$this->assertTrue($modules['dummy.js']['minified']);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddJsModuleWithMinifiedTrue(): void {
 		$this->helper->addJsModule('dummy.js', true);
 
 		$modules = $this->helper->getJsModules();
 		$this->assertArrayHasKey('dummy.js', $modules);
 
 		$this->assertTrue($modules['dummy.js']['minified']);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddJsModuleWithMinifiedFalse(): void {
+		$this->helper->addJsModule('dummy.js', false);
+
+		$modules = $this->helper->getJsModules();
+		$this->assertArrayHasKey('dummy.js', $modules);
+
+		$this->assertFalse($modules['dummy.js']['minified']);
 	}
 
 
@@ -1643,13 +1717,121 @@ class AssetHelperTest extends TestCase {
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testCreateImportMapWithMinified(): void {
+	public function testCreateImportMapRespectsMinified(): void {
 		$this->helper->addJsModule('dummy.js', true);
 
 		$importMap = $this->helper->createImportMap();
 
 		$this->assertStringContainsString('<script', $importMap);
 		$this->assertStringContainsString('{"imports":{"dummy":"http:\/\/localhost\/assets\/awyiss\/js\/dummy.min', $importMap);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateImportMapRespectsAlias(): void {
+		$this->helper->addJsModule(['dummy.js' => ['as' => 'DifferentName']]);
+
+		$importMap = $this->helper->createImportMap();
+
+		$this->assertStringContainsString('<script', $importMap);
+		$this->assertStringContainsString('{"imports":{"DifferentName":"http:\/\/localhost\/assets\/awyiss\/js\/dummy.', $importMap);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateImportMapRespectsRealm(): void {
+		$this->helper->addJsModule(['dummy.js' => ['realm' => Awyiss::REALM_BACKEND]]);
+
+		$importMap = $this->helper->createImportMap();
+
+		$this->assertStringContainsString('<script', $importMap);
+		$this->assertStringContainsString('{"imports":{"dummy":"http:\/\/localhost\/assets\/awyiss\/js\/dummy.', $importMap);
+
+		// Remove the module to test the next one
+		$this->helper->removeJsModule('dummy.js');
+
+		$this->helper->addJsModule(['dummy.js' => ['realm' => Awyiss::REALM_FRONTEND]]);
+
+		$importMap = $this->helper->createImportMap();
+
+		$this->assertStringContainsString('<script', $importMap);
+		$this->assertStringContainsString('{"imports":{"dummy":null', $importMap);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateImportMapRespectsFallback(): void {
+		$this->helper->addJsModule(['doesnotexist.js' => ['fallback' => 'fallback.js']]);
+
+		$importMap = $this->helper->createImportMap();
+
+		$this->assertStringContainsString('<script', $importMap);
+		$this->assertStringContainsString('{"imports":{"doesnotexist":null', $importMap);
+
+		$this->helper->removeJsModule('doesnotexist.js');
+
+		$this->helper->addJsModule(['doesnotexist2.js' => ['fallback' => 'dummy.js']]);
+
+		$importMap = $this->helper->createImportMap();
+
+		$this->assertStringContainsString('<script', $importMap);
+		$this->assertStringContainsString('{"imports":{"doesnotexist2":"http:\/\/localhost\/assets\/awyiss\/js\/dummy.', $importMap);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateImportMapRespectsFallbackAndAlias(): void {
+		$this->helper->addJsModule(['doesnotexist.js' => ['fallback' => 'dummy.js', 'as' => 'DifferentName']]);
+
+		$importMap = $this->helper->createImportMap();
+
+		$this->assertStringContainsString('<script', $importMap);
+		$this->assertStringNotContainsString('doesnotexist', $importMap);
+		$this->assertStringContainsString('"DifferentName":"http:\/\/localhost\/assets\/awyiss\/js\/dummy.', $importMap);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateImportMapRespectsSubfolders(): void {
+		$this->helper->addJsModule('Modules/Media/Crop.js');
+
+		$importMap = $this->helper->createImportMap();
+
+		$this->assertStringContainsString('{"imports":{"Media\/Crop":"http:\/\/localhost\/awyiss\/assets\/js\/Modules\/Media\/Crop.', $importMap);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateImportMapIgnoresSubfoldersWithAlias(): void {
+		$this->helper->addJsModule(['Modules/Media/Crop.js' => ['as' => 'MediaCropAlias']]);
+
+		$importMap = $this->helper->createImportMap();
+
+		$this->assertStringContainsString('{"imports":{"MediaCropAlias":"http:\/\/localhost\/awyiss\/assets\/js\/Modules\/Media\/Crop.', $importMap);
 	}
 
 
@@ -1986,5 +2168,149 @@ class AssetHelperTest extends TestCase {
 		$response = $this->helper->getView()->getResponse();
 
 		$this->assertFalse($response->hasHeader('Link'));
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddCssLayer(): void {
+		$this->helper->addCssLayer('layer1');
+		$this->helper->addCssLayer('layer2');
+		$layers = $this->helper->getCssLayers();
+
+		$expected = [
+			'layer1' => [
+				'priority' => 10,
+				'layer' => 'layer1',
+			],
+			'layer2' => [
+				'priority' => 10,
+				'layer' => 'layer2',
+			],
+		];
+		$this->assertEquals($expected, $layers);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddCssLayerWithPriority(): void {
+		$this->helper->addCssLayer('layer1', 100);
+		$this->helper->addCssLayer('layer2', 50);
+
+		$layers = $this->helper->getCssLayers();
+
+		$expected = [
+			'layer1' => [
+				'priority' => 100,
+				'layer' => 'layer1',
+			],
+			'layer2' => [
+				'priority' => 50,
+				'layer' => 'layer2',
+			],
+		];
+		$this->assertEquals($expected, $layers);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddCssLayerDuplicate(): void {
+		$this->helper->addCssLayer('layer1');
+		$this->helper->addCssLayer('layer1', 100);
+
+		$layers = $this->helper->getCssLayers();
+
+		$expected = [
+			'layer1' => [
+				'priority' => 10,
+				'layer' => 'layer1',
+			],
+		];
+		$this->assertEquals($expected, $layers);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddCssLayerWithArray(): void {
+		$this->helper->addCssLayer(['layer1', 'layer2', 'layer3']);
+
+		$layers = $this->helper->getCssLayers();
+
+		$expected = [
+			'layer1, layer2, layer3' => [
+				'priority' => 10,
+				'layer' => 'layer1, layer2, layer3',
+			],
+		];
+		$this->assertEquals($expected, $layers);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateLayerTag(): void {
+		$this->helper->addCssLayer('layer1');
+		$this->helper->addCssLayer(['layer2', 'layer3']);
+		$this->helper->addCssLayer('layer4');
+
+		$tag = $this->helper->createLayerTag();
+
+		$this->assertStringContainsString('<style>@layer layer1, layer2, layer3, layer4;</style>', $tag);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateLayerTagWithPriority(): void {
+		$this->helper->addCssLayer(['layer2', 'layer3']);
+		$this->helper->addCssLayer('layer4', 5);
+		$this->helper->addCssLayer('layer1', 5);
+
+		$tag = $this->helper->createLayerTag();
+
+		$this->assertStringContainsString('<style>@layer layer4, layer1, layer2, layer3;</style>', $tag);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateLayerTagWithEmptyLayers(): void {
+		$tag = $this->helper->createLayerTag();
+
+		$this->assertSame('', $tag);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateLayerTagWithNonce(): void {
+		$view = $this->helper->getView();
+		$request = $view->getRequest()->withAttribute('cspStyleNonce', 'test-nonce');
+		$view->setRequest($request);
+
+		$this->helper->addCssLayer('layer1');
+
+		$tag = $this->helper->createLayerTag();
+
+		$this->assertStringContainsString('<style nonce="test-nonce">@layer layer1;</style>', $tag);
 	}
 }

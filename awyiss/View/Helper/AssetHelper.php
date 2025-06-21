@@ -29,7 +29,9 @@ use MatthiasMullie\Minify;
  */
 class AssetHelper extends Helper {
 	/**
-	 * @var array $assets An associative array of assets. The keys are the asset names, and the values are arrays of options for each asset.
+	 * An associative array of assets. The keys are the asset names, and the values are arrays of options for each asset.
+	 *
+	 * @var array $assets
 	 */
 	protected static array $assets = [
 		'all' => [],
@@ -48,31 +50,45 @@ class AssetHelper extends Helper {
 		],
 	];
 	/**
-	 * @var array $checkedAssets An associative array of checked assets. The keys are the asset names, and the values are the asset paths.
+	 * An associative array of checked assets. The keys are the asset names, and the values are the asset paths.
+	 *
+	 * @var array $checkedAssets
 	 */
 	protected static array $checkedAssets = [];
 	/**
-	 * @var bool $autoMinify A boolean indicating whether assets should be minified automatically. Defaults to true.
+	 * A boolean indicating whether assets should be minified automatically. Defaults to true.
+	 *
+	 * @var bool $autoMinify
 	 */
 	protected static bool $autoMinify = true;
 	/**
-	 * @var array $jsModules An array of JavaScript modules included in an import map.
+	 * An array of JavaScript modules included in an import map.
+	 *
+	 * @var array $jsModules
 	 */
 	protected static array $jsModules = [];
 	/**
-	 * @var array $noScriptAssets An array of assets to include in a <noscript> tag.
+	 * An array of assets to include in a <noscript> tag.
+	 *
+	 * @var array $noScriptAssets
 	 */
 	protected static array $noScriptAssets = [];
 	/**
-	 * @var string $realm The realm of the application. This is used to determine the base path for assets.
+	 * The realm of the application. This is used to determine the base path for assets.
+	 *
+	 * @var string $realm
 	 */
 	protected static string $realm;
 	/**
-	 * @var array $realmFolders An associative array of realm folders. The keys are the realm names, and the values are arrays of folder paths for each realm.
+	 * An associative array of realm folders. The keys are the realm names, and the values are arrays of folder paths for each realm.
+	 *
+	 * @var array $realmFolders
 	 */
 	protected static array $realmFolders;
 	/**
-	 * @var \Cake\View\Helper|null
+	 * The default asset configuration.
+	 *
+	 * @var array<string, array
 	 */
 	protected static array $assetDefaults = [
 		'all' => [],
@@ -148,7 +164,6 @@ class AssetHelper extends Helper {
 	 * - minified: A boolean indicating whether the asset is minified.
 	 * - critical: A boolean indicating whether the asset is critical.
 	 * - priority: An integer indicating the priority of the asset. Higher numbers indicate higher priority.
-	 *
 	 * The minified option defaults to true for production environments, false for development environments.
 	 *
 	 * @param array|string $asset The asset to add. This can be either a string representing the asset, or an array with the asset as the key and an array of options as the value.
@@ -157,7 +172,7 @@ class AssetHelper extends Helper {
 	 * @param bool|null $minified (optional) Whether the asset is minified. Defaults to false.
 	 * @param int $priority (optional) The priority of the asset. Defaults to 10.
 	 * @return void
-	 */
+	 * @noinspection DuplicatedCode*/
 	public function add(array|string $asset, array $attributes = [], bool $critical = false, ?bool $minified = null, int $priority = 10): void {
 		// Determines if the asset is minified based on the provided value or the application's debug configuration
 		$lb_minified = $minified ?? $this->getAutoMinify();
@@ -230,6 +245,14 @@ class AssetHelper extends Helper {
 
 
 	/**
+	 * Returns the defined css layers
+	 */
+	public function getCssLayers(): array {
+		return static::$assets['cssLayer'];
+	}
+
+
+	/**
 	 * Simplified add method for adding assets that will only be included in the <noscript> tag.
 	 * Manually added NoScript assets are never critical.
 	 *
@@ -238,6 +261,7 @@ class AssetHelper extends Helper {
 	 * @param bool|null $minified
 	 * @param int $priority
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	public function addNoScriptAsset(array|string $asset, array $attributes = [], ?bool $minified = null, int $priority = 10): void {
 		// Determines if the asset is minified based on the provided value or the application's debug configuration
@@ -303,7 +327,7 @@ class AssetHelper extends Helper {
 		foreach ($la_assets as $ls_asset) {
 			$ls_extension = pathinfo($ls_asset, PATHINFO_EXTENSION);
 
-			// If the extension is not recognized, try to determine it from the url, if it's an url
+			// If the extension is not recognized, try to determine it from the url, if it's a url
 			if (empty($ls_extension)) {
 				// fonts.googleapis.com is a special case, as it's not a file, but a URL
 				if (str_contains($ls_asset, '//fonts.googleapis.com')) {
@@ -701,6 +725,11 @@ class AssetHelper extends Helper {
 	 *
 	 * The minified option defaults to true for production environments, false for development environments.
 	 *
+	 * Possible options for the module:
+	 * - `minified`: A boolean indicating whether the module is minified. Defaults to the opposite of the debug configuration.
+	 * - `as`: A string indicating the name to use for the module in the import map. If not provided, the module name will be used.
+	 * - `fallback`: A string indicating a fallback for the module. This is used if the module cannot be loaded.
+	 *
 	 * @param array|string $module The module to add. This can be either a string representing the module, or an array with the module as the key and an array of options as the
 	 * 	value.
 	 * @param bool|null $minified (optional) Whether the module is minified. Defaults to the opposite of the debug configuration.
@@ -815,6 +844,7 @@ class AssetHelper extends Helper {
 
 			// Add the module to the import map
 			$ls_assetPath = $this->getAssetPath($ls_moduleName, $la_options);
+
 			if (!$ls_assetPath && isset($la_options['fallback'])) {
 				$ls_assetPath = $this->getAssetPath($la_options['fallback'], $la_options);
 			}
@@ -891,7 +921,7 @@ class AssetHelper extends Helper {
 	/**
 	 * Returns all remembered assets.
 	 *
-	 * @return bool
+	 * @return array
 	 */
 	public function getAssets(): array {
 		return static::$assets;
@@ -913,7 +943,7 @@ class AssetHelper extends Helper {
 	 * Useful if you want to reset for a new batch of assets,
 	 * noscript tags or import maps.
 	 *
-	 * @return bool
+	 * @return void
 	 */
 	public function clearAssets(): void {
 		static::$assets = static::$assetDefaults;
@@ -985,9 +1015,11 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Minifies the asset file located at the given source path and saves the minified content to the target path.
-	 * This method uses the MatthiasMullie\Minify library to minify CSS and JavaScript files. The type of minifier used depends on the type of the asset file.
+	 * This method uses the `MatthiasMullie\Minify` library to minify CSS and JavaScript files. The type of minifier used depends on the type of the asset file.
+	 *
 	 * If the type is 'css', a Minify\CSS minifier is used. If the type is 'js', a Minify\JS minifier is used. If the type is neither 'css' nor 'js', no minification is performed.
 	 * The method first creates a new instance of the appropriate minifier for the asset type, passing the source path to the minifier's constructor.
+	 *
 	 * If the minifier instance is not null, the method calls the minifier's minify method, passing the target path. The minify method minifies the asset file and saves the
 	 * minified content to the target path.
 	 *
