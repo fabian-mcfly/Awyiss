@@ -443,14 +443,16 @@ class AssetHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function getAssetPath(string $asset, array $options = []): ?string {
+		$ls_realm = $options['realm'] ?? static::$realm;
+
 		// If the asset has already been checked, return the asset path
-		if (isset(static::$checkedAssets[ $asset ])) {
-			return static::$checkedAssets[ $asset ];
+		if (isset(static::$checkedAssets[ $ls_realm . '__' . $asset ])) {
+			return static::$checkedAssets[ $ls_realm . '__' . $asset ];
 		}
 
 		// If the asset is a full URL, return it
 		if (preg_match('/^((http|https|ftp):\\/\\/|\\/\\/)/', $asset)) {
-			static::$checkedAssets[ $asset ] = $asset;
+			static::$checkedAssets[ $ls_realm . '__' . $asset ] = $asset;
 
 			return $asset;
 		}
@@ -462,8 +464,6 @@ class AssetHelper extends Helper {
 		if ($ls_extension === 'woff' || $ls_extension === 'woff2' || $ls_extension === 'ttf') {
 			$ls_subPath = 'font';
 		}
-
-		$ls_realm = $options['realm'] ?? static::$realm;
 
 		foreach (static::$realmFolders[ $ls_realm ] as $ls_key => $ls_folder) {
 			$lb_minified = $options['minified'] ?? false;
@@ -514,12 +514,12 @@ class AssetHelper extends Helper {
 				$ls_fileName .= $li_modTime . '.';
 			}
 
-			// Generate a URL for the asset using CakePHP's Router and ppend the modification time to the filename
-			return static::$checkedAssets[ $asset ] = Router::url($ls_fileName . $ls_extension, true);
+			// Generate a URL for the asset using CakePHP's Router and append the modification time to the filename
+			return static::$checkedAssets[ $ls_realm . '__' . $asset ] = Router::url($ls_fileName . $ls_extension, true);
 		}
 
 		// If the asset is not found, return null
-		static::$checkedAssets[ $asset ] = null;
+		static::$checkedAssets[ $ls_realm . '__' . $asset ] = null;
 
 
 		return null;
