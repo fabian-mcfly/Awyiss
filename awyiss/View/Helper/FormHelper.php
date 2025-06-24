@@ -209,8 +209,10 @@ class FormHelper extends BaseFormHelper {
 
 	/**
 	 * Use "empty => true" as default value for selects (if not multiple).
-	 * This negates CakePHP's questionable decision to remove
-	 * the empty option if a select is required. Usability-wise it's not very clever to show required fields prepopulated.
+	 * This negates CakePHP's decision to remove the empty option
+	 * if a select is required.
+	 * Usability-wise it's not good to show any fields prepopulated as they
+	 * get overlooked easier.
 	 *
 	 * @inheritDoc
 	 */
@@ -226,6 +228,7 @@ class FormHelper extends BaseFormHelper {
 	 * @param string $fieldName
 	 * @param array $options
 	 * @return string
+	 * @throws \DOMException
 	 */
 	public function textarea(string $fieldName, array $options = []): string {
 		if (
@@ -373,7 +376,8 @@ class FormHelper extends BaseFormHelper {
 	/**
 	 * Re-implemented 1:1 but
 	 * - uses 'Required' instead of 'required' as a class name for required elements. We like our classes uppercase.
-	 * - uses `ucparts` for the `type`-option
+	 * - uses `ucparts` for the `type`-option.
+	 * - uses the `id`-option as the identifier for the input container.
 	 *
 	 * @inheritDoc
 	 */
@@ -386,6 +390,7 @@ class FormHelper extends BaseFormHelper {
 		$ls_name = $options['options']['id'];
 		// When the id starts with the entity context's table, we want to remove the prefix (association name) from the id.
 		if ($this->context() instanceof EntityContext) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_entity = $this->context()->entity();
 			$ls_source = Inflector::singularize($lo_entity->getSource());
 			if (str_starts_with($ls_name, $ls_source . '-')) {

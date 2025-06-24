@@ -24,13 +24,14 @@ class FrontendView extends AppView {
 	 *
 	 * @var string
 	 */
-	public const TYPE_CONTENT = 'content';
+	final public const TYPE_CONTENT = 'content';
 	/**
 	 * Constant for view file type 'content'
 	 *
 	 * @var string
 	 */
-	public const TYPE_WIDGET = 'widget';
+	final public const TYPE_WIDGET = 'widget';
+
 
 
 	/**
@@ -202,6 +203,7 @@ class FrontendView extends AppView {
 	 * @param array<string, mixed> $options Content options
 	 * @return array<string, mixed> Content Cache configuration.
 	 * @psalm-return array{key:string, config:string}
+	 * @noinspection DuplicatedCode
 	 */
 	protected function _contentCache(string $name, array $data, array $options): array {
 		if (isset($options['cache']['key'], $options['cache']['config'])) {

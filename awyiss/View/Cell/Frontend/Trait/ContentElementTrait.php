@@ -4,12 +4,12 @@
 namespace Awyiss\View\Cell\Frontend\Trait;
 
 
-use Awyiss\Awyiss;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\Utility\Inflector;
+use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\I18n\DateTime;
@@ -107,7 +107,9 @@ trait ContentElementTrait {
 		foreach ($entities as $lo_entity) {
 			$ls_children = '';
 
+			/** @noinspection PhpUndefinedFieldInspection */
 			if ($lo_entity->children) {
+				/** @noinspection PhpUndefinedFieldInspection */
 				$ls_children = $this->buildContents($lo_entity->children, $noContentRow);
 			}
 
@@ -121,6 +123,7 @@ trait ContentElementTrait {
 
 				$lb_noContentRow = !$lo_entity->$ls_template->inContentRow;
 				if ($lo_entity->has('inContentRow')) {
+					/** @noinspection PhpUndefinedFieldInspection */
 					$lb_noContentRow = !$lo_entity->inContentRow;
 				}
 			}
@@ -145,6 +148,7 @@ trait ContentElementTrait {
 				$ls_contentElements .= $ls_renderedContent;
 				// Unset the row class. Follow-up contents will start a new row and with a blank row class.
 				$la_contentRowClasses = [];
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$this->getView()->setRowClass('');
 
 				continue;
@@ -175,7 +179,9 @@ trait ContentElementTrait {
 			}
 
 			// If the row class is set, add it to the content row class
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			if ($this->getView()->getRowClass()) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$la_contentRowClasses[] = $this->getView()->getRowClass();
 			}
 
@@ -197,6 +203,7 @@ trait ContentElementTrait {
 			}
 
 			// Clear the row class for the next content element
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$this->getView()->setRowClass('');
 		}
 
@@ -206,6 +213,7 @@ trait ContentElementTrait {
 		}
 
 		// Unset the row class.
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$this->getView()->setRowClass('');
 
 		return $ls_contentElements;
@@ -230,12 +238,10 @@ trait ContentElementTrait {
 	 */
 	protected function renderContentRow(string $contents, bool $isFormRow = false, array $rowClasses = []): string {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ls_contentRow = $this->getView()->element($isFormRow ? 'form_row' : 'content_row', [
+		return $this->getView()->element($isFormRow ? 'form_row' : 'content_row', [
 			'contents' => $contents,
 			'class' => implode(' ', array_unique($rowClasses)),
 		]);
-
-		return $ls_contentRow;
 	}
 
 
@@ -292,6 +298,7 @@ trait ContentElementTrait {
 			$entity->cssClass .= ' ' . $ls_cssClass;
 		}
 
+		/** @noinspection PhpUndefinedFieldInspection */
 		if (
 			!$entity->active ||
 			($entity->publicationStart && $entity->publicationStart > $ld_now) ||
@@ -309,6 +316,7 @@ trait ContentElementTrait {
 	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 	 * @param float $columnWidth
 	 * @return void
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	protected function setRealColumnWidth(Entity $entity, float $columnWidth): void {
 		$entity->setVirtual(['realColumnWidth']);
@@ -338,6 +346,7 @@ trait ContentElementTrait {
 	 *
 	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 	 * @return void
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	protected function setTemplate(Entity $entity): void {
 		static $ls_templatePath;
@@ -369,7 +378,6 @@ trait ContentElementTrait {
 
 	/**
 	 * @param \Awyiss\Model\Entity $entity
-	 * @param array $blocklistedKeys
 	 * @return void
 	 */
 	protected function applyDuplicateData(Entity $entity): void {

@@ -198,6 +198,7 @@ class AuthorizationHelper extends Helper {
 	 * @param array{scope: string, identifier: string|array<string>, additionalData?: array} ...$actions
 	 * @return bool
 	 * @noinspection PhpUnused
+	 * @throws \Exception
 	 */
 	public function anyIsAccessible(array ...$actions): bool {
 		foreach ($actions as $la_action) {
@@ -270,7 +271,7 @@ class AuthorizationHelper extends Helper {
 
 
 	/**
-	 * Retreive the identity attribute from the current request
+	 * Retrieve the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */

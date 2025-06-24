@@ -234,7 +234,6 @@ class FormController extends AppController {
 	/**
 	 * @param string $identifier
 	 * @param string $languageShortcode
-	 * @param array $requestData
 	 * @return string
 	 */
 	protected function buildCaptcha(string $identifier, string $languageShortcode): string {

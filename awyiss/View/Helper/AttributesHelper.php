@@ -88,7 +88,7 @@ class AttributesHelper extends Helper {
 	 *     If you pass an empty array, the fieldset will be enabled.
 	 * - `legend` Set to `false` to disable the legend for the generated input set.
 	 *     Or supply a string to customize the legend text.
-	 * - `onlyProvided` Set to true to only output fields that are present in the `$fields`-paramter.
+	 * - `onlyProvided` Set to true to only output fields that are present in the `$fields`-parameter.
 	 *     Otherwise, fields will get merged.
 	 * @return string Completed form controls.
 	 * @throws \ReflectionException
@@ -409,7 +409,7 @@ class AttributesHelper extends Helper {
 	/**
 	 * @param string $fieldName
 	 * @param array $options
-	 * @return array
+	 * @return string
 	 */
 	protected function prepareTranslationField(string $fieldName, array &$options): string {
 		$ls_field = $fieldName;

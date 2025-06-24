@@ -471,6 +471,7 @@ class PagesController extends Controller {
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @param string $method
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function save(Page $page, string $method = 'add'): void {
 		$la_associated = [];
@@ -638,7 +639,7 @@ class PagesController extends Controller {
 	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $pageRole
 	 * @param string $identifier
 	 * @return \Awyiss\Controller\Backend\PagesController
-	 * @throws \ReflectionException
+	 * @noinspection DuplicatedCode
 	 */
 	#[NoDirectAccess]
 	public function asPageRole(PageRoleEnumInterface $pageRole, string $identifier): static {
@@ -740,8 +741,9 @@ class PagesController extends Controller {
 
 	/**
 	 * @param \Awyiss\Model\Entity\Page $page
-	 * @param \Cake\Collection\CollectionInterface $threadedContents
+	 * @param \Cake\Collection\CollectionInterface $threadedPages
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function ensurePossibleParentId(Page $page, CollectionInterface $threadedPages): void {
 		if ($this->Categories->getConfig('enabled') && $this->Categories->getConfig('field') === 'parentId') {

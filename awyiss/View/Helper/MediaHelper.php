@@ -565,7 +565,6 @@ class MediaHelper extends Helper {
 
 	/**
 	 * Return the resized media element for the given media item
-	 *
 	 * If `strictSize` is set to false (default), an image will be
 	 * returned that might be larger than the requested size to not
 	 * create versions of it for approximately the same size.
@@ -581,6 +580,7 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $renderOptions
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpFeatureEnvyLocalInspection
 	 */
 	public function resize(
 		Media $media,
@@ -773,6 +773,7 @@ class MediaHelper extends Helper {
 	 * @param array $fields
 	 * @return void
 	 * @noinspection PhpUnused
+	 * @throws \Exception
 	 */
 	public function replaceCustomImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
@@ -793,6 +794,7 @@ class MediaHelper extends Helper {
 	 * @param string|null $value
 	 * @return string|null
 	 * @noinspection PhpUnused
+	 * @throws \Exception
 	 */
 	public function replaceCustomImageTagsInField(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field, ?string $value = null): ?string {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
