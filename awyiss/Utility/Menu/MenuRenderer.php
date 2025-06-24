@@ -8,6 +8,7 @@ use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Text;
 use Cake\View\StringTemplate;
+use InvalidArgumentException;
 
 
 /**
@@ -24,6 +25,7 @@ class MenuRenderer {
 	 */
 	protected array $_defaultConfig = [
 		'activeOnly' => true,
+		'escapeTitle' => true,
 		'formatters' => [
 			'menu' => null,
 			'list' => null,
@@ -204,7 +206,7 @@ class MenuRenderer {
 			'children' => $ls_childrenContent,
 			'identifier' => !is_string($lx_identifier) ? $lx_identifier : Inflector::camelize(Text::slug($lx_identifier, '_')),
 			'level' => $level,
-			'title' => $item->getTitle(),
+			'title' => $this->escapeTitle($item->getTitle()),
 			'item' => $item,
 		];
 
@@ -253,5 +255,31 @@ class MenuRenderer {
 
 
 		return $this->templates->format($type, $data);
+	}
+
+
+	/**
+	 * @param string|null $title
+	 * @return string|null
+	 */
+	protected function escapeTitle(?string $title): ?string {
+		if (!$title) {
+			return null;
+		}
+
+		$lx_escape = $this->getConfig('escapeTitle');
+
+		if (is_bool($lx_escape)) {
+			return $lx_escape ? h($title) : $title;
+		}
+
+		// If it's a callable, call it with the title
+		if (is_callable($lx_escape)) {
+			return $lx_escape($title);
+		}
+
+		throw new InvalidArgumentException(
+			sprintf('The escapeTitle configuration must be a boolean or callable, `%s` given.', gettype($lx_escape))
+		);
 	}
 }
