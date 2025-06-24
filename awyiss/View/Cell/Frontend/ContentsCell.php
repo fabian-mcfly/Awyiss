@@ -87,7 +87,7 @@ class ContentsCell extends Cell {
 		);
 
 		// Parse the module
-		$this->parseResponsiveImageTags($entity, $lo_mediaRenderOptions);
+		$this->parseAwyissImageTags($entity, $lo_mediaRenderOptions);
 
 		// Parse the module
 		$this->parseModule($entity, $lo_mediaRenderOptions);

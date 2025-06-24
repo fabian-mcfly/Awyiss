@@ -387,7 +387,7 @@ class SurveyRenderer {
 		$lo_mediaRenderOptions = $lo_mediaRenderOptions->withSelector('#Survey-' . Inflector::ucparts($this->survey->identifier));
 
 		// Parse the module
-		$this->parseResponsiveImageTags($this->survey, $lo_mediaRenderOptions, [
+		$this->parseAwyissImageTags($this->survey, $lo_mediaRenderOptions, [
 			'successMessage',
 			'failureMessage',
 		]);
@@ -776,7 +776,7 @@ class SurveyRenderer {
 		$lo_mediaRenderOptions = $mediaRenderOptions->withSelector('#SurveyQuestion-' . Inflector::ucparts($this->currentAction->identifier));
 
 		// Parse the module
-		$this->parseResponsiveImageTags($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
+		$this->parseAwyissImageTags($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
 
 		$ls_result = null;
 		if ($this->currentAction->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::InfoText && !$this->survey->hasNextAction()) {

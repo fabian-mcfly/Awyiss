@@ -58,6 +58,8 @@ trait FrontendRenderingTrait {
 			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
 		}
 
+		$la_options['columnWidth'] = (float)$la_options['columnWidth'];
+
 		if (!array_key_exists('singleColumnBreakpoint', $la_options)) {
 			$la_options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($la_options);
 		}
@@ -148,8 +150,9 @@ trait FrontendRenderingTrait {
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param array $fields
 	 * @return void
+	 * @throws \Exception
 	 */
-	public function parseResponsiveImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
+	public function parseAwyissImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
 		static $ls_imageHandlerClass;
 
