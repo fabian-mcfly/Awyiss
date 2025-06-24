@@ -4,12 +4,12 @@
 namespace Awyiss\View\Cell\Frontend;
 
 
-use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Menu as MenuEntity;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
+use Awyiss\View\FrontendView;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
@@ -198,7 +198,7 @@ class MenuCell extends Cell {
 		$la_data = $data;
 
 		$lb_isPreview = $data['level'] === 1 && $this->isPreview() && ($la_data['menuConfig']['active'] ?? true) === false;
-		$la_data['isPreview'] = $lb_isPreview ? ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME : '';
+		$la_data['isPreview'] = $lb_isPreview ? ' ' . FrontendView::getPreviewModeElementClass() : '';
 
 		return $template->format('list', $la_data);
 	}
@@ -238,7 +238,7 @@ class MenuCell extends Cell {
 			}
 
 			if (!$lb_active) {
-				$la_data['isPreview'] = ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME;
+				$la_data['isPreview'] = ' ' . FrontendView::getPreviewModeElementClass();
 			}
 		}
 

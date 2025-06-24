@@ -43,10 +43,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class Awyiss extends BaseApplication {
 	/**
-	 * The class name for inactive elements in preview mode
-	 */
-	final public const PREVIEW_MODE_ELEMENT_CLASSNAME = 'AwyissFrontendPreview-InactiveElement';
-	/**
 	 * The name of the frontend realm
 	 */
 	final public const REALM_FRONTEND = 'Frontend';

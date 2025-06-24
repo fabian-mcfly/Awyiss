@@ -39,6 +39,10 @@ class FrontendView extends AppView {
 	 * @var string $rowClass
 	 */
 	protected static string $rowClass = '';
+	/**
+	 * The class name for inactive elements in preview mode
+	 */
+	protected static string $previewModeElementClass = 'AwyissFrontendPreview-InactiveElement';
 
 
 	/**
@@ -576,11 +580,20 @@ class FrontendView extends AppView {
 		}
 	}
 
-		if (!$ls_logoPath) {
-			return;
-		}
 
-		// If the logo path is set, remove the root path and custom directory from the path
-		$this->set('ogImage', Router::url('/', true) . substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
+	/**
+	 * @return string
+	 */
+	public static function getPreviewModeElementClass(): string {
+		return self::$previewModeElementClass;
+	}
+
+
+	/**
+	 * @param string $class
+	 * @return void
+	 */
+	public static function setPreviewModeElementClass(string $class): void {
+		self::$previewModeElementClass = $class;
 	}
 }

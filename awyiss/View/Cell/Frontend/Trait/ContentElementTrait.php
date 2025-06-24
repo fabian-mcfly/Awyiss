@@ -297,7 +297,7 @@ trait ContentElementTrait {
 			($entity->publicationStart && $entity->publicationStart > $ld_now) ||
 			($entity->publicationEnd && $entity->publicationEnd < $ld_now)
 		) {
-			$entity->cssClass .= ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME;
+			$entity->cssClass .= ' ' . FrontendView::getPreviewModeElementClass();
 		}
 	}
 

@@ -15,6 +15,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
+use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Http\Exception\RedirectException;
@@ -372,7 +373,7 @@ class PagesController extends Controller {
 		$lo_session->write('previewMode', [
 			'enabled' => true,
 			'markInactiveElements' => $lo_session->read('previewMode.markElements', true),
-			'inactiveElementClass' => Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME,
+			'inactiveElementClass' => FrontendView::getPreviewModeElementClass(),
 		]);
 
 		return $this->redirect([
