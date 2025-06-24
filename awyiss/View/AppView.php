@@ -253,4 +253,27 @@ class AppView extends TwigView {
 
 		static::$twigInitialized = true;
 	}
+
+
+	/**
+	 * Get the path to the login logo.
+	 * This method checks for the existence of a login logo in the customer's `assets` directory
+	 * with the name `login-logo` and the extensions `png`, `jpg`, or `svg`.
+	 *
+	 * @return string|null
+	 */
+	protected function getLoginLogoPath(): ?string {
+		$ls_extensions = ['png', 'jpg', 'svg'];
+		$ls_basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
+
+		// For each extension, check if the file exists
+		foreach ($ls_extensions as $ls_extension) {
+			$ls_tempPath = $ls_basePath . $ls_extension;
+			if (file_exists($ls_tempPath)) {
+				return substr_replace($ls_tempPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1);
+			}
+		}
+
+		return null;
+	}
 }

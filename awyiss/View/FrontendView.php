@@ -86,22 +86,10 @@ class FrontendView extends AppView {
 
 		$lo_twig = $this->getTwig();
 
-		// Set login logo path
-		$ls_logoPath = null;
-		$ls_extensions = ['png', 'jpg', 'svg'];
-		$ls_basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
-		// For each extension, check if the file exists
-		foreach ($ls_extensions as $ls_extension) {
-			$ls_tempPath = $ls_basePath . $ls_extension;
-			if (file_exists($ls_tempPath)) {
-				$ls_logoPath = $ls_tempPath;
-				break;
-			}
-		}
-
+		// Find the customer logo
+		$ls_logoPath = $this->getLoginLogoPath();
 		if ($ls_logoPath) {
-			// If the logo path is set, remove the root path and custom directory from the path
-			$lo_twig->addGlobal('loginLogoPath', substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
+			$lo_twig->addGlobal('loginLogoPath', $ls_logoPath);
 		}
 
 		$lo_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn', 'label'];
@@ -363,6 +351,7 @@ class FrontendView extends AppView {
 	 * @param array<string, mixed> $options Widget options
 	 * @return array<string, mixed> Widget Cache configuration.
 	 * @psalm-return array{key:string, config:string}
+	 * @noinspection DuplicatedCode
 	 */
 	protected function _widgetCache(string $name, array $data, array $options): array {
 		if (isset($options['cache']['key'], $options['cache']['config'])) {
@@ -579,18 +568,13 @@ class FrontendView extends AppView {
 			return;
 		}
 
-		// Set login logo path
-		$ls_logoPath = null;
-		$ls_extensions = ['png', 'jpg', 'svg'];
-		$ls_basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
-		// For each extension, check if the file exists
-		foreach ($ls_extensions as $ls_extension) {
-			$ls_tempPath = $ls_basePath . $ls_extension;
-			if (file_exists($ls_tempPath)) {
-				$ls_logoPath = $ls_tempPath;
-				break;
-			}
+		// Find the customer logo
+		$ls_logoPath = $this->getLoginLogoPath();
+		if ($ls_logoPath) {
+			// If the logo path is found, set the Open Graph image URL
+			$this->set('ogImage', Router::url('/', true) . $ls_logoPath);
 		}
+	}
 
 		if (!$ls_logoPath) {
 			return;
