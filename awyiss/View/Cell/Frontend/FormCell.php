@@ -10,6 +10,7 @@ use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
+use Cake\Core\Configure;
 use Cake\View\Cell;
 
 
@@ -33,6 +34,7 @@ class FormCell extends Cell {
 	 * @param array $options
 	 * @return void
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	public function display(string|int $identifier, Page $page, array $options = []): void {
 		// Set the template for the view
@@ -68,6 +70,26 @@ class FormCell extends Cell {
 		$la_formElements = $lo_formRenderer->getForm()->getFormElements()->listNested()->filter(function (FormElement $element): bool {
 			return !empty($element->identifier);
 		})->indexBy('identifier')->toArray();
+
+		if ($lo_formRenderer->isSent()) {
+			/**
+			 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+			 * @noinspection PhpPossiblePolymorphicInvocationInspection
+			 */
+			$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
+				baseWidth: $la_options['fullWidth'],
+				breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
+				columnWidth: $la_options['columnWidth'],
+				selector: '#Form' . $lo_form->id,
+				singleColumnBreakpoint: $la_options['singleColumnBreakpoint'],
+			);
+
+			// Parse the custom image tags
+			$this->parseAwyissImageTags($lo_form, $lo_mediaRenderOptions);
+
+			// Parse the module
+			$this->parseModule($lo_form, $lo_mediaRenderOptions);
+		}
 
 		// Set the view variables
 		$this->set([

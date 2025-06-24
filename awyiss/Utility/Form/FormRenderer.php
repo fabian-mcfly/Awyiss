@@ -76,6 +76,8 @@ class FormRenderer {
 			$lo_query = $lo_formsTable->find('active')->find('published');
 		}
 
+		$lo_query = $lo_query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+
 		if (is_int($identifier)) {
 			$lo_query = $lo_query->where(['Forms.id' => $identifier]);
 		}

@@ -7,9 +7,13 @@ namespace Awyiss\Controller\Frontend;
 use Awyiss\Controller\AppController;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\FormElement;
-use Awyiss\View\Cell\Frontend\FormCell;
+use Awyiss\View\Cell\Frontend\Trait\FrontendRenderingTrait;
 use Awyiss\View\FrontendView;
+use Cake\Controller\ComponentRegistry;
+use Cake\Core\Configure;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use InvalidArgumentException;
 
@@ -19,40 +23,29 @@ use InvalidArgumentException;
  * that where submitted with the wrong action.
  */
 class FormController extends AppController {
+	use FrontendRenderingTrait;
 	use LocatorAwareTrait;
 
 
 	/**
-	 * @var \Awyiss\View\Cell\Frontend\FormCell
-	 */
-	protected FormCell $formCell;
-	/**
-	 * @var bool|null $formSent
-	 */
-	protected ?bool $formSent = null;
-	/**
-	 * @var bool $formSubmitted
-	 */
-	protected bool $formSubmitted = false;
-	/**
 	 * @var \Awyiss\View\FrontendView
 	 */
-	protected FrontendView $view;
+	protected FrontendView $View;
 
 
 	/**
-	 * @return void
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
-	public function initialize(): void {
-		parent::initialize();
+	public function __construct(
+		ServerRequest $request,
+		?string $name = null,
+		?EventManagerInterface $eventManager = null,
+		?ComponentRegistry $components = null
+	) {
+		parent::__construct($request, $name, $eventManager, $components);
 
-		$this->formCell = new FormCell(
-			$this->getRequest(),
-			$this->getResponse(),
-			$this->getEventManager(),
-			['action' => 'display'],
-		);
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+		$this->View = $this->createView('Frontend');
 	}
 
 
@@ -66,8 +59,6 @@ class FormController extends AppController {
 	 */
 	public function antiSpam(): void {
 		$this->viewBuilder()->setClassName('Frontend');
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-		$this->view = $this->viewBuilder()->build();
 
 		if ($this->request->is('post')) {
 			$ls_identifier = $this->request->getData('_form_identifier');
@@ -88,6 +79,7 @@ class FormController extends AppController {
 	 * @param string $formEntryHash
 	 * @return void
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	protected function handleFormEntry(string $formEntryHash): void {
 		$la_options = $this->getOptions();
@@ -125,6 +117,26 @@ class FormController extends AppController {
 		}
 
 		$lo_formRenderer->processFormEntry($lo_formEntry);
+
+		if ($lo_formRenderer->isSent()) {
+			/**
+			 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+			 * @noinspection PhpPossiblePolymorphicInvocationInspection
+			 */
+			$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
+				baseWidth: $la_options['fullWidth'],
+				breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
+				columnWidth: $la_options['columnWidth'],
+				selector: '#Form' . $lo_form->id,
+				singleColumnBreakpoint: $la_options['singleColumnBreakpoint'],
+			);
+
+			// Parse the custom image tag
+			$this->parseAwyissImageTags($lo_form, $lo_mediaRenderOptions);
+
+			// Parse the module
+			$this->parseModule($lo_form, $lo_mediaRenderOptions);
+		}
 
 		// Set the view variables
 		$this->set([
@@ -273,7 +285,7 @@ class FormController extends AppController {
 		$ls_fieldName = md5(json_encode($lx_result));
 		$lo_session->write('awyiss_captcha.' . $identifier . '.fieldName', $ls_fieldName);
 
-		return $this->view->element('form/form_captcha', [
+		return $this->View->element('form/form_captcha', [
 			'words' => $la_words,
 			'word' => $li_randomWord,
 			'fieldName' => $ls_fieldName,
@@ -355,8 +367,8 @@ class FormController extends AppController {
 	 */
 	protected function getOptions(): array {
 		$la_options = [
-			'columnWidth' => 100.00,
-			'viewVars' => $this->view->getTwig()->getGlobals(),
+			'columnWidth' => 60.00,
+			'viewVars' => $this->View->getTwig()->getGlobals(),
 		];
 
 		$la_options['fullWidth'] = $this->findFullWidth($la_options);
