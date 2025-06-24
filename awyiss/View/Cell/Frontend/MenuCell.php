@@ -210,6 +210,12 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderItem(array $data, StringTemplate $template): string {
+		static $ld_now;
+
+		if (!isset($ld_now)) {
+			$ld_now = new DateTime();
+		}
+
 		$la_data = $data;
 
 		$la_data['id'] = $data['item']->getEntity()->id;
@@ -225,7 +231,6 @@ class MenuCell extends Cell {
 			$lo_entity = $data['item']->getEntity();
 			$lb_active = $lo_entity->active ?? true;
 
-			$ld_now = new DateTime();
 			// If the item is active, but not published, it is not active
 			if (
 				$lb_active &&
