@@ -57,8 +57,8 @@ class FlashHelper extends Helper {
 			$la_message['class'] = '';
 			if (!empty($la_message['params']['class'])) {
 				$la_message['class'] .= ' ' . $la_message['params']['class'];
-				unset($la_message['params']['class']);
 			}
+			unset($la_message['params']['class']);
 
 			$ls_messages .= $this->_View->element($la_message['element'], [
 				'message' => $la_message['message'],
