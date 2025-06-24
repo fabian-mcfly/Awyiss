@@ -19,7 +19,8 @@ use Awyiss\Model\Entity;
  * @property string|null $bodyConfirmation
  * @property string|null $data
  * @property string $ipHash
- * @property string|null $postHash
+ * @property string $postHash
+ * @property string $identifier
  * @property bool $deleted
  * @property \Cake\I18n\DateTime $createdOn
  * @property int|null $deletedBy
@@ -53,5 +54,6 @@ class FormEntry extends Entity {
 		'data' => true,
 		'ipHash' => true,
 		'postHash' => true,
+		'identifier' => true,
 	];
 }

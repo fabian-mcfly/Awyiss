@@ -17,10 +17,8 @@ use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\FrontendView;
 use Cake\Core\Configure;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\Query\SelectQuery;
 use RuntimeException;
 
 
@@ -90,7 +88,7 @@ class FormRenderer {
 
 
 	/**
-	 * @param string|int Form
+	 * @param \Awyiss\Model\Entity\Form|string|int $form Form
 	 * @param array $requestData
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @return $this
@@ -199,7 +197,7 @@ class FormRenderer {
 			}
 		}
 
-		// If there's at least one input of inputtype `file`, set the form enctype to multipart/form-data
+		// If there's at least one input of input-type `file`, set the form enctype to multipart/form-data
 		$this->form->set(
 			'enctype',
 			array_reduce($la_formElements, function ($carry, FormElement $element) {
@@ -227,20 +225,8 @@ class FormRenderer {
 		/** @var \Awyiss\Model\Table\FormEntriesTable $lo_formEntriesTable */
 		$lo_formEntriesTable = $this->fetchTable('FormEntries');
 
-		$ls_formEntryHash = $entryHash;
-
 		/** @var \Awyiss\Model\Entity\FormEntry|null $lo_entry */
-		$lo_entry = $lo_formEntriesTable->find('all')->where(function (QueryExpression $exp, SelectQuery $query) use ($ls_formEntryHash) {
-			// The concat of the id and the post_hash must equal the form entry identifier
-			/** @noinspection PhpUndefinedMethodInspection */
-			return $exp->eq($query->func()->md5([
-				$query->func()->concat([
-					'FormEntries.id' => 'identifier',
-					' | ',
-					'FormEntries.post_hash' => 'identifier',
-				]),
-			]), $ls_formEntryHash);
-		})->first();
+		$lo_entry = $lo_formEntriesTable->find('all')->where(['identifier' => $entryHash])->first();
 
 		return $lo_entry;
 	}
@@ -291,7 +277,6 @@ class FormRenderer {
 	 * @param \Awyiss\Model\Entity\FormElement $entity
 	 * @param string $children
 	 * @return string
-	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
@@ -355,6 +340,7 @@ class FormRenderer {
 	 * and redirects to a URL with the form entry hash on success.
 	 *
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	public function sendAndRedirect(): void {
 		if (!$this->form) {

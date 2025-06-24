@@ -74,6 +74,7 @@ class FormEntriesTable extends Table {
 			'pageId',
 			'ipHash',
 			'postHash',
+			'identifier',
 		], 'create');
 
 
@@ -132,6 +133,13 @@ class FormEntriesTable extends Table {
 
 		$validator->notEmptyString('postHash');
 		$validator->add('postHash', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 40]],
+		]);
+
+
+		$validator->notEmptyString('identifier');
+		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 40]],
 		]);

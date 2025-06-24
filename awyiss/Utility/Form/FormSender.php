@@ -348,6 +348,7 @@ class FormSender {
 			'data' => base64_encode(gzcompress(json_encode($this->getFormData()))),
 			'ip_hash' => $ls_ipHash,
 			'post_hash' => $ls_postHash,
+			'identifier' => md5($ls_ipHash . '|' . $ls_postHash),
 		];
 
 		$this->formEntriesTable->patchEntity($lo_formEntry, $la_data);
@@ -363,7 +364,7 @@ class FormSender {
 
 		// Save the form entry
 		if ($this->formEntriesTable->save($lo_formEntry, ['allowFrontendSave' => true])) {
-			$this->formEntryIdentifier = md5($lo_formEntry->id . ' | ' . $lo_formEntry->postHash);
+			$this->formEntryIdentifier = $lo_formEntry->identifier;
 
 			return true;
 		}

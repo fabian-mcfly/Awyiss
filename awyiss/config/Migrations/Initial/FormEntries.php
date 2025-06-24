@@ -72,7 +72,11 @@ class FormEntries {
 		])->addColumn('post_hash', 'char', [
 			'default' => null,
 			'limit' => 40,
-			'null' => true,
+			'null' => false,
+		])->addColumn('identifier', 'char', [
+			'default' => null,
+			'limit' => 40,
+			'null' => false,
 		])->addColumn('deleted', 'boolean', [
 			'default' => false,
 			'limit' => null,
