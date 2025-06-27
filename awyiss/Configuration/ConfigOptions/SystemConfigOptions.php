@@ -8,6 +8,8 @@ use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptionType;
+use Awyiss\Core\App;
+use Awyiss\Utility\Route\RoutingServiceInterface;
 use DateTimeZone;
 
 
@@ -33,13 +35,6 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				nullable: false,
 				type: ConfigOptionType::Bool,
 			),
-			new ConfigOption(
-				defaultValue: null,
-				identifier: 'orsApiKey',
-				localizable: false,
-				nullable: true,
-				type: ConfigOptionType::String,
-			),
 			'meta' => [
 				new ConfigOption(
 					defaultValue: 'Firma',
@@ -57,6 +52,22 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					localizable: false,
 					nullable: false,
 					type: ConfigOptionType::Bool,
+				),
+			],
+			'route' => [
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'orsApiKey',
+					localizable: false,
+					nullable: true,
+					type: ConfigOptionType::String,
+				),
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'routingService',
+					localizable: false,
+					type: ConfigOptionType::ListKey,
+					values: $this->getRoutingServices(...),
 				),
 			],
 		]);
@@ -169,5 +180,22 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				},
 			),
 		]);
+	}
+
+
+	/**
+	 * Get all available route classes
+	 *
+	 * @return array
+	 */
+	protected function getRoutingServices(): array {
+		$la_classes = [];
+
+		// Traverse both namespaces
+		foreach (App::classes('*', 'Utility/Route', 'RoutingService', RoutingServiceInterface::class) as $ls_classPath) {
+			$la_classes[ $ls_classPath ] = $ls_classPath;
+		}
+
+		return $la_classes;
 	}
 }

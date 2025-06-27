@@ -7,6 +7,7 @@ namespace Awyiss\Controller\Frontend;
 use Awyiss\Controller\AppController;
 use Awyiss\Core\App;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Route\Address;
 use Cake\Core\Configure;
 use Cake\Http\Exception\ForbiddenException;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
@@ -17,43 +18,43 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
  */
 class RouteController extends AppController {
 	/**
-	 * Tries to find the coordinates of a given address/search string
-	 * using the OpenRouteService API.
+	 * @var class-string<\Awyiss\Utility\Route\RoutingServiceInterface>
+	 */
+	protected string $routeClass;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		parent::initialize();
+
+		$this->routeClass = Configure::read('Awyiss.System.Frontend.route.routingService') ?? App::className('Ors', 'Utility/Route', 'RoutingService');
+	}
+
+
+	/**
+	 * Tries to find the coordinates of a given address/search
 	 * If multiple results are found, the controller will return
 	 * a notice with the results and a 300 status code.
 	 *
 	 * @param string $search
-	 * @noinspection PhpUnused*/
+	 * @see \Awyiss\Utility\Route\OrsRoutingService::findCoordinates()
+	 * @noinspection PhpUnused
+	 */
 	public function findCoordinates(string $search): void {
-		$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['status', 'data', 'title', 'message']);
+		$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['status', 'addresses', 'title', 'message']);
 
 		$this->accessCheck();
 
-		$ls_orsApiKey = $this->getOrsApiKey();
+		$lo_addresses = $this->routeClass::findCoordinates($search, $this->request->getParam('lang'));
 
-		if (!$ls_orsApiKey) {
-			// Set the response data
-			$this->set([
-				'status' => 'error',
-				'message' => __d('route', 'geocode_error_api_key_missing'),
-				'data' => null,
-			]);
-
-			$this->response = $this->response->withStatus(500);
-
-			return;
-		}
-
-		/** @var class-string<\Awyiss\Utility\Route> $ls_routeClass */
-		$ls_routeClass = App::className('Route', 'Utility');
-
-		$la_data = $ls_routeClass::findCoordinates($search, $this->request->getParam('lang'));
-
-		if ($la_data === false) {
+		if ($lo_addresses === false) {
 			$this->set([
 				'status' => 'error',
 				'message' => __d('route', 'geocode_error_address'),
-				'data' => null,
+				'title' => null,
+				'addresses' => null,
 			]);
 
 			$this->response = $this->response->withStatus(400);
@@ -61,12 +62,12 @@ class RouteController extends AppController {
 			return;
 		}
 
-		if (!isset($la_data['lat']) || !isset($la_data['lng'])) {
+		if (count($lo_addresses) > 1) {
 			$this->set([
 				'status' => 'notice',
 				'message' => __d('route', 'geocode_multiple_results_found'),
 				'title' => __d('route', 'geocode_multiple_results_found_title'),
-				'data' => $la_data,
+				'addresses' => $lo_addresses->toArray(),
 			]);
 
 			$this->response = $this->response->withStatus(300);
@@ -77,43 +78,28 @@ class RouteController extends AppController {
 		$this->set([
 			'status' => 'success',
 			'message' => __d('route', 'geocode_address_found'),
-			'data' => $la_data,
+			'title' => null,
+			'addresses' => $lo_addresses->toArray(),
 		]);
 	}
 
 	/**
 	 * Fetch the route between two coordinates.
-	 *
 	 * If the start coordinates are not given as lat/lng,
-	 * the controller will try to find the coordinates
-	 * using the OpenRouteService API.
+	 * the controller will try to find the coordinates.
+	 * If multiple results are found, the controller will return
+	 * a notice with the results and a 300 status code.
 	 *
 	 * @param string $start
 	 * @param string $end
 	 * @return void
+	 * @see \Awyiss\Utility\Route\OrsRoutingService::findCoordinates()
+	 * @see \Awyiss\Utility\Route\OrsRoutingService::getRoute()
 	 */
 	public function route(string $start, string $end): void {
-		$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['status', 'data', 'message']);
+		$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['status', 'addresses', 'route', 'message']);
 
 		$this->accessCheck();
-
-		$ls_orsApiKey = $this->getOrsApiKey();
-
-		if (!$ls_orsApiKey) {
-			// Set the response data
-			$this->set([
-				'status' => 'error',
-				'message' => __d('route', 'route_planner_error_api_key_missing'),
-				'data' => null,
-			]);
-
-			$this->response = $this->response->withStatus(500);
-
-			return;
-		}
-
-		/** @var class-string<\Awyiss\Utility\Route> $ls_routeClass */
-		$ls_routeClass = App::className('Route', 'Utility');
 
 		$la_end = explode(',', $end);
 		$la_end = array_map('trim', $la_end);
@@ -126,7 +112,8 @@ class RouteController extends AppController {
 			$this->set([
 				'status' => 'error',
 				'message' => __d('route', 'route_planner_error_end_coordinates'),
-				'data' => null,
+				'addresses' => null,
+				'route' => null,
 			]);
 
 			$this->response = $this->response->withStatus(400);
@@ -134,10 +121,10 @@ class RouteController extends AppController {
 			return;
 		}
 
-		$la_end = [
-			'lat' => $la_end[0],
-			'lng' => $la_end[1],
-		];
+		$lo_end = new Address(
+			lat: (float)$la_end[0],
+			lng: (float)$la_end[1],
+		);
 
 		$la_start = explode(',', $start);
 		$la_start = array_map('trim', $la_start);
@@ -147,13 +134,14 @@ class RouteController extends AppController {
 			!preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $la_start[0]) ||
 			!preg_match('/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/', $la_start[1])
 		) {
-			$la_start = $ls_routeClass::findCoordinates($start, $this->request->getParam('lang'));
+			$lo_addresses = $this->routeClass::findCoordinates($start, $this->request->getParam('lang'));
 
-			if ($la_start === false) {
+			if ($lo_addresses === false) {
 				$this->set([
 					'status' => 'error',
 					'message' => __d('route', 'route_planner_error_start_coordinates'),
-					'data' => null,
+					'addresses' => null,
+					'route' => null,
 				]);
 
 				$this->response = $this->response->withStatus(400);
@@ -161,23 +149,26 @@ class RouteController extends AppController {
 				return;
 			}
 
-			if (!isset($la_start['lat']) || !isset($la_start['lng'])) {
+			if (count($lo_addresses) > 1) {
 				$this->set([
 					'status' => 'notice',
 					'message' => __d('route', 'route_planner_multiple_results_found'),
-					'data' => $la_start,
+					'addresses' => $lo_addresses->toArray(),
+					'route' => null,
 				]);
 
 				$this->response = $this->response->withStatus(300);
 
 				return;
 			}
+
+			$lo_start = $lo_addresses->get(0);
 		}
 		else {
-			$la_start = [
-				'lat' => $la_start[0],
-				'lng' => $la_start[1],
-			];
+			$lo_start = new Address(
+				lat: (float)$la_start[0],
+				lng: (float)$la_start[1],
+			);
 		}
 
 		$ls_transportationMode = match ($this->request->getParam('transportationMode')) {
@@ -186,24 +177,17 @@ class RouteController extends AppController {
 			default => 'driving-car',
 		};
 
-		$la_data = $ls_routeClass::getRoute($la_start, $la_end, $ls_transportationMode, $this->request->getParam('lang'));
-		$ls_message = __d('route', is_array($la_data) ? 'route_planner_directions_found' : 'route_planner_no_directions_found');
+		$lo_route = $this->routeClass::getRoute($lo_start, $lo_end, $ls_transportationMode, $this->request->getParam('lang'));
+		$ls_message = __d('route', $lo_route !== false ? 'route_planner_directions_found' : 'route_planner_no_directions_found');
 
 		$this->set([
-			'status' => is_array($la_data) ? 'success' : 'error',
+			'status' => $lo_route !== false ? 'success' : 'error',
 			'message' => $ls_message,
-			'data' => $la_data ?: null,
+			'addresses' => null,
+			'route' => $lo_route !== false ? $lo_route->toArray() : null,
 		]);
 
 		$this->response = $this->response->withStatus(200);
-	}
-
-
-	/**
-	 * @return string
-	 */
-	protected function getOrsApiKey(): string {
-		return Configure::read('Awyiss.System.Frontend.orsApiKey');
 	}
 
 

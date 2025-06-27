@@ -97,9 +97,9 @@ export default class AddressFinder {
 		}
 
 
-		const address = input.value;
+		const search = input.value;
 
-		if (!address) {
+		if (!search) {
 			button.classList.remove('FetchInProgress');
 			return;
 		}
@@ -107,7 +107,7 @@ export default class AddressFinder {
 		const latInput = input.latInput;
 		const lngInput = input.lngInput;
 
-		const url = `${baseUrl}${languageShortcode}/_route/find-coordinates/${encodeURIComponent(address)}/`;
+		const url = `${baseUrl}${languageShortcode}/_route/find-coordinates/${encodeURIComponent(search)}/`;
 		const response = await fetch(url, {
 			method: 'GET',
 			headers: {
@@ -121,7 +121,7 @@ export default class AddressFinder {
 		button.classList.remove('FetchInProgress');
 
 		if (!response.ok) {
-			if (!data.data) {
+			if (!data.addresses) {
 				return;
 			}
 
@@ -134,10 +134,9 @@ export default class AddressFinder {
 			return false;
 		}
 
-		if (data.data?.lat && data.data?.lng) {
-			latInput.value = data.data.lat;
-			lngInput.value = data.data.lng;
-		}
+		const address = data.addresses[0];
+		latInput.value = address.lat;
+		lngInput.value = address.lng;
 	}
 
 
@@ -186,13 +185,13 @@ export default class AddressFinder {
 		list.classList.add('AddressList');
 		inner.appendChild(list);
 
-		data.data.forEach((item) => {
+		data.addresses.forEach(item => {
 			const listItem = document.createElement('li');
 			listItem.classList.add('AddressList-Item');
 
 			listItem.textContent = item.name;
-			listItem.dataset.lat = item.coordinates.lat;
-			listItem.dataset.lng = item.coordinates.lng;
+			listItem.dataset.lat = item.lat;
+			listItem.dataset.lng = item.lng;
 
 			list.appendChild(listItem);
 
@@ -222,7 +221,6 @@ export default class AddressFinder {
 	handleDialogClick(event) {
 		if (event.target.closest('.Button-Close')) {
 			event.target.closest('dialog').close();
-			return;
 		}
 	}
 

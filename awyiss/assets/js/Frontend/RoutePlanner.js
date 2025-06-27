@@ -41,6 +41,7 @@ import mapLibreLocale from 'Frontend/MapLibre/locale';
  * @typedef {Object} FeatureProperties
  * @property {Summary} summary
  * @property {Segment[]} segments
+ * @property {array} way_points
  */
 
 /**
@@ -48,17 +49,40 @@ import mapLibreLocale from 'Frontend/MapLibre/locale';
  */
 
 /**
- * @typedef {Object} RouteData
- * @property {{ lat:number, lng:number }} start
- * @property {[number,number,number,number]} [bbox]
+ * @typedef {Object} AddressData
+ * @property {float} lat
+ * @property {float} lng
+ * @property {string} name
+ */
+
+/**
+ * @typedef {Object} AddressResponse
+ * @property {string} status
+ * @property {string} message
+ * @property {AddressData[]} [addresses]
+ */
+
+/**
+ * @typedef {Object} GeoJson
+ * @property {[float, float, float, float]} bbox
+ * @property {string} type
+ * @property {FeatureProperties} properties
  * @property {Feature[]} features
+ */
+
+/**
+ * @typedef {Object} RouteData
+ * @property {AddressData} start
+ * @property {AddressData} end
+ * @property {GeoJson} geoJson
  */
 
 /**
  * @typedef {Object} RouteResponse
  * @property {string} status
  * @property {string} message
- * @property {RouteData} [data]
+ * @property {RouteData} route
+ * @property {AddressData[]} [addresses]
  */
 
 export default class RoutePlanner {
@@ -333,7 +357,7 @@ export default class RoutePlanner {
 			return;
 		}
 
-		this.buildRoute(response.data, routePlanner);
+		this.buildRoute(response.route, routePlanner);
 	}
 
 
@@ -471,7 +495,7 @@ export default class RoutePlanner {
 			// Handle 300 response that offers a list of routes
 			// and requires the user to select one before proceeding.
 			if (response.status === 300) {
-				this.buildStartChoices(routePlanner, data.message, data.data);
+				this.buildStartChoices(routePlanner, data.message, data.addresses);
 			}
 			else {
 				routePlanner.messageArea.setAttribute('aria-hidden', 'false');
@@ -552,12 +576,12 @@ export default class RoutePlanner {
 		}).setLngLat([data.start.lng, data.start.lat]).addTo(routePlanner.mapLibre);
 
 		// If bbox is set, set the map bounds
-		if (data.bbox) {
-			routePlanner.mapLibre.fitBounds(data.bbox);
+		if (data.geoJson.bbox) {
+			routePlanner.mapLibre.fitBounds(data.geoJson.bbox);
 		}
 
 		// Set the route data to the map
-		routePlanner.mapLibre.getSource('route').setData(data.features[0]);
+		routePlanner.mapLibre.getSource('route').setData(data.geoJson);
 
 		routePlanner.route.scrollTo(0, 0);
 
@@ -595,8 +619,8 @@ export default class RoutePlanner {
 
 		const startInput = routePlanner.form.querySelector(this.settings.startInputSelector);
 
-		innerHTML = innerHTML.replace(/{{distance}}/g, this.readableDistance(data.features[0].properties.summary.distance));
-		innerHTML = innerHTML.replace(/{{duration}}/g, this.readableDuration(data.features[0].properties.summary.duration, true));
+		innerHTML = innerHTML.replace(/{{distance}}/g, this.readableDistance(data.geoJson.properties.summary.distance));
+		innerHTML = innerHTML.replace(/{{duration}}/g, this.readableDuration(data.geoJson.properties.summary.duration, true));
 		innerHTML = innerHTML.replace(/{{start}}/g, startInput.value);
 		innerHTML = innerHTML.replace(/{{end}}/g, routePlanner.map.dataset.end);
 
@@ -630,7 +654,7 @@ export default class RoutePlanner {
 		routePlanner.route.appendChild(routeList);
 
 		// Add the route steps to the list
-		data.features[0].properties.segments.forEach((segment) => {
+		data.geoJson.properties.segments.forEach((segment) => {
 			if (routeList.innerHTML !== '') {
 				// Create a new list
 				routeList = listTemplate.content.cloneNode(true);
@@ -677,9 +701,9 @@ export default class RoutePlanner {
 	 *
 	 * @param {RoutePlannerElement} routePlanner - The route planner element.
 	 * @param {string} message - The message to display.
-	 * @param {Object} data - The data containing the start choices.
+	 * @param {AddressData[]} addresses - The data containing the start choices.
 	 */
-	buildStartChoices(routePlanner, message, data) {
+	buildStartChoices(routePlanner, message, addresses) {
 		routePlanner.startChoices.setAttribute('aria-hidden', 'false');
 		routePlanner.startChoices.classList.add('Visible');
 		routePlanner.startChoices.inert = false;
@@ -699,14 +723,14 @@ export default class RoutePlanner {
 		routePlanner.startChoices.insertBefore(messageArea, closeButton);
 
 		// Create a new list of choices
-		data.forEach((choice) => {
+		addresses.forEach((address) => {
 			const choiceElement = document.createElement('button');
 
 			choiceElement.type = 'button';
 			choiceElement.classList.add('Button', 'Button-RoutePlanner-StartChoices-Choice');
-			choiceElement.dataset.lat = choice.coordinates.lat;
-			choiceElement.dataset.lng = choice.coordinates.lng;
-			choiceElement.textContent = choice.name;
+			choiceElement.dataset.lat = '' + address.lat;
+			choiceElement.dataset.lng = '' + address.lng;
+			choiceElement.textContent = address.name;
 
 			// Insert the item before the close button
 			routePlanner.startChoices.insertBefore(choiceElement, closeButton);
