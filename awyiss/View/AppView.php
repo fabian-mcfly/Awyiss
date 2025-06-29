@@ -36,10 +36,6 @@ use Twig\Markup;
  */
 class AppView extends TwigView {
 	/**
-	 * @var bool $twigInitialized A flag to check if the view has been initialized.
-	 */
-	protected static bool $twigInitialized = false;
-	/**
 	 * @var array $helperCache An associative array to cache the helper instances.
 	 */
 	protected array $helperCache = [];
@@ -58,12 +54,12 @@ class AppView extends TwigView {
 			'strict_variables' => false,
 		]);
 
+		$lb_twigInitialized = static::$twig !== null;
+
 		parent::initialize();
 
-		$lo_twig = $this->getTwig();
-
-		if (!static::$twigInitialized) {
-			$this->initTwig($lo_twig);
+		if (!$lb_twigInitialized) {
+			$this->initTwig($this->getTwig());
 		}
 
 		$this->set('Awyiss', [
@@ -250,8 +246,6 @@ class AppView extends TwigView {
 				$twig->addExtension(new $ls_customExtensionClass());
 			}
 		}
-
-		static::$twigInitialized = true;
 	}
 
 

@@ -141,40 +141,48 @@ class BackendView extends AppView {
 
 
 	/**
-	 * @param \Twig\Environment $lo_twig
+	 * @param \Twig\Environment $twig
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function addFrontendLanguage(Environment $lo_twig): void {
+	protected function addFrontendLanguage(Environment $twig): void {
 		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
+
 		if ($lo_frontendLanguage) {
 			$lo_frontendLanguage = $this->cleanLanguage($lo_frontendLanguage);
 		}
-		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
-		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
+
+		$twig->addGlobal('currentLanguage', $lo_frontendLanguage);
+		$twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
 	}
 
 
 	/**
-	 * @param \Twig\Environment $lo_twig
+	 * @param \Twig\Environment $twig
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function addUserLanguage(Environment $lo_twig): void {
+	protected function addUserLanguage(Environment $twig): void {
 		$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
-		if ($lo_backendLanguage) {
-			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
-			if ($ls_timezone === 'auto') {
-				$ls_timezone = $lo_backendLanguage->timezone;
-			}
 
-			$this->addHelper('Time', ['outputTimezone' => $ls_timezone]);
+		if (!$lo_backendLanguage) {
+			$twig->addGlobal('userLanguage', null);
 
-			$lo_twig->addGlobal('dateFormat', $lo_backendLanguage->dateFormat ?? 'yyyy-MM-dd');
-			$lo_twig->addGlobal('timeFormat', $lo_backendLanguage->timeFormat ?? 'HH:mm');
-
-			$lo_backendLanguage = $this->cleanLanguage($lo_backendLanguage);
+			return;
 		}
-		$lo_twig->addGlobal('userLanguage', $lo_backendLanguage);
+
+		$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+		if ($ls_timezone === 'auto') {
+			$ls_timezone = $lo_backendLanguage->timezone;
+		}
+
+		$this->addHelper('Time', ['outputTimezone' => $ls_timezone]);
+
+		$twig->addGlobal('dateFormat', $lo_backendLanguage->dateFormat ?? 'yyyy-MM-dd');
+		$twig->addGlobal('timeFormat', $lo_backendLanguage->timeFormat ?? 'HH:mm');
+
+		$lo_backendLanguage = $this->cleanLanguage($lo_backendLanguage);
+
+		$twig->addGlobal('userLanguage', $lo_backendLanguage);
 	}
 }

@@ -69,7 +69,6 @@ class FrontendView extends AppView {
 	/**
 	 * @inheritDoc
 	 * @return void
-	 * @throws \Twig\Error\LoaderError
 	 * @throws \Exception
 	 * @noinspection DuplicatedCode
 	 */
