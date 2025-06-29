@@ -102,9 +102,9 @@ class FormEntries {
 			]
 		)->addIndex(
 			[
-				'ip_hash',
+				'identifier',
 			], [
-				'name' => 'FORM_ENTRIES_IP_HASH',
+				'name' => 'FORM_ENTRIES_IDENTIFIER',
 			]
 		)->addIndex(
 			[
