@@ -314,7 +314,11 @@ class Survey extends Entity {
 	 */
 	public function getNextAction(?SurveySurveyQuestion $question = null, array|string|int|null $answer = null): SurveySurveyQuestion|BackedEnum|false|null {
 		$lo_action = $question ?? $this->getCurrentAction();
-		$lx_answer = $answer ?? $this->progressData[ $lo_action->identifier ] ?? null;
+		$lx_answer = $answer ?? null;
+
+		if ($lx_answer === null && $lo_action instanceof SurveySurveyQuestion) {
+			$lx_answer = $this->progressData[ $lo_action->identifier ] ?? null;
+		}
 
 		if (!$lo_action) {
 			// If no action is given, we cannot determine the next action.
