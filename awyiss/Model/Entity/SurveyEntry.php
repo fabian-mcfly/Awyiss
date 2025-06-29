@@ -16,6 +16,7 @@ use Awyiss\Model\Entity;
  * @property string|null $data
  * @property string $ipHash
  * @property string|null $postHash
+ * @property string $identifier
  * @property bool $deleted
  * @property \Cake\I18n\DateTime|null $createdOn
  * @property int|null $deletedBy
@@ -42,5 +43,6 @@ class SurveyEntry extends Entity {
 		'data' => true,
 		'ipHash' => true,
 		'postHash' => true,
+		'identifier' => true,
 	];
 }

@@ -22,11 +22,9 @@ use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\FrontendView;
 use BackedEnum;
 use Cake\Core\Configure;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Security;
 use RuntimeException;
 
@@ -72,6 +70,10 @@ class SurveyRenderer {
 	 */
 	protected array $requestData = [];
 	/**
+	 * @var \Awyiss\Survey\AbstractSurveyResults|null
+	 */
+	protected ?AbstractSurveyResults $results = null;
+	/**
 	 * Whether the survey entry was saved successfully.
 	 * Null if the survey was not processed yet.
 	 *
@@ -95,10 +97,6 @@ class SurveyRenderer {
 	 * @noinspection PhpPropertyNamingConventionInspection
 	 */
 	protected FrontendView $View;
-	/**
-	 * @var \Awyiss\Survey\AbstractSurveyResults|null
-	 */
-	protected ?AbstractSurveyResults $results;
 
 
 	/**
@@ -310,17 +308,10 @@ class SurveyRenderer {
 		$ls_surveyEntryHash = $entryHash;
 
 		/** @var \Awyiss\Model\Entity\SurveyEntry|null $lo_entry */
-		$lo_entry = $lo_surveyEntriesTable->find('all')->where(function (QueryExpression $exp, SelectQuery $query) use ($ls_surveyEntryHash) {
-			// The concat of the id and the post_hash must equal the survey entry identifier
-			/** @noinspection PhpUndefinedMethodInspection */
-			return $exp->eq($query->func()->md5([
-				$query->func()->concat([
-					'SurveyEntries.id' => 'identifier',
-					' | ',
-					'SurveyEntries.post_hash' => 'identifier',
-				]),
-			]), $ls_surveyEntryHash);
-		})->where(['survey_id' => $surveyId])->first();
+		$lo_entry = $lo_surveyEntriesTable->find('all')->where([
+			'identifier' => $ls_surveyEntryHash,
+			'survey_id' => $surveyId,
+		])->first();
 
 		return $lo_entry;
 	}
@@ -402,7 +393,7 @@ class SurveyRenderer {
 			])
 		) {
 			$this->parseModule($this->survey, $lo_mediaRenderOptions, 'successMessage');
-			$ls_successMessage = $this->results->getFinalResult($this->survey->successMessage, $lo_mediaRenderOptions);
+			$ls_successMessage = $this->results?->getFinalResult($this->survey->successMessage, $lo_mediaRenderOptions) ?? $this->survey->successMessage;
 		}
 
 		return $this->getView()->element('survey/survey', [
@@ -581,6 +572,7 @@ class SurveyRenderer {
 			'data' => base64_encode(gzcompress(json_encode($la_surveyData))),
 			'ip_hash' => $ls_ipHash,
 			'post_hash' => $ls_postHash,
+			'identifier' => md5($ls_ipHash . '|' . $ls_postHash)
 		];
 
 		$this->surveyEntriesTable->patchEntity($lo_surveyEntry, $la_data);
@@ -588,7 +580,7 @@ class SurveyRenderer {
 		// Save the survey entry
 		if ($this->surveyEntriesTable->save($lo_surveyEntry, ['allowFrontendSave' => true])) {
 			$this->savedEntry = true;
-			return md5($lo_surveyEntry->id . ' | ' . $lo_surveyEntry->postHash);
+			return $lo_surveyEntry->identifier;
 		}
 
 		return $this->savedEntry = false;
@@ -779,7 +771,7 @@ class SurveyRenderer {
 
 		$ls_result = null;
 		if ($this->currentAction->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::InfoText && !$this->survey->hasNextAction()) {
-			$ls_result = $this->results->getStepResult($this->currentAction->identifier, $lo_mediaRenderOptions);
+			$ls_result = $this->results?->getStepResult($this->currentAction->identifier, $lo_mediaRenderOptions);
 		}
 
 		// Parse the module

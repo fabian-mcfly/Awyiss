@@ -56,7 +56,11 @@ class SurveyEntries {
 		])->addColumn('post_hash', 'char', [
 			'default' => null,
 			'limit' => 40,
-			'null' => true,
+			'null' => false,
+		])->addColumn('identifier', 'char', [
+			'default' => null,
+			'limit' => 40,
+			'null' => false,
 		])->addColumn('deleted', 'boolean', [
 			'default' => false,
 			'limit' => null,
@@ -82,9 +86,9 @@ class SurveyEntries {
 			]
 		)->addIndex(
 			[
-				'ip_hash',
+				'identifier',
 			], [
-				'name' => 'SURVEY_ENTRIES_IP_HASH',
+				'name' => 'SURVEY_ENTRIES_IDENTIFIER',
 			]
 		)->addIndex(
 			[

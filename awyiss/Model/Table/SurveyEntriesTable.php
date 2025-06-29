@@ -75,6 +75,7 @@ class SurveyEntriesTable extends Table {
 			'surveyId',
 			'ipHash',
 			'postHash',
+			'identifier',
 		], 'create');
 
 
@@ -107,6 +108,13 @@ class SurveyEntriesTable extends Table {
 
 		$validator->notEmptyString('postHash');
 		$validator->add('postHash', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 40]],
+		]);
+
+
+		$validator->notEmptyString('identifier');
+		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 40]],
 		]);
