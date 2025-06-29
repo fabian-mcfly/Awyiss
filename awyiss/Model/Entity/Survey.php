@@ -552,6 +552,10 @@ class Survey extends Entity {
 		foreach ($progressData as $ls_identifier => $lx_answer) {
 			$lo_question = $this->questionsByIdentifier[ $ls_identifier ] ?? null;
 
+			if (!$lo_question) {
+				break;
+			}
+
 			$lx_answer = match ($lo_question->surveyQuestion->type) {
 				$this->getQuestionTypeEnum()::SingleChoice => $lx_answer !== 'custom' ? (int)$lx_answer : $lx_answer,
 				$this->getQuestionTypeEnum()::MultiChoice => array_map(function (mixed $answer) {
