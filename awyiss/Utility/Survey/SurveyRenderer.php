@@ -168,8 +168,7 @@ class SurveyRenderer {
 
 
 	/**
-	 * Returns whether the form was sent
-	 * or null if the form was not processed yet (no request data).
+	 * Processes the survey and its form.
 	 *
 	 * @param string|null $surveyEntryHash
 	 * @param string|null $formEntryHash
@@ -183,7 +182,7 @@ class SurveyRenderer {
 		$this->currentAction = $this->survey->getCurrentAction();
 
 		if (
-			isset($this->requestData['_survey_identifier']) &&
+			($this->requestData['_survey_identifier'] ?? null) === $this->survey->identifier &&
 			!isset($this->requestData['_form_identifier']) &&
 			in_array($this->currentAction, [
 				$this->survey->getNextActionEnum()::SaveAndEnd,
