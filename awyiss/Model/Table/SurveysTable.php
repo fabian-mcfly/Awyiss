@@ -198,6 +198,17 @@ class SurveysTable extends Table {
 				/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
 				$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
+				if (
+					!$entity->formId &&
+					in_array($entity->finalAction, [
+						$ls_surveyNextActionEnum::ShowForm,
+						$ls_surveyNextActionEnum::SaveAndShowForm,
+						$ls_surveyNextActionEnum::ShowFormAndSave,
+					])
+				) {
+					return false;
+				}
+
 				/**
 				 * If any question has a next action that is of type "Form",
 				 * or if any answer has a next action that is of type "Form",
