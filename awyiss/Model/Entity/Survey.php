@@ -400,7 +400,13 @@ class Survey extends Entity {
 
 		$la_progress = array_keys($this->progressData);
 		$ls_lastIdentifier = array_pop($la_progress);
-		$lo_question = $question ?? $this->questionsByIdentifier[ $ls_lastIdentifier ];
+
+		$lo_question = $question ?? ($ls_lastIdentifier ? $this->questionsByIdentifier[ $ls_lastIdentifier ] : null);
+		// Should not happen, except in tests, but better safe than sorry.
+		if (!$lo_question) {
+			return null;
+		}
+
 		$lx_answer = $answer ?? $this->progressData[ $lo_question->identifier ] ?? null;
 
 		if ($lx_answer && isset($lo_question->surveySurveyAnswers[ $lx_answer ])) {
