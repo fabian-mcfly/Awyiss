@@ -228,7 +228,7 @@ class SurveyRenderer {
 	 * @param array $data
 	 * @return $this
 	 */
-	public function processSurveyFromData(array $data): static {
+	protected function processSurveyFromData(array $data): static {
 		if (!$this->survey) {
 			return $this;
 		}
@@ -244,7 +244,7 @@ class SurveyRenderer {
 	 * @param string $entryHash
 	 * @return $this
 	 */
-	public function processSurveyEntryFromHash(string $entryHash): static {
+	protected function processSurveyEntryFromHash(string $entryHash): static {
 		if (!$this->survey) {
 			return $this;
 		}
@@ -279,7 +279,7 @@ class SurveyRenderer {
 	 * @param string $formEntryHash
 	 * @return $this
 	 */
-	public function processFormEntryFromHash(string $formEntryHash): static {
+	protected function processFormEntryFromHash(string $formEntryHash): static {
 		if (!$this->survey) {
 			return $this;
 		}
@@ -301,7 +301,7 @@ class SurveyRenderer {
 	 * @param int $surveyId
 	 * @return \Awyiss\Model\Entity\SurveyEntry|null
 	 */
-	public function loadSurveyEntryFromHash(string $entryHash, int $surveyId): ?SurveyEntry {
+	protected function loadSurveyEntryFromHash(string $entryHash, int $surveyId): ?SurveyEntry {
 		/** @var \Awyiss\Model\Table\SurveyEntriesTable $lo_surveyEntriesTable */
 		$lo_surveyEntriesTable = $this->fetchTable('SurveyEntries');
 
@@ -422,7 +422,7 @@ class SurveyRenderer {
 	/**
 	 * @return \Awyiss\Utility\Form\FormRenderer|null
 	 */
-	public function getFormRenderer(): ?FormRenderer {
+	protected function getFormRenderer(): ?FormRenderer {
 		if (!isset($this->formRenderer)) {
 			/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $ls_className */
 			$ls_className = App::className('FormRenderer', 'Utility/Form');
@@ -514,7 +514,7 @@ class SurveyRenderer {
 	 * @return string
 	 * @throws \ReflectionException
 	 */
-	public function renderForm(array $options): string {
+	protected function renderForm(array $options): string {
 		$lo_formRenderer = $this->getFormRenderer();
 		$la_formElements = $lo_formRenderer->getForm()->getFormElements()->listNested()->filter(function (FormElement $element): bool {
 			return !empty($element->identifier);
@@ -541,7 +541,7 @@ class SurveyRenderer {
 	 *
 	 * @return void
 	 */
-	public function saveEntryAndRedirect(): void {
+	protected function saveEntryAndRedirect(): void {
 		$ls_entryIdentifier = $this->saveEntry();
 
 		if (!$ls_entryIdentifier) {
@@ -555,7 +555,7 @@ class SurveyRenderer {
 	/**
 	 * @return string|false
 	 */
-	public function saveEntry(): string|false {
+	protected function saveEntry(): string|false {
 		if (!$this->survey) {
 			throw new RuntimeException('No survey was initialized.');
 		}
@@ -572,7 +572,7 @@ class SurveyRenderer {
 			'data' => base64_encode(gzcompress(json_encode($la_surveyData))),
 			'ip_hash' => $ls_ipHash,
 			'post_hash' => $ls_postHash,
-			'identifier' => md5($ls_ipHash . '|' . $ls_postHash)
+			'identifier' => md5($ls_ipHash . '|' . $ls_postHash),
 		];
 
 		$this->surveyEntriesTable->patchEntity($lo_surveyEntry, $la_data);
@@ -715,7 +715,7 @@ class SurveyRenderer {
 	/**
 	 * @return string|false
 	 */
-	public function sendForm(): string|false {
+	protected function sendForm(): string|false {
 		/** @var \Awyiss\Utility\Form\SurveyFormSender $ls_formSenderClass */
 		$ls_formSenderClass = App::className('Survey', 'Utility/Form', 'FormSender');
 
