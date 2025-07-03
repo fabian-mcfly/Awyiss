@@ -173,9 +173,9 @@ class FormRenderer {
 			'formErrors' => $this->form->getErrors(),
 			'sent' => $this->formSent,
 			'submitted' => $this->form->isSubmitted(),
-			'fullWidth' => $options['fullWidth'],
-			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
-			...$options['viewVars'],
+			'fullWidth' => $options['fullWidth'] ?? $this->View->get('fullWidth', 1920),
+			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'] ?? $this->View->get('singleColumnBreakpoint', 860),
+			...($options['viewVars'] ?? []),
 		]);
 
 		$lo_formElements = $this->form->getFormElements();
@@ -184,7 +184,7 @@ class FormRenderer {
 			return '';
 		}
 
-		$this->prepareEntities($lo_formElements, (float)$options['columnWidth']);
+		$this->prepareEntities($lo_formElements, (float)($options['columnWidth'] ?? $this->View->get('columnWidth', 100.0)));
 
 		$la_formElements = $lo_formElements->listNested()->toList();
 		foreach ($la_formElements as $lo_formElement) {
