@@ -21,8 +21,8 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{% block questionSingleChoice %}
-	<div class="SurveyQuestion SurveyQuestionType-SingleChoice" id="SurveyQuestion-{{ question.identifier|ucparts(false) }}">
+{% block question %}
+	<div class="SurveyQuestion SurveyQuestionType-{{ question.surveyQuestion.type.value|ucparts(false) }}" id="SurveyQuestion-{{ question.identifier|ucparts(false) }}">
 		{% block questionTitle %}
 			{% if question.surveyQuestion.title %}
 				<p class="Title SurveyQuestion-Title">
