@@ -41,23 +41,21 @@ class AddressCollection implements Countable, IteratorAggregate {
 
 
 	/**
-	 * @param \Awyiss\Utility\Route\AddressInterface|array $address
+	 * @param array<\Awyiss\Utility\Route\AddressInterface|array> ...$addresses
 	 * @return static
 	 */
-	public function add(AddressInterface|array $address): static {
-		if ($address instanceof AddressInterface) {
-			$this->addresses[] = $address;
+	public function add(AddressInterface|array ...$addresses): static {
+		foreach ($addresses as $lx_address) {
+			if (!$lx_address instanceof AddressInterface) {
+				$lx_address = $this->addressClass::fromArray($lx_address);
 
-			return $this;
+				if (!$lx_address) {
+					throw new InvalidArgumentException('Invalid address array provided');
+				}
+			}
+
+			$this->addresses[] = $lx_address;
 		}
-
-		$lo_address = $this->addressClass::fromArray($address);
-
-		if (!$lo_address) {
-			throw new InvalidArgumentException('Invalid address array provided');
-		}
-
-		$this->addresses[] = $lo_address;
 
 		return $this;
 	}
