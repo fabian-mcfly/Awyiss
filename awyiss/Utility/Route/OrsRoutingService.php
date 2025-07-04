@@ -19,7 +19,7 @@ class OrsRoutingService implements RoutingServiceInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public static function findCoordinates(string $search, ?string $languageShortcode = null): AddressCollection|false {
+	public function findCoordinates(string $search, ?string $languageShortcode = null): AddressCollection|false {
 		$la_params = [
 			'api_key' => Configure::read('Awyiss.System.Frontend.route.orsApiKey'),
 			'language' => $languageShortcode ?? Router::getRequest()->getParam('lang'),
@@ -28,7 +28,7 @@ class OrsRoutingService implements RoutingServiceInterface {
 
 		$ls_url = 'https://api.openrouteservice.org/geocode/search';
 
-		$lo_client = static::getClient();
+		$lo_client = $this->getClient();
 
 		$lo_response = $lo_client->get(
 			$ls_url,
@@ -71,7 +71,7 @@ class OrsRoutingService implements RoutingServiceInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public static function getRoute(
+	public function getRoute(
 		AddressInterface $start,
 		AddressInterface $end,
 		string $transportationMode = 'driving-car',
@@ -91,7 +91,7 @@ class OrsRoutingService implements RoutingServiceInterface {
 
 		$ls_url = 'https://api.openrouteservice.org/v2/directions/' . $transportationMode . '/geojson';
 
-		$lo_client = static::getClient();
+		$lo_client = $this->getClient();
 
 		$lo_response = $lo_client->post($ls_url, json_encode($la_params), [
 			'headers' => [
@@ -122,7 +122,7 @@ class OrsRoutingService implements RoutingServiceInterface {
 	/**
 	 * @return \Cake\Http\Client
 	 */
-	protected static function getClient(): Client {
+	protected function getClient(): Client {
 		return new Client([
 			'timeout' => 10,
 			'http_errors' => false,

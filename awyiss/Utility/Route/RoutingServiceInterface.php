@@ -20,7 +20,7 @@ interface RoutingServiceInterface {
 	 * @param string|null $languageShortcode
 	 * @return \Awyiss\Utility\Route\AddressCollection|false
 	 */
-	public static function findCoordinates(string $search, ?string $languageShortcode = null): AddressCollection|false;
+	public function findCoordinates(string $search, ?string $languageShortcode = null): AddressCollection|false;
 
 
 	/**
@@ -35,5 +35,5 @@ interface RoutingServiceInterface {
 	 * @param array $params
 	 * @return \Awyiss\Utility\Route\RouteInterface|false
 	 */
-	public static function getRoute(AddressInterface $start, AddressInterface $end, string $transportationMode = 'driving-car', ?string $languageShortcode = null, array $params = []): RouteInterface|false;
+	public function getRoute(AddressInterface $start, AddressInterface $end, string $transportationMode = 'driving-car', ?string $languageShortcode = null, array $params = []): RouteInterface|false;
 }

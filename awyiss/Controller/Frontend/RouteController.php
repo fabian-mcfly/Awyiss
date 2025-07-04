@@ -8,6 +8,7 @@ use Awyiss\Controller\AppController;
 use Awyiss\Core\App;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Route\Address;
+use Awyiss\Utility\Route\RoutingServiceInterface;
 use Cake\Core\Configure;
 use Cake\Http\Exception\ForbiddenException;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
@@ -18,9 +19,9 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
  */
 class RouteController extends AppController {
 	/**
-	 * @var class-string<\Awyiss\Utility\Route\RoutingServiceInterface>
+	 * @var \Awyiss\Utility\Route\RoutingServiceInterface
 	 */
-	protected string $routeClass;
+	protected RoutingServiceInterface $routingService;
 
 
 	/**
@@ -29,7 +30,7 @@ class RouteController extends AppController {
 	public function initialize(): void {
 		parent::initialize();
 
-		$this->routeClass = Configure::read('Awyiss.System.Frontend.route.routingService') ?? App::className('Ors', 'Utility/Route', 'RoutingService');
+		$this->routingService = new (Configure::read('Awyiss.System.Frontend.route.routingService') ?? App::className('Ors', 'Utility/Route', 'RoutingService'))();
 	}
 
 
@@ -47,7 +48,7 @@ class RouteController extends AppController {
 
 		$this->accessCheck();
 
-		$lo_addresses = $this->routeClass::findCoordinates($search, $this->request->getParam('lang'));
+		$lo_addresses = $this->routingService->findCoordinates($search, $this->request->getParam('lang'));
 
 		if ($lo_addresses === false) {
 			$this->set([
@@ -134,7 +135,7 @@ class RouteController extends AppController {
 			!preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $la_start[0]) ||
 			!preg_match('/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/', $la_start[1])
 		) {
-			$lo_addresses = $this->routeClass::findCoordinates($start, $this->request->getParam('lang'));
+			$lo_addresses = $this->routingService->findCoordinates($start, $this->request->getParam('lang'));
 
 			if ($lo_addresses === false) {
 				$this->set([
@@ -177,7 +178,7 @@ class RouteController extends AppController {
 			default => 'driving-car',
 		};
 
-		$lo_route = $this->routeClass::getRoute($lo_start, $lo_end, $ls_transportationMode, $this->request->getParam('lang'));
+		$lo_route = $this->routingService->getRoute($lo_start, $lo_end, $ls_transportationMode, $this->request->getParam('lang'));
 		$ls_message = __d('route', $lo_route !== false ? 'route_planner_directions_found' : 'route_planner_no_directions_found');
 
 		$this->set([
