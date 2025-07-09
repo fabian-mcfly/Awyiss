@@ -30,6 +30,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\BackendMenuEntry $parentBackendMenuEntry
  * @property \Awyiss\Model\Entity\BackendMenuEntry[] $childBackendMenuEntries
+ * @property \Awyiss\Model\Entity\BackendMenuEntry[] $children
  */
 class BackendMenuEntry extends Entity {
 	/**

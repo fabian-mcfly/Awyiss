@@ -4,6 +4,7 @@
 namespace Awyiss\Utility\Menu;
 
 
+use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Text;
@@ -78,7 +79,7 @@ class MenuRenderer {
 
 	/**
 	 * @param string $menuIdentifier
-	 * @param string $ls_list
+	 * @param string $list
 	 * @return string
 	 */
 	public function render(string $menuIdentifier = '', string $list = ''): string {
@@ -171,7 +172,7 @@ class MenuRenderer {
 	/**
 	 * Recursively renders a menu item and its children as HTML.
 	 *
-	 * @param MenuItem $item The menu item to render.
+	 * @param \Awyiss\Utility\Menu\MenuItem $item The menu item to render.
 	 * @param int $level The current depth level.
 	 * @param int $maxLevel The maximum depth level to render.
 	 * @return string Rendered HTML for the menu item.
@@ -210,11 +211,14 @@ class MenuRenderer {
 			'item' => $item,
 		];
 
-		$lo_link = $item->getLink($this->currentRoute);
+		$lo_link = $item->getLink();
 		if ($lo_link && $item->isAccessible()) {
+			$ls_url = $lo_link->getUrl();
+			$ls_url = $this->optimizeUrl($ls_url);
+
 			$la_data += [
-				'attributes' => $this->templates->formatAttributes($lo_link->attributes),
-				'url' => $lo_link->url,
+				'attributes' => $this->templates->formatAttributes($lo_link->getAttributes()),
+				'url' => $ls_url,
 			];
 
 			$ls_link = $this->format('link', $la_data);
@@ -281,5 +285,39 @@ class MenuRenderer {
 		throw new InvalidArgumentException(
 			sprintf('The escapeTitle configuration must be a boolean or callable, `%s` given.', gettype($lx_escape))
 		);
+	}
+
+
+	/**
+	 * @param string|null $url
+	 * @return string|null
+	 */
+	protected function optimizeUrl(?string $url): ?string {
+		if (!$url) {
+			return null;
+		}
+
+		$ls_requestTarget = Router::getRequest()?->getRequestTarget();
+		$ls_url = $url;
+
+		// If the request and the link are for the homepage, set the link to '/'
+		if ($ls_requestTarget === '/' && $ls_url === $this->currentRoute) {
+			$ls_url = Router::url('/', true);
+		}
+
+		/*
+		 * If the link is the current route and contains a '#', set the link to '#'
+		 * so that it doesn't redirect to the current route again.
+		 */
+		if (str_contains($ls_url, '#')) {
+			$la_parts = explode('#', $ls_url);
+			$la_parts[0] = '/' . trim($la_parts[0], '/');
+
+			if ($la_parts[0] === $this->currentRoute) {
+				$ls_url = '#' . $la_parts[1];
+			}
+		}
+
+		return $ls_url;
 	}
 }

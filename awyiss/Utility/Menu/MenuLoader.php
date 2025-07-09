@@ -74,7 +74,7 @@ class MenuLoader {
 
 		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_className */
 		$ls_className = App::className('Menu', 'Utility/Menu');
-
+		/** @see \Awyiss\Utility\Menu\Menu::__construct() */
 		$lo_menu = new $ls_className((array)$data, $la_config, 1);
 
 		if ($lb_validateUniqueIdentifiers) {

@@ -28,6 +28,42 @@ class BackendMenuItem extends MenuItem {
 
 
 	/**
+	 * @param \Awyiss\Model\Entity\BackendMenuEntry|\stdClass $entity
+	 * @param array $config
+	 * @param int $level
+	 * @throws \ReflectionException
+	 * @noinspection DuplicatedCode
+	 */
+	public function __construct(
+		object $entity,
+		array $config = [],
+		int $level = 1
+	) {
+		$this->access = $this->convertAccess($entity);
+		$this->active = $entity->active ?? true;
+		$this->identifier = $entity->identifier ?? $entity->id;
+		$this->level = $level;
+		$this->link = $this->convertLink($entity);
+		$this->title = $this->convertTitle($entity);
+
+		if (isset($entity->children)) {
+			$this->setChildren((array)$entity->children, $config);
+		}
+
+		if (!empty($config['identity'])) {
+			$this->setIdentity($config['identity']);
+		}
+		/**
+		 * Make sure to not set the identity in the config to avoid confusion
+		 *
+		 * @noinspection PhpVariableNamingConventionInspection
+		 */
+		unset($config['identity']);
+		$this->setConfig($config);
+	}
+
+
+	/**
 	 * Check if this item's currentRoute matches the current route
 	 * This variant checks if the test currentRoute is the same as the currentRoute of this item
 	 * The test currentRoute consists of the current controller but the overview action
@@ -40,7 +76,7 @@ class BackendMenuItem extends MenuItem {
 			$lo_request = Router::getRequest();
 			$ls_controller = $lo_request->getParam('controller');
 
-			// Some controllers depend on others, like contents on <pagerole>,
+			// Some controllers depend on others, like contents on any page-role,
 			// form entries on forms, menu entries on menus
 			// They all should mark their "parent" controller as active
 			$ls_controller = match ($ls_controller) {
@@ -61,12 +97,14 @@ class BackendMenuItem extends MenuItem {
 			return $this->isCurrentRoute;
 		}
 
-		$ls_itemUrl = $this->getLink()?->url;
+		$ls_itemUrl = $this->getLink()?->getUrl();
 		if (!$ls_itemUrl) {
 			$this->isCurrentRoute = false;
-
 			return false;
 		}
+
+		$ls_currentRoute = rtrim($currentRoute, '/') . '/';
+		$ls_itemUrl = rtrim($ls_itemUrl, '/') . '/';
 
 		// Make sure the itemUrl is absolute
 		if (!str_contains($ls_itemUrl, '//')) {
@@ -74,18 +112,12 @@ class BackendMenuItem extends MenuItem {
 		}
 
 		// Make sure the currentRoute is absolute
-		if (!str_contains($currentRoute, '//')) {
+		if (!str_contains($ls_currentRoute, '//')) {
 			/** @noinspection PhpVariableNamingConventionInspection */
-			$currentRoute = Router::url($currentRoute, true);
+			$ls_currentRoute = Router::url($ls_currentRoute, true);
 		}
 
-		if ($ls_itemUrl === $currentRoute) {
-			$this->isCurrentRoute = true;
-
-			return true;
-		}
-
-		$this->isCurrentRoute = $ls_itemUrl === static::$testUrl;
+		$this->isCurrentRoute = $ls_itemUrl === $ls_currentRoute || $ls_itemUrl === static::$testUrl;
 
 		return $this->isCurrentRoute;
 	}

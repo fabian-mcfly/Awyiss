@@ -31,6 +31,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\Menu $menu
  * @property \Awyiss\Model\Entity\MenuEntry $parentMenuEntry
  * @property \Awyiss\Model\Entity\MenuEntry[] $childMenuEntries
+ * @property \Awyiss\Model\Entity\MenuEntry[] $children
  * @property \Awyiss\Model\Entity\Language $language
  */
 class MenuEntry extends Entity {

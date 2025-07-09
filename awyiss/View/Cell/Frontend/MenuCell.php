@@ -94,7 +94,6 @@ class MenuCell extends Cell {
 			$lb_active = $lo_menuRecord->active;
 
 			$ld_now = new DateTime();
-			/** @noinspection PhpUndefinedFieldInspection */
 			if (
 				($lo_menuRecord->publicationStart && $lo_menuRecord->publicationStart > $ld_now) ||
 				($lo_menuRecord->publicationEnd && $lo_menuRecord->publicationEnd < $ld_now)
@@ -105,14 +104,16 @@ class MenuCell extends Cell {
 
 		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_className */
 		$ls_className = App::className('Menu', 'Utility/Menu');
-
+		/** @see \Awyiss\Utility\Menu\Menu::__construct() */
 		$lo_menu = new $ls_className($lo_menuEntries->toArray(), [
 			'active' => $lb_active,
+			/** @var class-string<\Awyiss\Utility\Menu\FrontendMenuItem> $ls_menuItemClass */
+			'menuItemClass' => App::className('FrontendMenuItem', 'Utility/Menu'),
 		]);
 
 		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_className */
 		$ls_className = App::className('MenuRenderer', 'Utility/Menu');
-
+		/** @see \Awyiss\Utility\Menu\MenuRenderer::__construct() */
 		$lo_renderer = new $ls_className($lo_menu, $this->rendererOptions);
 
 		$lo_renderer->setCurrentRoute($la_options['currentRoute']);
@@ -210,15 +211,9 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderItem(array $data, StringTemplate $template): string {
-		static $ld_now;
-
-		if (!isset($ld_now)) {
-			$ld_now = new DateTime();
-		}
-
 		$la_data = $data;
 
-		$la_data['id'] = $data['item']->getEntity()->id;
+		$la_data['id'] = $data['item']->identifier;
 		$la_data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);
 
 		if (!empty($la_data['children'])) {
@@ -228,19 +223,7 @@ class MenuCell extends Cell {
 
 		$la_data['isPreview'] = '';
 		if ($this->isPreview()) {
-			$lo_entity = $data['item']->getEntity();
-			$lb_active = $lo_entity->active ?? true;
-
-			// If the item is active, but not published, it is not active
-			if (
-				$lb_active &&
-				(
-					($lo_entity->publicationStart && $lo_entity->publicationStart > $ld_now) ||
-					($lo_entity->publicationEnd && $lo_entity->publicationEnd < $ld_now)
-				)
-			) {
-				$lb_active = false;
-			}
+			$lb_active = $data['item']->active;
 
 			if (!$lb_active) {
 				$la_data['isPreview'] = ' ' . FrontendView::getPreviewModeElementClass();

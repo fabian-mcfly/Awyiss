@@ -31,7 +31,7 @@ class Menu {
 	 */
 	protected ?IdentityPermissionsInterface $identity = null;
 	/**
-	 * @var array<string|int, MenuItem>
+	 * @var array<string|int, \Awyiss\Utility\Menu\MenuItem>
 	 */
 	protected array $items = [];
 	/**
@@ -59,11 +59,15 @@ class Menu {
 		/** @var class-string<\Awyiss\Utility\Menu\MenuItem> $ls_menuItemClass */
 		$ls_menuItemClass = $la_config['menuItemClass'];
 
-		foreach ($la_items as $lx_identifier => $lo_item) {
+		foreach ($la_items as $lx_identifier => $lx_item) {
+			$lo_item = (object)$lx_item;
+
+			// If the identifier is not a string and the item has an id, use the id as identifier
 			if (!is_string($lx_identifier) && isset($lo_item->id)) {
 				$lx_identifier = $lo_item->id;
 			}
 
+			// Make sure the item has an identifier
 			if (!isset($lo_item->identifier)) {
 				$lo_item->identifier = $lx_identifier;
 			}
@@ -203,7 +207,7 @@ class Menu {
 
 
 		if (!isset($this->items[ $identifier ])) {
-			/** @var array<MenuItem> $lo_items */
+			/** @var array<\Awyiss\Utility\Menu\MenuItem> $lo_items */
 			$lo_items = $this->items();
 			foreach ($lo_items as $lo_item) {
 				$lo_children = $lo_item->getChildren();
@@ -247,7 +251,7 @@ class Menu {
 
 
 	/**
-	 * @return \Awyiss\Utility\Menu\MenuItem|\Generator
+	 * @return \Generator<string|int, \Awyiss\Utility\Menu\MenuItem>
 	 */
 	public function items(int $maxLevel = -1): Generator {
 		foreach ($this->items as $lx_identifier => $lo_item) {
@@ -290,7 +294,7 @@ class Menu {
 
 
 	/**
-	 * @return array
+	 * @return array<string|int, \Awyiss\Utility\Menu\MenuItem>
 	 */
 	public function toArray(): array {
 		$la_items = [];

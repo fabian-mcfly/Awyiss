@@ -7,9 +7,6 @@ namespace Awyiss\Utility\Menu;
 use ArrayAccess;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Core\App;
-use Awyiss\Model\Entity;
-use Awyiss\Model\Entity\BackendMenuEntry;
-use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
@@ -20,14 +17,14 @@ use RuntimeException;
 /**
  * A single menu item with its properties and optional children
  */
-class MenuItem implements ArrayAccess {
+abstract class MenuItem implements ArrayAccess {
 	use InstanceConfigTrait;
 
 
 	/**
-	 * @var mixed|object|null
+	 * @var \Awyiss\Utility\Menu\MenuItemAccess|null
 	 */
-	protected mixed $access = null;
+	protected ?MenuItemAccess $access = null;
 	/**
 	 * @var bool|null
 	 */
@@ -45,10 +42,6 @@ class MenuItem implements ArrayAccess {
 	 */
 	protected array $_defaultConfig = [];
 	/**
-	 * @var \Awyiss\Model\Entity
-	 */
-	protected Entity $entity;
-	/**
 	 * @var string|int|null
 	 */
 	protected string|int|null $identifier;
@@ -65,9 +58,9 @@ class MenuItem implements ArrayAccess {
 	 */
 	protected int $level = 0;
 	/**
-	 * @var mixed|null
+	 * @var \Awyiss\Utility\Menu\MenuItemLink|null
 	 */
-	protected mixed $link = null;
+	protected ?MenuItemLink $link = null;
 	/**
 	 * @var mixed|null
 	 */
@@ -79,60 +72,12 @@ class MenuItem implements ArrayAccess {
 
 
 	/**
-	 * @param object $data
-	 * @param array $config
-	 * @param int $level
-	 * @throws \ReflectionException
-	 */
-	public function __construct(object $data, array $config = [], int $level = 1) {
-		$la_config = $config;
-
-		$this->access = $data->access ?? null;
-		$this->active = $data->active ?? true;
-		$this->identifier = $data->identifier ?? null;
-		$this->identity = $la_config['identity'] ?? null;
-		$this->level = $level;
-		$this->link = $data->link;
-		$this->title = $data->title;
-
-		if ($data instanceof MenuEntry || $data instanceof BackendMenuEntry) {
-			if ($data instanceof BackendMenuEntry) {
-				if ($this->access) {
-					$this->access = (object)$this->access;
-				}
-			}
-
-			$this->convertEntityLink($data);
-
-			$this->entity = $data;
-		}
-
-		if (!empty($data->children)) {
-			$this->setChildren($data->children, $la_config);
-		}
-
-		if (isset($la_config['identity'])) {
-			$this->setIdentity($la_config['identity']);
-
-			//Make sure to not set the identity in the config to avoid confusion
-			unset($la_config['identity']);
-		}
-
-		$this->setConfig($la_config);
-	}
-
-
-	/**
 	 * Checks if the menu item is accessible.
 	 *
 	 * @return bool|null Returns true if the menu item is accessible, false otherwise.
 	 * If the accessibility is not set, it returns null.
 	 */
 	public function isAccessible(): ?bool {
-		if ($this->accessible === null && ($this->entity ?? null) instanceof MenuEntry) {
-			return true;
-		}
-
 		return $this->accessible;
 	}
 
@@ -147,7 +92,7 @@ class MenuItem implements ArrayAccess {
 	 */
 	public function isAccessibleBy(?IdentityPermissionsInterface $identity = null): ?bool {
 		//No access settings means the item is always accessible
-		if (!isset($this->access)) {
+		if (!$this->access) {
 			return true;
 		}
 
@@ -161,7 +106,7 @@ class MenuItem implements ArrayAccess {
 		}
 
 
-		return $lo_identity->scopeIsAccessible($this->access->scope, (array)($this->access->additionalData ?? []), $this->access->identifier);
+		return $lo_identity->scopeIsAccessible($this->access->getScope(), $this->access->getAdditionalData() ?? [], $this->access->getIdentifier());
 	}
 
 
@@ -207,12 +152,13 @@ class MenuItem implements ArrayAccess {
 			return false;
 		}
 
-		$ls_testUrl = $this->getLink()?->url;
+		$ls_testUrl = $this->getLink()?->getUrl();
 		if (!$ls_testUrl) {
 			$this->isCurrentRoute = false;
 			return false;
 		}
 
+		$ls_currentRoute = rtrim($currentRoute, '/') . '/';
 		$ls_testUrl = rtrim($ls_testUrl, '/') . '/';
 
 		if (!isset($ls_fullBaseUrl)) {
@@ -223,20 +169,20 @@ class MenuItem implements ArrayAccess {
 			$ls_testUrl = substr_replace($ls_testUrl, '', 0, strlen($ls_fullBaseUrl));
 		}
 
-		if ($ls_testUrl === $currentRoute) {
+		if ($ls_testUrl === $ls_currentRoute) {
 			$this->isCurrentRoute = true;
 			return true;
 		}
 
 		// If there are parameters in the url, remove them and try again
-		if (str_contains($currentRoute, ':')) {
-			$la_segments = explode('/', trim($currentRoute, '/'));
+		if (str_contains($ls_currentRoute, ':')) {
+			$la_segments = explode('/', trim($ls_currentRoute, '/'));
 			$la_segments = array_filter($la_segments, function (string $segment) {
 				$this->isCurrentRoute = !str_contains($segment, ':');
 				return $this->isCurrentRoute;
 			});
 
-			$ls_cleanRoute = '/' . implode('/', $la_segments);
+			$ls_cleanRoute = '/' . implode('/', $la_segments) . '/';
 
 			$this->isCurrentRoute = $ls_testUrl === $ls_cleanRoute;
 
@@ -271,7 +217,7 @@ class MenuItem implements ArrayAccess {
 	 * Generates the children of the menu item.
 	 *
 	 * @param int $maxLevel The maximum level of children to generate.
-	 * @return Generator|MenuItem A generator that yields the children of the menu item.
+	 * @return Generator<string, MenuItem> A generator that yields the children of the menu item.
 	 */
 	public function children(int $maxLevel = -1): Generator {
 		if ($this->children === null) {
@@ -297,17 +243,12 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Sets the children of the menu item.
 	 *
-	 * @param object|iterable $children The children to set.
+	 * @param iterable $children The children to set.
 	 * @param array|null $config The configuration for the children.
 	 * @return void
-	 * @throws \ReflectionException
 	 */
-	public function setChildren(object|iterable $children, ?array $config = null): void {
-		$la_config = $config;
-
-		if ($la_config === null) {
-			$la_config = $this->getConfig();
-		}
+	public function setChildren(iterable $children, ?array $config = null): void {
+		$la_config = $config ?? $this->getConfig();
 
 		if (!array_key_exists('identity', $la_config)) {
 			$la_config['identity'] = $this->identity;
@@ -318,6 +259,7 @@ class MenuItem implements ArrayAccess {
 		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_menuClass */
 		$ls_menuClass = App::className('Menu', 'Utility/Menu');
 
+		/** @see \Awyiss\Utility\Menu\Menu::__construct() */
 		$this->children = new $ls_menuClass($children, $la_config, $this->level + 1);
 	}
 
@@ -341,26 +283,6 @@ class MenuItem implements ArrayAccess {
 
 
 	/**
-	 * Gets the entity of the menu item.
-	 *
-	 * @return \Awyiss\Model\Entity
-	 */
-	public function getEntity(): Entity {
-		return $this->entity;
-	}
-
-
-	/**
-	 * Checks if the menu item has an entity.
-	 *
-	 * @return bool
-	 */
-	public function hasEntity(): bool {
-		return isset($this->entity);
-	}
-
-
-	/**
 	 * Sets the identity of the menu item.
 	 *
 	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity The identity to set.
@@ -377,7 +299,7 @@ class MenuItem implements ArrayAccess {
 		}
 
 		if ($this->hasChildren()) {
-			foreach ($this->getChildren() as $lo_child) {
+			foreach ($this->children() as $lo_child) {
 				$lo_child->setIdentity($identity);
 			}
 		}
@@ -418,50 +340,9 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Gets the link of the menu item.
 	 *
-	 * @param string|null $currentRoute
-	 * @return object|null The link of the menu item.
+	 * @return \Awyiss\Utility\Menu\MenuItemLink|null The link of the menu item.
 	 */
-	public function getLink(?string $currentRoute = null): ?object {
-		if ($this->link === null) {
-			return null;
-		}
-
-		if (is_string($this->link)) {
-			$this->link = (object)[
-				'url' => $this->link,
-			];
-		}
-
-		if (is_object($this->link->url)) {
-			$this->link->url = Router::url((array)$this->link->url, true);
-		}
-
-		if (!isset($this->link->attributes)) {
-			$this->link->attributes = [];
-		}
-		else {
-			$this->link->attributes = (array)$this->link->attributes;
-		}
-
-		if ($currentRoute) {
-			$ls_requestTarget = Router::getRequest()?->getRequestTarget();
-
-			// If the request is the homepage and the link is as well, set the link '/'
-			if ($ls_requestTarget === '/' && $this->link->url === $currentRoute) {
-				$this->link->url = Router::url('/', true);
-			}
-
-			// If the link is the current route and contains a '#', set the link to '#'
-			if (str_contains($this->link->url, '#')) {
-				$la_parts = explode('#', $this->link->url);
-				$la_parts[0] = '/' . trim($la_parts[0], '/');
-
-				if ($la_parts[0] === $currentRoute) {
-					$this->link->url = '#' . $la_parts[1];
-				}
-			}
-		}
-
+	public function getLink(): ?MenuItemLink {
 		return $this->link;
 	}
 
@@ -472,15 +353,6 @@ class MenuItem implements ArrayAccess {
 	 * @return string|null The title of the menu item.
 	 */
 	public function getTitle(): ?string {
-		if (is_object($this->title)) {
-			if (!isset($this->title->translate)) {
-				throw new RuntimeException(sprintf('Missing property `translate` for `title` in `%s`', static::class));
-			}
-
-			$this->title = __d(... (array)$this->title->translate);
-		}
-
-
 		return $this->title;
 	}
 
@@ -502,7 +374,6 @@ class MenuItem implements ArrayAccess {
 
 		$lo_children = $this->getChildren();
 		$lb_childIsVisible = false;
-
 		if ($lo_children) {
 			// Check the visibility of child items
 			foreach ($lo_children->items() as $lo_child) {
@@ -519,13 +390,12 @@ class MenuItem implements ArrayAccess {
 			}
 		}
 
-		if ($lb_isVisible && !$this->getLink() && !$lb_childIsVisible) {
+		if ($lb_isVisible && !$this->getLink()?->getUrl() && !$lb_childIsVisible) {
 			$lb_isVisible = false;
 		}
 
 		// Set the visibility for this item
 		$this->visible = $lb_isVisible;
-
 
 		return $lb_isVisible;
 	}
@@ -537,11 +407,6 @@ class MenuItem implements ArrayAccess {
 	 * @return bool|null The visibility of the menu item.
 	 */
 	public function isVisible(): ?bool {
-		// If the item is a menu entry, it is always visible
-		if (($this->entity ?? null) instanceof MenuEntry) {
-			return true;
-		}
-
 		return $this->visible;
 	}
 
@@ -555,8 +420,79 @@ class MenuItem implements ArrayAccess {
 	public function setVisible(?bool $isVisible): static {
 		$this->visible = $isVisible;
 
-
 		return $this;
+	}
+
+
+	/**
+	 * Converts the access of the menu item from an object.
+	 *
+	 * @param object $entity
+	 * @return \Awyiss\Utility\Menu\MenuItemAccess|null
+	 */
+	protected function convertAccess(object $entity): ?MenuItemAccess {
+		if (empty($entity->access)) {
+			return null;
+		}
+
+		/**
+		 * @var class-string<\Awyiss\Utility\Menu\MenuItemAccess> $ls_menuItemAccessClass
+		 * @see \Awyiss\Utility\Menu\MenuItemAccess::__construct()
+		 */
+		$ls_menuItemAccessClass = App::className('MenuItemAccess', 'Utility/Menu');
+
+		return new $ls_menuItemAccessClass((object)$entity->access);
+	}
+
+
+	/**
+	 * Converts the link of the menu item from an object.
+	 *
+	 * @param object $entity
+	 * @return \Awyiss\Utility\Menu\MenuItemLink|null
+	 */
+	protected function convertLink(object $entity): ?MenuItemLink {
+		if (empty($entity->link)) {
+			return null;
+		}
+
+		/**
+		 * @var class-string<\Awyiss\Utility\Menu\MenuItem> $ls_menuItemLinkClass
+		 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
+		 */
+		$ls_menuItemLinkClass = App::className('MenuItemLink', 'Utility/Menu');
+
+		$lo_link = new $ls_menuItemLinkClass($entity->link);
+
+		if ($entity->external ?? false) {
+			$lo_link->setTarget('_blank');
+			$lo_link->setRel('noopener noreferrer');
+		}
+
+		return $lo_link;
+	}
+
+
+	/**
+	 * Converts the title of the menu item from an object.
+	 *
+	 * @param object $entity
+	 * @return string|null
+	 */
+	protected function convertTitle(object $entity): ?string {
+		if (empty($entity->title)) {
+			return null;
+		}
+
+		if (is_object($entity->title)) {
+			if (!isset($entity->title->translate)) {
+				throw new RuntimeException(sprintf('Missing property `translate` for `title` in `%s`', static::class));
+			}
+
+			return __d(... (array)$entity->title->translate);
+		}
+
+		return (string)$entity->title;
 	}
 
 
@@ -573,69 +509,6 @@ class MenuItem implements ArrayAccess {
 		}
 
 		throw new RuntimeException(sprintf('Unknown field `%s` in `%s`', $field, static::class));
-	}
-
-
-	/**
-	 * Converts the link of the menu item from a BackendMenuEntry.
-	 *
-	 * @param \Awyiss\Model\Entity\MenuEntry|\Awyiss\Model\Entity\BackendMenuEntry $data The BackendMenuEntry to convert from.
-	 * @return void
-	 */
-	protected function convertEntityLink(MenuEntry|BackendMenuEntry $data): void {
-		if (empty($this->link)) {
-			$this->link = null;
-
-
-			return;
-		}
-
-		if (!str_contains($this->link, '::') || $data instanceof MenuEntry) {
-			$la_linkData = [
-				'url' => !str_contains($this->link, '//') ? Router::url($this->link) : $this->link,
-			];
-
-			if ($data->external) {
-				$la_linkData['attributes'] = [
-					'target' => '_blank',
-				];
-			}
-
-			$this->link = json_decode(json_encode($la_linkData));
-
-			return;
-		}
-
-		$la_parts = explode('::', $this->link);
-
-		$ls_controller = array_shift($la_parts);
-		$ls_action = array_shift($la_parts);
-
-		$la_params = [];
-		if (!empty($la_parts)) {
-			foreach ($la_parts as $lx_value) {
-				$la_innerParts = explode(':', $lx_value);
-				$la_params[ $la_innerParts[0] ] = $la_innerParts[1] ?? null;
-			}
-			$la_params = array_filter($la_params, function ($value) {
-				return $value !== null;
-			});
-		}
-
-		$la_linkData = [
-			'url' => [
-				'controller' => $ls_controller,
-				'action' => $ls_action,
-			] + $la_params,
-		];
-
-		if ($data->external) {
-			$la_linkData['attributes'] = [
-				'target' => '_blank',
-			];
-		}
-
-		$this->link = json_decode(json_encode($la_linkData));
 	}
 
 
