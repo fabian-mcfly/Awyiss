@@ -105,7 +105,6 @@ abstract class MenuItem implements ArrayAccess {
 			$lo_identity = $this->identity;
 		}
 
-
 		return $lo_identity->scopeIsAccessible($this->access->getScope(), $this->access->getAdditionalData() ?? [], $this->access->getIdentifier());
 	}
 
@@ -373,8 +372,10 @@ abstract class MenuItem implements ArrayAccess {
 		$lb_isVisible = $this->isAccessible();
 
 		$lo_children = $this->getChildren();
-		$lb_childIsVisible = false;
+		$lb_anyChildIsVisible = null;
 		if ($lo_children) {
+			$lb_anyChildIsVisible = false;
+
 			// Check the visibility of child items
 			foreach ($lo_children->items() as $lo_child) {
 				// Determine and set visibility for each child
@@ -383,6 +384,8 @@ abstract class MenuItem implements ArrayAccess {
 				// If any child is visible, set the parent item to be visible as well
 				if ($lb_childIsVisible) {
 					$lb_isVisible = true;
+					$lb_anyChildIsVisible = true;
+
 					if (!$reset) {
 						break;
 					}
@@ -390,7 +393,10 @@ abstract class MenuItem implements ArrayAccess {
 			}
 		}
 
-		if ($lb_isVisible && !$this->getLink()?->getUrl() && !$lb_childIsVisible) {
+		// When no child is visible and the item has no link,
+		// there is no reason to show this item,
+		// so we set it to not visible
+		if ($lb_anyChildIsVisible === false && !$this->getLink()?->getUrl()) {
 			$lb_isVisible = false;
 		}
 
