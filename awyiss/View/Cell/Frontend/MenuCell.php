@@ -102,8 +102,8 @@ class MenuCell extends Cell {
 			}
 		}
 
-		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_menuClass */
-		$ls_menuClass = App::className('Menu', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenu> $ls_menuClass */
+		$ls_menuClass = App::className('FrontendMenu', 'Utility/Menu');
 		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenuItem> $ls_menuItemClass */
 		$ls_menuItemClass = App::className('FrontendMenuItem', 'Utility/Menu');
 

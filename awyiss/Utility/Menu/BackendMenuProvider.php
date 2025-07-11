@@ -72,6 +72,9 @@ class BackendMenuProvider {
 	 */
 	protected function createMenu(): void {
 		$la_config = [
+			/** @see \Awyiss\Utility\Menu\BackendMenu::__construct */
+			'menuClass' => App::className('BackendMenu', 'Utility/Menu'),
+			/** @see \Awyiss\Utility\Menu\BackendMenuItem::__construct */
 			'menuItemClass' => App::className('BackendMenuItem', 'Utility/Menu'),
 			'identity' => $this->identity,
 			'validate' => [

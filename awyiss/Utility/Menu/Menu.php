@@ -5,7 +5,6 @@ namespace Awyiss\Utility\Menu;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
-use Awyiss\Core\App;
 use Cake\Core\InstanceConfigTrait;
 use Generator;
 use RuntimeException;
@@ -14,7 +13,7 @@ use RuntimeException;
 /**
  * A menu class that represents one level of items
  */
-class Menu {
+abstract class Menu {
 	use InstanceConfigTrait;
 
 
@@ -55,10 +54,6 @@ class Menu {
 
 		$this->level = $level;
 
-		$la_config['menuItemClass'] ??= App::className('MenuItem', 'Utility/Menu');
-		/** @var class-string<\Awyiss\Utility\Menu\MenuItem> $ls_menuItemClass */
-		$ls_menuItemClass = $la_config['menuItemClass'];
-
 		foreach ($la_items as $lx_identifier => $lx_item) {
 			$lo_item = (object)$lx_item;
 
@@ -72,7 +67,7 @@ class Menu {
 				$lo_item->identifier = $lx_identifier;
 			}
 
-			$this->items[ $lx_identifier ] = new $ls_menuItemClass($lo_item, $la_config, $level);
+			$this->items[ $lx_identifier ] = new $la_config['menuItemClass']($lo_item, $la_config, $level);
 		}
 
 		if (isset($la_config['identity'])) {
@@ -95,11 +90,6 @@ class Menu {
 	 */
 	public function appendEntries(array $entries, string $identifier, bool $determineVisibility = true): void {
 		$lo_item = $this->getItem($identifier);
-
-		if (!$lo_item) {
-			// If the identifier is not found, we try to find the system menu
-			$lo_item = $this->getItem('system');
-		}
 
 		if (!$lo_item) {
 			// If an item to append to is still not found, throw an exception
@@ -147,6 +137,17 @@ class Menu {
 
 
 		return $this;
+	}
+
+
+	/**
+	 * Returns whether the menu an item with the given identifier.
+	 *
+	 * @param string|int $id
+	 * @return bool
+	 */
+	public function hasItem(string|int $id): bool {
+		return isset($this->items[ $id ]);
 	}
 
 
@@ -205,7 +206,6 @@ class Menu {
 			return;
 		}
 
-
 		if (!isset($this->items[ $identifier ])) {
 			/** @var array<\Awyiss\Utility\Menu\MenuItem> $lo_items */
 			$lo_items = $this->items();
@@ -227,7 +227,6 @@ class Menu {
 				//Only after all elements are updated, the visibility can be calculated
 				$this->determineVisibility();
 			}
-
 
 			return;
 		}
@@ -299,6 +298,7 @@ class Menu {
 	public function toArray(): array {
 		$la_items = [];
 
+		/** @noinspection PhpLoopCanBeConvertedToArrayMapInspection */
 		foreach ($this->items() as $lx_identifier => $lo_item) {
 			$la_items[ $lx_identifier ] = $lo_item;
 		}
