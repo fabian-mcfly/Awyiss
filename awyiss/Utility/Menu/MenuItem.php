@@ -223,6 +223,10 @@ abstract class MenuItem implements ArrayAccess {
 			return;
 		}
 
+		if ($maxLevel !== -1 && $maxLevel <= $this->level) {
+			return;
+		}
+
 		foreach ($this->children->items($maxLevel) as $lx_identifier => $lo_childItem) {
 			yield $lx_identifier => $lo_childItem;
 		}

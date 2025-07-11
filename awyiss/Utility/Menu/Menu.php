@@ -256,6 +256,10 @@ abstract class Menu {
 		foreach ($this->items as $lx_identifier => $lo_item) {
 			yield $lx_identifier => $lo_item;
 
+			if ($maxLevel !== -1 && $maxLevel <= $this->level) {
+				continue;
+			}
+
 			foreach ($lo_item->children($maxLevel) as $lx_childIdentifier => $lo_child) {
 				yield $lx_childIdentifier => $lo_child;
 			}
