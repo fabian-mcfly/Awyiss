@@ -118,8 +118,13 @@ class MenuCell extends Cell {
 
 		// Set the current route in the menu renderer
 		$ls_url = '/backend/' . $this->request->getParam('lang') . '/';
-		$ls_url .= $currentPageRole ?? Inflector::dasherize($this->request->getParam('controller'));
-		$ls_url .= '/' . $this->request->getParam('action') . '/';
+		if ($currentPageRole) {
+			$ls_url .= $currentPageRole . '/overview/';
+		}
+		else {
+			$ls_url .= Inflector::dasherize($this->request->getParam('controller'));
+			$ls_url .= '/' . $this->request->getParam('action') . '/';
+		}
 		$lo_renderer->setCurrentRoute($ls_url);
 
 		// Render the menu
