@@ -72,10 +72,10 @@ class MenuLoader {
 		//Validate-config is not needed inside the menu
 		unset($la_config['validate']);
 
-		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_className */
-		$ls_className = App::className('Menu', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_menuClass */
+		$ls_menuClass = $la_config['menuClass'] ?? App::className('Menu', 'Utility/Menu');
 		/** @see \Awyiss\Utility\Menu\Menu::__construct() */
-		$lo_menu = new $ls_className((array)$data, $la_config, 1);
+		$lo_menu = new $ls_menuClass((array)$data, $la_config, 1);
 
 		if ($lb_validateUniqueIdentifiers) {
 			$la_knownIdentifiers = [];

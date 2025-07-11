@@ -102,19 +102,22 @@ class MenuCell extends Cell {
 			}
 		}
 
-		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_className */
-		$ls_className = App::className('Menu', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_menuClass */
+		$ls_menuClass = App::className('Menu', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenuItem> $ls_menuItemClass */
+		$ls_menuItemClass = App::className('FrontendMenuItem', 'Utility/Menu');
+
 		/** @see \Awyiss\Utility\Menu\Menu::__construct() */
-		$lo_menu = new $ls_className($lo_menuEntries->toArray(), [
+		$lo_menu = new $ls_menuClass($lo_menuEntries->toArray(), [
 			'active' => $lb_active,
-			/** @var class-string<\Awyiss\Utility\Menu\FrontendMenuItem> $ls_menuItemClass */
-			'menuItemClass' => App::className('FrontendMenuItem', 'Utility/Menu'),
+			'menuClass' => $ls_menuClass,
+			'menuItemClass' => $ls_menuItemClass,
 		]);
 
-		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_className */
-		$ls_className = App::className('MenuRenderer', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_menuRendererClass */
+		$ls_menuRendererClass = App::className('MenuRenderer', 'Utility/Menu');
 		/** @see \Awyiss\Utility\Menu\MenuRenderer::__construct() */
-		$lo_renderer = new $ls_className($lo_menu, $this->rendererOptions);
+		$lo_renderer = new $ls_menuRendererClass($lo_menu, $this->rendererOptions);
 
 		$lo_renderer->setCurrentRoute($la_options['currentRoute']);
 		$lo_renderer->setConfig('identifier', Inflector::ucparts($identifier, false));

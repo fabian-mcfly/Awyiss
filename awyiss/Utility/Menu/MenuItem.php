@@ -256,7 +256,7 @@ abstract class MenuItem implements ArrayAccess {
 		$la_config['menuItemClass'] ??= static::class;
 
 		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_menuClass */
-		$ls_menuClass = App::className('Menu', 'Utility/Menu');
+		$ls_menuClass = $la_config['menuClass'] ?? App::className('Menu', 'Utility/Menu');
 
 		/** @see \Awyiss\Utility\Menu\Menu::__construct() */
 		$this->children = new $ls_menuClass($children, $la_config, $this->level + 1);
