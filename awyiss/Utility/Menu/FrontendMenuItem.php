@@ -69,7 +69,7 @@ class FrontendMenuItem extends MenuItem {
 	 */
 	public function isAccessible(): ?bool {
 		// Frontend menu items are always accessible, if not explicitly set otherwise
-		return $this->accessible ?? true;
+		return $this->accessible ?? empty($this->access);
 	}
 
 
@@ -78,6 +78,6 @@ class FrontendMenuItem extends MenuItem {
 	 */
 	public function isVisible(): ?bool {
 		// Frontend menu items are always visible, if not explicitly set otherwise
-		return $this->visible ?? true;
+		return $this->visible ?? $this->isAccessible();
 	}
 }
