@@ -155,9 +155,9 @@ class BackendMenuEntriesTable extends Table {
 
 			if (!is_numeric($lx_parentId)) {
 				if (!isset($lo_menu)) {
-					/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
-					$ls_className = App::className('BackendMenu', 'Utility/Menu');
-					$lo_menu = new $ls_className();
+					/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $ls_backendMenuProviderClass */
+					$ls_backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
+					$lo_menu = new $ls_backendMenuProviderClass();
 				}
 
 

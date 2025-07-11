@@ -16,7 +16,7 @@ use RuntimeException;
  * Build a menu, based on config/menu.json
  * and customer/config/menu-extension.json
  */
-class BackendMenu {
+class BackendMenuProvider {
 	use LocatorAwareTrait;
 
 

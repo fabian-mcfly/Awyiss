@@ -91,10 +91,10 @@ class MenuCell extends Cell {
 		// If the menu data is not in the session or is outdated, regenerate the menu data
 		/** @noinspection PhpUndefinedVariableInspection */
 		if (!$la_menuData || $lo_time < $lo_identity->changedOn) {
-			/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
-			$ls_className = App::className('BackendMenu', 'Utility/Menu');
+			/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $ls_backendMenuProviderClass */
+			$ls_backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
 
-			$lo_menu = new $ls_className();
+			$lo_menu = new $ls_backendMenuProviderClass();
 			$lo_menu = $lo_menu->getDynamicMenu();
 
 			// Cache the menu data and the time it was cached
@@ -110,11 +110,10 @@ class MenuCell extends Cell {
 
 		$lo_menu->setIdentity($lo_identity);
 
-		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_className */
-		$ls_className = App::className('MenuRenderer', 'Utility/Menu');
-
+		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_menuRendererClass */
+		$ls_menuRendererClass = App::className('MenuRenderer', 'Utility/Menu');
 		// Create a new menu renderer with the menu data
-		$lo_renderer = new $ls_className($lo_menu, $this->rendererOptions);
+		$lo_renderer = new $ls_menuRendererClass($lo_menu, $this->rendererOptions);
 
 		// Set the current route in the menu renderer
 		$ls_url = '/backend/' . $this->request->getParam('lang') . '/';

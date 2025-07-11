@@ -97,9 +97,9 @@ class BackendMenuEntriesController extends Controller {
 			$lo_menuEntries = $this->getOverviewQuery()->find('threaded')->all();
 		}
 		else {
-			/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
-			$ls_className = App::className('BackendMenu', 'Utility/Menu');
-			$lo_menu = new $ls_className(null, $this->getOverviewQuery());
+			/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $ls_backendMenuProviderClass */
+			$ls_backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
+			$lo_menu = new $ls_backendMenuProviderClass(null, $this->getOverviewQuery());
 		}
 
 		$this->set([
@@ -393,9 +393,9 @@ class BackendMenuEntriesController extends Controller {
 	 * @throws \ReflectionException
 	 */
 	protected function setViewVars(BackendMenuEntry $menuEntry): void {
-		/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
-		$ls_className = App::className('BackendMenu', 'Utility/Menu');
-		$lo_menu = new $ls_className();
+		/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $ls_backendMenuProviderClass */
+		$ls_backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
+		$lo_menu = new $ls_backendMenuProviderClass();
 
 		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
 
