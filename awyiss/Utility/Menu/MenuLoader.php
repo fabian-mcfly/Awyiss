@@ -78,16 +78,8 @@ class MenuLoader {
 		$lo_menu = new $ls_menuClass((array)$data, $la_config, 1);
 
 		if ($lb_validateUniqueIdentifiers) {
-			$la_knownIdentifiers = [];
-			foreach ($lo_menu->items() as $ls_identifier => $lo_item) {
-				if (in_array($ls_identifier, $la_knownIdentifiers)) {
-					throw new RuntimeException(sprintf('Cannot use identifier `%s` twice in `%s`', $ls_identifier, self::class));
-				}
-
-				$la_knownIdentifiers[] = $ls_identifier;
-			}
+			static::validateUniqueIdentifiers($lo_menu);
 		}
-
 
 		return $lo_menu;
 	}
@@ -128,7 +120,7 @@ class MenuLoader {
 	public static function loadJsonFile(string $filePath): object {
 		$ls_filePath = realpath($filePath);
 
-		if (!file_exists($ls_filePath)) {
+		if (!$ls_filePath || !file_exists($ls_filePath)) {
 			throw new RuntimeException(sprintf('File `%s` does not exist.', $ls_filePath));
 		}
 
@@ -151,5 +143,21 @@ class MenuLoader {
 
 
 		return $lo_data;
+	}
+
+
+	/**
+	 * @param \Awyiss\Utility\Menu\Menu $menu
+	 * @return void
+	 */
+	protected static function validateUniqueIdentifiers(Menu $menu): void {
+		$la_knownIdentifiers = [];
+		foreach ($menu->items() as $ls_identifier => $lo_item) {
+			if (in_array($ls_identifier, $la_knownIdentifiers)) {
+				throw new RuntimeException(sprintf('Cannot use identifier `%s` twice in `%s`', $ls_identifier, self::class));
+			}
+
+			$la_knownIdentifiers[] = $ls_identifier;
+		}
 	}
 }
