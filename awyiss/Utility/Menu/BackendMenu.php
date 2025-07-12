@@ -34,4 +34,27 @@ class BackendMenu extends Menu {
 
 		parent::appendEntries($entries, $identifier, $determineVisibility);
 	}
+
+
+	/**
+	 * Inserting entries after a specific identifier
+	 * allows for a fallback to the last known identifier.
+	 * This is useful when a custom menu entry is no longer present,
+	 * but an entry in the database or a custom json file still refers to it.
+	 *
+	 * @inheritDoc
+	 */
+	public function insertEntriesAfter(array $entries, ?string $identifier = null, bool $determineVisibility = true): void {
+		/**
+		 * If the identifier doesn't exist in the menu
+		 * or any of its children, set it to the last
+		 * known identifier.
+		 */
+		if ($identifier && !isset($this->items[ $identifier ]) && !$this->getItem($identifier)) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$identifier = array_key_last($this->items);
+		}
+
+		parent::insertEntriesAfter($entries, $identifier, $determineVisibility);
+	}
 }

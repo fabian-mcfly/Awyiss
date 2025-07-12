@@ -185,11 +185,8 @@ abstract class Menu {
 	 * @throws \ReflectionException
 	 */
 	public function insertEntriesAfter(array $entries, ?string $identifier = null, bool $determineVisibility = true): void {
-		if ($identifier) {
-			if (!isset($this->items[ $identifier ]) && !$this->getItem($identifier)) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$identifier = null;
-			}
+		if ($identifier && !isset($this->items[ $identifier ]) && !$this->getItem($identifier)) {
+			throw new RuntimeException(sprintf('Cannot insert entries after an unknown identifier. `%s` given.', $identifier));
 		}
 
 		$lo_newMenu = new static($entries, $this->getConfig() + ['identity' => $this->identity], $this->level);
