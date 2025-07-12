@@ -40,7 +40,7 @@ class MenuRenderer {
 			'list' => '<ul class="Level{{level}}{{identifier}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
 			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}} MenuItem-{{identifier}}">' . PHP_EOL . '{{link}}{{children}}</li>' . PHP_EOL,
 			'link' => '<a href="{{url}}" class="Level{{level}}{{active}} MenuItem-{{identifier}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
-			'noLink' => '<span class="Level{{level}}{{active}}">{{title}}</span>' . PHP_EOL,
+			'noLink' => '<span class="Level{{level}}{{active}} MenuItem-{{identifier}}"{{attributes}}>{{title}}</span>' . PHP_EOL,
 		],
 	];
 	/**

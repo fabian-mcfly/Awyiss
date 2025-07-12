@@ -30,9 +30,7 @@ class MenuCell extends Cell {
 	 */
 	protected array $rendererOptions = [
 		'formatters' => [],
-		'templates' => [
-			'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}"{{tabindex}}>{{title}}</span>' . PHP_EOL,
-		],
+		'templates' => [],
 	];
 
 
