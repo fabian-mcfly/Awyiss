@@ -380,53 +380,6 @@
 							"identifier": "create"
 						}
 					},
-					"backend_menu_entries": {
-						"title": {
-							"translate": ["backend_menu_entries", "menu_title"]
-						},
-						"link": {
-							"url": {
-								"controller": "BackendMenuEntries",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "backend_menu_entries",
-							"identifier": "read"
-						},
-						"children": {
-							"backend_menu_entries_overview": {
-								"title": {
-									"translate": ["backend_menu_entries", "menu_overview"]
-								},
-								"link": {
-									"url": {
-										"controller": "BackendMenuEntries",
-										"action": "overview"
-									}
-								},
-								"access": {
-									"scope": "BackendMenuEntries",
-									"identifier": "read"
-								}
-							},
-							"backend_menu_entries_add": {
-								"title": {
-									"translate": ["backend_menu_entries", "menu_add"]
-								},
-								"link": {
-									"url": {
-										"controller": "BackendMenuEntries",
-										"action": "add"
-									}
-								},
-								"access": {
-									"scope": "backend_menu_entries",
-									"identifier": "create"
-								}
-							}
-						}
-					},
 					"menus_configure": {
 						"title": {
 							"translate": ["menus", "menu_configure"]

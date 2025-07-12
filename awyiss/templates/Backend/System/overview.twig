@@ -42,6 +42,7 @@
 			{% block fieldsetExtend %}
 				{% if (AuthorizationHelper.anyIsAccessible(
 					{scope: 'attributes', identifier: 'read'},
+					{scope: 'backend_menu_entries', identifier: 'read'},
 					{scope: 'datatables', identifier: 'read'},
 					{scope: 'page_roles', identifier: 'read'}
 				)) %}
@@ -54,6 +55,14 @@
 									{% if AuthorizationHelper.scopeIsAccessible('attributes', [], 'read') %}
 										<li>
 											{{ HtmlHelper.link(__d('attributes', 'headline_overview'), {controller: 'Attributes', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemBackendMenuEntriesOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('backend_menu_entries', [], 'read') %}
+										<li>
+											{{ HtmlHelper.link(__d('backend_menu_entries', 'headline_overview'), {controller: 'BackendMenuEntries', action: 'overview'}) }}
 										</li>
 									{% endif %}
 								{% endblock %}
