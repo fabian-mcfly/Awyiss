@@ -85,7 +85,7 @@ class FormEntriesTable extends Table {
 		]);
 
 
-		$validator->notEmptyString('pageId');
+		$validator->allowEmptyString('pageId');
 		$validator->add('pageId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
