@@ -321,6 +321,15 @@ class FormRenderer {
 	 * @return string|false
 	 */
 	public function sendForm(): string|false {
+		if (!$this->form) {
+			throw new RuntimeException('No form was initialized.');
+		}
+
+		// Make sure the form is submitted
+		if (!$this->form->isSubmitted()) {
+			return false;
+		}
+
 		/** @var \Awyiss\Utility\Form\FormSender $ls_formSenderClass */
 		$ls_formSenderClass = App::className('FormSender', 'Utility/Form');
 
@@ -345,6 +354,11 @@ class FormRenderer {
 	public function sendAndRedirect(): void {
 		if (!$this->form) {
 			throw new RuntimeException('No form was initialized.');
+		}
+
+		// Make sure the form is submitted
+		if (!$this->form->isSubmitted()) {
+			return;
 		}
 
 		$ls_responseCode = $this->sendForm();
