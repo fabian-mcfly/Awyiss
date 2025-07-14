@@ -7,6 +7,7 @@ namespace Awyiss\Model\Entity;
 use Awyiss\Core\App;
 use Awyiss\Form\FormOptionsInterface;
 use Awyiss\Form\Protection\FormProtectionProvider;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Utility\Inflector;
 use Awyiss\Validation\Validator;
@@ -238,7 +239,7 @@ class Form extends Entity {
 				$lo_formElement->options = $lo_formElement->parseOptions(
 					$lo_formElement->options,
 					$lo_formElement->type,
-					$this->sourcePage?->languageShortcode ?? null
+					$this->sourcePage?->languageShortcode ?? LocaleMiddleware::getLanguage()?->shortcode ?? null
 				);
 			}
 
