@@ -191,7 +191,7 @@ class FormSender {
 
 		$lo_mailer->setSubject(html_entity_decode($this->form->subject))
 		->setFrom(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName))
-		->setTo(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')));
+		->setTo(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix', 'Awyiss CMS')));
 
 		if ($this->form->cc) {
 			foreach ($this->form->cc as $la_cc) {
@@ -205,22 +205,12 @@ class FormSender {
 			}
 		}
 
-		/*
-		 * It's usually not permitted to send emails from a different domain than the site's domain.
-		 * To ensure that the email is sent, the real sender should be part of the site's domain.
-		 *
-		 * And to make sure the recipient can reply to the email,
-		 * the real sender should be set as the reply-to address.
-		 */
-		if ($this->getFormOptions()->getSafeRealSender()) {
-			$lo_mailer->setSender($this->getFormOptions()->getSafeRealSender(), html_entity_decode($this->form->userName))
-			->setReplyTo(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName));
-		}
-
-		// `both` should be default, so only set the format if it differs from the default.
-		if (empty($ls_bodyHtml) || empty($ls_bodyPlain)) {
-			$lo_mailer->setEmailFormat(empty($ls_bodyHtml) ? 'text' : 'html');
-		}
+		$this->setSafeSender(
+			$lo_mailer,
+			$this->form->userName,
+			$this->form->userEmail,
+			$this->form->userName
+		);
 
 		$this->addFormAttachments($lo_mailer);
 
@@ -300,22 +290,12 @@ class FormSender {
 		->setFrom(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')))
 		->setTo(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName));
 
-		/*
-		 * It's usually not permitted to send emails from a different domain than the site's domain.
-		 * To ensure that the email is sent, the real sender should be part of the site's domain.
-		 *
-		 * And to make sure the recipient can reply to the email,
-		 * the real sender should be set as the reply-to address.
-		 */
-		if ($this->getFormOptions()->getSafeRealSender()) {
-			$lo_mailer->setSender($this->getFormOptions()->getSafeRealSender(), html_entity_decode($this->form->userName))
-			->setReplyTo(html_entity_decode($this->form->ownerEmail), $this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'));
-		}
-
-		// `both` should be default, so only set the format if it differs from the default.
-		if (empty($ls_bodyHtml) || empty($ls_bodyPlain)) {
-			$lo_mailer->setEmailFormat(empty($ls_bodyHtml) ? 'text' : 'html');
-		}
+		$this->setSafeSender(
+			$lo_mailer,
+			$this->form->userName,
+			$this->form->ownerEmail,
+			$this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')
+		);
 
 		// Dispatch a new event for the form beforeConfirmationEmailDeliver
 		// If the event is stopped, do not send the email.
@@ -844,5 +824,30 @@ class FormSender {
 		}
 
 		return true;
+	}
+
+
+	/**
+	 * It's usually not permitted to send emails from a different domain than the site's domain.
+	 * To ensure that the email is sent, the real sender should be part of the site's domain.
+	 *
+	 * And to make sure the recipient can reply to the email, the real sender should be set
+	 * as the reply-to address.
+	 *
+	 * @param \Cake\Mailer\Mailer $mailer
+	 * @param string|null $senderName
+	 * @param string $replyToMail
+	 * @param string|null $replyToName
+	 * @return static
+	 */
+	protected function setSafeSender(Mailer $mailer, ?string $senderName, string $replyToMail, ?string $replyToName): static {
+		$ls_safeRealSender = $this->getFormOptions()->getSafeRealSender();
+		if ($ls_safeRealSender) {
+			$mailer
+				->setSender($ls_safeRealSender, html_entity_decode($senderName))
+				->setReplyTo(html_entity_decode($replyToMail), html_entity_decode($replyToName));
+		}
+
+		return $this;
 	}
 }
