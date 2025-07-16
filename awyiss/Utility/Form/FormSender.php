@@ -22,6 +22,7 @@ use Cake\Mailer\Mailer;
 use Cake\Utility\Security;
 use DateTimeZone;
 use Exception;
+use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 
 
@@ -166,16 +167,19 @@ class FormSender {
 			return false;
 		}
 
-		$lo_eventManager = EventManager::instance();
-
 		// Dispatch a new event for the form beforeSendEmail
-		$lo_event = new Event('FormSender.beforeSendEmail', $this->form, [
-			'bodyHtml' => &$ls_bodyHtml,
-			'bodyPlain' => &$ls_bodyPlain,
-		]);
-		$lo_eventManager->dispatch($lo_event);
+		// If the event is stopped, do not send the email.
+		if (
+			!$this->sendEvent('FormSender.beforeSendEmail', [
+				'bodyHtml' => &$ls_bodyHtml,
+				'bodyPlain' => &$ls_bodyPlain,
+			])
+		) {
+			return false;
+		}
 
-		if ($lo_event->isStopped()) {
+		// Check again if both body parts are empty.
+		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
 			return false;
 		}
 
@@ -221,27 +225,36 @@ class FormSender {
 		$this->addFormAttachments($lo_mailer);
 
 		// Dispatch a new event for the form beforeEmailDeliver
-		$lo_event = new Event('FormSender.beforeEmailDeliver', $this->form, [
-			'bodyHtml' => &$ls_bodyHtml,
-			'bodyPlain' => &$ls_bodyPlain,
-			'mailer' => $lo_mailer,
-		]);
-		$lo_eventManager->dispatch($lo_event);
-
-		if ($lo_event->isStopped()) {
+		// If the event is stopped, do not send the email.
+		if (
+			!$this->sendEvent('FormSender.beforeEmailDeliver', [
+				'bodyHtml' => &$ls_bodyHtml,
+				'bodyPlain' => &$ls_bodyPlain,
+				'mailer' => $lo_mailer,
+			])
+		) {
 			return false;
+		}
+
+		// Check again if both body parts are empty.
+		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+			return false;
+		}
+
+		// `both` should be default, so only set the format if it differs from the default.
+		if (empty($ls_bodyHtml) || empty($ls_bodyPlain)) {
+			$lo_mailer->setEmailFormat(empty($ls_bodyHtml) ? 'text' : 'html');
 		}
 
 		$lb_sent = $this->send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain);
 
 		// Dispatch a new event for the form afterEmailDeliver
-		$lo_event = new Event('FormSender.afterEmailDeliver', $this->form, [
+		$this->sendEvent('FormSender.afterEmailDeliver', [
 			'bodyHtml' => $ls_bodyHtml,
 			'bodyPlain' => $ls_bodyPlain,
 			'mailer' => $lo_mailer,
 			'sent' => $lb_sent,
 		]);
-		$lo_eventManager->dispatch($lo_event);
 
 		return $lb_sent;
 	}
@@ -261,16 +274,19 @@ class FormSender {
 			return false;
 		}
 
-		$lo_eventManager = EventManager::instance();
-
 		// Dispatch a new event for the form beforeSendConfirmationEmail
-		$lo_event = new Event('FormSender.beforeSendConfirmationEmail', $this->form, [
-			'bodyHtml' => &$ls_bodyHtml,
-			'bodyPlain' => &$ls_bodyPlain,
-		]);
-		$lo_eventManager->dispatch($lo_event);
+		// If the event is stopped, do not send the email.
+		if (
+			!$this->sendEvent('FormSender.beforeSendConfirmationEmail', [
+				'bodyHtml' => &$ls_bodyHtml,
+				'bodyPlain' => &$ls_bodyPlain,
+			])
+		) {
+			return false;
+		}
 
-		if ($lo_event->isStopped()) {
+		// Check again if both body parts are empty.
+		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
 			return false;
 		}
 
@@ -302,27 +318,36 @@ class FormSender {
 		}
 
 		// Dispatch a new event for the form beforeConfirmationEmailDeliver
-		$lo_event = new Event('FormSender.beforeConfirmationEmailDeliver', $this->form, [
-			'bodyHtml' => &$ls_bodyHtml,
-			'bodyPlain' => &$ls_bodyPlain,
-			'mailer' => $lo_mailer,
-		]);
-		$lo_eventManager->dispatch($lo_event);
-
-		if ($lo_event->isStopped()) {
+		// If the event is stopped, do not send the email.
+		if (
+			!$this->sendEvent('FormSender.beforeConfirmationEmailDeliver', [
+				'bodyHtml' => &$ls_bodyHtml,
+				'bodyPlain' => &$ls_bodyPlain,
+				'mailer' => $lo_mailer,
+			])
+		) {
 			return false;
+		}
+
+		// Check again if both body parts are empty.
+		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+			return false;
+		}
+
+		// `both` should be default, so only set the format if it differs from the default.
+		if (empty($ls_bodyHtml) || empty($ls_bodyPlain)) {
+			$lo_mailer->setEmailFormat(empty($ls_bodyHtml) ? 'text' : 'html');
 		}
 
 		$lb_sent = $this->send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain, 'confirmation');
 
 		// Dispatch a new event for the form afterConfirmationEmailDeliver
-		$lo_event = new Event('FormSender.afterConfirmationEmailDeliver', $this->form, [
+		$this->sendEvent('FormSender.afterConfirmationEmailDeliver', [
 			'bodyHtml' => $ls_bodyHtml,
 			'bodyPlain' => $ls_bodyPlain,
 			'mailer' => $lo_mailer,
 			'sent' => $lb_sent,
 		]);
-		$lo_eventManager->dispatch($lo_event);
 
 		return $lb_sent;
 	}
@@ -785,5 +810,39 @@ class FormSender {
 			'formData' => $la_formData,
 			'formElements' => $la_formElements,
 		];
+	}
+
+
+	/**
+	 * @param string $eventName
+	 * @param array $data
+	 * @return bool
+	 */
+	protected function sendEvent(string $eventName, array $data): bool {
+		$lo_eventManager = EventManager::instance();
+
+		// Dispatch a new event for the form beforeSendEmail
+		$lo_event = new Event($eventName, $this->form, $data);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			return false;
+		}
+
+		$la_result = $lo_event->getResult();
+		if ($la_result !== null) {
+			if (!is_array($la_result)) {
+				throw new InvalidArgumentException(sprintf('Expected an array as result of the event "%s", `%s` given', $eventName, gettype($la_result)));
+			}
+
+			foreach ($la_result as $ls_key => $lx_value) {
+				if (array_key_exists($ls_key, $data)) {
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$data[ $ls_key ] = $lx_value;
+				}
+			}
+		}
+
+		return true;
 	}
 }
