@@ -42,9 +42,9 @@ class FormSender {
 	 * Stores the identifier of the saved form entry.
 	 * The value is a md5 hash of the form entry id and the post-hash.
 	 *
-	 * @var string $formEntryIdentifier
+	 * @var string|null $formEntryIdentifier
 	 */
-	protected string $formEntryIdentifier;
+	protected ?string $formEntryIdentifier = null;
 	/**
 	 * @var array $errors
 	 */
@@ -145,9 +145,9 @@ class FormSender {
 	 * Returns the identifier of the saved form entry.
 	 * The value is a md5 hash of the form entry id and the post-hash.
 	 *
-	 * @return string
+	 * @return string|null
 	 */
-	public function getFormEntryIdentifier(): string {
+	public function getFormEntryIdentifier(): ?string {
 		return $this->formEntryIdentifier;
 	}
 
