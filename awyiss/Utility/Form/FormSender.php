@@ -72,19 +72,20 @@ class FormSender {
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 */
 	public function __construct(Form $form, ?Page $page = null) {
-		$lo_form = $form;
+		$this->form = $form;
 		$this->page = $page;
 
 		/** @var \Awyiss\Model\Table\FormsTable $lo_formsTable */
 		$lo_formsTable = FactoryLocator::get('Table')->get('Forms');
-		if (!$lo_form->emailTemplate) {
-			$lo_form = $lo_formsTable->loadInto($lo_form, ['EmailTemplates']);
+		if (!$form->emailTemplate) {
+			$lo_formsTable->loadInto($form, ['EmailTemplates']);
 		}
-		if (!$lo_form->confirmationEmailTemplate) {
-			$lo_form = $lo_formsTable->loadInto($lo_form, ['ConfirmationEmailTemplates']);
+		if (!$form->confirmationEmailTemplate) {
+			$lo_formsTable->loadInto($form, ['ConfirmationEmailTemplates']);
 		}
-
-		$this->form = $lo_form;
+		if (!$form->formElements) {
+			$form->loadFormOptions()->loadFormElements();
+		}
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->formEntriesTable = FactoryLocator::get('Table')->get('FormEntries');
