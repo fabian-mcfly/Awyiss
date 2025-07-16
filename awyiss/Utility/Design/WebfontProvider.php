@@ -27,14 +27,6 @@ class WebfontProvider {
 
 
 	/**
-	 * @param array $webfonts
-	 */
-	public function __construct() {
-		$this->webfonts = Cache::remember('webfonts', fn() => $this->fetchWebfonts(), 'persistent');
-	}
-
-
-	/**
 	 * Fetches the webfonts from the google-webfonts-helper
 	 * and stores them in the $webfonts property
 	 *
@@ -72,9 +64,23 @@ class WebfontProvider {
 
 
 	/**
+	 * Clears the cache of the webfonts
+	 *
+	 * @return $this
+	 */
+	public function clearCache(): static {
+		Cache::delete('webfonts', 'persistent');
+
+		return $this;
+	}
+
+
+	/**
 	 * @return array
 	 */
 	public function getWebfonts(): array {
+		$this->webfonts = Cache::remember('webfonts', fn () => $this->fetchWebfonts(), 'persistent');
+
 		$lo_webfonts = new Collection($this->webfonts);
 
 		return $lo_webfonts->filter(fn ($font) => $font['popularity'] < 1000)->toArray();
