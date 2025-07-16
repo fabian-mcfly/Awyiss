@@ -581,7 +581,10 @@ class Survey extends Entity {
 
 			if (
 				$lx_answer === 'custom' &&
-				$lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::SingleChoice &&
+				(
+					$lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::SingleChoice ||
+					$lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::FreeText
+				) &&
 				isset($la_customData[ $ls_identifier ])
 			) {
 				$this->customAnswers[ $ls_identifier ] = $la_customData[ $ls_identifier ];
