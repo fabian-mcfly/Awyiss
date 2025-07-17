@@ -154,12 +154,6 @@ class ScssCompiler {
 	public static function compileFolders(array $folders, array $vars = [], bool $returnCss = false): array {
 		$la_return = [];
 
-		$la_variables = $vars;
-
-		if ($la_variables) {
-			$la_variables = static::normalizeVariables($la_variables);
-		}
-
 		foreach ($folders as $ls_folderPath => $lo_files) {
 			// If the value is not an instance of ScssFilesCollection, skip it.
 			if (!$lo_files instanceof ScssFilesCollection) {
@@ -167,7 +161,7 @@ class ScssCompiler {
 			}
 
 			// Compile the SCSS files in the folder and store the result in the return array.
-			$la_return[ $ls_folderPath ] = static::compile($lo_files, $ls_folderPath, $la_variables, $returnCss);
+			$la_return[ $ls_folderPath ] = static::compile($lo_files, $ls_folderPath, $vars, $returnCss);
 		}
 
 		// Return the array of compilation results.
@@ -220,6 +214,16 @@ class ScssCompiler {
 			throw new InvalidArgumentException(sprintf('The file `%s` is not a valid SCSS file.', $file->getBasename()));
 		}
 
+		if (!file_exists($file->getPathname())) {
+			throw new InvalidArgumentException(sprintf('The SCSS file `%s` does not exist.', $file->getBasename()));
+		}
+
+		// Normalize variables
+		if ($vars) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$vars = static::normalizeVariables($vars);
+		}
+
 		// Instantiate the SCSS compiler and configure it.
 		$lo_scssCompiler = static::getCompiler();
 
@@ -230,11 +234,11 @@ class ScssCompiler {
 				return new SassString('');
 			}
 
-			if (str_starts_with($value, 'clamp(')) {
+			if (is_string($value) && str_starts_with($value, 'clamp(')) {
 				return new SassString($value);
 			}
 
-			return ValueConverter::parseValue($value);
+			return ValueConverter::parseValue((string)$value);
 		}, $vars));
 
 		// Set the css file path based on the scss file
@@ -412,7 +416,14 @@ class ScssCompiler {
 
 
 	/**
-	 * Normalizes the variables by adding the units to values
+	 * Normalizes SCSS variables by transforming PHP values into SCSS-compatible format.
+	 *
+	 * This method processes variables in three ways:
+	 * 1. Scalar values: Appends corresponding unit values (e.g., 'fontSize' + 'fontSizeUnit')
+	 * 2. Array values without 'font' key: Joins array elements with spaces
+	 * 3. Font arrays: Extracts font name and wraps it in SCSS inspect() function
+	 *
+	 * Variables ending with 'Unit' are skipped as they are used to append units to other variables.
 	 *
 	 * @param array $variables
 	 * @return array

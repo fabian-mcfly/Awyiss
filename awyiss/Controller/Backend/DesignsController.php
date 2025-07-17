@@ -568,8 +568,6 @@ class DesignsController extends Controller {
 		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_className */
 		$ls_className = App::className('ScssCompiler', 'Utility/Design');
 
-		$la_variables = $ls_className::normalizeVariables($data['settings']);
-
 		foreach (Configure::read('Design.previewScssFiles', []) as $ls_scssFile) {
 			foreach ($la_realmFolders as $ls_basePath) {
 				if (!str_starts_with($ls_scssFile, $ls_basePath)) {
@@ -579,7 +577,7 @@ class DesignsController extends Controller {
 				// compileScss expects SplFileInfo, not a string, so convert it
 				$ls_scssFile = new SplFileInfo($ls_scssFile);
 
-				$ls_css .= $ls_className::compileScss($ls_scssFile, $ls_basePath, $la_variables, true, $includeColumnSystem) . PHP_EOL;
+				$ls_css .= $ls_className::compileScss($ls_scssFile, $ls_basePath, $data['settings'], true, $includeColumnSystem) . PHP_EOL;
 			}
 		}
 
