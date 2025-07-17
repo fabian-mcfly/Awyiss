@@ -5,6 +5,7 @@ namespace Awyiss\Utility\Design;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Utility\Content\AwyissColumnSystem;
 use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
 use Cake\Log\Log;
@@ -29,7 +30,9 @@ class ScssCompiler {
 	 */
 	protected static Compiler $compiler;
 	/**
-	 * @var bool $showExceptions Whether to show compile exceptions
+	 * Whether to show compile exceptions
+	 *
+	 * @var bool $showExceptions
 	 */
 	protected static bool $showExceptions = false;
 
@@ -39,7 +42,8 @@ class ScssCompiler {
 	 * Main files are ones that do not start with an underscore.
 	 *
 	 * @param string|null $realm The realm to be searched. This can be either Awyiss::REALM_FRONTEND or Awyiss::REALM_BACKEND.
-	 * @return array An array of ScssFilesCollection objects containing all .scss files and the latest file modification time for each realm.
+	 * @return array{string: \Awyiss\Utility\Design\ScssFilesCollection} An associative array where the keys are folder paths and the values are ScssFilesCollection objects
+	 *     containing all .scss files and the latest file modification time.
 	 * @throws InvalidArgumentException If the given realm is not valid.
 	 */
 	public static function discoverRealmFiles(?string $realm): array {
@@ -236,7 +240,7 @@ class ScssCompiler {
 		$ls_cssFilename = substr($file->getFilename(), 0, -4) . 'css';
 
 		// Replace 'scss' with 'css' in the file path to get the css folder path
-		$ls_cssFolderPath = rtrim(str_replace($basePath . 'scss', $basePath . 'css', $file->getPath()), DS) . DS;
+		$ls_cssFolderPath = rtrim(realpath(str_replace($basePath . 'scss', $basePath . 'css', $file->getPath())), DS) . DS;
 
 		static::$compiler->addVariables([
 			'awyissVersion' => ValueConverter::fromPhp(Awyiss::VERSION),
@@ -250,10 +254,8 @@ class ScssCompiler {
 		$ls_sourceRoot = '../';
 		$ls_subDir = trim(substr($ls_cssFolderPath, strlen($basePath)), DS);
 		if (str_contains($ls_subDir, DS)) {
-			$li_directories = substr_count($ls_subDir, DS);
-			for ($li_i = 0; $li_i < $li_directories; $li_i++) {
-				$ls_sourceRoot .= '../';
-			}
+			$li_directoryCount = substr_count($ls_subDir, DS);
+			$ls_sourceRoot .= str_repeat('../', $li_directoryCount);
 		}
 
 		// Set the source map options if the CSS content is not returned.
@@ -275,7 +277,7 @@ class ScssCompiler {
 		 *
 		 * @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName
 		 */
-		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className');
+		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className', AwyissColumnSystem::class);
 		$la_columnSystemFilePaths = $ls_columnSystemClassName::getScssFilePaths();
 		if ($includeColumnSystem && !empty($la_columnSystemFilePaths['pre'])) {
 			foreach ($la_columnSystemFilePaths['pre'] as $ls_columnSystemFilePath) {
@@ -351,7 +353,7 @@ class ScssCompiler {
 		 *
 		 * @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName
 		 */
-		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className');
+		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className', AwyissColumnSystem::class);
 
 		$la_widths = [];
 		$la_indents = [];
