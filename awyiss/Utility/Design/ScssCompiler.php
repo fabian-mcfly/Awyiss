@@ -240,7 +240,7 @@ class ScssCompiler {
 		$ls_cssFilename = substr($file->getFilename(), 0, -4) . 'css';
 
 		// Replace 'scss' with 'css' in the file path to get the css folder path
-		$ls_cssFolderPath = rtrim(realpath(str_replace($basePath . 'scss', $basePath . 'css', $file->getPath())), DS) . DS;
+		$ls_cssFolderPath = rtrim(str_replace($basePath . 'scss', $basePath . 'css', $file->getPath()), DS) . DS;
 
 		static::$compiler->addVariables([
 			'awyissVersion' => ValueConverter::fromPhp(Awyiss::VERSION),

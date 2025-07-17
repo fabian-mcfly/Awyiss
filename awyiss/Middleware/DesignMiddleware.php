@@ -10,6 +10,7 @@ use Awyiss\Utility\Design\ScssFilesCollection;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Exception;
+use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -98,7 +99,12 @@ class DesignMiddleware implements MiddlewareInterface {
 		$ls_compilerClass::showExceptions($showExceptions);
 
 		// Discover the SCSS files in the realm
-		$la_files = $ls_compilerClass::discoverRealmFiles($realm ?? Awyiss::getRealm());
+		try {
+			$la_files = $ls_compilerClass::discoverRealmFiles($realm ?? Awyiss::getRealm());
+		}
+		catch (InvalidArgumentException) {
+			return;
+		}
 
 		/*
 		 * If the SCSS should be compiled, but must not be compiled,
@@ -235,7 +241,7 @@ class DesignMiddleware implements MiddlewareInterface {
 	/**
 	 * @return class-string<\Awyiss\Utility\Design\ScssCompiler>
 	 */
-	protected static function getCompilerClass(): ?string {
+	protected static function getCompilerClass(): string {
 		if (isset(static::$compilerClass)) {
 			return static::$compilerClass;
 		}
