@@ -1,4 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+/**
+ * @noinspection PhpInternalEntityUsedInspection
+ */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 namespace Awyiss\Utility\Design;
@@ -9,6 +15,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use ScssPhp\ScssPhp\Ast\Sass\Expression;
+use ScssPhp\ScssPhp\Ast\Sass\Expression\BooleanExpression;
 use ScssPhp\ScssPhp\Ast\Sass\Expression\ColorExpression;
 use ScssPhp\ScssPhp\Ast\Sass\Expression\FunctionExpression;
 use ScssPhp\ScssPhp\Ast\Sass\Expression\ListExpression;
@@ -17,6 +24,7 @@ use ScssPhp\ScssPhp\Ast\Sass\Expression\StringExpression;
 use ScssPhp\ScssPhp\Ast\Sass\Expression\VariableExpression;
 use ScssPhp\ScssPhp\Ast\Sass\Statement\Stylesheet;
 use ScssPhp\ScssPhp\Ast\Sass\Statement\VariableDeclaration;
+use ScssPhp\ScssPhp\Exception\SassFormatException;
 
 
 /**
@@ -105,7 +113,12 @@ class ScssVariableProvider {
 				throw new InvalidArgumentException(sprintf('The SCSS file `%s` does not exist.', $ls_scssFile));
 			}
 
-			$lo_stylesheet = Stylesheet::parseScss(file_get_contents($ls_scssFile));
+			try {
+				$lo_stylesheet = Stylesheet::parseScss(file_get_contents($ls_scssFile));
+			}
+			catch (SassFormatException) {
+				continue;
+			}
 
 			foreach ($lo_stylesheet->getChildren() as $lo_var) {
 				if (!is_a($lo_var, VariableDeclaration::class)) {
@@ -198,7 +211,10 @@ class ScssVariableProvider {
 			'value' => null,
 		];
 
-		if (is_a($value, ColorExpression::class)) {
+		if (is_a($value, BooleanExpression::class)) {
+			$la_options['value'] = $value->getValue();
+		}
+		elseif (is_a($value, ColorExpression::class)) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$la_options['value'] = $value->getValue()->getFormat()->getOriginal();
 		}
