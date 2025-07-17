@@ -25,7 +25,7 @@ final class AwyissColumnSystem extends AbstractColumnSystem {
 	 * @inheritDoc
 	 */
 	public static function getScssFilePaths(): array {
-		$ls_path = implode(DS, [ROOT, CUSTOM_DIR, 'assets', 'scss', 'columns', 'Awyiss']) . DS;
+		$ls_path = implode(DS, [ROOT, 'awyiss', 'assets', 'scss', 'Frontend', 'ColumnSystem', 'Awyiss']) . DS;
 
 		return [
 			'pre' => [

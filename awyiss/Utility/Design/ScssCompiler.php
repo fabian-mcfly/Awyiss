@@ -129,7 +129,8 @@ class ScssCompiler {
 		foreach ($files->getMainFiles() as $lo_file) {
 			$lo_scssVariableProvider->setScssFiles([$lo_file->getPathname()]);
 
-			$lb_includeColumnSystem = isset($lo_scssVariableProvider->getInternalVariables()['includeColumnSystem']);
+			$la_internalVariables = $lo_scssVariableProvider->getInternalVariables();
+			$lb_includeColumnSystem = isset($la_internalVariables['includeColumnSystem']) && $la_internalVariables['includeColumnSystem']->getValue() === true;
 
 			$la_compiledCss[] = self::compileScss($lo_file, $basePath, $vars, $returnCss, $lb_includeColumnSystem);
 		}

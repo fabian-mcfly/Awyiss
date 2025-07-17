@@ -1,6 +1,3 @@
-// Just needs to exists. The value is not important.
-$includeColumnSystem:true !default;
-
 $fontNameMain:Helvetica !default;
 $fontStackFallbackMain:Arial, Geneva, sans-serif !default;
 $fontStackMain:quote($fontNameMain), inspect($fontStackFallbackMain);

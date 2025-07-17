@@ -1,4 +1,8 @@
-// Just needs to exists. The value is not important.
+/**
+ * Boolean value determines whether or not to include
+ * the column system-specific styles.
+ * Needs to be marked as default.
+ */
 $includeColumnSystem:true !default;
 
 //noinspection SassScssUnresolvedVariable
