@@ -4,6 +4,7 @@
 namespace Awyiss\Utility\Content;
 
 
+use Awyiss\Model\Entity;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use DOMDocument;
@@ -62,7 +63,7 @@ class HtmlCleaner {
 		}
 
 		foreach ($la_fields as $ls_field) {
-			if (!$entity->has($ls_field) || !is_string($entity->get($ls_field)) || !$entity->isDirty($ls_field)) {
+			if (!static::fieldIsValid($entity, $ls_field)) {
 				continue;
 			}
 
@@ -76,7 +77,7 @@ class HtmlCleaner {
 				continue;
 			}
 
-			throw new InvalidArgumentException(sprintf('Invalid clean method. Expected one of `none`, `moderate`, `strict`. Got `%s`.', $method));
+			throw new InvalidArgumentException(sprintf('Invalid clean method. Expected one of `none`, `moderate`, `strict`. `%s` given.', $method));
 		}
 
 		if ($entity->has('_translations')) {
@@ -202,12 +203,6 @@ class HtmlCleaner {
 		// Suppress errors due to malformed HTML
 		libxml_use_internal_errors(true);
 
-		//$ls_body = mb_encode_numericentity(
-		//	htmlspecialchars_decode(htmlentities($value, ENT_NOQUOTES, 'UTF-8', false), ENT_NOQUOTES),
-		//	[0x80, 0x10FFFF, 0, ~0],
-		//	'UTF-8'
-		//);
-
 		// Load the HTML string into the DOMDocument
 		$lo_dom->loadHTML('<!DOCTYPE html>' . mb_encode_numericentity($value, [0x80, 0x10FFFF, 0, ~0], 'UTF-8'));
 
@@ -291,6 +286,12 @@ class HtmlCleaner {
 					// Left trim the text node from non-breaking spaces
 					$lo_brTag->nextSibling->nodeValue = ltrim($lo_brTag->nextSibling->nodeValue, "\u{A0}");
 				}
+
+				// If the next sibling is a text node and only consist of whitespaces,
+				// remove it. No space should occur after a <br>-tag.
+				if ($lo_brTag->nextSibling->nodeName === '#text' && preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_brTag->nextSibling->nodeValue)) {
+					$lo_brTag->parentNode->removeChild($lo_brTag->nextSibling);
+				}
 			}
 
 			if ($lo_brTag->previousSibling) {
@@ -298,6 +299,13 @@ class HtmlCleaner {
 					// Right trim the text node from non-breaking spaces
 					$lo_brTag->previousSibling->nodeValue = rtrim($lo_brTag->previousSibling->nodeValue, "\u{A0}");
 				}
+			}
+
+			// Remove the next sibling if it is a <br>-tag to avoid multiple consecutive <br>-tags
+			if ($lo_brTag->nextSibling->nodeName === 'br') {
+				$lo_brTag->parentNode->removeChild($lo_brTag->nextSibling);
+				$li_i--;
+				$li_brTags--;
 			}
 		}
 	}
@@ -321,14 +329,15 @@ class HtmlCleaner {
 				continue;
 			}
 
-			if (!preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_pTag->textContent)) {
+			if (!preg_match('/^([\s\n\r\t]|\xC2\xA0\x{A0})*$/u', $lo_pTag->textContent)) {
 				continue;
 			}
 
 			// If the current node has any non-textnode children, skip it
 			if ($lo_pTag->hasChildNodes()) {
+				/** @var \DOMNode $lo_childNode */
 				foreach ($lo_pTag->childNodes as $lo_childNode) {
-					if ($lo_childNode->nodeName !== '#text') {
+					if ($lo_childNode->nodeName !== '#text' && $lo_childNode->nodeType !== XML_ENTITY_REF_NODE) {
 						continue 2;
 					}
 				}
@@ -344,6 +353,7 @@ class HtmlCleaner {
 				$lo_nextSibling = $lo_nextSibling->nextSibling;
 			}
 
+
 			if (!$lo_nextSibling || $lo_nextSibling->nodeName !== 'p') {
 				continue;
 			}
@@ -355,7 +365,7 @@ class HtmlCleaner {
 				if ($lo_nextSibling->hasChildNodes()) {
 					// If the current node has any non-textnode children, skip it
 					foreach ($lo_nextSibling->childNodes as $lo_childNode) {
-						if ($lo_childNode->nodeName !== '#text') {
+						if ($lo_childNode->nodeName !== '#text' && $lo_childNode->nodeType !== XML_ENTITY_REF_NODE) {
 							continue 2;
 						}
 					}
@@ -414,6 +424,7 @@ class HtmlCleaner {
 	protected static function convertLeadingAndTrailingBrTags(DOMDocument $dom): void {
 		$lo_pTags = $dom->getElementsByTagName('p');
 
+		/** @var \DOMNode $lo_pTag */
 		foreach ($lo_pTags as $lo_pTag) {
 			// As long as the first child of the <p>-tag is a <br>-tag, remove it and prepend a <p>-tag
 			while ($lo_pTag->firstChild && $lo_pTag->firstChild->nodeName === 'br') {
@@ -423,8 +434,9 @@ class HtmlCleaner {
 				$lo_newPTag = $dom->createElement('p', '&nbsp;');
 				$lo_pTag->parentNode->insertBefore($lo_newPTag, $lo_pTag);
 
-				// Create a new \r\n text node
-				$lo_newTextNode = $dom->createTextNode("\r\n");
+				// Create a new newline text node
+				$lo_newTextNode = $dom->createTextNode("\n");
+				// and insert it between the new <p>-tag and the old <p>-tag
 				$lo_pTag->parentNode->insertBefore($lo_newTextNode, $lo_pTag);
 			}
 
@@ -435,10 +447,22 @@ class HtmlCleaner {
 
 				$lo_newPTag = $dom->createElement('p', '&nbsp;');
 				if ($lo_pTag->nextSibling === null) {
+					// Create a new \n text node
+					$lo_newTextNode = $dom->createTextNode("\n");
+					// and append it to the parent node
+					$lo_pTag->parentNode->appendChild($lo_newTextNode);
+
+					// Now append the new <p>-tag
 					$lo_pTag->parentNode->appendChild($lo_newPTag);
 				}
 				else {
+					// Insert the new <p>-tag after the current <p>-tag
 					$lo_pTag->parentNode->insertBefore($lo_newPTag, $lo_pTag->nextSibling);
+
+					// Create a new \n text node
+					$lo_newTextNode = $dom->createTextNode("\n");
+					// and insert it before the new <p>-tag
+					$lo_pTag->parentNode->insertBefore($lo_newTextNode, $lo_newPTag);
 				}
 			}
 		}
@@ -552,6 +576,7 @@ class HtmlCleaner {
 					}
 
 					if ($lo_tag->lastChild->isSameNode($lo_tag->firstChild)) {
+						// Create a new text node with a non-breaking space
 						$lo_tag->appendChild($dom->createTextNode("\u{A0}"));
 						break;
 					}
@@ -578,6 +603,7 @@ class HtmlCleaner {
 					}
 
 					if ($lo_tag->firstChild->isSameNode($lo_tag->lastChild)) {
+						// Create a new text node with a non-breaking space
 						$lo_tag->appendChild($dom->createTextNode("\u{A0}"));
 						break;
 					}
@@ -616,6 +642,7 @@ class HtmlCleaner {
 	 *
 	 * @param \DOMDocument $dom
 	 * @return string|false
+	 * @noinspection DuplicatedCode
 	 */
 	protected static function getBody(DOMDocument $dom): string|false {
 		// Remove the doctype
@@ -640,5 +667,37 @@ class HtmlCleaner {
 
 		// Return the cleaned HTML
 		return $dom->saveHTML();
+	}
+
+
+	/**
+	 * Checks if the given field is valid for the entity
+	 * or if it exists in the attributes of the entity.
+	 *
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param string $field
+	 * @return bool
+	 */
+	protected static function fieldIsValid(EntityInterface $entity, string $field): bool {
+		// Field is valid if it exists in the entity and is a string
+		if ($entity->has($field)) {
+			return is_string($entity->get($field)) && $entity->isDirty($field);
+		}
+
+		// If the entity has no attributes or the attributes are not an instance of Entity,
+		// the field is not valid
+		if (
+			!$entity->has('attributes') || !($entity->get('attributes') instanceof Entity)
+		) {
+			return false;
+		}
+
+
+		/**
+		 * Field is valid if it exists in the attributes and is a string
+		 *
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		return $entity->attributes->has($field) && is_string($entity->attributes->get($field)) && $entity->attributes->isDirty($field);
 	}
 }
