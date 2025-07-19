@@ -4,6 +4,7 @@
 namespace Awyiss\Utility\Content;
 
 
+use InvalidArgumentException;
 use JsonSerializable;
 
 
@@ -11,29 +12,48 @@ use JsonSerializable;
  * Class AwyissColumn
  */
 abstract class AbstractColumn implements ColumnInterface,  JsonSerializable {
+	/**
+	 * @var string
+	 */
 	protected string $cssClassPrefix = 'Column';
+	/**
+	 * @var int
+	 */
 	protected int $denominator;
+	/**
+	 * @var string
+	 */
 	protected string $fraction;
+	/**
+	 * @var int
+	 */
 	protected int $numerator;
-	protected string $label;
+	/**
+	 * @var string|null
+	 */
+	protected ?string $label = null;
 
 
 	/**
 	 * Constructor
 	 *
-	 * @param string $fraction
 	 * @param int $numerator
 	 * @param int $denominator
-	 * @param string $label
+	 * @param string|null $label
 	 */
-	public function __construct(string $fraction, int $numerator, int $denominator, ?string $label = null) {
-		$this->setFraction($fraction);
-		$this->setNumerator($numerator);
-		$this->setDenominator($denominator);
-
-		if ($label) {
-			$this->setLabel($label);
+	public function __construct(int $numerator, int $denominator, ?string $label = null) {
+		if ($numerator < 0) {
+			throw new InvalidArgumentException('Numerator must be greater than or equal to zero.');
 		}
+
+		if ($denominator <= 0) {
+			throw new InvalidArgumentException('Denominator must be greater than zero.');
+		}
+
+		$this->fraction = $numerator . '/' . $denominator;
+		$this->numerator = $numerator;
+		$this->denominator = $denominator;
+		$this->label = $label;
 	}
 
 
@@ -67,17 +87,6 @@ abstract class AbstractColumn implements ColumnInterface,  JsonSerializable {
 	/**
 	 * @inheritDoc
 	 */
-	public function setDenominator(int $denominator): static {
-		$this->denominator = $denominator;
-
-
-		return $this;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
 	public function getFactor(): float {
 		return $this->numerator / $this->denominator;
 	}
@@ -94,41 +103,8 @@ abstract class AbstractColumn implements ColumnInterface,  JsonSerializable {
 	/**
 	 * @inheritDoc
 	 */
-	public function setFraction(string $fraction): static {
-		$this->fraction = $fraction;
-
-
-		return $this;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function setLabel(string $label): static {
-		$this->label = $label;
-
-
-		return $this;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
 	public function getNumerator(): int {
 		return $this->numerator;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function setNumerator(int $numerator): static {
-		$this->numerator = $numerator;
-
-
-		return $this;
 	}
 
 
