@@ -37,12 +37,12 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 	 * @inheritDoc
 	 */
 	public static function getColumnWidths(): array {
-		if (!isset(static::$columnWidths)) {
-			static::$columnWidths = static::buildUniqueFractions(1, static::$maxDenominator);
+		if (!isset(static::$columnWidths[ static::$maxDenominator ])) {
+			static::$columnWidths[ static::$maxDenominator ] = static::buildUniqueFractions(1, static::$maxDenominator);
 		}
 
 
-		return static::$columnWidths;
+		return static::$columnWidths[ static::$maxDenominator ];
 	}
 
 
@@ -80,6 +80,10 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 	 * @inheritDoc
 	 */
 	public static function setMaxDenominator(int $maxDenominator): void {
+		if ($maxDenominator < 1) {
+			throw new RuntimeException(sprintf('The maximum denominator must be at least 1, %d given', $maxDenominator));
+		}
+
 		static::$maxDenominator = $maxDenominator;
 	}
 
@@ -117,8 +121,10 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 
 				// Avoid adding duplicates
 				if (!array_key_exists($ls_fraction, $la_fractions)) {
+					/**
+					 * @see \Awyiss\Utility\Content\AwyissColumn::__construct()
+					 */
 					$la_fractions[ $ls_fraction ] = new static::$columnClassName(
-						fraction: $ls_fraction,
 						numerator: $li_simplifiedNumerator,
 						denominator: $li_simplifiedDenominator,
 					);
@@ -126,19 +132,7 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 			}
 		}
 
-		//Sort fractions by their numerical value
-		uasort($la_fractions, function (ColumnInterface $a, ColumnInterface $b) {
-			// Check if either fraction is [1, 1] and adjust ordering
-			if ($a->getNumerator() / $a->getDenominator() === 1) {
-				return -1; // $a is [1, 1], so it should come before $b
-			}
-			if ($b->getNumerator() / $b->getDenominator() === 1) {
-				return 1; // $b is [1, 1], so it should come after $a
-			}
-
-			return $a->getNumerator() / $a->getDenominator() <=> $b->getNumerator() / $b->getDenominator();
-		});
-
+		static::sortFractions($la_fractions);
 
 		return $la_fractions;
 	}
@@ -170,5 +164,27 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 
 		//When $li_secondNumber is zero, $li_firstNumber contains the GCD of the original two numbers.
 		return $li_firstNumber;
+	}
+
+
+	/**
+	 * Sort fractions by their numerical value, with 1/1 coming first.
+	 *
+	 * @param array $fractions
+	 * @return void
+	 */
+	protected static function sortFractions(array &$fractions): void {
+		/** @noinspection PhpVariableNamingConventionInspection */
+		uasort($fractions, function (ColumnInterface $a, ColumnInterface $b) {
+			// Check if either fraction is [1, 1] and adjust ordering
+			if ($a->getNumerator() / $a->getDenominator() === 1) {
+				return -1; // $a is [1, 1], so it should come before $b
+			}
+			if ($b->getNumerator() / $b->getDenominator() === 1) {
+				return 1; // $b is [1, 1], so it should come after $a
+			}
+
+			return $a->getNumerator() / $a->getDenominator() <=> $b->getNumerator() / $b->getDenominator();
+		});
 	}
 }
