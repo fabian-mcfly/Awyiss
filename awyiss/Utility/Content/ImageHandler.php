@@ -4,6 +4,7 @@
 namespace Awyiss\Utility\Content;
 
 
+use Awyiss\Model\Entity;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
@@ -25,7 +26,7 @@ use DOMXPath;
  * It also rebuilds the `<img>` tags from the custom tags when loading the content
  * for the backend, or responsive picture tags for the frontend.
  *
- * This is necessary to ensure that images, inserted in the rich text editor
+ * This is necessary to ensure that images, inserted in the rich text editor,
  * are rendered with sources for different screen sizes.
  */
 class ImageHandler {
@@ -48,7 +49,7 @@ class ImageHandler {
 		$la_fields = $fields ?: static::getDefaultFields($entity);
 
 		foreach ($la_fields as $ls_field) {
-			if (!$entity->has($ls_field) || !is_string($entity->get($ls_field))) {
+			if (!static::fieldIsValid($entity, $ls_field)) {
 				continue;
 			}
 
@@ -65,6 +66,98 @@ class ImageHandler {
 
 	/**
 	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param string $field
+	 * @param string|null $value
+	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
+	 * @return string|null
+	 * @throws \DOMException
+	 */
+	public static function replaceImageTagsInField(
+		EntityInterface $entity,
+		string $field,
+		?string $value = null,
+		?EntityInterface $referenceEntity = null
+	): ?string {
+		$ls_value = $value ?? $entity->get($field) ?? '';
+
+		if (!is_string($ls_value) || !str_contains($ls_value, '<img')) {
+			return $ls_value;
+		}
+
+		$lo_dom = static::getDomDocument($ls_value);
+
+		// Create an XPath instance
+		$lo_xpath = new DOMXPath($lo_dom);
+
+		// Find all <img> tags
+		$lo_tags = $lo_xpath->query('//img');
+
+		$la_foundSources = [];
+
+		foreach ($lo_tags as $lo_tag) {
+			// Get all attributes
+			$la_attributes = [];
+			foreach ($lo_tag->attributes as $lo_attribute) {
+				$la_attributes[ Inflector::variable($lo_attribute->name) ] = $lo_attribute->value;
+			}
+
+			// Get the src attribute
+			if ($la_attributes['src'] ?? null) {
+				$la_foundSources[] = [
+					'src' => $la_attributes['src'],
+					'attributes' => $la_attributes,
+					'node' => $lo_tag,
+				];
+			}
+		}
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get('Media');
+		$lo_media = $lo_table->find('all')->where([
+			'path IN' => array_map(function (array $foundSource) {
+				return $foundSource['src'];
+			}, $la_foundSources),
+		])->all()->indexBy('path');
+
+		if (!$lo_media->count()) {
+			return $ls_value;
+		}
+
+		$la_media = $lo_media->toArray();
+		foreach ($la_foundSources as $la_source) {
+			if (!isset($la_media[ $la_source['src'] ])) {
+				continue;
+			}
+
+			$lo_mediaEntity = $la_media[ $la_source['src'] ];
+
+			// Create a new custom image tag
+			$lo_customTag = $lo_dom->createElement('awyiss-responsive-image');
+
+			$la_attributes = $la_source['attributes'];
+			// Remove the source
+			unset($la_attributes['src']);
+			// Add the media id
+			$la_attributes['mediaId'] = (string)$lo_mediaEntity->id;
+
+			// Set the JSON string as the content of the custom tag
+			$lo_customTag->textContent = json_encode($la_attributes);
+
+			// Replace the original image tag with the custom tag
+			$la_source['node']->parentNode->replaceChild($lo_customTag, $la_source['node']);
+		}
+
+		// Build media assignments
+		static::buildMediaAssignments($referenceEntity ?? $entity, $la_media);
+
+		$entity->set($field, trim(static::getBody($lo_dom)) ?: null);
+
+		return $entity->get($field);
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param array $fields
 	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return void
@@ -74,7 +167,7 @@ class ImageHandler {
 		$la_fields = $fields ?: static::getDefaultFields($entity);
 
 		foreach ($la_fields as $ls_field) {
-			if (!$entity->has($ls_field) || !is_string($entity->get($ls_field))) {
+			if (!static::fieldIsValid($entity, $ls_field)) {
 				continue;
 			}
 
@@ -86,138 +179,6 @@ class ImageHandler {
 				static::rebuildSimpleImageTags($lo_translation, $fields, $entity);
 			}
 		}
-	}
-
-
-	/**
-	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param \Cake\View\View $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
-	 * @param array $fields
-	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
-	 * @return void
-	 * @throws \Exception
-	 */
-	public static function replaceCustomImageTags(
-		EntityInterface $entity,
-		View $view,
-		MediaRenderOptions $mediaRenderOptions,
-		array $fields = [],
-		?EntityInterface $referenceEntity = null
-	): void {
-		$la_fields = $fields ?: static::getDefaultFields($entity);
-
-		foreach ($la_fields as $ls_field) {
-			if (!$entity->has($ls_field) || !is_string($entity->get($ls_field))) {
-				continue;
-			}
-
-			static::replaceCustomImageTagsInField($entity, $view, $mediaRenderOptions, $ls_field, null, $referenceEntity);
-		}
-
-		if ($entity->has('_translations')) {
-			foreach ($entity->get('_translations') as $lo_translation) {
-				static::replaceCustomImageTags($lo_translation, $view, $mediaRenderOptions, $fields, $entity);
-			}
-		}
-	}
-
-
-	/**
-	 * Returns the default fields to check,
-	 * including the attributes with input type `texteditor`
-	 *
-	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @return array
-	 * @noinspection DuplicatedCode
-	 */
-	public static function getDefaultFields(EntityInterface $entity): array {
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($entity->getSource());
-
-		if (!$lo_table->hasBehavior('Attributes') || !$lo_table->hasAttributes()) {
-			return static::$defaultFields;
-		}
-
-		$la_fields = static::$defaultFields;
-
-		foreach ($lo_table->getAttributes() as $lo_attribute) {
-			if ($lo_attribute->inputType === 'texteditor') {
-				$la_fields[] = $lo_attribute->identifier;
-			}
-		}
-
-		return $la_fields;
-	}
-
-
-	/**
-	 * Rebuilds the image tags in the given entity
-	 *
-	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param \Cake\View\View $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
-	 * @param string $field
-	 * @param string|null $value
-	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
-	 * @return string|null
-	 * @throws \Exception
-	 */
-	public static function replaceCustomImageTagsInField(
-		EntityInterface $entity,
-		View $view,
-		MediaRenderOptions $mediaRenderOptions,
-		string $field,
-		?string $value = null,
-		?EntityInterface $referenceEntity = null
-	): ?string {
-		$ls_value = $value ?? $entity->get($field) ?? '';
-		$lb_isDirty = $entity->isDirty($field);
-
-		if (!is_string($ls_value) || !str_contains($ls_value, '<awyiss-responsive-image')) {
-			return $ls_value;
-		}
-
-		/** @var \Awyiss\View\Helper\MediaHelper $lo_mediaHelper */
-		$lo_mediaHelper = $view->helpers()->get('Media');
-
-		$lo_dom = static::getDomDocument($ls_value);
-
-		// Create an XPath instance
-		$lo_xpath = new DOMXPath($lo_dom);
-
-		// Find all <awyiss-responsive-image> tags
-		$lo_tags = $lo_xpath->query('//awyiss-responsive-image');
-
-		foreach ($lo_tags as $lo_tag) {
-			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $referenceEntity ?? $entity);
-			unset($la_attributes['mediaId']);
-
-			if (!$lo_media) {
-				continue;
-			}
-
-			$lo_mediaRenderOptions = $mediaRenderOptions->withAttributes($la_attributes);
-			if ($la_attributes['width'] ?? null) {
-				$lo_mediaRenderOptions = $lo_mediaRenderOptions
-					->withWidth((int)$la_attributes['width'])
-					->withResponsive(false);
-			}
-			if ($la_attributes['height'] ?? null) {
-				$lo_mediaRenderOptions = $lo_mediaRenderOptions
-					->withHeight((int)$la_attributes['height'])
-					->withResponsive(false);
-			}
-
-			$ls_htmlTag = $lo_mediaHelper->htmlTag($lo_media, $lo_mediaRenderOptions);
-
-			$ls_value = str_replace($lo_tag->ownerDocument->saveHTML($lo_tag), $ls_htmlTag, $ls_value);
-		}
-
-		$entity->set($field, trim($ls_value) ?: null);
-		$entity->setDirty($field, $lb_isDirty);
-
-		return $entity->get($field);
 	}
 
 
@@ -295,7 +256,6 @@ class ImageHandler {
 			return $value;
 		}
 
-
 		$lo_dom = static::getDomDocument($value);
 
 		// Create an XPath instance
@@ -340,91 +300,103 @@ class ImageHandler {
 
 	/**
 	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \Cake\View\View $view
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param array $fields
+	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
+	 * @return void
+	 * @throws \Exception
+	 */
+	public static function replaceCustomImageTags(
+		EntityInterface $entity,
+		View $view,
+		MediaRenderOptions $mediaRenderOptions,
+		array $fields = [],
+		?EntityInterface $referenceEntity = null
+	): void {
+		$la_fields = $fields ?: static::getDefaultFields($entity);
+
+		foreach ($la_fields as $ls_field) {
+			if (!static::fieldIsValid($entity, $ls_field)) {
+				continue;
+			}
+
+			static::replaceCustomImageTagsInField($entity, $view, $mediaRenderOptions, $ls_field, null, $referenceEntity);
+		}
+
+		if ($entity->has('_translations')) {
+			foreach ($entity->get('_translations') as $lo_translation) {
+				static::replaceCustomImageTags($lo_translation, $view, $mediaRenderOptions, $fields, $entity);
+			}
+		}
+	}
+
+
+	/**
+	 * Rebuilds the image tags in the given entity
+	 *
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \Cake\View\View $view
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param string $field
 	 * @param string|null $value
 	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return string|null
-	 * @throws \DOMException
+	 * @throws \Exception
 	 */
-	public static function replaceImageTagsInField(
+	public static function replaceCustomImageTagsInField(
 		EntityInterface $entity,
+		View $view,
+		MediaRenderOptions $mediaRenderOptions,
 		string $field,
 		?string $value = null,
 		?EntityInterface $referenceEntity = null
 	): ?string {
 		$ls_value = $value ?? $entity->get($field) ?? '';
+		$lb_isDirty = $entity->isDirty($field);
 
-		if (!is_string($ls_value) || !str_contains($ls_value, '<img')) {
+		if (!is_string($ls_value) || !str_contains($ls_value, '<awyiss-responsive-image')) {
 			return $ls_value;
 		}
+
+		/** @var \Awyiss\View\Helper\MediaHelper $lo_mediaHelper */
+		$lo_mediaHelper = $view->helpers()->get('Media');
 
 		$lo_dom = static::getDomDocument($ls_value);
 
 		// Create an XPath instance
 		$lo_xpath = new DOMXPath($lo_dom);
 
-		// Find all <img> tags
-		$lo_tags = $lo_xpath->query('//img');
-
-		$la_foundSources = [];
+		// Find all <awyiss-responsive-image> tags
+		$lo_tags = $lo_xpath->query('//awyiss-responsive-image');
 
 		foreach ($lo_tags as $lo_tag) {
-			// Get all attributes
-			$la_attributes = [];
-			foreach ($lo_tag->attributes as $lo_attribute) {
-				$la_attributes[ Inflector::variable($lo_attribute->name) ] = $lo_attribute->value;
-			}
+			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $referenceEntity ?? $entity);
+			unset($la_attributes['mediaId']);
 
-			// Get the src attribute
-			if ($la_attributes['src'] ?? null) {
-				$la_foundSources[] = [
-					'src' => $la_attributes['src'],
-					'attributes' => $la_attributes,
-					'node' => $lo_tag,
-				];
-			}
-		}
-
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('Media');
-		$lo_media = $lo_table->find('all')->where([
-			'path IN' => array_map(function ($la_foundSource) {
-				return $la_foundSource['src'];
-			}, $la_foundSources),
-		])->all()->indexBy('path');
-
-		if (!$lo_media->count()) {
-			return $ls_value;
-		}
-
-		$la_media = $lo_media->toArray();
-		foreach ($la_foundSources as $la_source) {
-			if (!isset($la_media[ $la_source['src'] ])) {
+			if (!$lo_media) {
 				continue;
 			}
 
-			$lo_mediaEntity = $la_media[ $la_source['src'] ];
+			$lo_mediaRenderOptions = $mediaRenderOptions->withAttributes($la_attributes);
+			if ($la_attributes['width'] ?? null) {
+				$lo_mediaRenderOptions = $lo_mediaRenderOptions
+					->withWidth((int)$la_attributes['width'])
+					->withResponsive(false);
+			}
+			if ($la_attributes['height'] ?? null) {
+				$lo_mediaRenderOptions = $lo_mediaRenderOptions
+					->withHeight((int)$la_attributes['height'])
+					->withResponsive(false);
+			}
 
-			// Create a new custom image tag
-			$lo_customTag = $lo_dom->createElement('awyiss-responsive-image');
+			$ls_htmlTag = $lo_mediaHelper->htmlTag($lo_media, $lo_mediaRenderOptions);
 
-			$la_attributes = $la_source['attributes'];
-			// Remove the source
-			unset($la_attributes['src']);
-			// Add the media id
-			$la_attributes['mediaId'] = (string)$lo_mediaEntity->id;
-
-			// Set the JSON string as the content of the custom tag
-			$lo_customTag->textContent = json_encode($la_attributes);
-
-			// Replace the original image tag with the custom tag
-			$la_source['node']->parentNode->replaceChild($lo_customTag, $la_source['node']);
+			$ls_value = str_replace($lo_tag->ownerDocument->saveHTML($lo_tag), $ls_htmlTag, $ls_value);
 		}
 
-		// Build media assignments
-		static::buildMediaAssignments($referenceEntity ?? $entity, $la_media);
-
-		$entity->set($field, trim(static::getBody($lo_dom)) ?: null);
+		$entity->set($field, trim($ls_value) ?: null);
+		$entity->setDirty($field, $lb_isDirty);
 
 		return $entity->get($field);
 	}
@@ -502,7 +474,7 @@ class ImageHandler {
 		$la_originalInlineAssignments = $la_originalMediaAssignments['inlineImgTag'] ?? [];
 
 		// Remember the media ids
-		$la_mediaIdsFound = [];
+		$la_mediaIdsFound = array_column($la_mediaAssignments, 'mediaId');
 		foreach ($media as $lo_media) {
 			// If the media id is already in the assignments, skip it
 			// There's no need to create multiple assignments for the same media
@@ -570,5 +542,70 @@ class ImageHandler {
 		$lo_media = $entity->mediaAssignments['inlineImgTag'][ $la_attributes['mediaId'] ]->media;
 
 		return [$la_attributes, $lo_media];
+	}
+
+
+	/**
+	 * Checks if the given field is valid for the entity
+	 * or if it exists in the attributes of the entity.
+	 *
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param string $field
+	 * @return bool
+	 */
+	protected static function fieldIsValid(EntityInterface $entity, string $field): bool {
+		// Field is valid if it exists in the entity and is a string
+		if ($entity->has($field)) {
+			return is_string($entity->get($field));
+		}
+
+		// If the entity has no attributes or the attributes are not an instance of Entity,
+		// the field is not valid
+		if (
+			!$entity->has('attributes') || !($entity->get('attributes') instanceof Entity)
+		) {
+			return false;
+		}
+
+
+		/**
+		 * Field is valid if it exists in the attributes and is a string
+		 *
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		return $entity->attributes->has($field) && is_string($entity->attributes->get($field));
+	}
+
+
+	/**
+	 * Returns the default fields to check,
+	 * including the attributes with input type `texteditor`
+	 *
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return array
+	 * @noinspection DuplicatedCode
+	 */
+	protected static function getDefaultFields(EntityInterface $entity): array {
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get($entity->getSource());
+
+		if (!$lo_table->hasBehavior('Attributes') || !$lo_table->hasAttributes()) {
+			return static::$defaultFields;
+		}
+
+		$la_fields = static::$defaultFields;
+
+		foreach ($lo_table->getAttributes() as $lo_attribute) {
+			if ($lo_attribute->inputType !== 'texteditor') {
+				continue;
+			}
+
+			$ls_field = Inflector::variable($lo_attribute->identifier);
+			if (!in_array($ls_field, $la_fields, true)) {
+				$la_fields[] = $ls_field;
+			}
+		}
+
+		return $la_fields;
 	}
 }
