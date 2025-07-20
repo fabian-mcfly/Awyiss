@@ -8,7 +8,6 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Log\Engine\FileLog;
-use Cake\Mailer\Transport\MailTransport;
 use Queue\Generator\Task\QueuedJobTask;
 
 
@@ -19,11 +18,12 @@ $la_assetPaths = [
 	],
 ];
 
+// Add the customer assets paths and make sure they are sorted; customer first
 if (defined('CUSTOM_DIR')) {
 	$la_assetPaths[ Awyiss::REALM_FRONTEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
-	$la_assetPaths[ Awyiss::REALM_BACKEND ] = [
-		'customer' => ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'awyiss' . DS
-	] + $la_assetPaths[ Awyiss::REALM_BACKEND ];
+	krsort($la_assetPaths[ Awyiss::REALM_FRONTEND ]);
+	$la_assetPaths[ Awyiss::REALM_BACKEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'awyiss' . DS;
+	krsort($la_assetPaths[ Awyiss::REALM_BACKEND ]);
 }
 
 return [

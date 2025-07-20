@@ -215,34 +215,29 @@ class AppView extends TwigView {
 		/** @var \Awyiss\Twig\FileLoader $lo_loader */
 		$lo_loader = $twig->getLoader();
 
-		$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS, Configure::read('App.namespace'));
+		$ls_awyissTemplatesPath = Configure::read('App.paths.templates.awyiss');
+		$lo_loader->addPath($ls_awyissTemplatesPath, Configure::read('App.namespace'));
 
+		$la_frontendPaths = [$ls_awyissTemplatesPath . 'Frontend' . DS];
+		$la_backendPaths = [$ls_awyissTemplatesPath . 'Backend' . DS];
 		if (defined('CUSTOM_DIR')) {
-			$lo_loader->addPath(ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, CUSTOM_NAMESPACE);
+			$ls_customerTemplatesPath = Configure::read('App.paths.templates.customer');
+			$lo_loader->addPath($ls_customerTemplatesPath, CUSTOM_NAMESPACE);
 
-			$lo_loader->setPaths([
-				ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS,
-				ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Frontend' . DS,
-			], 'Frontend');
-
-			$lo_loader->setPaths([
-				ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Backend' . DS,
-				ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS,
-			], 'Backend');
+			array_unshift($la_frontendPaths, $ls_customerTemplatesPath . 'Frontend' . DS);
+			array_unshift($la_backendPaths, $ls_customerTemplatesPath . 'Backend' . DS);
 		}
-		else {
-			$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Frontend' . DS, 'Frontend');
 
-			$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS, 'Backend');
-		}
+		$lo_loader->setPaths($la_frontendPaths, 'Frontend');
+		$lo_loader->setPaths($la_backendPaths, 'Backend');
 
 		$twig->addExtension(new AwyissExtension());
 		$twig->addExtension(new EnumExtension());
 
 		if (defined('CUSTOM_NAMESPACE')) {
-			//This looks for a custom Twig Extension class in \<custom namespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
-			$ls_customExtensionClass = '\\' . CUSTOM_NAMESPACE . '\Twig\Extension\\' . CUSTOM_NAMESPACE . 'Extension';
-			if (class_exists($ls_customExtensionClass)) {
+			//This looks for a custom Twig Extension class in \<CustomNamespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
+			$ls_customExtensionClass = App::className(CUSTOM_NAMESPACE, 'Twig/Extension', 'Extension');
+			if ($ls_customExtensionClass) {
 				$twig->addExtension(new $ls_customExtensionClass());
 			}
 		}
