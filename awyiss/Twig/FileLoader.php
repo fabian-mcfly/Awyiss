@@ -89,12 +89,12 @@ class FileLoader extends BaseFileLoader {
 	 * @throws LoaderError
 	 */
 	public function addPath(string $path, string $namespace = self::MAIN_NAMESPACE, bool $prepend = false): void {
-		$ls_checkPath = $this->isAbsolutePath($path) ? $path : $this->rootPath . $path;
+		$ls_path = rtrim($path, '/\\') . DS;
+
+		$ls_checkPath = $this->isAbsolutePath($ls_path) ? $ls_path : $this->rootPath . $ls_path;
 		if (!is_dir($ls_checkPath)) {
 			throw new LoaderError(sprintf('The "%s" directory does not exist ("%s").', $path, $ls_checkPath));
 		}
-
-		$ls_path = rtrim($path, '/\\') . DS;
 
 		if (!isset($this->paths[ $namespace ])) {
 			$this->paths[ $namespace ] = [$ls_path];
@@ -149,12 +149,13 @@ class FileLoader extends BaseFileLoader {
 			$ls_name = substr($ls_name, 0, -5);
 		}
 
-		[$ls_plugin, $ls_name] = pluginSplit($ls_name);
-		$ls_name = str_replace('/', DS, $ls_name);
+		// Keep the name as is, in case no Plugin was found
+		[$ls_plugin, $ls_pluginTemplateName] = pluginSplit($ls_name);
+		$ls_pluginTemplateName = str_replace('/', DS, $ls_pluginTemplateName);
 
-		if ($ls_plugin !== null) {
+		if ($ls_plugin) {
 			$ls_templatePath = Plugin::templatePath($ls_plugin);
-			$ls_path = $this->checkExtensions($ls_templatePath . $ls_name);
+			$ls_path = $this->checkExtensions($ls_templatePath . $ls_pluginTemplateName);
 			if ($ls_path !== null) {
 				return $ls_path;
 			}
@@ -198,22 +199,20 @@ class FileLoader extends BaseFileLoader {
 	 * @return array|array<string>
 	 * @throws LoaderError
 	 */
-	private function parseName(string $name): array {
-		if (isset($name[0]) && $name[0] == '@') {
-			$li_pos = strpos($name, DS);
-			if ($li_pos === false) {
-				throw new LoaderError(sprintf('Malformed namespaced template name "%s" (expecting "@namespace%stemplate_name").', $name, DS));
-			}
-
-			$ls_namespace = substr($name, 1, $li_pos - 1);
-			$ls_shortname = substr($name, $li_pos + 1);
-
-
-			return [$ls_namespace, $ls_shortname];
+	protected function parseName(string $name): array {
+		if (!str_starts_with($name, '@')) {
+			return [self::MAIN_NAMESPACE, $name];
 		}
 
+		$li_pos = strpos($name, DS);
+		if ($li_pos === false) {
+			throw new LoaderError(sprintf('Malformed namespaced template name "%s" (expecting "@namespace%stemplate_name").', $name, DS));
+		}
 
-		return [self::MAIN_NAMESPACE, $name];
+		$ls_namespace = substr($name, 1, $li_pos - 1);
+		$ls_shortname = substr($name, $li_pos + 1);
+
+		return [$ls_namespace, $ls_shortname];
 	}
 
 
@@ -224,7 +223,7 @@ class FileLoader extends BaseFileLoader {
 	 *
 	 * @throws LoaderError
 	 */
-	private function validateName(string $name): void {
+	protected function validateName(string $name): void {
 		if (str_contains($name, "\0")) {
 			throw new LoaderError('A template name cannot contain NUL bytes.');
 		}
@@ -248,10 +247,26 @@ class FileLoader extends BaseFileLoader {
 
 
 	/**
+	 * Determines if a file path is absolute or relative by examining
+	 * various platform-specific and protocol-based absolute path patterns.
+	 *
+	 * Recognized absolute path formats:
+	 * - Unix/Linux absolute paths: `/path/to/file` or `\path\to\file`
+	 * - Windows absolute paths: `C:\path\to\file` or `D:/path/to/file`
+	 * - URL schemes: `file://`, `http://`, `https://`, `ftp://`, etc.
+	 *
+	 * ```
+	 * $this->isAbsolutePath('/usr/local/bin');           // true
+	 * $this->isAbsolutePath('C:\Windows\System32');      // true
+	 * $this->isAbsolutePath('file:///tmp/file.txt');     // true
+	 * $this->isAbsolutePath('relative/path/file.txt');   // false
+	 * $this->isAbsolutePath('./local/file.txt');         // false
+	 * ```
+	 *
 	 * @param string $file
 	 * @return bool
 	 */
-	private function isAbsolutePath(string $file): bool {
+	protected function isAbsolutePath(string $file): bool {
 		return strspn($file, '/\\', 0, 1) ||
 			   (strlen($file) > 3 && ctype_alpha($file[0]) && $file[1] === ':' && strspn($file, '/\\', 2, 1)) ||
 			   parse_url($file, PHP_URL_SCHEME) !== null;
