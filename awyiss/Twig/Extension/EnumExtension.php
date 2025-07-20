@@ -22,7 +22,7 @@ class EnumExtension extends AbstractExtension {
 	 */
 	public function getFunctions(): array {
 		return [
-			new TwigFunction('enum', [$this, 'createProxy']),
+			new TwigFunction('enum', $this->createProxy(...)),
 		];
 	}
 
@@ -52,7 +52,7 @@ class EnumExtension extends AbstractExtension {
 			 */
 			public function __construct(private readonly string $enum) {
 				if (!enum_exists($this->enum)) {
-					throw new InvalidArgumentException("$this->enum is not an Enum type and cannot be used in this function");
+					throw new InvalidArgumentException(sprintf('`%s` is not an Enum type and cannot be used in this function', $this->enum));
 				}
 			}
 
@@ -73,7 +73,7 @@ class EnumExtension extends AbstractExtension {
 					return $this->enum::$name(...$arguments);
 				}
 
-				throw new BadMethodCallException("Neither \"$ls_enumFQN\" nor \"$ls_enumFQN::$name()\" exist in this runtime.");
+				throw new BadMethodCallException(sprintf('Case or method `%s` does not exist in `%s`', $name, $this->enum));
 			}
 		};
 	}
