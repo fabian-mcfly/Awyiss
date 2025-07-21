@@ -12,7 +12,9 @@ use Awyiss\Twig\Extension\NodeVisitor\ExtendsNodeVisitor;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
+use Cake\I18n\I18n;
 use Cake\Utility\Hash;
+use Collator;
 use InvalidArgumentException;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 use Twig\Extension\AbstractExtension;
@@ -38,7 +40,6 @@ class AwyissExtension extends AbstractExtension {
 
 			new TwigFilter('json_decode', function (string $json): ?array {
 				$la_return = json_decode($json, true);
-
 
 				// If the JSON is invalid, return null
 				return !is_array($la_return) ? null : $la_return;
@@ -157,14 +158,23 @@ class AwyissExtension extends AbstractExtension {
 
 			new TwigFunction('naturalSort', function (array $data, int|string|null $key = null): array {
 				$lx_key = $key;
+
+				$lo_collator = new Collator(I18n::getLocale());
+				/**
+				 * Ignore case but not accents
+				 * This will allow sorting 'Äpfel' after 'Apfel', not after 'Zitronen'
+				 */
+				$lo_collator->setStrength(Collator::SECONDARY);
+				// Enable natural sorting for numbers
+				$lo_collator->setAttribute(Collator::NUMERIC_COLLATION, Collator::ON);
+
 				/** @noinspection PhpVariableNamingConventionInspection */
-				uasort($data, function ($a, $b) use ($lx_key) {
+				uasort($data, function ($a, $b) use ($lx_key, $lo_collator) {
 					if (!empty($lx_key)) {
-						return strnatcasecmp($a[ $lx_key ], $b[ $lx_key ]);
+						return $lo_collator->compare($a[ $lx_key ], $b[ $lx_key ]);
 					}
 
-
-					return strnatcasecmp($a, $b);
+					return $lo_collator->compare($a, $b);
 				});
 
 
