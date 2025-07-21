@@ -18,19 +18,32 @@ class Router extends BaseRouter {
 	 * @inheritDoc
 	 */
 	public static function url(UriInterface|array|string|null $url = null, bool $full = false): string {
-		$lx_url = $url;
-		if (is_array($lx_url)) {
-			if (!array_key_exists('_name', $lx_url) && empty($lx_url['plugin'])) {
-				$lx_url['_name'] = Awyiss::getRealm();
+		// Strings and URLs for plugins are handled by the parent method.
+		if (!is_array($url) || !empty($url['plugin'])) {
+			return parent::url($url, $full);
+		}
 
-				if ($lx_url['_name'] === Awyiss::REALM_FRONTEND && empty($lx_url['slug']) && empty($lx_url['lang'])) {
-					$lx_url['_name'] = Router::getRequest()->getParam('_name');
-				}
-			}
+		$la_url = $url;
 
-			if (empty($lx_url['_name'])) {
-				unset($lx_url['_name']);
+		// If the `_name` key is not set, set it to the current realm.
+		if (!array_key_exists('_name', $la_url)) {
+			$la_url['_name'] = Awyiss::getRealm();
+
+			/**
+			 * If the realm is the frontend but both `slug` and `lang` are empty,
+			 * set the `_name` to the request's `_name` parameter to keep the current route.
+			 *
+			 * This is used to keep routes like the frontend root or the frontend language root,
+			 * as well as form anti-spam and route generation urls.
+			 */
+			if ($la_url['_name'] === Awyiss::REALM_FRONTEND && empty($la_url['slug']) && empty($la_url['lang'])) {
+				$la_url['_name'] = Router::getRequest()->getParam('_name');
 			}
+		}
+
+		// If the `_name` key is set but empty, remove it.
+		if (empty($la_url['_name'])) {
+			unset($la_url['_name']);
 		}
 
 		/**
@@ -47,8 +60,8 @@ class Router extends BaseRouter {
 		 *
 		 * @see \Cake\Routing\RouteBuilder::_makeRoute()
 		 */
-		if (($lx_url['_name'] ?? null) === Awyiss::REALM_BACKEND && empty($lx_url['action'])) {
-			$lx_url['action'] = static::getRequest()->getParam('action');
+		if (($la_url['_name'] ?? null) === Awyiss::REALM_BACKEND && empty($la_url['action'])) {
+			$la_url['action'] = static::getRequest()->getParam('action');
 		}
 
 		/**
@@ -56,10 +69,10 @@ class Router extends BaseRouter {
 		 * remove the language shortcode from the URL if the config
 		 * `Route.includeLanguageShortcode` is set to false.
 		 */
-		if (($lx_url['_name'] ?? null) === Awyiss::REALM_FRONTEND && !Configure::read('Route.includeLanguageShortcode')) {
-			unset($lx_url['lang']);
+		if (($la_url['_name'] ?? null) === Awyiss::REALM_FRONTEND && !Configure::read('Route.includeLanguageShortcode')) {
+			unset($la_url['lang']);
 		}
 
-		return parent::url($lx_url, $full);
+		return parent::url($la_url, $full);
 	}
 }
