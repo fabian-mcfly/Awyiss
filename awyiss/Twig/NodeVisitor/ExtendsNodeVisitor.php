@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Twig\Extension\NodeVisitor;
+namespace Awyiss\Twig\NodeVisitor;
 
 
 use Twig\Environment;
@@ -51,10 +51,6 @@ class ExtendsNodeVisitor implements NodeVisitorInterface {
 	 * @return \Twig\Node\Node
 	 */
 	protected function processExtendsNode(ModuleNode $node): Node {
-		if (!$node->hasNode('parent')) {
-			return $node;
-		}
-
 		// Get the current template name and path
 		$lo_sourceContext = $node->getSourceContext();
 		$ls_currentTemplateName = $lo_sourceContext->getName(); // e.g., "@Frontend/some/template.twig"

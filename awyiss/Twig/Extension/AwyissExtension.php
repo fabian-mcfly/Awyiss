@@ -8,7 +8,7 @@ use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Module\ModulesProvider;
-use Awyiss\Twig\Extension\NodeVisitor\ExtendsNodeVisitor;
+use Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
