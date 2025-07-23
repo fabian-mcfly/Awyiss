@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Queue\Task\Designs;
+namespace Awyiss\Queue\Task\Design;
 
 
 use Queue\Queue\Task;
@@ -69,16 +69,8 @@ class WebfontDownloadTask extends Task {
 				continue;
 			}
 
-			// Build the query data
-			$la_queryData = [
-				'download' => 'zip',
-				'subsets' => 'latin,latin-ext',
-				'variants' => implode(',', $la_font['variants']),
-				'formats' => 'woff2',
-			];
-
 			// External API URL
-			$ls_downloadUrl = 'https://gwfh.mranftl.com/api/fonts/' . $la_font['id'] . '?' . http_build_query($la_queryData);
+			$ls_downloadUrl = $this->getDownloadUrl($la_font);
 
 			// Local path for the downloaded zip
 			$ls_downloadPath = $ls_fontPath . '.zip';
@@ -102,7 +94,10 @@ class WebfontDownloadTask extends Task {
 			unlink($ls_downloadPath);
 		}
 
-		$this->generateScssFile($la_fonts);
+		$ls_content = $this->generateScssFile($la_fonts);
+		if ($ls_content) {
+			file_put_contents(ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'scss' . DS . 'webfonts.scss', $ls_content);
+		}
 	}
 
 
@@ -110,9 +105,9 @@ class WebfontDownloadTask extends Task {
 	 * Generate the SCSS file for the webfonts
 	 *
 	 * @param array $fonts
-	 * @return void
+	 * @return string
 	 */
-	protected function generateScssFile(array $fonts): void {
+	protected function generateScssFile(array $fonts): string {
 		$ls_fileContents = <<<EOT
 /**
  * Webfont SCSS file
@@ -139,11 +134,11 @@ EOT;
 					$ls_fileName = $la_font['id'] . '-' . $la_font['version'] . '-latin-' . $la_font['variants'][ $li_variantKey ] . '.woff2';
 				}
 
-				$ls_fileContents .= $this->getFontFaceTemplate($la_font['id'], $la_font['name'], $ls_fontStyle, $li_fontWeight, $ls_fileName);
+				$ls_fileContents .= $this->buildFontFaceBlock($la_font['id'], $la_font['name'], $ls_fontStyle, $li_fontWeight, $ls_fileName);
 			}
 		}
 
-		file_put_contents(ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'scss' . DS . 'webfonts.scss', $ls_fileContents);
+		return $ls_fileContents;
 	}
 
 
@@ -155,7 +150,7 @@ EOT;
 	 * @param string $fileName
 	 * @return string
 	 */
-	protected function getFontFaceTemplate(string $fontId, string $fontName, string $fontStyle, int $fontWeight, string $fileName): string {
+	protected function buildFontFaceBlock(string $fontId, string $fontName, string $fontStyle, int $fontWeight, string $fileName): string {
 		return <<<EOT
 @font-face {
     font-display:swap;
@@ -167,5 +162,22 @@ EOT;
 
 
 EOT;
+	}
+
+
+	/**
+	 * @param array $font
+	 * @return string
+	 */
+	protected function getDownloadUrl(array $font): string {
+		// Build the query data
+		$la_queryData = [
+			'download' => 'zip',
+			'subsets' => 'latin,latin-ext',
+			'variants' => implode(',', array_unique($font['variants'])),
+			'formats' => 'woff2',
+		];
+
+		return 'https://gwfh.mranftl.com/api/fonts/' . $font['id'] . '?' . http_build_query($la_queryData);
 	}
 }
