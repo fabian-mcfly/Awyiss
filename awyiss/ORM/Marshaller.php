@@ -15,126 +15,120 @@ use Cake\ORM\Marshaller as BaseMarshaller;
  */
 class Marshaller extends BaseMarshaller {
 	/**
-	 * Implemented 1:1 but added a `has`-check before skipping columns and
-	 * extracted that sequencee into `buildProperties()`
-	 * Also passes `$options['setter']` to `$entity::set`, to skip using
-	 * setters for default values
+	 * Implemented 1:1 to
+	 * - allow `accessibleFields` to be passed as string or array
+	 * - pass `$options['setter']` to `$entity::set()`, to allow skipping setters when merging default values
+	 * - skip the `beforeMarshal` and `afterMarshal` events if `$options['events']` is given and not `true`.
 	 *
 	 * @inheritDoc
-	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param array $data
-	 * @param array $options
-	 * @return \Cake\Datasource\EntityInterface
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface {
-		[$la_data, $la_options] = $this->_prepareDataAndOptions($data, $options);
-		unset($la_options['events']);
+		[$data, $options] = $this->_prepareDataAndOptions($data, $options);
+		$dispatchEvents = $options['events'] ?? true;
+		unset($options['events']);
 
-		$lb_isNew = $entity->isNew();
-		$la_keys = [];
+		$isNew = $entity->isNew();
+		$keys = [];
 
-		if (!$lb_isNew) {
-			$la_keys = $entity->extract((array)$this->_table->getPrimaryKey());
+		if (!$isNew) {
+			$keys = $entity->extract((array)$this->_table->getPrimaryKey());
 		}
 
-		if (isset($la_options['accessibleFields'])) {
-			if (!is_array($la_options['accessibleFields'])) {
-				$la_options['accessibleFields'] = [
-					(string)$la_options['accessibleFields'] => true,
-				];
-			}
+		if (isset($options['accessibleFields'])) {
+			foreach ((array)$options['accessibleFields'] as $key => $value) {
+				if (is_int($key) && is_string($value)) {
+					// If the value is a string, use it as the key
+					$key = $value;
+					$value = true;
+				}
 
-			foreach ($la_options['accessibleFields'] as $lx_key => $lx_value) {
-				$entity->setAccess($lx_key, $lx_value);
+				$entity->setAccess($key, $value);
 			}
 		}
 
-		$la_errors = $this->_validate($la_data + $la_keys, $la_options['validate'], $lb_isNew);
-		$la_options['isMerge'] = true;
-		$la_propertyMap = $this->_buildPropertyMap($la_data, $la_options);
+		$errors = $this->_validate($data + $keys, $options['validate'], $isNew);
+		$options['isMerge'] = true;
+		$propertyMap = $this->_buildPropertyMap($data, $options);
+		$properties = $this->buildProperties($entity, $propertyMap, $data, $errors);
 
-		$la_properties = $this->buildProperties($entity, $la_propertyMap, $la_data, $la_errors);
+		$entity->setErrors($errors);
 
-		$entity->setErrors($la_errors);
-
-		if (!isset($la_options['fields'])) {
+		if (!isset($options['fields'])) {
 			if (method_exists($entity, 'patch')) {
-				$entity->patch($la_properties);
+				$entity->patch($properties, ['setter' => $options['setter'] ?? true]);
 			}
 			else {
-				$entity->set($la_properties);
+				$entity->set($properties, ['setter' => $options['setter'] ?? true]);
 			}
 
-			foreach ($la_properties as $ls_field => $lx_value) {
-				if ($lx_value instanceof EntityInterface) {
-					$entity->setDirty($ls_field, $lx_value->isDirty());
+			foreach ($properties as $field => $value) {
+				if ($value instanceof EntityInterface) {
+					$entity->setDirty($field, $value->isDirty());
 				}
 			}
 
-			if (($options['events'] ?? true) === true) {
-				$this->dispatchAfterMarshal($entity, $la_data, $la_options);
+			if ($dispatchEvents === true) {
+				$this->dispatchAfterMarshal($entity, $data, $options);
 			}
-
 
 			return $entity;
 		}
 
-		foreach ((array)$la_options['fields'] as $ls_field) {
-			assert(is_string($ls_field));
-			if (!array_key_exists($ls_field, $la_properties)) {
+		foreach ((array)$options['fields'] as $field) {
+			assert(is_string($field));
+			if (!array_key_exists($field, $properties)) {
 				continue;
 			}
-			$entity->set($ls_field, $la_properties[ $ls_field ], ['setter' => $la_options['setter'] ?? true]);
-			if ($la_properties[ $ls_field ] instanceof EntityInterface) {
-				$entity->setDirty($ls_field, $la_properties[ $ls_field ]->isDirty());
+			$entity->set($field, $properties[ $field ], ['setter' => $options['setter'] ?? true]);
+			if ($properties[ $field ] instanceof EntityInterface) {
+				$entity->setDirty($field, $properties[ $field ]->isDirty());
 			}
 		}
 
-		if (($options['events'] ?? true) === true) {
-			$this->dispatchAfterMarshal($entity, $la_data, $la_options);
+		if ($dispatchEvents === true) {
+			$this->dispatchAfterMarshal($entity, $data, $options);
 		}
-
 
 		return $entity;
 	}
 
 
 	/**
-	 * Adds `$entity->has($ls_key) &&` in the big if-statement to only skip fields that were present during initialization.
-	 * Helpful for default and null values.
-	 *
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param array $propertyMap
 	 * @param array $data
 	 * @param array $errors
 	 * @return array
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function buildProperties(EntityInterface $entity, array $propertyMap, array $data, array $errors): array {
-		$la_properties = [];
+		$properties = [];
 
-		foreach ($data as $ls_key => $lx_value) {
-			if (!empty($errors[ $ls_key ])) {
+		foreach ($data as $key => $value) {
+			if (!empty($errors[ $key ])) {
 				if ($entity instanceof InvalidPropertyInterface) {
-					$entity->setInvalidField($ls_key, $lx_value);
+					$entity->setInvalidField($key, $value);
 				}
 				continue;
 			}
 
-			if (isset($propertyMap[ $ls_key ])) {
-				$lx_value = $propertyMap[ $ls_key ]($lx_value, $entity);
+			if (isset($propertyMap[ $key ])) {
+				$method = $propertyMap[ $key ];
+				$value = $method($value, $entity);
 			}
 
-			$la_properties[ $ls_key ] = $lx_value;
+			$properties[ $key ] = $value;
 		}
 
-
-		return $la_properties;
+		return $properties;
 	}
 
 
 	/**
-	 * Re-implemented to skip the event,
-	 * if `$options['events']` is set to `false`.
+	 * Re-implemented to
+	 * - skip the event if `$options['events']` is set to `false`.
+	 * - unmap field names if the entity class has a `unmapField()` method.
 	 *
 	 * @inheritDoc
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -149,28 +143,32 @@ class Marshaller extends BaseMarshaller {
 		}
 
 		if (($options['events'] ?? true) === true) {
+			// Convert to ArrayObject to allow modification in the event
 			$data = new ArrayObject($data);
 			$options = new ArrayObject($options);
 			$this->_table->dispatchEvent('Model.beforeMarshal', compact('data', 'options'));
 		}
 
-		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = $this->_table->getEntityClass();
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = $this->_table->getEntityClass();
 
-		$la_data = (array)$data;
-		if (method_exists($ls_entityClass, 'unmapField')) {
-			foreach ($data as $ls_field => $lx_value) {
-				$ls_unmappedField = $ls_entityClass::unmapField($ls_field);
+		// Convert back to arrays
+		$data = (array)$data;
+		$options = (array)$options;
 
-				if ($ls_unmappedField === $ls_field) {
+		if (method_exists($entityClass, 'unmapField')) {
+			foreach ($data as $field => $value) {
+				$unmappedField = $entityClass::unmapField($field);
+
+				if ($unmappedField === $field) {
 					continue;
 				}
 
-				$la_data[ $ls_unmappedField ] = $lx_value;
-				unset($la_data[ $ls_field ]);
+				$data[ $unmappedField ] = $value;
+				unset($data[ $field ]);
 			}
 		}
 
-		return [$la_data, (array)$options];
+		return [$data, $options];
 	}
 }
