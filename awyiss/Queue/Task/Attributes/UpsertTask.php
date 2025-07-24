@@ -224,7 +224,7 @@ class UpsertTask extends Task/* implements AddInterface*/ {
 
 			//Bake a `remove`-migration
 			/** @noinspection PhpVariableNamingConventionInspection */
-			$commands[] = 'bin' . DS . 'cake bake migration remove_' . $data['new']['identifier'] . '_from_' . $ls_oldAttributesTable . ' ' . $data['old']['identifier'] . $migrationsPath;
+			$commands[] = 'bin' . DS . 'cake bake migration remove_' . ($data['old']['identifier'] ?? $data['new']['identifier']) . '_from_' . $ls_oldAttributesTable . ' ' . $data['old']['identifier'] . $migrationsPath;
 		}
 
 		/*
