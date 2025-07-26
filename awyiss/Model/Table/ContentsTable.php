@@ -731,6 +731,7 @@ class ContentsTable extends Table {
 			if (!$this->hasAssociation($pageRole->tableAlias())) {
 				$this->belongsTo($pageRole->tableAlias(), [
 					'bindingKey' => 'id',
+					/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 					'finder' => 'forCurrentLanguage',
 					'foreignKey' => 'page_id',
 					'propertyName' => 'page',

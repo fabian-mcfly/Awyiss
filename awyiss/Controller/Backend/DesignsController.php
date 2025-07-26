@@ -417,6 +417,7 @@ class DesignsController extends Controller {
 	 */
 	protected function loadDesigns(): void {
 		if (!isset($this->designs)) {
+			/** @uses \Awyiss\Model\Table::findTranslations() */
 			$this->designs = $this->Designs->find('translations')
 			->contain([
 				'CreatedByUser',

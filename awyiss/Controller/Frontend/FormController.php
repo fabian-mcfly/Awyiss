@@ -101,7 +101,10 @@ class FormController extends AppController {
 		if (!$lo_page) {
 			$ls_languageShortcode = $this->request->getParam('lang');
 
-			/** @var \Awyiss\Model\Entity\Page $lo_page */
+			/**
+			 * @var \Awyiss\Model\Entity\Page $lo_page
+			 * @uses \Awyiss\Model\Table::findActive()
+			 */
 			$lo_page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
 				'parent_id IS' => null,
 				'language_shortcode' => $ls_languageShortcode,
@@ -168,7 +171,10 @@ class FormController extends AppController {
 		if (!$lo_page) {
 			$ls_languageShortcode = $this->request->getParam('lang');
 
-			/** @var \Awyiss\Model\Entity\Page $lo_page */
+			/**
+			 * @var \Awyiss\Model\Entity\Page $lo_page
+			 * @uses \Awyiss\Model\Table::findActive()
+			 */
 			$lo_page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
 				'parent_id IS' => null,
 				'language_shortcode' => $ls_languageShortcode,

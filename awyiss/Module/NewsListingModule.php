@@ -154,9 +154,11 @@ class NewsListingModule extends AbstractModule {
 			$lo_query = $lo_newsTable->find('all');
 		}
 		else {
+			/** @uses \Awyiss\Model\Table::findActive() */
 			$lo_query = $lo_newsTable->find('active')->find('published');
 		}
 
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$lo_query->find('forCurrentLanguage')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 
 		$lo_query->orderBy(['date' => 'DESC']);

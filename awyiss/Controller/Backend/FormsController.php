@@ -93,7 +93,10 @@ class FormsController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var Form $lo_form */
+		/**
+		 * @var Form $lo_form
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_form = $this->Forms->findById($id)
 			->find('translations')
 			->find('mediaAssignments')
@@ -293,6 +296,7 @@ class FormsController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(Form $form): void {
+		/** @uses \Awyiss\Model\Table::findActive() */
 		$lo_emailTemplates = $this->fetchTable('EmailTemplates')->find('active')->orderByAsc('title');
 
 		$la_formConditionalRecipientTypes = [

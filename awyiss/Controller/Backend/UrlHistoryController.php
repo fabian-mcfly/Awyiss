@@ -108,7 +108,10 @@ class UrlHistoryController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\UrlHistory $lo_urlHistory */
+		/**
+		 * @var \Awyiss\Model\Entity\UrlHistory $lo_urlHistory
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_urlHistory = $this->UrlHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (! $lo_urlHistory) {
 			$this->Flash->error(__('record_not_found'));
@@ -221,6 +224,7 @@ class UrlHistoryController extends Controller {
 			/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
 			$lo_pagesTable = $this->fetchTable('Pages');
 
+			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			$lo_query = $lo_pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true);
 
 			$this->threadedPages = $lo_pagesTable->listNested($lo_query);

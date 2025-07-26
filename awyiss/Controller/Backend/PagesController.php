@@ -91,6 +91,7 @@ class PagesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$lo_query = $this->Pages->find('forCurrentLanguage')->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
 		$this->Search->filterQuery($lo_query);
@@ -281,7 +282,10 @@ class PagesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		/**
+		 * @var \Awyiss\Model\Entity\Page $lo_page
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_page = $this->Pages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 
 		if (!$lo_page) {
@@ -424,8 +428,13 @@ class PagesController extends Controller {
 	#[NoDirectAccess]
 	public function linkList(): void {
 		// Get all page roles that can be included in the link list
+		/** @uses \Awyiss\Model\Table::findActive() */
 		$la_pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['include_in_linklist' => true])->all()->indexBy('id')->toArray();
 
+		/**
+		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
+		 * @uses \Awyiss\Model\Table::findActive()
+		 */
 		$lo_query = $this->Pages->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
 			'page_role_id IN' => array_keys($la_pageRoles),
 		]);
@@ -590,6 +599,7 @@ class PagesController extends Controller {
 	 */
 	protected function getPageTemplates(): CollectionInterface {
 		if (!isset($this->pageTemplates)) {
+			/** @uses \Awyiss\Model\Table::findActive() */
 			$this->pageTemplates = $this->Pages->PageTemplates->find('active')->where([
 				'page_role_id' => $this->getPageRole(),
 			])->all()->indexBy('id');
@@ -622,6 +632,7 @@ class PagesController extends Controller {
 			 */
 			unset($la_categoryQueryConditions['parent_id'], $la_categoryQueryConditions['parentId']);
 
+			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			$lo_query = $this->Pages->find('forCurrentLanguage', languageShortcode: $page->languageShortcode)
 			->where($this->getOverviewWhere() + $la_categoryQueryConditions);
 
@@ -782,6 +793,7 @@ class PagesController extends Controller {
 			$lo_possibleParentPages = null;
 		}
 
+		/** @uses \Awyiss\Model\Table::findActive() */
 		$lo_menus = $this->fetchTable('Menus')->find('active')->all();
 
 		// Get the parent page if it exists
@@ -807,6 +819,7 @@ class PagesController extends Controller {
 			//'localConfig' => LocalConfig::read(),
 			'nestable' => $this->nestable,
 			'sortable' => $this->sortable,
+			/** @uses \Awyiss\Model\Table::findActive() */
 			'forms' => $this->Pages->Forms->find('active')->orderByAsc('title')->all(),
 			'menus' => $lo_menus,
 			'isGenericPage' => $this->pageRole->value !== 1,

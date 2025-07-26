@@ -88,7 +88,10 @@ class EmailTemplatesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var EmailTemplate $lo_emailTemplate */
+		/**
+		 * @var EmailTemplate $lo_emailTemplate
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_emailTemplate = $this->EmailTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_emailTemplate) {
 			$this->Flash->error(__('record_not_found'));

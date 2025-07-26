@@ -212,7 +212,10 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit(int $id) {
-		/** @var Content $lo_content */
+		/**
+		 * @var Content $lo_content
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_content = $this->Contents->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_content) {
 			$this->Flash->error(__('record_not_found'));
@@ -867,6 +870,7 @@ class ContentsController extends Controller {
 
 		$this->Categories->setConfig([
 			'finder' => [
+				/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 				'forCurrentLanguage' => [
 					'languageShortcode' => $ls_languageShortcode,
 				],
@@ -1156,7 +1160,9 @@ class ContentsController extends Controller {
 			'languageShortcode' => $ls_languageShortcode,
 			'columnWidths' => $la_columnWidths,
 			'columnIndents' => $la_columnIndents,
+			/** @uses \Awyiss\Model\Table::findActive() */
 			'forms' => $this->Contents->Forms->find('active')->orderByAsc('title')->all(),
+			/** @uses \Awyiss\Model\Table::findActive() */
 			'surveys' => $this->Contents->Surveys->find('active')->orderByAsc('title')->all(),
 			'allowedKeys' => $la_allowedKeys,
 			'expertMode' => $this->request->getParam('expertMode'),

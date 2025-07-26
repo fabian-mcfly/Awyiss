@@ -219,6 +219,7 @@ class Form extends Entity {
 			$lo_query = $lo_formElementsTable->find('all');
 		}
 		else {
+			/** @uses \Awyiss\Model\Table::findActive() */
 			$lo_query = $lo_formElementsTable->find('active')->find('published');
 		}
 

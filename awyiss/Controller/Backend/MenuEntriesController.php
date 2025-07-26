@@ -148,7 +148,10 @@ class MenuEntriesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\MenuEntry $lo_menuEntry */
+		/**
+		 * @var \Awyiss\Model\Entity\MenuEntry $lo_menuEntry
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_menuEntry = $this->MenuEntries->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
@@ -375,6 +378,7 @@ class MenuEntriesController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function findLinkablePages(bool $listNested = false): CollectionInterface {
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$lo_pages = $this->fetchTable('Pages')->find('forCurrentLanguage')->find('threaded')->all();
 
 		if ($listNested) {

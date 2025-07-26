@@ -395,6 +395,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @throws \Exception
 	 */
 	protected function copyMediaEntities(MediaFolder $entity, MediaFolder $originalEntity, MediaFoldersTable $table): void {
+		/** @uses \Awyiss\Model\Table::findTranslations() */
 		$lo_files = $table->Media->find('translations')->where(['media_folder_id' => $originalEntity->id])->all();
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
 		foreach ($lo_files as $lo_file) {

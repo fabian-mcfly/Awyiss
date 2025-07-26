@@ -126,7 +126,10 @@ class AttributesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var Attribute $lo_attribute */
+		/**
+		 * @var Attribute $lo_attribute
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_attribute = $this->Attributes->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_attribute) {
 			$this->Flash->error(__('record_not_found'));

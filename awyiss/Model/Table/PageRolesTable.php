@@ -77,6 +77,7 @@ class PageRolesTable extends Table {
 	 */
 	public function findAllAndCache(): ResultSetInterface {
 		if (!isset(static::$cachedPageRoles)) {
+			/** @uses \Awyiss\Model\Table::findTranslations() */
 			static::$cachedPageRoles = static::find('translations')->all();
 		}
 

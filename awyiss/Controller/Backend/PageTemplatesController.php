@@ -107,7 +107,10 @@ class PageTemplatesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var PageTemplate $lo_pageTemplate */
+		/**
+		 * @var PageTemplate $lo_pageTemplate
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_pageTemplate = $this->PageTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['ContentAreas'])->first();
 		if (!$lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
@@ -347,6 +350,7 @@ class PageTemplatesController extends Controller {
 
 		$la_contentAreas = $lo_query->all()->toArray();
 
+		/** @uses \Awyiss\Model\Table::findTranslations() */
 		$la_contentTemplates = $this->PageTemplates->ContentAreas->ContentTemplates->find('translations')->all()->toArray();
 
 		$this->set([

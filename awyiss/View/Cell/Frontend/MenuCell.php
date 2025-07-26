@@ -147,6 +147,7 @@ class MenuCell extends Cell {
 			$lo_query = $lo_menusTable->find('all');
 		}
 		else {
+			/** @uses \Awyiss\Model\Table::findActive() */
 			$lo_query = $lo_menusTable->find('active')->find('published');
 		}
 
@@ -179,6 +180,7 @@ class MenuCell extends Cell {
 			$lo_query = $lo_menuEntriesTable->find('all');
 		}
 		else {
+			/** @uses \Awyiss\Model\Table::findActive() */
 			$lo_query = $lo_menuEntriesTable->find('active')->find('published');
 		}
 

@@ -52,6 +52,7 @@ class PagesTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $categories = [
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		'finder' => 'forCurrentLanguage',
 		'foreignKey' => 'parent_id',
 	];
@@ -558,6 +559,7 @@ class PagesTable extends Table {
 		}
 
 		if ($column === 'duplicate_of') {
+			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			return $this->find('forCurrentLanguage')->find('threaded')->all()->listNested()->printer('label', 'id', '- ')->toArray();
 		}
 

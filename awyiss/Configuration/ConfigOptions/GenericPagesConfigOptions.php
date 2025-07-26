@@ -245,6 +245,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	 */
 	protected function getMediaFolders(?string $languageShortcode): array {
 		$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$lo_mediaFolders = $lo_mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode)->find('threaded')->where([
 			'id !=' => 1,
 			'hidden' => false,
@@ -271,6 +272,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	 */
 	protected function getPages(?string $languageShortcode): array {
 		$lo_pagesTable = $this->fetchTable('Pages');
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$lo_pages = $lo_pagesTable->find('forCurrentLanguage', languageShortcode: $languageShortcode)->find('threaded')->all();
 		$lo_pages = $lo_pages->listNested();
 

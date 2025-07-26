@@ -60,6 +60,7 @@ class MediaTable extends Table {
 		'allowAggregation' => false,
 		'associationName' => 'MediaFolders',
 		'enabled' => true,
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		'finder' => 'forCurrentLanguage',
 		'identifier' => 'mediaFolder',
 	];

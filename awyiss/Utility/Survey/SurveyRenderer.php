@@ -122,6 +122,7 @@ class SurveyRenderer {
 			$lo_query = $lo_surveysTable->find('all');
 		}
 		else {
+			/** @uses \Awyiss\Model\Table::findActive() */
 			$lo_query = $lo_surveysTable->find('active')->find('published');
 		}
 

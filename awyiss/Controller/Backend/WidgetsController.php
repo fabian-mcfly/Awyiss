@@ -156,7 +156,10 @@ class WidgetsController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var Widget $lo_widget */
+		/**
+		 * @var Widget $lo_widget
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_widget = $this->Widgets->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_widget) {
 			$this->Flash->error(__('record_not_found'));
@@ -649,7 +652,9 @@ class WidgetsController extends Controller {
 			'widgetElementsByFieldset' => $la_widgetElementsByFieldset,
 			'columnWidths' => $la_columnWidths,
 			'columnIndents' => $la_columnIndents,
+			/** @uses \Awyiss\Model\Table::findActive() */
 			'forms' => $this->Widgets->Forms->find('active')->orderByAsc('title')->all(),
+			/** @uses \Awyiss\Model\Table::findActive() */
 			'surveys' => $this->Widgets->Surveys->find('active')->orderByAsc('title')->all(),
 			'expertMode' => $this->request->getParam('expertMode'),
 		]);

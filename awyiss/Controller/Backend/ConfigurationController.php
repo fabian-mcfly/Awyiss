@@ -176,7 +176,10 @@ class ConfigurationController extends Controller {
 			'scope' => '',
 		])->ensure('update');
 
-		/** @var Configuration $lo_configuration */
+		/**
+		 * @var Configuration $lo_configuration
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_configuration = $this->Configuration->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));

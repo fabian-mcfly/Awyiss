@@ -45,6 +45,7 @@ class UrlsNotFoundStatusCell extends Cell {
 		$lo_lastLogin = $lo_session->read('Backend.lastLogin');
 
 		$lo_pagesTable = $this->fetchTable('Pages');
+		/** @uses \Awyiss\Model\Table::findActive() */
 		$lo_pagesQuery = $lo_pagesTable->find('active', skipPageRoleCheck: true)
 		->disableAutoFields()
 		->find('published')

@@ -202,6 +202,7 @@ class Survey extends Entity {
 			$lo_query = $lo_questionsTable->find('all');
 		}
 		else {
+			/** @uses \Awyiss\Model\Table::findActive() */
 			$lo_query = $lo_questionsTable->find('active');
 		}
 

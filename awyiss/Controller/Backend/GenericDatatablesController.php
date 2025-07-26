@@ -62,6 +62,7 @@ abstract class GenericDatatablesController extends Controller {
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		if ($this->splitIntoLanguages) {
+			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			$lo_query = $this->Datatable->find('forCurrentLanguage');
 		}
 		else {
@@ -151,7 +152,10 @@ abstract class GenericDatatablesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity $lo_entity */
+		/**
+		 * @var \Awyiss\Model\Entity $lo_entity
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_entity = $this->Datatable->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 
 		if (!$lo_entity) {
@@ -410,7 +414,10 @@ abstract class GenericDatatablesController extends Controller {
 	 */
 	protected function getThreadedRecords(Entity $entity): CollectionInterface {
 		if (!isset($this->threadedRecords)) {
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			/**
+			 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
+			 * @noinspection PhpPossiblePolymorphicInvocationInspection
+			 */
 			$lo_query = $this->Datatable->find('forCurrentLanguage', languageShortcode: $entity->languageShortcode, includeGlobal: false)->where(
 				$this->getOverviewWhere() + $this->Categories->getQueryConditions(
 					$this->Categories->getSelectedCategory($entity)

@@ -50,6 +50,7 @@ class MenusTable extends Table {
 		]);
 
 		$this->hasMany('MenuEntries', [
+			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			'finder' => 'forCurrentLanguage',
 			'foreignKey' => 'menu_id',
 		]);

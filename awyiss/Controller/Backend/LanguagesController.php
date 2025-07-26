@@ -92,7 +92,10 @@ class LanguagesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var Language $lo_language */
+		/**
+		 * @var Language $lo_language
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_language = $this->Languages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_language) {
 			$this->Flash->error(__('record_not_found'));

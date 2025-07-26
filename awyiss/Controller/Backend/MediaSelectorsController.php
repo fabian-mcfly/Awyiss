@@ -96,7 +96,10 @@ class MediaSelectorsController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var MediaSelector $lo_mediaSelector */
+		/**
+		 * @var MediaSelector $lo_mediaSelector
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_mediaSelector = $this->MediaSelectors->findById($id)->find('translations')->first();
 		if (!$lo_mediaSelector) {
 			$this->Flash->error(__('record_not_found'));

@@ -44,10 +44,10 @@ class WeinkonfiguratorSurveyResults extends AbstractSurveyResults {
 		}
 
 		$lo_winesTable = FactoryLocator::get('Table')->get('Wines');
-		$lo_wines = $lo_winesTable->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)
-			->find('active')
-			->where(['AttributesWines.identifier IN' => $la_result])
-			->all();
+		/** @uses \Awyiss\Model\Table::findActive() */
+		$lo_wines = $lo_winesTable->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)->find('active')->where(
+			['AttributesWines.identifier IN' => $la_result]
+		)->all();
 
 		return $this->view->element('survey/results/weinkonfigurator', [
 			'wines' => $lo_wines,

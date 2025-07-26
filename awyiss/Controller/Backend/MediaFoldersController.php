@@ -89,6 +89,7 @@ class MediaFoldersController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$lo_query = $this->MediaFolders->find('forCurrentLanguage')->where(['hidden' => false]);
 
 		if ($this->getOverviewWhere('language_shortcode') !== 'all') {
@@ -175,7 +176,10 @@ class MediaFoldersController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder */
+		/**
+		 * @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_mediaFolder = $this->MediaFolders->findById($id)->find('translations')->first();
 
 		if (!$lo_mediaFolder) {
@@ -481,6 +485,7 @@ class MediaFoldersController extends Controller {
 	 */
 	protected function getThreadedMediaFolders(MediaFolder $mediaFolder): CollectionInterface {
 		if (!isset($this->threadedMediaFolders)) {
+			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			$lo_query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $mediaFolder->languageShortcode ?? '_global', includeGlobal: false)
 			->where($this->getOverviewWhere())
 			->where(['hidden' => $mediaFolder->hidden]);

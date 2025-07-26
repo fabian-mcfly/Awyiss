@@ -211,7 +211,10 @@ class UserConfigurationController extends Controller {
 			'scope' => '',
 		])->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\UserConfiguration $lo_configuration */
+		/**
+		 * @var \Awyiss\Model\Entity\UserConfiguration $lo_configuration
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_configuration = $this->UserConfiguration->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->where(['user_id' => $this->getIdentity()->getIdentifier()])->first();
 		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));

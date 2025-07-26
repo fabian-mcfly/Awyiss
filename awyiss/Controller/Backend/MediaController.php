@@ -138,6 +138,10 @@ class MediaController extends Controller {
 			$lo_media = $lo_query->all();
 		}
 
+		/**
+		 * @uses \Awyiss\Model\Table::findActive()
+		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
+		 */
 		$lo_mediaFoldersQuery = $this->Media->MediaFolders->find('active')->find('threaded')->find('forCurrentLanguage');
 
 		$la_where = [];
@@ -279,7 +283,10 @@ class MediaController extends Controller {
 		 * the exception is rethrown so the exception handler can handle it
 		 */
 		try {
-			/** @var \Awyiss\Model\Entity\Media $lo_media */
+			/**
+			 * @var \Awyiss\Model\Entity\Media $lo_media
+			 * @uses \Awyiss\Model\Table::findTranslations()
+			 */
 			$lo_media = $this->Media->findById($id)->find('translations')->first();
 
 			if (!$lo_media) {
@@ -562,6 +569,7 @@ class MediaController extends Controller {
 			$la_where['hidden'] = false;
 		}
 
+		/** @uses \Awyiss\Model\Table::findActive() */
 		$lo_mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->where($la_where)->all();
 		$la_mediaFolders = $lo_mediaFolders->groupBy(function (MediaFolder $element) {
 			return $element->languageShortcode ?? '';

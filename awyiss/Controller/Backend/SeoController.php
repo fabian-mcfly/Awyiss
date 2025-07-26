@@ -94,6 +94,7 @@ class SeoController extends BackendController {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		return $this->table->find('forCurrentLanguage')->where($this->getOverviewWhere());
 	}
 
@@ -232,6 +233,7 @@ class SeoController extends BackendController {
 	 */
 	#[NoDirectAccess]
 	protected function initPageRoles(): array {
+		/** @uses \Awyiss\Model\Table::findActive() */
 		$lo_pageRoles = $this->fetchTable('PageRoles')->find('active')->all();
 
 		foreach ($lo_pageRoles as $lo_pageRole) {

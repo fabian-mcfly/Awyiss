@@ -112,6 +112,7 @@ class WidgetsCell extends Cell {
 			$lo_query = $lo_widgetsTable->find('all');
 		}
 		else {
+			/** @uses \Awyiss\Model\Table::findActive() */
 			$lo_query = $lo_widgetsTable->find('active')->find('published');
 		}
 

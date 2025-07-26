@@ -141,7 +141,10 @@ class BackendMenuEntriesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var BackendMenuEntry $lo_menuEntry */
+		/**
+		 * @var BackendMenuEntry $lo_menuEntry
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_menuEntry = $this->BackendMenuEntries->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));

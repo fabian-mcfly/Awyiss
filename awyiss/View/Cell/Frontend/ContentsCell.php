@@ -265,6 +265,10 @@ class ContentsCell extends Cell {
 			$lo_query = $lo_contentsTable->find('all');
 		}
 		else {
+			/**
+			 * @uses \Awyiss\Model\Table::findActive()
+			 * @uses \Awyiss\Model\Table::findActive()
+			 */
 			$lo_query = $lo_contentsTable->find('active')->find('published');
 		}
 

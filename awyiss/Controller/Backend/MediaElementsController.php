@@ -103,11 +103,15 @@ class MediaElementsController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var MediaElement $lo_mediaElement */
+		/**
+		 * @var MediaElement $lo_mediaElement
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_mediaElement = $this->MediaElements->findById($id)->find('translations')->contain([
 			'MediaElementAssignments',
 			'MediaElementSelectors' => [
 				'queryBuilder' => function (SelectQuery $query) {
+					/** @uses \Awyiss\Model\Table::findTranslations() */
 					return $query->find('translations');
 				},
 			],

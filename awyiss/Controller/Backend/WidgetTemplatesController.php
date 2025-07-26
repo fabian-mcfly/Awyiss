@@ -95,11 +95,15 @@ class WidgetTemplatesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\WidgetTemplate $lo_widgetTemplate */
+		/**
+		 * @var \Awyiss\Model\Entity\WidgetTemplate $lo_widgetTemplate
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_widgetTemplate = $this->WidgetTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')
 		->contain([
 			'WidgetTemplateElements' => [
 				'queryBuilder' => function (SelectQuery $query) {
+					/** @uses \Awyiss\Model\Table::findTranslations() */
 					return $query->find('translations');
 				},
 			],

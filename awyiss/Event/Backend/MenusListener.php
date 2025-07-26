@@ -59,6 +59,7 @@ class MenusListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Entity\Menu $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
 
+		/** @uses \Awyiss\Model\Table::findTranslations() */
 		$lo_entries = $lo_table->AllMenuEntries->find('threaded', nestingKey: 'childMenuEntries')
 		->find('mediaAssignments', formatResult: false)
 		->find('translations')

@@ -120,7 +120,10 @@ class SurveysController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var Survey $lo_survey */
+		/**
+		 * @var Survey $lo_survey
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_survey = $this->Surveys->findById($id)
 			->find('translations')
 			->find('mediaAssignments')
@@ -199,7 +202,10 @@ class SurveysController extends Controller {
 	public function diagram(): void {
 		$this->Authorization->ensure('read');
 
-		/** @var Survey $lo_survey */
+		/**
+		 * @var Survey $lo_survey
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_survey = $this->Surveys->findById($this->request->getParam('id'))
 			->find('translations')
 			->find('mediaAssignments')

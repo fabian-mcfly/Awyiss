@@ -72,7 +72,10 @@ class AuditController extends Controller {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->fetchTable(Inflector::camelize($ls_scope));
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		/**
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
 		$lo_entity = $lo_table->findById($li_id)->find('translations')->find('mediaAssignments')->first();
 
 		if (!$lo_entity) {

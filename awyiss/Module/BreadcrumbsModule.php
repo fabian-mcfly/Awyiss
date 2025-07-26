@@ -94,6 +94,7 @@ class BreadcrumbsModule extends AbstractModule {
 		}
 		else {
 			// Get the homepage entity (first page for the current language)
+			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			$lo_query = $lo_pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true)->orderBy([
 				'Pages.parent_id' => 'ASC',
 			]);
@@ -117,6 +118,7 @@ class BreadcrumbsModule extends AbstractModule {
 		array_shift($la_pathParts);
 
 		// Get all pages in the current path
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$lo_query = $lo_pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true);
 
 		$ls_currentPath = '';
@@ -168,6 +170,10 @@ class BreadcrumbsModule extends AbstractModule {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_pageTable */
 		$lo_pageTable = FactoryLocator::get('Table')->get('Pages');
 
+		/**
+		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
+		 * @uses \Awyiss\Model\Table::findActive()
+		 */
 		$lo_query = $lo_pageTable->find('active')->find('threaded')->find('forCurrentLanguage');
 
 		$lo_pages = $lo_query->all()->listNested();

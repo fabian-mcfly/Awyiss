@@ -52,7 +52,7 @@ use RuntimeException;
  * @method string|\Awyiss\Authorization\Policy\AbstractGenericPolicy|null getPolicyClass()
  * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $entity = null)
  * @method array hasDirtyRelatedSystemOrderColumns(?\Cake\Datasource\EntityInterface $entity = null)
- * @method array extractAttributeFields(array $fields, bool $inlcudeBaseFields = false)
+ * @method array extractAttributeFields(array $fields, bool $includeBaseFields = false)
  * @method \Awyiss\Model\Entity\Attribute[] getAttributes()
  * @method \Awyiss\Model\Table getAttributesTable()
  * @method string getAttributesTableName(bool $camelized = false)
@@ -65,6 +65,7 @@ use RuntimeException;
  * @method string normalizeColumnType(string $type)
  * @method bool searchIsActive()
  * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class Table extends BaseTable {
 	use IdentityAwareTrait;
@@ -190,10 +191,6 @@ class Table extends BaseTable {
 	 * @var array Settings for the TranslateBehavior
 	 */
 	protected array $translate = [];
-	/**
-	 * @var array Custom configuration, set by the current user, for the current user
-	 */
-	protected array $userConfiguration;
 
 
 	/**
@@ -210,6 +207,7 @@ class Table extends BaseTable {
 
 	/**
 	 * @inheritDoc
+	 * @throws \Exception
 	 */
 	public function initialize(array $config): void {
 		if (static::TABLE) {
@@ -229,10 +227,7 @@ class Table extends BaseTable {
 
 		$this->initializeAssociations();
 
-		/**
-		 * @noinspection PhpStrictTypeCheckingInspection
-		 * @noinspection PhpParamsInspection
-		 */
+		/** @noinspection PhpStrictTypeCheckingInspection, PhpParamsInspection, PhpUndefinedFieldInspection */
 		$ls_sourceTable = isset($this->pageRole) ? Inflector::tableize($this->pageRole->name) : $this->getTable();
 
 		//Merge the config properties with custom configuration from the database
@@ -270,6 +265,7 @@ class Table extends BaseTable {
 				$this->addBehavior('SystemOrder', $this->systemOrder);
 			}
 
+			/** @noinspection PhpInArrayCanBeReplacedWithComparisonInspection */
 			if (
 				!str_starts_with($this->getTable(), 'media') &&
 				!in_array($this->getTable(), [
@@ -305,11 +301,9 @@ class Table extends BaseTable {
 	/**
 	 * @param SelectQuery $query
 	 * @return SelectQuery
-	 * @noinspection PhpUnused
 	 */
 	public function findTranslations(SelectQuery $query): SelectQuery {
 		if ($this->hasBehavior('Translate')) {
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			return $this->getBehavior('Translate')->findTranslations($query);
 		}
 
@@ -319,10 +313,8 @@ class Table extends BaseTable {
 
 
 	/**
-	 * @param SelectQuery $query
-	 * @param array $options
-	 * @return SelectQuery
-	 * @noinspection PhpUnused
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function findActive(SelectQuery $query): SelectQuery {
 		if (!$this->getSchema()->getColumn('active')) {
@@ -520,9 +512,7 @@ class Table extends BaseTable {
 	 * @return Validator
 	 */
 	public function validationDefault(BaseValidator $validator): BaseValidator {
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$validator->setI18nDomain($this->getI18nDomain())->setStopOnFailure();
-
 
 		return $validator;
 	}
@@ -1072,6 +1062,7 @@ class Table extends BaseTable {
 	/**
 	 * @param \Awyiss\Model\Entity\Language|null $translateLanguage
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function addTranslateBehavior(?Language $translateLanguage = null): void {
 		if (

@@ -128,7 +128,10 @@ class UsersController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var User $lo_user */
+		/**
+		 * @var User $lo_user
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_user = $this->Users->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['Usergroups'])->first();
 		if (!$lo_user) {
 			$this->Flash->error(__('record_not_found'));

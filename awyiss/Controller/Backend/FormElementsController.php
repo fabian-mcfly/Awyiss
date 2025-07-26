@@ -164,7 +164,10 @@ class FormElementsController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\FormElement $lo_formElement */
+		/**
+		 * @var \Awyiss\Model\Entity\FormElement $lo_formElement
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_formElement = $this->FormElements->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_formElement) {
 			$this->Flash->error(__('record_not_found'));

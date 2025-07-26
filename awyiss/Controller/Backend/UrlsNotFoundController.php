@@ -49,6 +49,7 @@ class UrlsNotFoundController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_pagesTable = $this->fetchTable('Pages');
+		/** @uses \Awyiss\Model\Table::findActive() */
 		$lo_pagesQuery = $lo_pagesTable->find('active', skipPageRoleCheck: true)
 		->disableAutoFields()
 		->find('published')

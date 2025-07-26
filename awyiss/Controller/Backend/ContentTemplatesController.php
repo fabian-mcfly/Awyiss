@@ -96,11 +96,15 @@ class ContentTemplatesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var ContentTemplate $lo_contentTemplate */
+		/**
+		 * @var ContentTemplate $lo_contentTemplate
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain([
 			'ContentAreas',
 			'ContentTemplateElements' => [
 				'queryBuilder' => function (SelectQuery $query) {
+					/** @uses \Awyiss\Model\Table::findTranslations() */
 					return $query->find('translations');
 				},
 			],

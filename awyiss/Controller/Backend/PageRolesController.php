@@ -95,7 +95,10 @@ class PageRolesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var PageRole $lo_pageRole */
+		/**
+		 * @var PageRole $lo_pageRole
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_pageRole = $this->PageRoles->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_pageRole) {
 			$this->Flash->error(__('record_not_found'));

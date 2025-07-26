@@ -90,7 +90,10 @@ class SurveyQuestionsController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var SurveyQuestion $lo_surveyQuestion */
+		/**
+		 * @var SurveyQuestion $lo_surveyQuestion
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_surveyQuestion = $this->SurveyQuestions->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_surveyQuestion) {
 			$this->Flash->error(__('record_not_found'));

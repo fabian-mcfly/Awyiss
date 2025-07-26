@@ -159,6 +159,7 @@ class MediaElementsCell extends Cell {
 	 */
 	protected function getElements(): Collection {
 		if (!isset(static::$elements)) {
+			/** @uses \Awyiss\Model\Table::findActive() */
 			static::$elements = $this->fetchTable('MediaElements')->find('active')
 			->where(['internal' => 0])
 			->contain([

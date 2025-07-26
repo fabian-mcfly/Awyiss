@@ -296,6 +296,7 @@ class PagesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Entity\Page $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
 
+		/** @uses \Awyiss\Model\Table::findTranslations() */
 		$lo_entries = $lo_table->Contents->find('threaded', nestingKey: 'childContents')
 		->find('mediaAssignments', formatResult: false)
 		->find('translations')

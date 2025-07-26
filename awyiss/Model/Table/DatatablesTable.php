@@ -171,6 +171,7 @@ class DatatablesTable extends Table {
 	 */
 	public function findAllAndCache(): ResultSetInterface {
 		if (!isset(static::$cachedDatatables)) {
+			/** @uses \Awyiss\Model\Table::findTranslations() */
 			static::$cachedDatatables = static::find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->all();
 		}
 
