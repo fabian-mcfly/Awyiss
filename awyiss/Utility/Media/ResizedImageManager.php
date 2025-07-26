@@ -90,7 +90,7 @@ class ResizedImageManager {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		foreach ($entity->mediaAssignments as $la_assignments) {
 			foreach ($la_assignments as $ls_identifier => $lo_media) {
-				if (str_starts_with($ls_identifier, '_')) {
+				if (!is_int($ls_identifier) && str_starts_with($ls_identifier, '_')) {
 					continue;
 				}
 
