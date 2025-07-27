@@ -364,25 +364,29 @@ class Table extends BaseTable {
 
 
 	/**
-	 * @inheritDoc
+	 * Re-implemented so it'll use `\Awyiss\Core\App::className()` to find the entity class.
+	 * Looks for the
+	 *
+	 * @return class-string<\Cake\Datasource\EntityInterface>
+	 * @see \Cake\ORM\Table::getEntityClass()
+	 * @see \Awyiss\Core\App::className()
 	 */
 	public function getEntityClass(): string {
 		if (!$this->_entityClass) {
-			$ls_default = Entity::class;
-			$ls_self = static::class;
-			$la_parts = explode('\\', $ls_self);
+			$ls_default = Inflector::classify($this->_table);
+			$la_parts = explode('\\', static::class);
 
-			if ($ls_self === self::class || count($la_parts) < 3) {
-				return $this->_entityClass = $ls_default;
+			if (static::class === self::class || count($la_parts) < 3) {
+				return $this->_entityClass = Entity::class;
 			}
 
 			$ls_alias = Inflector::classify(Inflector::underscore(substr(array_pop($la_parts), 0, -5)));
-			$ls_name = implode('\\', array_slice($la_parts, 0, -1)) . '\\Entity\\' . $ls_alias;
+			$ls_name = '\\' . implode('\\', array_slice($la_parts, 0, -1)) . '\\Entity\\' . $ls_alias;
 
 			/** @var class-string<\Cake\Datasource\EntityInterface>|null $ls_class */
-			$ls_class = App::className($ls_name, 'Model/Entity');
+			$ls_class = App::className($ls_alias, 'Model/Entity');
 			if (!$ls_class) {
-				$ls_class = App::className($ls_alias, 'Model/Entity');
+				$ls_class = App::className($ls_default, 'Model/Entity');
 			}
 
 			if (!$ls_class) {
