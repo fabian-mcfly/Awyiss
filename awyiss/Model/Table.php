@@ -547,18 +547,26 @@ class Table extends BaseTable {
 	 */
 	public function buildEventMap(Table|Behavior $instance, array $eventMap, ?int $priority = null): array {
 		$la_eventMap = [];
-		$li_priority = $priority;
 
 		foreach ($eventMap as $ls_event => $lx_callable) {
+			$li_priority = $priority;
+
 			if (is_array($lx_callable)) {
 				if (isset($lx_callable['priority'])) {
 					$li_priority = $lx_callable['priority'];
 				}
 
 				$lx_callable = $lx_callable['callable'] ?? null;
+
+				if (!$lx_callable) {
+					throw new RuntimeException(sprintf('When provided an array, the key `%s` must contain a `callable` key', $ls_event));
+				}
 			}
 
-			if ((is_string($lx_callable) && !method_exists($instance, $lx_callable)) || (!is_string($lx_callable) && !is_callable($lx_callable))) {
+			if (
+				(is_string($lx_callable) && !method_exists($instance, $lx_callable)) ||
+				(!is_string($lx_callable) && !is_callable($lx_callable))
+			) {
 				continue;
 			}
 
