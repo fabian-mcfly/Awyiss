@@ -641,7 +641,7 @@ class ContentsTable extends Table {
 
 			/** @var Content $lo_content */
 			foreach ($lo_contents as $lo_content) {
-				$lo_content->setVirtual(['level']);
+				$lo_content->setVirtual(['level'], true);
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$lo_content->level = $lo_contents->getDepth();
 			}

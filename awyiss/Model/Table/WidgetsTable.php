@@ -396,7 +396,7 @@ class WidgetsTable extends Table {
 
 			/** @var Widget $lo_widget */
 			foreach ($lo_widgets as $lo_widget) {
-				$lo_widget->setVirtual(['level']);
+				$lo_widget->setVirtual(['level'], true);
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$lo_widget->level = $lo_widgets->getDepth();
 			}

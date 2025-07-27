@@ -693,6 +693,7 @@ class Table extends BaseTable {
 			/** @noinspection PhpDynamicFieldDeclarationInspection */
 			$entity->originalEntity = clone $entity;
 			$entity->setVirtual(['originalEntity']);
+			$entity->setVirtual(['originalEntity'], true);
 
 			/** @noinspection PhpUndefinedFieldInspection */
 			if ($entity->originalPrimaryKeys) {

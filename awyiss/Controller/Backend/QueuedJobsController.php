@@ -222,7 +222,7 @@ class QueuedJobsController extends BackendController {
 	 * @return void
 	 */
 	protected function setJobProperties(QueuedJob $queuedJob): void {
-		$queuedJob->setVirtual(['failed', 'scope']);
+		$queuedJob->setVirtual(['failed', 'scope'], true);
 		$queuedJob->failed = $this->taskFailed($queuedJob);
 
 		$queuedJob->scope = '';

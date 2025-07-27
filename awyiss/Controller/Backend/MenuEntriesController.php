@@ -386,7 +386,7 @@ class MenuEntriesController extends Controller {
 
 			/** @var \Awyiss\Model\Entity\Page $lo_page */
 			foreach ($lo_pages as $lo_page) {
-				$lo_page->setVirtual(['level']);
+				$lo_page->setVirtual(['level'], true);
 				//Add the current depth as a level-property to the entity
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$lo_page->level = $lo_pages->getDepth();

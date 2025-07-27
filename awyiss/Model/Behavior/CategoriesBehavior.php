@@ -740,7 +740,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 			/** @var \Awyiss\Model\Entity $lo_category */
 			foreach ($lo_categories as $lo_category) {
-				$lo_category->setVirtual(['level']);
+				$lo_category->setVirtual(['level'], true);
 				//Add the current depth as a level-property to the entity
 				$lo_category->level = $lo_categories->getDepth();
 			}

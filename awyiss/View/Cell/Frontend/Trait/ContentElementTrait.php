@@ -42,7 +42,7 @@ trait ContentElementTrait {
 		foreach ($lo_entities as $lo_entity) {
 			$this->applyDuplicateData($lo_entity);
 
-			$lo_entity->setVirtual(['level']);
+			$lo_entity->setVirtual(['level'], true);
 			//Add the current depth as a level-property to the entity
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_entity->level = $lo_entities->getDepth();
@@ -319,7 +319,7 @@ trait ContentElementTrait {
 	 * @noinspection PhpDocSignatureInspection
 	 */
 	protected function setRealColumnWidth(Entity $entity, float $columnWidth): void {
-		$entity->setVirtual(['realColumnWidth']);
+		$entity->setVirtual(['realColumnWidth'], true);
 
 		$ls_property = match (true) {
 			$entity instanceof Content => 'parentContents',

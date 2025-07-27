@@ -586,7 +586,7 @@ class SurveysController extends Controller {
 				}
 
 				$lo_question->set('unused', !$lb_usedInGraph);
-				$lo_question->setVirtual(['unused']);
+				$lo_question->setVirtual(['unused'], true);
 
 				if (!$lb_usedInGraph) {
 					$la_unusedQuestions[] = $lo_question->identifier;
@@ -614,7 +614,7 @@ class SurveysController extends Controller {
 		foreach ($survey->surveySurveyQuestions as $lo_question) {
 			if (in_array($lo_question->identifier, $la_onlyReachableFromUnused, true)) {
 				$lo_question->set('onlyReachableFromUnused', true);
-				$lo_question->setVirtual(['onlyReachableFromUnused']);
+				$lo_question->setVirtual(['onlyReachableFromUnused'], true);
 			}
 		}
 	}

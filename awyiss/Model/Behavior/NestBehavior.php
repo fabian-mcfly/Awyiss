@@ -247,7 +247,7 @@ class NestBehavior extends Behavior {
 
 		$lo_collection = new Collection([]);
 
-		$entity->setVirtual(['level']);
+		$entity->setVirtual(['level'], true);
 		$entity->set('level', $currentLevel);
 
 		foreach ($this->getChildren($entity, $options) as $lo_entity) {
@@ -392,7 +392,7 @@ class NestBehavior extends Behavior {
 
 		/** @var \Awyiss\Model\Entity $lo_page */
 		foreach ($lo_records as $lo_entity) {
-			$lo_entity->setVirtual(['level']);
+			$lo_entity->setVirtual(['level'], true);
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_entity->level = $lo_records->getDepth();
 		}

@@ -134,7 +134,7 @@ class BackendView extends AppView {
 			return $key !== 'label';
 		});
 
-		$lo_language->setVirtual($la_virtualFields);
+		$lo_language->setVirtual($la_virtualFields, true);
 
 		return $lo_language;
 	}
