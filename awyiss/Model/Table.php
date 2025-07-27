@@ -318,7 +318,7 @@ class Table extends BaseTable {
 	 */
 	public function findActive(SelectQuery $query): SelectQuery {
 		if (!$this->getSchema()->getColumn('active')) {
-			throw new RuntimeException(sprintf('Cannot use `findActive` on table `%s` ', $this->getAlias()));
+			throw new RuntimeException(sprintf('Cannot use `findActive` on table `%s`', $this->getAlias()));
 		}
 
 		$query->where(['active' => true]);
@@ -330,16 +330,16 @@ class Table extends BaseTable {
 
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param string|null $languageShortcode
+	 * @param string|false|null $languageShortcode A language shortcode to filter by, null to use the current language, or false to not filter by language.
 	 * @param \Awyiss\Model\Entity\MediaFolder|null $entity
 	 * @param bool $includeGlobal
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @throws \Exception
 	 */
-	public function findForCurrentLanguage(SelectQuery $query, ?string $languageShortcode = null, ?Entity $entity = null, bool $includeGlobal = true): SelectQuery {
+	public function findForCurrentLanguage(SelectQuery $query, string|false|null $languageShortcode = null, ?Entity $entity = null, bool $includeGlobal = true): SelectQuery {
 		$ls_languageShortcode = $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode;
 
-		if ($ls_languageShortcode === '_global') {
+		if ($ls_languageShortcode === false) {
 			$ls_languageShortcode = null;
 		}
 
@@ -986,7 +986,6 @@ class Table extends BaseTable {
 		}
 
 		$this->addBehavior('Attributes', $la_options);
-		$this->addBehavior('Search', $this->search);
 
 		if ($sourceTable) {
 			return;

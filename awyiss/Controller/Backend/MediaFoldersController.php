@@ -486,7 +486,7 @@ class MediaFoldersController extends Controller {
 	protected function getThreadedMediaFolders(MediaFolder $mediaFolder): CollectionInterface {
 		if (!isset($this->threadedMediaFolders)) {
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-			$lo_query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $mediaFolder->languageShortcode ?? '_global', includeGlobal: false)
+			$lo_query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $mediaFolder->languageShortcode ?? false, includeGlobal: false)
 			->where($this->getOverviewWhere())
 			->where(['hidden' => $mediaFolder->hidden]);
 
