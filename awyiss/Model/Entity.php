@@ -75,8 +75,7 @@ class Entity extends BaseEntity {
 	 * @inheritDoc
 	 */
 	public function &get(string $field): mixed {
-		$ls_field = $field;
-		$ls_field = static::mapField($ls_field);
+		$ls_field = static::mapField($field);
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection ... stupid PhpStorm */
 		$lx_value = &$this->getOrGetFromAttribute($ls_field);
@@ -93,24 +92,21 @@ class Entity extends BaseEntity {
 	 * @param array $options
 	 */
 	public function set(array|string $field, mixed $value = null, array $options = []): EntityInterface {
-		$lx_field = $field;
-		if (is_string($lx_field)) {
-			$lx_field = static::mapField($lx_field);
-		}
-		elseif (is_array($field) && $field) {
-			$lx_field = static::mapFields($field, true);
+		if (is_array($field)) {
+			/**
+			 * Let the parent method handle an array of fields.
+			 * Since CakePHP 5.2.0, setting an array of fields
+			 * is deprecated and will throw an exception in the future.
+			 */
+			return parent::set($field, $value, $options);
 		}
 
-
-		return $this->setOrSetAttribute($lx_field, $value, $options);
+		return $this->setOrSetAttribute(static ::mapField($field), $value, $options);
 	}
 
 
 	/**
 	 * @inheritDoc
-	 * @param array|string $value
-	 * @param mixed|null $value
-	 * @param array $options
 	 */
 	public function patch(array $values, array $options = []): EntityInterface {
 		$la_values = static::mapFields($values, true);
@@ -177,7 +173,7 @@ class Entity extends BaseEntity {
 		 * - the table has no publication data behavior
 		 * - the entity has no publication data
 		 *
-		 * In both cases the entity is considered published
+		 * In both cases the entity should be considered published
 		 */
 		if (empty($this->_publicationData)) {
 			return null;

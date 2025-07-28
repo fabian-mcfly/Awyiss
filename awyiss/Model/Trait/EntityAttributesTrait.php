@@ -90,46 +90,43 @@ trait EntityAttributesTrait {
 	 * @return \Cake\Datasource\EntityInterface
 	 */
 	public function set(array|string $field, mixed $value = null, array $options = []): EntityInterface {
-		if (is_string($field) && in_array($field, ['_locale', '_translations'])) {
+		if (
+			is_array($field) ||
+			in_array($field, ['_locale', '_translations'])
+		) {
+			/**
+			 * Let the parent method handle an array of fields
+			 * and '_locale' or '_translations' fields.
+			 *
+			 * Since CakePHP 5.2.0, setting an array of fields
+			 * is deprecated and will throw an exception in the future.
+			 *
+			 * @noinspection PhpIncompatibleReturnTypeInspection
+			 */
+			return parent::set($field, $value, $options);
+		}
+
+		/**
+		 * If no attributes field is set,
+		 * or if it is not an Entity,
+		 * or if the field is not part of the attributes,
+		 * let the parent method handle it
+		 */
+		if (
+			!($this->_fields['attributes'] ?? null) instanceof Entity ||
+			!$this->_fields['attributes']->has($field)
+		) {
 			/** @noinspection PhpIncompatibleReturnTypeInspection */
 			return parent::set($field, $value, $options);
 		}
 
-		$lx_field = $field;
+		/** @var \Awyiss\Model\Entity $lo_attributes */
+		$lo_attributes = $this->_fields['attributes'];
 
-		if (($this->_fields['attributes'] ?? null) instanceof Entity) {
-			/** @var Entity $lo_attributes */
-			$lo_attributes = $this->_fields['attributes'];
+		// Set the value in the attributes field
+		$lo_attributes->set($field, $value, $options);
 
-			if (is_string($lx_field) && $lo_attributes->has($lx_field)) {
-				$lo_attributes->set($lx_field, $value, $options);
-
-				return $this;
-			}
-			elseif (is_array($lx_field)) {
-				$la_attributeFields = [];
-				foreach ($lx_field as $ls_field => $lx_value) {
-					if (in_array($ls_field, ['_locale', '_translations'])) {
-						continue;
-					}
-
-					if ($lo_attributes->has($ls_field)) {
-						$la_attributeFields[ $ls_field ] = $lx_value;
-						unset($lx_field[ $ls_field ]);
-					}
-				}
-
-				$lo_attributes->set($la_attributeFields, $value, $options);
-			}
-		}
-
-		if (is_array($lx_field)) {
-			/** @noinspection PhpIncompatibleReturnTypeInspection */
-			return parent::patch($lx_field, $options);
-		}
-
-		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::set($lx_field, $value, $options);
+		return $this;
 	}
 
 

@@ -56,17 +56,20 @@ trait EntityFieldMapTrait {
 	 * @inheritDoc
 	 */
 	public function set(array|string $field, mixed $value = null, array $options = []): EntityInterface {
-		$lx_field = $field;
-		if (is_string($lx_field)) {
-			$lx_field = static::mapField($lx_field);
+		if (is_array($field)) {
+			/**
+			 * Let the parent method handle an array of fields.
+			 *
+			 * Since CakePHP 5.2.0, setting an array of fields
+			 * is deprecated and will throw an exception in the future.
+			 *
+			 * @noinspection PhpIncompatibleReturnTypeInspection
+			 */
+			return parent::set($field, $value, $options);
 		}
-		elseif (is_array($field) && $field) {
-			$lx_field = static::mapFields($field, true);
-		}
-
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::set($lx_field, $value, $options);
+		return parent::set(static::mapField($field), $value, $options);
 	}
 
 

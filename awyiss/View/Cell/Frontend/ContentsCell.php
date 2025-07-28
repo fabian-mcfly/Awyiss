@@ -219,7 +219,7 @@ class ContentsCell extends Cell {
 		$la_data = $entity->duplicateOfContent->extract(null, false, false);
 		$la_data = array_diff_key($la_data, array_flip($la_blocklistedKeys));
 
-		$entity->set($la_data);
+		$entity->patch($la_data);
 	}
 
 

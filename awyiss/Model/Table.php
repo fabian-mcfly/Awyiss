@@ -698,12 +698,12 @@ class Table extends BaseTable {
 			/** @noinspection PhpUndefinedFieldInspection */
 			if ($entity->originalPrimaryKeys) {
 				/** @noinspection PhpUndefinedFieldInspection */
-				$entity->originalEntity->set($entity->originalPrimaryKeys, ['guard' => false]);
+				$entity->originalEntity->patch($entity->originalPrimaryKeys, ['guard' => false]);
 				$entity->unset('originalPrimaryKeys');
 			}
 
 			if ($entity->originalEntity->isDirty()) {
-				$entity->originalEntity->set(
+				$entity->originalEntity->patch(
 					$entity->originalEntity->extractOriginalChanged(
 						$entity->originalEntity->getOriginalFields()
 					)
