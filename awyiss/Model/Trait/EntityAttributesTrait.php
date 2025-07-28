@@ -7,7 +7,6 @@ namespace Awyiss\Model\Trait;
 use Awyiss\Model\Entity;
 use Awyiss\ORM\Association\HasOne;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\FactoryLocator;
 use InvalidArgumentException;
 
 
@@ -15,60 +14,6 @@ use InvalidArgumentException;
  * Adds attribute-specific logic to entities
  */
 trait EntityAttributesTrait {
-	/**
-	 * Constructor
-	 *
-	 * @param array $properties
-	 * @param array $options
-	 */
-	public function __construct(array $properties = [], array $options = []) {
-		parent::__construct($properties, $options);
-
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
-		if ($lo_table->hasAttributes()) {
-			/** @var HasOne $lo_association */
-			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
-
-			$this->initAttributesField($lo_association, $lo_association->getForeignKey());
-		}
-	}
-
-
-	/**
-	 * Sets each of the attribute's values as
-	 *
-	 * @param \Awyiss\ORM\Association\HasOne|\Awyiss\Model\Table $attributesTable
-	 * @param string $foreignKey
-	 * @return void
-	 */
-	public function initAttributesField(HasOne $attributesTable, string $foreignKey): void {
-		$lo_attributes = $this->_fields['attributes'] ?? null;
-
-		if (!$lo_attributes || !is_a($lo_attributes, Entity::class)) {
-			return;
-		}
-
-		$la_translatableFields = [];
-		if ($attributesTable->hasBehavior('Translate')) {
-			$la_translatableFields = $attributesTable->getBehavior('Translate')->getConfig('fields', []);
-		}
-
-		/** @var \Cake\Datasource\EntityInterface $lo_attributes */
-		foreach ($lo_attributes->_fields as $ls_key => $lx_value) {
-			if (in_array($ls_key, ['id', $foreignKey, '_i18n', '_translations'])) {
-				continue;
-			}
-
-			if (str_ends_with($ls_key, '_translation') && in_array(substr($ls_key, 0, -12), $la_translatableFields)) {
-				continue;
-			}
-
-			$this->setVirtual([$ls_key], true);
-		}
-	}
-
-
 	/**
 	 * @inheritDoc
 	 */

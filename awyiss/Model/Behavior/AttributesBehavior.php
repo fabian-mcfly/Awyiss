@@ -429,14 +429,6 @@ class AttributesBehavior extends Behavior {
 				$lo_association = $this->table()->{$this->getAttributesTableName(true)};
 
 				$entity->attributes = $lo_association->newDefaultEntity();
-
-				/** @var static $ls_associationEntityClass */
-				$ls_associationEntityClass = $lo_association->getEntityClass();
-
-				/** @noinspection PhpUndefinedMethodInspection */
-				$ls_foreignKey = $ls_associationEntityClass::mapField($lo_association->getForeignKey());
-
-				$entity->initAttributesField($lo_association, $ls_foreignKey);
 			}
 
 			/**

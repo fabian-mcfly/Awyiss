@@ -8,7 +8,6 @@ use Awyiss\Model\Trait\EntityAttributesTrait;
 use Awyiss\Model\Trait\EntityFieldMapTrait;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\FactoryLocator;
 use Cake\I18n\DateTime;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity as BaseEntity;
@@ -53,22 +52,6 @@ class Entity extends BaseEntity {
 		$this->setOriginalField(array_keys($la_properties));
 
 		parent::__construct($la_properties, $options);
-
-		if (isset($this->_fields['attributes']) && $this->getSource()) {
-			/** @var Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
-			if ($lo_table->hasAttributes()) {
-				/** @var \Awyiss\ORM\Association\HasOne $lo_association */
-				$lo_association = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
-
-				/** @var static $ls_associationEntityClass */
-				$ls_associationEntityClass = $lo_association->getEntityClass();
-
-				$ls_foreignKey = $ls_associationEntityClass::mapField($lo_association->getForeignKey());
-
-				$this->initAttributesField($lo_association, $ls_foreignKey);
-			}
-		}
 
 		if (!array_key_exists('_translations', $this->_accessible)) {
 			$this->setAccess('_translations', true);
