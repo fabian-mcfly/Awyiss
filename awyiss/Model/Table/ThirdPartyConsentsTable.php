@@ -53,6 +53,7 @@ class ThirdPartyConsentsTable extends Table {
 		$validator->notEmptyString('consentId');
 		$validator->add('consentId', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 36),
@@ -65,6 +66,7 @@ class ThirdPartyConsentsTable extends Table {
 
 		$validator->add('acceptType', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

@@ -95,6 +95,7 @@ class UsersTable extends Table {
 		$validator->notEmptyString('username');
 		$validator->add('username', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
@@ -102,6 +103,7 @@ class UsersTable extends Table {
 		$validator->allowEmptyString('password', null, 'update');
 		$validator->add('password', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'minLength' => ['rule' => ['minLength', 8]],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'compareWith' => ['rule' => ['compareWith', 'password_confirm']],
@@ -122,18 +124,21 @@ class UsersTable extends Table {
 
 		$validator->add('firstname', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
 
 		$validator->add('lastname', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
 
 		$validator->add('email', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'email' => ['rule' => 'email'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);

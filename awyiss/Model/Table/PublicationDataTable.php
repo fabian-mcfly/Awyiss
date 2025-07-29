@@ -45,6 +45,7 @@ class PublicationDataTable extends Table {
 
 		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -60,6 +61,7 @@ class PublicationDataTable extends Table {
 		$validator->notEmptyString('type');
 		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 		]);
 

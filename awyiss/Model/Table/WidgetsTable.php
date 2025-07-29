@@ -184,7 +184,8 @@ class WidgetsTable extends Table {
 
 		$validator->notEmptyString('identifier');
 		$validator->add('identifier', [
-			'isInteger' => ['rule' => 'isScalar'],
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
@@ -197,24 +198,28 @@ class WidgetsTable extends Table {
 
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
 		$validator->add('subtitle', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
 		$validator->add('text', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
 		$validator->add('link', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -248,6 +253,7 @@ class WidgetsTable extends Table {
 
 		$validator->add('cssClass', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -416,7 +422,6 @@ class WidgetsTable extends Table {
 	 */
 	protected function validateInputFields(Widget $entity, Validator $validator, ?Validator $attributesValidator, WidgetTemplate $widgetTemplate): void {
 		$la_widgetAttributes = $this->WidgetTemplates->getAvailableWidgetAttributes();
-		$la_widgetAttributes = array_column($la_widgetAttributes, null, 'identifier');
 
 		$this->validateAssignedElements($widgetTemplate, $entity, $validator, $la_widgetAttributes, $attributesValidator);
 

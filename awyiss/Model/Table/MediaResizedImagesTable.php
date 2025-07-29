@@ -119,6 +119,7 @@ class MediaResizedImagesTable extends Table {
 		$validator->notEmptyString('name');
 		$validator->add('name', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

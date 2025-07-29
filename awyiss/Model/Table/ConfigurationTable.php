@@ -141,6 +141,7 @@ class ConfigurationTable extends Table {
 		$validator->notEmptyString('realm');
 		$validator->add('realm', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'inList' => ['rule' => ['inList', Awyiss::getRealms()]],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 		]);
@@ -148,6 +149,7 @@ class ConfigurationTable extends Table {
 
 		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -155,6 +157,7 @@ class ConfigurationTable extends Table {
 
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -162,12 +165,14 @@ class ConfigurationTable extends Table {
 
 		$validator->add('value', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
 		$validator->add('languageShortcode', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 2]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -175,6 +180,7 @@ class ConfigurationTable extends Table {
 
 		$validator->add('description', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 

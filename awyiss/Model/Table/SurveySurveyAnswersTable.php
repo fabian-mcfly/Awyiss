@@ -95,6 +95,7 @@ class SurveySurveyAnswersTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -103,6 +104,7 @@ class SurveySurveyAnswersTable extends Table {
 		$validator->allowEmptyString('subtitle');
 		$validator->add('subtitle', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -111,12 +113,14 @@ class SurveySurveyAnswersTable extends Table {
 		$validator->allowEmptyString('text');
 		$validator->add('text', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
 		$validator->add('nextAction', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -124,6 +128,7 @@ class SurveySurveyAnswersTable extends Table {
 
 		$validator->add('nextActionTarget', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

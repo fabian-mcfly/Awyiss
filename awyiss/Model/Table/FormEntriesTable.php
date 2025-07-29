@@ -95,6 +95,7 @@ class FormEntriesTable extends Table {
 		$validator->allowEmptyString('subject');
 		$validator->add('subject', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -102,24 +103,28 @@ class FormEntriesTable extends Table {
 		$validator->allowEmptyString('subjectConfirmation');
 		$validator->add('subjectConfirmation', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
 		$validator->add('emailBody', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
 		$validator->add('emailConfirmationBody', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
 		$validator->add('data', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
@@ -127,6 +132,7 @@ class FormEntriesTable extends Table {
 		$validator->notEmptyString('ipHash');
 		$validator->add('ipHash', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 40]],
 		]);
 
@@ -134,6 +140,7 @@ class FormEntriesTable extends Table {
 		$validator->notEmptyString('postHash');
 		$validator->add('postHash', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 40]],
 		]);
 
@@ -141,6 +148,7 @@ class FormEntriesTable extends Table {
 		$validator->notEmptyString('identifier');
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 40]],
 		]);
 

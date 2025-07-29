@@ -143,6 +143,7 @@ class UserConfigurationTable extends Table {
 
 		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -150,6 +151,7 @@ class UserConfigurationTable extends Table {
 
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -157,6 +159,7 @@ class UserConfigurationTable extends Table {
 
 		$validator->add('value', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 

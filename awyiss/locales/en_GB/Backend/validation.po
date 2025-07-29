@@ -11,6 +11,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "error_ascii"
+msgstr "This value must contain only ASCII characters (no umlauts, accents, etc.)"
+
+msgid "error_not_boolean"
+msgstr "This value must not be a boolean"
+
 msgid "error_min_length"
 msgstr "This value is too short. Min. {0} characters are required"
 

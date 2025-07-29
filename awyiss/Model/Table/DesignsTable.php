@@ -60,18 +60,21 @@ class DesignsTable extends Table {
 
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 12]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 		$validator->add('description', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -86,6 +89,7 @@ class DesignsTable extends Table {
 
 		$validator->add('css', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 

@@ -79,6 +79,7 @@ class FormConditionalRecipientsTable extends Table {
 		$validator->notEmptyString('type');
 		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'inList' => ['rule' => ['inList', ['current_page', 'element_identifier']]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -87,6 +88,7 @@ class FormConditionalRecipientsTable extends Table {
 		$validator->notEmptyString('field');
 		$validator->add('field', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'notBlank' => ['rule' => 'notBlank'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
@@ -99,6 +101,7 @@ class FormConditionalRecipientsTable extends Table {
 		$validator->allowEmptyString('value');
 		$validator->add('value', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 

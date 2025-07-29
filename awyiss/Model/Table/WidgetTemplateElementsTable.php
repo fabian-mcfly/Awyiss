@@ -101,6 +101,7 @@ class WidgetTemplateElementsTable extends Table {
 		$validator->notEmptyString('identifier');
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 61]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -109,6 +110,7 @@ class WidgetTemplateElementsTable extends Table {
 		$validator->allowEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -117,6 +119,7 @@ class WidgetTemplateElementsTable extends Table {
 		$validator->notEmptyString('fieldset');
 		$validator->add('fieldset', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

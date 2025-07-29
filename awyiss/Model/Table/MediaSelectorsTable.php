@@ -75,6 +75,7 @@ class MediaSelectorsTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -83,6 +84,7 @@ class MediaSelectorsTable extends Table {
 		$validator->notEmptyString('identifier');
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

@@ -74,6 +74,7 @@ class AuditTable extends Table {
 		$validator->notEmptyString('scope');
 		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -87,6 +88,7 @@ class AuditTable extends Table {
 		$validator->notEmptyString('transactionId');
 		$validator->add('transactionId', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 36]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -95,6 +97,7 @@ class AuditTable extends Table {
 		$validator->notEmptyString('type');
 		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'inList' => ['rule' => ['inList', ['u', 'd']]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -102,12 +105,14 @@ class AuditTable extends Table {
 
 		$validator->add('data_old', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
 		$validator->add('data_new', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 

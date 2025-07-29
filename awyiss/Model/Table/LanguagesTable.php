@@ -110,6 +110,7 @@ class LanguagesTable extends Table {
 		$validator->notEmptyString('realm');
 		$validator->add('realm', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'inList' => ['rule' => ['inList', Awyiss::getRealms()]],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 		]);
@@ -118,6 +119,7 @@ class LanguagesTable extends Table {
 		$validator->notEmptyString('shortcode');
 		$validator->add('shortcode', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
@@ -131,6 +133,7 @@ class LanguagesTable extends Table {
 		$validator->notEmptyString('timezone');
 		$validator->add('timezone', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -139,6 +142,7 @@ class LanguagesTable extends Table {
 		$validator->notEmptyString('locale');
 		$validator->add('locale', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 5]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -147,6 +151,7 @@ class LanguagesTable extends Table {
 		$validator->allowEmptyString('dateFormat');
 		$validator->add('dateFormat', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 30]],
 		]);
 
@@ -154,6 +159,7 @@ class LanguagesTable extends Table {
 		$validator->allowEmptyString('timeFormat');
 		$validator->add('timeFormat', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 30]],
 		]);
 
@@ -161,6 +167,7 @@ class LanguagesTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

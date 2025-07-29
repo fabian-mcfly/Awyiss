@@ -254,6 +254,7 @@ class FormElementsTable extends Table {
 		$validator->notEmptyString('type');
 		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -264,6 +265,7 @@ class FormElementsTable extends Table {
 		});
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -274,6 +276,7 @@ class FormElementsTable extends Table {
 		});
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -281,6 +284,7 @@ class FormElementsTable extends Table {
 
 		$validator->add('title_email', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -288,6 +292,7 @@ class FormElementsTable extends Table {
 
 		$validator->add('placeholder', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -295,6 +300,7 @@ class FormElementsTable extends Table {
 
 		$validator->add('text', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
@@ -341,6 +347,7 @@ class FormElementsTable extends Table {
 
 		$validator->add('cssClass', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 

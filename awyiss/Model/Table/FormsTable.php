@@ -123,6 +123,7 @@ class FormsTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -131,6 +132,7 @@ class FormsTable extends Table {
 		$validator->notEmptyString('identifier');
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -169,6 +171,7 @@ class FormsTable extends Table {
 		});
 		$validator->add('owner_email', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'email' => ['rule' => 'email'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
@@ -176,6 +179,7 @@ class FormsTable extends Table {
 
 		$validator->add('owner_name', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -185,6 +189,7 @@ class FormsTable extends Table {
 		});
 		$validator->add('user_email', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'email' => ['rule' => function (string $value): bool {
 				/**
 				 * String must be a valid email address or a placeholder like:
@@ -217,6 +222,7 @@ class FormsTable extends Table {
 
 		$validator->add('user_name', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -272,6 +278,7 @@ class FormsTable extends Table {
 		});
 		$validator->add('subject', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -281,6 +288,7 @@ class FormsTable extends Table {
 		});
 		$validator->add('subject_confirmation', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -290,6 +298,7 @@ class FormsTable extends Table {
 		});
 		$validator->add('salutation_confirmation', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
@@ -301,6 +310,7 @@ class FormsTable extends Table {
 
 		$validator->add('success_message', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
@@ -313,6 +323,7 @@ class FormsTable extends Table {
 		$validator->notEmptyString('conditional_recipients_strategy');
 		$validator->add('conditional_recipients_strategy', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 			'inList' => ['rule' => ['inList', [
 				FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
@@ -324,6 +335,7 @@ class FormsTable extends Table {
 
 		$validator->add('transport_profile', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 

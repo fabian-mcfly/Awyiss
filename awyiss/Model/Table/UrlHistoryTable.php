@@ -84,6 +84,7 @@ class UrlHistoryTable extends Table {
 		$validator->notEmptyString('url');
 		$validator->add('url', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -91,6 +92,7 @@ class UrlHistoryTable extends Table {
 		$validator->notEmptyString('target', null, fn ($context) => empty($context['data']['scope']));
 		$validator->add('target', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

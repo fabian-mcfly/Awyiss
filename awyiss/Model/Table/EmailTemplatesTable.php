@@ -113,6 +113,7 @@ class EmailTemplatesTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -120,19 +121,21 @@ class EmailTemplatesTable extends Table {
 
 		$validator->add('textHtml', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
 		$validator->add('textPlain', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
 		$validator->notEmptyString('fileName');
 		$validator->add('fileName', [
-			'isScalar' => ['rule' => 'isScalar'],
+			'ascii' => ['rule' => 'ascii'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -141,6 +144,7 @@ class EmailTemplatesTable extends Table {
 		$validator->notEmptyString('layout');
 		$validator->add('layout', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

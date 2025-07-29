@@ -95,6 +95,7 @@ class SurveyEntriesTable extends Table {
 
 		$validator->add('data', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
@@ -102,6 +103,7 @@ class SurveyEntriesTable extends Table {
 		$validator->notEmptyString('ipHash');
 		$validator->add('ipHash', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 40]],
 		]);
 
@@ -109,6 +111,7 @@ class SurveyEntriesTable extends Table {
 		$validator->notEmptyString('postHash');
 		$validator->add('postHash', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 40]],
 		]);
 
@@ -116,6 +119,7 @@ class SurveyEntriesTable extends Table {
 		$validator->notEmptyString('identifier');
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 40]],
 		]);
 

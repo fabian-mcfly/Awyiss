@@ -123,6 +123,7 @@ abstract class GenericDatatablesTable extends Table {
 			$validator->notEmptyString('languageShortcode');
 			$validator->add('languageShortcode', [
 				'isScalar' => ['rule' => 'isScalar'],
+				'notBoolean' => ['rule' => 'notBoolean'],
 				'ascii' => ['rule' => 'ascii'],
 				'exactLength' => [
 					'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
@@ -137,6 +138,7 @@ abstract class GenericDatatablesTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

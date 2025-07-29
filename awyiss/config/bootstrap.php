@@ -19,11 +19,13 @@ require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Core\Configure\Engine\PhpConfig;
 use Awyiss\Database\Type\IntegerType;
 use Awyiss\Database\Type\StringType;
 use Awyiss\I18n\MessagesFileLoader;
 use Awyiss\Routing\Router;
+use Awyiss\Validation\Validator;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Database\TypeFactory;
@@ -221,3 +223,5 @@ TypeFactory::map('biginteger', IntegerType::class);
 TypeFactory::map('char', StringType::class);
 TypeFactory::map('string', StringType::class);
 TypeFactory::map('text', StringType::class);
+
+Validator::addDefaultProvider('default', App::className('Validation', 'Validation'));

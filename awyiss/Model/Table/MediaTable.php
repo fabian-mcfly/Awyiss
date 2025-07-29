@@ -134,6 +134,7 @@ class MediaTable extends Table {
 		$validator->notEmptyString('name');
 		$validator->add('name', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -141,6 +142,7 @@ class MediaTable extends Table {
 
 		$validator->add('alt', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 

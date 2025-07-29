@@ -105,6 +105,7 @@ class MediaAssignmentsTable extends Table {
 		$validator->notEmptyString('mediaElementSelectorIdentifier');
 		$validator->add('mediaElementSelectorIdentifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -131,6 +132,7 @@ class MediaAssignmentsTable extends Table {
 		$validator->notEmptyString('scope');
 		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

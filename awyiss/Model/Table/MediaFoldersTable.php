@@ -112,6 +112,7 @@ class MediaFoldersTable extends Table {
 
 		$validator->add('languageShortcode', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
@@ -125,6 +126,7 @@ class MediaFoldersTable extends Table {
 		$validator->notEmptyString('path');
 		$validator->add('path', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -133,6 +135,7 @@ class MediaFoldersTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

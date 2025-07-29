@@ -187,6 +187,7 @@ class PagesTable extends Table {
 		$validator->notEmptyString('languageShortcode');
 		$validator->add('languageShortcode', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
@@ -200,6 +201,7 @@ class PagesTable extends Table {
 		$validator->notEmptyString('slug');
 		$validator->add('slug', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'minLength' => ['rule' => ['minLength', 3]],
 			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
@@ -209,6 +211,7 @@ class PagesTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -216,6 +219,7 @@ class PagesTable extends Table {
 
 		$validator->add('redirectLink', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
 			'url' => ['rule' => ['url', true]],
@@ -224,6 +228,7 @@ class PagesTable extends Table {
 
 		$validator->add('metaTitle', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -231,6 +236,7 @@ class PagesTable extends Table {
 
 		$validator->add('metaDescription', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);

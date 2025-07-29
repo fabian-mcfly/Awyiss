@@ -195,6 +195,7 @@ class AttributesTable extends Table {
 		$validator->notEmptyString('scope');
 		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -203,6 +204,7 @@ class AttributesTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -211,6 +213,7 @@ class AttributesTable extends Table {
 		$validator->notEmptyString('identifier');
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -218,6 +221,7 @@ class AttributesTable extends Table {
 
 		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 			'notBlank' => ['rule' => 'notBlank'],
 			'typeRegex' => ['rule' => ['custom', static::TYPE_PATTERN]],
@@ -232,6 +236,7 @@ class AttributesTable extends Table {
 		$validator->notEmptyString('fieldset');
 		$validator->add('fieldset', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -239,6 +244,7 @@ class AttributesTable extends Table {
 
 		$validator->add('inputType', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 30]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -246,6 +252,7 @@ class AttributesTable extends Table {
 
 		$validator->add('defaultValue', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 		]);
 

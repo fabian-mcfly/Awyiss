@@ -83,6 +83,7 @@ class BackendMenuEntriesTable extends Table {
 		$validator->allowEmptyString('parentId');
 		$validator->add('parentId', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
@@ -90,6 +91,7 @@ class BackendMenuEntriesTable extends Table {
 		$validator->allowEmptyString('insertAfterId');
 		$validator->add('insertAfterId', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
@@ -97,6 +99,7 @@ class BackendMenuEntriesTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
@@ -104,6 +107,7 @@ class BackendMenuEntriesTable extends Table {
 
 		$validator->add('link', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
