@@ -267,7 +267,7 @@ class AttributesTable extends Table {
 		]);
 
 
-		$validator->add('columSpan', [
+		$validator->add('columnSpan', [
 			'inList' => [
 				'rule' => [
 					'inList',
