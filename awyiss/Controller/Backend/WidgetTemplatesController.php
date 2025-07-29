@@ -34,6 +34,7 @@ class WidgetTemplatesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
+		/** @uses \Awyiss\Model\Table\WidgetTemplatesTable::findWithUsages() */
 		$lo_query = $this->WidgetTemplates->find('withUsages')->where($this->getOverviewWhere());
 		$this->Search->filterQuery($lo_query);
 

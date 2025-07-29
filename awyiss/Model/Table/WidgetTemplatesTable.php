@@ -102,10 +102,8 @@ class WidgetTemplatesTable extends Table {
 
 
 	/**
-	 * @param SelectQuery $query
-	 * @param array $options
+	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @return \Cake\ORM\Query\SelectQuery
-	 * @noinspection PhpUnused
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
 		return $query->enableAutoFields()->select([

@@ -34,6 +34,7 @@ class PageTemplatesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
+		/** @uses \Awyiss\Model\Table\PageTemplatesTable::findWithUsages() */
 		$lo_query = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas', 'PageRoles']);
 		$this->Categories->filterQuery($lo_query, null, false);
 		$this->Search->filterQuery($lo_query);

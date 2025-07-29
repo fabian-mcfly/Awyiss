@@ -35,6 +35,7 @@ class ContentTemplatesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
+		/** @uses \Awyiss\Model\Table\ContentTemplatesTable::findWithUsages() */
 		$lo_query = $this->ContentTemplates->find('withUsages')->where($this->getOverviewWhere());
 		$this->Search->filterQuery($lo_query);
 

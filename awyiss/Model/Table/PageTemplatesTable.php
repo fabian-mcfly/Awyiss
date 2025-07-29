@@ -84,7 +84,6 @@ class PageTemplatesTable extends Table {
 	 * @param SelectQuery $query
 	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
-	 * @noinspection PhpUnused
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
 		return $query->enableAutoFields()->select([
