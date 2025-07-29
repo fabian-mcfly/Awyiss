@@ -190,12 +190,12 @@ trait EntityFieldMapTrait {
 	 * @return array
 	 */
 	public function extractOriginalChanged(?array $fields = [], bool $includeUnknownFields = false, bool $unmapped = true): array {
-		$la_fields = $fields ?: array_keys($this->_fields);
-		$la_extracted = parent::extractOriginalChanged(static::mapFields($la_fields));
+		$la_fields = static::mapFields($fields ?: array_keys($this->_fields));
+		$la_extracted = parent::extractOriginalChanged($la_fields);
 
 		//Include fields that aren't part of the entity but requested.
 		if ($includeUnknownFields) {
-			foreach ($fields as $ls_field) {
+			foreach ($la_fields as $ls_field) {
 				if (
 					!array_key_exists($ls_field, $la_extracted) &&
 					!in_array($ls_field, $this->_originalFields)
