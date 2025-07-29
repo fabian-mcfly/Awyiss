@@ -72,10 +72,12 @@ class WidgetTemplatesTable extends Table {
 		'publication',
 	];
 	/**
-	 * @var array<int, array{title: string, label: string, identifier: string, active: bool, type: string,
-	 *     inputType:string}>
+	 * @var array<string, array<string, array{title: string, label: string, identifier: string, active: bool, type: string,inputType:string}|null>>
 	 */
-	protected array $availableWidgetAttributes;
+	protected array $availableWidgetAttributes = [
+		'withInactive' => null,
+		'active' => null,
+	];
 	/**
 	 * @inheritDoc
 	 */
@@ -119,28 +121,10 @@ class WidgetTemplatesTable extends Table {
 
 
 	/**
-	 * @return array<string>
-	 */
-	public function getAvailableWidgetElements(): array {
-		return $this->availableWidgetElements;
-	}
-
-
-	/**
-	 * @return array<string>
-	 */
-	public function getAvailableFieldsets(): array {
-		return $this->availableFieldsets;
-	}
-
-
-	/**
 	 * @param \Awyiss\Model\Entity\WidgetTemplate $widgetTemplate
 	 * @return array
 	 */
 	public function getAssignedWidgetAttributes(WidgetTemplate $widgetTemplate): array {
-		$la_availableWidgetAttributes = $this->getAvailableWidgetAttributes();
-
 		if (!isset($widgetTemplate->widgetTemplateElements)) {
 			//Load WidgetTemplateElements in case the entity is missing that key
 			$this->loadInto($widgetTemplate, [
@@ -148,7 +132,8 @@ class WidgetTemplatesTable extends Table {
 			]);
 		}
 
-		$la_availableWidgetElementIdentifiers = array_column($widgetTemplate->widgetTemplateElements, 'identifier');
+		$la_availableWidgetAttributes = $this->getAvailableWidgetAttributes();
+		$la_availableWidgetElementIdentifiers = array_column($widgetTemplate->widgetTemplateElements ?? [], 'identifier');
 		$la_assignedWidgetAttributes = [];
 		foreach ($la_availableWidgetAttributes as $la_attribute) {
 			if (in_array('attributes.' . $la_attribute['identifier'], $la_availableWidgetElementIdentifiers)) {
@@ -162,29 +147,49 @@ class WidgetTemplatesTable extends Table {
 
 
 	/**
+	 * @return array<string>
+	 */
+	public function getAvailableFieldsets(): array {
+		return $this->availableFieldsets;
+	}
+
+
+	/**
+	 * @return array<string>
+	 */
+	public function getAvailableWidgetElements(): array {
+		return $this->availableWidgetElements;
+	}
+
+
+	/**
 	 * @param bool $includeInactive
 	 * @return array<int, array>
 	 */
 	public function getAvailableWidgetAttributes(bool $includeInactive = false): array {
-		if (isset($this->availableWidgetAttributes)) {
-			return $this->availableWidgetAttributes;
+		$ls_key = $includeInactive ? 'withInactive' : 'active';
+
+		if (isset($this->availableWidgetAttributes[ $ls_key ])) {
+			return $this->availableWidgetAttributes[ $ls_key ];
 		}
 
 		/** @var \Awyiss\Model\Table\AttributesTable $lo_attributesTable */
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableWidgetAttributes = $lo_attributesTable->find($includeInactive ? 'all' : 'active')->where(['scope' => 'widgets'])->all()->indexBy('id')->map(function (Attribute $attribute): array {
-			return [
-				'title' => $attribute->title,
-				'label' => $attribute->label,
-				'identifier' => $attribute->identifier,
-				'active' => $attribute->active,
-				'type' => $attribute->type,
-				'inputType' => $attribute->inputType,
-			];
-		})->toArray();
+		$this->availableWidgetAttributes[ $ls_key ] = $lo_attributesTable->find($includeInactive ? 'all' : 'active')->where(['scope' => 'widgets'])->all()->indexBy('identifier')->map(
+			function (Attribute $attribute): array {
+				return [
+					'title' => $attribute->title,
+					'label' => $attribute->label,
+					'identifier' => $attribute->identifier,
+					'active' => $attribute->active,
+					'type' => $attribute->type,
+					'inputType' => $attribute->inputType,
+				];
+			}
+		)->toArray();
 
 
-		return $this->availableWidgetAttributes;
+		return $this->availableWidgetAttributes[ $ls_key ];
 	}
 
 
@@ -264,7 +269,7 @@ class WidgetTemplatesTable extends Table {
 		$rules->add(function (WidgetTemplate $entity): bool {
 			$lb_valid = true;
 
-			$la_availableAttributes = array_column($this->getAvailableWidgetAttributes(), 'identifier');
+			$la_availableAttributes = array_keys($this->getAvailableWidgetAttributes());
 			foreach ($entity->widgetTemplateElements as $lo_assignedWidgetElement) {
 				if (str_starts_with($lo_assignedWidgetElement->identifier, 'attributes.')) {
 					$ls_identifier = substr($lo_assignedWidgetElement->identifier, 11);

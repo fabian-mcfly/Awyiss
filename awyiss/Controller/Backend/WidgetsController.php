@@ -592,8 +592,7 @@ class WidgetsController extends Controller {
 			$widget->set($ls_element);
 		}
 
-		$la_widgetAttributes = $this->Widgets->WidgetTemplates->getAvailableWidgetAttributes(true);
-		$la_widgetAttributes = array_column($la_widgetAttributes, 'identifier');
+		$la_widgetAttributes = array_keys($this->Widgets->WidgetTemplates->getAvailableWidgetAttributes(true));
 
 		foreach (
 			array_diff(

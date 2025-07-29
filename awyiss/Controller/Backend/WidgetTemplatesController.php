@@ -273,7 +273,7 @@ class WidgetTemplatesController extends Controller {
 
 		// Sort the available widget attributes by the order of the assigned widget template elements
 		$la_availableWidgetAttributes = $this->WidgetTemplates->getAvailableWidgetAttributes();
-		uasort($la_availableWidgetAttributes, function ($a, $b) use ($lo_widgetTemplate) {
+		uasort($la_availableWidgetAttributes, function (array $a, array $b) use ($lo_widgetTemplate): int {
 			$la_keys = array_keys($lo_widgetTemplate->widgetTemplateElements ?? []);
 			$ls_aIdentifier = 'attributes.' . $a['identifier'];
 			$ls_bIdentifier = 'attributes.' . $b['identifier'];
