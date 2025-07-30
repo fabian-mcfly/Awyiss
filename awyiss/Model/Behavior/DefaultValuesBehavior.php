@@ -88,9 +88,11 @@ class DefaultValuesBehavior extends Behavior {
 		$this->typecastDefaults($la_defaults, $lo_schema);
 
 		if ($lo_table->hasAttributes()) {
-			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributes */
-			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
-			$la_defaults[ $ls_entityClass::mapField($lo_attributes->getProperty()) ] = $lo_attributes->newDefaultEntity();
+			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributesTable */
+			$lo_attributesTable = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
+			$la_defaults['attributes'] = $lo_attributesTable->newDefaultEntity($additionalData['attributes'] ?? []);
+			/** @noinspection PhpVariableNamingConventionInspection */
+			unset($additionalData['attributes']);
 		}
 
 		if (
@@ -98,7 +100,7 @@ class DefaultValuesBehavior extends Behavior {
 			$lo_table->getBehavior('Categories')->getConfig('enabled') === true &&
 			($options['includeCategory'] ?? true) === true
 		) {
-			$this->addCategoryDefault($la_defaults, $lo_table, $lo_attributes ?? null);
+			$this->addCategoryDefault($la_defaults, $lo_table, $lo_attributesTable ?? null);
 		}
 
 		$la_additionalData = $additionalData;
@@ -111,8 +113,7 @@ class DefaultValuesBehavior extends Behavior {
 
 		//Set the entity to the attributes entity
 		if ($lo_table->hasAttributes()) {
-			/** @noinspection PhpUndefinedVariableInspection */
-			$lo_entity->{$ls_entityClass::mapField($lo_attributes->getProperty())}->setEntity($lo_entity);
+			$lo_entity->attributes->setEntity($lo_entity);
 		}
 
 
@@ -186,7 +187,6 @@ class DefaultValuesBehavior extends Behavior {
 		$lo_table = $this->table();
 
 		$lo_marshaller = $lo_table->marshaller();
-
 
 		return $lo_marshaller->merge($entity, $la_defaults, $la_options);
 	}
