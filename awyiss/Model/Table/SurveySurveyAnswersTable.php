@@ -36,6 +36,12 @@ class SurveySurveyAnswersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['surveySurveyQuestionId'],
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $translate = [
 		'fields' => [
 			'title',

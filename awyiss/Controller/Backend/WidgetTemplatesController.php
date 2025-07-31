@@ -183,8 +183,13 @@ class WidgetTemplatesController extends Controller {
 				return !empty($element['identifier']);
 			});
 
-			$la_requestData['widget_template_elements'] = array_map(function ($element) {
-				static $li_systemOrder = 1;
+			$ls_currentFieldset = '';
+			$li_systemOrder = 1;
+			$la_requestData['widget_template_elements'] = array_map(function (array $element) use (&$ls_currentFieldset, &$li_systemOrder): array {
+				if ($element['fieldset'] !== $ls_currentFieldset) {
+					$ls_currentFieldset = $element['fieldset'];
+					$li_systemOrder = 1;
+				}
 
 				/** @noinspection PhpVariableNamingConventionInspection */
 				$element['system_order'] = $li_systemOrder++;

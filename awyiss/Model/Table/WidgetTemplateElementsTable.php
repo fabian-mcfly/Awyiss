@@ -42,6 +42,12 @@ class WidgetTemplateElementsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['widgetTemplateId', 'fieldset'],
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $translate = [
 		'fields' => ['title'],
 	];

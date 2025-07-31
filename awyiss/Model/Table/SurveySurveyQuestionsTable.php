@@ -32,8 +32,12 @@ class SurveySurveyQuestionsTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'survey_survey_questions';
-
-
+	/**
+	 * @inheritDoc
+	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['surveyId'],
+	];
 	/**
 	 * @inheritDoc
 	 */
