@@ -73,9 +73,9 @@ class SurveySurveyQuestionsTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
-	 * @return \Cake\Validation\Validator
+	 * @return \Awyiss\Validation\Validator
 	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
@@ -104,6 +104,19 @@ class SurveySurveyQuestionsTable extends Table {
 		$validator->add('surveyQuestionId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$validator->notEmptyString('identifier');
+		$validator->add('identifier', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'exactLength' => [
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 8),
+				'rule' => function (string $identifier): bool {
+					return strlen($identifier) == 8;
+				},
+			],
 		]);
 
 
