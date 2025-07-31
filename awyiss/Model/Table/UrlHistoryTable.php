@@ -81,6 +81,20 @@ class UrlHistoryTable extends Table {
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
 
+		$validator->requirePresence([
+			'url',
+			'scope',
+			'status',
+		], 'create');
+
+		$validator->requirePresence([
+			'target',
+		], fn ($context) => empty($context['data']['scope']));
+
+		$validator->requirePresence([
+			'foreignKey',
+		], fn ($context) => !empty($context['data']['scope']));
+
 		$validator->notEmptyString('url');
 		$validator->add('url', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -105,12 +119,16 @@ class UrlHistoryTable extends Table {
 
 		$validator->notEmptyString('status');
 		$validator->add('status', [
-			'isInteger' => ['rule' => 'isInteger'],
-			'exactLength' => [
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 3),
-				'rule' => function ($status) {
-					return strlen($status) == 3;
-				},
+			'inList' => [
+				'rule' => [
+					'inList',
+					[
+						301,
+						302,
+						307,
+						308,
+					],
+				],
 			],
 		]);
 
@@ -132,13 +150,11 @@ class UrlHistoryTable extends Table {
 				/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 				$lo_table = $lo_tableLocator->get('Pages');
 				$lo_existsIn = $lo_rules->existsIn(['foreignKey'], $lo_table, [
-					'errorField' => 'foreignKey',
 					'finder' => [
 						'all' => [
 							'skipPageRoleCheck' => true,
 						],
 					],
-					'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_foreign_key'),
 				]);
 
 				return $lo_existsIn($entity, $options);
@@ -147,16 +163,16 @@ class UrlHistoryTable extends Table {
 			if ($entity->scope === 'media') {
 				/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 				$lo_table = $lo_tableLocator->get('Media');
-				$lo_existsIn = $lo_rules->existsIn(['foreignKey'], $lo_table, [
-					'errorField' => 'foreignKey',
-					'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_foreign_key'),
-				]);
+				$lo_existsIn = $lo_rules->existsIn(['foreignKey'], $lo_table);
 
 				return $lo_existsIn($entity, $options);
 			}
 
 			return empty($entity->foreignKey);
-		}, 'validForeignKey');
+		}, 'validForeignKey', [
+			'errorField' => 'foreignKey',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_foreign_key'),
+		]);
 
 		$rules->add(function (UrlHistory $entity, array $options) use ($lo_rules) {
 			if (empty($entity->scope)) {
@@ -164,13 +180,9 @@ class UrlHistoryTable extends Table {
 			}
 
 			return !empty($entity->target);
-		}, 'validTarget');
-
-		$rules->add(function (UrlHistory $entity) {
-			return in_array($entity->status, [301, 302, 307, 308], true);
-		}, 'validStatus', [
-			'errorField' => 'status',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_status'),
+		}, 'validTarget', [
+			'errorField' => 'target',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_target'),
 		]);
 
 		return $rules;
