@@ -6,10 +6,12 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
+use Awyiss\Model\Entity\SurveySurveyAnswer;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
+use Cake\Datasource\FactoryLocator;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -20,7 +22,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\SurveyAnswersTable&\Awyiss\ORM\Association\BelongsTo $SurveyAnswers
  * @property \Awyiss\Model\Table\SurveySurveyQuestionsTable&\Awyiss\ORM\Association\BelongsTo $SurveySurveyQuestions
  * @method \Awyiss\Model\Entity\SurveySurveyAnswer newDefaultEntity(array $additionalData = [], array $options = [])
- * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class SurveySurveyAnswersTable extends Table {
 	/**
@@ -78,6 +80,12 @@ class SurveySurveyAnswersTable extends Table {
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
 
+		$validator->requirePresence([
+			'surveyAnswerId',
+			'surveySurveyQuestionId',
+			'systemOrder',
+		], 'create');
+
 		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
@@ -98,7 +106,7 @@ class SurveySurveyAnswersTable extends Table {
 		]);
 
 
-		$validator->notEmptyString('title');
+		$validator->allowEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
@@ -166,7 +174,19 @@ class SurveySurveyAnswersTable extends Table {
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
-			$rules->existsIn('surveyAnswerId', 'SurveyAnswers'),
+			function (SurveySurveyAnswer $entity/*, array $options*/): string|bool {
+				$lo_tableLocator = FactoryLocator::get('Table');
+				// Check if the given answer id is part of the question
+				$lo_query = $lo_tableLocator->get('SurveySurveyQuestions')
+					->find()
+					->innerJoinWith('SurveyQuestions.SurveyAnswers')
+					->where([
+						'SurveySurveyQuestions.id' => $entity->surveySurveyQuestionId,
+						'SurveyAnswers.id' => $entity->surveyAnswerId,
+					]);
+
+				return $lo_query->count() > 0;
+			},
 			'validSurveyAnswerId',
 			[
 				'errorField' => 'surveyAnswerId',
