@@ -11,6 +11,7 @@ use Awyiss\Model\Entity\SurveySurveyAnswer;
 use Awyiss\Model\Entity\SurveySurveyQuestion;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use BackedEnum;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -196,7 +197,7 @@ class SurveysTable extends Table {
 
 		$rules->add(
 			function (Survey $entity): bool {
-				if (!$entity->surveySurveyQuestions || $entity->formId) {
+				if ($entity->formId) {
 					return true;
 				}
 
@@ -204,7 +205,6 @@ class SurveysTable extends Table {
 				$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
 				if (
-					!$entity->formId &&
 					in_array($entity->finalAction, [
 						$ls_surveyNextActionEnum::ShowForm,
 						$ls_surveyNextActionEnum::SaveAndShowForm,
@@ -212,6 +212,10 @@ class SurveysTable extends Table {
 					])
 				) {
 					return false;
+				}
+
+				if (!$entity->surveySurveyQuestions) {
+					return true;
 				}
 
 				/**
@@ -337,7 +341,13 @@ class SurveysTable extends Table {
 					foreach ($lo_question->surveySurveyAnswers as $lo_answer) {
 						// For answers, empty next action is allowed but
 						// unknown next action is not
-						if ($lo_answer->nextAction && !array_key_exists($lo_answer->nextAction->value, $this->availableNextActions())) {
+						if (
+							$lo_answer->nextAction &&
+							(
+								!$lo_answer->nextAction instanceof BackedEnum ||
+								!array_key_exists($lo_answer->nextAction->value, $this->availableNextActions())
+							)
+						) {
 							return false;
 						}
 					}
