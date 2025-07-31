@@ -310,7 +310,14 @@ class UserConfigurationController extends Controller {
 			$configuration->setAccess('attributes', true);
 		}
 
-		$this->UserConfiguration->patchEntity($configuration, $this->request->getData() + ['userId' => $this->getIdentity()->getIdentifier()], [
+		$la_data = $this->request->getData();
+
+		if (is_array($la_data['value'] ?? null)) {
+			$la_data['value'] = json_encode(array_values($la_data['value']));
+		}
+		$la_data['userId'] = $this->getIdentity()->getIdentifier();
+
+		$this->UserConfiguration->patchEntity($configuration, $la_data, [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
