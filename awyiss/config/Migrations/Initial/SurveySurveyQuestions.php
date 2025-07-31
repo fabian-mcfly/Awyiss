@@ -76,7 +76,7 @@ class SurveySurveyQuestions {
 			'limit' => null,
 			'null' => true,
 		])->addColumn('custom_answer_title', 'string', [
-			'default' => false,
+			'default' => null,
 			'limit' => 255,
 			'null' => true,
 		])->addColumn('system_order', 'integer', [
