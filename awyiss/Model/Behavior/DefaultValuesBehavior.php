@@ -105,7 +105,7 @@ class DefaultValuesBehavior extends Behavior {
 
 		$la_additionalData = $additionalData;
 		if ($additionalData) {
-			//Map the fields in case the additional data contains mapped keys
+			// Unmap the fields in case the additional data contains mapped keys
 			$la_additionalData = $ls_entityClass::unmapFields($additionalData, true);
 		}
 
@@ -173,8 +173,10 @@ class DefaultValuesBehavior extends Behavior {
 	 * @return \Cake\Datasource\EntityInterface
 	 */
 	protected function marshallDefaults(EntityInterface $entity, array $defaults, array $additionalData, array $options): EntityInterface {
+		$la_defaults = $additionalData;
 		/** @var \Awyiss\Model\Entity $entity */
-		$la_defaults = $additionalData + $entity->defaultValues() + $defaults;
+		$la_defaults += $entity::unmapFields($entity->defaultValues(), true);
+		$la_defaults += $defaults;
 
 		$la_options = $options + [
 			'fields' => array_keys($la_defaults),
