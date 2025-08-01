@@ -31,10 +31,6 @@ class SurveysTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = true;
-	/**
-	 * @inheritDoc
-	 */
 	public const TABLE = 'surveys';
 
 

@@ -22,10 +22,6 @@ class UrlHistoryTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = true;
-	/**
-	 * @inheritDoc
-	 */
 	public const TABLE = 'url_history';
 
 

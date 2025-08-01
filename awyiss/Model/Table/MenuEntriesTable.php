@@ -29,10 +29,6 @@ class MenuEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = true;
-	/**
-	 * @inheritDoc
-	 */
 	public const TABLE = 'menu_entries';
 
 

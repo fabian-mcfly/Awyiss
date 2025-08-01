@@ -27,11 +27,11 @@
  */
 class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
-{% if userConstants.ATTRIBUTABLE is not defined %}
+{% if userConstants.ATTRIBUTABLE is not defined and name[0:10] == 'Attributes'%}
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = {% if name[0:10] == 'Attributes' %}false{% else %}true{% endif %};
+	public const ATTRIBUTABLE = false;
 {% endif %}
 {% if userConstants.TABLE is not defined %}
 	/**
