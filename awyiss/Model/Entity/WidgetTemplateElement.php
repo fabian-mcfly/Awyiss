@@ -64,7 +64,7 @@ class WidgetTemplateElement extends Entity {
 	 * @noinspection PhpUnused
 	 * @see \Awyiss\Model\Entity\WidgetTemplateElement::$identifier
 	 */
-	public function _setIdentifier(?string $identifier): ?string {
+	protected function _setIdentifier(?string $identifier): ?string {
 		if ($identifier === null) {
 			return null;
 		}

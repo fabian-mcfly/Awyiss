@@ -47,7 +47,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::$scope
 	 */
-	public function _setScope(?string $scope): ?string {
+	protected function _setScope(?string $scope): ?string {
 		if ($scope === null) {
 			return null;
 		}
@@ -63,7 +63,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::$identifier
 	 */
-	public function _setIdentifier(?string $identifier): ?string {
+	protected function _setIdentifier(?string $identifier): ?string {
 		if ($identifier === null) {
 			return null;
 		}

@@ -80,7 +80,7 @@ class BackendMenuEntry extends Entity {
 	 * @return mixed
 	 * @noinspection PhpUnused
 	 */
-	public function _setAccess(mixed $value): mixed {
+	protected function _setAccess(mixed $value): mixed {
 		if (empty($value)) {
 			return null;
 		}
