@@ -369,6 +369,7 @@ class ContentsTable extends Table {
 
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
@@ -1040,7 +1041,7 @@ class ContentsTable extends Table {
 			}
 
 			// Disallow duplicating contents when the content itself is used as a duplicate
-			if ($this->exists(['duplicate_of' => $entity->id])) {
+			if ($entity->id && $this->exists(['duplicate_of' => $entity->id])) {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicated');
 			}
 

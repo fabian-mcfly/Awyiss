@@ -63,9 +63,9 @@ class SurveyEntriesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
-	 * @return \Cake\Validation\Validator
+	 * @return \Awyiss\Validation\Validator
 	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
@@ -77,6 +77,12 @@ class SurveyEntriesTable extends Table {
 			'postHash',
 			'identifier',
 		], 'create');
+
+
+		$validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
 
 		$validator->notEmptyString('surveyId');
@@ -136,7 +142,7 @@ class SurveyEntriesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|BaseRulesChecker $rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {

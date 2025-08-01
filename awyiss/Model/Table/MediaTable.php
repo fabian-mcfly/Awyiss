@@ -100,9 +100,9 @@ class MediaTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $validator The validator that can be modified to
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
-	 * @return Validator
+	 * @return \Awyiss\Validation\Validator
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
@@ -136,10 +136,52 @@ class MediaTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('mimeType');
+		$validator->add('mimeType', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 100]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->notEmptyString('path');
+		$validator->add('path', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 1124]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
 		$validator->add('alt', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
+		]);
+
+
+		$validator->add('width', [
+			'isFloat' => ['rule' => 'isFloat'],
+		]);
+
+
+		$validator->add('height', [
+			'isFloat' => ['rule' => 'isFloat'],
+		]);
+
+
+		$validator->add('averageColor', [
+			'exactLength' => [
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', '6/8'),
+				'rule' => function (mixed $averageColor): bool {
+					if (!str_starts_with((string)$averageColor, '#')) {
+						return strlen((string)$averageColor) == 6 || strlen((string)$averageColor) == 8;
+					}
+
+					return strlen((string)$averageColor) == 7 || strlen((string)$averageColor) == 9;
+				},
+			],
 		]);
 
 
@@ -153,8 +195,44 @@ class MediaTable extends Table {
 		]);
 
 
+		$validator->allowEmptyArray('crop');
+		$validator->add('crop', [
+			'isArray' => ['rule' => 'isArray'],
+			'maxLengthBytes' => [
+				'rule' => function (array|string $value): bool {
+					return strlen(json_encode($value)) <= 65535;
+				},
+			],
+		]);
+
+
+		$validator->notEmptyString('focusPoint');
+		$validator->add('focusPoint', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'inList' => [
+				'rule' => [
+					'inList',
+					[
+						'0,0',
+						'0,1',
+						'0,2',
+						'1,0',
+						'1,1',
+						'1,2',
+						'2,0',
+						'2,1',
+						'2,2',
+					],
+				],
+			],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
@@ -171,8 +249,8 @@ class MediaTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
@@ -277,8 +355,8 @@ class MediaTable extends Table {
 		}
 
 		//Fallback if extension isn't known for the mimetype
-		$la_knownExtensionsForDetectedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $ls_mimeType));
-		$la_knownExtensionsForProvidedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $uploadedFile->getClientMediaType()));
+		$la_knownExtensionsForDetectedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $ls_mimeType), []);
+		$la_knownExtensionsForProvidedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $uploadedFile->getClientMediaType()), []);
 
 		// If both mime types contain the same, provided extension, return the provided mime type
 		if (

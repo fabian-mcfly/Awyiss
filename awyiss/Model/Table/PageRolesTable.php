@@ -89,9 +89,9 @@ class PageRolesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $validator The validator that can be modified to
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
-	 * @return Validator
+	 * @return \Awyiss\Validation\Validator
 	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
@@ -135,6 +135,7 @@ class PageRolesTable extends Table {
 
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
@@ -155,8 +156,8 @@ class PageRolesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$lo_rules = $rules;

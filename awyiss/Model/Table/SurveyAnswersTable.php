@@ -88,15 +88,16 @@ class SurveyAnswersTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
-	 * @return \Cake\Validation\Validator
+	 * @return \Awyiss\Validation\Validator
 	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
 
 		$validator->requirePresence([
+			'surveyQuestionId',
 			'title',
 		], 'create');
 
@@ -142,6 +143,7 @@ class SurveyAnswersTable extends Table {
 
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
@@ -162,7 +164,7 @@ class SurveyAnswersTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->addDelete(
@@ -189,7 +191,6 @@ class SurveyAnswersTable extends Table {
 
 		/**
 		 * @var \Awyiss\Model\Entity\SurveyQuestion $lo_category
-		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
 		foreach ($this->getBehavior('Categories')->getCategories(true) as $lo_category) {
 			if (

@@ -40,6 +40,7 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\Page getParent(\Awyiss\Model\Entity\Page $entity, array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getParents(\Awyiss\Model\Entity\Page $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PagesTable extends Table {
 	/**
@@ -145,6 +146,21 @@ class PagesTable extends Table {
 
 
 	/**
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findActive(SelectQuery $query): SelectQuery {
+		$query->where([
+			'active' => true,
+			'parents_active' => true,
+		]);
+
+
+		return $query;
+	}
+
+
+	/**
 	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface
 	 */
 	public function getPageRole(): PageRoleEnumInterface {
@@ -155,9 +171,10 @@ class PagesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $validator The validator that can be modified to
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
-	 * @return Validator
+	 * @return \Awyiss\Validation\Validator
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
@@ -286,6 +303,7 @@ class PagesTable extends Table {
 
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
@@ -311,8 +329,9 @@ class PagesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
+	 * @noinspection DuplicatedCode
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole->name));
@@ -363,8 +382,9 @@ class PagesTable extends Table {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_self_duplicating');
 			}
 
-			// Disallow duplicating pages when the page itself is used as a duplicate
-			if ($this->exists(['duplicate_of' => $entity->id])) {
+			// Prevent a page (current) from duplicating another one (target),
+			// if the (current) page is already duplicated by a page (third).
+			if ($entity->id && $this->exists(['duplicate_of' => $entity->id])) {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicated');
 			}
 
@@ -375,14 +395,10 @@ class PagesTable extends Table {
 				return __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of');
 			}
 
-			// Disallow duplicating pages that are duplicating another page
+			// Prevents a page (current) from duplicating another page (target),
+			// if the (target) page is already duplicating another page (third).
 			if ($lo_duplicateOf->duplicateOf) {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicating');
-			}
-
-			// Disallow circular duplicating
-			if (!$entity->isNew() && $lo_duplicateOf->duplicateOf === $entity->id) {
-				return __df($this->getI18nDomain(), 'validation', 'error_circular_duplicating');
 			}
 
 			return true;
@@ -394,10 +410,28 @@ class PagesTable extends Table {
 		//Ensure that a page has no linked duplicating pages when deleting it.
 		$rules->addDelete(
 			function (Page $entity): bool {
-				/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-				$lo_table = FactoryLocator::get('Table')->get('Pages');
+				/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
+				$lo_pagesTable = FactoryLocator::get('Table')->get('Pages');
 
-				return !$lo_table->exists(['duplicate_of' => $entity->id]);
+				if ($lo_pagesTable->exists(['duplicate_of' => $entity->id])) {
+					// If the page is duplicated by another page, we cannot delete it.
+					return false;
+				}
+
+				$la_nestedChildren = $this->getNestedPages($entity)?->toArray();
+
+				// No nested children? Allow deletion.
+				if (!$la_nestedChildren) {
+					return true;
+				}
+
+				$la_nestedChildrenIds = array_values(array_map(fn (Page $entity) => $entity->id, $la_nestedChildren));
+
+				// If any of the nested pages is duplicated by another page, we cannot delete it.
+				return !$lo_pagesTable->find('all', skipPageRoleCheck: true)->where([
+					'duplicate_of IN' => $la_nestedChildrenIds,
+					'id NOT IN' => $la_nestedChildrenIds,
+				])->count();
 			},
 			'noDuplicating' . $ls_pageRole,
 			[
@@ -407,46 +441,49 @@ class PagesTable extends Table {
 		);
 
 
-		$rules->addDelete(function (Page $page/*, array $options = []*/): string|bool {
-			/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get('Contents');
+		$rules->addDelete(function (Page $entity/*, array $options = []*/): string|bool {
+			/** @var \Awyiss\Model\Table\ContentsTable $lo_contentsTable */
+			$lo_contentsTable = FactoryLocator::get('Table')->get('Contents');
 
 			// Get all contents of the current page
-			$la_contents = $lo_table->find()->where(['page_id' => $page->id])->all()->indexBy('id')->toArray();
+			$la_contents = $lo_contentsTable->find()->where(['page_id' => $entity->id])->all()->indexBy('id')->toArray();
 
 			if ($la_contents) {
 				// Find contents that duplicate the current page's contents
-				if ($lo_table->find()->where(['duplicate_of IN' => array_keys($la_contents)])->count()) {
+				if ($lo_contentsTable->find()->where(['duplicate_of IN' => array_keys($la_contents)])->count()) {
 					return false;
 				}
 			}
 
-			$la_nestedChildren = $page->getNestedChildren()?->toArray();
+			$la_nestedChildren = $this->getNestedPages($entity)?->toArray();
 
 			if (!$la_nestedChildren) {
 				return true;
 			}
 
-			$la_nestedChildrenIds = array_values(array_map(fn (Page $page) => $page->id, $la_nestedChildren));
+			$la_nestedChildrenIds = array_values(array_map(fn (Page $entity) => $entity->id, $la_nestedChildren));
 
 			// Get all contents of all nested children
-			$la_contents = $lo_table->find()->where(['page_id IN' => $la_nestedChildrenIds])->all()->indexBy('id')->toArray();
-			if ($la_contents) {
-				// Find contents that duplicate the children page's contents
-				if ($lo_table->find()->where(['duplicate_of IN' => array_keys($la_contents)])->count()) {
-					return false;
-				}
+			$la_contents = $lo_contentsTable->find()->where(['page_id IN' => $la_nestedChildrenIds])->all()->indexBy('id')->toArray();
+			if (!$la_contents) {
+				return true;
 			}
 
-			return true;
+			// If any of the nested pages has a content that is duplicated by other contents,
+			// we cannot delete the current page. Except if the duplicating contents
+			// are also contents of the nested pages.
+			return !$lo_contentsTable->find()->where([
+				'duplicate_of IN' => array_keys($la_contents),
+				'page_id NOT IN' => $la_nestedChildrenIds,
+			])->count();
 		}, 'noDuplicatedContents', [
 			'errorField' => '_general',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_no_duplicated_contents'),
 		]);
 
 
-		$rules->addDelete(function (Page $page/*, array $options = []*/): bool {
-			return !$this->hasDescendantsWithDifferentPageRole($page);
+		$rules->addDelete(function (Page $entity/*, array $options = []*/): bool {
+			return !$this->hasDescendantsWithDifferentPageRole($entity);
 		}, 'noNestedChildrenWithDifferentPageRole', [
 			'errorField' => '_general',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_no_nested_children_with_different_page_role'),
@@ -470,6 +507,7 @@ class PagesTable extends Table {
 			'propertyName' => 'duplicated_by',
 		]);
 
+		// Singular DuplicateOf<Page/News/Product>
 		$this->belongsTo('DuplicateOf' . Inflector::camelize($this->pageRole->name), [
 			'bindingKey' => 'id',
 			'className' => $ls_pageRole,
@@ -488,23 +526,6 @@ class PagesTable extends Table {
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		$schema->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));
-	}
-
-
-	/**
-	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param array $options
-	 * @return \Cake\ORM\Query\SelectQuery
-	 * @noinspection PhpUnused
-	 */
-	public function findActive(SelectQuery $query): SelectQuery {
-		$query->where([
-			'active' => true,
-			'parents_active' => true,
-		]);
-
-
-		return $query;
 	}
 
 
@@ -558,6 +579,7 @@ class PagesTable extends Table {
 	 * @param string $column
 	 * @param string|null $type
 	 * @return array|null
+	 * @throws \ReflectionException
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
 		if ($column === 'form_id') {
@@ -565,7 +587,10 @@ class PagesTable extends Table {
 		}
 
 		if ($column === 'duplicate_of') {
-			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
+			/**
+			 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
+			 * @noinspection PhpPossiblePolymorphicInvocationInspection
+			 */
 			return $this->find('forCurrentLanguage')->find('threaded')->all()->listNested()->printer('label', 'id', '- ')->toArray();
 		}
 

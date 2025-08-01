@@ -82,7 +82,7 @@ class SurveySurveyAnswersTable extends Table {
 
 		$validator->requirePresence([
 			'surveyAnswerId',
-			'surveySurveyQuestionId',
+			// No 'surveySurveyQuestionId', since it's gets set automatically as it is a foreign key
 			'systemOrder',
 		], 'create');
 
@@ -150,6 +150,7 @@ class SurveySurveyAnswersTable extends Table {
 
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 

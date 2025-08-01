@@ -36,11 +36,16 @@ class PublicationDataTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $validator The validator that can be modified to add some rules to it.
-	 * @return \Cake\Validation\Validator
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to add some rules to it.
+	 * @return \Awyiss\Validation\Validator
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
+
+		$validator->requirePresence([
+			'scope',
+			'type',
+		], 'create');
 
 
 		$validator->add('scope', [
@@ -65,7 +70,7 @@ class PublicationDataTable extends Table {
 			'maxLength' => ['rule' => ['maxLength', 20]],
 		]);
 
-
+		$validator->allowEmptyDateTime('dateTime');
 		$validator->add('dateTime', [
 			'dateTime' => ['rule' => 'dateTime'],
 		]);
