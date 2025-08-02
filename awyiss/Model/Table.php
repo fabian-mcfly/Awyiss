@@ -512,8 +512,8 @@ class Table extends BaseTable {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $validator The validator that can be modified to add some rules to it.
-	 * @return Validator
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to add some rules to it.
+	 * @return \Awyiss\Validation\Validator
 	 */
 	public function validationDefault(BaseValidator $validator): BaseValidator {
 		$validator->setI18nDomain($this->getI18nDomain())->setStopOnFailure();

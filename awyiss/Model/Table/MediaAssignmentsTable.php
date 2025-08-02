@@ -34,7 +34,7 @@ class MediaAssignmentsTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $systemOrder = [
-		'relatedColumns' => ['media_element_id', 'media_element_selector_identifier', 'scope', 'foreign_key'],
+		'relatedColumns' => ['mediaElementId', 'mediaElementSelectorIdentifier', 'scope', 'foreignKey'],
 	];
 
 
@@ -80,14 +80,29 @@ class MediaAssignmentsTable extends Table {
 
 
 	/**
-	 * Returns the default validator object.
-	 *
-	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
-	 * add some rules to it.
-	 * @return \Cake\Validation\Validator
+	 * @inheritDoc
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
+
+		$validator->requirePresence([
+			'mediaElementId',
+			'mediaElementSelectorIdentifier',
+			'scope',
+		], 'create');
+
+		$validator->requirePresence([
+			'mediaId',
+		], function (array $context): bool {
+			return empty($context['data']['media_folder_id']) && $context['newRecord'];
+		});
+
+		$validator->requirePresence([
+			'mediaFolderId',
+		], function (array $context): bool {
+			return empty($context['data']['media_id']) && $context['newRecord'];
+		});
 
 		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
@@ -170,6 +185,11 @@ class MediaAssignmentsTable extends Table {
 		$rules->add($rules->existsIn('mediaId', 'Media'), 'mediaExists', [
 			'errorField' => 'mediaId',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_exists'),
+		]);
+
+		$rules->add($rules->existsIn('mediaFolderId', 'MediaFolders'), 'mediaFolderExists', [
+			'errorField' => 'mediaFolderId',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_folder_exists'),
 		]);
 
 		return $rules;

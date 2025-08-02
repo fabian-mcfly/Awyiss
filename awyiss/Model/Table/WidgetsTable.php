@@ -159,12 +159,7 @@ class WidgetsTable extends Table {
 
 
 	/**
-	 * Returns the default validator object.
-	 *
-	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
-	 * add some rules to it.
-	 * @return \Awyiss\Validation\Validator
-	 * @noinspection DuplicatedCode
+	 * @inheritDoc
 	 */
 	public function validationDefault(BaseValidator $validator): BaseValidator {
 		parent::validationDefault($validator);

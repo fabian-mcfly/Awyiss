@@ -87,11 +87,8 @@ class MediaFoldersTable extends Table {
 
 
 	/**
-	 * Returns the default validator object.
-	 *
-	 * @param Validator $validator The validator that can be modified to
-	 * add some rules to it.
-	 * @return Validator
+	 * @inheritDoc
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);

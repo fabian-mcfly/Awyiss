@@ -100,11 +100,7 @@ class PageTemplatesTable extends Table {
 
 
 	/**
-	 * Returns the default validator object.
-	 *
-	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
-	 * add some rules to it.
-	 * @return \Awyiss\Validation\Validator
+	 * @inheritDoc
 	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {

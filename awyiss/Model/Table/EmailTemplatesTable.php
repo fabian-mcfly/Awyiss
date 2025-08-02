@@ -87,11 +87,8 @@ class EmailTemplatesTable extends Table {
 
 
 	/**
-	 * Returns the default validator object.
-	 *
-	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
-	 * add some rules to it.
-	 * @return \Cake\Validation\Validator
+	 * @inheritDoc
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
