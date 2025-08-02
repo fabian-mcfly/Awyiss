@@ -128,24 +128,6 @@ msgstr "Invalid locale"
 msgid "error_not_last_language_in_realm"
 msgstr "This language cannot be deleted as it is the last one in this domain"
 
-msgid "error_root_language_shortcode_unchanged"
-msgstr "The language shortcode of the root folder cannot be changed"
-
-msgid "error_root_title_unchanged"
-msgstr "The title of the root folder cannot be changed"
-
-msgid "error_root_parent_id_unchanged"
-msgstr "The root folder cannot be moved"
-
-msgid "error_root_path_unchanged"
-msgstr "The path of the root folder cannot be changed"
-
-msgid "error_not_nested_under_root"
-msgstr "A folder cannot be moved under the root folder"
-
-msgid "error_not_root_deletion"
-msgstr "The root folder cannot be deleted"
-
 msgid "error_media_has_file_extension"
 msgstr "The file has no extension"
 

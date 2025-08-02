@@ -649,7 +649,7 @@ export default class NestedListHandler {
 	 */
 	toggleListState(listItem, childList, forceState = null) {
 		// Toggle the visibility of the child list
-		childList.classList.toggle('Collapsed', forceState);
+		childList.classList.toggle('Collapsed', forceState ?? undefined);
 
 		// Update the state in nestedListStates
 		this.nestedListStates[ listItem.id ] = childList.classList.contains('Collapsed') ? 'Collapsed' : 'Expanded';

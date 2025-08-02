@@ -128,24 +128,6 @@ msgstr "Ungültige Sprachregion"
 msgid "error_not_last_language_in_realm"
 msgstr "Diese Sprache kann nicht gelöscht werden, da sie die letzte in dieser Domäne ist"
 
-msgid "error_root_language_shortcode_unchanged"
-msgstr "Die Sprachkürzel des Hauptordners darf nicht geändert werden"
-
-msgid "error_root_title_unchanged"
-msgstr "Der Titel des Hauptordners darf nicht geändert werden"
-
-msgid "error_root_parent_id_unchanged"
-msgstr "Der Hauptordner darf nicht verschoben werden"
-
-msgid "error_root_path_unchanged"
-msgstr "Der Pfad des Hauptordners darf nicht geändert werden"
-
-msgid "error_not_nested_under_root"
-msgstr "Ein Ordner darf nicht unter den Hauptordner verschoben werden"
-
-msgid "error_not_root_deletion"
-msgstr "Der Hauptordner kann nicht gelöscht werden"
-
 msgid "error_media_has_file_extension"
 msgstr "Die Datei hat keine Endung"
 

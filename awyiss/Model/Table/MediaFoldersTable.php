@@ -27,7 +27,7 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\MediaFolder getParent(MediaFolder $entity, array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getParents(MediaFolder $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
- * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MediaFoldersTable extends Table {
 	/**
@@ -54,6 +54,12 @@ class MediaFoldersTable extends Table {
 	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['languageShortcode', 'parentId', 'hidden'],
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
 	];
 
 
@@ -190,22 +196,32 @@ class MediaFoldersTable extends Table {
 
 		$rules->add(
 			function (MediaFolder $entity, array $options): bool|string {
-				if ($entity->get('id') === 1 && ($options['isCopy'] ?? false) === false) {
-					if ($entity->get('languageShortcode') !== null) {
-						return __df($this->getI18nDomain(), 'validation', 'error_root_language_shortcode_unchanged');
-					}
+				if ($entity->get('id') !== 1 || ($options['isCopy'] ?? false) === true) {
+					return true;
+				}
 
-					if ($entity->get('title') !== 'Media') {
-						return __df($this->getI18nDomain(), 'validation', 'error_root_title_unchanged');
-					}
+				if (!$entity->get('active')) {
+					return __df($this->getI18nDomain(), 'validation', 'error_root_active_unchanged');
+				}
 
-					if ($entity->get('parentId') !== null) {
-						return __df($this->getI18nDomain(), 'validation', 'error_root_parent_id_unchanged');
-					}
+				if ($entity->get('hidden')) {
+					return __df($this->getI18nDomain(), 'validation', 'error_root_hidden_unchanged');
+				}
 
-					if ($entity->get('path') !== 'media') {
-						return __df($this->getI18nDomain(), 'validation', 'error_root_path_unchanged');
-					}
+				if ($entity->get('languageShortcode') !== null) {
+					return __df($this->getI18nDomain(), 'validation', 'error_root_language_shortcode_unchanged');
+				}
+
+				if ($entity->get('title') !== 'Media') {
+					return __df($this->getI18nDomain(), 'validation', 'error_root_title_unchanged');
+				}
+
+				if ($entity->get('parentId') !== null) {
+					return __df($this->getI18nDomain(), 'validation', 'error_root_parent_id_unchanged');
+				}
+
+				if ($entity->get('path') !== 'media') {
+					return __df($this->getI18nDomain(), 'validation', 'error_root_path_unchanged');
 				}
 
 				return true;
@@ -247,9 +263,7 @@ class MediaFoldersTable extends Table {
 
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
-	 * @noinspection PhpUnused
 	 */
 	public function findActive(SelectQuery $query): SelectQuery {
 		$query->where([

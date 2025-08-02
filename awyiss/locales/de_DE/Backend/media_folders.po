@@ -91,3 +91,27 @@ msgstr "Mindestens eine Datei wird verwendet. Sind Sie sicher, dass Sie den Medi
 
 msgid "error_subfolders_hidden"
 msgstr "Mindestens ein Unterordner ist ein versteckter Ordner und wird vom System verwendet. Das Löschen ist nicht möglich."
+
+msgid "error_root_active_unchanged"
+msgstr "Der Hauptordner darf nicht deaktiviert werden"
+
+msgid "error_root_hidden_unchanged"
+msgstr "Der Hauptordner darf nicht versteckt werden"
+
+msgid "error_root_language_shortcode_unchanged"
+msgstr "Die Sprachkürzel des Hauptordners darf nicht geändert werden"
+
+msgid "error_root_title_unchanged"
+msgstr "Der Titel des Hauptordners darf nicht geändert werden"
+
+msgid "error_root_parent_id_unchanged"
+msgstr "Der Hauptordner darf nicht verschoben werden"
+
+msgid "error_root_path_unchanged"
+msgstr "Der Pfad des Hauptordners darf nicht geändert werden"
+
+msgid "error_not_nested_under_root"
+msgstr "Ein Ordner darf nicht unter den Hauptordner verschoben werden"
+
+msgid "error_not_root_deletion"
+msgstr "Der Hauptordner kann nicht gelöscht werden"

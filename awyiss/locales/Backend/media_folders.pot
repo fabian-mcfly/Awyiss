@@ -91,3 +91,27 @@ msgstr "At least one file is in use. Are you sure you want to delete the media F
 
 msgid "error_subfolders_hidden"
 msgstr "At least one subfolder is a hidden folder and is used by the system. Deletion is not possible."
+
+msgid "error_root_active_unchanged"
+msgstr "The root folder cannot be deactivated"
+
+msgid "error_root_hidden_unchanged"
+msgstr "The root folder cannot be hidden"
+
+msgid "error_root_language_shortcode_unchanged"
+msgstr "The language shortcode of the root folder cannot be changed"
+
+msgid "error_root_title_unchanged"
+msgstr "The title of the root folder cannot be changed"
+
+msgid "error_root_parent_id_unchanged"
+msgstr "The root folder cannot be moved"
+
+msgid "error_root_path_unchanged"
+msgstr "The path of the root folder cannot be changed"
+
+msgid "error_not_nested_under_root"
+msgstr "A folder cannot be moved under the root folder"
+
+msgid "error_not_root_deletion"
+msgstr "The root folder cannot be deleted"
