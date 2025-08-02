@@ -223,11 +223,14 @@ class MediaElementsTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function getAssignableModels(bool $includeEntities = false, bool $allowGrouping = true): array {
-		if (isset($this->availableModels)) {
-			return $this->availableModels;
+		$ls_withEntities = $includeEntities ? 'withEntities' : 'withoutEntities';
+		$ls_allowGrouping = $allowGrouping ? 'allowGrouping' : 'noGrouping';
+
+		if (isset($this->availableModels[ $ls_withEntities ][ $ls_allowGrouping ])) {
+			return $this->availableModels[ $ls_withEntities ][ $ls_allowGrouping ];
 		}
 
-		$this->availableModels = [];
+		$la_availableModels = [];
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$la_datatables = FactoryLocator::get('Table')->get('Datatables')->findAllAndCache()->indexBy(fn($datatable) => $datatable->identifier)->toArray();
@@ -247,7 +250,7 @@ class MediaElementsTable extends Table {
 			/** @var string $ls_tableName */
 			$ls_tableName = $ls_className::TABLE;
 
-			if (isset($this->availableModels[ $ls_tableName ])) {
+			if (isset($la_availableModels[ $ls_tableName ])) {
 				continue;
 			}
 
@@ -289,7 +292,7 @@ class MediaElementsTable extends Table {
 				}
 			}
 
-			$this->availableModels[ $ls_tableName ] = [
+			$la_availableModels[ $ls_tableName ] = [
 				'entityLevel' => $lb_entityLevel,
 				'modelLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
 				'label' => isset($la_datatables[ $ls_tableName ]) ? $la_datatables[ $ls_tableName ]->label : __d($ls_tableName, 'headline_overview'),
@@ -297,8 +300,10 @@ class MediaElementsTable extends Table {
 			];
 		}
 
-		uasort($this->availableModels, fn($a, $b) => strcasecmp($a['label'], $b['label']));
+		uasort($la_availableModels, fn($a, $b) => strcasecmp($a['label'], $b['label']));
 
-		return $this->availableModels;
+		$this->availableModels[ $ls_withEntities ][ $ls_allowGrouping ] = $la_availableModels;
+
+		return $this->availableModels[ $ls_withEntities ][ $ls_allowGrouping ];
 	}
 }
