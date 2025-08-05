@@ -28,6 +28,7 @@ use Cake\Validation\Validator;
  * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class FormElementsTable extends Table {
 	/**
@@ -113,7 +114,7 @@ class FormElementsTable extends Table {
 	protected array $translate = [
 		'fields' => [
 			'title',
-			'title_email',
+			'titleEmail',
 			'placeholder',
 			'text',
 		],
@@ -377,8 +378,8 @@ class FormElementsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['identifier', 'form_id']), 'identifierUnique', [

@@ -20,6 +20,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\HasMany $FormEmails
  * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\HasMany $FormConfirmationEmails
  * @method \Awyiss\Model\Entity\EmailTemplate newDefaultEntity(array $additionalData = [], array $options = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class EmailTemplatesTable extends Table {
 	/**
@@ -38,8 +39,8 @@ class EmailTemplatesTable extends Table {
 	protected array $translate = [
 		'fields' => [
 			'title',
-			'text_html',
-			'text_plain',
+			'textHtml',
+			'textPlain',
 		],
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
@@ -63,7 +64,6 @@ class EmailTemplatesTable extends Table {
 
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
@@ -163,8 +163,8 @@ class EmailTemplatesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['fileName']), 'fileNameUnique', [

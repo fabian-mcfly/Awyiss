@@ -35,7 +35,7 @@ class FormConditionalRecipientsTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $systemOrder = [
-		'relatedColumns' => ['form_id'],
+		'relatedColumns' => ['formId'],
 	];
 
 
@@ -100,12 +100,17 @@ class FormConditionalRecipientsTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
+			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
 		$validator->notEmptyString('recipient');
 		$validator->add('recipient', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
+			'notBlank' => ['rule' => 'notBlank'],
+			'email' => ['rule' => 'email'],
 		]);
 
 
@@ -122,8 +127,8 @@ class FormConditionalRecipientsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param BaseRulesChecker $rules The rules object to be modified.
-	 * @param \Awyiss\ORM\RulesChecker|BaseRulesChecker $rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(

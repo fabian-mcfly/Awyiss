@@ -348,12 +348,12 @@ class FormSender {
 			'form_id' => $this->form->id,
 			'page_id' => $this->page?->id ?? null,
 			'subject' => html_entity_decode($this->form->subject ?? ''),
-			'subject_confirmation' => html_entity_decode($this->form->subjectConfirmation ?? ''),
+			'subjectConfirmation' => html_entity_decode($this->form->subjectConfirmation ?? ''),
 			'body' => $this->emailBody['email'] ? base64_encode(gzcompress($this->emailBody['email'])) : null,
-			'body_confirmation' => $this->emailBody['confirmation'] ? base64_encode(gzcompress($this->emailBody['confirmation'])) : null,
+			'bodyConfirmation' => $this->emailBody['confirmation'] ? base64_encode(gzcompress($this->emailBody['confirmation'])) : null,
 			'data' => base64_encode(gzcompress(json_encode($this->getFormData()))),
-			'ip_hash' => $ls_ipHash,
-			'post_hash' => $ls_postHash,
+			'ipHash' => $ls_ipHash,
+			'postHash' => $ls_postHash,
 			'identifier' => md5($ls_ipHash . '|' . $ls_postHash),
 		];
 

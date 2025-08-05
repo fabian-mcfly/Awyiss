@@ -78,7 +78,8 @@ abstract class GenericDatatablesTable extends Table {
 		if (!$this->translatable && $this->hasAttributes()) {
 			$lo_attributesTable = $this->getAttributesTable();
 			if ($lo_attributesTable->hasBehavior('Translate')) {
-				$lo_attributesTable->getBehavior('Translate')->setConfig('fields');
+				/** @noinspection PhpRedundantOptionalArgumentInspection */
+				$lo_attributesTable->getBehavior('Translate')->setConfig('fields', null);
 			}
 		}
 	}
@@ -103,6 +104,7 @@ abstract class GenericDatatablesTable extends Table {
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
 
+		$validator->requirePresence(['title'], 'create');
 
 		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
@@ -117,6 +119,8 @@ abstract class GenericDatatablesTable extends Table {
 
 
 		if ($this->splitIntoLanguages) {
+			$validator->requirePresence(['languageShortcode'], 'create');
+
 			$validator->notEmptyString('languageShortcode');
 			$validator->add('languageShortcode', [
 				'isScalar' => ['rule' => 'isScalar'],

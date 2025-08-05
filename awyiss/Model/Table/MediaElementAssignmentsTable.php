@@ -16,6 +16,7 @@ use Cake\Validation\Validator;
  *
  * @method \Awyiss\Model\Entity\MediaElementAssignment newDefaultEntity(array $additionalData = [], array $options = [])
  * @property \Awyiss\Model\Table\MediaElementsTable&\Awyiss\ORM\Association\BelongsTo $MediaElements
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MediaElementAssignmentsTable extends Table {
 	/**
@@ -52,6 +53,11 @@ class MediaElementAssignmentsTable extends Table {
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
+
+		$validator->requirePresence([
+			'mediaElementId',
+			'scope',
+		], 'create');
 
 		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],

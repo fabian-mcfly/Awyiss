@@ -116,9 +116,11 @@ class Form extends Entity {
 		'formConditionalRecipients' => true,
 	];
 	/**
-	 * @var bool
+	 * @inheritDoc
 	 */
-	protected bool $isPreview = false;
+	protected array $defaultValues = [
+		'transportProfile' => 'default',
+	];
 	/**
 	 * @var array
 	 */
@@ -135,6 +137,10 @@ class Form extends Entity {
 	 * @var bool
 	 */
 	protected bool $formSubmitted = false;
+	/**
+	 * @var bool
+	 */
+	protected bool $isPreview = false;
 	/**
 	 * @var array<string, \Awyiss\Form\Protection\FormProtectionInterface>
 	 */

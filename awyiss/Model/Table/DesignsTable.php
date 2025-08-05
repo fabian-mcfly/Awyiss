@@ -16,7 +16,8 @@ use Cake\Validation\Validator;
  * Designs Model
  *
  * @method \Awyiss\Model\Entity\Design newDefaultEntity(array $additionalData = [], array $options = [])
- * @noinspection PhpFullyQualifiedNameUsageInspection*/
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
+ */
 class DesignsTable extends Table {
 	/**
 	 * @inheritDoc
@@ -55,6 +56,7 @@ class DesignsTable extends Table {
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
+		$validator->notEmptyString('identifier');
 		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
@@ -105,8 +107,8 @@ class DesignsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['identifier']), 'identifierUnique', [

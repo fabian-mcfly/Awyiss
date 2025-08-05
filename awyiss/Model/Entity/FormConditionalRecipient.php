@@ -45,4 +45,10 @@ class FormConditionalRecipient extends Entity {
 		'recipient' => true,
 		'systemOrder' => true,
 	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $defaultValues = [
+		'formId' => null, // Since sqlite sets '0' as default
+	];
 }

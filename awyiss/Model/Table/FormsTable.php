@@ -46,9 +46,9 @@ class FormsTable extends Table {
 		'fields' => [
 			'title',
 			'subject',
-			'subject_confirmation',
-			'salutation_confirmation',
-			'success_message',
+			'subjectConfirmation',
+			'salutationConfirmation',
+			'successMessage',
 		],
 		'realm' => Awyiss::REALM_FRONTEND,
 	];
@@ -107,7 +107,43 @@ class FormsTable extends Table {
 		$validator->requirePresence([
 			'title',
 			'identifier',
+			'transportProfile',
 		], 'create');
+
+
+		// Ensure that ownerEmail is required only if send_email or send_confirmation_email is true
+		$validator->requirePresence('ownerEmail', function (array $context): bool {
+			return !empty($context['data']['send_email']) || !empty($context['data']['send_confirmation_email']);
+		});
+
+
+		// Ensure that userEmail is required only if send_email or send_confirmation_email is true
+		$validator->requirePresence('userEmail', function (array $context): bool {
+			return !empty($context['data']['send_email']) || !empty($context['data']['send_confirmation_email']);
+		});
+
+		// Ensure that subject is required only if send_email is true
+		$validator->requirePresence(['subject'], function (array $context): bool {
+			return !empty($context['data']['send_email']);
+		});
+
+
+		// Ensure that subjectConfirmation is required only if send_confirmation_email is true
+		$validator->requirePresence(['subjectConfirmation'], function (array $context): bool {
+			return !empty($context['data']['send_confirmation_email']);
+		});
+
+
+		// Ensure that emailTemplateId is required only if send_email is true
+		$validator->requirePresence('emailTemplateId', function (array $context): bool {
+			return !empty($context['data']['send_email']);
+		});
+
+
+		// Ensure that confirmationEmailTemplateId is required only if send_confirmation_email is true
+		$validator->requirePresence('confirmationEmailTemplateId', function (array $context): bool {
+			return !empty($context['data']['send_confirmation_email']);
+		});
 
 
 		$validator->add('id', [
@@ -134,38 +170,38 @@ class FormsTable extends Table {
 		]);
 
 
-		$validator->add('send_email', [
+		$validator->add('sendEmail', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$validator->notEmptyString('email_template_id', null, function (array $context): bool {
+		$validator->notEmptyString('emailTemplateId', null, function (array $context): bool {
 			return !empty($context['data']['send_email']);
 		});
-		$validator->add('email_template_id', [
+		$validator->add('emailTemplateId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$validator->add('send_confirmation_email', [
+		$validator->add('sendConfirmationEmail', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$validator->notEmptyString('confirmation_email_template_id', null, function (array $context): bool {
+		$validator->notEmptyString('confirmationEmailTemplateId', null, function (array $context): bool {
 			return !empty($context['data']['send_confirmation_email']);
 		});
-		$validator->add('confirmation_email_template_id', [
+		$validator->add('confirmationEmailTemplateId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$validator->notEmptyString('owner_email', null, function (array $context): bool {
+		$validator->notEmptyString('ownerEmail', null, function (array $context): bool {
 			return !empty($context['data']['send_email']) || !empty($context['data']['send_confirmation_email']);
 		});
-		$validator->add('owner_email', [
+		$validator->add('ownerEmail', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'email' => ['rule' => 'email'],
@@ -173,17 +209,17 @@ class FormsTable extends Table {
 		]);
 
 
-		$validator->add('owner_name', [
+		$validator->add('ownerName', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		$validator->notEmptyString('user_email', null, function (array $context): bool {
+		$validator->notEmptyString('userEmail', null, function (array $context): bool {
 			return !empty($context['data']['send_email']) || !empty($context['data']['send_confirmation_email']);
 		});
-		$validator->add('user_email', [
+		$validator->add('userEmail', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'email' => ['rule' => function (string $value): bool {
@@ -216,7 +252,7 @@ class FormsTable extends Table {
 		]);
 
 
-		$validator->add('user_name', [
+		$validator->add('userName', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
@@ -279,32 +315,30 @@ class FormsTable extends Table {
 		]);
 
 
-		$validator->notEmptyString('subject_confirmation', null, function (array $context): bool {
+		$validator->notEmptyString('subjectConfirmation', null, function (array $context): bool {
 			return !empty($context['data']['send_confirmation_email']);
 		});
-		$validator->add('subject_confirmation', [
+		$validator->add('subjectConfirmation', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		$validator->notEmptyString('salutation_confirmation', null, function (array $context): bool {
-			return !empty($context['data']['send_confirmation_email']);
-		});
-		$validator->add('salutation_confirmation', [
+		$validator->allowEmptyString('salutationConfirmation');
+		$validator->add('salutationConfirmation', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		$validator->add('summarize_errors', [
+		$validator->add('summarizeErrors', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$validator->add('success_message', [
+		$validator->add('successMessage', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
@@ -316,8 +350,8 @@ class FormsTable extends Table {
 		]);
 
 
-		$validator->notEmptyString('conditional_recipients_strategy');
-		$validator->add('conditional_recipients_strategy', [
+		$validator->notEmptyString('conditionalRecipientsStrategy');
+		$validator->add('conditionalRecipientsStrategy', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
@@ -329,7 +363,8 @@ class FormsTable extends Table {
 		]);
 
 
-		$validator->add('transport_profile', [
+		$validator->notEmptyString('transportProfile');
+		$validator->add('transportProfile', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
@@ -352,8 +387,8 @@ class FormsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
@@ -434,12 +469,10 @@ class FormsTable extends Table {
 	public function getFormTemplates(): array {
 		$la_classes = App::classes('*', 'Utility/Form/Templates', 'FormTemplate', FormTemplateInterface::class);
 
-		$la_templates = [];
-
 		/** @var class-string<\Awyiss\Utility\Form\Templates\FormTemplateInterface> $ls_className */
-		foreach ($la_classes as $ls_templateName => $ls_className) {
-			$la_templates[ $ls_templateName ] = $ls_className::getTitle();
-		}
+		$la_templates = array_map(function ($ls_className) {
+			return $ls_className::getTitle();
+		}, $la_classes);
 
 		uasort($la_templates, function ($a, $b) {
 			return strnatcasecmp($a, $b);
