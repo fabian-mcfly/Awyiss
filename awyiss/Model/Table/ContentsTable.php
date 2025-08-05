@@ -45,6 +45,8 @@ use RuntimeException;
  * @method \Awyiss\Model\Entity\Content getParent(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class ContentsTable extends Table {
 	/**
@@ -172,16 +174,59 @@ class ContentsTable extends Table {
 
 	/**
 	 * Finds the most recent content for each page.
-	 * Used to determine the last change of a pagef or the sitemap
+	 * Used to determine the last changed content and
+	 * therefore the last changed page.
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function findLatestForPages(SelectQuery $query): SelectQuery {
-		return $query->select(['page_id', 'id', 'changed_on', 'created_on'])
-		->orderBy(['changed_on' => 'DESC', 'created_on' => 'DESC'])
-		->distinct(['page_id'])->groupBy('page_id');
+		/**
+		 * SELECT Contents.page_id AS Contents__page_id, Contents.id AS Contents__id, Contents.changed_on AS Contents__changed_on, Contents.created_on AS Contents__created_on
+		 * FROM contents Contents
+		 * INNER JOIN (SELECT latest.page_id AS latest_page_id, (MAX(COALESCE(latest.changed_on, latest.created_on))) AS latest_date FROM Contents as latest GROUP BY latest.page_id) latest
+		 * ON (Contents.page_id = latest.latest_page_id AND COALESCE(Contents.changed_on, Contents.created_on) = latest.latest_date)
+		 * WHERE (Contents.deleted = 0)
+		 * GROUP BY Contents.page_id
+		 * ORDER BY changed_on DESC, created_on DESC, system_order ASC;
+		 *
+		 * @noinspection GrazieInspection
+		 */
+		$lo_subquery = $this->find()->select([
+			'latest_page_id' => 'page_id',
+			'latest_date' => $this->find()->func()->max(
+				new FunctionExpression('COALESCE', ['changed_on' => 'literal', 'created_on' => 'literal'])
+			),
+		])->groupBy('page_id')->applyOptions([
+			'attributes' => [
+				'skip' => true,
+			],
+		]);
+
+		return $query->select([
+			'page_id',
+			'id',
+			'changed_on',
+			'created_on',
+		])->innerJoin(
+			['latest' => $lo_subquery],
+			function (QueryExpression $exp/*, SelectQuery $q*/) {
+				return $exp->eq('Contents.page_id', new IdentifierExpression('latest_page_id'))->eq(
+					new FunctionExpression('COALESCE', [
+						'Contents.changed_on' => 'literal',
+						'Contents.created_on' => 'literal',
+					]),
+					new IdentifierExpression('latest_date')
+				);
+			}
+		)->where(['Contents.deleted' => 0])->groupBy('Contents.page_id')->orderBy([
+			'Contents.changed_on' => 'DESC',
+			'Contents.created_on' => 'DESC',
+		])->applyOptions([
+			'attributes' => [
+				'skip' => true,
+			],
+		]);
 	}
 
 
