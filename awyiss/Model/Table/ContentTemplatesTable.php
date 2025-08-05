@@ -179,22 +179,36 @@ class ContentTemplatesTable extends Table {
 	 * @return array<int, array>
 	 */
 	public function getAvailableContentAttributes(bool $includeInactive = false): array {
-		if (isset($this->availableContentAttributes)) {
-			return $this->availableContentAttributes;
+		$ls_includeInactiveKey = $includeInactive ? 'withInactive' : 'active';
+
+		if (isset($this->availableContentAttributes [ $ls_includeInactiveKey ])) {
+			return $this->availableContentAttributes [ $ls_includeInactiveKey ];
 		}
 
 		/** @var \Awyiss\Model\Table\AttributesTable $lo_attributesTable */
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableContentAttributes = $lo_attributesTable->find($includeInactive ? 'all' : 'active')->where(['scope' => 'contents'])->all()->indexBy('id')->map(function (Attribute $attribute): array {
-			return [
-				'title' => $attribute->title,
-				'label' => $attribute->label,
-				'identifier' => $attribute->identifier,
-				'active' => $attribute->active,
-				'type' => $attribute->type,
-				'inputType' => $attribute->inputType,
-			];
-		})->toArray();
+		$this->availableContentAttributes[ $ls_includeInactiveKey ] = $lo_attributesTable->find($includeInactive ? 'all' : 'active')
+			->where(['scope' => 'contents'])
+			->all()
+			->indexBy('id')
+			->map(
+				function (Attribute $attribute): array {
+					return [
+						'title' => $attribute->title,
+						'label' => $attribute->label,
+						'identifier' => $attribute->identifier,
+						'active' => $attribute->active,
+						'type' => $attribute->type,
+						'inputType' => $attribute->inputType,
+					];
+				}
+			)
+			->toArray();
+
+
+		return $this->availableContentAttributes [ $ls_includeInactiveKey ];
+	}
+
 
 
 		return $this->availableContentAttributes;
