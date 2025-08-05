@@ -15,8 +15,9 @@ use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Content\AwyissColumnSystem;
 use Awyiss\Utility\Inflector;
 use Awyiss\Validation\Validator;
-use Cake\Collection\Collection;
-use Cake\Collection\CollectionInterface;
+use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
@@ -269,6 +270,7 @@ class ContentsTable extends Table {
 
 	/**
 	 * @inheritDoc
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(BaseValidator $validator): BaseValidator {
 		parent::validationDefault($validator);
@@ -430,14 +432,14 @@ class ContentsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
 	 * @noinspection DuplicatedCode
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): BaseRulesChecker {
 		$rules->add(function (Content $entity/*, array $options*/): bool {
 			/**
-			 * Retreive the page and the assigned page template.
+			 * Retrieve the page and the assigned page template.
 			 *
 			 * @see ContentsTable::forPageRole
 			 */
@@ -448,14 +450,16 @@ class ContentsTable extends Table {
 				]);
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
-				$entity->setError('page_id', __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'));
+				$entity->setError('page_id', [
+					'validPageId' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'),
+				]);
 
 				return false;
 			}
 
 
 			/*
-			 * Retreive tthe content template of the current entity
+			 * Retrieve the content template of the current entity
 			 * This works as an existsIn-like rule
 			 */
 			try {
@@ -474,7 +478,9 @@ class ContentsTable extends Table {
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				//Content template not found
-				$entity->setError('content_template_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_template_id'));
+				$entity->setError('content_template_id', [
+					'validContentTemplateId' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_template_id'),
+				]);
 
 				return false;
 			}
@@ -482,7 +488,9 @@ class ContentsTable extends Table {
 
 			//Content area not found in the content template
 			if (!in_array($entity->contentAreaId, array_column($lo_contentTemplate->contentAreas, 'id'))) {
-				$entity->setError('content_area_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id'));
+				$entity->setError('content_area_id', [
+					'validContentAreaId' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id'),
+				]);
 
 				return false;
 			}
@@ -490,7 +498,9 @@ class ContentsTable extends Table {
 
 			// Make sure that all children of the current entity can be moved to the target content area as well
 			if (!$this->childrenCanBeMoved($entity, $lo_page->pageTemplateId)) {
-				$entity->setError('content_area_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id_for_children'));
+				$entity->setError('content_area_id', [
+					'validContentAreaIdForChildren' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id_for_children'),
+				]);
 
 				return false;
 			}
@@ -657,48 +667,6 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * Groups the result of a query or the elements of a collection by their `contentAreaId`-value and returns
-	 * a new collection
-	 *
-	 * @noinspection PhpUnused
-	 */
-	public function groupByContentArea(SelectQuery|CollectionInterface $data): CollectionInterface {
-		$lo_data = is_a($data, SelectQuery::class) ? $data->all() : $data;
-
-		foreach ($lo_data->groupBy('contentAreaId') as $ls_contentArea => $la_contents) {
-			$lo_data->$ls_contentArea = new Collection($la_contents);
-		}
-
-
-		return $lo_data;
-	}
-
-
-	/**
-	 * Groups the result of a query by their `contentAreaId`-value and returns a new collection with all
-	 * contents nested and an added `level`-property.
-	 *
-	 * @param SelectQuery $query
-	 * @return CollectionInterface
-	 */
-	public function nestedByContentArea(SelectQuery $query): CollectionInterface {
-		return $query->find('threaded')->all()->groupBy('contentAreaId')->map(function (array $contents): CollectionInterface {
-			$lo_contents = (new Collection($contents))->listNested();
-
-			/** @var Content $lo_content */
-			foreach ($lo_contents as $lo_content) {
-				$lo_content->setVirtual(['level'], true);
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_content->level = $lo_contents->getDepth();
-			}
-
-
-			return $lo_contents;
-		});
-	}
-
-
-	/**
 	 * Return a Page-object with the page role and page template associations
 	 *
 	 * @param int $pageId
@@ -760,7 +728,7 @@ class ContentsTable extends Table {
 	/**
 	 * Sets this table to run the access check of the 'Pages'-association with a specific page role.
 	 *
-	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $pageRole
+	 * @param \Awyiss\Model\Entity\PageRole|\Awyiss\Model\Enum\PageRoleEnumInterface $pageRole
 	 * @param bool $initializePages
 	 * @return void
 	 * @throws \Exception
@@ -902,8 +870,76 @@ class ContentsTable extends Table {
 	/**
 	 * @param \Awyiss\Model\Entity\ContentTemplate $contentTemplate
 	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param \Awyiss\Validation\Validator $validator
 	 * @param array $contentAttributes
-	 * @param \Awyiss\Validation\Validator $attributesValidator
+	 * @param \Awyiss\Validation\Validator|null $attributesValidator
+	 * @return void
+	 */
+	protected function validateAssignedElements(
+		ContentTemplate $contentTemplate,
+		Content $entity,
+		Validator $validator,
+		array $contentAttributes,
+		?Validator $attributesValidator
+	): void {
+		$la_allowedKeyForDuplicating = $this->getAllowedKeyForDuplicating();
+
+		//Traverse all elements that are available inside the content template
+		foreach ($contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
+			if (!str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
+				// If the content is a duplicate of another content, only require those fields that are allowed for this content
+				if ($entity->duplicateOf && !in_array($lo_contentTemplateElement->identifier, $la_allowedKeyForDuplicating)) {
+					continue;
+				}
+
+				if ($lo_contentTemplateElement->required === true) {
+					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
+					$validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
+					//TODO check if notEmptyString is enough. Some fields might need notEmpty*
+				}
+
+				continue;
+			}
+
+			/**
+			 * If no validator for the attributes is set,
+			 * or is duplicating another content,
+			 * skip the validation of attributes
+			 */
+			if (!$attributesValidator || $entity->duplicateOf) {
+				continue;
+			}
+
+			$ls_identifier = substr($lo_contentTemplateElement->identifier, 11);
+
+			if ($entity->attributes->getError($ls_identifier)) {
+				continue;
+			}
+
+			if ($lo_contentTemplateElement->required === true) {
+				$attributesValidator->requirePresence($ls_identifier);
+
+				switch ($contentAttributes[ $ls_identifier ]['inputType']) {
+					case 'checkbox':
+						$attributesValidator->add($ls_identifier, [
+							'checkboxChecked' => [
+								'rule' => ['equalTo', true],
+							],
+						]);
+						break;
+					default:
+						$attributesValidator->notEmptyString($ls_identifier);
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\ContentTemplate $contentTemplate
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param array $contentAttributes
+	 * @param \Awyiss\Validation\Validator|null $attributesValidator
 	 * @return void
 	 */
 	protected function validateUnassignedAttributes(ContentTemplate $contentTemplate, Content $entity, array $contentAttributes, ?Validator $attributesValidator): void {
@@ -988,99 +1024,28 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\ContentTemplate $contentTemplate
 	 * @param \Awyiss\Model\Entity\Content $entity
-	 * @param \Awyiss\Validation\Validator $validator
-	 * @param array $contentAttributes
-	 * @param \Awyiss\Validation\Validator $attributesValidator
-	 * @return void
-	 */
-	protected function validateAssignedElements(
-		ContentTemplate $contentTemplate,
-		Content $entity,
-		Validator $validator,
-		array $contentAttributes,
-		?Validator $attributesValidator
-	): void {
-		$la_allowedKeyForDuplicating = $this->getAllowedKeyForDuplicating();
-
-		//Traverse all elements that are available inside the content template
-		foreach ($contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
-			if (!str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
-				// If the content is a duplicate of another content, only require those fields that are allowed for this content
-				if ($entity->duplicateOf && !in_array($lo_contentTemplateElement->identifier, $la_allowedKeyForDuplicating)) {
-					continue;
-				}
-
-				if ($lo_contentTemplateElement->required === true) {
-					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
-					$validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
-					//TODO check if notEmptyString is enough. Some fields might need notEmpty*
-				}
-
-				continue;
-			}
-
-			/**
-			 * If no validator for the attributes is set,
-			 * or is duplicating another content,
-			 * skip the validation of attributes
-			 */
-			if (!$attributesValidator || $entity->duplicateOf) {
-				continue;
-			}
-
-			$ls_identifier = substr($lo_contentTemplateElement->identifier, 11);
-
-			if ($entity->attributes->getError($ls_identifier)) {
-				continue;
-			}
-
-			if ($lo_contentTemplateElement->required === true) {
-				$attributesValidator->requirePresence($ls_identifier);
-
-				switch ($contentAttributes[ $ls_identifier ]['inputType']) {
-					case 'checkbox':
-						$attributesValidator->add($ls_identifier, [
-							'checkboxChecked' => [
-								'rule' => ['equalTo', true],
-							],
-						]);
-						break;
-					default:
-						$attributesValidator->notEmptyString($ls_identifier);
-				}
-			}
-		}
-	}
-
-
-	/**
-	 * @param \Awyiss\Model\Entity\Content $entity
-	 * @param array $options
-	 * @param \Awyiss\ORM\RulesChecker $rules
 	 * @return string|bool
+	 * @noinspection DuplicatedCode
 	 */
 	protected function checkValidDuplicateRules(Content $entity): string|bool {
-		if ($entity->isNew()) {
-			return true;
-		}
-
 		// Get all children of the current entity
 		$la_nestedChildren = $entity->getNestedChildren()->toArray();
 		$la_duplicatedContentIds = array_column($la_nestedChildren, 'duplicateOf');
 
-		if (!$entity->duplicateOf && !$la_duplicatedContentIds) {
+		// Neither the current entity nor any of its nested children are duplicates?
+		if (empty($entity->duplicateOf) && !$la_duplicatedContentIds) {
 			return true;
 		}
 
-		if (!empty($entity->duplicateOf)) {
+		if ($entity->duplicateOf) {
 			// Disallow self-duplicating contents
 			if (!$entity->isNew() && $entity->id === $entity->duplicateOf) {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_self_duplicating');
 			}
 
-			// Disallow duplicating contents when the content itself is used as a duplicate
+			// Prevent a content (current) from duplicating another one (target),
+			// if the (current) content is already duplicated by a content (third).
 			if ($entity->id && $this->exists(['duplicate_of' => $entity->id])) {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicated');
 			}
@@ -1093,30 +1058,39 @@ class ContentsTable extends Table {
 				return __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of');
 			}
 
-			// Disallow duplicating contents that are duplicating another content
+			// Prevents a content (current) from duplicating another content (target),
+			// if the (target) content is already duplicating another content (third).
 			if ($lo_duplicateOf->duplicateOf) {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicating');
 			}
 
-			// Disallow duplicating contents that are not on the same page
+			// Disallow duplicating contents that are on the same page
 			if ($lo_duplicateOf->pageId === $entity->pageId) {
 				return __df($this->getI18nDomain(), 'validation', 'error_duplicate_not_on_same_page');
 			}
-
-			// Disallow circular duplicating
-			if (!$entity->isNew() && $lo_duplicateOf->duplicateOf === $entity->id) {
-				return __df($this->getI18nDomain(), 'validation', 'error_circular_duplicating');
-			}
 		}
 
-		if ($la_duplicatedContentIds) {
-			$la_duplicatedContents = $this->find()->where(['id IN' => $la_duplicatedContentIds])->all()->indexBy('id')->toArray();
+		// No nested children to check? Rule is valid.
+		if (!$la_duplicatedContentIds) {
+			return true;
+		}
 
-			/** @var \Awyiss\Model\Entity\Content $lo_duplicatedContent */
-			foreach ($la_duplicatedContents as $lo_duplicatedContent) {
-				if ($lo_duplicatedContent->pageId === $entity->pageId) {
-					return __df($this->getI18nDomain(), 'validation', 'error_children_not_duplicating_contents_on_same_page');
-				}
+		// Find all contents that are duplicated by nested children of the current entity
+		$la_duplicatedContents = $this->find()->where(['id IN' => $la_duplicatedContentIds])->all()->indexBy('id')->toArray();
+
+		/** @var \Awyiss\Model\Entity\Content $lo_duplicatedContent */
+		foreach ($la_duplicatedContents as $lo_duplicatedContent) {
+			/**
+			 * If any of the nested children of the current entity
+			 * is duplicating another content that is on the same page,
+			 * return an error message.
+			 *
+			 * This prevents moving a content to a page if it
+			 * would result in a content and its duplicated content
+			 * being on the same page.
+			 */
+			if ($lo_duplicatedContent->pageId === $entity->pageId) {
+				return __df($this->getI18nDomain(), 'validation', 'error_children_not_duplicating_contents_on_same_page');
 			}
 		}
 
@@ -1130,18 +1104,20 @@ class ContentsTable extends Table {
 	 * @param string $column
 	 * @param string|null $type
 	 * @return array|null
+	 * @throws \ReflectionException
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
-		if ($column === 'form_id') {
-			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
+		if ($column === 'content_template_id') {
+			return $this->getAssociation('ContentTemplates')->find('list', valueField: 'label')->toArray();
 		}
 
 		if ($column === 'duplicate_of') {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			return $this->find('threaded')->find('mediaAssignments', useMediaEntity: true)->all()->listNested()->printer('label', 'id', '- ')->toArray();
 		}
 
-		if ($column === 'content_template_id') {
-			return $this->getAssociation('ContentTemplates')->find('list', valueField: 'label')->toArray();
+		if ($column === 'form_id') {
+			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
 		}
 
 		if ($column === 'survey_id') {
