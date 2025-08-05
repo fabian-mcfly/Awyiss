@@ -42,6 +42,12 @@ class ContentTemplateElementsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['contentTemplateId', 'fieldset'],
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $translate = [
 		'fields' => ['title'],
 	];
