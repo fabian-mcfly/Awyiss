@@ -34,9 +34,9 @@ class MediaListener implements EventListenerInterface {
 	 */
 	protected static array $media = [];
 	/**
-	 * @var array<int, \Awyiss\Model\Entity\MediaFolder>
+	 * @var array<int, \Awyiss\Model\Entity\MediaFolder>|null
 	 */
-	protected static array $mediaFolders;
+	protected static ?array $mediaFolders = null;
 	/**
 	 * @var string
 	 */

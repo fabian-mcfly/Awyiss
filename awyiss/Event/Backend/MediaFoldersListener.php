@@ -19,6 +19,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Exception;
+use ReflectionClass;
 
 
 /**
@@ -46,6 +47,8 @@ class MediaFoldersListener implements EventListenerInterface {
 			'Model.MediaFolders.afterSave' => 'afterSave',
 			'Model.MediaFolders.afterSaveCommit' => 'afterSaveCommit',
 			'Model.MediaFolders.beforeSoftDelete' => 'beforeSoftDelete',
+			'Model.MediaFolders.asterDeleteCommit' => 'asterDeleteCommit',
+			'Model.MediaFolders.asterSoftDeleteCommit' => 'asterSoftDeleteCommit',
 		];
 	}
 
@@ -208,6 +211,8 @@ class MediaFoldersListener implements EventListenerInterface {
 		if (!is_dir(WWW_ROOT . str_replace('/', DS, $entity->path)) && ($options['isCopy'] ?? false) === false) {
 			mkdir(WWW_ROOT . str_replace('/', DS, $entity->path), 0750, true);
 		}
+
+		$this->emptyMediaFoldersCache();
 	}
 
 
@@ -222,6 +227,30 @@ class MediaFoldersListener implements EventListenerInterface {
 		if ($options['_primary'] ?? null === true) {
 			$entity->path = substr_replace($entity->path, '/_deleted_', strrpos($entity->path, '/'), 1) . '_' . time();
 		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\MediaFolder $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function asterDeleteCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
+		$this->emptyMediaFoldersCache();
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\MediaFolder $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function asterSoftDeleteCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
+		$this->emptyMediaFoldersCache();
 	}
 
 
@@ -469,5 +498,21 @@ class MediaFoldersListener implements EventListenerInterface {
 		}
 
 		return $ls_path;
+	}
+
+
+	/**
+	 * Unset the static property "mediaFolders" in the MediaListener class
+	 * to empty the cache of media folders.
+	 *
+	 * @return void
+	 * @see \Awyiss\Event\Backend\MediaListener::$mediaFolders
+	 */
+	protected function emptyMediaFoldersCache(): void {
+		$lo_reflection = new ReflectionClass(MediaListener::class);
+		$ls_property = $lo_reflection->getProperty('mediaFolders');
+		/** @noinspection PhpExpressionResultUnusedInspection */
+		$ls_property->setAccessible(true);
+		$ls_property->setValue(null, null);
 	}
 }
