@@ -253,8 +253,8 @@ class WidgetTemplatesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->isUnique(['fileName']), 'fileNameUnique', [
@@ -267,7 +267,7 @@ class WidgetTemplatesTable extends Table {
 			$lb_valid = true;
 
 			$la_availableAttributes = array_keys($this->getAvailableWidgetAttributes());
-			foreach ($entity->widgetTemplateElements as $lo_assignedWidgetElement) {
+			foreach (($entity->widgetTemplateElements ?? []) as $lo_assignedWidgetElement) {
 				if (str_starts_with($lo_assignedWidgetElement->identifier, 'attributes.')) {
 					$ls_identifier = substr($lo_assignedWidgetElement->identifier, 11);
 

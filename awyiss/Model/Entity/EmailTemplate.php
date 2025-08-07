@@ -59,7 +59,6 @@ class EmailTemplate extends Entity {
 	 *
 	 * @param string|null $fileName
 	 * @return string|null
-	 * @see \Awyiss\Model\Entity\ContentTemplate::$filename
 	 */
 	protected function _setFileName(?string $fileName): ?string {
 		if ($fileName === null) {

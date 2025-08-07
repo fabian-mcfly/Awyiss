@@ -93,7 +93,6 @@ class AttributesHelper extends Helper {
 	 * @return string Completed form controls.
 	 * @throws \ReflectionException
 	 * @throws \Exception
-	 * @noinspection PhpUnused
 	 */
 	public function allControls(string $fieldset, array $fields = [], array $options = []): string {
 		$ls_source = $this->getSource();

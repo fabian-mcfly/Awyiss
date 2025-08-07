@@ -100,9 +100,6 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 					 *
 					 * This way, we can check for the `originalName`-key of the field inside the `skeleton.twig`-file
 					 * and call the `rename`-method of the migration
-					 *
-					 * @see  awyiss/plugins/AwyissBake/templates/bake/migrations/config/skeleton.twig:53
-					 * @link awyiss/plugins/AwyissBake/templates/bake/migrations/config/skeleton.twig:53
 					 */
 					$la_fields[ $ls_key ]['originalName'] = $ls_fieldName;
 				}

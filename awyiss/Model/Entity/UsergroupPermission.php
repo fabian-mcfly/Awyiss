@@ -25,18 +25,20 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'usergroup_id' => 'usergroupId',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'usergroupId' => true,
 		'scope' => true,
 		'identifier' => true,
 		'access' => true,
 		'settings' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'usergroup_id' => 'usergroupId',
 	];
 
 

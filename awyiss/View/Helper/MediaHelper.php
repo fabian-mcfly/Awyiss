@@ -710,7 +710,6 @@ class MediaHelper extends Helper {
 	 * @param array $fields
 	 * @return void
 	 * @throws \DOMException
-	 * @noinspection PhpUnused
 	 */
 	public function rebuildSimpleImageTags(Entity $entity, array $fields = []): void {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
@@ -749,7 +748,6 @@ class MediaHelper extends Helper {
 	 * @param bool $absolutePath
 	 * @return string|null
 	 * @throws \DOMException
-	 * @noinspection PhpUnused
 	 */
 	public function rebuildSimpleImageTagsInText(?string $value, array $media, bool $absolutePath = false): ?string {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
@@ -772,7 +770,6 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param array $fields
 	 * @return void
-	 * @noinspection PhpUnused
 	 * @throws \Exception
 	 */
 	public function replaceCustomImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
@@ -793,7 +790,6 @@ class MediaHelper extends Helper {
 	 * @param string $field
 	 * @param string|null $value
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 * @throws \Exception
 	 */
 	public function replaceCustomImageTagsInField(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field, ?string $value = null): ?string {

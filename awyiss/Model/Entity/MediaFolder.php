@@ -39,18 +39,6 @@ class MediaFolder extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
-		'parentId' => true,
-		'path' => true,
-		'languageShortcode' => true,
-		'title' => true,
-		'hidden' => true,
-		'systemOrder' => true,
-		'active' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
 	protected static array $fieldMap = [
 		'parent_id' => 'parentId',
 		'language_shortcode' => 'languageShortcode',
@@ -60,9 +48,25 @@ class MediaFolder extends Entity {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	protected array $_accessible = [
+		'parentId' => true,
+		'path' => true,
+		'languageShortcode' => true,
+		'title' => true,
+		'hidden' => true,
+		'systemOrder' => true,
+		'active' => true,
+	];
+
+
+	/**
 	 * Get all direct children of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
@@ -76,7 +80,10 @@ class MediaFolder extends Entity {
 	/**
 	 * Get all children, and their children, and their children, and their children of the current entity. And its children.
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
@@ -88,9 +95,11 @@ class MediaFolder extends Entity {
 
 
 	/**
-	 * Get the parent media folders of the current entity
+	 * Get the parent entity of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @return \Awyiss\Model\Entity\Widget|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
@@ -102,9 +111,12 @@ class MediaFolder extends Entity {
 
 
 	/**
-	 * Get all the parent media folders and all of its parents media folders of the current entity
+	 * Get all the parent entities and all of its parent entities of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */

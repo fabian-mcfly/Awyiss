@@ -49,8 +49,6 @@ class MediaResizedImage extends Entity {
 		'strategy' => true,
 		'status' => true,
 	];
-
-
 	/**
 	 * @inheritDoc
 	 */

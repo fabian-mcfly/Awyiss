@@ -27,16 +27,18 @@ class Usergroup extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'usergroup_permissions' => 'usergroupPermissions',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'title' => true,
 		'active' => true,
 		'usergroupPermissions' => false,
 		'users' => false,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'usergroup_permissions' => 'usergroupPermissions',
 	];
 }

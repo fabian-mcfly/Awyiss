@@ -145,11 +145,11 @@ class CategoriesHelper extends Helper {
 	 * Provide the `groupLabels` option to customize the labels of the groups.
 	 * - `groupLabels` - An array of group labels. The keys are the group values, the values are the labels.
 	 *
-	 * @param string|null $identifier
+	 * @param string $identifier
 	 * @param array $attributes
 	 * @return string
-	 * @throws \Exception
 	 * @see \Cake\View\Helper\FormHelper::control()
+	 * @throws \Exception
 	 */
 	public function control(string $identifier, array $attributes = []): string {
 		$ls_identifier = Inflector::underscore($identifier);
@@ -244,8 +244,8 @@ class CategoriesHelper extends Helper {
 	 * - `unassignedKey` The value of an additional option that's used for showing items without any category.
 	 * - `val` The value of the currently selected category.
 	 *
-	 * @param string|null $identifier
-	 * @param iterable $options
+	 * @param string $identifier
+	 * @param iterable|null $options
 	 * @param array $attributes
 	 * @return string
 	 */
@@ -377,7 +377,7 @@ class CategoriesHelper extends Helper {
 			$lx_return = $la_categories['raw'] ?? null;
 		}
 
-		//Empty means no prefered raw format or prefered raw but empty
+		//Empty means no preferred raw format or preferred raw but empty
 		if (empty($lx_return)) {
 			$lx_return = $la_categories['simple'] ?? null;
 		}

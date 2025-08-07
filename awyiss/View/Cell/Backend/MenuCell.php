@@ -47,6 +47,7 @@ class MenuCell extends Cell {
 	/**
 	 * Generate the menu and load templates/Backend/cell/menu/menu
 	 *
+	 * @param string|null $currentPageRole
 	 * @return void
 	 * @throws \ReflectionException
 	 * @throws \Exception
@@ -138,7 +139,7 @@ class MenuCell extends Cell {
 
 
 	/**
-	 * Retreive the identity attribute from the current request
+	 * Retrieve the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */

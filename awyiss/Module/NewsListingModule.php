@@ -229,6 +229,7 @@ class NewsListingModule extends AbstractModule {
 	 * @param \Awyiss\Model\Entity\Language|null $userLanguage
 	 * @param array $settings
 	 * @return array
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected static function getCategoriesField(?Language $frontendLanguage, ?Language $userLanguage, array $settings): array {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_newsTable */

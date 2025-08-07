@@ -132,7 +132,7 @@ class SystemOrderHelper extends Helper {
 	/**
 	 * Transform the given options into an array, usable as options in `FormHelper::control()`
 	 *
-	 * @param iterable $options
+	 * @param iterable|null $options
 	 * @param array $attributes
 	 * @param Entity $entity
 	 * @return array

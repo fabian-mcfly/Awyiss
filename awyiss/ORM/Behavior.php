@@ -11,11 +11,12 @@ use RuntimeException;
 
 /**
  * General overwrite of the default Behavior class
+ *
+ * @method \Awyiss\Model\Table table()
  */
 class Behavior extends BaseBehavior {
 	/**
-	 * This array contains all implemented events and their corresponding method names
-	 * that will get called when the event is fired.
+	 * This array contains all implemented events.
 	 *
 	 * @var array
 	 */
@@ -38,8 +39,6 @@ class Behavior extends BaseBehavior {
 
 	/**
 	 * @inheritDoc
-	 * @param Table $table
-	 * @param array $config
 	 */
 	public function __construct(Table $table, array $config = []) {
 		parent::__construct($table, $config);
@@ -64,9 +63,10 @@ class Behavior extends BaseBehavior {
 
 
 	/**
-	 * @inheritDoc
+	 * This variation will use the `defaultEvents`-property of the extending behavior
+	 * instead of a hardcoded array of events names.
 	 *
-	 * This variation will use the class's "defaultEvents"-property instead of a hardcoded array of events names
+	 * @inheritDoc
 	 */
 	public function implementedEvents(): array {
 		$li_priority = $this->getConfig('priority');
@@ -82,7 +82,7 @@ class Behavior extends BaseBehavior {
 
 
 	/**
-	 * @return void
+	 * @return static
 	 */
 	public function enable(): void {
 		if (array_key_exists('enabled', $this->_config)) {
@@ -97,7 +97,7 @@ class Behavior extends BaseBehavior {
 
 
 	/**
-	 * @return void
+	 * @return static
 	 */
 	public function disable(): void {
 		if (array_key_exists('enabled', $this->_config)) {

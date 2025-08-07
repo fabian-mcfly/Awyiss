@@ -38,6 +38,17 @@ class MenuEntry extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'menu_id' => 'menuId',
+		'language_shortcode' => 'languageShortcode',
+		'parent_id' => 'parentId',
+		'system_order' => 'systemOrder',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'menuId' => true,
 		'languageShortcode' => true,
@@ -48,21 +59,14 @@ class MenuEntry extends Entity {
 		'systemOrder' => true,
 		'active' => true,
 	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'menu_id' => 'menuId',
-		'language_shortcode' => 'languageShortcode',
-		'parent_id' => 'parentId',
-		'system_order' => 'systemOrder',
-	];
 
 
 	/**
 	 * Get all direct children of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
@@ -76,7 +80,10 @@ class MenuEntry extends Entity {
 	/**
 	 * Get all children, and their children, and their children, and their children of the current entity. And its children.
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
@@ -88,9 +95,11 @@ class MenuEntry extends Entity {
 
 
 	/**
-	 * Get the parent page of the current entity
+	 * Get the parent entity of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @return \Awyiss\Model\Entity\Widget|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
@@ -102,9 +111,12 @@ class MenuEntry extends Entity {
 
 
 	/**
-	 * Get all the parent page and all of its parents pages of the current entity
+	 * Get all the parent entities and all of its parent entities of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */

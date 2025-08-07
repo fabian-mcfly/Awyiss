@@ -34,18 +34,6 @@ class PageTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
-		'pageRoleId' => true,
-		'title' => true,
-		'fileName' => true,
-		'systemOrder' => true,
-		'active' => true,
-		'contentAreas' => true,
-		'contentTemplateContentAreas' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
 	protected static array $fieldMap = [
 		'page_role_id' => 'pageRoleId',
 		'file_name' => 'fileName',
@@ -54,6 +42,20 @@ class PageTemplate extends Entity {
 		'content_areas' => 'contentAreas',
 		'content_template_content_areas' => 'contentTemplateContentAreas',
 		'used_for_pages' => 'usedForPages',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_accessible = [
+		'pageRoleId' => true,
+		'title' => true,
+		'fileName' => true,
+		'systemOrder' => true,
+		'active' => true,
+		'contentAreas' => true,
+		'contentTemplateContentAreas' => true,
 	];
 
 

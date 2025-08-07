@@ -25,6 +25,7 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\BackendMenuEntry getParent(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class BackendMenuEntriesTable extends Table {
@@ -36,6 +37,8 @@ class BackendMenuEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'backend_menu_entries';
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -137,8 +140,8 @@ class BackendMenuEntriesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$lo_rules = $rules;

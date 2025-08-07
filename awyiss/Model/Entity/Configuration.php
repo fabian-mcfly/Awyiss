@@ -81,7 +81,6 @@ class Configuration extends Entity {
 
 	/**
 	 * @return mixed
-	 * @throws \ReflectionException
 	 */
 	protected function _getPrintableValue(): mixed {
 		if (!$this->scope || !$this->realm || !$this->identifier) {

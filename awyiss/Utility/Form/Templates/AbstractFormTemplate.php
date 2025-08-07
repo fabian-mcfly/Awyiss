@@ -75,7 +75,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addTitle(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -100,7 +99,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addFirstname(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -122,7 +120,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addLastname(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -145,7 +142,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addName(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -166,7 +162,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addEmail(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -189,7 +184,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addPhone(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -212,7 +206,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addDatetime(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -234,7 +227,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addMessage(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -257,7 +249,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addPrivacyAccepted(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -281,7 +272,6 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addSubmit(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [

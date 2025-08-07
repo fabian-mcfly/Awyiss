@@ -47,6 +47,8 @@ class MediaAssignment extends Entity {
 		'media_element_selector' => 'mediaElementSelector',
 		'media_folder' => 'mediaFolder',
 	];
+
+
 	/**
 	 * @inheritDoc
 	 */

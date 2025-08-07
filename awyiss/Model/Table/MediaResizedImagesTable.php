@@ -9,10 +9,11 @@ use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table;
+use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
-use Cake\ORM\RulesChecker;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 
@@ -21,6 +22,7 @@ use InvalidArgumentException;
  * MediaResizedImages Model
  *
  * @method \Awyiss\Model\Entity\MediaResizedImage newDefaultEntity(array $additionalData = [], array $options = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MediaResizedImagesTable extends Table {
 	/**
@@ -132,10 +134,10 @@ class MediaResizedImagesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
-	public function buildRules(RulesChecker $rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn(['mediaId'], 'Media'), 'validMediaId', ['errorField' => 'mediaId']);
 
 		return $rules;

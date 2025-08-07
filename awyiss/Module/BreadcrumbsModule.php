@@ -134,7 +134,12 @@ class BreadcrumbsModule extends AbstractModule {
 
 		if ($la_paths) {
 			$lo_query->where(['Pages.slug IN' => $la_paths])
-				// Order by the length of the slug
+				/**
+				 * Order by the length of the slug since
+				 * all slugs are nested, and we want to
+				 * show the shortest slug first
+				 * (e.g. /about/team should come before /about/team/john)
+				 */
 				->orderBy(['LENGTH(Pages.slug)' => 'ASC']);
 			$la_pages = $lo_query->all()->indexBy('id')->toArray();
 		}

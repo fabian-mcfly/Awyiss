@@ -30,7 +30,6 @@ class AuthorizationHelper extends Helper {
 
 	/**
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	public function getAdditionalData(): array {
 		return $this->getConfig('additionalData');
@@ -40,7 +39,6 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * @param array $data
 	 * @return $this
-	 * @noinspection PhpUnused
 	 */
 	public function setAdditionalData(array $data): static {
 		$this->setConfig('additionalData', $data, false);
@@ -52,7 +50,6 @@ class AuthorizationHelper extends Helper {
 
 	/**
 	 * @return $this
-	 * @noinspection PhpUnused
 	 */
 	public function resetAdditionalData(): static {
 		$this->setConfig('additionalData', [], false);
@@ -85,7 +82,6 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @param IdentityPermissionsInterface $identity
 	 * @return $this
-	 * @noinspection PhpUnused
 	 */
 	public function setIdentity(IdentityPermissionsInterface $identity): static {
 		$this->setConfig('identity', $identity);
@@ -99,7 +95,6 @@ class AuthorizationHelper extends Helper {
 	 * Resets the identity so that `getIdentity()` will use the default one provided by `_getIdentity()`
 	 *
 	 * @return $this
-	 * @noinspection PhpUnused
 	 */
 	public function resetIdentity(): static {
 		$this->setConfig('identity');
@@ -132,7 +127,6 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @param string $scope
 	 * @return $this
-	 * @noinspection PhpUnused
 	 */
 	public function setScope(string $scope): static {
 		$ls_scope = Inflector::underscore($scope);
@@ -150,7 +144,6 @@ class AuthorizationHelper extends Helper {
 	 * Resets the scope so that `getScope()` will use the name of the view's controller name.
 	 *
 	 * @return $this
-	 * @noinspection PhpUnused
 	 */
 	public function resetScope(): static {
 		$this->setConfig('scope');
@@ -170,7 +163,6 @@ class AuthorizationHelper extends Helper {
 	 * @return bool
 	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
-	 * @noinspection PhpUnused
 	 */
 	public function isAccessible(string|array ...$identifier): bool {
 		return $this->scopeIsAccessible($this->getScope(), $this->getConfig('additionalData'), ...$identifier);
@@ -197,7 +189,6 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * @param array{scope: string, identifier: string|array<string>, additionalData?: array} ...$actions
 	 * @return bool
-	 * @noinspection PhpUnused
 	 * @throws \Exception
 	 */
 	public function anyIsAccessible(array ...$actions): bool {
@@ -238,7 +229,6 @@ class AuthorizationHelper extends Helper {
 	 * @param string|null $fileName
 	 * @param string|null $subDir
 	 * @return string
-	 * @noinspection PhpUnused
 	 */
 	public function permissionOptions(PermissionOptionInterface $permission, ?Entity $entity = null, ?string $fileName = null, ?string $subDir = null): string {
 		$ls_subDir = 'authorization' . DS . 'permission_option';

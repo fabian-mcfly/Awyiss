@@ -8,16 +8,15 @@ use Cake\ORM\Association\BelongsToMany as BaseBelongsToMany;
 
 
 /**
- * {@inheritDoc}
+ * Re-implemented so it'll use ExistsTrait
  *
- * Re-implemented 1:1 so it'll use ExistsTrait
- */
+ * @inheritDoc} */
 class BelongsToMany extends BaseBelongsToMany {
 	use ExistsTrait;
 
 
 	/**
-	 * Gets the current join table, either the name of the Table instance or the instance itself.
+	 * Returns whether this association has a `through` table
 	 *
 	 * @return bool
 	 */

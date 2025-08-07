@@ -20,17 +20,19 @@ class UsergroupsUser extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'usergroup_id' => 'usergroupId',
+		'user_id' => 'userId',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'usergroupId' => true,
 		'userId' => true,
 		'usergroup' => true,
 		'user' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'usergroup_id' => 'usergroupId',
-		'user_id' => 'userId',
 	];
 }

@@ -374,13 +374,11 @@ class AwyissRoute extends DashedRoute {
 			}
 		}
 
-		// If the _base key is not set in the host options array and the _base key is set in the context array, set the _base key in the host options array to the _base key in the context array.
+		// If no base is set, copy one in.
 		if (!isset($la_hostOptions['_base']) && isset($context['_base'])) {
 			$la_hostOptions['_base'] = $context['_base'];
 		}
 
-
-		// Return the host options array.
 		return $la_hostOptions;
 	}
 
@@ -493,8 +491,6 @@ class AwyissRoute extends DashedRoute {
 			}
 		}
 
-
-		// Return an array containing the modified URL array and the pass array.
 		return [$la_url, $la_pass];
 	}
 

@@ -21,17 +21,19 @@ class I18n extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'foreign_key' => 'foreignKey',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'locale' => true,
 		'model' => true,
 		'foreignKey' => true,
 		'field' => true,
 		'content' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'foreign_key' => 'foreignKey',
 	];
 }

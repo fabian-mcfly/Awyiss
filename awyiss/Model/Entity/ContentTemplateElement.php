@@ -61,7 +61,6 @@ class ContentTemplateElement extends Entity {
 	 *
 	 * @param string|null $identifier
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 * @see \Awyiss\Model\Entity\ContentTemplateElement::$identifier
 	 */
 	protected function _setIdentifier(?string $identifier): ?string {

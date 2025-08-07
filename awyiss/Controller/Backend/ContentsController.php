@@ -88,12 +88,6 @@ class ContentsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		/**
-		 * Using `$this->Contents->find()` instead of
-		 * `$this->Contents->Pages->loadInto($lo_page, ['Contents'])->contents, $lo_contents->count();`
-		 * because `nestedByContentArea()` works with a Query, not an array.
-		 * This could be changed, but I fail to see any benefits
-		 */
 		$lo_query = $this->Contents->find('mediaAssignments', useMediaEntity: true)->where($this->getOverviewWhere())->contain(['ContentTemplates']);
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
 		$this->Search->filterQuery($lo_query);

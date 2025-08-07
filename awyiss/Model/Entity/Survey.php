@@ -151,8 +151,7 @@ class Survey extends Entity {
 		$this->isPreview = $isPreview;
 		$this->sourcePage = $page;
 
-		$this->loadQuestions()
-			->setProgress($progressData);
+		$this->loadQuestions()->setProgress($progressData);
 
 		return $this;
 	}
@@ -188,7 +187,7 @@ class Survey extends Entity {
 	/**
 	 * @return $this
 	 */
-	public function loadQuestions(): static {
+	protected function loadQuestions(): static {
 		if (!$this->id) {
 			$this->questions = collection([]);
 
@@ -263,7 +262,7 @@ class Survey extends Entity {
 	 */
 	public function getCurrentAction(): SurveySurveyQuestion|BackedEnum|false|null {
 		if ($this->currentAction === null) {
-			$this->currentAction = $this->questions->first();
+			$this->currentAction = isset($this->questions) ? $this->questions->first() : null;
 		}
 
 		return $this->currentAction;
@@ -625,7 +624,7 @@ class Survey extends Entity {
 	 * @param \Awyiss\Model\Entity\SurveySurveyQuestion|null $previousQuestion
 	 * @return bool
 	 */
-	public function validateProgress(string $identifier, array|string|int|null $answer, ?SurveySurveyQuestion $previousQuestion = null): bool {
+	protected function validateProgress(string $identifier, array|string|int|null $answer, ?SurveySurveyQuestion $previousQuestion = null): bool {
 		if (!isset($this->questionsByIdentifier[ $identifier ])) {
 			return false;
 		}
@@ -760,7 +759,7 @@ class Survey extends Entity {
 	 * @param array $stack
 	 * @return bool
 	 */
-	public function detectCycle(string $node, array $graph, array &$visited, array &$stack): bool {
+	protected function detectCycle(string $node, array $graph, array &$visited, array &$stack): bool {
 		if (!empty($stack[ $node ])) {
 			return true;
 		}
@@ -958,7 +957,7 @@ class Survey extends Entity {
 	 * @param array $results Reference to the results array to collect all paths.
 	 * @return void
 	 */
-	private function traverseResultsPaths(SurveySurveyQuestion $question, array $path, array &$results): void {
+	protected function traverseResultsPaths(SurveySurveyQuestion $question, array $path, array &$results): void {
 		$ls_type = $question->surveyQuestion->type;
 		$la_answers = $question->surveySurveyAnswers ?? [];
 
@@ -1052,7 +1051,7 @@ class Survey extends Entity {
 	 * @param bool $withCustomAnswer Whether to include custom answers in the combinations.
 	 * @return array
 	 */
-	private function getNonEmptyCombinations(array $values, bool $withCustomAnswer = false): array {
+	protected function getNonEmptyCombinations(array $values, bool $withCustomAnswer = false): array {
 		$la_result = [];
 
 		if ($withCustomAnswer) {

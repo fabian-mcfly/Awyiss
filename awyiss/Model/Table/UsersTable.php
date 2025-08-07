@@ -51,9 +51,10 @@ class UsersTable extends Table {
 
 
 	/**
-	 * Finder that will only find users that are both active and with no more than 4 failed login attemps in the last ten minutes.
+	 * Finder that will only find users that are both active and with no more than 4 failed login attempts in the last ten minutes.
 	 *
-	 * @noinspection PhpUnused
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function findActive(SelectQuery $query): SelectQuery {
 		$query->where([
@@ -158,8 +159,8 @@ class UsersTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(

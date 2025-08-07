@@ -43,7 +43,8 @@ class FileLoader extends BaseFileLoader {
 	/**
 	 * Returns the paths to the templates.
 	 *
-	 * @noinspection PhpUnused
+	 * @param string $namespace
+	 * @return array
 	 */
 	public function getPaths(string $namespace = self::MAIN_NAMESPACE): array {
 		return $this->paths[ $namespace ] ?? [];
@@ -69,10 +70,9 @@ class FileLoader extends BaseFileLoader {
 
 	/**
 	 * Returns the path namespaces.
-	 *
 	 * The main namespace is always defined.
 	 *
-	 * @noinspection PhpUnused
+	 * @return array
 	 */
 	public function getNamespaces(): array {
 		return array_keys($this->paths);
@@ -125,7 +125,6 @@ class FileLoader extends BaseFileLoader {
 	 * @param string $namespace
 	 * @return void
 	 * @throws LoaderError
-	 * @noinspection PhpUnused
 	 */
 	public function prependPath(string $path, string $namespace = self::MAIN_NAMESPACE): void {
 		$this->addPath($path, $namespace, true);

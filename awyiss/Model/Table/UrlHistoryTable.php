@@ -17,6 +17,7 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
  * @method \Awyiss\Model\Entity\UrlHistory newDefaultEntity(array $additionalData = [], array $options = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class UrlHistoryTable extends Table {
 	/**
@@ -132,8 +133,8 @@ class UrlHistoryTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param BaseRulesChecker $rules The rules object to be modified.
-	 * @param \Awyiss\ORM\RulesChecker|BaseRulesChecker $rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$lo_rules = $rules;
@@ -167,9 +168,9 @@ class UrlHistoryTable extends Table {
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_foreign_key'),
 		]);
 
-		$rules->add(function (UrlHistory $entity, array $options) use ($lo_rules) {
-			if (empty($entity->scope)) {
-				return true;
+		$rules->add(function (UrlHistory $entity/*, array $options*/) use ($lo_rules) {
+			if (!empty($entity->scope)) {
+				return empty($entity->target);
 			}
 
 			return !empty($entity->target);

@@ -256,7 +256,6 @@ class FormHelper extends BaseFormHelper {
 	 * @return string
 	 * @throws \ReflectionException
 	 * @throws \Exception
-	 * @noinspection PhpUnused
 	 */
 	public function translatableText(string $fieldName, array $options = []): string {
 		if (!isset($this->languageRealm)) {

@@ -198,7 +198,9 @@ class NestBehavior extends Behavior {
 	/**
 	 * Returns a collection containing all direct children of the given entity.
 	 *
-	 * @noinspection PhpUnused
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param array $options
+	 * @return \Cake\Collection\CollectionInterface|null
 	 */
 	public function getChildren(EntityInterface $entity, array $options = []): ?CollectionInterface {
 		if (($options['forceEnable'] ?? false) === false && (!$this->getConfig('enabled') || !$this->getConfig('children'))) {
@@ -275,7 +277,9 @@ class NestBehavior extends Behavior {
 	/**
 	 * Returns the direct parent entity of the given entity or `null` if none exists
 	 *
-	 * @noinspection PhpUnused
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param array $options
+	 * @return \Cake\Datasource\EntityInterface|null
 	 */
 	public function getParent(EntityInterface $entity, array $options = []): ?EntityInterface {
 		if (($options['forceEnable'] ?? false) === false && (!$this->getConfig('enabled') || !$this->getConfig('parent'))) {
@@ -308,7 +312,10 @@ class NestBehavior extends Behavior {
 	 * Calling `$Comments->getParents($comment, ['maxLevel' => 2]);` returns the direct parent of $comment
 	 * as well as the direct parent of this.
 	 *
-	 * @noinspection PhpUnused
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
 	 */
 	public function getParents(EntityInterface $entity, array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		if (($options['forceEnable'] ?? false) === false && (!$this->getConfig('enabled') || !$this->getConfig('parent'))) {
@@ -383,12 +390,13 @@ class NestBehavior extends Behavior {
 	 * Creates a threaded list of entities from a query, adding the `level`-property to each entity and returns
 	 * a collection
 	 *
-	 * @param SelectQuery $query
+	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $nestingKey
-	 * @return CollectionInterface
+	 * @param string $direction
+	 * @return \Cake\Collection\CollectionInterface
 	 */
-	public function listNested(SelectQuery $query, string $nestingKey = 'children'): CollectionInterface {
-		$lo_records = $query->find('threaded', nestingKey: $nestingKey)->all()->listNested('desc', $nestingKey);
+	public function listNested(SelectQuery $query, string $nestingKey = 'children', string $direction = 'desc'): CollectionInterface {
+		$lo_records = $query->find('threaded', nestingKey: $nestingKey)->all()->listNested($direction, $nestingKey);
 
 		/** @var \Awyiss\Model\Entity $lo_page */
 		foreach ($lo_records as $lo_entity) {
@@ -889,8 +897,7 @@ class NestBehavior extends Behavior {
 		$this->addQueryOptions($lo_query, $options);
 
 		$ls_nestingKey = Inflector::variable($this->getConfig('parent.associationName'));
-		$lo_records = $this->listNested($lo_query, $ls_nestingKey);
-
+		$lo_records = $this->listNested($lo_query, $ls_nestingKey, 'asc');
 		$lo_records = $lo_records->compile(false);
 
 		$li_originalId = $entity->id;
@@ -898,19 +905,16 @@ class NestBehavior extends Behavior {
 		$lo_records = $lo_records->filter(function (EntityInterface $entity) use ($li_originalId, &$li_foundParentId) {
 			/** @var \Awyiss\Model\Entity $entity */
 			if ($entity->get('id') === $li_originalId) {
-				$li_foundParentId = $entity->id;
+				$li_foundParentId = (int)$entity->parentId;
 			}
-			elseif ($li_foundParentId !== null && $entity->id < $li_foundParentId) {
-				$li_foundParentId = $entity->id;
-
+			elseif ($li_foundParentId !== null && $entity->id === $li_foundParentId) {
+				$li_foundParentId = (int)$entity->parentId;
 
 				return true;
 			}
 
-
 			return false;
 		});
-
 
 		return $lo_records->compile(false);
 	}

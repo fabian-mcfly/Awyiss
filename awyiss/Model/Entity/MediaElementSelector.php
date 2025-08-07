@@ -53,6 +53,13 @@ class MediaElementSelector extends Entity {
 		'required' => true,
 		'systemOrder' => true,
 	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_virtual = [
+		'column',
+		'label',
+	];
 
 
 	/**

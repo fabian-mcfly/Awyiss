@@ -23,6 +23,7 @@ class UrlsNotFoundStatusCell extends Cell {
 	 *
 	 * @return void
 	 * @throws \ReflectionException
+	 * @noinspection DuplicatedCode
 	 */
 	public function display(): void {
 		// Get the user's identity and session
@@ -86,7 +87,7 @@ class UrlsNotFoundStatusCell extends Cell {
 
 
 	/**
-	 * Retreive the identity attribute from the current request
+	 * Retrieve the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */

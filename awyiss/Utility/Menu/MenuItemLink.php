@@ -142,7 +142,7 @@ class MenuItemLink {
 
 
 	/**
-	 * Converts the link of the menu item from a BackendMenuEntry.
+	 * Converts the link of the menu item from an object.
 	 *
 	 * @param object $link
 	 * @return void

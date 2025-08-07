@@ -387,6 +387,7 @@ class PagesTable extends Table {
 			/** @var \Awyiss\Model\Entity\Page $lo_duplicateOf */
 			$lo_duplicateOf = $this->findById($entity->duplicateOf)->first();
 
+			// Disallow duplicating pages that do not exist
 			if (!$lo_duplicateOf) {
 				return __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of');
 			}

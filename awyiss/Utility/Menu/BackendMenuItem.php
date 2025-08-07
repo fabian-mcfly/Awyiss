@@ -76,9 +76,16 @@ class BackendMenuItem extends MenuItem {
 			$lo_request = Router::getRequest();
 			$ls_controller = $lo_request->getParam('controller');
 
-			// Some controllers depend on others, like contents on any page-role,
-			// form entries on forms, menu entries on menus
-			// They all should mark their "parent" controller as active
+			/**
+			 * Some controllers depend on others, like contents on any page-role,
+			 * form entries on forms, menu entries on menus.
+			 * They all should mark their "parent" controller as active.
+			 *
+			 * The $currentRoute will contain a page role as the `controller`-part
+			 * if the current controller is `Contents`.
+			 *
+			 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
+			 */
 			$ls_controller = match ($ls_controller) {
 				'Contents' => $this->getPageRoleFromUrl($currentRoute) ?? $ls_controller,
 				'FormElements' => 'Forms',

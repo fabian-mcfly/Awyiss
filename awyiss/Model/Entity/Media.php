@@ -63,6 +63,9 @@ use Cake\Utility\Text;
  * @property string|null $webpPathAbsolute
  * @property string|null $originalWebpPathAbsolute
  * @property int|null $usageCount
+ * @property bool $isAudio
+ * @property bool $isImage
+ * @property bool $isVideo
  */
 class Media extends Entity {
 	/**
@@ -298,6 +301,7 @@ class Media extends Entity {
 		 * WHERE media_id = 1
 		 *
 		 * @noinspection PhpUndefinedMethodInspection
+		 * @noinspection SpellCheckingInspection
 		 */
 		$lo_query->update('media_resized_images')->set('name', $lo_query->newExpr($lo_query->func()->concat([
 			$ls_fileName,
@@ -319,7 +323,6 @@ class Media extends Entity {
 			]),
 		])))->where(['media_id' => $this->id])->execute();
 
-
 		if ($this->isImage()) {
 			$ls_baseName = $this->originalCleanName ?? $this->cleanName;
 		}
@@ -332,13 +335,13 @@ class Media extends Entity {
 		$ls_path = $this->getOriginal('path');
 		$ls_path = substr($ls_path, 0, strrpos($ls_path, DS)) . DS . '_resized' . DS;
 
-		$la_resizedFiles = glob($ls_path . $ls_globFileName);
+		$la_resizedFiles = glob(WWW_ROOT . $ls_path . $ls_globFileName);
 		if (!is_array($la_resizedFiles) || empty($la_resizedFiles)) {
 			return;
 		}
 
 		$ls_targetPath = $this->path;
-		$ls_targetPath = substr($ls_targetPath, 0, strrpos($ls_targetPath, DS)) . DS . '_resized' . DS;
+		$ls_targetPath = WWW_ROOT . substr($ls_targetPath, 0, strrpos($ls_targetPath, DS)) . DS . '_resized' . DS;
 
 		foreach ($la_resizedFiles as $ls_filePath) {
 			$ls_targetFileName = $ls_fileName . substr(basename($ls_filePath), strlen($ls_originalName));
@@ -406,7 +409,7 @@ class Media extends Entity {
 		$ls_path = $this->path;
 		$ls_path = substr($ls_path, 0, strrpos($ls_path, DS)) . DS . '_resized' . DS . $ls_name;
 
-		$la_resizedFiles = glob($ls_path);
+		$la_resizedFiles = glob(WWW_ROOT . $ls_path);
 		if (is_array($la_resizedFiles) && !empty($la_resizedFiles)) {
 			array_map('unlink', $la_resizedFiles);
 		}
@@ -415,7 +418,14 @@ class Media extends Entity {
 
 	/**
 	 * @return bool
-	 * @noinspection PhpUnused
+	 */
+	protected function _getIsAudio(): bool {
+		return $this->isAudio();
+	}
+
+
+	/**
+	 * @return bool
 	 */
 	protected function _getIsImage(): bool {
 		return $this->isImage();
@@ -423,8 +433,15 @@ class Media extends Entity {
 
 
 	/**
+	 * @return bool
+	 */
+	protected function _getIsVideo(): bool {
+		return $this->isVideo();
+	}
+
+
+	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getCleanName(): ?string {
 		if (!$this->name) {
@@ -444,7 +461,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalCleanName(): ?string {
 		if (!$this->hasOriginal('name')) {
@@ -464,7 +480,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getExtension(): ?string {
 		if (!$this->name) {
@@ -484,7 +499,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalExtension(): ?string {
 		if (!$this->hasOriginal('name')) {
@@ -504,7 +518,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getPathAbsolute(): ?string {
 		if (!$this->path) {
@@ -517,7 +530,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalPathAbsolute(): ?string {
 		if (!$this->hasOriginal('path')) {
@@ -530,7 +542,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getPreviewName(): ?string {
 		if (!$this->name || $this->isImage()) {
@@ -543,7 +554,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalPreviewName(): ?string {
 		if (!$this->hasOriginal('name') || $this->originalIsImage()) {
@@ -556,7 +566,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getPreviewPath(): ?string {
 		if (!$this->path || $this->isImage()) {
@@ -573,7 +582,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalPreviewPath(): ?string {
 		if (!$this->hasOriginal('path') || $this->originalIsImage()) {
@@ -591,7 +599,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getPreviewPathAbsolute(): ?string {
 		if (!$this->path || $this->isImage()) {
@@ -604,7 +611,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalPreviewPathAbsolute(): ?string {
 		if (!$this->hasOriginal('path') || $this->originalIsImage()) {
@@ -617,7 +623,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getAvifName(): ?string {
 		if (!$this->name) {
@@ -630,7 +635,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalAvifName(): ?string {
 		if (!$this->hasOriginal('name')) {
@@ -643,7 +647,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getAvifPath(): ?string {
 		if (!$this->path || $this->mimeType === 'image/avif') {
@@ -660,7 +663,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalAvifPath(): ?string {
 		if (
@@ -683,7 +685,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getAvifPathAbsolute(): ?string {
 		$ls_avifPath = $this->avifPath;
@@ -698,7 +699,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalAvifPathAbsolute(): ?string {
 		$ls_originalAvifPath = $this->originalAvifPath;
@@ -713,7 +713,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getWebpName(): ?string {
 		if (!$this->name) {
@@ -726,7 +725,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalWebpName(): ?string {
 		if (!$this->hasOriginal('name')) {
@@ -739,7 +737,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getWebpPath(): ?string {
 		if (!$this->path || $this->mimeType === 'image/webp') {
@@ -756,7 +753,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalWebpPath(): ?string {
 		if (
@@ -779,7 +775,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getWebpPathAbsolute(): ?string {
 		$ls_webpPath = $this->webpPath;
@@ -794,7 +789,6 @@ class Media extends Entity {
 
 	/**
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _getOriginalWebpPathAbsolute(): ?string {
 		$ls_originalWebpPath = $this->originalWebpPath;
@@ -812,7 +806,6 @@ class Media extends Entity {
 	 *
 	 * @param string|null $color
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _setAverageColor(?string $color): ?string {
 		if ($color === null) {
@@ -829,7 +822,6 @@ class Media extends Entity {
 	 * @param string|null $path
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Page::$path
-	 * @noinspection PhpUnused
 	 */
 	protected function _setName(?string $path): ?string {
 		if ($path === null) {

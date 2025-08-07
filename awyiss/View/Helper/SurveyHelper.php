@@ -16,7 +16,6 @@ class SurveyHelper extends Helper {
 	 * @param array<\Awyiss\Model\Entity\SurveySurveyQuestion> $questions
 	 * @param string $identifier
 	 * @return \Awyiss\Model\Entity\SurveySurveyQuestion|false
-	 * @noinspection PhpUnused
 	 */
 	public function realNextQuestion(array $questions, string $identifier): SurveySurveyQuestion|false {
 		$lb_currentQuestionFound = false;

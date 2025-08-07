@@ -114,7 +114,9 @@ class Widget extends Entity {
 	/**
 	 * Get all direct children of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\WidgetsTable $lo_table */
@@ -128,7 +130,10 @@ class Widget extends Entity {
 	/**
 	 * Get all children, and their children, and their children, and their children of the current entity. And its children.
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\WidgetsTable $lo_table */
@@ -140,9 +145,11 @@ class Widget extends Entity {
 
 
 	/**
-	 * Get the parent widget of the current entity
+	 * Get the parent entity of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @return \Awyiss\Model\Entity\Widget|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\WidgetsTable $lo_table */
@@ -154,9 +161,12 @@ class Widget extends Entity {
 
 
 	/**
-	 * Get all the parent widget and all of its parents widgets of the current entity
+	 * Get all the parent entities and all of its parent entities of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\WidgetsTable $lo_table */
@@ -187,12 +197,7 @@ class Widget extends Entity {
 
 
 	/**
-	 * Creates and returns a specific text, used for list items and so on
-	 * It uses the first of following db colums identifier, filename, title if present and
-	 * prepends a translatable text in case the entity is inactive (active = 0)
-	 * The label can be translated as well
-	 *
-	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Trait\ForcedTitleTrait::getForcedTitle()
 	 */
 	protected function _getLabel(): string {
 		return $this->getForcedTitle(false);
@@ -200,6 +205,8 @@ class Widget extends Entity {
 
 
 	/**
+	 * Force a bool value when null was provided
+	 *
 	 * @param bool|null $last
 	 * @return bool
 	 */
@@ -209,6 +216,8 @@ class Widget extends Entity {
 
 
 	/**
+	 * Force a bool value when null was provided
+	 *
 	 * @param bool|null $rtl
 	 * @return bool
 	 */
@@ -222,7 +231,6 @@ class Widget extends Entity {
 	 *
 	 * @param array|null $data
 	 * @return array|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _setData(?array $data): ?array {
 		if (empty($data)) {

@@ -108,6 +108,10 @@ class BackendMenuProvider {
 			throw new RuntimeException('The data is not valid according to menu-extension.schema.json');
 		}
 
+		/**
+		 * Serialize and unserialize to ensure that the menu is a new instance
+		 * since cloning will not clone nested objects
+		 */
 		$this->customMenu = unserialize(serialize($this->getMenu()));
 		$this->customMenu?->extend($lo_customMenuData);
 	}
@@ -129,6 +133,10 @@ class BackendMenuProvider {
 			})->toArray();
 		})->toArray();
 
+		/**
+		 * Serialize and unserialize to ensure that the menu is a new instance
+		 * since cloning will not clone nested objects
+		 */
 		$this->dynamicMenu = unserialize(serialize($this->getCustomMenu() ?? $this->getMenu()));
 		$this->dynamicMenu->extend($la_menuEntries);
 	}

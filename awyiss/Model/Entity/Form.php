@@ -163,6 +163,7 @@ class Form extends Entity {
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @param bool $isPreview
 	 * @return $this
+	 * @throws \Exception
 	 */
 	public function initialize(View $view, ?Page $page = null, bool $isPreview = false): static {
 		$this->view = $view;
@@ -216,6 +217,7 @@ class Form extends Entity {
 
 	/**
 	 * @return $this
+	 * @throws \Exception
 	 */
 	public function loadFormElements(): static {
 		/** @var \Awyiss\Model\Table\FormElementsTable $lo_formElementsTable */
@@ -297,9 +299,9 @@ class Form extends Entity {
 
 	/**
 	 * @param bool $submitted
-	 * @return $this
+	 * @return static
 	 */
-	public function submitted(bool $submitted = true) {
+	public function submitted(bool $submitted = true): static {
 		$this->formSubmitted = $submitted;
 
 		return $this;

@@ -28,7 +28,6 @@ class LocaleHelper extends Helper {
 	 * @param string|null $shortcode
 	 * @param array|null $languagesByShortcode
 	 * @return string|null
-	 * @noinspection PhpUnused
 	 */
 	public function languageTitle(?string $shortcode = null, ?array $languagesByShortcode = null): ?string {
 		if (!$shortcode) {

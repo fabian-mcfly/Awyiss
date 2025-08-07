@@ -22,6 +22,7 @@ use Cake\Utility\Text;
  * @property int|null $parentId
  * @property string|null $languageShortcode
  * @property string|null $slug
+ * @property string|null $link
  * @property string|null $title
  * @property string|null $redirectLink
  * @property string|null $metaTitle
@@ -55,10 +56,6 @@ use Cake\Utility\Text;
  */
 class Page extends Entity {
 	/**
-	 * @var string
-	 */
-	protected static bool $includeLanguageShortcode;
-	/**
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
@@ -81,6 +78,10 @@ class Page extends Entity {
 		'page_template' => 'pageTemplate',
 		'add_menu_entry' => 'addMenuEntry',
 	];
+	/**
+	 * @var bool
+	 */
+	protected static bool $includeLanguageShortcode;
 
 
 	/**
@@ -105,6 +106,10 @@ class Page extends Entity {
 		'active' => true,
 		'addMenuEntry' => true,
 	];
+	/**
+	 * @inheritdoc
+	 */
+	protected array $_virtual = ['link', 'label'];
 
 
 	/**
@@ -122,7 +127,9 @@ class Page extends Entity {
 	/**
 	 * Get all direct children of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
@@ -136,7 +143,10 @@ class Page extends Entity {
 	/**
 	 * Get all children, and their children, and their children, and their children of the current entity. And its children.
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
@@ -148,9 +158,11 @@ class Page extends Entity {
 
 
 	/**
-	 * Get the parent page of the current entity
+	 * Get the parent entity of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @return \Awyiss\Model\Entity\Widget|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
@@ -162,9 +174,12 @@ class Page extends Entity {
 
 
 	/**
-	 * Get all the parent page and all of its parents pages of the current entity
+	 * Get all the parent entities and all of its parent entities of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */

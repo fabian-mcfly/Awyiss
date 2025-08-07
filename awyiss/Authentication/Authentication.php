@@ -223,6 +223,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		$this->addIdentifier(PasswordIdentifier::class, [
 			'resolver' => [
 				'className' => OrmResolver::class,
+				/** @see \Awyiss\Model\Table\UsersTable::findActive() */
 				'finder' => 'active',
 			],
 		]);

@@ -771,7 +771,6 @@ class ContentsTable extends Table {
 	 * Returns the scope - the plural form of the page role identifier - that's set for the authorization behavior.
 	 *
 	 * @return string
-	 * @noinspection PhpUnused
 	 */
 	public function getForScope(): string {
 		if (!isset($this->forScope)) {

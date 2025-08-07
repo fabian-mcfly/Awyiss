@@ -340,7 +340,7 @@ class PaginatorHelper extends BasePaginatorHelper {
 	/**
 	 * Formats a number for the paginator number output.
 	 *
-	 * @param \Cake\View\StringTemplate $templater StringTemplate instance.
+	 * @param \Awyiss\View\StringTemplate|\Cake\View\StringTemplate $templater StringTemplate instance.
 	 * @param array<string, mixed> $options Options from the numbers() method.
 	 * @return string
 	 */
@@ -358,7 +358,7 @@ class PaginatorHelper extends BasePaginatorHelper {
 	/**
 	 * Generates the numbers for the paginator numbers() method.
 	 *
-	 * @param \Cake\View\StringTemplate $templater StringTemplate instance.
+	 * @param \Awyiss\View\StringTemplate|\Cake\View\StringTemplate $templater StringTemplate instance.
 	 * @param array<string, mixed> $params Params from the numbers() method.
 	 * @param array<string, mixed> $options Options from the numbers() method.
 	 * @return string Markup output.

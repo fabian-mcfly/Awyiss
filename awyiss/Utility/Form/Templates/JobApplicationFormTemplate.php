@@ -99,7 +99,6 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addJobApplicationFilesText(string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [
@@ -126,7 +125,6 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
-	 * @noinspection PhpUnused
 	 */
 	protected static function addJobApplicationFile(string $count, string $mainLocale, bool $i18n, array $languages): array {
 		$la_settings = [

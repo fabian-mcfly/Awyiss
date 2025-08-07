@@ -86,7 +86,8 @@ class PageTemplateContentAreasTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param BaseRulesChecker $rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn('pageTemplateId', 'PageTemplates'), 'pageTemplateExists', [

@@ -37,7 +37,6 @@ class ModulesProvider {
 	 * Returns all found Module classes in both the Awyiss and the custom namespace
 	 *
 	 * @return array<string, class-string<\Awyiss\Module\ModuleInterface>>
-	 * @noinspection PhpUnused
 	 */
 	public static function getModuleFiles(): array {
 		if (!static::$foundAll) {

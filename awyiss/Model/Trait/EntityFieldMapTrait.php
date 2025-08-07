@@ -13,7 +13,7 @@ use Cake\Datasource\EntityInterface;
  * All methods in this trait are copies from Cake's EntityTrait with the addition of mapping the provided data
  * using `static::mapFields` resp `static::mapField`
  *
- * It also offers the `unmapField`- and `unmapFields`-methods to be used whereever one needs the database name
+ * It also offers the `unmapField`- and `unmapFields`-methods to be used wherever one needs the database name
  * of a field name.
  *
  * @see static::mapField()
@@ -327,7 +327,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * Transforms the given value column name to a field name, defined by static::$fieldMap
 	 *
-	 * @param string $field
+	 * @param string|null $field
 	 * @return string|null
 	 */
 	public static function mapField(?string $field): ?string {
@@ -365,7 +365,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * Transforms the given value field name to a column name, defined by static::$fieldMap
 	 *
-	 * @param string $field
+	 * @param string|null $field
 	 * @return string|null
 	 */
 	public static function unmapField(?string $field): ?string {

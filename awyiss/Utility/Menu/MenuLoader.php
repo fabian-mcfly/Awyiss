@@ -13,7 +13,7 @@ use RuntimeException;
 
 /**
  * A loader for objects, json encoded objects or json encoded files, holding menu data.
- * Validates the json data and returns a menu instance with the data as menuitems
+ * Validates the json data and returns a menu instance with the data as menu items
  */
 class MenuLoader {
 	/**

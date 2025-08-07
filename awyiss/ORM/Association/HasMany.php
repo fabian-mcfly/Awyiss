@@ -8,8 +8,9 @@ use Cake\ORM\Association\HasMany as BaseHasMany;
 
 
 /**
- * {@inheritDoc}
- * Re-implemented 1:1 so it'll use ExistsTrait
+ * Re-implemented so it'll use ExistsTrait
+ *
+ * @inheritDoc
  */
 class HasMany extends BaseHasMany {
 	use ExistsTrait;

@@ -14,11 +14,13 @@ use Cake\ORM\Entity as BaseEntity;
 
 
 /**
- * Page Entity
+ * Base Entity
  *
  * @property string $label
  * @property \Cake\Datasource\EntityInterface|null $attributes
  * @property array|null $mediaAssignments
+ * @property \Cake\I18n\DateTime|null $publicationStart
+ * @property \Cake\I18n\DateTime|null $publicationEnd
  */
 class Entity extends BaseEntity {
 	use EntityAttributesTrait {
@@ -195,7 +197,7 @@ class Entity extends BaseEntity {
 
 	/**
 	 * Creates and returns a specific text, used for list items and so on
-	 * It uses the first of following db colums identifier, filename, title if present and
+	 * It uses the first of following db columns identifier, filename, title if present and
 	 * prepends a translatable text in case the entity is inactive (active = 0)
 	 *
 	 * The label can be translated as well

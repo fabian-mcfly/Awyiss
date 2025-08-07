@@ -78,7 +78,6 @@ class BackendMenuEntry extends Entity {
 	/**
 	 * @param mixed $value
 	 * @return mixed
-	 * @noinspection PhpUnused
 	 */
 	protected function _setAccess(mixed $value): mixed {
 		if (empty($value)) {
@@ -93,7 +92,9 @@ class BackendMenuEntry extends Entity {
 	/**
 	 * Get all direct children of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $options
+	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
@@ -110,6 +111,7 @@ class BackendMenuEntry extends Entity {
 	 * @param array $options
 	 * @param int $currentLevel
 	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
@@ -121,10 +123,11 @@ class BackendMenuEntry extends Entity {
 
 
 	/**
-	 * Get the parent page of the current entity
+	 * Get the parent entity of the current entity
 	 *
 	 * @param array $options
-	 * @return \Awyiss\Model\Entity\BackendMenuEntry|null
+	 * @return \Awyiss\Model\Entity\Widget|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
@@ -136,11 +139,12 @@ class BackendMenuEntry extends Entity {
 
 
 	/**
-	 * Get all the parent page and all of its parents pages of the current entity
+	 * Get all the parent entities and all of its parent entities of the current entity
 	 *
 	 * @param array $options
 	 * @param int $currentLevel
 	 * @return \Cake\Collection\CollectionInterface|null
+	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */

@@ -232,7 +232,7 @@ class PageRolesListener implements EventListenerInterface {
 	 * @param PageRole $entity
 	 * @return void
 	 */
-	private function bakePageRoleModel(PageRole $entity): void {
+	protected function bakePageRoleModel(PageRole $entity): void {
 		if ($entity->identifier === 'page') {
 			return;
 		}

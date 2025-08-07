@@ -13,6 +13,11 @@ use Cake\Mailer\Renderer;
  */
 class FormMailRenderer extends Renderer {
 	/**
+	 * Re-implemented to:
+	 *
+	 * - load the FrontendView class using the App::className finder.
+	 * - render the content based on the provided types.
+	 *
 	 * @inheritDoc
 	 */
 	public function render(string $content, array $types = []): array {
@@ -35,12 +40,11 @@ class FormMailRenderer extends Renderer {
 		}
 
 		foreach ($types as $ls_type) {
-			if ($ls_type === 'text') {
-				$la_rendered[ $ls_type ] = $lo_view->get('textPlain');
-			}
-			else {
-				$la_rendered[ $ls_type ] = $lo_view->render();
-			}
+			/**
+			 * If the type is `text`, no additional rendering is done,
+			 * as the content is already plain text.
+			 */
+			$la_rendered[ $ls_type ] = $ls_type === 'text' ? $lo_view->get('textPlain') : $lo_view->render();
 		}
 
 		return $la_rendered;

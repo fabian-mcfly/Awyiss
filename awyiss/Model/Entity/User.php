@@ -47,6 +47,15 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'last_login' => 'lastLogin',
+		'failed_attempts' => 'failedAttempts',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'username' => true,
 		'password' => true,
@@ -70,12 +79,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 * @var \Awyiss\Authorization\Permission\PermissionCollection|null
 	 */
 	protected ?PermissionCollection $permissionCollection = null;
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'failed_attempts' => 'failedAttempts',
-	];
 
 
 	/**
@@ -147,7 +150,8 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		 *
 		 * This line saves one foreach. That foreach would save the comment above, though.
 		 *
-		 * @var UsergroupPermission $lo_usergrousPermissions
+		 * @var \Awyiss\Model\Entity\UsergroupPermission $lo_usergrousPermissions
+		 * @noinspection GrazieInspection
 		 */
 		$this->permissionCollection = new PermissionCollection($lo_authorizationService, array_merge(...array_column($la_usergroups, 'usergroup_permissions')));
 
@@ -274,7 +278,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 * @param array|null $usergroups
 	 * @return array|null
 	 * @see \Awyiss\Model\Entity\User::$usergroups
-	 * @noinspection PhpUnused
 	 */
 	protected function _setUsergroups(?array $usergroups): ?array {
 		$this->permissionCollection = null;
@@ -291,7 +294,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 * @param string|null $password
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\User::$password
-	 * @noinspection PhpUnused
 	 */
 	protected function _setPassword(?string $password): ?string {
 		if (empty($password)) {

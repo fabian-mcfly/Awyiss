@@ -14,8 +14,9 @@ use Cake\Validation\Validator;
 /**
  * MediaSelectors Model
  *
- * @method MediaSelector newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Awyiss\Model\Entity\MediaSelector newDefaultEntity(array $additionalData = [], array $options = [])
  * @property \Awyiss\Model\Table\MediaElementSelectorsTable&\Awyiss\ORM\Association\HasMany $MediaElementSelectors
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MediaSelectorsTable extends Table {
 	/**
@@ -103,8 +104,8 @@ class MediaSelectorsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(

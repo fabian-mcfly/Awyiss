@@ -31,6 +31,18 @@ class WidgetTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'file_name' => 'fileName',
+		'widget_template_elements' => 'widgetTemplateElements',
+		'in_content_row' => 'inContentRow',
+		'system_order' => 'systemOrder',
+		'used_for_widgets' => 'usedForWidgets',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'title' => true,
 		'fileName' => true,
@@ -38,16 +50,6 @@ class WidgetTemplate extends Entity {
 		'systemOrder' => true,
 		'active' => true,
 		'widgetTemplateElements' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'file_name' => 'fileName',
-		'widget_template_elements' => 'widgetTemplateElements',
-		'in_content_row' => 'inContentRow',
-		'system_order' => 'systemOrder',
-		'used_for_widgets' => 'usedForWidgets',
 	];
 
 

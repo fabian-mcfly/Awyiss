@@ -8,8 +8,9 @@ use Cake\ORM\Association\BelongsTo as BaseBelongsTo;
 
 
 /**
- * {@inheritDoc}
- * Re-implemented 1:1 so it'll use ExistsTrait
+ * Re-implemented so it'll use ExistsTrait
+ *
+ * @inheritDoc
  */
 class BelongsTo extends BaseBelongsTo {
 	use ExistsTrait;
