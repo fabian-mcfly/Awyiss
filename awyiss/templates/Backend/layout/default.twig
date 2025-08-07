@@ -150,9 +150,9 @@
 									{{ __d('system', 'dark_mode_switch_off') }}
 								</a>
 							</li>
-							<li class="DarkModeSwitch-Item DarkModeSwitch-Item-On{% if config.Awyiss.System.Backend.interface.darkMode == true %} Active{%  endif %}">
+							<li class="DarkModeSwitch-Item DarkModeSwitch-Item-On{% if config.Awyiss.System.Backend.interface.darkMode == true %} Active{% endif %}">
 								<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'userConfiguration', identifier: 'interface.darkMode', value: 'true'}) }}"
-									{% if config.Awyiss.System.Backend.interface.darkMode == true %} tabindex="-1"{%  endif %}
+									{% if config.Awyiss.System.Backend.interface.darkMode == true %} tabindex="-1"{% endif %}
 									class="DarkModeSwitch-Link DarkModeSwitch-Link-On" title="{{ __d('system', 'dark_mode_switch_on') }}">
 									{{ __d('system', 'dark_mode_switch_on') }}
 								</a>

@@ -51,7 +51,7 @@ abstract class BackendController extends AppController {
 	 */
 	protected array $categories = [];
 	/**
-	 * @var array<string>  A list of properties that will be merged with values from the database configuration
+	 * @var array<string> A list of properties that will be merged with values from the database configuration
 	 */
 	protected array $customConfigProperties = [
 		'categories',

@@ -48,7 +48,7 @@
 			{{ mediaElement.label }}
 		</td>
 	</tr>
-	{% for mediaSelector in mediaElement.mediaElementSelectors  %}
+	{% for mediaSelector in mediaElement.mediaElementSelectors %}
 		{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
 		{% set oldValue = oldData.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
 		{% set inputName = 'media_assignments[' ~ mediaElement.id ~ '][' ~ mediaSelector.identifier ~ ']' %}
@@ -66,7 +66,7 @@
 
 		{% set changed = oldValue != currentValue %}
 
-		<tr{% if changed %}  class="ValueChanged"{% endif %} data-field="{{ inputName }}">
+		<tr{% if changed %} class="ValueChanged"{% endif %} data-field="{{ inputName }}">
 			<td class="TableCell-Field">
 				{{ mediaSelector.label }}
 			</td>

@@ -127,7 +127,7 @@
 
 							{% block listOverviewActions %}
 								<span class="Actions">
-									{% if isDefault  %}
+									{% if isDefault %}
 										{% if AuthorizationHelper.isAccessible('create') %}
 											{{ FormHelper.create(null, {action: addUrl, method: 'post', idPrefix: 'Configuration'}) }}
 												{{ FormHelper.hidden('scope', {val: selectedScope}) }}

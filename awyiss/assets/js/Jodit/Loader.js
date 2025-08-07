@@ -152,7 +152,7 @@ export default class Loader {
 		// noinspection JSUnresolvedReference
 		Jodit.modules.Icon.set('insertNbsp', `
 			<svg class="svg-icon" style="fill: currentColor;overflow: hidden;" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-				<path d="M448 576l-192 0 0-128 192 0 0-192 128 0 0 192 192 0 0 128-192 0 0 192-128 0zM1024 640l0 384-1024 0 0-384 128 0 0 256 768 0 0-256z"  />
+				<path d="M448 576l-192 0 0-128 192 0 0-192 128 0 0 192 192 0 0 128-192 0 0 192-128 0zM1024 640l0 384-1024 0 0-384 128 0 0 256 768 0 0-256z" />
 			</svg>
 		`);
 

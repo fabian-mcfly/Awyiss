@@ -36,7 +36,7 @@
 	{% set saveStepBeforeForm, saveStepAfterFormSubmit, hasSaveStepAfter = '', '', '' %}
 	{% set shortFinalAction = 'ShowForm' %}
 	{% if survey.finalAction == enum(nextActionEnum).SaveAndShowForm %}
-		{% set shortFinalAction = 'SaveAndShowForm'  %}
+		{% set shortFinalAction = 'SaveAndShowForm' %}
 		{% set saveStepBeforeForm = shortFinalAction ~ '[("' ~ __('save') ~ '")]--> ' %}
 	{% elseif survey.finalAction == enum(nextActionEnum).ShowFormAndSave %}
 		{% set saveStepAfterFormSubmit = '--> ShowFormAndSave[("' ~ __('save') ~ '")]' %}
@@ -87,7 +87,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 									{%~ set shortFinalAction = 'ShowForm' ~ answer.nextActionTarget %}
 									{%~ set saveStepBeforeForm, saveStepAfterFormSubmit, hasSaveStepAfter = '', '', '' %}
 									{%~ if answer.nextAction == enum(nextActionEnum).SaveAndShowForm %}
-										{%~ set shortFinalAction = 'SaveAndShowForm' ~ answer.nextActionTarget  %}
+										{%~ set shortFinalAction = 'SaveAndShowForm' ~ answer.nextActionTarget %}
 										{%~ set saveStepBeforeForm = shortFinalAction ~ '[("' ~ __('save') ~ '")]--> ' %}
 									{%~ elseif answer.nextAction == enum(nextActionEnum).ShowFormAndSave %}
 										{%~ set saveStepAfterFormSubmit = '--> ShowFormAndSave' ~ answer.nextActionTarget ~ '[("' ~ __('save') ~ '")]' %}
@@ -184,7 +184,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 									{{~ question.identifier }}@{ shape: diamond, label: "{{ questionLabel }}"}
 								{%~ else %}
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} Abort@{ shape: diamond, label: "{{ __('next_action_abort') }}"}
-								{%~ endif  %}
+								{%~ endif %}
 							{%~ elseif question.nextAction == enum(nextActionEnum).SaveAndEnd %}
 								{%~ if inactive %}
 									{%~ set link = 'x-.' ~ (inheritingAnswers ? ('"' ~ inheritingAnswers|join('<br>')) ~ '"' : '') ~ '.-x' %}

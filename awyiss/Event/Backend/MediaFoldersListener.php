@@ -468,11 +468,11 @@ class MediaFoldersListener implements EventListenerInterface {
 		 * path
 		 * ```
 		 * [
-		 *    "MediaFolders.path" => "new/path/of/the/current/mediafolder"
-		 *    "language_shortcode" => "de"
-		 *    "NOT" => [
-		 *        "MediaFolders.id" => 1234
-		 *    ]
+		 *	"MediaFolders.path" => "new/path/of/the/current/mediafolder"
+		 * 	"language_shortcode" => "de"
+		 * 	"NOT" => [
+		 * 		"MediaFolders.id" => 1234
+		 * 	]
 		 * ]
 		 * ```
 		 */

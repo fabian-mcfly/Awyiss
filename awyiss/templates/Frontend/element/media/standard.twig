@@ -41,7 +41,7 @@ via the `$options['lightboxMedia']` setting.
 				</a>
 			{% elseif mediaAssignments.lightboxMedia %}
 				{% set media = mediaAssignments.lightboxMedia %}
-				{% set link = media.path  %}
+				{% set link = media.path %}
 				{% if media.isImage() %}
 					{% set mediaRenderOptions = MediaHelper.mediaRenderOptions().with({
 						width: 1920,

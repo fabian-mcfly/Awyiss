@@ -183,7 +183,7 @@ class ConfigOptionsProvider {
 
 
 	/**
-	 * Loads a configuration class for the given scope and  cast the provided value to it's correct type for the given identifier
+	 * Loads a configuration class for the given scope and cast the provided value to it's correct type for the given identifier
 	 *
 	 * @param string $scope
 	 * @param string $realm

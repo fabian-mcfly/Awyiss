@@ -90,7 +90,7 @@
 														{% if field == 'language_shortcode' %}
 															{{ entity.get(field) ? languages.Frontend[ entity.get(field) ].title : '-' }}
 														{% elseif field == 'content_template_id' %}
-															{% if entity.contentTemplate is defined  %}
+															{% if entity.contentTemplate is defined %}
 																{{ entity.contentTemplate.label }}
 															{% elseif contentTemplates[ entity.get(field) ] is defined %}
 																{{ contentTemplates[ entity.get(field) ].label}}
@@ -98,7 +98,7 @@
 																-
 															{% endif %}
 														{% elseif field == 'email_template_id' %}
-															{% if entity.emailTemplate is defined  %}
+															{% if entity.emailTemplate is defined %}
 																{{ entity.emailTemplate.label }}
 															{% elseif emailTemplates[ entity.get(field) ] is defined %}
 																{{ emailTemplates[ entity.get(field) ].label}}
@@ -106,7 +106,7 @@
 																-
 															{% endif %}
 														{% elseif field == 'page_template_id' %}
-															{% if entity.pageTemplate is defined  %}
+															{% if entity.pageTemplate is defined %}
 																{{ entity.pageTemplate.label }}
 															{% elseif pageTemplates[ entity.get(field) ] is defined %}
 																{{ pageTemplates[ entity.get(field) ].label}}
@@ -114,7 +114,7 @@
 																-
 															{% endif %}
 														{% elseif field == 'widget_template_id' %}
-															{% if entity.widgetTemplate is defined  %}
+															{% if entity.widgetTemplate is defined %}
 																{{ entity.widgetTemplate.label }}
 															{% elseif widgetTemplates[ entity.get(field) ] is defined %}
 																{{ widgetTemplates[ entity.get(field) ].label}}

@@ -1070,8 +1070,7 @@ class MediaHelper extends Helper {
 
 		/** @noinspection HtmlRequiredAltAttribute */
 		return '<img data-src="' . $path . '"' . $ls_srcSet . $ls_attributes . '>' . PHP_EOL .
-			   '<noscript><img src="' . $path . '"' . $ls_noScriptSrcSet . $ls_noScriptAttributes . '></noscript>' . PHP_EOL .
-			   $ls_placeholderStyleTag . PHP_EOL;
+			'<noscript><img src="' . $path . '"' . $ls_noScriptSrcSet . $ls_noScriptAttributes . '></noscript>' . PHP_EOL . $ls_placeholderStyleTag . PHP_EOL;
 	}
 
 
@@ -1250,7 +1249,7 @@ class MediaHelper extends Helper {
 			$ls_default = $ls_sourceLang === (LocaleMiddleware::getLanguage()->shortcode ?? '') ? ' default' : '';
 
 			// Add a track tag for the subtitle
-			$ls_subtitles .= PHP_EOL .  '<track src="' . $lo_alternative->path . '" kind="subtitles"' .
+			$ls_subtitles .= PHP_EOL . '<track src="' . $lo_alternative->path . '" kind="subtitles"' .
 				$ls_default .
 				' srclang="' . $ls_sourceLang . '" label="' . ($lo_alternative->alt ?? locale_get_display_language($ls_sourceLang)) . '">';
 		}

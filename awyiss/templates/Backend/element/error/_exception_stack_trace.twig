@@ -19,13 +19,13 @@
 	{% endif %}
 	<div id="stack-frame-{{ i }}" style="display:{{ i is same as 0 ? 'block' : 'none' }};" class="stack-details">
 		<div class="stack-frame-header">
-            <span class="stack-frame-file">
-                {% if line %}
+			<span class="stack-frame-file">
+				{% if line %}
 					{{ HtmlHelper.link(staticCall('\\Cake\\Error\\Debugger', 'trimPath', file), staticCall('\\Cake\\Error\\Debugger', 'editorUrl', file, line)) }}
 				{% else %}
 					{{ staticCall('\\Cake\\Error\\Debugger', 'trimPath', file)|raw }}
 				{% endif %}
-            </span>
+			</span>
 			<a href="#" class="toggle-link stack-frame-args" data-target="stack-args-{{ i }}">Toggle Arguments</a>
 		</div>
 

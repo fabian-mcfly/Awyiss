@@ -69,7 +69,7 @@ class Inflector extends CakeInflector {
 	 * @inheritDoc
 	 */
 	public static function underscore(string $string): string {
-		$ls_string =  parent::underscore($string);
+		$ls_string = parent::underscore($string);
 
 		// Prevent double underscores
 		$ls_string = preg_replace('/_+/', '_', $ls_string);

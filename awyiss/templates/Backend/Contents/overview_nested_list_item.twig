@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block nestedListItem %}
-	{% set contentTemplate = settings.contentTemplates[ entity.contentTemplateId ] ?? null  %}
+	{% set contentTemplate = settings.contentTemplates[ entity.contentTemplateId ] ?? null %}
 	<li
 		{{ block('nestedListItemId') }}
 		{{ block('nestedListItemClass') }}

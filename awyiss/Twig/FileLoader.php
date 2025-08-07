@@ -255,11 +255,11 @@ class FileLoader extends BaseFileLoader {
 	 * - URL schemes: `file://`, `http://`, `https://`, `ftp://`, etc.
 	 *
 	 * ```
-	 * $this->isAbsolutePath('/usr/local/bin');           // true
-	 * $this->isAbsolutePath('C:\Windows\System32');      // true
-	 * $this->isAbsolutePath('file:///tmp/file.txt');     // true
-	 * $this->isAbsolutePath('relative/path/file.txt');   // false
-	 * $this->isAbsolutePath('./local/file.txt');         // false
+	 * $this->isAbsolutePath('/usr/local/bin'); // true
+	 * $this->isAbsolutePath('C:\Windows\System32'); // true
+	 * $this->isAbsolutePath('file:///tmp/file.txt'); // true
+	 * $this->isAbsolutePath('relative/path/file.txt'); // false
+	 * $this->isAbsolutePath('./local/file.txt'); // false
 	 * ```
 	 *
 	 * @param string $file

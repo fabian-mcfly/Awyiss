@@ -13,9 +13,9 @@ use Bake\Command\AllCommand as BaseAllCommand;
  * Command for `bake all`
  *
  * This one overwrites the default bake AllCommand to use
- *        \AwyissBake\Command\Bake\ControllerCommand
- *        \AwyissBake\Command\Bake\ModelCommand
- *        \AwyissBake\Command\Bake\TemplateCommand
+ * \AwyissBake\Command\Bake\ControllerCommand
+ * \AwyissBake\Command\Bake\ModelCommand
+ * \AwyissBake\Command\Bake\TemplateCommand
  */
 class AllCommand extends BaseAllCommand {
 	/**

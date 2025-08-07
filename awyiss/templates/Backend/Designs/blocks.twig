@@ -79,7 +79,7 @@
 							{{ FormHelper.control('font_variants[' ~ variable|underscore ~ '][]', {
 								checked: (i * 100) ~ 'i' in design.settings[ variable ].variants,
 								hiddenField: false,
-								id: 'FontVariant' ~ variable|camelize ~  (i * 100) ~ 'i',
+								id: 'FontVariant' ~ variable|camelize ~ (i * 100) ~ 'i',
 								label: (i * 100) ~ 'i',
 								type: 'checkbox',
 								value: (i * 100) ~ 'i',
@@ -117,7 +117,7 @@
 {% block formControlFontStack %}
 	{{ FormHelper.control(variable|underscore, {
 		empty: false,
-		options: {'': options.value|replace({',': ', '})  ~ ' (' ~ __('default') ~ ')'}|merge(fontStacks),
+		options: {'': options.value|replace({',': ', '}) ~ ' (' ~ __('default') ~ ')'}|merge(fontStacks),
 		val: design.settings[ variable ] ?? options.value,
 	}) }}
 {% endblock %}
