@@ -70,7 +70,7 @@ class UserConfiguration extends Entity {
 
 	/**
 	 * @return mixed
-	 * @throws \ReflectionException
+	 * @noinspection DuplicatedCode
 	 */
 	protected function _getPrintableValue(): mixed {
 		if (!$this->scope || !$this->identifier) {
@@ -83,14 +83,14 @@ class UserConfiguration extends Entity {
 		$lx_value = $this->value;
 
 		if ($lo_configOption) {
-			$lx_value = $lo_configOption->typecastConfigValue($this->value, $this->languageShortcode);
+			$lx_value = $lo_configOption->typecastConfigValue($this->value);
 
 			if ($lo_configOption->getType() === ConfigOptionType::ListKey) {
-				return $lo_configOption->getValues(true, $this->languageShortcode)[ $lx_value ] ?? $lx_value;
+				return $lo_configOption->getValues(true)[ $lx_value ] ?? $lx_value;
 			}
 
 			if ($lo_configOption->getType() === ConfigOptionType::ValueCollection) {
-				$la_values = $lo_configOption->getValues(true, $this->languageShortcode);
+				$la_values = $lo_configOption->getValues(true);
 
 				if (!is_array($lx_value)) {
 					$lx_value = $lx_value ? [$lx_value] : [];
@@ -117,7 +117,6 @@ class UserConfiguration extends Entity {
 	 *
 	 * @param string|null $scope
 	 * @return string|null
-	 * @see \Awyiss\Model\Entity\UserConfiguration::$scope
 	 */
 	protected function _setScope(?string $scope): ?string {
 		if ($scope === null) {
