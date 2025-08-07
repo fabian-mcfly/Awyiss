@@ -410,8 +410,14 @@ class Survey extends Entity {
 
 		$lx_answer = $answer ?? $this->progressData[ $lo_question->identifier ] ?? null;
 
-		if ($lx_answer && isset($lo_question->surveySurveyAnswers[ $lx_answer ])) {
-			$lo_answer = $lo_question->surveySurveyAnswers[ $lx_answer ] ?? null;
+		if (
+			$lx_answer &&
+			(
+				$answer instanceof SurveySurveyAnswer ||
+				isset($lo_question->surveySurveyAnswers[ $lx_answer ])
+			)
+		) {
+			$lo_answer = $answer instanceof SurveySurveyAnswer ? $answer : $lo_question->surveySurveyAnswers[ $lx_answer ];
 
 			// Check if the selected answer has a next action that requires a form.
 			if (
