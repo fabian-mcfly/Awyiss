@@ -7,6 +7,7 @@ namespace Awyiss\Model\Table;
 use Awyiss\Annotation\MediaElementAssignable;
 use Awyiss\Awyiss;
 use Awyiss\Core\LocalConfig;
+use Awyiss\Model\Entity;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Inflector;
@@ -170,11 +171,21 @@ abstract class GenericDatatablesTable extends Table {
 	 *
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @return \Awyiss\ORM\RulesChecker
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		if ($this->splitIntoLanguages) {
 			$rules->add(
-				$rules->existsIn('languageShortcode', 'Languages'),
+				function (Entity $entity, array $options) use ($rules): bool|string {
+					// When split into languages, the languageShortcode must be set
+					if (!$entity->languageShortcode) {
+						return false;
+					}
+
+					$exists = $rules->existsIn('languageShortcode', 'Languages');
+
+					return $exists($entity, $options);
+				},
 				'languageExists',
 				[
 					'errorField' => 'languageShortcode',
