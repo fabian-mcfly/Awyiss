@@ -380,12 +380,15 @@ class PagesTable extends Table {
 
 			// Prevent a page (current) from duplicating another one (target),
 			// if the (current) page is already duplicated by a page (third).
-			if ($entity->id && $this->exists(['duplicate_of' => $entity->id])) {
+			if ($entity->id && $this->exists(['duplicate_of' => $entity->id], ['skipPageRoleCheck' => true])) {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicated');
 			}
 
 			/** @var \Awyiss\Model\Entity\Page $lo_duplicateOf */
-			$lo_duplicateOf = $this->findById($entity->duplicateOf)->first();
+			$lo_duplicateOf = $this->find('all', skipPageRoleCheck: true)->where([
+				'id' => $entity->duplicateOf,
+				'page_role_id' => $entity->pageRoleId,
+			])->first();
 
 			// Disallow duplicating pages that do not exist
 			if (!$lo_duplicateOf) {
@@ -410,7 +413,7 @@ class PagesTable extends Table {
 				/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
 				$lo_pagesTable = FactoryLocator::get('Table')->get('Pages');
 
-				if ($lo_pagesTable->exists(['duplicate_of' => $entity->id])) {
+				if ($lo_pagesTable->exists(['duplicate_of' => $entity->id], ['skipPageRoleCheck' => true])) {
 					// If the page is duplicated by another page, we cannot delete it.
 					return false;
 				}
