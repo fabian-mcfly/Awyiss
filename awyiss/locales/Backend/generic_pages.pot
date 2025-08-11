@@ -24,7 +24,7 @@ msgid "menu_add"
 msgstr "New record"
 
 msgid "menu_add_batch"
-msgstr "Add multiple {0}"
+msgstr "Add multiple entries"
 
 msgid "headline_overview"
 msgstr "{0}"
@@ -45,13 +45,13 @@ msgid "add_failed"
 msgstr "The {0} could not be added"
 
 msgid "headline_add_batch"
-msgstr "Add multiple {0}s"
+msgstr "Add multiple entries"
 
 msgid "add_batch_succeeded"
-msgstr "The {0}s were successfully added"
+msgstr "The entries were successfully added"
 
 msgid "add_batch_failed"
-msgstr "The {0}s could not be added"
+msgstr "The entries could not be added"
 
 msgid "headline_edit"
 msgstr "Edit {0}"
@@ -66,7 +66,7 @@ msgid "record_not_found"
 msgstr "The {0} was not found"
 
 msgid "confirm_delete"
-msgstr "Are you sure you want to delete this {0} (ID: {0})?"
+msgstr "Are you sure you want to delete this entry (ID: {0})?"
 
 msgid "delete_succeeded"
 msgstr "The {0} was successfully deleted"

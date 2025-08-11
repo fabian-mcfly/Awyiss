@@ -24,7 +24,7 @@ msgid "menu_add"
 msgstr "Neuer Eintrag"
 
 msgid "menu_add_batch"
-msgstr "Mehrere {0} hinzufügen"
+msgstr "Mehrere Einträge hinzufügen"
 
 msgid "headline_overview"
 msgstr "{0}"
@@ -33,46 +33,46 @@ msgid "menu_configure"
 msgstr "Konfiguration"
 
 msgid "create"
-msgstr "Neue {0}"
+msgstr "Neuer Eintrag"
 
 msgid "headline_add"
 msgstr "{0} hinzufügen"
 
 msgid "add_succeeded"
-msgstr "Die {0} wurde erfolgreich hinzugefügt"
+msgstr "Der Eintrag wurde erfolgreich hinzugefügt"
 
 msgid "add_failed"
-msgstr "Die {0} konnte nicht hinzugefügt werden"
+msgstr "Der Eintrag konnte nicht hinzugefügt werden"
 
 msgid "headline_add_batch"
-msgstr "Mehrere {0}n hinzufügen"
+msgstr "Mehrere Einträge hinzufügen"
 
 msgid "add_batch_succeeded"
-msgstr "Die {0}n wurden erfolgreich hinzugefügt"
+msgstr "Die Einträge wurden erfolgreich hinzugefügt"
 
 msgid "add_batch_failed"
-msgstr "Die {0}n konnten nicht hinzugefügt werden"
+msgstr "Die Einträge konnten nicht hinzugefügt werden"
 
 msgid "headline_edit"
 msgstr "{0} bearbeiten"
 
 msgid "edit_succeeded"
-msgstr "Die {0} wurde erfolgreich aktualisiert"
+msgstr "Der Eintrag wurde erfolgreich aktualisiert"
 
 msgid "edit_failed"
-msgstr "Die {0} konnte nicht aktualisiert werden"
+msgstr "Der Eintrag konnte nicht aktualisiert werden"
 
 msgid "record_not_found"
-msgstr "Die {0} wurde nicht gefunden"
+msgstr "Der Eintrag wurde nicht gefunden"
 
 msgid "confirm_delete"
-msgstr "Sind Sie sicher, dass Sie dieses {0}n (ID: {0}) löschen möchten?"
+msgstr "Sind Sie sicher, dass Sie diesen Eintrag (ID: {0}) löschen möchten?"
 
 msgid "delete_succeeded"
-msgstr "Die {0} wurde erfolgreich gelöscht"
+msgstr "Der Eintrag wurde erfolgreich gelöscht"
 
 msgid "delete_failed"
-msgstr "Die {0} konnte nicht gelöscht werden"
+msgstr "Der Eintrag konnte nicht gelöscht werden"
 
 msgid "view_contents"
 msgstr "Inhalte anzeigen"
