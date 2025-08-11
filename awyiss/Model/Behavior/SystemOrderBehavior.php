@@ -12,9 +12,11 @@ use BackedEnum;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\I18n\I18n;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
+use Collator;
 
 
 /**
@@ -672,13 +674,33 @@ class SystemOrderBehavior extends Behavior {
 			$lo_query->where($additionalWhere);
 		}
 
-		$lo_records = $lo_query->all()->sortBy(
-			$field,
-			$direction,
-			in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
-		);
+		if (in_array($ls_fieldType, ['string', 'text', 'char'])) {
+			$la_records = $lo_query->all()->toArray();
 
-		//dd($lo_records->toArray(), $direction, in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC);
+			$lo_collator = new Collator(I18n::getLocale());
+			/**
+			 * Ignore case but not accents
+			 * This will allow sorting 'Äpfel' after 'Apfel', not after 'Zitronen'
+			 *
+			 * @noinspection SpellCheckingInspection
+			 */
+			$lo_collator->setStrength(Collator::SECONDARY);
+			// Enable natural sorting for numbers
+			$lo_collator->setAttribute(Collator::NUMERIC_COLLATION, Collator::ON);
+
+			uasort($la_records, function (EntityInterface $a, EntityInterface $b) use ($ls_field, $lo_collator) {
+				return $lo_collator->compare($a->get($ls_field), $b->get($ls_field));
+			});
+
+			$lo_records = collection($la_records);
+		}
+		else {
+			$lo_records = $lo_query->all()->sortBy(
+				$ls_field,
+				$direction
+			);
+		}
+
 
 		return $this->_rebuildSystemOrder($lo_table, $lo_records, $event);
 	}
