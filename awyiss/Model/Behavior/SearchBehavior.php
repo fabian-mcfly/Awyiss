@@ -31,6 +31,7 @@ class SearchBehavior extends Behavior {
 	 */
 	protected array $_defaultConfig = [
 		'blocklistedColumns' => [],
+		'handleNulls' => true,
 		'implementedMethods' => [
 			'getPossibleFieldValues' => 'getPossibleFieldValues',
 			'getFilterColumns' => 'getFilterColumns',
@@ -221,6 +222,12 @@ class SearchBehavior extends Behavior {
 			return $this->getUsers();
 		}
 
+		// Try to get the type from the table schema if not provided
+		if (!$type && $lo_table->getSchema()->hasColumn($column)) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$type = $lo_table->getSchema()->getColumnType($column);
+		}
+
 		if ($type && str_starts_with($type, 'enum-')) {
 			$lo_dbType = TypeFactory::build($type);
 			if ($lo_dbType instanceof EnumType) {
@@ -253,14 +260,12 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function filterQuery(SelectQuery $query): SelectQuery {
-		$la_sessionData = Router::getRequest()->getSession()->read($this->getConfig('sessionIdentifier'));
-
-		if (!($la_sessionData['values'] ?? []) || !$this->getFilterColumns()) {
+		if (!$this->getFilterColumns()) {
 			return $query;
 		}
 
 		foreach ($this->getFilterColumns() as $ls_column => $la_columnSettings) {
-			if (!array_key_exists($ls_column, $la_sessionData['values'])) {
+			if ($la_columnSettings['operator'] === null) {
 				continue;
 			}
 
@@ -340,6 +345,21 @@ class SearchBehavior extends Behavior {
 		}
 		else {
 			$ls_operator = $not ? ' !=' : '';
+
+			if ($not && $this->getConfig('handleNulls', true) === true) {
+				/**
+				 * If the value is not null and the operator is "not equal",
+				 * null values would not be included in the result set, even though
+				 * we want to find all records that do not match a specific value.
+				 * So we add a second condition to include null values.
+				 */
+				return $query->where([
+					'OR' => [
+						$column . $ls_operator => $lx_value,
+						$column . ' IS' => null,
+					],
+				]);
+			}
 		}
 
 		return $query->where([
@@ -368,6 +388,21 @@ class SearchBehavior extends Behavior {
 			$ls_operator = $not ? ' <=' : ' >=';
 		}
 
+		if ($not && $this->getConfig('handleNulls', true) === true) {
+			/**
+			 * If the operator is "lower than",
+			 * null values would not be included in the result set, even though
+			 * we want to find all records that have a value lower than a specific value.
+			 * So we add a second condition to include null values.
+			 */
+			return $query->where([
+				'OR' => [
+					$column . $ls_operator => $lx_value,
+					$column . ' IS' => null,
+				],
+			]);
+		}
+
 		return $query->where([
 			$column . $ls_operator => $lx_value,
 		]);
@@ -382,7 +417,21 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addBetweenCondition(SelectQuery $query, string $column, array $columnSettings, bool $not = false): SelectQuery {
-		$la_values = is_null($columnSettings['value']) ? [] : explode(',', $columnSettings['value']);
+		$la_values = $columnSettings['value'] ?? [];
+
+		if (!is_array($la_values)) {
+			$la_values = explode(',', $la_values);
+		}
+
+		// Trim and remove non-numeric values
+		$la_values = array_map(function (mixed $value): mixed {
+			if ($value === null) {
+				return '';
+			}
+
+			return is_string($value) ? trim($value) : $value;
+		}, $la_values);
+		$la_values = array_filter($la_values, fn ($value) => is_numeric($value));
 
 		if (!$la_values || count($la_values) !== 2) {
 			return $query;
@@ -391,18 +440,28 @@ class SearchBehavior extends Behavior {
 		// Normalize all
 		$la_values = array_map(fn ($value) => $this->normalizeValue($value, $columnSettings), $la_values);
 
-		if (!$not) {
-			return $query->where([
-				$column . ' >=' => $la_values[0],
-				$column . ' <=' => $la_values[1],
-			]);
+		if ($not) {
+			$la_where = [
+				$column . ' <' => $la_values[0],
+				$column . ' >' => $la_values[1],
+			];
+
+			if ($this->getConfig('handleNulls', true) === true) {
+				/**
+				 * If the operator is "not between",
+				 * null values would not be included in the result set, even though
+				 * we want to find all records that do not match a specific range.
+				 * So we add a third condition to include null values.
+				 */
+				$la_where[ $column . ' IS' ] = null;
+			}
+
+			return $query->where(['OR' => $la_where]);
 		}
 
 		return $query->where([
-			'OR' => [
-				$column . ' <' => $la_values[0],
-				$column . ' >' => $la_values[1],
-			],
+			$column . ' >=' => $la_values[0],
+			$column . ' <=' => $la_values[1],
 		]);
 	}
 
@@ -422,11 +481,39 @@ class SearchBehavior extends Behavior {
 
 		$li_value = (int)$columnSettings['value'];
 
+		if (
+			$this->getConfig('handleNulls', true) === true &&
+			(
+				($not && $li_value !== 0) ||
+				(!$not && $li_value === 0)
+			)
+		) {
+			/**
+			 * If the operator is
+			 * - "length not equal" and the value is not "0" or
+			 * - "length equal" and the value is "0",
+			 * null values would not be included in the result set, even though
+			 * we want to find all records that do/don't match a specific length.
+			 * So we add a second condition to include null values.
+			 */
+			return $query->where([
+				'OR' => [
+					function (QueryExpression $exp) use ($column, $query, $li_value, $not) {
+						/** @noinspection PhpUndefinedMethodInspection */
+						$lo_lengthExp = $query->func()->length([$column => 'identifier']);
+
+						return $not ? $exp->notEq($lo_lengthExp, $li_value, 'integer') : $exp->eq($lo_lengthExp, $li_value, 'integer');
+					},
+					$column . ' IS' => null,
+				],
+			]);
+		}
+
 		return $query->where(function (QueryExpression $exp) use ($column, $query, $li_value, $not) {
 			/** @noinspection PhpUndefinedMethodInspection */
 			$lo_lengthExp = $query->func()->length([$column => 'identifier']);
 
-			return $not ? $exp->notEq($lo_lengthExp, $li_value) : $exp->eq($lo_lengthExp, $li_value);
+			return $not ? $exp->notEq($lo_lengthExp, $li_value, 'integer') : $exp->eq($lo_lengthExp, $li_value, 'integer');
 		});
 	}
 
@@ -452,15 +539,63 @@ class SearchBehavior extends Behavior {
 			$ls_operator = $not ? ' <=' : ' >=';
 		}
 
+		if ($this->getConfig('handleNulls', true) === true) {
+			if (!$not && $orEqual && $li_value === 0) {
+				/**
+				 * If the operator is "longer than or equal" and the value is "0",
+				 * null values would not be included in the result set, even though
+				 * we want to find all records that have a length greater than or equal to "0".
+				 * So we add a second condition to include null values.
+				 */
+				return $query->where([
+					'OR' => [
+						function (QueryExpression $exp) use ($column, $query, $li_value, $ls_operator) {
+							/** @noinspection PhpUndefinedMethodInspection */
+							$lo_lengthExp = $query->func()->length([$column => 'identifier']);
+
+							return $exp->gte($lo_lengthExp, $li_value, 'integer');
+						},
+						$column . ' IS' => null,
+					],
+				]);
+			}
+
+			if ($not && ($li_value !== 0 || $orEqual)) {
+				/**
+				 * If the operator is
+				 * - "shorter than" and the value is "0" or
+				 * - "shorter than or equal" and the value is "0",
+				 * null values would not be included in the result set, even though
+				 * we want to find all records that have a length shorter than a specific value.
+				 * So we add a second condition to include null values.
+				 */
+				return $query->where([
+					'OR' => [
+						function (QueryExpression $exp) use ($column, $query, $li_value, $ls_operator) {
+							/** @noinspection PhpUndefinedMethodInspection */
+							$lo_lengthExp = $query->func()->length([$column => 'identifier']);
+
+							return match ($ls_operator) {
+								' <' => $exp->lt($lo_lengthExp, $li_value, 'integer'),
+								' <=' => $exp->lte($lo_lengthExp, $li_value, 'integer'),
+							};
+						},
+						$column . ' IS' => null,
+					],
+				]);
+			}
+		}
+
+
 		return $query->where(function (QueryExpression $exp) use ($column, $query, $li_value, $ls_operator) {
 			/** @noinspection PhpUndefinedMethodInspection */
 			$lo_lengthExp = $query->func()->length([$column => 'identifier']);
 
 			return match ($ls_operator) {
-				' >' => $exp->gt($lo_lengthExp, $li_value),
-				' >=' => $exp->gte($lo_lengthExp, $li_value),
-				' <' => $exp->lt($lo_lengthExp, $li_value),
-				' <=' => $exp->lte($lo_lengthExp, $li_value),
+				' >' => $exp->gt($lo_lengthExp, $li_value, 'integer'),
+				' >=' => $exp->gte($lo_lengthExp, $li_value, 'integer'),
+				' <' => $exp->lt($lo_lengthExp, $li_value, 'integer'),
+				' <=' => $exp->lte($lo_lengthExp, $li_value, 'integer'),
 				default => $exp,
 			};
 		});
@@ -475,23 +610,54 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addInCondition(SelectQuery $query, string $column, array $columnSettings, bool $not = false): SelectQuery {
-		$la_values = is_null($columnSettings['value']) ? [] : explode(',', $columnSettings['value']);
+		$la_values = $columnSettings['value'] ?? [];
+
+		if (!is_array($la_values)) {
+			$la_values = explode(',', $la_values);
+		}
+
+		// Trim and remove duplicate values
+		$la_values = array_map(function (mixed $value): mixed {
+			if ($value === null) {
+				return '';
+			}
+
+			return is_string($value) ? trim($value) : $value;
+		}, $la_values);
+		$la_values = array_unique($la_values);
 
 		if (!$la_values) {
 			return $query;
 		}
 
+		$lb_hasEmpty = in_array('', $la_values, true);
+
 		// Normalize all
 		$la_values = array_map(fn ($value) => $this->normalizeValue($value, $columnSettings), $la_values);
 
-		if (!$not) {
+		$ls_operator = $not ? ' NOT IN' : ' IN';
+		if (
+			($not && !$lb_hasEmpty) ||
+			(!$not && $lb_hasEmpty)
+		) {
+			/**
+			 * If the operator is
+			 * - "in" and there are no empty values or
+			 * - "not in" and there are empty values,
+			 * null values would not be included in the result set, even though
+			 * we want to find all records that do/don't match a set of values.
+			 * So we add a second condition to include null values.
+			 */
 			return $query->where([
-				$column . ' IN' => $la_values,
+				'OR' => [
+					$column . $ls_operator => $la_values,
+					$column . ' IS' => null,
+				],
 			]);
 		}
 
 		return $query->where([
-			$column . ' NOT IN' => $la_values,
+			$column . $ls_operator => $la_values,
 		]);
 	}
 
@@ -526,9 +692,20 @@ class SearchBehavior extends Behavior {
 		}
 
 		if ($not) {
-			return $query->where(function (QueryExpression $exp) use ($column, $ls_expression) {
-				return $exp->notLike($column, $ls_expression, 'string');
-			});
+			/**
+			 * If the operator is "not contains",
+			 * null values would not be included in the result set, even though
+			 * we want to find all records that do not match a specific value.
+			 * So we add a second condition to include null values.
+			 */
+			return $query->where([
+				'OR' => [
+					function (QueryExpression $exp) use ($column, $ls_expression) {
+						return $exp->notLike($column, $ls_expression, 'string');
+					},
+					$column . ' IS' => null,
+				],
+			]);
 		}
 
 		return $query->where(function (QueryExpression $exp) use ($column, $ls_expression) {
