@@ -784,6 +784,40 @@ class Table extends BaseTable {
 
 
 	/**
+	 * Reimplemented to only dispatch the `afterDeleteCommit` event
+	 * if no soft delete behavior is enabled or if the soft delete behavior is not enabled.
+	 *
+	 * @inheritDoc
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function delete(EntityInterface $entity, array $options = []): bool {
+		$options = new ArrayObject(
+			$options + [
+				'atomic' => true,
+				'checkRules' => true,
+				'_primary' => true,
+			]
+		);
+
+		$success = $this->_executeTransaction(
+			fn () => $this->_processDelete($entity, $options),
+			$options['atomic'],
+		);
+
+		$noSoftDeleteBehavior = !$this->hasBehavior('SoftDelete') || !$this->getBehavior('SoftDelete')->getConfig('enabled');
+
+		if ($success && $noSoftDeleteBehavior && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+			$this->dispatchEvent('Model.afterDeleteCommit', [
+				'entity' => $entity,
+				'options' => $options,
+			]);
+		}
+
+		return $success;
+	}
+
+
+	/**
 	 * Implemented nearly 1:1 but honors the `transaction`-option.
 	 * If set to false, the save calls will not be handled inside a transaction
 	 *
