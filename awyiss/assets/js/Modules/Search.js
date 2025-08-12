@@ -85,8 +85,8 @@ export default class Search {
 			event.preventDefault();
 			event.stopPropagation();
 
-			const hiddenInput = document.createElement('input');
-			hiddenInput.type = 'hidden';
+			const hiddenInput = document.createElement('button');
+			hiddenInput.type = 'submit';
 			hiddenInput.name = 'submit_type';
 			hiddenInput.value = 'reset';
 
@@ -94,7 +94,7 @@ export default class Search {
 			form.appendChild(hiddenInput);
 
 			// Submit the form to reset the filters
-			form.requestSubmit();
+			form.requestSubmit(hiddenInput);
 		}, element);
 	}
 
