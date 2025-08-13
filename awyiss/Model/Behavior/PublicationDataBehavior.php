@@ -20,6 +20,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
+use LogicException;
 
 
 /**
@@ -39,6 +40,10 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		'enabled' => false,
 		'implementedFinders' => [
 			'published' => 'findPublished',
+			'publishedStartingBefore' => 'findPublishedStartingBefore',
+			'publishedStartingAfter' => 'findPublishedStartingAfter',
+			'publishedEndingBefore' => 'findPublishedEndingBefore',
+			'publishedEndingAfter' => 'findPublishedEndingAfter',
 		],
 		'referenceName' => '',
 		'strategy' => 'subquery',
@@ -225,8 +230,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 				$la_conditions[ $ls_name . '.scope' ] = $ls_scope;
 			}
 
-
-
 			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
 			$this->_table->hasOne($ls_name, [
 				'conditions' => $la_conditions,
@@ -257,65 +260,176 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 
 	/**
-	 * Finds records that either have no publication data or are published at the given datetimes.
+	 * Finds records that either have no publication data or
+	 * are published at a given time.
 	 *
-	 * Possible datetimes are:
-	 * - `start`: When set, the record must have its start date before this date.
-	 * - `end`: When set, the record must have its end date after this date.
-	 * - `at`: When set, the record must be published at this date.
+	 * If no time is given, it defaults to the current time,
+	 * returning all records that are currently published.
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param \Cake\I18n\DateTime|null $start
-	 * @param \Cake\I18n\DateTime|null $end
 	 * @param \Cake\I18n\DateTime|null $at
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findPublished(SelectQuery $query, ?DateTime $start = null, ?DateTime $end = null, ?DateTime $at = null): SelectQuery {
+	public function findPublished(SelectQuery $query, ?DateTime $at = null): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
 		}
 
-		//$ls_timezone = LocaleMiddleware::getLanguage(null)->timezone;
 		$lo_date = $at ?? new DateTime('now');
 
+		$this->findPublishedStartingBefore($query, $lo_date);
+		$this->findPublishedEndingAfter($query, $lo_date);
+
+		return $query;
+	}
+
+
+	/**
+	 * Finds records that have publication data for a given type
+	 * starting before or after a given date.
+
+	 * If `includeUndefined` is true, it will also include records
+	 * that have no publication data for the specified type.
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param \Cake\I18n\DateTime|null $date
+	 * @param \Awyiss\Model\Enum\PublicationDataType $type
+	 * @param string $when
+	 * @param bool $includeUndefined
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	protected function find(SelectQuery $query, ?DateTime $date, PublicationDataType $type, string $when, bool $includeUndefined): SelectQuery {
 		$ls_alias = $this->_table->getAlias();
+		$lo_date = $date ?? new DateTime('now');
+		$ls_operator = $when === 'before' ? '<=' : '>=';
+		$ls_name = Inflector::camelize($ls_alias . '_publication_data_' . $type->value);
 
 		if ($query->isAutoFieldsEnabled() === null) {
 			$query->enableAutoFields();
 		}
 
-		$ls_name = Inflector::camelize($ls_alias . '_publication_data_start');
 		if ($query->isAutoFieldsEnabled() !== false) {
 			$query->select($this->_table->$ls_name);
 		}
 
-		$lo_startDate = $start ?? $lo_date;
-
-		$query->leftJoinWith($ls_name)->where([
-			'OR' => [
-				$ls_name . '.date_time IS ' => null,
-				$ls_name . '.date_time <= ' => $lo_startDate,
-			],
-		]);
-
-		$ls_name = Inflector::camelize($ls_alias . '_publication_data_end');
-		if ($query->isAutoFieldsEnabled() !== false) {
-			$query->select($this->_table->$ls_name);
+		if ($query->getOptions()['_hasPublicationData' . $type->name] ?? false) {
+			throw new LogicException(sprintf(
+				'Cannot use the publish finder with type `%s` twice.',
+				$type->name
+			));
 		}
 
-		$lo_endDate = $end ?? $lo_date;
-		//$lo_endDate = $lo_endDate->setTimezone($ls_timezone);
-
-		$query->leftJoinWith($ls_name)->where([
-			'OR' => [
-				$ls_name . '.date_time >= ' => $lo_endDate,
-				$ls_name . '.date_time IS ' => null,
-			],
+		$query->applyOptions([
+			'_hasPublicationData' . $type->name => true,
 		]);
 
+		if ($includeUndefined) {
+			return $query->leftJoinWith($ls_name)->where([
+				'OR' => [
+					$ls_name . '.date_time ' . $ls_operator => $lo_date,
+					$ls_name . '.date_time IS' => null,
+				],
+			]);
+		}
 
-		return $query;
+		return $query->leftJoinWith($ls_name)->where([
+			$ls_name . '.date_time ' . $ls_operator => $lo_date,
+		]);
 	}
+
+
+	/**
+	 * Finds records that have publication data starting before
+	 * a given date.
+	 *
+	 * If no date is given, it defaults to the current time.
+	 *
+	 * If `includeUndefined` is true, it will also include records
+	 * that have no publication data for the 'start' type.
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param \Cake\I18n\DateTime|null $date
+	 * @param bool $includeUndefined
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findPublishedStartingBefore(SelectQuery $query, ?DateTime $date = null, bool $includeUndefined = true): SelectQuery {
+		if (!$this->getConfig('enabled')) {
+			return $query;
+		}
+
+		return $this->find($query, $date, PublicationDataType::Start, 'before', $includeUndefined);
+	}
+
+
+	/**
+	 * Finds records that have publication data starting after
+	 * a given date.
+	 *
+	 * If no date is given, it defaults to the current time.
+	 *
+	 * If `includeUndefined` is true, it will also include records
+	 * that have no publication data for the 'start' type.
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param \Cake\I18n\DateTime|null $date
+	 * @param bool $includeUndefined
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findPublishedStartingAfter(SelectQuery $query, ?DateTime $date = null, bool $includeUndefined = true): SelectQuery {
+		if (!$this->getConfig('enabled')) {
+			return $query;
+		}
+
+		return $this->find($query, $date, PublicationDataType::Start, 'after', $includeUndefined);
+	}
+
+
+	/**
+	 * Finds records that have publication data ending before
+	 * a given date.
+	 *
+	 * If no date is given, it defaults to the current time.
+	 *
+	 * If `includeUndefined` is true, it will also include records
+	 * that have no publication data for the 'end' type.
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param \Cake\I18n\DateTime|null $date
+	 * @param bool $includeUndefined
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findPublishedEndingBefore(SelectQuery $query, ?DateTime $date = null, bool $includeUndefined = true): SelectQuery {
+		if (!$this->getConfig('enabled')) {
+			return $query;
+		}
+
+		return $this->find($query, $date, PublicationDataType::End, 'before', $includeUndefined);
+	}
+
+
+
+	/**
+	 * Finds records that have publication data ending after
+	 * a given date.
+	 *
+	 * If no date is given, it defaults to the current time.
+	 *
+	 * If `includeUndefined` is true, it will also include records
+	 * that have no publication data for the 'end' type.
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param \Cake\I18n\DateTime|null $date
+	 * @param bool $includeUndefined
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findPublishedEndingAfter(SelectQuery $query, ?DateTime $date = null, bool $includeUndefined = true): SelectQuery {
+		if (!$this->getConfig('enabled')) {
+			return $query;
+		}
+
+		return $this->find($query, $date, PublicationDataType::End, 'after', $includeUndefined);
+	}
+
 
 
 	/**
@@ -341,7 +455,9 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 			return function (SelectQuery $q) use ($ls_field, $lo_query, $la_select) {
 				if (
-					$lo_query->isAutoFieldsEnabled() !== false || in_array($ls_field, $la_select, true) || in_array($this->_table->aliasField($ls_field), $la_select, true)
+					$lo_query->isAutoFieldsEnabled() !== false ||
+					in_array($ls_field, $la_select, true) ||
+					in_array($this->_table->aliasField($ls_field), $la_select, true)
 				) {
 					$q->select(['id', 'scope', 'foreign_key', 'type', 'date_time']);
 				}
@@ -411,11 +527,8 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			return [];
 		}
 
-		$la_options = $options;
-		unset($la_options['associated']);
-
 		return [
-			'_publication_data' => function (array $values, EntityInterface $entity) use ($la_options) {
+			'_publication_data' => function (array $values, EntityInterface $entity) {
 				/**
 				 * @var array<string, \Awyiss\Model\Entity\PublicationData> $la_publicationData
 				 */
@@ -429,15 +542,29 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 						$la_publicationData[ $ls_type ] = $this->publicationDataTable->newEmptyEntity();
 					}
 
-					$la_data['type'] = $ls_type;
-					$la_data['date_time'] = $la_data['date_time'] ? TypeFactory::build('datetime')->marshal($la_data['date_time']) : null;
+					$la_data['type'] ??= $ls_type;
+
+					$la_data['date_time'] ??= null;
+					if (is_string($la_data['date_time']) && $la_data['date_time'] !== '') {
+						$la_data['date_time'] = TypeFactory::build('datetime')->marshal($la_data['date_time']);
+					}
+
 					$la_data['scope'] = $this->getConfig('referenceName');
 
 					if (empty($la_data['scope'])) {
 						dd($la_data, $this);
 					}
 
-					$lo_marshaller->merge($la_publicationData[ $ls_type ], $la_data, $la_options);
+					$lo_marshaller->merge($la_publicationData[ $ls_type ], $la_data, [
+						'fields' => [
+							'type',
+							'dateTime',
+							'scope',
+						],
+						'setter' => false,
+						'validate' => false,
+						'isMerge' => true,
+					]);
 
 					$la_dataErrors = $la_publicationData[ $ls_type ]->getErrors();
 					if ($la_dataErrors) {
