@@ -27,17 +27,20 @@ class SitemapController extends AppController {
 	public function index(): void {
 		$lo_pagesTable = $this->fetchTable('Pages');
 
-		$lo_query = $lo_pagesTable->find('threaded', skipPageRoleCheck: true)
-			->find('published')
-			->where([
-				'active' => true,
-				'parents_active' => true,
-			])
-			->contain([
-				'Contents' => function (SelectQuery $query) {
-					return $query->find('latestForPages');
-				},
-			]);
+		/**
+		 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+		 */
+		$lo_query = $lo_pagesTable->find('threaded', skipPageRoleCheck: true)->find('published')->where([
+			'active' => true,
+			'parents_active' => true,
+		])->contain([
+			'Contents' => function (SelectQuery $query) {
+				/**
+				 * @see \Awyiss\Model\Table\ContentsTable::findLatestForPages()
+				 */
+				return $query->find('latestForPages');
+			},
+		]);
 
 		$lo_pages = $lo_query->all();
 

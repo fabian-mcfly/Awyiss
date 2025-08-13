@@ -267,7 +267,7 @@ class ContentsCell extends Cell {
 		else {
 			/**
 			 * @uses \Awyiss\Model\Table::findActive()
-			 * @uses \Awyiss\Model\Table::findActive()
+			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
 			$lo_query = $lo_contentsTable->find('active')->find('published');
 		}

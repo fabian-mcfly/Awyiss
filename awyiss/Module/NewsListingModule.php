@@ -154,7 +154,10 @@ class NewsListingModule extends AbstractModule {
 			$lo_query = $lo_newsTable->find('all');
 		}
 		else {
-			/** @uses \Awyiss\Model\Table::findActive() */
+			/**
+			 * @uses \Awyiss\Model\Table::findActive()
+			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+			 */
 			$lo_query = $lo_newsTable->find('active')->find('published');
 		}
 

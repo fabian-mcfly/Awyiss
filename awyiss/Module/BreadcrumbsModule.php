@@ -100,7 +100,9 @@ class BreadcrumbsModule extends AbstractModule {
 			]);
 
 			if (!static::isPreview()) {
-				// Find only published pages
+				/**
+				 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+				 */
 				$lo_query->find('published')->where([
 					'Pages.active' => true,
 					'Pages.parents_active' => true,

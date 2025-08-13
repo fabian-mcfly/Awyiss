@@ -71,7 +71,10 @@ class FormRenderer {
 			$lo_query = $lo_formsTable->find('all');
 		}
 		else {
-			/** @uses \Awyiss\Model\Table::findActive() */
+			/**
+			 * @uses \Awyiss\Model\Table::findActive()
+			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+			 */
 			$lo_query = $lo_formsTable->find('active')->find('published');
 		}
 
