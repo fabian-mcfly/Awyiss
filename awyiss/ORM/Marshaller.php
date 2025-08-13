@@ -43,6 +43,12 @@ class Marshaller extends BaseMarshaller {
 					$value = true;
 				}
 
+				// Map the field name if the entity class has a `mapField()` method
+				if (method_exists($entity, 'mapField')) {
+					// Map the field name
+					$key = $entity::mapField($key);
+				}
+
 				$entity->setAccess($key, $value);
 			}
 		}
@@ -75,7 +81,14 @@ class Marshaller extends BaseMarshaller {
 			return $entity;
 		}
 
-		foreach ((array)$options['fields'] as $field) {
+		$fields = (array)$options['fields'];
+		// Map the property keys if the entity class has a `mapFields()` method
+		if (method_exists($entity, 'mapFields')) {
+			$fields = $entity::mapFields($fields);
+			$properties = $entity::mapFields($properties, true);
+		}
+
+		foreach ($fields as $field) {
 			assert(is_string($field));
 			if (!array_key_exists($field, $properties)) {
 				continue;
