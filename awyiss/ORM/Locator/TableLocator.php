@@ -7,6 +7,7 @@ namespace Awyiss\ORM\Locator;
 use Awyiss\Core\App;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Model\Table;
+use Awyiss\ORM\AssociationCollection;
 use Cake\ORM\Locator\TableLocator as BaseTableLocator;
 use Cake\ORM\Table as BaseTable;
 
@@ -28,6 +29,12 @@ class TableLocator extends BaseTableLocator {
 	 */
 	protected function createInstance(string $alias, array $options): BaseTable {
 		EventListenersProvider::loadListener($alias, 'Global');
+
+		if (empty($options['associations'])) {
+			$lo_associations = new AssociationCollection($this);
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$options['associations'] = $lo_associations;
+		}
 
 		return parent::createInstance($alias, $options);
 	}
