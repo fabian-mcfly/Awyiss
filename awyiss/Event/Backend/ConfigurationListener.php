@@ -211,8 +211,9 @@ class ConfigurationListener implements EventListenerInterface {
 			], SORT_ASC, Inflector::camelize($entity->scope));
 
 			if ($lo_table->hasBehavior('SystemOrder')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, $li_direction, $event);
+				/** @var \Awyiss\Model\Entity $ls_entityClass */
+				$ls_entityClass = $lo_table->getEntityClass();
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_entityClass::unmapField($ls_field), $li_direction, $event);
 			}
 		}
 	}
@@ -239,9 +240,10 @@ class ConfigurationListener implements EventListenerInterface {
 
 			/** @var \Awyiss\Model\Table $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
+			/** @var \Awyiss\Model\Entity $ls_entityClass */
+			$ls_entityClass = $lo_table->getEntityClass();
 			if ($lo_table->hasBehavior('SystemOrder')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($entity->value, $li_direction, $event);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_entityClass::unmapField($entity->value), $li_direction, $event);
 			}
 		}
 		elseif (
@@ -263,9 +265,10 @@ class ConfigurationListener implements EventListenerInterface {
 
 			/** @var \Awyiss\Model\Table $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
+			/** @var \Awyiss\Model\Entity $ls_entityClass */
+			$ls_entityClass = $lo_table->getEntityClass();
 			if ($lo_table->hasBehavior('SystemOrder')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, (int)$entity->value, $event);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_entityClass::unmapField($ls_field), (int)$entity->value, $event);
 			}
 		}
 	}
