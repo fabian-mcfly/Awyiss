@@ -965,7 +965,12 @@ export default class Overlay {
 			}
 
 			// Check if an element with the url as href exists
-			const element = document.querySelector(`a[href="${url}"]`);
+			let element = document.querySelector(`a[href="${url}"]`);
+
+			if (!element && url.startsWith(baseUrl)) {
+				url = url.substring(baseUrl.length - 1);
+				element = document.querySelector(`a[href="${url}"]`);
+			}
 
 			if (element) {
 				// Open the overlay
