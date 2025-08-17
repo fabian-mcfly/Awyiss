@@ -133,10 +133,9 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		/**
-		 * @noinspection PhpUndefinedFieldInspection
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		if ($entity->systemOrder >= $entity->originalEntity->systemOrder) {
+		if ($entity->systemOrder >= ($entity->originalEntity?->systemOrder ?? $entity->systemOrder)) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$entity->systemOrder++;
 		}
