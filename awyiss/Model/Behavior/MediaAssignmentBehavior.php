@@ -446,7 +446,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		 * This happens when no media element was assigned but
 		 * a media assignment is part of the entity/patched data.
 		 */
-		$la_mediaAssignments = $entity->get('mediaAssignments') ?? [];
+		$la_mediaAssignments = $entity->get('mediaAssignments') ?: [];
 		foreach ($la_mediaAssignments as $lx_key => $lo_mediaAssignment) {
 			if (!is_numeric($lx_key) || !$lo_mediaAssignment instanceof MediaAssignment) {
 				unset($la_mediaAssignments[ $lx_key ]);
@@ -496,7 +496,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			$lo_folder = $lo_existingAssignment->mediaFolder;
 			$lb_changed = false;
 
-			if (!empty($entity->title)) {
+			if (!empty($entity->title) && $lo_folder->title !== $entity->title) {
 				$lo_folder->title = $entity->title;
 				$lb_changed = true;
 			}
