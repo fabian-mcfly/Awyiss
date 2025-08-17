@@ -160,7 +160,8 @@ export default class Sortable {
 	 */
 	onStart() {
 		if (this.multiSelection.selectionRectangle) {
-			document.body.removeChild(this.multiSelection.selectionRectangle);
+			const parent = this.multiSelection.selectionRectangle.parentNode;
+			parent.removeChild(this.multiSelection.selectionRectangle);
 			this.multiSelection.selectionRectangle = null;
 		}
 

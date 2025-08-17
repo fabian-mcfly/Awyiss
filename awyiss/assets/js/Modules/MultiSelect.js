@@ -47,6 +47,11 @@ export default class MultiSelect {
 	 */
 	lastSelected = null;
 	/**
+	 * The parent element that contains the selection rectangle
+	 * @type {HTMLElement}
+	 */
+	parent;
+	/**
 	 * The selection rectangle element
 	 * @type {HTMLElement}
 	 */
@@ -67,6 +72,7 @@ export default class MultiSelect {
 		this.element = typeof selector === 'string' ? document.querySelector(selector) : selector;
 		this.itemSelector = itemSelector;
 		this.filterItemSelector = filterItemSelector;
+		this.parent = this.element;
 
 		// Handle ctrl+click selection
 		this.eventHandler.add('click', this.handleClick.bind(this), this.element);
@@ -180,7 +186,7 @@ export default class MultiSelect {
 		this.selectionRectangle = document.createElement('div');
 
 		this.selectionRectangle.classList.add('SelectionRectangle');
-		document.body.appendChild(this.selectionRectangle)
+		this.parent.appendChild(this.selectionRectangle)
 
 		// Prevent text selection
 		this.element.classList.add('NoTextSelect');
@@ -284,7 +290,7 @@ export default class MultiSelect {
 		// If the user is not dragging, remove the selection rectangle
 		if (!this.isDragging) {
 			if (this.selectionRectangle) {
-				document.body.removeChild(this.selectionRectangle);
+				this.parent.removeChild(this.selectionRectangle);
 				this.selectionRectangle = null;
 			}
 
@@ -296,7 +302,7 @@ export default class MultiSelect {
 		}
 
 		if (this.selectionRectangle) {
-			document.body.removeChild(this.selectionRectangle);
+			this.parent.removeChild(this.selectionRectangle);
 		}
 
 		this.selectionRectangle = null;
