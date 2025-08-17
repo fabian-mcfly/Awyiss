@@ -90,7 +90,9 @@ class EmailTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var EmailTemplate $lo_emailTemplate
+		 * @var \Awyiss\Model\Entity\EmailTemplate $lo_emailTemplate
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_emailTemplate = $this->EmailTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

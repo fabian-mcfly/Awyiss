@@ -109,7 +109,9 @@ class PageTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var PageTemplate $lo_pageTemplate
+		 * @var \Awyiss\Model\Entity\PageTemplate $lo_pageTemplate
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_pageTemplate = $this->PageTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['ContentAreas'])->first();

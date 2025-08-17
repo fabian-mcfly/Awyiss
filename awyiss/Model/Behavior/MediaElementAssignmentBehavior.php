@@ -47,7 +47,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 		'tableLocator' => null,
 	];
 	/**
-	 * Instance of Table responsible for dates
+	 * Instance of Table responsible for assignments.
 	 *
 	 * @var \Awyiss\Model\Table
 	 */
@@ -99,7 +99,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 				'cascadeCallbacks' => true,
 				'dependent' => true,
 				'foreignKey' => 'scope',
-				'propertyName' => 'media_element_assignments',
+				'propertyName' => 'mediaElementAssignments',
 				'saveStrategy' => 'replace',
 				'strategy' => $this->getConfig('strategy'),
 			]);
@@ -128,7 +128,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 				'cascadeCallbacks' => true,
 				'dependent' => true,
 				'foreignKey' => 'foreign_key',
-				'propertyName' => 'media_element_assignments',
+				'propertyName' => 'mediaElementAssignments',
 				'saveStrategy' => 'replace',
 				'strategy' => $this->getConfig('strategy'),
 			]);
@@ -190,9 +190,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 
 		return [
 			'media_element_assignments' => function (array $values, EntityInterface $entity) use ($la_options): array {
-				/**
-				 * @var array<string, \Awyiss\Model\Entity\MediaElementAssignment> $la_publicationData
-				 */
+				/** @var array<string, \Awyiss\Model\Entity\MediaElementAssignment> $la_publicationData */
 				$la_mediaElementAssignments = [];
 
 				$la_errors = [];
@@ -203,7 +201,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 					$lo_entity = null;
 					if (!empty($la_data['id'])) {
 						// Find the existing entity, if any, in `mediaElementAssignments`
-						$lo_entity = array_filter($entity->mediaElementAssignments, fn(MediaElementAssignment $entity) => $entity->id === (int)$la_data['id'])[0] ?? null;
+						$lo_entity = array_filter($entity->mediaElementAssignments ?? [], fn(MediaElementAssignment $entity) => $entity->id === (int)$la_data['id'])[0] ?? null;
 					}
 
 					if (!$lo_entity) {

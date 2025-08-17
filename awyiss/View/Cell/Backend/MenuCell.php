@@ -74,6 +74,7 @@ class MenuCell extends Cell {
 			// If the cached menu is outdated, clear the menu data
 			if ($lo_time >= $lo_identity->changedOn) {
 				$lo_table = $this->fetchTable('BackendMenuEntries');
+				/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
 				$lo_entity = $lo_table->find()->select('id')->find('withDeleted')->where([
 					'OR' => [
 						'created_on >' => $lo_time,

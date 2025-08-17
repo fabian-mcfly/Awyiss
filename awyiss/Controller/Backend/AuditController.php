@@ -421,6 +421,7 @@ class AuditController extends Controller {
 				continue;
 			}
 
+			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
 			$la_oldEntities[ $ls_foreignKey ] = $associations[ $ls_foreignKey ]->find('withDeleted', skipPageRoleCheck: true)->where([
 				$associations[ $ls_foreignKey ]->getBindingKey() . ' IN' => $la_foreignKeys,
 			])->all()->indexBy('id')->toArray();

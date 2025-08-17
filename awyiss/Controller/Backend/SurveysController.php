@@ -121,7 +121,9 @@ class SurveysController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var Survey $lo_survey
+		 * @var \Awyiss\Model\Entity\Survey $lo_survey
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_survey = $this->Surveys->findById($id)
@@ -203,7 +205,9 @@ class SurveysController extends Controller {
 		$this->Authorization->ensure('read');
 
 		/**
-		 * @var Survey $lo_survey
+		 * @var \Awyiss\Model\Entity\Survey $lo_survey
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_survey = $this->Surveys->findById($this->request->getParam('id'))

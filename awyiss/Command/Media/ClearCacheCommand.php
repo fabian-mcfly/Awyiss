@@ -221,9 +221,11 @@ class ClearCacheCommand extends Command {
 		$lo_query = $lo_table->find();
 
 		if ($type === 'deleted') {
+			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findDeleted() */
 			$lo_query->find('deleted');
 		}
 		elseif ($type === 'all') {
+			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
 			$lo_query->find('withDeleted');
 		}
 

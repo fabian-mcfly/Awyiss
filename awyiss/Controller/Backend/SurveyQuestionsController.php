@@ -91,7 +91,9 @@ class SurveyQuestionsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var SurveyQuestion $lo_surveyQuestion
+		 * @var \Awyiss\Model\Entity\SurveyQuestion $lo_surveyQuestion
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_surveyQuestion = $this->SurveyQuestions->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

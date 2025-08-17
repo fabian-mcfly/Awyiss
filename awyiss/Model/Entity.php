@@ -19,6 +19,7 @@ use Cake\ORM\Entity as BaseEntity;
  * @property string $label
  * @property \Cake\Datasource\EntityInterface|null $attributes
  * @property array|null $mediaAssignments
+ * @property array|null $mediaElementAssignments
  * @property \Cake\I18n\DateTime|null $publicationStart
  * @property \Cake\I18n\DateTime|null $publicationEnd
  */

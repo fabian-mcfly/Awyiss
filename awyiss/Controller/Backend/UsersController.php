@@ -129,7 +129,9 @@ class UsersController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var User $lo_user
+		 * @var \Awyiss\Model\Entity\User $lo_user
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_user = $this->Users->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['Usergroups'])->first();

@@ -98,6 +98,8 @@ class WidgetTemplatesController extends Controller {
 
 		/**
 		 * @var \Awyiss\Model\Entity\WidgetTemplate $lo_widgetTemplate
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_widgetTemplate = $this->WidgetTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')

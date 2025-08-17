@@ -157,7 +157,9 @@ class WidgetsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var Widget $lo_widget
+		 * @var \Awyiss\Model\Entity\Widget $lo_widget
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_widget = $this->Widgets->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

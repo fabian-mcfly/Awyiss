@@ -207,7 +207,9 @@ class ContentsController extends Controller {
 	 */
 	public function edit(int $id) {
 		/**
-		 * @var Content $lo_content
+		 * @var \Awyiss\Model\Entity\Content $lo_content
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_content = $this->Contents->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

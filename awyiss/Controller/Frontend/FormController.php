@@ -94,7 +94,10 @@ class FormController extends AppController {
 			throw new NotFoundException('Form entry not found');
 		}
 
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		/**
+		 * @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted()
+		 * @var \Awyiss\Model\Entity\Page $lo_page
+		 */
 		$lo_page = $this->getTableLocator()->get('Pages')->find('withDeleted', ['skipPageRoleCheck' => true])
 		->where(['id' => $lo_formEntry->pageId])->first();
 

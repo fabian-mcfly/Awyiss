@@ -55,6 +55,7 @@ class UsergroupsListener implements EventListenerInterface {
 
 		$lo_entity = $entity;
 		$lo_query = $lo_usersTable->find()->matching('Usergroups', function (SelectQuery $query) use ($lo_entity) {
+			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
 			return $query->find('withDeleted')->where(['Usergroups.id' => $lo_entity->id]);
 		});
 

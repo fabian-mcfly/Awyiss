@@ -107,7 +107,12 @@ class UsergroupsController extends Controller {
 		if ($lb_usersScopeIsAccessible) {
 			$la_contain[] = 'Users';
 		}
-		/** @uses \Awyiss\Model\Table::findTranslations() */
+		/**
+		 * @var \Awyiss\Model\Entity\Usergroup $lo_usergroup
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
 		$lo_usergroup = $this->Usergroups->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain($la_contain)->first();
 		if (!$lo_usergroup) {
 			$this->Flash->error(__('record_not_found'));

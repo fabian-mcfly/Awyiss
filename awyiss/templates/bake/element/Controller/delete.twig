@@ -1,13 +1,3 @@
-{#
-/**
- * Copyright (c) Awyiss
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- */
-#}
 
 	/**
 	 * Delete method
@@ -21,7 +11,7 @@
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var {{ entityClassName }} $lo_{{ singularName }} */
+		/** @var \{{ namespace }}\Model\Entity\{{ entityClassName }} $lo_{{ singularName }} */
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById($id)->first();
 		if (!$lo_{{ singularName }}) {
 			$this->Flash->error(__('record_not_found'));

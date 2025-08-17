@@ -98,7 +98,9 @@ class ContentTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var ContentTemplate $lo_contentTemplate
+		 * @var \Awyiss\Model\Entity\ContentTemplate $lo_contentTemplate
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain([

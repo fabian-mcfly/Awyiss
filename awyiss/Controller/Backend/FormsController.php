@@ -94,7 +94,9 @@ class FormsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var Form $lo_form
+		 * @var \Awyiss\Model\Entity\Form $lo_form
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_form = $this->Forms->findById($id)

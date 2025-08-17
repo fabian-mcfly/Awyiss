@@ -110,6 +110,8 @@ class UrlHistoryController extends Controller {
 
 		/**
 		 * @var \Awyiss\Model\Entity\UrlHistory $lo_urlHistory
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_urlHistory = $this->UrlHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
@@ -247,6 +249,7 @@ class UrlHistoryController extends Controller {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
 		$lo_pagesTable = $this->fetchTable('Pages');
 
+		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findDeleted() */
 		$lo_query = $lo_pagesTable->find('deleted', skipPageRoleCheck: true);
 
 		$lo_pages = $lo_query->where(function (QueryExpression $exp) use ($lo_historyPageIdQuery, $lo_pagesSlugQuery, $lo_query) {

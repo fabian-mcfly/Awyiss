@@ -166,6 +166,8 @@ class FormElementsController extends Controller {
 
 		/**
 		 * @var \Awyiss\Model\Entity\FormElement $lo_formElement
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_formElement = $this->FormElements->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

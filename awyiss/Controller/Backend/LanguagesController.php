@@ -93,7 +93,9 @@ class LanguagesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var Language $lo_language
+		 * @var \Awyiss\Model\Entity\Language $lo_language
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_language = $this->Languages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

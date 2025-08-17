@@ -96,7 +96,9 @@ class PageRolesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var PageRole $lo_pageRole
+		 * @var \Awyiss\Model\Entity\PageRole $lo_pageRole
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_pageRole = $this->PageRoles->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

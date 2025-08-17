@@ -177,7 +177,9 @@ class ConfigurationController extends Controller {
 		])->ensure('update');
 
 		/**
-		 * @var Configuration $lo_configuration
+		 * @var \Awyiss\Model\Entity\Configuration $lo_configuration
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_configuration = $this->Configuration->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

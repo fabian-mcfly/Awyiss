@@ -142,7 +142,9 @@ class BackendMenuEntriesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var BackendMenuEntry $lo_menuEntry
+		 * @var \Awyiss\Model\Entity\BackendMenuEntry $lo_menuEntry
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_menuEntry = $this->BackendMenuEntries->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

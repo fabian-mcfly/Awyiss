@@ -127,7 +127,9 @@ class AttributesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var Attribute $lo_attribute
+		 * @var \Awyiss\Model\Entity\Attribute $lo_attribute
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
 		$lo_attribute = $this->Attributes->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();

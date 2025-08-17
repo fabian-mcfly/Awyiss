@@ -38,6 +38,9 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	use LocatorAwareTrait;
 
 
+	/**
+	 * @var array<\Awyiss\Model\Entity\MediaElement>
+	 */
 	protected static array $mediaElements;
 
 
@@ -117,7 +120,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'foreign_key',
-			'propertyName' => 'media_assignments',
+			'propertyName' => 'mediaAssignments',
 			'saveStrategy' => 'replace',
 			'strategy' => $this->getConfig('strategy'),
 		]);
@@ -129,19 +132,18 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	/**
 	 * Find media assignments when querying a table.
 	 * This finder will automatically fetch the media assignments for the entity.
+	 *
 	 * If `includeElementSelector` is set to true, the media selectors will be included as well.
+	 *
 	 * If `useMediaEntity` is set to true, the media entity will be used instead of
 	 * the media assignment entity as the value of the media assignment identifier
 	 * The regular media assignment entity will still be available
 	 * in an underscored version of the media element identifier.
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param bool $includeElementSelector
-	 * Whether to include the media selectors in the result
-	 * @param bool $useMediaEntity
-	 * Whether to use the media entity instead of the media assignment entity as the value of the media assignment identifier
-	 * @param bool $formatResult
-	 * Whether to format the result so that the media assignments are nested under the media element identifier
+	 * @param bool $includeElementSelector Whether to include the media selectors in the result
+	 * @param bool $useMediaEntity Whether to use the media entity instead of the media assignment entity as the value of the media assignment identifier
+	 * @param bool $formatResult Whether to format the result so that the media assignments are nested under the media element identifier
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function findMediaAssignments(SelectQuery $query, bool $includeElementSelector = false, bool $useMediaEntity = false, bool $formatResult = true): SelectQuery {
@@ -326,11 +328,11 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 							$la_mediaIds = $la_elementData;
 						}
 						elseif (isset($la_elementData['media_id'])) {
-							$la_mediaIds = [$la_elementData['media_id']];
+							$la_mediaIds = (array)$la_elementData['media_id'];
 						}
 						elseif (!empty($la_elementData['media_folder_id'])) {
 							$lb_isFolder = true;
-							$la_mediaIds = [$la_elementData['media_folder_id']];
+							$la_mediaIds = (array)$la_elementData['media_folder_id'];
 						}
 						else {
 							continue;
@@ -394,15 +396,16 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			],
 		])->all()->indexBy('id');
 
-		static::$mediaElements = $lo_elements->each(function (MediaElement $element): void {
-			$lo_selectors = collection($element->mediaElementSelectors);
+		static::$mediaElements = $lo_elements->each(function (MediaElement $entity): void {
+			$lo_selectors = collection($entity->mediaElementSelectors);
 			$lo_selectors = $lo_selectors->indexBy(function (MediaElementSelector $selector): string {
 				return $selector->identifier;
 			})->map(function (MediaElementSelector $selector): MediaSelector {
 				return $selector->mediaSelector;
 			});
 
-			$element->mediaSelectors = $lo_selectors->toArray();
+			/** @noinspection PhpUndefinedFieldInspection */
+			$entity->mediaSelectors = $lo_selectors->toArray();
 		})->toArray();
 	}
 
@@ -446,7 +449,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		$la_mediaAssignments = $entity->get('mediaAssignments') ?? [];
 		foreach ($la_mediaAssignments as $lx_key => $lo_mediaAssignment) {
 			if (!is_numeric($lx_key) || !$lo_mediaAssignment instanceof MediaAssignment) {
-				unset($la_mediaAssignments[$lx_key]);
+				unset($la_mediaAssignments[ $lx_key ]);
 			}
 		}
 
@@ -535,10 +538,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		$lo_mediaFoldersTable->dispatchEvent('Model.MediaFolders.afterSaveCommit', ['entity' => $lo_folder, 'options' => $options]);
 
 		$lo_assignment = $lo_mediaAssignmentsTable->newDefaultEntity([
-			'media_element_id' => 1,
-			'media_element_selector_identifier' => 'hidden_folder',
-			'media_folder_id' => $lo_folder->id,
-			'foreign_key' => $entity->id,
+			'mediaElementId' => 1,
+			'mediaElementSelectorIdentifier' => 'hidden_folder',
+			'mediaFolderId' => $lo_folder->id,
+			'foreignKey' => $entity->id,
 			'scope' => $this->getConfig('referenceName'),
 		]);
 
