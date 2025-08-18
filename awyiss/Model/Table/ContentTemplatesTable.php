@@ -76,10 +76,13 @@ class ContentTemplatesTable extends Table {
 		'publication',
 	];
 	/**
-	 * @var array<int, array{title: string, label: string, identifier: string, active: bool, type: string,
-	 *     inputType:string}>
+	 * @var array<string, array<int, array{title: string, label: string, identifier: string, active: bool, type: string,
+	 *     inputType:string}>>
 	 */
-	protected array $availableContentAttributes;
+	protected array $availableContentAttributes = [
+		'withInactive' => null,
+		'active' => null,
+	];
 	/**
 	 * @inheritDoc
 	 */
@@ -127,22 +130,6 @@ class ContentTemplatesTable extends Table {
 				],
 			]);
 		})->groupBy('ContentTemplates.id');
-	}
-
-
-	/**
-	 * @return array<string>
-	 */
-	public function getAvailableContentElements(): array {
-		return $this->availableContentElements;
-	}
-
-
-	/**
-	 * @return array<string>
-	 */
-	public function getAvailableFieldsets(): array {
-		return $this->availableFieldsets;
 	}
 
 
@@ -209,8 +196,19 @@ class ContentTemplatesTable extends Table {
 	}
 
 
+	/**
+	 * @return array<string>
+	 */
+	public function getAvailableContentElements(): array {
+		return $this->availableContentElements;
+	}
 
-		return $this->availableContentAttributes;
+
+	/**
+	 * @return array<string>
+	 */
+	public function getAvailableFieldsets(): array {
+		return $this->availableFieldsets;
 	}
 
 
