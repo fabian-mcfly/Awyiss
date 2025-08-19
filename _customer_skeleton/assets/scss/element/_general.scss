@@ -234,7 +234,7 @@ h4, p.Textsize-LikeH4 {
 	line-height:1.2;
 }
 
-.FontAlternative {
+:where(.FontAlternative) {
 	@extend %FontAlternative;
 }
 
