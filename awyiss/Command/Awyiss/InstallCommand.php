@@ -129,6 +129,10 @@ class InstallCommand extends Command {
 		// Remove all .gitkeep files from the customer's folder
 		$this->removeGitkeepFiles();
 
+		if (!is_dir(TMP . 'sessions')) {
+			$this->filesystem->mkdir(TMP . 'sessions', 0750);
+		}
+
 		if (!$this->dryRun) {
 			// Remove the dummy folder
 			$this->filesystem->remove(ROOT . DS . '_customer_skeleton');
@@ -167,13 +171,9 @@ class InstallCommand extends Command {
 	/**
 	 * Check if the dummy folder exists
 	 *
-	 * @return bool
+	 * @return void
 	 */
 	protected function checkDummyFolder(): void {
-		if ($this->dryRun) {
-			return;
-		}
-
 		if (!$this->filesystem->exists(ROOT . DS . '_customer_skeleton')) {
 			$this->io->abort('Skeleton folder does not exist. Installation aborted.');
 		}
