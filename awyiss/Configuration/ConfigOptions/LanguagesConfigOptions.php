@@ -51,7 +51,7 @@ class LanguagesConfigOptions extends AbstractConfigOptions {
 			],
 			'paginate' => [
 				new ConfigOption(
-					defaultValue: true,
+					defaultValue: false,
 					identifier: 'enabled',
 					localizable: false,
 					nullable: false,
