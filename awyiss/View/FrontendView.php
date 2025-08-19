@@ -121,14 +121,24 @@ class FrontendView extends AppView {
 			}
 		}
 
+		$ls_folder = '/' . (ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
+		if (!str_ends_with($ls_folder, '/')) {
+			$ls_folder .= '/';
+		}
+
+		$lo_uri = $this->getRequest()->getUri();
+		if ($ls_folder !== '/' && !str_starts_with($lo_uri->getPath(), $ls_folder)) {
+			$lo_uri = $lo_uri->withPath($ls_folder . ltrim($lo_uri->getPath(), '/'));
+		}
+
 		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
 		$lo_twig->addGlobal('config', Configure::read());
 		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
-		$lo_twig->addGlobal('currentUrl', $this->getRequest()->getUri()->__toString());
+		$lo_twig->addGlobal('currentUrl', $lo_uri->__toString());
 		$lo_twig->addGlobal('designSettings', $this->getDesignVariables(true));
-		$lo_twig->addGlobal('environment', Configure::read('debug') ? 'Env-' . Inflector::ucparts(CONFIG_ENV) : 'l');
-		$lo_twig->addGlobal('folder', '/' . ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
+		$lo_twig->addGlobal('environment', Configure::read('debug') ? 'Env-' . Inflector::ucparts(CONFIG_ENV) : null);
+		$lo_twig->addGlobal('folder', $ls_folder);
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
 		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
 		$lo_twig->addGlobal('previewMode', $this->getRequest()->getSession()->read('previewMode', []));
@@ -577,7 +587,7 @@ class FrontendView extends AppView {
 		$ls_logoPath = $this->getLoginLogoPath();
 		if ($ls_logoPath) {
 			// If the logo path is found, set the Open Graph image URL
-			$this->set('ogImage', Router::url('/', true) . $ls_logoPath);
+			$this->set('ogImage', Router::url($ls_logoPath, true));
 		}
 	}
 

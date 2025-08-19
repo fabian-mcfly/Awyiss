@@ -129,6 +129,11 @@ class MenuItemLink {
 
 		$ls_url = $this->url;
 		if (!str_contains($this->url, '//')) {
+			// If the URL is relative but does not start with a slash, add one.
+			if (!str_starts_with($ls_url, '/') && !empty(Router::getRequest()->getAttribute('base'))) {
+				$ls_url = '/' . $ls_url;
+			}
+
 			$ls_url = Router::url($ls_url);
 
 			// Always ensure the URL ends with a slash if it doesn't contain a query string

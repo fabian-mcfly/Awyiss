@@ -259,7 +259,7 @@ class AppView extends TwigView {
 		foreach ($ls_extensions as $ls_extension) {
 			$ls_tempPath = $ls_basePath . $ls_extension;
 			if (file_exists($ls_tempPath)) {
-				return substr_replace($ls_tempPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1);
+				return substr_replace($ls_tempPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR));
 			}
 		}
 

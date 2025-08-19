@@ -968,7 +968,7 @@ export default class Overlay {
 			let element = document.querySelector(`a[href="${url}"]`);
 
 			if (!element && url.startsWith(baseUrl)) {
-				url = url.substring(baseUrl.length - 1);
+				url = url.substring(baseUrl.length - folder.length);
 				element = document.querySelector(`a[href="${url}"]`);
 			}
 

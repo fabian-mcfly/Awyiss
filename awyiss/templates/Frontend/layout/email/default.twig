@@ -31,7 +31,7 @@
 			<div class="Wrapper">
 				{% block bodyLogo %}
 					{% if loginLogoPath or ogImage %}
-						<img src="{{ baseUrl }}{{ loginLogoPath ?: ogImage }}" alt="{{ config.Awyiss.System.Frontend.meta.titleAppendix }}" class="Logo">
+						<img src="{{ baseUrl }}{{ (loginLogoPath ?: ogImage)|trim('/') }}" alt="{{ config.Awyiss.System.Frontend.meta.titleAppendix }}" class="Logo">
 					{% endif %}
 				{% endblock %}
 

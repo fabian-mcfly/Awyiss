@@ -150,6 +150,7 @@ abstract class BackendController extends AppController {
 					Router::url(
 						[
 							'_name' => $la_parts['_name'],
+							'_base' => false,
 							'?' => $lo_request->getParam('?'),
 						] + $lo_request->getParam('parts') + ['lang' => $ls_lang]
 					),
@@ -510,7 +511,7 @@ abstract class BackendController extends AppController {
 				$ls_referer = preg_replace('/([^:])\/\//', '$1/', $ls_referer);
 			}
 
-			throw new RedirectException($ls_referer, 302);
+			throw new RedirectException(Router::url($ls_referer), 302);
 		}
 	}
 

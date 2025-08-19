@@ -108,10 +108,20 @@ class BackendView extends AppView {
 
 		$this->addUserLanguage($lo_twig);
 
+		$ls_folder = '/' . (ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
+		if (!str_ends_with($ls_folder, '/')) {
+			$ls_folder .= '/';
+		}
+
+		$lo_uri = $this->getRequest()->getUri();
+		if ($ls_folder !== '/' && !str_starts_with($lo_uri->getPath(), $ls_folder)) {
+			$lo_uri = $lo_uri->withPath($ls_folder . ltrim($lo_uri->getPath(), '/'));
+		}
+
 		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
-		$lo_twig->addGlobal('currentUrl', $this->getRequest()->getUri()->__toString());
-		$lo_twig->addGlobal('folder', '/' . ltrim($this->getRequest()->getAttribute('base'), '/'));
+		$lo_twig->addGlobal('currentUrl', $lo_uri->__toString());
+		$lo_twig->addGlobal('folder', $ls_folder);
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
 	}
 
