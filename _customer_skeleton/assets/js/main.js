@@ -52,21 +52,6 @@ if (header) {
 
 
 /**
- * Focus the custom input field when the custom answer is clicked
- * @type {NodeListOf<Element>} surveyCustomInputs
- */
-const surveyCustomInputs = document.querySelectorAll('.SurveyAnswer-Custom');
-surveyCustomInputs.forEach((element) => {
-	element.addEventListener('click', event => {
-		const answer = event.target.closest('.SurveyAnswer');
-		if (answer.querySelector('input').checked) {
-			answer.querySelector('.SurveyAnswer-CustomInput').focus();
-		}
-	});
-});
-
-
-/**
  * Set up the lightbox
  */
 window.lightbox = new Lightbox({
