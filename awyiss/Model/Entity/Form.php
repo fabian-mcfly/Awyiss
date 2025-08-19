@@ -148,7 +148,7 @@ class Form extends Entity {
 	/**
 	 * @var \Awyiss\Model\Entity\Page|null
 	 */
-	protected ?Page $sourcePage;
+	protected ?Page $sourcePage = null;
 	/**
 	 * @var \Cake\View\View
 	 */
@@ -385,8 +385,8 @@ class Form extends Entity {
 
 		$la_formElements = $this->formElements ?? [];
 		if (!is_array($la_formElements)) {
-			$lo_formElements = $la_formElements->filter(fn (FormElement $element) => $element->identifier !== null);
-			$la_formElements = $lo_formElements->listNested()->indexBy('identifier')->toArray();
+			$lo_formElements = $la_formElements->listNested()->filter(fn (FormElement $element) => $element->identifier !== null);
+			$la_formElements = $lo_formElements->indexBy('identifier')->toArray();
 		}
 
 		$this->protectionMethods = [];
