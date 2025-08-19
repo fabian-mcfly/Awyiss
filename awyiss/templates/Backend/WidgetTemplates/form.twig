@@ -248,10 +248,8 @@
 
 										<ul class="List WidgetElements-List SortableList" data-fieldset="{{ key }}">
 											{% if fieldsetElements[key] is defined %}
-												{% for identifier, assignedWidgetElement in assignedWidgetElements %}
-													{% if fieldsetElements[ key ][ identifier ] is defined %}
-														{{ fieldsetElements[ key ][ identifier ]|raw }}
-													{% endif %}
+												{% for identifier, widgetElement in fieldsetElements[key] %}
+													{{ widgetElement|raw }}
 												{% endfor %}
 											{% endif %}
 										</ul>
