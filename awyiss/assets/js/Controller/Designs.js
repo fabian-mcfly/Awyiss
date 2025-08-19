@@ -256,11 +256,16 @@ export default class DesignsController {
 	 * @returns {number}
 	 */
 	normalizeRangeValue = (rangeInput, value) => {
+		const initialValue = value;
 		// Check if the value is in the range of the range input
 		const min = parseFloat(rangeInput.min);
 		const max = parseFloat(rangeInput.max);
 
 		value = Math.max(min, Math.min(max, value));
+
+		if (value === 0 && initialValue === '') {
+			return '';
+		}
 
 		// Round the value, according to the range input's step
 		const step = parseFloat(rangeInput.step);
