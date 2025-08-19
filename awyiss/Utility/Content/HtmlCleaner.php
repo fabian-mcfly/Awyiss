@@ -521,8 +521,8 @@ class HtmlCleaner {
 				break;
 			}
 
-			// If the first child has an img tag inside
-			if (in_array($lo_body->firstChild->firstChild?->nodeName, ['awyiss-responsive-image', 'img', 'module'])) {
+			// If the first child has a link or an img tag inside
+			if (in_array($lo_body->firstChild->firstChild?->nodeName, ['a', 'awyiss-responsive-image', 'img', 'module'])) {
 				break;
 			}
 
@@ -539,8 +539,8 @@ class HtmlCleaner {
 				break;
 			}
 
-			// If the last child has an img tag inside
-			if (in_array($lo_body->lastChild->lastChild?->nodeName, ['awyiss-responsive-image', 'img', 'module'])) {
+			// If the last child has a link or an img tag inside
+			if (in_array($lo_body->lastChild->lastChild?->nodeName, ['a', 'awyiss-responsive-image', 'img', 'module'])) {
 				break;
 			}
 
