@@ -71,6 +71,7 @@
 
 		code {
 			margin-block:calc(var(--lineHeightMain) * .5) 0;
+			user-select:all;
 		}
 
 		pre {
