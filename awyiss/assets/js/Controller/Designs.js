@@ -101,7 +101,7 @@ export default class DesignsController {
 				const property = `fontStack${fontCategory}`;
 
 				let fallbackKey = key.replace('font_name_', 'font_stack_fallback_');
-				if (formData.has(fallbackKey)) {
+				if (formData.has(fallbackKey) && formData.get(fallbackKey)) {
 					value += `, ${formData.get(fallbackKey)}`;
 				}
 
