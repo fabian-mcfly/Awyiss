@@ -87,6 +87,8 @@ if (defined('CUSTOM_DIR')) {
 		array_walk($la_parts, function (&$part) {
 			/** @noinspection PhpVariableNamingConventionInspection */
 			$part = Inflector::camelize($part, '-');
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$part = Inflector::camelize($part);
 		});
 		define('CUSTOM_NAMESPACE', implode('/', $la_parts));
 	}
@@ -194,7 +196,7 @@ TransportFactory::setConfig(Configure::consume('EmailTransport'));
 ini_set('intl.default_locale', 'de_DE');
 I18n::setLocale('de_DE');
 
-I18n::config('_fallback', function ($domain, $locale) {
+I18n::config('_fallback', function (string $domain, string $locale): Package {
 	$ls_domain = $domain;
 	if (!str_contains($ls_domain, '/')) {
 		$ls_domain = Awyiss::getRealm() . '/' . $ls_domain;

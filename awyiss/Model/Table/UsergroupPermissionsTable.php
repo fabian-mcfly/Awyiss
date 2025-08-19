@@ -84,10 +84,16 @@ class UsergroupPermissionsTable extends Table {
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
-
 		$validator->add('access', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 1]],
+			'inList' => ['rule' => [
+				'inList',
+				[
+					PermissionAccess::Granted->value,
+					PermissionAccess::Denied->value,
+				],
+			]],
 		]);
 
 
@@ -95,7 +101,7 @@ class UsergroupPermissionsTable extends Table {
 		$validator->add('settings', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function ($value) {
+				'rule' => function (array|string $value): bool {
 					return strlen(json_encode($value)) <= 65535;
 				},
 			],
@@ -109,8 +115,8 @@ class UsergroupPermissionsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(

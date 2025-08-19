@@ -107,7 +107,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		}
 
 		$la_authenticators = static::$authenticators;
-		usort($la_authenticators, function ($a, $b) {
+		usort($la_authenticators, function (array $a, array $b): int {
 			return $a['priority'] <=> $b['priority'];
 		});
 
@@ -145,15 +145,13 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 */
 	protected function addDefaultAuthenticators(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
 		$this->addAuthenticator(SessionAuthenticator::class, [
-			'identify' => function ($lx_user) {
-				if ($lx_user instanceof User) {
-					//Set last_login
-					$lo_checkTime = DateTime::now()->subMinutes(1);
-					if ($lo_checkTime >= $lx_user->lastLogin) {
-						$lx_user->set('lastLogin', DateTime::now());
+			'identify' => function (User $user): bool {
+				//Set last_login
+				$lo_checkTime = DateTime::now()->subMinutes(1);
+				if ($lo_checkTime >= $user->lastLogin) {
+					$user->set('lastLogin', DateTime::now());
 
-						return true;
-					}
+					return true;
 				}
 
 				return false;
@@ -184,7 +182,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		}
 
 		$la_identifiers = static::$identifiers;
-		usort($la_identifiers, function ($a, $b) {
+		usort($la_identifiers, function (array $a, array $b): int {
 			return $a['priority'] <=> $b['priority'];
 		});
 

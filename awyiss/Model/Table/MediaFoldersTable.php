@@ -47,7 +47,7 @@ class MediaFoldersTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $search = [
-		'blocklistedColumns' => ['language_shortcode'],
+		'blocklistedColumns' => ['language_shortcode', 'hidden'],
 	];
 	/**
 	 * @inheritDoc
@@ -119,7 +119,7 @@ class MediaFoldersTable extends Table {
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
-				'rule' => function ($shortcode) {
+				'rule' => function (string $shortcode): bool {
 					return strlen($shortcode) == 2;
 				},
 			],
@@ -177,8 +177,8 @@ class MediaFoldersTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(

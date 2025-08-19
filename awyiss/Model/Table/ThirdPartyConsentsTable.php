@@ -54,7 +54,7 @@ class ThirdPartyConsentsTable extends Table {
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 36),
-				'rule' => function ($consentId) {
+				'rule' => function (string $consentId): bool {
 					return strlen($consentId) == 36;
 				},
 			],
