@@ -257,9 +257,6 @@ msgstr "Leave"
 msgid "form_leave_confirmation_dialog_confirm_stay"
 msgstr "Cancel"
 
-msgid "cant_modify_deleted"
-msgstr "Can't modify deleted item"
-
 msgid "sort_asc"
 msgstr "Ascending"
 

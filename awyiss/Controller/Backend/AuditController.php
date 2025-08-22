@@ -219,7 +219,10 @@ class AuditController extends Controller {
 			throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'index']));
 		}
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		/**
+		 * @uses \Awyiss\Model\Behavior\AuditBehavior::findWithAuditUsers()
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
 		$lo_record = $this->fetchTable(Inflector::camelize($ls_scope))->findById($li_id)->find('withAuditUsers')->first($li_id);
 		if (!$lo_record) {
 			throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'index']));

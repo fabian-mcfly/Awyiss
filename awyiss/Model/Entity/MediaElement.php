@@ -16,6 +16,7 @@ use Cake\Utility\Text;
  * @property string|null $title
  * @property string|null $identifier
  * @property string $columnSpan
+ * @property bool $internal
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -54,6 +55,7 @@ class MediaElement extends Entity {
 		'title' => true,
 		'identifier' => true,
 		'columnSpan' => true,
+		'internal' => true,
 		'systemOrder' => true,
 		'active' => true,
 		'mediaElementAssignments' => true,

@@ -204,8 +204,8 @@ class FormRenderer {
 		// If there's at least one input of input-type `file`, set the form enctype to multipart/form-data
 		$this->form->set(
 			'enctype',
-			array_reduce($la_formElements, function ($carry, FormElement $element) {
-				return $carry || $element->type === 'file';
+			array_reduce($la_formElements, function (bool $multipart, FormElement $element) {
+				return $multipart || $element->type === 'file';
 			}, false) ? 'multipart/form-data' : null
 		);
 

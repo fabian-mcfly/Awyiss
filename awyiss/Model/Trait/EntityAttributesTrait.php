@@ -5,7 +5,6 @@ namespace Awyiss\Model\Trait;
 
 
 use Awyiss\Model\Entity;
-use Awyiss\ORM\Association\HasOne;
 use Cake\Datasource\EntityInterface;
 use InvalidArgumentException;
 

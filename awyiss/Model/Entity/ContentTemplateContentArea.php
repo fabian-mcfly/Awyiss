@@ -22,6 +22,19 @@ class ContentTemplateContentArea extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'content_template_id' => 'contentTemplateId',
+		'content_area_id' => 'contentAreaId',
+		'page_template_id' => 'pageTemplateId',
+		'content_template' => 'contentTemplate',
+		'content_area' => 'contentArea',
+		'page_template' => 'pageTemplate',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'contentTemplateId' => true,
 		'contentAreaId' => true,
@@ -31,15 +44,4 @@ class ContentTemplateContentArea extends Entity {
 	 * @var array|array<string>
 	 */
 	protected array $_virtual = [];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'content_template_id' => 'contentTemplateId',
-		'content_area_id' => 'contentAreaId',
-		'page_template_id' => 'pageTemplateId',
-		'content_template' => 'contentTemplate',
-		'content_area' => 'contentArea',
-		'page_template' => 'pageTemplate',
-	];
 }

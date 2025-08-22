@@ -11,7 +11,7 @@ use Cake\ORM\Query\SelectQuery;
 
 
 /**
- * FormEntrie Controller
+ * FormEntries Controller
  *
  * @property \Awyiss\Model\Table\FormEntriesTable $FormEntries
  */

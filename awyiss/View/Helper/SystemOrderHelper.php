@@ -192,7 +192,7 @@ class SystemOrderHelper extends Helper {
 				 *
 				 * If we select the second option, it's value needs to be '3' because it's labeled "AFTER #2".
 				 *
-				 * If we reached the option #4 in the loop, it's no longer neccesary to increase the value.
+				 * If we reached the option #4 in the loop, it's no longer necessary to increase the value.
 				 * Selecting the sixth option, it's value needs to be '6', since the options #5 and #6 move one forward.
 				 * This means option #6 is the now at system order #5.
 				 * And since the value says 6, it's the correct value

@@ -28,24 +28,28 @@ class UrlsNotFoundTable extends Table {
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
 
-		$validator
-			->scalar('url')
-			->maxLength('url', 2048)
-			->requirePresence('url', 'create')
-			->notEmptyString('url');
+		$validator->requirePresence([
+			'url',
+		], 'create');
 
-		$validator
-			->scalar('referrer')
-			->maxLength('referrer', 2048)
-			->allowEmptyString('referrer');
+		$validator->notEmptyString('url');
+		$validator->add('url', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 2048]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
 
-		$validator
-			->boolean('isRobot')
-			->allowEmptyString('isRobot');
+		$validator->allowEmptyString('referrer');
+		$validator->add('referrer', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 2048]],
+		]);
 
-		$validator
-			->dateTime('createdOn')
-			->allowEmptyDateTime('createdOn');
+		$validator->add('isRobot', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
 
 		return $validator;
 	}

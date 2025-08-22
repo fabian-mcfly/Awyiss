@@ -32,7 +32,10 @@ class Design extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'in_use' => 'inUse',
+		'is_preview' => 'isPreview',
 	];
+
+
 	/**
 	 * @inheritDoc
 	 */

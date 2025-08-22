@@ -168,8 +168,12 @@ class SystemOrderComponent extends Component {
 			return null;
 		}
 
-		$lo_systemOrderQuery = $lo_table->addSystemOrderQueryConditions(null, $entity);
-		$lo_systemOrderRecords = $lo_systemOrderQuery->all();
+		$lo_query = $lo_table->addSystemOrderQueryConditions($lo_table->find(), $entity);
+		if ($lo_table->hasBehavior('MediaAssignment')) {
+			$lo_query->find('mediaAssignments', useMediaEntity: true);
+		}
+
+		$lo_systemOrderRecords = $lo_query->all();
 
 		$this->setConfig('records', $lo_systemOrderRecords);
 

@@ -145,41 +145,37 @@ class BackendMenuEntriesTable extends Table {
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$lo_rules = $rules;
-		$rules->add(function (BackendMenuEntry $entity, array $options) use ($lo_rules): bool {
-			static $lo_menu;
+		$rules->add(
+			function (BackendMenuEntry $entity, array $options) use ($lo_rules): bool {
+				static $lo_menu;
 
-			if (!$options['checkRules']) {
-				dd(__FILE__, __LINE__);
-			}
-
-			$lx_parentId = $entity->get('parentId');
-			if (!$lx_parentId) {
-				return true;
-			}
-
-			if (!is_numeric($lx_parentId)) {
-				if (!isset($lo_menu)) {
-					/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $ls_backendMenuProviderClass */
-					$ls_backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
-					$lo_menu = new $ls_backendMenuProviderClass();
+				$lx_parentId = $entity->get('parentId');
+				if (!$lx_parentId) {
+					return true;
 				}
 
-
-				return (bool)($lo_menu->getCustomMenu() ?? $lo_menu->getMenu())->getItem($lx_parentId);
-			}
-
-			$lo_existsIn = $lo_rules->existsIn(
-				'parentId',
-				'ParentBackendMenuEntries',
-				[
-					'errorField' => 'parentId',
-					'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_parent_id'),
-				]
-			);
+				if (!is_numeric($lx_parentId)) {
+					if (!isset($lo_menu)) {
+						/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $ls_backendMenuProviderClass */
+						$ls_backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
+						$lo_menu = new $ls_backendMenuProviderClass();
+					}
 
 
-			return $lo_existsIn($entity, $options);
-		}, 'validParentId');
+					return (bool)($lo_menu->getCustomMenu() ?? $lo_menu->getMenu())->getItem($lx_parentId);
+				}
+
+				$lo_existsIn = $lo_rules->existsIn('parentId', 'ParentBackendMenuEntries');
+
+
+				return $lo_existsIn($entity, $options);
+			},
+			'validParentId',
+			[
+				'errorField' => 'parentId',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_parent_id'),
+			]
+		);
 
 
 		return $rules;

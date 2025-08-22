@@ -35,7 +35,6 @@ class SoftDeleteBehavior extends Behavior {
 			'buildRules',
 			'beforeFind',
 			'beforeDelete',
-			'afterDeleteCommit',
 		],
 		'implementedFinders' => [
 			'deleted' => 'findDeleted',
@@ -66,7 +65,7 @@ class SoftDeleteBehavior extends Behavior {
 
 
 	/**
-	 * A finder that allows retreiving deleted entities
+	 * A finder that allows retrieving deleted entities
 	 *
 	 * @param SelectQuery $query
 	 * @param array $options
@@ -91,7 +90,7 @@ class SoftDeleteBehavior extends Behavior {
 
 
 	/**
-	 * A finder that allows retreiving regular and deleted entities in the same query
+	 * A finder that allows retrieving regular and deleted entities in the same query
 	 *
 	 * @param SelectQuery $query
 	 * @param array $options
@@ -129,10 +128,18 @@ class SoftDeleteBehavior extends Behavior {
 		}
 
 		$rules->addUpdate(function (EntityInterface $entity, array $options): ?bool {
-			return !$entity->hasOriginal('deleted') || !$entity->getOriginal('deleted');
-		}, 'softDelete', [
+			// If the entity is deleted, we don't allow updating it.
+			if (
+				($entity->has('deleted') && $entity->get('deleted')) ||
+				($entity->hasOriginal('deleted') && $entity->getOriginal('deleted') === true)
+			) {
+				return false;
+			}
+
+			return true;
+		}, 'deletedNotModified', [
 			'errorField' => '_general',
-			'message' => __d('system', 'cant_modify_deleted'),
+			'message' => __df($this->table()->getI18nDomain(), 'validation', 'error_deleted_not_modified'),
 		]);
 	}
 
@@ -159,7 +166,7 @@ class SoftDeleteBehavior extends Behavior {
 		}
 
 		$query->where([
-			$this->table()->getAlias() . '.deleted' => false,
+			$this->table()->aliasField('deleted') => false,
 		]);
 	}
 
@@ -170,8 +177,7 @@ class SoftDeleteBehavior extends Behavior {
 	 * @param EventInterface $event
 	 * @param EntityInterface $entity
 	 * @param ArrayObject $options
-	 * @return null
-	 * @noinspection PhpUnused
+	 * @return void
 	 */
 	public function beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (!$this->getConfig('enabled')) {
@@ -184,46 +190,27 @@ class SoftDeleteBehavior extends Behavior {
 			return;
 		}
 
+		// At this point, rules have already been checked, so we can safely unset the checkRules option
+		// to not check `update`-rules in the process of saving.
 		$lo_options = $options;
 		if ($lo_options->offsetExists('checkRules')) {
 			$lo_options->offsetUnset('checkRules');
 		}
+
+		//Stop the beforeDelete event
+		$event->stopPropagation();
+		$event->setResult(true);
 
 		//Call softDelete. If it fails, throw an exception
 		if (!$this->softDelete($entity, $lo_options, $event)) {
 			throw new RuntimeException(sprintf('Could not soft-delete entity of type `%s`', $entity::class));
 		}
 
-		//Stop the beforeDelete event
-		$event->stopPropagation();
-		$event->setResult(true);
-	}
-
-
-	/**
-	 * @param EventInterface $event
-	 * @param EntityInterface $entity
-	 * @param ArrayObject $options
-	 * @return void
-	 * @noinspection PhpUnused
-	 */
-	public function afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		if (!$this->getConfig('enabled')) {
-			return;
-		}
-
-		$lo_options = new ArrayObject(Hash::merge($this->getConfig(), Hash::get($options, 'softDelete')));
-
-		$lo_event = $this->table()->dispatchEvent('Model.afterSoftDeleteCommit', [
+		// Dispatch the afterSoftDeleteCommit event
+		$this->table()->dispatchEvent('Model.afterSoftDeleteCommit', [
 			'entity' => $entity,
 			'options' => $lo_options,
 		]);
-
-		//If the 'Model.afterSoftDeleteCommit' event was stopped, stop the afterDeleteCommit event as well
-		if ($lo_event->isStopped()) {
-			$event->stopPropagation();
-			$event->setResult($lo_event->getResult());
-		}
 	}
 
 
@@ -231,27 +218,21 @@ class SoftDeleteBehavior extends Behavior {
 	 * Set the `delete`-column to true and call `Model.beforeSoftDelete` and `Model.afterSoftDelete` events
 	 *
 	 * @param EntityInterface $entity
-	 * @param ArrayObject|array $options
+	 * @param \ArrayObject $options
 	 * @param EventInterface|null $event
 	 * @return bool
-	 * @noinspection PhpUnused
 	 */
 	public function softDelete(EntityInterface $entity, ArrayObject $options, ?EventInterface $event = null): bool {
 		$lo_table = $this->table();
 
-		$la_defaults = [
-			'_cleanOnSuccess' => false,
-			'checkRules' => false,
-			'systemOrder' => ['skip' => true],
-			'_primary' => true,
-		];
-		$lo_options = $options;
-
-		foreach ($la_defaults as $ls_key => $lx_value) {
-			if (!$lo_options->offsetExists($ls_key)) {
-				$lo_options->offsetSet($ls_key, $lx_value);
-			}
-		}
+		$lo_options = new ArrayObject(
+			$options->getArrayCopy() + [
+				'_cleanOnSuccess' => false,
+				'checkRules' => false,
+				'systemOrder' => ['skip' => true],
+				'_primary' => true,
+			]
+		);
 
 		/**
 		 * Set the `deleted`-column
@@ -274,7 +255,6 @@ class SoftDeleteBehavior extends Behavior {
 			$event->stopPropagation();
 			$event->setResult($lo_event->getResult());
 
-
 			return false;
 		}
 
@@ -288,10 +268,9 @@ class SoftDeleteBehavior extends Behavior {
 			}
 		}
 
-		//Traverse all associations and call a cascadeDelete for those, if they are recursable.
-		/** @var Association $lo_association */
+		// Traverse all associations and call a cascadeDelete for those, that are configured to cascade on delete.
 		foreach ($lo_table->associations() as $lo_association) {
-			if ($this->isRecursable($lo_association)) {
+			if ($this->shouldCascadeDelete($lo_association)) {
 				$lo_association->cascadeDelete($entity, ['_primary' => false] + $lo_options->getArrayCopy());
 			}
 		}
@@ -307,26 +286,23 @@ class SoftDeleteBehavior extends Behavior {
 			//Clean the entity because it's saved and therefore no longer dirty.
 			$entity->clean();
 
-
 			return true;
 		}
-
 
 		return false;
 	}
 
 
 	/**
-	 * @param Association $association
+	 * @param \Cake\ORM\Association $association
 	 * @return bool
 	 */
-	protected function isRecursable(Association $association): bool {
+	protected function shouldCascadeDelete(Association $association): bool {
 		$lo_table = $this->table();
 
 		if ($association->isOwningSide($lo_table) && $association->getDependent() && $association->getCascadeCallbacks()) {
 			return true;
 		}
-
 
 		return false;
 	}

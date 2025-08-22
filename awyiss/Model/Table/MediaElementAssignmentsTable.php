@@ -55,7 +55,6 @@ class MediaElementAssignmentsTable extends Table {
 		parent::validationDefault($validator);
 
 		$validator->requirePresence([
-			'mediaElementId',
 			'scope',
 		], 'create');
 

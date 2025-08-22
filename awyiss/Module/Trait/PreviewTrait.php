@@ -13,19 +13,23 @@ use Awyiss\Routing\Router;
  */
 trait PreviewTrait {
 	/**
+	 * @var bool|null
+	 */
+	protected static ?bool $isPreview = null;
+
+
+	/**
 	 * Check if the current request is in preview mode
 	 *
 	 * @return bool
 	 */
 	protected static function isPreview(): bool {
-		static $lb_isPreview = null;
-
-		if (isset($lb_isPreview)) {
-			return $lb_isPreview;
+		if (isset(static::$isPreview)) {
+			return static::$isPreview;
 		}
 
-		$lb_isPreview = !!(Router::getRequest()?->getSession()->read('previewMode.enabled', false));
+		static::$isPreview = !!(Router::getRequest()?->getSession()->read('previewMode.enabled', false));
 
-		return $lb_isPreview;
+		return static::$isPreview;
 	}
 }

@@ -37,6 +37,7 @@ use Cake\Validation\Validator as BaseValidator;
  * @method \Awyiss\Model\Entity\Widget getParent(\Cake\Datasource\EntityInterface $entity, array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class WidgetsTable extends Table {
 	use LogTrait;
@@ -298,13 +299,13 @@ class WidgetsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): BaseRulesChecker {
 		$rules->add(function (Widget $entity/*, array $options*/): bool {
 			/*
-			 * Retreive tthe widget template of the current entity
+			 * Retrieve the widget template of the current entity
 			 * This works as an existsIn-like rule
 			 */
 			try {
@@ -323,13 +324,15 @@ class WidgetsTable extends Table {
 				return false;
 			}
 
-			/** @var \Awyiss\Validation\Validator $lo_validator */
-			/** @noinspection DuplicatedCode */
+			/**
+			 * @var \Awyiss\Validation\Validator $lo_validator
+			 * @noinspection DuplicatedCode
+			 */
 			$lo_validator = new $this->_validatorClass();
 			$lo_validator->setI18nDomain($this->getI18nDomain());
 
 			$la_data = $entity->extract();
-			if (!empty($entity->attributes)) {
+			if ($this->hasAttributes() && !empty($entity->attributes)) {
 				/** @var \Awyiss\Validation\Validator $lo_attributesValidator */
 				$lo_attributesValidator = new $this->_validatorClass();
 				$lo_attributesValidator->setI18nDomain($this->getI18nDomain());
@@ -337,10 +340,7 @@ class WidgetsTable extends Table {
 				$la_data['attributes'] = $entity->attributes->extract();
 			}
 
-			$this->validateInputFields($entity, $lo_validator, $lo_attributesValidator ?? null, $lo_widgetTemplate);
-
-			//Validate the entity using the
-			$la_errors = $lo_validator->validate($la_data, $entity->isNew());
+			$la_errors = $this->validateInputFields($la_data, $entity, $lo_validator, $lo_attributesValidator ?? null, $lo_widgetTemplate);
 
 			$la_errors = $this->getEntityClass()::mapFields($la_errors, true);
 
@@ -386,11 +386,21 @@ class WidgetsTable extends Table {
 
 
 	/**
-	 * Groups the result of a query by their `identifier`-value and returns a new collection with all
-	 * widgets nested and an added `level`-property.
+	 * @inheritDoc
+	 */
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
+
+		$schema->setColumnType('data', 'json');
+	}
+
+
+	/**
+	 * Groups the result of a query by their `identifier`-value and returns a
+	 * new collection with all widgets nested and added `level`-property.
 	 *
-	 * @param SelectQuery $query
-	 * @return CollectionInterface
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @return \Cake\Collection\CollectionInterface
 	 */
 	public function nestedByIdentifier(SelectQuery $query): CollectionInterface {
 		return $query->find('threaded')->all()->groupBy('identifier')->map(function (array $widgets): CollectionInterface {
@@ -410,13 +420,14 @@ class WidgetsTable extends Table {
 
 
 	/**
+	 * @param array $data
 	 * @param \Awyiss\Model\Entity\Widget $entity
 	 * @param \Awyiss\Validation\Validator $validator
 	 * @param \Awyiss\Validation\Validator|null $attributesValidator
 	 * @param \Awyiss\Model\Entity\WidgetTemplate $widgetTemplate
-	 * @return void
+	 * @return array
 	 */
-	protected function validateInputFields(Widget $entity, Validator $validator, ?Validator $attributesValidator, WidgetTemplate $widgetTemplate): void {
+	protected function validateInputFields(array $data, Widget $entity, Validator $validator, ?Validator $attributesValidator, WidgetTemplate $widgetTemplate): array {
 		$la_widgetAttributes = $this->WidgetTemplates->getAvailableWidgetAttributes();
 
 		$this->validateAssignedElements($widgetTemplate, $entity, $validator, $la_widgetAttributes, $attributesValidator);
@@ -426,48 +437,74 @@ class WidgetsTable extends Table {
 		if (isset($attributesValidator)) {
 			$this->validateUnassignedAttributes($widgetTemplate, $entity, $la_widgetAttributes, $attributesValidator);
 
+			// If validateUnassignedAttributes() added any rules, add the attributes validator to the main validator
 			if ($attributesValidator->count()) {
 				$validator->addNested('attributes', $attributesValidator);
 			}
 		}
-	}
 
-
-	/**
-	 * @inheritDoc
-	 */
-	protected function initializeSchema(TableSchemaInterface $schema): void {
-		parent::initializeSchema($schema);
-
-		$schema->setColumnType('data', 'json');
+		//Validate the extracted entity data and return the errors
+		return $validator->validate($data, $entity->isNew());
 	}
 
 
 	/**
 	 * @param \Awyiss\Model\Entity\WidgetTemplate $widgetTemplate
 	 * @param \Awyiss\Model\Entity\Widget $entity
+	 * @param \Awyiss\Validation\Validator $validator
 	 * @param array $widgetAttributes
-	 * @param \Awyiss\Validation\Validator $attributesValidator
+	 * @param \Awyiss\Validation\Validator|null $attributesValidator
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
-	protected function validateUnassignedAttributes(WidgetTemplate $widgetTemplate, Widget $entity, array $widgetAttributes, ?Validator $attributesValidator): void {
-		$la_attributes = array_keys($widgetAttributes);
+	protected function validateAssignedElements(
+		WidgetTemplate $widgetTemplate,
+		Widget $entity,
+		Validator $validator,
+		array $widgetAttributes,
+		?Validator $attributesValidator
+	): void {
+		//Traverse all elements that are available and assigned to the widget template
+		foreach ($widgetTemplate->widgetTemplateElements as $lo_widgetTemplateElement) {
+			if (!str_starts_with($lo_widgetTemplateElement->identifier, 'attributes.')) {
+				if ($lo_widgetTemplateElement->required === true) {
+					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
+					$validator->requirePresence($lo_widgetTemplateElement->identifier)->notEmptyString($lo_widgetTemplateElement->identifier);
+					//TODO check if notEmptyString is enough. Some fields might need notEmpty*
+				}
 
-		foreach (
-			array_diff(
-				$la_attributes,
-				$this->WidgetTemplates->getAssignedWidgetAttributes($widgetTemplate)
-			) as $ls_element
-		) {
-			if (!$entity->attributes->isDirty($ls_element)) {
 				continue;
 			}
 
-			$attributesValidator->add($ls_element, 'isEmpty', [
-				'rule' => function (mixed $value): bool {
-					return empty($value) && !in_array($value, [false, '0', 0], true);
-				},
-			]);
+			// Nothing more to do if there's no attributes validator
+			if (!$attributesValidator) {
+				continue;
+			}
+
+			// Strip the 'attributes.'/'attributes_' prefix from the identifier
+			$ls_identifier = substr($lo_widgetTemplateElement->identifier, 11);
+
+			// If the field already has an error or if it's not required, skip it.
+			if (
+				$entity->attributes->getError($ls_identifier) ||
+				$lo_widgetTemplateElement->required !== true
+			) {
+				continue;
+			}
+
+			$attributesValidator->requirePresence($ls_identifier);
+
+			switch ($widgetAttributes[ $ls_identifier ]['inputType']) {
+				case 'checkbox':
+					$attributesValidator->add($ls_identifier, [
+						'checkboxChecked' => [
+							'rule' => ['equalTo', true],
+						],
+					]);
+					break;
+				default:
+					$attributesValidator->notEmptyString($ls_identifier);
+			}
 		}
 	}
 
@@ -480,6 +517,7 @@ class WidgetsTable extends Table {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function validateUnassignedElements(WidgetTemplate $widgetTemplate, Widget $entity, Validator $validator): void {
+		//Traverse all elements that are available but not assigned to the widget template
 		foreach (
 			array_diff(
 				array_keys($this->WidgetTemplates->getAvailableWidgetElements()),
@@ -534,55 +572,29 @@ class WidgetsTable extends Table {
 	/**
 	 * @param \Awyiss\Model\Entity\WidgetTemplate $widgetTemplate
 	 * @param \Awyiss\Model\Entity\Widget $entity
-	 * @param \Awyiss\Validation\Validator $validator
 	 * @param array $widgetAttributes
-	 * @param \Awyiss\Validation\Validator $attributesValidator
+	 * @param \Awyiss\Validation\Validator|null $attributesValidator
 	 * @return void
 	 */
-	protected function validateAssignedElements(
-		WidgetTemplate $widgetTemplate,
-		Widget $entity,
-		Validator $validator,
-		array $widgetAttributes,
-		?Validator $attributesValidator
-	): void {
-		//Traverse all elements that are available inside the widget template
-		foreach ($widgetTemplate->widgetTemplateElements as $lo_widgetTemplateElement) {
-			if (!str_starts_with($lo_widgetTemplateElement->identifier, 'attributes.')) {
-				if ($lo_widgetTemplateElement->required === true) {
-					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
-					$validator->requirePresence($lo_widgetTemplateElement->identifier)->notEmptyString($lo_widgetTemplateElement->identifier);
-					//TODO check if notEmptyString is enough. Some fields might need notEmpty*
-				}
+	protected function validateUnassignedAttributes(WidgetTemplate $widgetTemplate, Widget $entity, array $widgetAttributes, ?Validator $attributesValidator): void {
+		$la_attributes = array_keys($widgetAttributes);
 
+		// Traverse all attributes that are available but not assigned to the widget template
+		foreach (
+			array_diff(
+				$la_attributes,
+				$this->WidgetTemplates->getAssignedWidgetAttributes($widgetTemplate)
+			) as $ls_element
+		) {
+			if (!$entity->attributes->isDirty($ls_element)) {
 				continue;
 			}
 
-			if (!$attributesValidator) {
-				continue;
-			}
-
-			$ls_identifier = substr($lo_widgetTemplateElement->identifier, 11);
-
-			if ($entity->attributes->getError($ls_identifier)) {
-				continue;
-			}
-
-			if ($lo_widgetTemplateElement->required === true) {
-				$attributesValidator->requirePresence($ls_identifier);
-
-				switch ($widgetAttributes[ $ls_identifier ]['inputType']) {
-					case 'checkbox':
-						$attributesValidator->add($ls_identifier, [
-							'checkboxChecked' => [
-								'rule' => ['equalTo', true],
-							],
-						]);
-						break;
-					default:
-						$attributesValidator->notEmptyString($ls_identifier);
-				}
-			}
+			$attributesValidator->add($ls_element, 'isEmpty', [
+				'rule' => function (mixed $value): bool {
+					return empty($value) && !in_array($value, [false, '0', 0], true);
+				},
+			]);
 		}
 	}
 
@@ -593,18 +605,19 @@ class WidgetsTable extends Table {
 	 * @param string $column
 	 * @param string|null $type
 	 * @return array|null
+	 * @throws \ReflectionException
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
 		if ($column === 'form_id') {
 			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
 		}
 
-		if ($column === 'widget_template_id') {
-			return $this->getAssociation('WidgetTemplates')->find('list', valueField: 'label')->toArray();
-		}
-
 		if ($column === 'survey_id') {
 			return $this->getAssociation('Surveys')->find('list', valueField: 'label')->toArray();
+		}
+
+		if ($column === 'widget_template_id') {
+			return $this->getAssociation('WidgetTemplates')->find('list', valueField: 'label')->toArray();
 		}
 
 

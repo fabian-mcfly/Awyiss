@@ -3,3066 +3,6 @@
 namespace PHPSTORM_META {
 
 	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Attribute::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Attribute'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Audit::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Audit'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\BackendMenuEntry::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\BackendMenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Configuration::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Configuration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Content::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Content'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentArea::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplate::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateContentArea::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ContentTemplateElement::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ContentTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Datatable::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Datatable'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Design::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Design'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\EmailTemplate::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\EmailTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Form::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Form'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormConditionalRecipient::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormConditionalRecipient'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormElement::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\FormEntry::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\FormEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\I18n::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\I18n'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Language::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Language'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Lock::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Lock'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Media::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Media'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaAssignment::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElement::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementAssignment::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementAssignment'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaElementSelector::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaElementSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaFolder::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaFolder'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaResizedImage::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaResizedImage'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MediaSelector::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MediaSelector'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Menu::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Menu'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\MenuEntry::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\MenuEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Page::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Page'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageRole::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageRole'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplate::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PageTemplateContentArea::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PageTemplateContentArea'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\PublicationData::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PublicationData'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Survey::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Survey'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyAnswer::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyEntry::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyEntry'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveyQuestion::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyAnswer::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyAnswer'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\SurveySurveyQuestion::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SurveySurveyQuestion'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\ThirdPartyConsent::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\ThirdPartyConsent'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlHistory::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UrlsNotFound::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\User::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\User'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UserConfiguration::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UserConfiguration'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Usergroup::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Usergroup'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupPermission::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupPermission'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsergroupsUser::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsergroupsUser'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
 		\Cake\Cache\Cache::add(),
 		2,
 		argumentsSet('cacheEngines'),
@@ -3371,6 +311,10 @@ namespace PHPSTORM_META {
 			'mediaAssignments' => \Cake\ORM\Query::class,
 			'mediaElementAssignments' => \Cake\ORM\Query::class,
 			'published' => \Cake\ORM\Query::class,
+			'publishedEndingAfter' => \Cake\ORM\Query::class,
+			'publishedEndingBefore' => \Cake\ORM\Query::class,
+			'publishedStartingAfter' => \Cake\ORM\Query::class,
+			'publishedStartingBefore' => \Cake\ORM\Query::class,
 			'queued' => \Cake\ORM\Query::class,
 			'recent' => \Cake\ORM\Query::class,
 			'threaded' => \Cake\ORM\Query::class,
@@ -3426,6 +370,10 @@ namespace PHPSTORM_META {
 			'mediaAssignments' => \Cake\ORM\Query::class,
 			'mediaElementAssignments' => \Cake\ORM\Query::class,
 			'published' => \Cake\ORM\Query::class,
+			'publishedEndingAfter' => \Cake\ORM\Query::class,
+			'publishedEndingBefore' => \Cake\ORM\Query::class,
+			'publishedStartingAfter' => \Cake\ORM\Query::class,
+			'publishedStartingBefore' => \Cake\ORM\Query::class,
 			'queued' => \Cake\ORM\Query::class,
 			'recent' => \Cake\ORM\Query::class,
 			'threaded' => \Cake\ORM\Query::class,
@@ -3716,6 +664,10 @@ namespace PHPSTORM_META {
 			'mediaAssignments' => \Cake\ORM\Query::class,
 			'mediaElementAssignments' => \Cake\ORM\Query::class,
 			'published' => \Cake\ORM\Query::class,
+			'publishedEndingAfter' => \Cake\ORM\Query::class,
+			'publishedEndingBefore' => \Cake\ORM\Query::class,
+			'publishedStartingAfter' => \Cake\ORM\Query::class,
+			'publishedStartingBefore' => \Cake\ORM\Query::class,
 			'queued' => \Cake\ORM\Query::class,
 			'recent' => \Cake\ORM\Query::class,
 			'threaded' => \Cake\ORM\Query::class,
@@ -4750,7 +1702,7 @@ namespace PHPSTORM_META {
 		0,
 		'Attributes/Delete',
 		'Attributes/Upsert',
-		'Designs/WebfontDownload',
+		'Design/WebfontDownload',
 		'Queue.CostsExample',
 		'Queue.Email',
 		'Queue.Example',
@@ -4769,7 +1721,7 @@ namespace PHPSTORM_META {
 		1,
 		'Attributes/Delete',
 		'Attributes/Upsert',
-		'Designs/WebfontDownload',
+		'Design/WebfontDownload',
 		'Queue.CostsExample',
 		'Queue.Email',
 		'Queue.Example',
@@ -4781,6 +1733,3066 @@ namespace PHPSTORM_META {
 		'Queue.RetryExample',
 		'Queue.SuperExample',
 		'Queue.UniqueExample',
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Attribute::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Attribute'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Audit::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Audit'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\BackendMenuEntry::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\BackendMenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Configuration::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Configuration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Content::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Content'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentArea::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplate::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateContentArea::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ContentTemplateElement::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Datatable::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Design::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Design'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\EmailTemplate::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\EmailTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Form::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Form'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormConditionalRecipient::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormConditionalRecipient'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormElement::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\FormEntry::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\I18n::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\I18n'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Language::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Language'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Lock::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Lock'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Media::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Media'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaAssignment::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElement::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementAssignment::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementAssignment'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaElementSelector::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaElementSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaFolder::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaFolder'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaResizedImage::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaResizedImage'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MediaSelector::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MediaSelector'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Menu::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Menu'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\MenuEntry::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\MenuEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Page::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Page'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageRole::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageRole'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplate::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PageTemplateContentArea::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PageTemplateContentArea'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\PublicationData::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\PublicationData'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Survey::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Survey'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyAnswer::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyEntry::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyEntry'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveyQuestion::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyAnswer::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\SurveySurveyQuestion::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\ThirdPartyConsent::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\ThirdPartyConsent'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlHistory::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlHistory'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UrlsNotFound::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UrlsNotFound'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\User::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\User'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UserConfiguration::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UserConfiguration'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Usergroup::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Usergroup'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupPermission::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupPermission'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\UsergroupsUser::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\UsergroupsUser'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\Widget::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplate::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
+	);
+
+	expectedArguments(
+		\\Awyiss\Model\Entity\WidgetTemplateElement::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
 	);
 
 	expectedArguments(
@@ -4913,7 +4925,6 @@ namespace PHPSTORM_META {
 		'cancel',
 		'cancel_preview',
 		'cancel_upload',
-		'cant_modify_deleted',
 		'captcha_info',
 		'captcha_label',
 		'captcha_legend',
@@ -5097,6 +5108,7 @@ namespace PHPSTORM_META {
 		'edit_succeeded',
 		'email',
 		'email_template_id',
+		'error_ascii',
 		'error_assignment_allows_entity_level',
 		'error_assignment_allows_model_level',
 		'error_assignment_invalid_entity',
@@ -5111,6 +5123,7 @@ namespace PHPSTORM_META {
 		'error_content_template_exists',
 		'error_date',
 		'error_datetime',
+		'error_deleted_not_modified',
 		'error_duplicate_not_on_same_page',
 		'error_email',
 		'error_email_send',
@@ -5159,6 +5172,7 @@ namespace PHPSTORM_META {
 		'error_no_nested_children_with_different_page_role',
 		'error_no_repeated_questions_in_linear_survey',
 		'error_not_blank',
+		'error_not_boolean',
 		'error_not_default_element_deletion',
 		'error_not_default_selector_deletion',
 		'error_not_duplicating_duplicated',
@@ -5179,6 +5193,8 @@ namespace PHPSTORM_META {
 		'error_page_template_exists',
 		'error_required',
 		'error_reserved_identifier',
+		'error_root_active_unchanged',
+		'error_root_hidden_unchanged',
 		'error_root_language_shortcode_unchanged',
 		'error_root_parent_id_unchanged',
 		'error_root_path_unchanged',
@@ -5585,6 +5601,7 @@ namespace PHPSTORM_META {
 		'permission_save',
 		'permission_update',
 		'permission_use',
+		'php_array',
 		'pick_question',
 		'placeholder',
 		'placeholder_data',
@@ -5644,6 +5661,7 @@ namespace PHPSTORM_META {
 		'route_planner_calculate_route',
 		'route_planner_directions_found',
 		'route_planner_end',
+		'route_planner_error_access',
 		'route_planner_error_api_key_missing',
 		'route_planner_error_end_coordinates',
 		'route_planner_error_start_coordinates',
@@ -6086,6 +6104,7 @@ namespace PHPSTORM_META {
 		'widget_id',
 		'widget_template_id',
 		'width',
+		'wine_id',
 		'workerkey',
 	);
 
@@ -6432,7 +6451,62 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Attribute',
+		'entityFields:DebugKit\Model\Entity\Panel',
+		'content',
+		'element',
+		'id',
+		'panel',
+		'request',
+		'request_id',
+		'summary',
+		'title',
+	);
+
+	registerArgumentsSet(
+		'entityFields:DebugKit\Model\Entity\Request',
+		'content_type',
+		'id',
+		'method',
+		'panels',
+		'requested_at',
+		'status_code',
+		'url',
+	);
+
+	registerArgumentsSet(
+		'entityFields:Queue\Model\Entity\QueueProcess',
+		'active_job',
+		'created',
+		'id',
+		'modified',
+		'pid',
+		'server',
+		'terminate',
+		'workerkey',
+	);
+
+	registerArgumentsSet(
+		'entityFields:Queue\Model\Entity\QueuedJob',
+		'attempts',
+		'completed',
+		'created',
+		'data',
+		'failure_message',
+		'fetched',
+		'id',
+		'job_group',
+		'job_task',
+		'notbefore',
+		'priority',
+		'progress',
+		'reference',
+		'status',
+		'worker_process',
+		'workerkey',
+	);
+
+	registerArgumentsSet(
+		'entityFields:\Awyiss\Model\Entity\Attribute',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -6453,7 +6527,7 @@ namespace PHPSTORM_META {
 		'identifier',
 		'input_type',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'required',
 		'scope',
 		'system_order',
@@ -6463,7 +6537,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Audit',
+		'entityFields:\Awyiss\Model\Entity\Audit',
 		'created_by',
 		'created_by_user',
 		'created_on',
@@ -6473,7 +6547,6 @@ namespace PHPSTORM_META {
 		'foreign_key',
 		'id',
 		'label',
-		'media_assignments',
 		'scope',
 		'transaction_id',
 		'type',
@@ -6481,7 +6554,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\BackendMenuEntry',
+		'entityFields:\Awyiss\Model\Entity\BackendMenuEntry',
 		'access',
 		'active',
 		'changed_by',
@@ -6500,7 +6573,7 @@ namespace PHPSTORM_META {
 		'insert_after_id',
 		'label',
 		'link',
-		'media_assignments',
+		'mediaAssignments',
 		'parent_backend_menu_entry',
 		'parent_id',
 		'system_order',
@@ -6508,7 +6581,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Configuration',
+		'entityFields:\Awyiss\Model\Entity\Configuration',
 		'changed_by',
 		'changed_by_user',
 		'changed_on',
@@ -6523,7 +6596,7 @@ namespace PHPSTORM_META {
 		'identifier',
 		'language',
 		'language_shortcode',
-		'media_assignments',
+		'mediaAssignments',
 		'printableValue',
 		'realm',
 		'scope',
@@ -6531,7 +6604,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Content',
+		'entityFields:\Awyiss\Model\Entity\Content',
 		'active',
 		'attributes',
 		'changed_by',
@@ -6564,7 +6637,7 @@ namespace PHPSTORM_META {
 		'id',
 		'label',
 		'link',
-		'media_assignments',
+		'mediaAssignments',
 		'page_id',
 		'parent_content',
 		'parent_id',
@@ -6579,7 +6652,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\ContentArea',
+		'entityFields:\Awyiss\Model\Entity\ContentArea',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -6595,13 +6668,13 @@ namespace PHPSTORM_META {
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'page_templates',
 		'title',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\ContentTemplate',
+		'entityFields:\Awyiss\Model\Entity\ContentTemplate',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -6620,26 +6693,26 @@ namespace PHPSTORM_META {
 		'id',
 		'in_content_row',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'page_templates',
 		'system_order',
 		'title',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\ContentTemplateContentArea',
+		'entityFields:\Awyiss\Model\Entity\ContentTemplateContentArea',
 		'content_area',
 		'content_area_id',
 		'content_template',
 		'content_template_id',
 		'id',
-		'media_assignments',
+		'mediaAssignments',
 		'page_template',
 		'page_template_id',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\ContentTemplateElement',
+		'entityFields:\Awyiss\Model\Entity\ContentTemplateElement',
 		'column',
 		'column_span',
 		'content_template',
@@ -6648,14 +6721,14 @@ namespace PHPSTORM_META {
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'required',
 		'system_order',
 		'title',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Datatable',
+		'entityFields:\Awyiss\Model\Entity\Datatable',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -6670,12 +6743,12 @@ namespace PHPSTORM_META {
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'title',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Design',
+		'entityFields:\Awyiss\Model\Entity\Design',
 		'changed_by',
 		'changed_by_user',
 		'changed_on',
@@ -6693,13 +6766,13 @@ namespace PHPSTORM_META {
 		'in_use',
 		'is_preview',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'settings',
 		'title',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\EmailTemplate',
+		'entityFields:\Awyiss\Model\Entity\EmailTemplate',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -6717,14 +6790,14 @@ namespace PHPSTORM_META {
 		'id',
 		'label',
 		'layout',
-		'media_assignments',
+		'mediaAssignments',
 		'text_html',
 		'text_plain',
 		'title',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Form',
+		'entityFields:\Awyiss\Model\Entity\Form',
 		'active',
 		'bcc',
 		'cc',
@@ -6750,7 +6823,7 @@ namespace PHPSTORM_META {
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'multistep',
 		'owner_email',
 		'owner_name',
@@ -6772,7 +6845,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\FormConditionalRecipient',
+		'entityFields:\Awyiss\Model\Entity\FormConditionalRecipient',
 		'changed_by',
 		'changed_by_user',
 		'changed_on',
@@ -6787,7 +6860,7 @@ namespace PHPSTORM_META {
 		'form_id',
 		'id',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'operator',
 		'recipient',
 		'system_order',
@@ -6796,7 +6869,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\FormElement',
+		'entityFields:\Awyiss\Model\Entity\FormElement',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -6820,7 +6893,7 @@ namespace PHPSTORM_META {
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'options',
 		'parent_form_element',
 		'parent_id',
@@ -6834,7 +6907,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\FormEntry',
+		'entityFields:\Awyiss\Model\Entity\FormEntry',
 		'body',
 		'body_confirmation',
 		'created_on',
@@ -6846,9 +6919,10 @@ namespace PHPSTORM_META {
 		'form',
 		'form_id',
 		'id',
+		'identifier',
 		'ip_hash',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'page',
 		'page_id',
 		'post_hash',
@@ -6857,19 +6931,19 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\I18n',
+		'entityFields:\Awyiss\Model\Entity\I18n',
 		'content',
 		'field',
 		'foreign_key',
 		'id',
 		'label',
 		'locale',
-		'media_assignments',
+		'mediaAssignments',
 		'model',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Language',
+		'entityFields:\Awyiss\Model\Entity\Language',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -6886,7 +6960,7 @@ namespace PHPSTORM_META {
 		'id',
 		'label',
 		'locale',
-		'media_assignments',
+		'mediaAssignments',
 		'menu_entries',
 		'pages',
 		'realm',
@@ -6898,20 +6972,20 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Lock',
+		'entityFields:\Awyiss\Model\Entity\Lock',
 		'created_by',
 		'created_by_user',
 		'created_on',
 		'foreign_key',
 		'id',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'scope',
 		'unique_id',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Media',
+		'entityFields:\Awyiss\Model\Entity\Media',
 		'alt',
 		'average_color',
 		'avif',
@@ -6972,7 +7046,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\MediaAssignment',
+		'entityFields:\Awyiss\Model\Entity\MediaAssignment',
 		'changed_by',
 		'changed_by_user',
 		'changed_on',
@@ -7000,7 +7074,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\MediaElement',
+		'entityFields:\Awyiss\Model\Entity\MediaElement',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7026,7 +7100,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\MediaElementAssignment',
+		'entityFields:\Awyiss\Model\Entity\MediaElementAssignment',
 		'foreign_key',
 		'id',
 		'label',
@@ -7037,7 +7111,8 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\MediaElementSelector',
+		'entityFields:\Awyiss\Model\Entity\MediaElementSelector',
+		'column',
 		'column_span',
 		'id',
 		'identifier',
@@ -7053,7 +7128,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\MediaFolder',
+		'entityFields:\Awyiss\Model\Entity\MediaFolder',
 		'active',
 		'attributes',
 		'changed_by',
@@ -7083,7 +7158,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\MediaResizedImage',
+		'entityFields:\Awyiss\Model\Entity\MediaResizedImage',
 		'extension',
 		'height',
 		'id',
@@ -7102,7 +7177,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\MediaSelector',
+		'entityFields:\Awyiss\Model\Entity\MediaSelector',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7122,7 +7197,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Menu',
+		'entityFields:\Awyiss\Model\Entity\Menu',
 		'active',
 		'all_menu_entries',
 		'changed_by',
@@ -7138,13 +7213,13 @@ namespace PHPSTORM_META {
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'menu_entries',
 		'title',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\MenuEntry',
+		'entityFields:\Awyiss\Model\Entity\MenuEntry',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7163,7 +7238,7 @@ namespace PHPSTORM_META {
 		'language',
 		'language_shortcode',
 		'link',
-		'media_assignments',
+		'mediaAssignments',
 		'menu',
 		'menu_id',
 		'parent_id',
@@ -7173,7 +7248,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Page',
+		'entityFields:\Awyiss\Model\Entity\Page',
 		'active',
 		'attributes',
 		'changed_by',
@@ -7197,7 +7272,8 @@ namespace PHPSTORM_META {
 		'label',
 		'language',
 		'language_shortcode',
-		'media_assignments',
+		'link',
+		'mediaAssignments',
 		'meta_description',
 		'meta_title',
 		'page_role',
@@ -7219,7 +7295,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\PageRole',
+		'entityFields:\Awyiss\Model\Entity\PageRole',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7235,7 +7311,7 @@ namespace PHPSTORM_META {
 		'identifier',
 		'include_in_linklist',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'page_template',
 		'pages',
 		'system_order',
@@ -7243,7 +7319,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\PageTemplate',
+		'entityFields:\Awyiss\Model\Entity\PageTemplate',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7260,7 +7336,7 @@ namespace PHPSTORM_META {
 		'file_name',
 		'id',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'page_role',
 		'page_role_id',
 		'pages',
@@ -7269,18 +7345,18 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\PageTemplateContentArea',
+		'entityFields:\Awyiss\Model\Entity\PageTemplateContentArea',
 		'content_area',
 		'content_area_id',
 		'id',
-		'media_assignments',
+		'mediaAssignments',
 		'page_template',
 		'page_template_id',
 		'system_order',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\PublicationData',
+		'entityFields:\Awyiss\Model\Entity\PublicationData',
 		'date_time',
 		'foreign_key',
 		'id',
@@ -7290,7 +7366,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Survey',
+		'entityFields:\Awyiss\Model\Entity\Survey',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7310,7 +7386,7 @@ namespace PHPSTORM_META {
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'pages',
 		'success_message',
 		'survey_entries',
@@ -7321,7 +7397,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\SurveyAnswer',
+		'entityFields:\Awyiss\Model\Entity\SurveyAnswer',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7335,7 +7411,7 @@ namespace PHPSTORM_META {
 		'deleted_on',
 		'id',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'subtitle',
 		'survey_question',
 		'survey_question_id',
@@ -7347,7 +7423,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\SurveyEntry',
+		'entityFields:\Awyiss\Model\Entity\SurveyEntry',
 		'created_on',
 		'data',
 		'deleted',
@@ -7355,9 +7431,10 @@ namespace PHPSTORM_META {
 		'deleted_by_user',
 		'deleted_on',
 		'id',
+		'identifier',
 		'ip_hash',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'page',
 		'page_id',
 		'post_hash',
@@ -7366,7 +7443,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\SurveyQuestion',
+		'entityFields:\Awyiss\Model\Entity\SurveyQuestion',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7380,7 +7457,7 @@ namespace PHPSTORM_META {
 		'deleted_on',
 		'id',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'subtitle',
 		'survey_answers',
 		'survey_survey_questions',
@@ -7390,7 +7467,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\SurveySurveyAnswer',
+		'entityFields:\Awyiss\Model\Entity\SurveySurveyAnswer',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7404,7 +7481,7 @@ namespace PHPSTORM_META {
 		'deleted_on',
 		'id',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'next_action',
 		'next_action_target',
 		'subtitle',
@@ -7418,7 +7495,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\SurveySurveyQuestion',
+		'entityFields:\Awyiss\Model\Entity\SurveySurveyQuestion',
 		'active',
 		'allow_custom_answer',
 		'changed_by',
@@ -7435,7 +7512,7 @@ namespace PHPSTORM_META {
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'next_action',
 		'next_action_target',
 		'subtitle',
@@ -7450,19 +7527,19 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\ThirdPartyConsent',
+		'entityFields:\Awyiss\Model\Entity\ThirdPartyConsent',
 		'accept_type',
 		'accepted_categories',
 		'consent_id',
 		'created_on',
 		'id',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'rejected_categories',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\UrlHistory',
+		'entityFields:\Awyiss\Model\Entity\UrlHistory',
 		'changed_by',
 		'changed_by_user',
 		'changed_on',
@@ -7476,7 +7553,7 @@ namespace PHPSTORM_META {
 		'id',
 		'label',
 		'media',
-		'media_assignments',
+		'mediaAssignments',
 		'page',
 		'scope',
 		'status',
@@ -7485,18 +7562,18 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\UrlsNotFound',
+		'entityFields:\Awyiss\Model\Entity\UrlsNotFound',
 		'created_on',
 		'id',
 		'is_robot',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'referrer',
 		'url',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\User',
+		'entityFields:\Awyiss\Model\Entity\User',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7515,7 +7592,7 @@ namespace PHPSTORM_META {
 		'label',
 		'last_login',
 		'lastname',
-		'media_assignments',
+		'mediaAssignments',
 		'password',
 		'user_configuration',
 		'usergroups',
@@ -7523,10 +7600,10 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\UserConfiguration',
+		'entityFields:\Awyiss\Model\Entity\UserConfiguration',
 		'id',
 		'identifier',
-		'media_assignments',
+		'mediaAssignments',
 		'printableValue',
 		'scope',
 		'user',
@@ -7535,7 +7612,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Usergroup',
+		'entityFields:\Awyiss\Model\Entity\Usergroup',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7549,19 +7626,19 @@ namespace PHPSTORM_META {
 		'deleted_on',
 		'id',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'title',
 		'usergroup_permissions',
 		'users',
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\UsergroupPermission',
+		'entityFields:\Awyiss\Model\Entity\UsergroupPermission',
 		'access',
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'scope',
 		'settings',
 		'usergroup',
@@ -7569,10 +7646,10 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\UsergroupsUser',
+		'entityFields:\Awyiss\Model\Entity\UsergroupsUser',
 		'id',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'user',
 		'user_id',
 		'usergroup',
@@ -7580,7 +7657,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\Widget',
+		'entityFields:\Awyiss\Model\Entity\Widget',
 		'active',
 		'attributes',
 		'changed_by',
@@ -7607,7 +7684,7 @@ namespace PHPSTORM_META {
 		'identifier',
 		'label',
 		'link',
-		'media_assignments',
+		'mediaAssignments',
 		'parent_id',
 		'parent_widget',
 		'subtitle',
@@ -7621,7 +7698,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\WidgetTemplate',
+		'entityFields:\Awyiss\Model\Entity\WidgetTemplate',
 		'active',
 		'changed_by',
 		'changed_by_user',
@@ -7637,7 +7714,7 @@ namespace PHPSTORM_META {
 		'id',
 		'in_content_row',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'system_order',
 		'title',
 		'widget_template_elements',
@@ -7645,74 +7722,19 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\WidgetTemplateElement',
+		'entityFields:\Awyiss\Model\Entity\WidgetTemplateElement',
 		'column',
 		'column_span',
 		'fieldset',
 		'id',
 		'identifier',
 		'label',
-		'media_assignments',
+		'mediaAssignments',
 		'required',
 		'system_order',
 		'title',
 		'widget_template',
 		'widget_template_id',
-	);
-
-	registerArgumentsSet(
-		'entityFields:DebugKit\Model\Entity\Panel',
-		'content',
-		'element',
-		'id',
-		'panel',
-		'request',
-		'request_id',
-		'summary',
-		'title',
-	);
-
-	registerArgumentsSet(
-		'entityFields:DebugKit\Model\Entity\Request',
-		'content_type',
-		'id',
-		'method',
-		'panels',
-		'requested_at',
-		'status_code',
-		'url',
-	);
-
-	registerArgumentsSet(
-		'entityFields:Queue\Model\Entity\QueueProcess',
-		'active_job',
-		'created',
-		'id',
-		'modified',
-		'pid',
-		'server',
-		'terminate',
-		'workerkey',
-	);
-
-	registerArgumentsSet(
-		'entityFields:Queue\Model\Entity\QueuedJob',
-		'attempts',
-		'completed',
-		'created',
-		'data',
-		'failure_message',
-		'fetched',
-		'id',
-		'job_group',
-		'job_task',
-		'notbefore',
-		'priority',
-		'progress',
-		'reference',
-		'status',
-		'worker_process',
-		'workerkey',
 	);
 
 	registerArgumentsSet(
@@ -7731,6 +7753,7 @@ namespace PHPSTORM_META {
 		'attributes_newscategories',
 		'attributes_pages',
 		'attributes_widgets',
+		'attributes_wines',
 		'audit',
 		'backend_menu_entries',
 		'cars',
@@ -7785,6 +7808,7 @@ namespace PHPSTORM_META {
 		'widget_template_elements',
 		'widget_templates',
 		'widgets',
+		'wines',
 	);
 
 	registerArgumentsSet(

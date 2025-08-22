@@ -36,6 +36,16 @@ class BackendMenuEntry extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'parent_id' => 'parentId',
+		'insert_after_id' => 'insertAfterId',
+		'system_order' => 'systemOrder',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'parentId' => true,
 		'insertAfterId' => true,
@@ -45,14 +55,6 @@ class BackendMenuEntry extends Entity {
 		'external' => true,
 		'systemOrder' => true,
 		'active' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'parent_id' => 'parentId',
-		'insert_after_id' => 'insertAfterId',
-		'system_order' => 'systemOrder',
 	];
 
 

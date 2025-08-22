@@ -1,4 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * @noinspection PhpInternalEntityUsedInspection
+ */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 namespace Awyiss\Model\Behavior;
@@ -308,6 +315,16 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$la_options = $options;
 		unset($la_options['associated']);
+		$la_options['fields'] = [
+			'id',
+			'mediaElementId',
+			'mediaElementSelectorIdentifier',
+			'mediaId',
+			'mediaFolderId',
+			'scope',
+			'foreignKey',
+			'systemOrder',
+		];
 
 		return [
 			'media_assignments' => function (array $values, EntityInterface $entity) use ($la_options): array {
@@ -324,15 +341,17 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 						$li_systemOrder = 1;
 						$lb_isFolder = false;
 
+						$la_elementData = $this->mapKeys($la_elementData);
+
 						if (array_is_list($la_elementData)) {
 							$la_mediaIds = $la_elementData;
 						}
-						elseif (isset($la_elementData['media_id'])) {
-							$la_mediaIds = (array)$la_elementData['media_id'];
+						elseif (isset($la_elementData['mediaId'])) {
+							$la_mediaIds = (array)$la_elementData['mediaId'];
 						}
-						elseif (!empty($la_elementData['media_folder_id'])) {
+						elseif (!empty($la_elementData['mediaFolderId'])) {
 							$lb_isFolder = true;
-							$la_mediaIds = (array)$la_elementData['media_folder_id'];
+							$la_mediaIds = (array)$la_elementData['mediaFolderId'];
 						}
 						else {
 							continue;
@@ -344,7 +363,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 							}
 
 							/** @var \Awyiss\Model\Entity\MediaAssignment $lo_entity */
-							$lo_entity = $this->assignmentsTable->newEmptyEntity();
+							$lo_entity = $this->assignmentsTable->newDefaultEntity();
 
 							if (!empty($la_elementData['id'])) {
 								$lo_entity->id = $la_elementData['id'];
@@ -615,5 +634,26 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		])));
 
 		return $query->contain(['Media', 'MediaFolders']);
+	}
+
+
+	/**
+	 * @param array $elementData
+	 * @return array
+	 */
+	protected function mapKeys(array $elementData): array {
+		$la_data = [];
+
+		foreach ($elementData as $lx_key => $lx_value) {
+			if (!is_string($lx_key)) {
+				$la_data[ $lx_key ] = $lx_value;
+				continue;
+			}
+
+			$lx_key = Inflector::variable($lx_key);
+			$la_data[ $lx_key ] = $lx_value;
+		}
+
+		return $la_data;
 	}
 }

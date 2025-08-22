@@ -28,7 +28,7 @@ use ReflectionClass;
  * If an attribute-entity is moved to a different scope, it will check the table of the old scope.
  * If there are no other attributes left, it will bake a `drop`-migration.
  */
-class UpsertTask extends Task/* implements AddInterface*/ {
+class UpsertTask extends Task {
 	/**
 	 * @inheritDoc
 	 */
@@ -73,11 +73,11 @@ class UpsertTask extends Task/* implements AddInterface*/ {
 		$lb_bakeOldModel = false;
 		$la_commands = [];
 		$ls_foreignKey = Inflector::singularize($data['new']['scope']);
-		$lb_scopeIsPageRole = false;
 
+		$lb_scopeIsPageRole = false;
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-		if ($ls_pageRoleEnum::tryFromName($ls_foreignKey) && $ls_foreignKey !== 'page') {
+		if ($ls_foreignKey !== 'page' && $ls_pageRoleEnum::tryFromName($ls_foreignKey)) {
 			$ls_foreignKey = 'page';
 			$lb_scopeIsPageRole = true;
 		}
@@ -114,6 +114,10 @@ class UpsertTask extends Task/* implements AddInterface*/ {
 			}
 		}
 
+		// If the last command is "sleep 1", remove it.
+		if (end($la_commands) === 'sleep 1') {
+			array_pop($la_commands);
+		}
 
 		$this->createJob($la_commands, $data, $lb_scopeIsPageRole, $lb_bakeOldModel);
 	}
@@ -121,7 +125,7 @@ class UpsertTask extends Task/* implements AddInterface*/ {
 
 	/**
 	 * Splits strings into valid phinx column types and length
-	 *   "varchar(255)" => ['string', 255]
+	 *   "varchar(255)" => ['string', '255']
 	 *   "int(10,4)" => ['integer', '10,4']
 	 *   "tinyint" => ['tinyint', null]
 	 *
@@ -130,11 +134,11 @@ class UpsertTask extends Task/* implements AddInterface*/ {
 	 * @param string|null $type
 	 * @return array
 	 */
-	public function getTypeAndLength(?string $type): array {
+	protected function getTypeAndLength(?string $type): array {
 		$ls_type = $type ?: 'varchar(255)';
 
 		if (!preg_match(AttributesTable::TYPE_PATTERN, $ls_type, $la_typeMatches, PREG_UNMATCHED_AS_NULL)) {
-			return ['string', 255];
+			return ['string', '255'];
 		}
 
 		$lo_reflector = new ReflectionClass(AdapterInterface::class);
@@ -158,11 +162,11 @@ class UpsertTask extends Task/* implements AddInterface*/ {
 
 
 	/**
-	 * @param string $ls_oldAttributesTable
-	 * @param string $migrationsPath
-	 * @param array $la_commands
+	 * @param array $commands
 	 * @param array $data
+	 * @param string $migrationsPath
 	 * @return bool
+	 * @noinspection DuplicatedCode
 	 */
 	protected function buildAlterOldTableCommands(array &$commands, array $data, string $migrationsPath): bool {
 		$ls_oldAttributesTable = 'attributes_' . $data['old']['scope'];
@@ -241,11 +245,11 @@ class UpsertTask extends Task/* implements AddInterface*/ {
 
 	/**
 	 * @param array $commands
-	 * @param bool $scopeIsPageRole
 	 * @param array $data
-	 * @param string $attributesTable
+	 * @param bool $scopeIsPageRole
 	 * @param bool $bakeOldModel
-	 * @return array
+	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function createJob(array $commands, array $data, bool $scopeIsPageRole, bool $bakeOldModel): void {
 		if (empty($commands)) {
@@ -310,6 +314,7 @@ class UpsertTask extends Task/* implements AddInterface*/ {
 	 * @param string $column
 	 * @param string $migrationsPath
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function buildAlterTableCommands(array &$commands, array $data, array $diff, bool $changedScope, string $column, string $migrationsPath): void {
 		$ls_attributesTable = 'attributes_' . $data['new']['scope'];

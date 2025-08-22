@@ -30,18 +30,20 @@ class ContentArea extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'page_templates' => 'pageTemplates',
+		'content_templates' => 'contentTemplates',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'identifier' => true,
 		'title' => true,
 		'active' => true,
 		'pageTemplates' => true,
 		'contentTemplateContentAreas' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'page_templates' => 'pageTemplates',
-		'content_templates' => 'contentTemplates',
 	];
 }

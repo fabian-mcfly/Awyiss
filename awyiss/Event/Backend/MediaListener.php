@@ -407,7 +407,7 @@ class MediaListener implements EventListenerInterface {
 		$lo_currentMedia = static::$media[ $entity->mediaFolderId ][ $entity->name ] ?? null;
 		if ($lo_currentMedia) {
 			$entity->setNew(false);
-			$entity->set([
+			$entity->patch([
 				'id' => $lo_currentMedia->id,
 				'alt' => $entity->alt ?? $lo_currentMedia->alt,
 				'systemOrder' => $lo_currentMedia->systemOrder,

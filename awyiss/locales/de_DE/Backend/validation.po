@@ -256,3 +256,6 @@ msgstr "Der Wert muss eine gültige Uhrzeit sein "
 
 msgid "error_email"
 msgstr "Der Wert muss eine gültige E-Mail-Adresse sein"
+
+msgid "error_deleted_not_modified"
+msgstr "Gelöschte Einträge können nicht bearbeitet werden"

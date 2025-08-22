@@ -433,7 +433,7 @@ class ContentsTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
-	 * @return RulesChecker
+	 * @return \Awyiss\ORM\RulesChecker
 	 * @noinspection DuplicatedCode
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): BaseRulesChecker {
@@ -450,7 +450,7 @@ class ContentsTable extends Table {
 				]);
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
-				$entity->setError('page_id', [
+				$entity->setError('pageId', [
 					'validPageId' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'),
 				]);
 

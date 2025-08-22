@@ -129,7 +129,7 @@ class AuditBehavior extends Behavior {
 
 			$la_fields = array_diff($la_fields, $this->getConfig('ignoredFields'), ['id']);
 
-			$this->setConfig('historyFields', $la_fields);
+			$this->setConfig('historyFields', array_values($la_fields));
 		}
 	}
 
@@ -158,9 +158,8 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Modify the query to join with the audit users and select their usernames.
 	 *
-	 * @param SelectQuery $query The query to modify.
-	 * @return SelectQuery The modified query.
-	 * @noinspection PhpUnused
+	 * @param \Cake\ORM\Query\SelectQuery $query The query to modify.
+	 * @return \Cake\ORM\Query\SelectQuery The modified query.
 	 */
 	public function findWithAuditUsers(SelectQuery $query): SelectQuery {
 		// Enable auto fields for the query if they are not already enabled
@@ -202,11 +201,9 @@ class AuditBehavior extends Behavior {
 					unset($lx_row['_matchingData']);
 				}
 
-
 				return $lx_row;
 			});
 		});
-
 
 		return $query;
 	}
@@ -217,7 +214,6 @@ class AuditBehavior extends Behavior {
 	 *
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return int
-	 * @noinspection PhpUnused
 	 */
 	public function countAuditData(EntityInterface $entity): int {
 		return $this->auditDataQuery($entity)->count();
@@ -260,8 +256,8 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param EventInterface $event
-	 * @param Validator $validator
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Awyiss\Validation\Validator $validator
 	 * @param string $name
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
@@ -300,49 +296,45 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param EventInterface $event
-	 * @param Entity $entity
-	 * @param ArrayObject $options
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \ArrayObject $options
 	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeDelete(EventInterface $event, Entity $entity, ArrayObject $options): void {
-		if (!isset($options['transactionId'])) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$options['transactionId'] = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
-		}
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$options['transactionId'] ??= vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
 	}
 
 
 	/**
 	 * Before saving set information when creating, updating or deleting.
 	 *
-	 * @param EventInterface $event
-	 * @param Entity $entity
-	 * @param ArrayObject $options
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \ArrayObject $options
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection,PhpUnused
 	 */
 	public function beforeCopy(EventInterface $event, Entity $entity, ArrayObject $options): void {
-		$entity->unset(['createdOn', 'changedOn', 'changedBy', 'changedOn']);
+		$entity->unset(['createdOn', 'createdBy', 'changedOn', 'changedBy']);
 	}
 
 
 	/**
 	 * Before saving set information when creating, updating or deleting.
 	 *
-	 * @param EventInterface $event
-	 * @param Entity $entity
-	 * @param ArrayObject $options
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \ArrayObject $options
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(EventInterface $event, Entity $entity, ArrayObject $options): void {
-		if (!isset($options['transactionId'])) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$options['transactionId'] = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
-		}
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$options['transactionId'] ??= vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
 
 		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'audit'));
 
@@ -354,18 +346,19 @@ class AuditBehavior extends Behavior {
 		$li_identityId = $this->getIdentityId();
 		$lo_schema = $this->table()->getSchema();
 
-		if (empty($entity->deleted)) {
+		if (empty($entity->get('deleted'))) {
 			if ($lb_isNew && $lo_schema->getColumn('created_on') && $la_options['setTimeOnCreate']) {
 				//If the item is new, and if config wants it, set the create-info on this entity
 				$this->setCreateInfo($entity, $li_identityId, $lo_schema);
 			}
-			elseif (!$lb_isNew && $lo_schema->getColumn('changed_on') && $la_options['setTimeOnUpdate']) {
+
+			if (!$lb_isNew && $lo_schema->getColumn('changed_on') && $la_options['setTimeOnUpdate']) {
 				//If the item is not new, and if config wants it, set the update-info on this entity
 				$this->setUpdateInfo($entity, $li_identityId, $lo_schema);
 			}
 		}
 		//elseif ($lo_schema->getColumn('deleted') && ! empty($entity->deleted) && ( ! $entity->hasOriginal('deleted') || $entity->deleted != $entity->getOriginal('deleted'))) {
-		elseif ($lo_schema->getColumn('deleted') && (!$entity->hasOriginal('deleted') || $entity->deleted != $entity->getOriginal('deleted'))) {
+		elseif ($lo_schema->getColumn('deleted') && (!$entity->hasOriginal('deleted') || $entity->get('deleted') != $entity->getOriginal('deleted'))) {
 			//A soft delete will set the `deleted`-property. If this happens, and the config wants it, set the delete-info on this entity
 			if ($lo_schema->getColumn('deleted_on') && $la_options['setTimeOnDelete']) {
 				$this->setDeleteInfo($entity, $li_identityId, $lo_schema);
@@ -376,16 +369,16 @@ class AuditBehavior extends Behavior {
 			return;
 		}
 
-		$this->auditData[ $entity->id ] = $this->buildEntityData($entity);
+		$this->auditData[ $entity->get('id') ] = $this->buildEntityData($entity);
 	}
 
 
 	/**
 	 * Before saving set information when creating, updating or deleting.
 	 *
-	 * @param EventInterface $event
-	 * @param Entity $entity
-	 * @param ArrayObject $options
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \ArrayObject $options
 	 */
 	public function afterSave(EventInterface $event, Entity $entity, ArrayObject $options): void {
 		if (!$this->getConfig('enabled')) {
@@ -402,9 +395,9 @@ class AuditBehavior extends Behavior {
 			return;
 		}
 
-		$la_entityData = $this->auditData[ $entity->id ];
+		$la_entityData = $this->auditData[ $entity->get('id') ] ?? [];
 		//No difference? Do nothing.
-		if (empty($la_entityData) || empty($la_entityData['changes']['old']) && empty($la_entityData['changes']['new'])) {
+		if (empty($la_entityData) || (empty($la_entityData['changes']['old']) && empty($la_entityData['changes']['new']))) {
 			return;
 		}
 
@@ -413,7 +406,7 @@ class AuditBehavior extends Behavior {
 		//Set the data to be used in `newEntity`
 		$la_auditData = [
 			'transactionId' => $options['transactionId'],
-			'type' => !empty($entity->deleted) ? 'd' : 'u',
+			'type' => !empty($entity->get('deleted')) ? 'd' : 'u',
 			'scope' => $event->getSubject()->getTable(),
 			'foreignKey' => $entity->get('id'),
 			'dataOld' => base64_encode(gzcompress(json_encode($la_entityData['old']), 9)),
@@ -432,16 +425,15 @@ class AuditBehavior extends Behavior {
 			throw new RuntimeException('Could not save audit.');
 		}
 
-		unset($this->auditData[ $entity->id ]);
+		unset($this->auditData[ $entity->get('id') ]);
 	}
 
 
 	/**
 	 * Sets the identity
 	 *
-	 * @param IdentityInterface $identity
+	 * @param \Authentication\IdentityInterface $identity
 	 * @return void
-	 * @noinspection PhpUnused
 	 */
 	public function setIdentity(IdentityInterface $identity): void {
 		$this->identity = $identity;
@@ -471,9 +463,9 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $field
-	 * @param Association|false $association
+	 * @param \Cake\ORM\Association|false $association
 	 * @param array $entityData
 	 * @return array
 	 */
@@ -514,7 +506,7 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param array $entityData
 	 * @return array
 	 */
@@ -541,16 +533,14 @@ class AuditBehavior extends Behavior {
 			'mediaFolder',
 		];
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		if ($entity->mediaAssignments) {
+		if ($entity->get('mediaAssignments')) {
 			$lo_sourceTable = $this->fetchTable($entity->getSource());
-			$lo_clonedEntity = clone $entity;
+			/** @var \Awyiss\Model\Entity $lo_clonedEntity */
+			$lo_clonedEntity = unserialize(serialize($entity));
 
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_sourceTable->getBehavior('MediaAssignment')->rebuildMediaAssignments($lo_clonedEntity);
 
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			foreach ($lo_clonedEntity->mediaAssignments as $ls_elementIdentifier => $la_elementAssignments) {
+			foreach ($lo_clonedEntity->get('mediaAssignments') as $ls_elementIdentifier => $la_elementAssignments) {
 				$la_newData = $this->buildMediaAssignment(
 					$la_newData,
 					$ls_elementIdentifier,
@@ -562,11 +552,17 @@ class AuditBehavior extends Behavior {
 
 		ksort($la_newData);
 
-
 		$la_oldData = [];
 		if ($entity->hasOriginal('mediaAssignments')) {
-			/** @var Entity $lo_mediaAssignment */
-			foreach ($entity->getOriginal('mediaAssignments') as $ls_elementIdentifier => $la_elementAssignments) {
+			$lo_sourceTable = $this->fetchTable($entity->getSource());
+			/** @var \Awyiss\Model\Entity $lo_clonedEntity */
+			$lo_clonedEntity = unserialize(serialize($entity));
+			$lo_clonedEntity->patch($lo_clonedEntity->extractOriginal());
+
+			$lo_sourceTable->getBehavior('MediaAssignment')->rebuildMediaAssignments($lo_clonedEntity);
+
+			/** @var \Awyiss\Model\Entity $lo_mediaAssignment */
+			foreach ($lo_clonedEntity->get('mediaAssignments') as $ls_elementIdentifier => $la_elementAssignments) {
 				$la_oldData = $this->buildMediaAssignment(
 					$la_oldData,
 					$ls_elementIdentifier,
@@ -578,7 +574,7 @@ class AuditBehavior extends Behavior {
 
 		ksort($la_oldData);
 
-		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
+		// Even if the assignments are the same, they have to make their way into the db as plain arrays, not entities
 		$la_entityData['old']['mediaAssignments'] = $la_oldData;
 		$la_entityData['new']['mediaAssignments'] = $la_newData;
 
@@ -594,7 +590,7 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param array $entityData
 	 * @return array
 	 */
@@ -603,27 +599,49 @@ class AuditBehavior extends Behavior {
 			return $entityData;
 		}
 
-		$la_oldData = $la_newData = ['start' => ['date_time' => null], 'end' => ['date_time' => null]];
-		if ($entity->hasOriginal('_publicationData')) {
-			/** @var \Awyiss\Model\Entity\PublicationData $lo_publicationData */
-			foreach ($entity->getOriginal('_publicationData') as $lo_publicationData) {
-				$lx_date = $lo_publicationData->hasOriginal('dateTime') ? $lo_publicationData->getOriginal('dateTime') : $lo_publicationData->get('dateTime');
+		$la_oldData = $la_newData = ['start' => ['dateTime' => null], 'end' => ['dateTime' => null]];
+		// If the entity has no original publication data, the data hasn't changed
+		if (
+			!$entity->hasOriginal('_publicationData') ||
+			$entity->get('_publicationData') === $entity->getOriginal('_publicationData')
+		) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			unset($entityData['changes']['old']['_publicationData'], $entityData['changes']['new']['_publicationData']);
 
-				if ($lx_date) {
-					$lx_date = $lx_date->format('Y-m-d H:i:s');
-				}
+			// If the entity has no publication data, we can skip the audit and unset the publication data from the entity data
+			if ($entity->get('_publicationData') === null) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				unset($entityData['old']['_publicationData'], $entityData['new']['_publicationData']);
 
-				$la_oldData[ $lo_publicationData->type->value ] = [
-					'dateTime' => $lx_date ?: null,
-				];
+				return $entityData;
 			}
+
+			// If the publication data is not empty, old = new
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$entityData['old']['_publicationData'] = $entity->get('_publicationData');
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$entityData['new']['_publicationData'] = $entity->get('_publicationData');
+
+			return $entityData;
+		}
+
+		/** @var \Awyiss\Model\Entity\PublicationData $lo_publicationData */
+		foreach ($entity->getOriginal('_publicationData') ?? [] as $lo_publicationData) {
+			$lx_date = $lo_publicationData->hasOriginal('dateTime') ? $lo_publicationData->getOriginal('dateTime') : $lo_publicationData->get('dateTime');
+
+			if ($lx_date) {
+				$lx_date = $lx_date->format('Y-m-d H:i:s');
+			}
+
+			$la_oldData[ $lo_publicationData->type->value ] = [
+				'dateTime' => $lx_date ?: null,
+			];
 		}
 
 		/**
 		 * @var \Awyiss\Model\Entity\PublicationData $lo_publicationData
-		 * @noinspection PhpUndefinedFieldInspection
 		 */
-		foreach ($entity->_publicationData as $lo_publicationData) {
+		foreach ($entity->get('_publicationData') ?? [] as $lo_publicationData) {
 			$lx_date = $lo_publicationData->has('dateTime') ? $lo_publicationData->get('dateTime') : null;
 
 			if ($lx_date) {
@@ -637,7 +655,7 @@ class AuditBehavior extends Behavior {
 
 		$la_entityData = $entityData;
 
-		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
+		// Even if the publication data stayed the same, it has to make their way into the db as plain arrays, not entities
 		$la_entityData['old']['_publicationData'] = $la_oldData;
 		$la_entityData['new']['_publicationData'] = $la_newData;
 
@@ -653,7 +671,7 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param array $entityData
 	 * @return array
 	 */
@@ -662,16 +680,12 @@ class AuditBehavior extends Behavior {
 			return $entityData;
 		}
 
+		$la_translateFields = null;
 		/** @var \Awyiss\Model\Table $lo_sourceTable */
 		$lo_sourceTable = $this->fetchTable($entity->getSource());
-		if (!$lo_sourceTable->hasBehavior('Translate')) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			unset($entityData['old']['_translations'], $entityData['new']['_translations'], $entityData['changes']['old']['_translations'], $entityData['changes']['new']['_translations']);
-
-			return $entityData;
+		if ($lo_sourceTable->hasBehavior('Translate')) {
+			$la_translateFields = $lo_sourceTable->getBehavior('Translate')->getConfig('fields');
 		}
-
-		$la_translateFields = $lo_sourceTable->getBehavior('Translate')->getConfig('fields');
 
 		if (!$la_translateFields) {
 			/** @noinspection PhpVariableNamingConventionInspection */
@@ -685,11 +699,12 @@ class AuditBehavior extends Behavior {
 		 * @var Entity $lo_translatedEntity
 		 * @noinspection PhpLoopCanBeConvertedToArrayMapInspection
 		 */
-		foreach (($entity->_translations ?? []) as $ls_languageShortcode => $lo_translatedEntity) {
-			$la_newTranslations[ $ls_languageShortcode ] = $lo_translatedEntity->extract($la_translateFields, false, false);
+		foreach (($entity->get('_translations') ?? []) as $ls_languageShortcode => $lo_translatedEntity) {
+			$la_newTranslations[ $ls_languageShortcode ] = $lo_translatedEntity?->extract($la_translateFields, false, false) ?? null;
 		}
 
-		$la_oldTranslations = $entity->hasOriginal('_translations') ? $entity->getOriginal('_translations') : $entity->get('_translations');
+		$lb_hasOldTranslations = $entity->hasOriginal('_translations');
+		$la_oldTranslations = $lb_hasOldTranslations ? $entity->getOriginal('_translations') : $entity->get('_translations');
 		if ($la_oldTranslations) {
 			/** @var Entity $lo_translatedEntity */
 			foreach ($la_oldTranslations as $ls_languageShortcode => $lo_translatedEntity) {
@@ -699,12 +714,22 @@ class AuditBehavior extends Behavior {
 						$lx_value = $lo_translatedEntity->getOriginal($ls_field);
 					}
 					else {
-						$lx_value = $lo_translatedEntity->get($ls_field);
+						$lx_value = $lb_hasOldTranslations || !$lo_translatedEntity->isDirty($ls_field) ? $lo_translatedEntity->get($ls_field) : null;
 					}
 
 					$la_oldTranslations[ $ls_languageShortcode ][ $ls_field ] = $lx_value;
 				}
+
+				if (!array_filter($la_oldTranslations[ $ls_languageShortcode ], fn ($value) => $value !== null)) {
+					// If the translations only contain null values, remove them
+					unset($la_oldTranslations[ $ls_languageShortcode ]);
+				}
 			}
+		}
+
+		// If old translations only contain null values, remove them
+		if (!array_filter($la_oldTranslations, fn ($value) => $value !== null)) {
+			$la_oldTranslations = null;
 		}
 
 		$la_entityData = $entityData;
@@ -725,7 +750,7 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param array $entityData
 	 * @return void
 	 */
@@ -763,9 +788,9 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Set the info for a new entity
 	 *
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param int|null $identityId
-	 * @param TableSchemaInterface $schema
+	 * @param \Cake\Database\Schema\TableSchemaInterface $schema
 	 * @return void
 	 */
 	protected function setCreateInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
@@ -781,9 +806,9 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Set the info for an existing entity
 	 *
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param int|null $identityId
-	 * @param TableSchemaInterface $schema
+	 * @param \Cake\Database\Schema\TableSchemaInterface $schema
 	 * @return void
 	 */
 	protected function setUpdateInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
@@ -797,9 +822,9 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Set the info for a deleted entity
 	 *
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param int|null $identityId
-	 * @param TableSchemaInterface $schema
+	 * @param \Cake\Database\Schema\TableSchemaInterface $schema
 	 * @return void
 	 */
 	protected function setDeleteInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
@@ -831,9 +856,9 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $field
-	 * @param Association|HasOne $association
+	 * @param \Cake\ORM\Association|\Awyiss\ORM\Association\HasOne $association
 	 * @param array $entityData
 	 * @return array
 	 */
@@ -891,7 +916,7 @@ class AuditBehavior extends Behavior {
 				}
 
 				//Do not fuck around with the original entity;
-				$lo_clonedEntity = clone $entity;
+				$lo_clonedEntity = unserialize(serialize($entity));
 				$this->table()->loadInto($lo_clonedEntity, [$association->getName()]);
 				if ($lo_clonedEntity->get($field) instanceof Entity) {
 					$la_oldData = $lo_clonedEntity->get($field)->getOriginalValues();
@@ -931,9 +956,9 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $field
-	 * @param Association|HasMany $association
+	 * @param \Cake\ORM\Association|\Awyiss\ORM\Association\HasMany $association
 	 * @param array $entityData
 	 * @return array
 	 */
@@ -973,7 +998,7 @@ class AuditBehavior extends Behavior {
 			}
 
 			//Do not fuck around with the original entity;
-			$lo_clonedEntity = clone $entity;
+			$lo_clonedEntity = unserialize(serialize($entity));
 			$lo_clonedEntity->unset($field);
 			$this->table()->loadInto($lo_clonedEntity, [$association->getName()]);
 			$la_oldData = $lo_clonedEntity->get($field);
@@ -988,6 +1013,18 @@ class AuditBehavior extends Behavior {
 					$this->auditAssociationTranslations($lo_entity, $la_oldData[ $li_key ]);
 				}
 			}
+		}
+
+		if ($la_oldData && $la_newData) {
+			foreach ($la_newData as $lx_key => &$la_entityData) {
+				if (!isset($la_oldData[ $lx_key ])) {
+					continue;
+				}
+
+				// Set all fields that are not present in the new entity to the values of the old entity
+				$la_entityData += $la_oldData[ $lx_key ];
+			}
+			unset($la_entityData);
 		}
 
 		/** @noinspection DuplicatedCode */
@@ -1010,9 +1047,9 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $field
-	 * @param Association|BelongsToMany $association
+	 * @param \Cake\ORM\Association|\Awyiss\ORM\Association\BelongsToMany $association
 	 * @param array $entityData
 	 * @return array
 	 * @noinspection PhpFunctionCyclomaticComplexityInspection
@@ -1070,13 +1107,14 @@ class AuditBehavior extends Behavior {
 				return $entityData;
 			}
 
-			//Do not fuck around with the original entity;
-			$lo_clonedEntity = clone $entity;
+			// Do not fuck around with the original entity;
+			$lo_clonedEntity = unserialize(serialize($entity));
+			$lo_clonedEntity->unset($field);
 			$this->table()->loadInto($lo_clonedEntity, [$association->getName()]);
 			$la_oldData = $lo_clonedEntity->get($field);
 		}
 
-		if ($la_oldData ?? null) {
+		if ($la_oldData) {
 			foreach ($la_oldData as $li_key => $lo_entity) {
 				$la_oldEntityData = $lo_entity->extract($la_keys);
 				$la_oldData[ $li_key ] = $la_oldEntityData;
@@ -1093,8 +1131,8 @@ class AuditBehavior extends Behavior {
 
 		//If only ids are part of the diff, set the diff as <propertyname>._ids
 		if (!$lb_hasThrough && count($la_keys) === 1 && $la_keys[0] === 'id') {
-			$la_oldData = ['_ids' => array_column($la_oldData, 'id')];
-			$la_newData = ['_ids' => array_column($la_newData, 'id')];
+			$la_oldData = ['_ids' => array_column($la_oldData ?? [], 'id')];
+			$la_newData = ['_ids' => array_column($la_newData ?? [], 'id')];
 		}
 
 		/** @noinspection DuplicatedCode */
@@ -1117,7 +1155,7 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @return array
 	 */
 	protected function buildEntityData(Entity $entity): array {
@@ -1208,11 +1246,11 @@ class AuditBehavior extends Behavior {
 	/**
 	 * @param array $data
 	 * @param string|int $elementIdentifier
-	 * @param mixed $elementAssignments
+	 * @param array $elementAssignments
 	 * @param array $blocklistedFields
 	 * @return array
 	 */
-	protected function buildMediaAssignment(array $data, string|int $elementIdentifier, mixed $elementAssignments, array $blocklistedFields): array {
+	protected function buildMediaAssignment(array $data, string|int $elementIdentifier, array $elementAssignments, array $blocklistedFields): array {
 		foreach ($elementAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
 			if ($lx_selectorAssignments instanceof Entity) {
 				$la_values = $lx_selectorAssignments->extract(null, false, false);

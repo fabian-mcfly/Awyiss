@@ -428,10 +428,10 @@ class CategoriesComponent extends Component {
 
 
 	/**
-	 * @param SelectQuery $query
+	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string|null $column
 	 * @param string|null $associationName
-	 * @return SelectQuery
+	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function sortQuery(SelectQuery $query, ?string $column = null, ?string $associationName = null): SelectQuery {
 		if (!$this->getConfig('enabled')) {

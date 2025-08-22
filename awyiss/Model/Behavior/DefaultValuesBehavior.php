@@ -1,4 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * @noinspection PhpMultipleClassDeclarationsInspection
+ */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 namespace Awyiss\Model\Behavior;
@@ -62,17 +69,16 @@ class DefaultValuesBehavior extends Behavior {
 	 */
 	public function newDefaultEntity(array $additionalData = [], array $options = []): EntityInterface {
 		if (!$this->getConfig('enabled')) {
-			//Calling this method when the behavior is disabled results in an exception
+			// Calling this method when the behavior is disabled results in an exception
 			throw new RuntimeException(sprintf('The method `newDefaultEntity()` is not available since the `%s` Behavior is not enabled', static::class));
 		}
 
-		//Retreive the class that's used by the table for the creation of new entities
+		// Retrieve the class that's used by the table for the creation of new entities
 		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
 		$ls_entityClass = $this->table()->getEntityClass();
 		/** @var \Awyiss\Model\Entity $lo_entity */
 		$lo_entity = new $ls_entityClass([], ['source' => $this->table()->getRegistryAlias()]);
 
-		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 
 		$lo_schema = $lo_table->getSchema();
@@ -87,12 +93,10 @@ class DefaultValuesBehavior extends Behavior {
 		//Typecast the defaults based on the schema
 		$this->typecastDefaults($la_defaults, $lo_schema);
 
-		if ($lo_table->hasAttributes()) {
-			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributesTable */
-			$lo_attributesTable = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
-			$la_defaults['attributes'] = $lo_attributesTable->newDefaultEntity($additionalData['attributes'] ?? []);
-			/** @noinspection PhpVariableNamingConventionInspection */
-			unset($additionalData['attributes']);
+		$la_additionalData = $additionalData;
+		if ($additionalData) {
+			// Unmap the fields in case the additional data contains mapped keys
+			$la_additionalData = $ls_entityClass::unmapFields($additionalData, true);
 		}
 
 		if (
@@ -103,16 +107,40 @@ class DefaultValuesBehavior extends Behavior {
 			$this->addCategoryDefault($la_defaults, $lo_table, $lo_attributesTable ?? null);
 		}
 
-		$la_additionalData = $additionalData;
-		if ($additionalData) {
-			// Unmap the fields in case the additional data contains mapped keys
-			$la_additionalData = $ls_entityClass::unmapFields($additionalData, true);
+		if ($lo_table->hasAttributes()) {
+			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributesTable */
+			$lo_attributesTable = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
+			/** @var \Awyiss\Model\Entity $ls_attributesEntityClass */
+			$ls_attributesEntityClass = $lo_attributesTable->getEntityClass();
+			$la_attributeColumns = $lo_attributesTable->getSchema()->columns();
+			$la_attributeData = $la_additionalData['attributes'] ?? [];
+
+			// Check if any of the attribute columns are part of the additional data directly
+			foreach ($la_attributeColumns as $ls_column) {
+				$ls_column = $ls_attributesEntityClass::unmapField($ls_column);
+				if (array_key_exists($ls_column, $la_additionalData)) {
+					$la_attributeData[ $ls_column ] = $la_additionalData[ $ls_column ];
+					unset($la_additionalData[ $ls_column ]);
+					continue;
+				}
+
+				$ls_column = $ls_attributesEntityClass::mapField($ls_column);
+				if (array_key_exists($ls_column, $la_additionalData)) {
+					$la_attributeData[ $ls_column ] = $la_additionalData[ $ls_column ];
+					unset($la_additionalData[ $ls_column ]);
+				}
+			}
+
+			$la_defaults['attributes'] = $lo_attributesTable->newDefaultEntity($la_attributeData);
+			/** @noinspection PhpVariableNamingConventionInspection */
+			unset($la_additionalData['attributes']);
 		}
 
 		$lo_entity = $this->marshallDefaults($lo_entity, $la_defaults, $la_additionalData, $options);
 
 		//Set the entity to the attributes entity
 		if ($lo_table->hasAttributes()) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_entity->attributes->setEntity($lo_entity);
 		}
 
@@ -127,8 +155,10 @@ class DefaultValuesBehavior extends Behavior {
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
+		/** @noinspection PhpParamsInspection */
 		$this->processArray($data, $this->_table);
 	}
 
@@ -149,25 +179,21 @@ class DefaultValuesBehavior extends Behavior {
 		$ls_column = $lo_categories->getConfig('field') ?: $lo_categories->getConfig('identifier');
 		$ls_column = $ls_entityClass::unmapField($ls_column);
 
-
-		if ($attributes) {
-			if ($attributes->getSchema()->getColumn($ls_column)) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$defaults[ $attributes->getProperty() ][ $ls_column ] = $lo_categories->getConfig('selectedCategory');
-			}
+		if ($attributes && $attributes->getSchema()->getColumn($ls_column)) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$defaults[ $attributes->getProperty() ][ $ls_column ] = $lo_categories->getConfig('selectedCategory');
 		}
-		else {
-			if ($table->getSchema()->getColumn($ls_column)) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$defaults[ $ls_column ] = $lo_categories->getConfig('selectedCategory');
-			}
+
+		if ($table->getSchema()->getColumn($ls_column)) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$defaults[ $ls_column ] = $lo_categories->getConfig('selectedCategory');
 		}
 	}
 
 
 	/**
 	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param array $data
+	 * @param array $defaults
 	 * @param array $additionalData
 	 * @param array $options
 	 * @return \Cake\Datasource\EntityInterface
@@ -185,10 +211,7 @@ class DefaultValuesBehavior extends Behavior {
 			'events' => false,
 		];
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $this->table();
-
-		$lo_marshaller = $lo_table->marshaller();
+		$lo_marshaller = $this->table()->marshaller();
 
 		return $lo_marshaller->merge($entity, $la_defaults, $la_options);
 	}
@@ -198,12 +221,13 @@ class DefaultValuesBehavior extends Behavior {
 	 * Copyright (c) 2024 Awyiss
 	 * Copyright (c) 2019 Mark Scherer
 	 *
-	 * @param \ArrayObject|array $data
-	 * @param \Cake\ORM\Table $table
-	 * @return \ArrayObject|array
+	 * @param \ArrayObject $data
+	 * @param \Awyiss\Model\Table $table
+	 * @return void
 	 * @copyright https://github.com/dereuromark/cakephp-shim/tree/master
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	protected function processArray(ArrayObject|array $data, Table $table): ArrayObject|array {
+	protected function processArray(ArrayObject $data, Table $table): void {
 		$la_associations = [];
 
 		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
@@ -214,32 +238,41 @@ class DefaultValuesBehavior extends Behavior {
 			$la_associations[ $ls_entityClass::unmapField($lo_association->getProperty()) ] = $lo_association->getName();
 		}
 
-		$la_data = $data;
-		foreach ($la_data as $ls_key => $lx_value) {
+		foreach ($data as $ls_key => $lx_value) {
 			if (is_numeric($ls_key)) {
 				continue;
 			}
 
 			if (array_key_exists($ls_key, $la_associations)) {
-				if ($lx_value !== null) {
-					if ($lx_value === '') {
-						$lx_value = $ls_key === 'attributes' ? [] : null;
-					}
-					elseif ($lx_value instanceof EntityInterface) {
-						$lx_value = $this->processEntity(
-							$lx_value,
-							$table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
-						);
-					}
-					else {
-						$lx_value = $this->processArray(
-							$lx_value,
-							$table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
-						);
+				if ($lx_value === null) {
+					continue;
+				}
+
+				if ($lx_value === '') {
+					$lx_value = $ls_key === 'attributes' ? [] : null;
+				}
+				elseif ($lx_value instanceof EntityInterface) {
+					/** @noinspection PhpParamsInspection */
+					$lx_value = $this->processEntity(
+						$lx_value,
+						$table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
+					);
+				}
+				elseif (is_array($lx_value) || $lx_value instanceof ArrayObject) {
+					if (!$lx_value instanceof ArrayObject) {
+						$lx_value = new ArrayObject($lx_value);
 					}
 
-					$la_data[ $ls_key ] = $lx_value;
+					/** @noinspection PhpParamsInspection */
+					$this->processArray(
+						$lx_value,
+						$table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
+					);
+
+					$lx_value = $lx_value->getArrayCopy();
 				}
+
+				$data[ $ls_key ] = $lx_value;
 
 				continue;
 			}
@@ -255,11 +288,8 @@ class DefaultValuesBehavior extends Behavior {
 			}
 
 			$lx_default = Hash::get((array)$table->getSchema()->getColumn($ls_entityClass::unmapField($ls_key)), 'default');
-			$la_data[ $ls_key ] = $lx_default;
+			$data[ $ls_key ] = $lx_default;
 		}
-
-
-		return $la_data;
 	}
 
 
@@ -268,7 +298,7 @@ class DefaultValuesBehavior extends Behavior {
 	 * Copyright (c) 2019 Mark Scherer
 	 *
 	 * @param \Awyiss\Model\Entity $entity
-	 * @param \Cake\ORM\Table $table
+	 * @param \Awyiss\Model\Table $table
 	 * @return \Cake\Datasource\EntityInterface
 	 * @copyright https://github.com/dereuromark/cakephp-shim/tree/master
 	 */
@@ -288,10 +318,18 @@ class DefaultValuesBehavior extends Behavior {
 						$lx_value = null;
 					}
 					elseif ($lx_value instanceof EntityInterface) {
+						/** @noinspection PhpParamsInspection */
 						$lx_value = $this->processEntity($lx_value, $table->getAssociation($la_associations[ $ls_field ])->getTarget());
 					}
 					elseif (is_array($lx_value) || $lx_value instanceof ArrayObject) {
-						$lx_value = $this->processArray($lx_value, $table->getAssociation($la_associations[ $ls_field ])->getTarget());
+						if (!$lx_value instanceof ArrayObject) {
+							$lx_value = new ArrayObject($lx_value);
+						}
+
+						/** @noinspection PhpParamsInspection */
+						$this->processArray($lx_value, $table->getAssociation($la_associations[ $ls_field ])->getTarget());
+
+						$lx_value = $lx_value->getArrayCopy();
 					}
 
 					$entity->set($ls_field, $lx_value);
@@ -351,6 +389,7 @@ class DefaultValuesBehavior extends Behavior {
 					'time' => $lx_default ? new Time($lx_default) : null,
 				};
 			}
+			/** @noinspection PhpMultipleClassDeclarationsInspection */
 			catch (UnhandledMatchError) {
 				if (str_starts_with($la_typeMap[ $ls_column ], 'enum-')) {
 					$lo_dbType = TypeFactory::build($la_typeMap[ $ls_column ]);

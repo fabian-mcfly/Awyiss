@@ -272,7 +272,7 @@ class InstagramFeedModule extends AbstractModule {
 
 				$entity->setAccess('createdOn', true);
 
-				$entity->set([
+				$entity->patch([
 					'mediaFolderId' => $li_mediaFolderId,
 					'name' => $ls_fileName,
 					'path' => $ls_path . $ls_fileName,

@@ -891,7 +891,6 @@ class Survey extends Entity {
 	 * ]`
 	 *
 	 * @return array<int, array<int, int>>
-	 * @noinspection PhpUnused
 	 */
 	public function buildResultsArray(): array {
 		$la_results = [];
@@ -911,7 +910,6 @@ class Survey extends Entity {
 	/**
 	 * @param array|null $path
 	 * @return string
-	 * @noinspection PhpUnused
 	 */
 	public function buildResultPath(?array $path = null): string {
 		/** @noinspection PhpVariableNamingConventionInspection */

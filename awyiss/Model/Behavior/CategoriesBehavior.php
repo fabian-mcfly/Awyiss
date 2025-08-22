@@ -1,4 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * @noinspection PhpInternalEntityUsedInspection
+ */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 namespace Awyiss\Model\Behavior;
@@ -12,22 +19,27 @@ use Awyiss\Utility\Inflector;
 use BackedEnum;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
+use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
-use Cake\ORM\Marshaller;
-use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 use RuntimeException;
 
 
 /**
- * Build the category-association (if necessary) and offers a method to retreive all category records
+ * Build the category-association (if necessary) and
+ * offers a method to retrieve all category records.
+ *
+ * If `useDatasource` is set to `false`, the categories
+ * are expected to be provided via the `categories`-config or
+ * built via a `buildCategories`-method in the table.
  */
-class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
+class CategoriesBehavior extends Behavior {
 	/**
 	 * Default configuration
 	 *
@@ -84,7 +96,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 
 		if ($this->getConfig('associationName')) {
@@ -139,7 +150,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		}
 
 		if (!$this->getConfig('useDatasource')) {
-			/** @var \Awyiss\Model\Table $lo_table */
 			$lo_table = $this->table();
 
 			if (method_exists($lo_table, 'buildCategories')) {
@@ -171,7 +181,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			$this->buildCategories();
 		}
 
-
 		return $this->categories[ $returnRaw ? 'raw' : 'simple' ];
 	}
 
@@ -198,10 +207,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			return false;
 		}
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $this->table();
-
-		return $lo_table->fieldIsAttribute($this->getConfig('field') ?: $this->getConfig('identifier'));
+		return $this->table()->fieldIsAttribute($this->getConfig('field') ?: $this->getConfig('identifier'));
 	}
 
 
@@ -210,7 +216,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param mixed $selectedCategory
-	 * @param string|null $column
+	 * @param bool $sortAggregation
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function filterQuery(SelectQuery $query, mixed $selectedCategory = null, bool $sortAggregation = true): SelectQuery {
@@ -248,7 +254,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
 			return $sortAggregation ? $this->sortQuery($query) : $query;
 		}
-
 
 		if ($lo_association instanceof HasMany || $lo_association instanceof BelongsToMany) {
 			if ($lx_selectedCategory == $this->getConfig('unassignedKey')) {
@@ -317,7 +322,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		$ls_column = $this->getConfig('field') ?: $this->getConfig('identifier');
 
-		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 		$lb_isAttribute = $this->fieldIsAttribute();
 		if ($lb_isAttribute) {
@@ -371,7 +375,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		if ($this->getConfig('useDatasource')) {
 			$ls_associationName = $associationName ?? $this->getConfig('associationName');
 			if (!$ls_associationName) {
-				throw new RuntimeException(
+				throw new InvalidArgumentException(
 					sprintf(
 						'Cannot filter query without an association in `%s` for table `%s`.',
 						static::class,
@@ -380,9 +384,9 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 				);
 			}
 
-			$lo_association = $query->getRepository()->getAssociation($ls_associationName);
-
 			if (empty($ls_column)) {
+				$lo_association = $query->getRepository()->getAssociation($ls_associationName);
+
 				$ls_column = $lo_association->getForeignKey();
 				if (is_array($ls_column)) {
 					$ls_column = reset($ls_column);
@@ -393,11 +397,11 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			$ls_entityClass = $query->getRepository()->getEntityClass();
 		}
 		else {
-			$ls_entityClass = $this->table()->getEntityClass();
-
 			if (empty($ls_column)) {
 				$ls_column = $this->getConfig('identifier');
 			}
+
+			$ls_entityClass = $this->table()->getEntityClass();
 		}
 
 		$ls_column = $ls_entityClass::mapField($ls_column);
@@ -406,13 +410,16 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			$this->sortQuery($query, $column, $associationName);
 		}
 
-
 		return $query->formatResults(function (CollectionInterface $collection) use ($ls_column) {
 			return $collection->groupBy(function (EntityInterface $entity) use ($ls_column) {
 				$lx_value = $entity->get($ls_column);
 
 				if ($lx_value instanceof BackedEnum) {
 					$lx_value = $lx_value->value;
+				}
+
+				if ($lx_value === null) {
+					$lx_value = $this->getConfig('unassignedKey');
 				}
 
 				return $lx_value;
@@ -486,8 +493,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 			/** @var \Awyiss\Model\Entity $ls_entityClass */
 			$ls_entityClass = $lo_association->getSource()->getEntityClass();
-
-			$la_categoryIdentifiers = array_keys($la_categories);
 		}
 		else {
 			$ls_entityClass = $this->table()->getEntityClass();
@@ -495,11 +500,9 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			if (empty($ls_column)) {
 				$ls_column = $this->getConfig('identifier');
 			}
-
-			$la_categoryIdentifiers = array_keys($la_categories);
-
-			dd(2, __FILE__, __LINE__);
 		}
+
+		$la_categoryIdentifiers = array_keys($la_categories);
 
 		$ls_column = $ls_entityClass::unmapField($ls_column);
 
@@ -510,14 +513,37 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		// If the table has a SystemOrder behavior, use the sort field to sort the records
 		if ($query->getRepository()->hasBehavior('SystemOrder')) {
-			$this->_sortQueryBySystemOrderField($query);
+			$this->sortQueryBySystemOrderField($query);
 		}
 
-		/** @noinspection PhpUndefinedMethodInspection */
-		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-			$ls_prefixedColumn => 'identifier',
-			implode(',', $la_categoryIdentifiers),
-		])), true);
+		$lo_dialect = $query->getConnection()->getDriver()->schemaDialect();
+		/**
+		 * SQLite does not support FIND_IN_SET(),
+		 * so ordering using CASE WHEN is used instead
+		 */
+		if ($lo_dialect instanceof SqliteSchemaDialect) {
+			$query->orderBy(function ($exp) use ($ls_prefixedColumn, $la_categoryIdentifiers) {
+				$li_index = 0;
+
+				$lo_case = $exp->case();
+				foreach ($la_categoryIdentifiers as $ls_categoryIdentifier) {
+					$lo_case->when([$ls_prefixedColumn => $ls_categoryIdentifier])->then($li_index, 'integer');
+
+					$li_index++;
+				}
+
+				$lo_case->else(999, 'integer');
+
+				return $lo_case;
+			});
+		}
+		else {
+			/** @noinspection PhpUndefinedMethodInspection */
+			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+				$ls_prefixedColumn => 'identifier',
+				implode(',', $la_categoryIdentifiers),
+			])), true);
+		}
 
 		/*
 		 * Set the order by-clause but reset existing order-clauses, so records will be sorted
@@ -580,24 +606,20 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
-	 * @param int $level
-	 * @param int $maxLevel
+	 * @param bool $includeCurrentCategories
 	 * @return \Cake\Collection\CollectionInterface|null
 	 */
-	public function getParentCategories(bool $include = false): ?CollectionInterface {
+	public function getParentCategories(bool $includeCurrentCategories = false): ?CollectionInterface {
 		if (isset($this->parentCategories)) {
-			if ($include) {
+			if ($includeCurrentCategories) {
 				$lo_categories = $this->parentCategories->append($this->getCategories(true));
-
 
 				return $lo_categories->indexBy('id')->compile();
 			}
 
-
 			return $this->parentCategories;
 		}
 
-		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 
 		$ls_associationName = $this->getConfig('associationName');
@@ -608,7 +630,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			!$lo_table->getAssociation($ls_associationName)->hasBehavior('Categories')
 		) {
 			$this->parentCategories = null;
-
 
 			return null;
 		}
@@ -622,20 +643,16 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		) {
 			$this->parentCategories = null;
 
-
 			return null;
 		}
 
 		$this->parentCategories = $lo_behavior->getCategories(true);
 
-
-		if ($include) {
+		if ($includeCurrentCategories) {
 			$lo_categories = $this->parentCategories->append($this->getCategories(true));
-
 
 			return $lo_categories->indexBy('id')->compile();
 		}
-
 
 		return $this->parentCategories;
 	}
@@ -645,7 +662,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * @param int $maxLevel
 	 * @return void
 	 */
-	public function assignParentCategories(int $maxLevel): void {
+	public function assignParentCategories(int $maxLevel = PHP_INT_MAX): void {
 		$lo_parentCategories = $this->getParentCategories(true);
 		if (!$lo_parentCategories) {
 			return;
@@ -653,7 +670,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		$lo_parentCategories = $lo_parentCategories->nest('id', 'parentId')->listNested();
 
-		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 
 		$ls_associationName = $this->getConfig('associationName');
@@ -674,6 +690,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			//Check if the entity is an instance of the special class
 			if ($lo_entity instanceof $ls_entityClass) {
 				$li_parentsCount = min($maxLevel, $li_currentDepth);
+				/** @noinspection PhpUndefinedFieldInspection */
 				$lo_entity->_parents = array_values(array_slice($la_currentPath, -$li_parentsCount, $li_parentsCount, true));
 				$lo_entity->setVirtual(['_parents'], true);
 
@@ -689,7 +706,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * @return void
 	 */
 	protected function buildCategories(): void {
-		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 
 		$ls_associationName = $this->getConfig('associationName');
@@ -720,12 +736,36 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			$ls_field = $this->getConfig('foreignKey');
 			$ls_field = $lo_association->aliasField($ls_field);
 
-			// Order by parent categories first
-			/** @noinspection PhpUndefinedMethodInspection */
-			$lo_query->orderByAsc($lo_query->newExpr($lo_query->func()->FIND_IN_SET([
-				$ls_field => 'identifier',
-				implode(',', $la_parentCategorieIds),
-			])), true);
+			$lo_dialect = $lo_query->getConnection()->getDriver()->schemaDialect();
+			/**
+			 * SQLite does not support FIND_IN_SET(),
+			 * so ordering using CASE WHEN is used instead
+			 */
+			if ($lo_dialect instanceof SqliteSchemaDialect) {
+				$lo_query->orderBy(function ($exp) use ($ls_field, $la_parentCategorieIds) {
+					$li_index = 0;
+
+					$lo_case = $exp->case();
+					foreach ($la_parentCategorieIds as $ls_parentCategoryId) {
+						$lo_case->when([$ls_field => $ls_parentCategoryId])->then($li_index, 'integer');
+
+						$li_index++;
+					}
+
+					return $lo_case;
+				});
+			}
+			else {
+				/**
+				 * Order by parent categories first
+				 *
+				 * @noinspection PhpUndefinedMethodInspection
+				 */
+				$lo_query->orderByAsc($lo_query->newExpr($lo_query->func()->FIND_IN_SET([
+					$ls_field => 'identifier',
+					implode(',', $la_parentCategorieIds),
+				])), true);
+			}
 		}
 
 		$lo_categories = $lo_query->all();
@@ -742,6 +782,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			foreach ($lo_categories as $lo_category) {
 				$lo_category->setVirtual(['level'], true);
 				//Add the current depth as a level-property to the entity
+				/** @noinspection PhpUndefinedFieldInspection */
 				$lo_category->level = $lo_categories->getDepth();
 			}
 
@@ -775,7 +816,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		$ls_fieldName = Inflector::camelize($this->getConfig('field'));
 		$ls_ruleName = 'valid' . $ls_fieldName;
 
-		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 		$rules->add(function (EntityInterface $entity, array $options) use ($lo_table): bool {
 			$la_categories = $this->getCategories();
@@ -789,10 +829,8 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 					if (!empty($lx_value)) {
 						$la_possibleValues = Hash::extract($lx_value, '{n}.' . $lo_association->getBindingKey());
 
-
 						return empty(array_diff($la_possibleValues, array_keys($la_categories)));
 					}
-
 
 					return true;
 				}
@@ -815,32 +853,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
-	 * @inheritDoc
-	 * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
-	 * @param array $map The property map being built.
-	 * @param array<string, mixed> $options The options array used in the marshalling call.
-	 * @return array A map of `[property => callable]` of additional properties to marshal.
-	 */
-	public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array {
-		if ($this->fieldIsAttribute()) {
-			$ls_column = $this->getConfig('field') ?: $this->getConfig('identifier');
-
-			return [
-				$ls_column => function (mixed $value, EntityInterface $entity) use ($ls_column): mixed {
-					$lo_attributes = $entity->get('attributes');
-
-					$lo_attributes->set($ls_column, $value);
-
-					return $value;
-				},
-			];
-		}
-
-		return [];
-	}
-
-
-	/**
 	 * Sorts the query by the field used for the system order.
 	 * This method is used to sort the query by the system order field, in case the system_order field itself
 	 * is ambiguous
@@ -848,13 +860,13 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @return void
 	 */
-	protected function _sortQueryBySystemOrderField(SelectQuery $query): void {
+	protected function sortQueryBySystemOrderField(SelectQuery $query): void {
 		$lo_table = $query->getRepository();
 
 		/** @var \Awyiss\Model\Behavior\SystemOrderBehavior $lo_behavior */
 		$lo_behavior = $lo_table->getBehavior('SystemOrder');
 		$ls_field = $lo_behavior->getConfig('field');
-		if ($ls_field === 'system_order') {
+		if (in_array($ls_field, ['system_order', 'systemOrder'])) {
 			return;
 		}
 
@@ -872,14 +884,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		else {
 			$ls_fieldType = $lo_table->getSchema()->getColumnType($ls_field);
 		}
-
-		/*
-		 * $lo_records = $lo_query->all()->sortBy(
-		 *	$field,
-		 *	$direction,
-		 *	in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
-		 * );
-		 */
 
 		 $query->formatResults(function (CollectionInterface $collection) use ($ls_field, $ls_direction, $ls_fieldType) {
 			 return $collection->sortBy(

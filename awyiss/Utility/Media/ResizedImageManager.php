@@ -308,7 +308,13 @@ class ResizedImageManager {
 	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int|null $strategy
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 */
-	public static function findWithinThreshold(Media $media, float|int|null $width, float|int|null $height, string $format, ResizeStrategy|string|int|null $strategy = null): ?MediaResizedImage {
+	public static function findWithinThreshold(
+		Media $media,
+		float|int|null $width,
+		float|int|null $height,
+		string $format,
+		ResizeStrategy|string|int|null $strategy = null
+	): ?MediaResizedImage {
 		$la_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
 
 		$li_widthThreshold = $width ? ceil($width * 1.1) : null;
@@ -383,17 +389,20 @@ class ResizedImageManager {
 			}
 		}
 
-		// If the size doesn't have to be strict, check if there is a resized image within a certain threshold
-		if (!$strictSize) {
-			$lo_resizedImage = static::findWithinThreshold($media, $width, $height, $format, $le_strategy);
+		// If the size has to be strict, return null since we haven't found an image
+		if ($strictSize) {
+			return null;
+		}
 
-			if ($lo_resizedImage) {
-				if (!$lo_resizedImage->media) {
-					$lo_resizedImage->media = $media;
-				}
+		// Check if there is a resized image within a certain threshold
+		$lo_resizedImage = static::findWithinThreshold($media, $width, $height, $format, $le_strategy);
 
-				return $lo_resizedImage;
+		if ($lo_resizedImage) {
+			if (!$lo_resizedImage->media) {
+				$lo_resizedImage->media = $media;
 			}
+
+			return $lo_resizedImage;
 		}
 
 		return null;

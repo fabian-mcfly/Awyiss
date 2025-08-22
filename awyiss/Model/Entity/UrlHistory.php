@@ -44,4 +44,13 @@ class UrlHistory extends Entity {
 		'target' => true,
 		'status' => true,
 	];
+
+
+	/**
+	 * @param string|int $status
+	 * @return int|null
+	 */
+	protected function _setStatus(string|int $status): ?int {
+		return (int)$status ?: null;
+	}
 }

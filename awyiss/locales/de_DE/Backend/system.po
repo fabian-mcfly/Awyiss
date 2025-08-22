@@ -257,9 +257,6 @@ msgstr "Seite verlassen"
 msgid "form_leave_confirmation_dialog_confirm_stay"
 msgstr "Abbrechen"
 
-msgid "cant_modify_deleted"
-msgstr "Gelöschte Einträge können nicht bearbeitet werden"
-
 msgid "sort_asc"
 msgstr "Aufsteigend"
 

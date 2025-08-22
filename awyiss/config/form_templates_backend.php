@@ -18,7 +18,7 @@ return [
 	// Wrapper content used to hide other content.
 	'hiddenBlock' => '<div class="Hidden">{{content}}</div>',
 	// Generic input element.
-	'input' => '<input type="{{type}}" name="{{name}}" {{attrs}}>',
+	'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
 	// Container element used by control().
 	'inputContainer' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}}"{{containerAttrs}}>{{content}}{{additionalContent}}</div>',
 	// Container element used by control() when a field has an error.
@@ -44,7 +44,7 @@ return [
 	// Multi-Checkbox input set title element.
 	'multicheckboxTitle' => '<legend class="Legend">{{text}}</legend>',
 	// Label element used for radio and multi-checkbox inputs.
-	'nestingLabel' => '{{hidden}}{{input}}<label class="Label" {{attrs}}>{{text}}</label>',
+	'nestingLabel' => '{{hidden}}{{input}}<label class="Label"{{attrs}}>{{text}}</label>',
 	// Option element used in select pickers.
 	'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 	// Option group element used in select pickers.
@@ -54,7 +54,7 @@ return [
 	// Select element,
 	'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
 	// Textarea input element,
-	'textarea' => '<textarea name="{{name}}" {{attrs}}>{{value}}</textarea>',
+	'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 	// Translatable text container.
 	'translatableText' => '<div class="TranslatableTexts" data-button-title="{{buttonTitle}}" data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
 	// Container for submit buttons.
@@ -64,5 +64,3 @@ return [
 	// selected class
 	'selectedClass' => 'Selected',
 ];
-
-

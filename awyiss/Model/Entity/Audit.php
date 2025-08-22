@@ -25,6 +25,18 @@ class Audit extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'transaction_id' => 'transactionId',
+		'foreign_key' => 'foreignKey',
+		'data_old' => 'dataOld',
+		'data_new' => 'dataNew',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+	];
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
 		'scope' => true,
 		'foreignKey' => true,
@@ -35,16 +47,5 @@ class Audit extends Entity {
 		'diff' => true,
 		'createdBy' => true,
 		'createdOn' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'transaction_id' => 'transactionId',
-		'foreign_key' => 'foreignKey',
-		'data_old' => 'dataOld',
-		'data_new' => 'dataNew',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
 	];
 }

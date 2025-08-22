@@ -33,6 +33,9 @@ class Entity extends BaseEntity {
 	use TranslateTrait;
 
 
+	/**
+	 * @var bool Whether the entity allows tracking changes by AuditBehavior
+	 */
 	protected bool $_audit = true;
 	/**
 	 * @var array Default values for the entity

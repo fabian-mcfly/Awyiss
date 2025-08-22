@@ -19,4 +19,15 @@ class Validation extends BaseValidation {
 	public static function notBoolean(mixed $check): bool {
 		return !is_bool($check);
 	}
+
+
+	/**
+	 * Check if the given value is a float
+	 *
+	 * @param mixed $check
+	 * @return bool
+	 */
+	public static function isFloat(mixed $check): bool {
+		return is_float($check);
+	}
 }

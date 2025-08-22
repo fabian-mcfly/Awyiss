@@ -42,12 +42,13 @@ class DatatablesTable extends Table {
 	 * or because they are template folder names
 	 */
 	protected array $blocklistedIdentifiers = [
-		'cell',
-		'content_area',
-		'email',
-		'element',
-		'generic_page',
-		'layout',
+		'cells',
+		'content_areas',
+		'emails',
+		'elements',
+		'forms',
+		'generic_pages',
+		'layouts',
 	];
 	/**
 	 * @inheritDoc

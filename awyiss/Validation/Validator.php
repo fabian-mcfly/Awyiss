@@ -47,10 +47,7 @@ class Validator extends BaseValidator {
 	 * @inheritDoc
 	 */
 	public function validate(array $data, bool $newRecord = true): array {
-		$la_data = $this->underscoreFields($data, true);
-
-
-		return parent::validate($la_data, $newRecord);
+		return parent::validate($this->underscoreFields($data, true), $newRecord);
 	}
 
 
@@ -58,10 +55,7 @@ class Validator extends BaseValidator {
 	 * @inheritDoc
 	 */
 	public function allowEmptyFor(string $field, ?int $flags = null, $when = true, ?string $message = null): static {
-		$ls_field = $this->underscoreField($field);
-
-
-		return parent::allowEmptyFor($ls_field, $flags, $when, $message);
+		return parent::allowEmptyFor($this->underscoreField($field), $flags, $when, $message);
 	}
 
 
@@ -89,10 +83,7 @@ class Validator extends BaseValidator {
 	 * @inheritDoc
 	 */
 	public function hasField(string $name): bool {
-		$ls_name = $this->underscoreField($name);
-
-
-		return isset($this->_fields[ $ls_name ]);
+		return isset($this->_fields[ $this->underscoreField($name) ]);
 	}
 
 
@@ -101,9 +92,7 @@ class Validator extends BaseValidator {
 	 */
 	public function remove(string $field, ?string $rule = null): static {
 		if ($rule === null) {
-			$ls_field = $this->underscoreField($field);
-
-			unset($this->_fields[ $ls_field ]);
+			unset($this->_fields[ $this->underscoreField($field) ]);
 		}
 		else {
 			$this->field($field)->remove($rule);
@@ -158,7 +147,7 @@ class Validator extends BaseValidator {
 
 
 	/**
-	 * Re-implemented translate the passed arguments for the error message.
+	 * Re-implemented to translate the passed arguments for the error message.
 	 * This way, validation messages from rules like this receive the
 	 * translated arguments:
 	 * ```
@@ -207,25 +196,32 @@ class Validator extends BaseValidator {
 				'field' => __df($this->i18nDomain, 'system', Inflector::underscore($field)),
 			];
 
-			$lx_pass = $lo_rule->get('pass')[0] ?? [];
-			if ($lx_pass) {
-				if (in_array($ls_name, ['equalTo', 'sameAs', 'notSameAs', 'compareWith', 'compareFields'])) {
-					$lx_pass = __d($this->i18nDomain, Inflector::underscore($lx_pass));
+			$lx_param = $lo_rule->get('pass')[0] ?? [];
+
+			if (!$lx_param) {
+				$la_errors[ $ls_name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($ls_name));
+
+				if ($lo_rule->isLast()) {
+					break;
 				}
-				elseif ($ls_name == 'dateTime') {
-					$lx_pass = is_string($lx_pass) ? $lx_pass : ($lx_pass[0] ?? 'Ymd');
-				}
-				elseif ($ls_name == 'inList') {
-					$lx_pass = implode(', ', $lx_pass);
-				}
-				elseif (!is_scalar($lx_pass)) {
-					throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_pass, true)));
-				}
-				//else {
-				//	dd($ls_name, $lx_pass, $lo_rule->get('pass'), __FILE__, __LINE__);
-				//}
-				$la_pass[ $ls_name ] = $lx_pass;
+
+				continue;
 			}
+
+			if (in_array($ls_name, ['equalTo', 'sameAs', 'notSameAs', 'compareWith', 'compareFields'])) {
+				$lx_param = __d($this->i18nDomain, Inflector::underscore($lx_param));
+			}
+			elseif ($ls_name == 'dateTime') {
+				$lx_param = is_string($lx_param) ? $lx_param : ($lx_param[0] ?? 'Ymd');
+			}
+			elseif ($ls_name == 'inList') {
+				$lx_param = implode(', ', $lx_param);
+			}
+			elseif (!is_scalar($lx_param)) {
+				throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_param, true)));
+			}
+
+			$la_pass[ $ls_name ] = $lx_param;
 
 			$la_errors[ $ls_name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($ls_name), $la_pass[ $ls_name ] ?? '');
 
@@ -240,29 +236,35 @@ class Validator extends BaseValidator {
 
 
 	/**
-	 * Transforms the given array so that keys or values (depending on $variableKey)
-	 * are written in camelBacked-format.
+	 * Transforms the given array so that keys or values (depending on $underscoreKeys)
+	 * are written in underscored-format.
 	 *
 	 * @param array $fields
-	 * @param bool $variableKey
+	 * @param bool $underscoreKeys Whether to transform the keys or the values of the array.
 	 * @return array
 	 */
 	protected function underscoreFields(array $fields, bool $underscoreKeys = false): array {
 		$la_fields = [];
 
-		foreach ($fields as $lx_field => $lx_value) {
-			$lx_mapped = ($underscoreKeys ? 'lx_field' : 'lx_value');
-			$$lx_mapped = $this->underscoreField($$lx_mapped);
+		/** @noinspection PhpVariableNamingConventionInspection */
+		foreach ($fields as $field => $value) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$mapped = ($underscoreKeys ? 'field' : 'value');
+			$$mapped = $this->underscoreField($$mapped);
 
-			$la_fields[ $lx_field ] = $lx_value;
+			$la_fields[ $field ] = $value;
 		}
-
 
 		return $la_fields;
 	}
 
 
 	/**
+	 * Transforms the given field to underscored format, but skips
+	 * fields that are empty, not a string or start with an underscore.
+	 *
+	 * If `$field` contains a dot, only the part after the last dot is transformed.
+	 *
 	 * @param mixed $field
 	 * @return mixed
 	 */
@@ -272,15 +274,13 @@ class Validator extends BaseValidator {
 		}
 
 		$li_lastPos = strrpos($field, '.');
-		if ($li_lastPos !== false) {
-			$ls_prefix = substr($field, 0, $li_lastPos);
-			$ls_field = substr($field, $li_lastPos + 1);
-
-
-			return $ls_prefix . '.' . Inflector::underscore($ls_field);
+		if ($li_lastPos === false) {
+			return Inflector::underscore($field);
 		}
 
+		$ls_prefix = substr($field, 0, $li_lastPos);
+		$ls_field = substr($field, $li_lastPos + 1);
 
-		return Inflector::underscore($field);
+		return $ls_prefix . '.' . Inflector::underscore($ls_field);
 	}
 }

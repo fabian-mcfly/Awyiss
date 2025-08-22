@@ -59,7 +59,8 @@ use RuntimeException;
  * @method bool hasAttributes()
  * @method \Cake\Datasource\ResultSetInterface|array|null getCategories(bool $returnRaw = false)
  * @method \Awyiss\Model\Entity newDefaultEntity(array $additionalData = [])
- * @method \Cake\Collection\CollectionInterface listNested(\Cake\ORM\Query\SelectQuery $query)
+ * @method \Cake\Datasource\EntityInterface|array rebuildMediaAssignments(\Cake\Datasource\EntityInterface|array $entity, bool $useMediaEntity = false)
+ * @method \Cake\Collection\CollectionInterface listNested(\Cake\ORM\Query\SelectQuery|\Cake\Collection\Iterator\TreeIterator $query, string $nestingKey = 'children', string $direction = 'desc')
  * @method array getPossibleFieldValues(string $column, ?String $type = null)
  * @method array getFilterColumns(array $blocklistedColumns = [])
  * @method string normalizeColumnType(string $type)
@@ -230,7 +231,7 @@ class Table extends BaseTable {
 		/** @noinspection PhpStrictTypeCheckingInspection, PhpParamsInspection, PhpUndefinedFieldInspection */
 		$ls_sourceTable = isset($this->pageRole) ? Inflector::tableize($this->pageRole->name) : $this->getTable();
 
-		//Merge the config properties with custom configuration from the database
+		// Merge the config properties with custom configuration from the database
 		foreach ($this->customConfigProperties as $ls_property) {
 			$ls_path = implode('.', ['Awyiss', Inflector::camelize($ls_sourceTable), Awyiss::REALM_BACKEND, $ls_property]);
 			$la_customConfig = Configure::read($ls_path);
@@ -265,10 +266,10 @@ class Table extends BaseTable {
 				$this->addBehavior('SystemOrder', $this->systemOrder);
 			}
 
-			/** @noinspection PhpInArrayCanBeReplacedWithComparisonInspection */
 			if (
 				!str_starts_with($this->getTable(), 'media') &&
 				!in_array($this->getTable(), [
+					'audit',
 					'publication_data',
 				])
 			) {
@@ -402,13 +403,10 @@ class Table extends BaseTable {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\BelongsTo
 	 *
-	 * @param string $associated
-	 * @param array $options
-	 * @return BelongsTo
+	 * @inheritDoc
+	 * @return \Awyiss\ORM\Association\BelongsTo
 	 */
 	public function belongsTo(string $associated, array $options = []): BelongsTo {
 		$la_options = $options + ['sourceTable' => $this];
@@ -422,13 +420,27 @@ class Table extends BaseTable {
 
 
 	/**
-	 * {@inheritDoc}
+	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\BelongsToMany
 	 *
+	 * @inheritDoc
+	 * @return \Awyiss\ORM\Association\BelongsToMany
+	 */
+	public function belongsToMany(string $associated, array $options = []): BelongsToMany {
+		$la_options = $options + ['sourceTable' => $this];
+
+		/** @var BelongsToMany $lo_association */
+		$lo_association = $this->_associations->load(BelongsToMany::class, $associated, $la_options);
+
+
+		return $lo_association;
+	}
+
+
+	/**
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\hasOne
 	 *
-	 * @param string $associated
-	 * @param array $options
-	 * @return HasOne
+	 * @inheritDoc
+	 * @return \Awyiss\ORM\Association\HasOne
 	 */
 	public function hasOne(string $associated, array $options = []): HasOne {
 		$la_options = $options + ['sourceTable' => $this];
@@ -442,39 +454,16 @@ class Table extends BaseTable {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\HasMany
 	 *
-	 * @param string $associated
-	 * @param array $options
-	 * @return HasOne
+	 * @inheritDoc
+	 * @return \Awyiss\ORM\Association\HasMany
 	 */
 	public function hasMany(string $associated, array $options = []): HasMany {
 		$la_options = $options + ['sourceTable' => $this];
 
 		/** @var HasMany $lo_association */
 		$lo_association = $this->_associations->load(HasMany::class, $associated, $la_options);
-
-
-		return $lo_association;
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\BelongsToMany
-	 *
-	 * @param string $associated
-	 * @param array $options
-	 * @return HasOne
-	 */
-	public function belongsToMany(string $associated, array $options = []): BelongsToMany {
-		$la_options = $options + ['sourceTable' => $this];
-
-		/** @var BelongsToMany $lo_association */
-		$lo_association = $this->_associations->load(BelongsToMany::class, $associated, $la_options);
 
 
 		return $lo_association;
@@ -634,6 +623,43 @@ class Table extends BaseTable {
 
 
 	/**
+	 * @param string|null $sourceTable
+	 * @return void
+	 */
+	protected function addAttributesBehavior(?string $sourceTable = null): void {
+		if ($sourceTable) {
+			$la_options = ['isAttributesTable' => false] + $this->attributes + [
+				'sourceTable' => $sourceTable,
+				'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
+			];
+		}
+		else {
+			$ls_sourceTable = substr($this->getTable(), 11);
+			$la_options = ['isAttributesTable' => true, 'sourceTable' => $ls_sourceTable] + $this->attributes;
+		}
+
+		$this->addBehavior('Attributes', $la_options);
+
+		if ($sourceTable) {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Behavior\AttributesBehavior $lo_attributes */
+		$lo_attributes = $this->getBehavior('Attributes');
+
+		$la_attributes = $lo_attributes->getAttributes();
+
+		foreach ($la_attributes as $lo_attribute) {
+			if (!$lo_attribute->translatable) {
+				continue;
+			}
+
+			$this->translate['fields'][] = $lo_attribute->identifier;
+		}
+	}
+
+
+	/**
 	 * @return void
 	 */
 	protected function addCategoriesBehavior(): void {
@@ -641,32 +667,66 @@ class Table extends BaseTable {
 
 		$la_categoriesOptions = $this->getBehavior('Categories')->getConfig();
 
-		if ($la_categoriesOptions['enabled'] === true) {
-			$ls_fieldName = $la_categoriesOptions['field'] ?? $la_categoriesOptions['identifier'] ?? 'category';
+		if (!$la_categoriesOptions['enabled'] === true) {
+			return;
+		}
 
-			//Disable the rule check for the NestBehavior if the category field is same as the parent foreign key
-			if (Inflector::underscore($ls_fieldName) === Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')) {
-				$this->nest['buildRules'] = false;
-			}
+		$ls_fieldName = $la_categoriesOptions['field'] ?? $la_categoriesOptions['identifier'] ?? 'category';
 
-			//Prefix the field with `attributes.` if it's an attribute
-			if ($this->fieldIsAttribute($ls_fieldName)) {
-				$ls_fieldName = 'attributes.' . $ls_fieldName;
-			}
+		//Disable the rule check for the NestBehavior if the category field is same as the parent foreign key
+		if (Inflector::underscore($ls_fieldName) === Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')) {
+			$this->nest['buildRules'] = false;
+		}
 
-			//Add field to the nested related columns
-			if (
-				!in_array($ls_fieldName, $this->nest['relatedColumns'] ?? []) &&
-				Inflector::underscore($ls_fieldName) !== Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')
-			) {
-				$this->nest['relatedColumns'][] = $ls_fieldName;
-			}
+		//Prefix the field with `attributes.` if it's an attribute
+		if ($this->fieldIsAttribute($ls_fieldName)) {
+			$ls_fieldName = 'attributes.' . $ls_fieldName;
+		}
 
-			//Add field to the system order related columns
-			if (!in_array($ls_fieldName, $this->systemOrder['relatedColumns'] ?? [])) {
-				$this->systemOrder['relatedColumns'][] = $ls_fieldName;
+		//Add field to the nested related columns
+		if (
+			!in_array($ls_fieldName, $this->nest['relatedColumns'] ?? []) &&
+			Inflector::underscore($ls_fieldName) !== Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')
+		) {
+			$this->nest['relatedColumns'][] = $ls_fieldName;
+		}
+
+		//Add field to the system order related columns
+		if (!in_array($ls_fieldName, $this->systemOrder['relatedColumns'] ?? [])) {
+			$this->systemOrder['relatedColumns'][] = $ls_fieldName;
+		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Language|null $translateLanguage
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function addTranslateBehavior(?Language $translateLanguage = null): void {
+		if (
+			!$translateLanguage &&
+			$this->getTable() !== 'languages'
+		) {
+			if (Awyiss::hasRealm()) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$translateLanguage = LocaleMiddleware::getLanguage($this->translate['realm'] ?? Awyiss::getRealm());
 			}
 		}
+
+		if (!$translateLanguage) {
+			return;
+		}
+
+		$this->addBehavior(
+			'Translate',
+			$this->translate + [
+				'allowEmptyTranslations' => false,
+				'defaultLocale' => '',
+				'locale' => $translateLanguage->shortcode ?? null,
+				'strategyClass' => EavStrategy::class,
+			]
+		);
 	}
 
 
@@ -679,10 +739,9 @@ class Table extends BaseTable {
 
 
 	/**
+	 * Handle `isCopy` and `asCopy` options before calling the parent save method.
+	 *
 	 * @inheritDoc
-	 * @param \Cake\Datasource\EntityInterface $entity
-	 * @param array $options
-	 * @return \Cake\Datasource\EntityInterface|false
 	 */
 	public function save(EntityInterface $entity, array $options = []): EntityInterface|false {
 		$la_options = $options;
@@ -690,16 +749,26 @@ class Table extends BaseTable {
 		$la_options['asCopy'] ??= false;
 
 		if ($la_options['asCopy'] === true || $la_options['isCopy'] === true) {
-			/** @noinspection PhpDynamicFieldDeclarationInspection */
-			$entity->originalEntity = clone $entity;
-			$entity->setVirtual(['originalEntity']);
+			$la_primaryKeys = $entity->extractOriginal((array)$this->getPrimaryKey());
+			if ($la_primaryKeys) {
+				/** @noinspection PhpDynamicFieldDeclarationInspection */
+				$entity->originalPrimaryKeyValues = $la_primaryKeys;
+				$entity->unset((array)$this->getPrimaryKey());
+			}
+
+			/**
+			 * Serialize and unserialize the entity to create a deep copy of it.
+			 *
+			 * @noinspection PhpDynamicFieldDeclarationInspection
+			 */
+			$entity->originalEntity = unserialize(serialize($entity));
 			$entity->setVirtual(['originalEntity'], true);
 
 			/** @noinspection PhpUndefinedFieldInspection */
-			if ($entity->originalPrimaryKeys) {
+			if ($entity->originalPrimaryKeyValues) {
 				/** @noinspection PhpUndefinedFieldInspection */
-				$entity->originalEntity->patch($entity->originalPrimaryKeys, ['guard' => false]);
-				$entity->unset('originalPrimaryKeys');
+				$entity->originalEntity->patch($entity->originalPrimaryKeyValues, ['guard' => false]);
+				$entity->unset('originalPrimaryKeyValues');
 			}
 
 			if ($entity->originalEntity->isDirty()) {
@@ -732,6 +801,7 @@ class Table extends BaseTable {
 				}
 
 				if ($lo_association instanceof HasMany) {
+					$entity->setDirty($ls_property);
 					foreach (($entity->get($ls_property) ?? []) as $lx_associated) {
 						if (!($lx_associated instanceof EntityInterface)) {
 							continue;
@@ -743,6 +813,7 @@ class Table extends BaseTable {
 				}
 
 				if ($lo_association instanceof HasOne) {
+					$entity->setDirty($ls_property);
 					$lo_associated = $entity->get($ls_property);
 					$lo_associated->unset((array)$lo_association->getPrimaryKey());
 					$lo_associated->setNew(true);
@@ -832,6 +903,7 @@ class Table extends BaseTable {
 			$options + [
 				'atomic' => true,
 				'checkRules' => true,
+				'transaction' => true,
 				'_primary' => true,
 			]
 		);
@@ -906,7 +978,7 @@ class Table extends BaseTable {
 			}
 		};
 
-		if ($this->_transactionCommitted($la_options['atomic'], $la_options['_primary'])) {
+		if ($la_options['transaction'] === false || $this->_transactionCommitted($la_options['atomic'], $la_options['_primary'])) {
 			foreach ($lx_entities as $lo_entity) {
 				$this->dispatchEvent('Model.afterSaveCommit', [
 					'entity' => $lo_entity,
@@ -995,104 +1067,36 @@ class Table extends BaseTable {
 	 * @param TableSchemaInterface $schema
 	 */
 	protected function initializeSchema(TableSchemaInterface $schema): void {
-		if (str_starts_with($this->getTable(), 'attributes_')) {
-			foreach ($this->getAttributes() as $lo_attribute) {
-				$la_column = $schema->getColumn($lo_attribute->identifier);
-
-				if (!$la_column) {
-					continue;
-				}
-
-				if ($lo_attribute->type === 'json') {
-					$schema->setColumnType($lo_attribute->identifier, 'json');
-				}
-
-				if (($la_column['default'] ?? null) !== $lo_attribute->defaultValue) {
-					$la_column['default'] = $lo_attribute->defaultValue;
-					$schema->addColumn($lo_attribute->identifier, $la_column);
-				}
-			}
-		}
-	}
-
-
-	/**
-	 * @param string|null $sourceTable
-	 * @return void
-	 */
-	protected function addAttributesBehavior(?string $sourceTable = null): void {
-		if ($sourceTable) {
-			$la_options = ['isAttributesTable' => false] + $this->attributes + [
-				'sourceTable' => $sourceTable,
-				'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
-			];
-		}
-		else {
-			$ls_sourceTable = substr($this->getTable(), 11);
-			$la_options = ['isAttributesTable' => true, 'sourceTable' => $ls_sourceTable] + $this->attributes;
-		}
-
-		$this->addBehavior('Attributes', $la_options);
-
-		if ($sourceTable) {
+		if (!str_starts_with($this->getTable(), 'attributes_')) {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Behavior\AttributesBehavior $lo_attributes */
-		$lo_attributes = $this->getBehavior('Attributes');
+		foreach ($this->getAttributes() as $lo_attribute) {
+			$la_column = $schema->getColumn($lo_attribute->identifier);
 
-		$la_attributes = $lo_attributes->getAttributes();
-
-		foreach ($la_attributes as $lo_attribute) {
-			if (!$lo_attribute->translatable) {
+			if (!$la_column) {
 				continue;
 			}
 
-			$this->translate['fields'][] = $lo_attribute->identifier;
+			if ($lo_attribute->type === 'json') {
+				$schema->setColumnType($lo_attribute->identifier, 'json');
+			}
+
+			if (($la_column['default'] ?? null) !== $lo_attribute->defaultValue) {
+				$la_column['default'] = $lo_attribute->defaultValue;
+				$schema->addColumn($lo_attribute->identifier, $la_column);
+			}
 		}
 	}
 
 
 	/**
 	 * Helper method to infer the requested finder and its options.
-	 * Returns the inferred options from the finder $finderData.
-	 *
-	 * ### Examples:
-	 * Given you're using the Muffin/TrashBehavior
-	 *
-	 * The following will call the finder 'withTrashed' with the value of the finder as its options:
-	 *
-	 * ```
-	 * $table->Articles->exists(['id' => 1], 'withTrashed');
-	 * $table->Articles->exists(['id' => 1], ['finder' => ['withTrashed' => []]]);
-	 * //this is the same as
-	 * $table->Articles->exists(['id' => 1], ['finder' => ['all' => ['skipAddTrashCondition' => true]]]);
-	 * ```
-	 *
-	 *
-	 * Only return true if an article with `en` and `es` locales exist
-	 *
-	 * ```
-	 * $table->Articles->exists(['id' => 1], ['finder' => ['translations' => ['locales' => ['en', 'es']]]]
-	 *
-	 * ```
-	 * The following will call the finder 'published' with additional options. Those options will be available
-	 * inside the attached behaviors (resp. their beforeFind-events):
-	 * ```
-	 *
-	 * $table->Articles->exists(['id' => 1], [
-	 * 	'finder' => [
-	 *  	'published' => [
-	 *    		'published_before' => '2010-01-01 00:00:00',
-	 *      	'skipAddTrashCondition' => true,
-	 *  	]
-	 * 	]
-	 * ]);
-	 * ```
 	 *
 	 * @param array|string $finderData The finder name or an array having the name as key
-	 * and options as value.
+	 *  and options as value.
 	 * @return array
+	 * @see \Cake\ORM\Association::_extractFinder()
 	 */
 	protected function _extractFinder(array|string $finderData): array {
 		$la_finderData = (array)$finderData;
@@ -1106,38 +1110,6 @@ class Table extends BaseTable {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Language|null $translateLanguage
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function addTranslateBehavior(?Language $translateLanguage = null): void {
-		if (
-			!$translateLanguage &&
-			$this->getTable() !== 'languages'
-		) {
-			if (Awyiss::hasRealm()) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$translateLanguage = LocaleMiddleware::getLanguage($this->translate['realm'] ?? Awyiss::getRealm());
-			}
-		}
-
-		if (!$translateLanguage) {
-			return;
-		}
-
-		$this->addBehavior(
-			'Translate',
-			$this->translate + [
-				'allowEmptyTranslations' => false,
-				'defaultLocale' => '',
-				'locale' => $translateLanguage->shortcode ?? null,
-				'strategyClass' => EavStrategy::class,
-			]
-		);
-	}
-
-
-	/**
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
@@ -1147,7 +1119,12 @@ class Table extends BaseTable {
 	 */
 	public function beforeRules(Event $event, Entity $entity, ArrayObject $options): void {
 		// Do not clean HTML if this is not the primary entity
-		if ($options['_primary'] === false) {
+		if (($options['_primary'] ?? true) === false) {
+			return;
+		}
+
+		if ($entity->get('deleted') === true) {
+			// If the entity is deleted, we don't want to clean the HTML
 			return;
 		}
 

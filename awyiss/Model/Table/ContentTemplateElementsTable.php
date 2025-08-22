@@ -15,7 +15,7 @@ use Cake\Validation\Validator;
  * ContentTemplateElements Model
  *
  * @property \Awyiss\Model\Table\ContentTemplatesTable&\Awyiss\ORM\Association\BelongsTo $ContentTemplates
- * @method \Awyiss\Model\Entity\UsergroupPermission newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Awyiss\Model\Entity\ContentTemplateElement newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class ContentTemplateElementsTable extends Table {

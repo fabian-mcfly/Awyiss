@@ -35,24 +35,12 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 
 	/**
 	 * @inheritDoc
+	 * @noinspection DuplicatedCode
 	 */
 	public function run(array $data, int $jobId): void {
 		$ls_attributesTable = 'attributes_' . $data['identifier'];
 
-		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
-		$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
-
-		//Remove both the table and the entity files from the custom directory.
-		if (file_exists($ls_tableFile)) {
-			unlink($ls_tableFile);
-		}
-		if (file_exists($ls_entityFile)) {
-			unlink($ls_entityFile);
-		}
-
-
 		$lo_tableLocator = FactoryLocator::get('Table');
-
 
 		/** @var \Awyiss\Model\Table $lo_attributesTable */
 		$lo_attributesTable = $lo_tableLocator->get('Attributes');
@@ -65,13 +53,23 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 			'scope' => Inflector::tableize($data['identifier']),
 		]);
 
-
 		$lo_configuration = $lo_tableLocator->get('I18n');
 		$lo_configuration->deleteAll([
 			'model' => $ls_attributesTable,
 		]);
 
 		$la_commands = [];
+
+		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
+		$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
+
+		//Remove both the table and the entity files from the custom directory.
+		if (file_exists($ls_tableFile)) {
+			$la_commands[] = 'unlink ' . $ls_tableFile;
+		}
+		if (file_exists($ls_entityFile)) {
+			$la_commands[] = 'unlink ' . $ls_entityFile;
+		}
 
 		//Bake a `drop`-migration
 		$la_commands[] = 'bin' . DS . 'cake bake migration drop_' . $ls_attributesTable . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
@@ -82,6 +80,7 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 		//Clear the database schema
 		$la_commands[] = 'bin' . DS . 'cake schema_cache clear';
 
+		// Bake the seed for the attributes table and truncate it beforehand.
 		$la_commands[] = 'bin' . DS . 'cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.

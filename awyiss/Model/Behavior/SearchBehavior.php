@@ -280,9 +280,7 @@ class SearchBehavior extends Behavior {
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $column
 	 * @param array $columnSettings
-	 * @param string $operator
 	 * @return \Cake\ORM\Query\SelectQuery
-	 * @noinspection PhpFunctionCyclomaticComplexityInspection
 	 */
 	protected function addFilterCondition(SelectQuery $query, string $column, array $columnSettings): SelectQuery {
 		$ls_operator = $columnSettings['operator'] ?? '=';

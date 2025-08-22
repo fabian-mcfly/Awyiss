@@ -91,7 +91,7 @@ class EventTriggerBehavior extends Behavior {
 			trigger_error(sprintf('Call to undefined method %s::%s()', static::class, $name), E_USER_ERROR);
 		}
 
-		//Saving an entitiy should create custom events
+		//Saving an entity should create custom events
 		if (in_array($name, ['beforeSave', 'afterSave', 'afterSaveCommit']) && isset($arguments[1]) && is_a($arguments[1], Entity::class)) {
 			if (($arguments[2]['isCopy'] ?? false) === true && $arguments[1]->isNew()) {
 				$this->dispatchCopyEvents($name, ...$arguments);
@@ -132,7 +132,6 @@ class EventTriggerBehavior extends Behavior {
 	/**
 	 * @param string $name
 	 * @param \Cake\Event\Event $originalEvent
-	 * @param mixed $subject
 	 * @param array $arguments
 	 * @return bool
 	 */
@@ -156,7 +155,7 @@ class EventTriggerBehavior extends Behavior {
 
 
 	/**
-	 * Trigger custom events when creating or updaten entities, depending on their isNew()-value
+	 * Trigger custom events when creating or updating entities, depending on their isNew()-value
 	 *
 	 * @param string $name
 	 * @param \Cake\Event\Event $originalEvent

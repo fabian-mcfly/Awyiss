@@ -628,7 +628,6 @@ class MediaController extends Controller {
 			}
 		}
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$li_affectedRows = $this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
 			'media_folder_id' => (int)$li_folderid,
 		]);

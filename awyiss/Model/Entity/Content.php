@@ -191,9 +191,6 @@ class Content extends Entity {
 	}
 
 
-
-
-
 	/**
 	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
 	 */
@@ -210,7 +207,6 @@ class Content extends Entity {
 			'indent' => static::$columnIndents[ $this->columnIndent ] ?? null,
 		];
 	}
-
 
 
 	/**
@@ -249,7 +245,6 @@ class Content extends Entity {
 	 *
 	 * @param array|null $data
 	 * @return array|null
-	 * @noinspection PhpUnused
 	 */
 	protected function _setData(?array $data): ?array {
 		if (empty($data)) {

@@ -67,10 +67,12 @@ class TranslateBehavior extends BaseTranslateBehavior {
 
 
 	/**
-	 * @param EventInterface $event
-	 * @param ArrayObject $data
-	 * @param ArrayObject $options
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \ArrayObject $data
+	 * @param \ArrayObject $options
 	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
 		$ls_firstLanguageShortcode = array_key_first($this->languages);
@@ -84,23 +86,34 @@ class TranslateBehavior extends BaseTranslateBehavior {
 		$la_forcedFields = $this->getConfig('forcedFields', ['title']);
 
 		foreach ($this->getConfig('fields') as $ls_field) {
-			$ls_defaultTranslation = $data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? null;
+			// Set the main entity's field to the first language's translation
+			$data[ $ls_field ] = $data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? null;
 
+			/**
+			 * If the field is empty, the current language is not the first one,
+			 * and the field is in the forced fields list,
+			 * then set the field to the current language's translation.
+			 *
+			 * This ensures that the main entity's field is always set, even if the main
+			 * language's field is empty, but allows later changes with the main language.
+			 *
+			 * Workflow:
+			 * Create a record in the second language, e.g. Spanish.
+			 * The main entity's field will be set to the Spanish translation.
+			 * Now modify the record in the main language, e.g. German.
+			 * The main entity's field will be set to the German translation.
+			 * If the main language's field remains empty, it will be set to the Spanish translation again.
+			 */
 			if (
-				!$ls_defaultTranslation &&
+				!$data[ $ls_field ] &&
 				$ls_firstLanguageShortcode !== $ls_currentLanguageShortcode &&
 				in_array($ls_field, $la_forcedFields)
 			) {
-				$ls_defaultTranslation = $data['_translations'][ $ls_currentLanguageShortcode ][ $ls_field ] ?? null;
+				$data[ $ls_field ] = $data['_translations'][ $ls_currentLanguageShortcode ][ $ls_field ] ?? null;
 			}
 
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$data[ $ls_field ] = $ls_defaultTranslation;
-
 			if ($data[ $ls_field ] === '') {
-				/** @noinspection PhpVariableNamingConventionInspection */
 				$data[ $ls_field ] = null;
-				/** @noinspection PhpVariableNamingConventionInspection */
 				$data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] = null;
 			}
 		}
