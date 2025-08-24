@@ -6,7 +6,10 @@ namespace Awyiss\Database\Type;
 
 use BackedEnum;
 use Cake\Database\Driver;
-use Cake\Database\Type\StringType as BaseType;
+use Cake\Database\Type\StringType as BaseStringType;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
+use Cake\I18n\Time;
 use InvalidArgumentException;
 use Stringable;
 
@@ -15,7 +18,7 @@ use Stringable;
  * String type converter.
  * Use to convert string data between PHP and the database types.
  */
-class StringType extends BaseType {
+class StringType extends BaseStringType {
 	/**
 	 * Convert string data into the database format.
 	 *
@@ -26,6 +29,18 @@ class StringType extends BaseType {
 	public function toDatabase(mixed $value, Driver $driver): ?string {
 		if ($value === null || is_string($value)) {
 			return $value;
+		}
+
+		if ($value instanceof Date) {
+			return $value->toDateString();
+		}
+
+		if ($value instanceof DateTime) {
+			return $value->toDateTimeString();
+		}
+
+		if ($value instanceof Time) {
+			return $value->format('H:i:s');
 		}
 
 		if ($value instanceof Stringable) {
