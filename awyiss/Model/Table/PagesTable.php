@@ -87,12 +87,14 @@ class PagesTable extends Table {
 	 * @throws \Exception
 	 */
 	public function initialize(array $config): void {
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		if (!isset($this->pageRole)) {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-		$la_parts = explode('\\', static::class);
+			$la_parts = explode('\\', static::class);
 
-		$this->pageRole = $ls_pageRoleEnum::tryFromName(substr(end($la_parts), 0, -5));
+			$this->pageRole = $ls_pageRoleEnum::tryFromName(substr(end($la_parts), 0, -5));
+		}
 
 		parent::initialize($config);
 	}
