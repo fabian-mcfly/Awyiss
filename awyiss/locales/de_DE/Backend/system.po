@@ -306,7 +306,7 @@ msgid "analyze_cronjob_running_error_message"
 msgstr "Erstellen Sie folgende Cronjobs:<br>"
 "<code>*/10 * * * * cd {0} &amp;&amp; bin/cake queue run -q -g general &gt;&gt; {0}logs/cron.log 2&gt;&amp;1"
 "<br>"
-"*/1 * * * * cd {0} &amp;&amp; bin/cake media convert_files --include-webp -q</code>"
+"*/1 * * * * cd {0} &amp;&amp; bin/cake media convert_files --include-avif --include-webp -q</code>"
 
 msgid "analyze_media_writable"
 msgstr "Medien-Verzeichnis schreibbar"
