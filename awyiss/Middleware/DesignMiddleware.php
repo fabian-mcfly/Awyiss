@@ -195,7 +195,11 @@ class DesignMiddleware implements MiddlewareInterface {
 			$lo_cssFiles = $ls_compilerClass::discoverFiles(dirname($lo_files->getFolderPath()) . DS . 'css');
 
 			// If the css files are newer than the scss files, return null.
-			if ($lo_cssFiles->getLastModified() && $lo_cssFiles->getLastModified()->greaterThan($lo_files->getLastModified())) {
+			if (
+				$lo_cssFiles->getLastModified() &&
+				$lo_files->getLastModified() &&
+				$lo_cssFiles->getLastModified()->greaterThan($lo_files->getLastModified())
+			) {
 				continue;
 			}
 
