@@ -275,7 +275,7 @@ trait ContentElementTrait {
 			$entity instanceof Widget => 'Widget',
 		};
 		$entity->cssClass .= 'Element';
-		$entity->cssClass .= ($ls_template ? ' Template-' . Inflector::ucparts($entity->$ls_template->fileName) : '');
+		$entity->cssClass .= ($ls_template ? ' Template-' . Inflector::ucparts($entity->$ls_template->fileName, false) : '');
 		$entity->cssClass .= ' ' . $entity->column['width']->getCssClass();
 
 		if ($entity instanceof FormElement) {
