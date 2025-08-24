@@ -104,20 +104,23 @@ class ColumnParser extends BaseColumnParser {
 	 * @return array
 	 */
 	public function getTypeAndLengthAndDefault(string $field, string $type): array {
+		$lx_default = null;
+
 		if ($type && preg_match($this->regexpParseField, $type, $la_matches)) {
 			if (str_contains($la_matches[2], ',')) {
 				$la_matches[2] = explode(',', $la_matches[2]);
 			}
 
-
-			return [$la_matches[1], $la_matches[2] ?? null ?: null, $la_matches[3] ?? null];
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$type = $la_matches[1];
+			$li_length = $la_matches[2] ?? null ?: null;
+			$lx_default = $la_matches[3] ?? null;
 		}
 
 		/** @var string $ls_fieldType */
 		$ls_fieldType = $this->getType($field, $type);
-		$li_length = $this->getLength($ls_fieldType);
+		$li_length ??= $this->getLength($ls_fieldType);
 
-
-		return [$ls_fieldType, $li_length, null];
+		return [$ls_fieldType, $li_length, $lx_default];
 	}
 }
