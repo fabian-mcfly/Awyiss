@@ -109,6 +109,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 	 * @param \Awyiss\Model\Entity\Language|null $frontendLanguage
 	 * @param \Awyiss\Model\Entity\Language|null $backendLanguage
 	 * @return void
+	 * @throws \Exception
 	 */
 	public static function useLanguage(?Language $frontendLanguage = null, ?Language $backendLanguage = null): void {
 		$lo_mainLanguage = $frontendLanguage;
@@ -128,8 +129,8 @@ class LocaleMiddleware implements MiddlewareInterface {
 			DateTime::$niceFormat = $lo_mainLanguage->dateFormat . ' ' . $lo_mainLanguage->timeFormat;
 		}
 
-		$ls_timezone = Configure::read('Awyiss.System.' . static::getRealm() . '.timezone');
-		if ($ls_timezone !== 'auto') {
+		$ls_timezone = Configure::read('Awyiss.System.' . static::getRealm() . '.timezone', 'auto');
+		if ($ls_timezone && $ls_timezone !== 'auto') {
 			TypeFactory::build('datetime')->setUserTimezone($ls_timezone);
 		}
 		else {
@@ -157,7 +158,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 			if (
 				$backendLanguage &&
-				$lo_behavior->getConfig('realm') === Awyiss::REALM_BACKEND
+				$lo_behavior->getConfig('realm', LocaleMiddleware::getRealm()) === Awyiss::REALM_BACKEND
 			) {
 				$lo_behavior->setLocale($backendLanguage->shortcode);
 			}
@@ -174,26 +175,19 @@ class LocaleMiddleware implements MiddlewareInterface {
 	/**
 	 * @param string|null $realm
 	 * @param bool $fallback If true, the default language will be returned if no language is found
-	 * @param string $retrievalStategy
 	 * @return \Awyiss\Model\Entity\Language|null
 	 * @throws \Exception
 	 */
-	public static function getLanguage(?string $realm = Awyiss::REALM_FRONTEND, bool $fallback = true, string $retrievalStategy = self::SOURCE_AUTO): ?Language {
+	public static function getLanguage(?string $realm = Awyiss::REALM_FRONTEND, bool $fallback = true): ?Language {
 		static::loadLanguages();
 
-		$ls_realm = $realm;
-		if (!$ls_realm) {
-			$ls_realm = static::getRealm();
+		$ls_realm = $realm ?: static::getRealm();
+
+		if (!isset(static::$retrievalStrategy[ $ls_realm ])) {
+			throw new RuntimeException(sprintf('Cannot use auto-detection of the retrievel strategy. No retrievel strategy defined for realm `%s`.', $ls_realm));
 		}
 
-		$ls_retrievalStategy = $retrievalStategy;
-		if ($ls_retrievalStategy === static::SOURCE_AUTO) {
-			if (!isset(static::$retrievalStrategy[ $ls_realm ])) {
-				throw new RuntimeException(sprintf('Cannot use auto-detection of the retrievel strategy. No retrievel strategy defined for realm `%s`.', $ls_realm));
-			}
-
-			$ls_retrievalStategy = static::$retrievalStrategy[ $ls_realm ];
-		}
+		$ls_retrievalStategy = static::$retrievalStrategy[ $ls_realm ];
 
 		$lo_language = null;
 		if ($ls_retrievalStategy === static::SOURCE_SESSION) {
@@ -289,6 +283,24 @@ class LocaleMiddleware implements MiddlewareInterface {
 		$ls_realm = $realm ?? static::getRealm();
 
 		return $ls_realm . '.languageShortcode';
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public static function resetLanguages(): void {
+		static::$languagesLoaded = false;
+
+		static::$defaultLanguages = [
+			Awyiss::REALM_FRONTEND => null,
+			Awyiss::REALM_BACKEND => null,
+		];
+		static::$languages = [
+			Awyiss::REALM_FRONTEND => [],
+			Awyiss::REALM_BACKEND => [],
+		];
+		static::$languagesByShortcode = [];
 	}
 
 
