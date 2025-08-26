@@ -18,7 +18,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class EventListenersMiddleware implements MiddlewareInterface {
 	/**
 	 * @inheritDoc
-	 * @throws \ReflectionException
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		EventListenersProvider::loadListener('general_events', Awyiss::getRealm());

@@ -33,10 +33,7 @@ class DesignMiddleware implements MiddlewareInterface {
 
 
 	/**
-	 * The process method is responsible for handling the request and returning a response.
-	 * It checks if the environment is a production environment and if SCSS files need to be compiled.
-	 * If the SCSS files need to be compiled, it uses the ScssCompiler to compile them.
-	 * It then adds the 'design' attribute to the request and passes the request to the next handler.
+	 * The process method checks if SCSS files need to be compiled.
 	 *
 	 * @param ServerRequestInterface $request The request to be processed
 	 * @param RequestHandlerInterface $handler The next handler in the middleware stack
@@ -49,7 +46,7 @@ class DesignMiddleware implements MiddlewareInterface {
 
 		// Is autoCompile set to true in the configuration?
 		$lb_shouldCompile = Configure::read('Design.autoCompile');
-		// Determine if the environment resembles a production environment
+		// Should not compile if the CONFIG_ENV resembles a production environment
 		$lb_shouldCompile = $lb_showExceptions = $lb_shouldCompile && !in_array($ls_configEnv, ['production', 'prod', 'live']);
 
 		// Check if the SCSS files must be compiled
@@ -106,8 +103,8 @@ class DesignMiddleware implements MiddlewareInterface {
 			return;
 		}
 
-		/*
-		 * If the SCSS should be compiled, but must not be compiled,
+		/**
+		 * If the SCSS should be compiled, but not must compile, then
 		 * filter out files that are older than the compiled CSS files.
 		 */
 		if (!$mustCompile) {
