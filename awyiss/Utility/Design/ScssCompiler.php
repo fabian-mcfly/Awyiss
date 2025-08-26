@@ -72,7 +72,7 @@ class ScssCompiler {
 
 
 	/**
-	 * Discovers all .scss files in a given directory and returns a ScssFilesCollection object.
+	 * Discovers all files in a given directory and returns a ScssFilesCollection object.
 	 * Main files are ones that do not start with an underscore.
 	 *
 	 * @param string $folderPath The path to the directory to be searched.
@@ -92,13 +92,25 @@ class ScssCompiler {
 
 		// Create a RecursiveDirectoryIterator and a RecursiveIteratorIterator to traverse the directory.
 		$lo_iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folderPath));
-		// Iterate over each file in the directory.
-		/** @var \SplFileInfo $lo_file */
+		$la_files = [];
+		/**
+		 * Iterate over each file in the directory.
+		 *
+		 * @var \SplFileInfo $lo_file
+		 */
 		foreach ($lo_iterator as $lo_file) {
-			// If the file is a .scss file, add it to the ScssFilesCollection object.
+			// If the file is of the same type as the directory name, add it to the ScssFilesCollection object.
 			if ($lo_file->isFile() && $lo_file->getExtension() === $ls_extension) {
-				$lo_filesCollection->addFile($lo_file);
+				$la_files[] = $lo_file;
 			}
+		}
+
+		// Sort files by filename
+		usort($la_files, fn (SplFileInfo $a, SplFileInfo $b) => strnatcasecmp($a->getRealPath(), $b->getRealPath()));
+
+		// Add each file to the ScssFilesCollection object.
+		foreach ($la_files as $lo_file) {
+			$lo_filesCollection->addFile($lo_file);
 		}
 
 		// Return the ScssFilesCollection object.
@@ -273,6 +285,9 @@ class ScssCompiler {
 				'sourceMapBasepath' => $basePath, // Difference between file & url locations, removed from ALL source files in .map
 				'sourceRoot' => $ls_sourceRoot,
 			]);
+		}
+		else {
+			static::$compiler->setSourceMap(Compiler::SOURCE_MAP_NONE);
 		}
 
 		$ls_fileContents = '';
