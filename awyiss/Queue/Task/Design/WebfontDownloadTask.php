@@ -77,7 +77,7 @@ class WebfontDownloadTask extends Task {
 
 			// Create the font directory if it doesn't exist
 			if (!is_dir($ls_fontPath)) {
-				mkdir($ls_fontPath, 0750, true);
+				mkdir($ls_fontPath, 0755, true);
 			}
 
 			// Download the Zip

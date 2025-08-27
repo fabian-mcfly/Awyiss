@@ -46,7 +46,7 @@ class BackupCommand extends Command {
 
 		// Check if the backup directory exists
 		if (!is_dir($ls_backupDir)) {
-			mkdir($ls_backupDir, 0750, true);
+			mkdir($ls_backupDir, 0755, true);
 		}
 
 		// Get the backup file name

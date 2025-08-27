@@ -158,7 +158,7 @@ trait ConfigTrait {
 
 		// Create the environment folder if it does not exist
 		if (!file_exists($ls_environmentFolderPath)) {
-			mkdir($ls_environmentFolderPath, 0750, true);
+			mkdir($ls_environmentFolderPath, 0755, true);
 		}
 
 		// Copy the environment skeleton file to the environment config file

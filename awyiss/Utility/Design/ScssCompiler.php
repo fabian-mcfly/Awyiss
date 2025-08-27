@@ -325,7 +325,7 @@ class ScssCompiler {
 			else {
 				// Check if the directory exists, if not create it.
 				if (!is_dir($ls_cssFolderPath)) {
-					mkdir($ls_cssFolderPath, 0750, true);
+					mkdir($ls_cssFolderPath, 0755, true);
 				}
 
 				// Write the compiled CSS content and the source map to the file system.

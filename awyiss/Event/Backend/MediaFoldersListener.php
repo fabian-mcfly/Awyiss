@@ -209,7 +209,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 */
 	public function afterSaveCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
 		if (!is_dir(WWW_ROOT . str_replace('/', DS, $entity->path)) && ($options['isCopy'] ?? false) === false) {
-			mkdir(WWW_ROOT . str_replace('/', DS, $entity->path), 0750, true);
+			mkdir(WWW_ROOT . str_replace('/', DS, $entity->path), 0755, true);
 		}
 
 		$this->emptyMediaFoldersCache();
@@ -391,7 +391,7 @@ class MediaFoldersListener implements EventListenerInterface {
 
 		//Create the destination directory if it does not exist
 		if (!is_dir($targetDirectory)) {
-			mkdir($targetDirectory, 0750, true);
+			mkdir($targetDirectory, 0755, true);
 		}
 
 		//Open the source directory

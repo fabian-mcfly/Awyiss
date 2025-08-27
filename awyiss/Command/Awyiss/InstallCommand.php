@@ -130,7 +130,7 @@ class InstallCommand extends Command {
 		$this->removeGitkeepFiles();
 
 		if (!is_dir(TMP . 'sessions')) {
-			$this->filesystem->mkdir(TMP . 'sessions', 0750);
+			$this->filesystem->mkdir(TMP . 'sessions', 0755);
 		}
 
 		if (!$this->dryRun) {

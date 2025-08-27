@@ -121,7 +121,7 @@ class WidgetTemplatesListener implements EventListenerInterface {
 		$la_commands = [];
 
 		if (!file_exists($ls_folderPath)) {
-			$la_commands[] = 'mkdir -m 0750 -p ' . $ls_folderPath;
+			$la_commands[] = 'mkdir -m 0755 -p ' . $ls_folderPath;
 		}
 
 		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
@@ -142,7 +142,7 @@ class WidgetTemplatesListener implements EventListenerInterface {
 		//If the file does not exist, we create one based on a twig-template for frontent widget templates
 		if (!$lb_fileExists) {
 			$la_commands[] = 'bin' . DS . 'cake bake template widget_templates widget_template ' . $ls_fileName . ' --prefix Frontend --controller widget';
-			$la_commands[] = 'chmod 0750 ' . $ls_filePath;
+			$la_commands[] = 'chmod 0755 ' . $ls_filePath;
 		}
 
 		if (!empty($la_commands)) {
