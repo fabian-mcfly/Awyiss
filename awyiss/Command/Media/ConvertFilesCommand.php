@@ -139,18 +139,25 @@ class ConvertFilesCommand extends Command {
 		$ls_driver = Configure::read('Awyiss.Media.Frontend.resizing.driver', 'imagick');
 		$io->out(sprintf('Starting media processing using %s with %u%% quality...', $this->cliMagickExists ? 'ImageMagick (CLI)' : 'Intervention Image (' . $ls_driver . ')', $this->quality));
 
+		$la_processMethods = [
+			'processCropFiles',
+			'processNonImageFiles',
+		];
+
+		if ($args->getOption('include-avif')) {
+			$la_processMethods[] = 'processAvifConversion';
+		}
+
+		if ($args->getOption('include-webp')) {
+			$la_processMethods[] = 'processWebpConversion';
+		}
+
+		$la_processMethods[] = 'processResizing';
+		$la_processMethods[] = 'processAverageColorCalculation';
+
 		// Keep this job running for 60 seconds to process as many files as possible
 		while (time() - $li_startTime < 60) {
 			$li_totalFiles = 0;
-
-			$la_processMethods = [
-				'processCropFiles',
-				'processNonImageFiles',
-				'processAvifConversion',
-				'processWebpConversion',
-				'processResizing',
-				'processAverageColorCalculation',
-			];
 
 			foreach ($la_processMethods as $ls_method) {
 				$li_files = $this->$ls_method($args, $io);
