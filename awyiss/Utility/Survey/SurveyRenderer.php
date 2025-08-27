@@ -621,6 +621,11 @@ class SurveyRenderer {
 				}
 				else {
 					foreach ($lx_answer as $li_answerId) {
+						if ($li_answerId === 'custom') {
+							$la_answers[] = $la_customAnswers[ $ls_identifier ] ?? '';
+							continue;
+						}
+
 						$la_answers[] = $lo_question->surveySurveyAnswers[ (int)$li_answerId ]->surveyAnswer->label;
 					}
 				}

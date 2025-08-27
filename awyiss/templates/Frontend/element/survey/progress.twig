@@ -23,6 +23,9 @@
 		{% for answerId in answer %}
 			<input type="hidden" name="survey[{{ survey.identifier }}][{{ questionIdentifier }}][]" value="{{ answerId }}">
 		{% endfor %}
+		{% if 'custom' in answer and customAnswers[ questionIdentifier ] is defined %}
+			<input type="hidden" name="survey[{{ survey.identifier }}][custom][{{ questionIdentifier }}]" value="{{ customAnswers[questionIdentifier] }}">
+		{% endif %}
 	{% else %}
 		{% if customAnswers[ questionIdentifier ] is defined %}
 			<input type="hidden" name="survey[{{ survey.identifier }}][custom][{{ questionIdentifier }}]" value="{{ customAnswers[questionIdentifier] }}">
