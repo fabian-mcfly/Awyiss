@@ -2,23 +2,22 @@
 
 
 use Awyiss\Awyiss;
-use Awyiss\Middleware\ConfigMiddleware;
-use Awyiss\Middleware\DesignMiddleware;
-use Awyiss\Middleware\EventListenersMiddleware;
-use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Middleware\RealmMiddleware;
-use Awyiss\Routing\Route\AwyissRoute;
+use Awyiss\Core\App;
 use Cake\Core\Configure;
-use Cake\Http\Middleware\CspMiddleware;
 use Cake\Routing\RouteBuilder;
 
 
-/** @var RouteBuilder $routes */
+/**  @var \Cake\Routing\RouteBuilder $routes */
 
-$routes->registerMiddleware('config', new ConfigMiddleware());
+/** @var class-string<\Awyiss\Middleware\ConfigMiddleware> $ls_configMiddlewareClass */
+$ls_configMiddlewareClass = App::className('Config', 'Middleware', 'Middleware');
+$routes->registerMiddleware('config', new $ls_configMiddlewareClass());
+
+/** @var class-string<\Cake\Http\Middleware\CspMiddleware> $ls_cspMiddlewareClass */
+$ls_cspMiddlewareClass = App::className('Csp', 'Http/Middleware', 'Middleware');
 $routes->registerMiddleware(
 	'csp',
-	new CspMiddleware(
+	new $ls_cspMiddlewareClass(
 		[
 			'base-uri' => [
 				'allow' => Configure::read('Csp.baseUri.allow'),
@@ -89,15 +88,27 @@ $routes->registerMiddleware(
 		]
 	)
 );
-$routes->registerMiddleware('eventListeners', new EventListenersMiddleware());
-$routes->registerMiddleware('design', new DesignMiddleware());
-$routes->registerMiddleware('requestLocale', new LocaleMiddleware());
+
+/** @var class-string<\Awyiss\Middleware\EventListenersMiddleware> $ls_eventListenersMiddlewareClass */
+$ls_eventListenersMiddlewareClass = App::className('EventListeners', 'Middleware', 'Middleware');
+$routes->registerMiddleware('eventListeners', new $ls_eventListenersMiddlewareClass());
+
+/** @var class-string<\Awyiss\Middleware\DesignMiddleware> $ls_designMiddlewareClass */
+$ls_designMiddlewareClass = App::className('Design', 'Middleware', 'Middleware');
+$routes->registerMiddleware('design', new $ls_designMiddlewareClass());
+
+/** @var class-string<\Awyiss\Middleware\LocaleMiddleware> $ls_localeMiddlewareClass */
+$ls_localeMiddlewareClass = App::className('Locale', 'Middleware', 'Middleware');
+$routes->registerMiddleware('requestLocale', new $ls_localeMiddlewareClass());
 
 
 $routes->scope('/', function (RouteBuilder $routeBuilder): void {
-	$routeBuilder->setRouteClass(AwyissRoute::class);
+	/** @uses \Awyiss\Routing\Route\AwyissRoute */
+	$routeBuilder->setRouteClass(App::className('Awyiss', 'Routing/Route', 'Route'));
 
-	$routeBuilder->registerMiddleware('frontendRealm', new RealmMiddleware(Awyiss::REALM_FRONTEND));
+	/** @var class-string<\Awyiss\Middleware\RealmMiddleware> $ls_realmMiddlewareClass */
+	$ls_realmMiddlewareClass = App::className('Realm', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('frontendRealm', new $ls_realmMiddlewareClass(Awyiss::REALM_FRONTEND));
 	$routeBuilder->applyMiddleware('frontendRealm');
 
 	// Load the configuration as early as possible to make it available for all other middleware

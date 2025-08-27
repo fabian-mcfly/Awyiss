@@ -1,21 +1,19 @@
 <?php declare(strict_types=1);
 
 
-use Awyiss\Authentication\Authentication;
-use Awyiss\Authorization\Authorization;
 use Awyiss\Awyiss;
-use Awyiss\Middleware\AuthenticationMiddleware;
-use Awyiss\Middleware\AuthorizationMiddleware;
-use Awyiss\Middleware\RealmMiddleware;
-use Awyiss\Routing\Route\AwyissRoute;
+use Awyiss\Core\App;
 use Cake\Routing\RouteBuilder;
 
 
-/** @var RouteBuilder $routes */
+/** @var \Cake\Routing\RouteBuilder $routes */
 $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
-	$routeBuilder->setRouteClass(AwyissRoute::class);
+	/** @uses \Awyiss\Routing\Route\AwyissRoute */
+	$routeBuilder->setRouteClass(App::className('Awyiss', 'Routing/Route', 'Route'));
 
-	$routeBuilder->registerMiddleware('backendRealm', new RealmMiddleware(Awyiss::REALM_BACKEND));
+	/** @var class-string<\Awyiss\Middleware\RealmMiddleware> $ls_realmMiddlewareClass */
+	$ls_realmMiddlewareClass = App::className('Realm', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('backendRealm', new $ls_realmMiddlewareClass(Awyiss::REALM_BACKEND));
 	$routeBuilder->applyMiddleware('backendRealm');
 
 	// Load the configuration as early as possible to make it available for all other middleware
@@ -24,12 +22,20 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 	// Load the event listeners as early as possible to possibly listen to middleware events
 	$routeBuilder->applyMiddleware('eventListeners');
 
-	$lo_authentication = new Authentication(Awyiss::REALM_BACKEND);
-	$routeBuilder->registerMiddleware('backendAuthentication', new AuthenticationMiddleware($lo_authentication));
+	/** @var class-string<\Awyiss\Authentication\AuthenticationService> $ls_authenticationClass */
+	$ls_authenticationClass = App::className('Authentication', 'Authentication');
+	$lo_authentication = new $ls_authenticationClass(Awyiss::REALM_BACKEND);
+	/** @var class-string<\Awyiss\Middleware\AuthenticationMiddleware> $ls_authenticationMiddlewareClass */
+	$ls_authenticationMiddlewareClass = App::className('Authentication', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('backendAuthentication', new $ls_authenticationMiddlewareClass($lo_authentication));
 	$routeBuilder->applyMiddleware('backendAuthentication');
 
-	$lo_authorization = new Authorization(Awyiss::REALM_BACKEND);
-	$routeBuilder->registerMiddleware('backendAuthorization', new AuthorizationMiddleware($lo_authorization));
+	/** @var class-string<\Awyiss\Authorization\Authorization> $ls_authorizationClass */
+	$ls_authorizationClass = App::className('Authorization', 'Authorization');
+	$lo_authorization = new $ls_authorizationClass(Awyiss::REALM_BACKEND);
+	/** @var class-string<\Awyiss\Middleware\AuthorizationMiddleware> $ls_authorizationMiddlewareClass */
+	$ls_authorizationMiddlewareClass = App::className('Authorization', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('backendAuthorization', new $ls_authorizationMiddlewareClass($lo_authorization));
 	$routeBuilder->applyMiddleware('backendAuthorization');
 
 	$routeBuilder->applyMiddleware('csp');
