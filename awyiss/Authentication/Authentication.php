@@ -132,7 +132,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				}
 			}
 
-			$service->loadAuthenticator($lx_authenticator['name'], $lx_authenticator['config']);
+			if (!$service->authenticators()->has($lx_authenticator['name'])) {
+				$service->loadAuthenticator($lx_authenticator['name'], $lx_authenticator['config']);
+			}
 		}
 	}
 
