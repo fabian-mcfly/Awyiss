@@ -15,7 +15,6 @@ use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -718,11 +717,11 @@ class MediaController extends Controller {
 		}
 
 		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
-		$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$lo_datatablesTable = $this->fetchTable('Datatables');
 		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$lo_pageRolesTable = $this->fetchTable('PageRoles');
 		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
 			return Inflector::pluralize($pageRole->identifier);
 		})->toArray();

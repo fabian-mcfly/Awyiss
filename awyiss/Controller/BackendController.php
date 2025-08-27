@@ -15,7 +15,6 @@ use Awyiss\Utility\Inflector;
 use Awyiss\View\BackendView;
 use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
@@ -187,7 +186,7 @@ abstract class BackendController extends AppController {
 		//Detect the available commands
 		if (!Configure::read('AvailableCommands')) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			$lo_queue = $this->fetchTable('Queue.QueuedJobs');
 			if (!$lo_queue->isQueued('system::detect_available_commands')) {
 				$lo_queue->createJob('Queue.Execute', [
 					'command' => 'bin' . DS . 'cake media detect_available_commands',
@@ -307,6 +306,7 @@ abstract class BackendController extends AppController {
 
 			$ls_timezone = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->timezone;
 
+			/** @var \Awyiss\Model\Entity $lo_entity */
 			$lo_entity = $this->fetchTable($this->defaultTable)->get($lo_lock->foreignKey);
 
 			$la_data = [

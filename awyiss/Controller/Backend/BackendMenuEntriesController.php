@@ -16,7 +16,6 @@ use Awyiss\Utility\Menu\Menu;
 use Awyiss\Utility\Menu\MenuItem;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
@@ -469,7 +468,7 @@ class BackendMenuEntriesController extends Controller {
 		}
 
 		/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('Datatables');
+		$lo_table = $this->fetchTable('Datatables');
 		$lo_table->findAllAndCache()->each(function (Datatable $datatable) {
 			$ls_name = Inflector::camelize($datatable->identifier);
 
