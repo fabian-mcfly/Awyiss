@@ -391,9 +391,17 @@ class FormHelper extends BaseFormHelper {
 		if ($this->context() instanceof EntityContext) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_entity = $this->context()->entity();
-			$ls_source = Inflector::singularize($lo_entity->getSource());
+			$ls_source = $lo_entity->getSource();
+
 			if (str_starts_with($ls_name, $ls_source . '-')) {
 				$ls_name = substr($ls_name, strlen($ls_source) + 1);
+			}
+			else {
+				$ls_source = Inflector::singularize($lo_entity->getSource());
+
+				if (str_starts_with($ls_name, $ls_source . '-')) {
+					$ls_name = substr($ls_name, strlen($ls_source) + 1);
+				}
 			}
 		}
 
