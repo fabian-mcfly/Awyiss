@@ -181,6 +181,39 @@ html.PickQuestionMode {
 		.ListItem-AnswersSettings {
 			display:none;
 		}
+
+		.Button-Add {
+			@extend %InFieldButton;
+
+			margin:auto;
+			background-color:var(--colorSuccess);
+			font-size:0;
+			line-height:0;
+
+			@media screen and (width > 1024px) {
+				display:none;
+			}
+
+			&:is(.Button) {
+				width:40px;
+				height:40px;
+				inset:0 10px 0 auto;
+			}
+
+			&::after {
+				width:auto;
+				height:auto;
+				margin:0;
+				font-size:20px;
+				line-height:.9;
+				vertical-align:-2px;
+				position:relative;
+
+				@media screen and (width <= 768px) {
+					transform:none;
+				}
+			}
+		}
 	}
 
 	.Fieldset-Questions-Assigned {

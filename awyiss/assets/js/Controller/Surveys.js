@@ -169,6 +169,23 @@ export default class SurveysController {
 				this.reloadForm();
 			}.bind(this)
 		});
+
+		// Add an add/remove button to each list item
+		const items = availableQuestionsList.querySelectorAll(`.ListItem`);
+		items.forEach((item) => {
+			if (item.dataset.sortable === 'false') {
+				return;
+			}
+
+			const addButton = document.createElement('button');
+			addButton.type = 'button';
+
+			addButton.classList.add('Button', 'Button-Add');
+			item.appendChild(addButton);
+		});
+
+		// Add event listeners to the add/remove buttons
+		window.eventHandler.add('click', this.handleAddButtonClick.bind(this), availableQuestionsList);
 	}
 
 
@@ -235,6 +252,46 @@ export default class SurveysController {
 			this.cancelPickQuestionMode(target.closest('.AssignedQuestions-ListItem'));
 		}
 	}
+
+	/**
+	 * Handle the add/remove button click
+	 * @param {MouseEvent} event
+	 */
+	handleAddButtonClick(event) {
+		const button = event.target.closest('.Button-Add');
+
+		if (!button) {
+			return;
+		}
+
+		const item = button.closest('.ListItem').cloneNode(true);
+		const targetList = this.form.querySelector('ul.AssignedQuestions-List');
+
+		// Move the item to the target list
+		targetList.appendChild(item);
+
+		// Create a random hash
+		const randHash = Math.random().toString(36).substring(2, 15);
+
+		item.classList.remove(item.id, 'AvailableQuestions-ListItem');
+		item.id = `AssignedQuestions-ListItem${randHash}`
+		item.classList.add(item.id, 'AssignedQuestions-ListItem');
+		item.removeAttribute('data-adjust-scroll-position');
+
+		const nextIndex = targetList.dataset.nextIndex;
+
+		// All inputs with name starting with survey_survey_questions[x], where x is a number
+		// replace the x with the number of the question
+		const inputs = item.querySelectorAll('input[name^="survey_survey_questions["], select[name^="survey_survey_questions["]');
+		inputs.forEach(input => {
+			// noinspection RegExpRedundantEscape
+			input.name = input.name.replace(/survey_survey_questions\[(\d+)\]/, `survey_survey_questions[${nextIndex}]`);
+			input.disabled = false;
+		});
+
+		this.reloadForm();
+	}
+
 
 	/**
 	 * Cancel the pick question mode.
