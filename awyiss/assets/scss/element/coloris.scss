@@ -442,6 +442,10 @@ input.clr-color {
 				display:none;
 			}
 		}
+
+		> input {
+			cursor:pointer;
+		}
 	}
 
 	&.clr-rtl {
