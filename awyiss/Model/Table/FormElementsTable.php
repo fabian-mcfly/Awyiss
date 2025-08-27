@@ -73,6 +73,7 @@ class FormElementsTable extends Table {
 		'associationName' => 'Forms',
 		'enabled' => true,
 		'identifier' => 'form',
+		'threaded' => false,
 	];
 	/**
 	 * @var array The column system

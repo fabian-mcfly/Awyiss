@@ -42,6 +42,7 @@ class PageTemplatesTable extends Table {
 		'associationName' => 'PageRoles',
 		'enabled' => true,
 		'identifier' => 'pageRole',
+		'threaded' => false,
 	];
 	/**
 	 * @inheritDoc

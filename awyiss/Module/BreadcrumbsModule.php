@@ -181,17 +181,11 @@ class BreadcrumbsModule extends AbstractModule {
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 * @uses \Awyiss\Model\Table::findActive()
 		 */
-		$lo_query = $lo_pageTable->find('active')->find('threaded')->find('forCurrentLanguage');
-
-		$lo_pages = $lo_query->all()->listNested();
+		$lo_query = $lo_pageTable->find('active')->find('forCurrentLanguage');
+		$lo_pages = $lo_pageTable->listNested($lo_query);
 
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		foreach ($lo_pages as $lo_page) {
-			$lo_page->setVirtual(['level'], true);
-			//Add the current depth as a level-property to the entity
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_page->level = $lo_pages->getDepth();
-
+		foreach ($lo_pages ?? [] as $lo_page) {
 			$la_options[ $lo_page->id ] = str_repeat('- ', $lo_page->level) . ' ' . $lo_page->title;
 		}
 

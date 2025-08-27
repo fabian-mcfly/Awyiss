@@ -36,6 +36,7 @@ class SurveyAnswersTable extends Table {
 		'associationName' => 'SurveyQuestions',
 		'enabled' => true,
 		'identifier' => 'question',
+		'threaded' => false,
 	];
 	/**
 	 * @inheritDoc

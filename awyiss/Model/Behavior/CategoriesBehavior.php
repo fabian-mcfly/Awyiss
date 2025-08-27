@@ -724,10 +724,6 @@ class CategoriesBehavior extends Behavior {
 
 		$lo_query = $lo_association->find($this->getConfig('finder'))->where($this->getConfig('queryConditions'));
 
-		if ($this->getConfig('threaded')) {
-			$lo_query->find('threaded');
-		}
-
 		// Include parent categories in the query
 		$lo_parentCategories = $this->getConfig('includeParentCategories') ? $this->getParentCategories() : null;
 		if ($lo_parentCategories?->count()) {
@@ -768,29 +764,15 @@ class CategoriesBehavior extends Behavior {
 			}
 		}
 
-		$lo_categories = $lo_query->all();
-
 		if ($this->getConfig('threaded')) {
-			/**
-			 * Create a nested list of all categories
-			 *
-			 * @var \Cake\Collection\Iterator\TreeIterator $lo_categories
-			 */
-			$lo_categories = $lo_categories->listNested();
-
-			/** @var \Awyiss\Model\Entity $lo_category */
-			foreach ($lo_categories as $lo_category) {
-				$lo_category->setVirtual(['level'], true);
-				//Add the current depth as a level-property to the entity
-				/** @noinspection PhpUndefinedFieldInspection */
-				$lo_category->level = $lo_categories->getDepth();
-			}
+			$lo_categories = $lo_association->getTarget()->listNested($lo_query);
 
 			//Create an array, based on a printer set in the config. Default is [id => label]
 			$ls_bindingKey = $this->getConfig('bindingKey', 'id');
 			$la_categories = $lo_categories->printer(...$this->getConfig('threaded.printer', ['label', $ls_bindingKey, '– ']))->toArray();
 		}
 		else {
+			$lo_categories = $lo_query->all();
 			//Create an array, based on a combinator set in the config. Default is [id => label]
 			$la_categories = $lo_categories->combine(...$this->getConfig('combinator'))->toArray();
 		}

@@ -40,6 +40,7 @@ class MenuEntriesTable extends Table {
 		'associationName' => 'Menus',
 		'enabled' => true,
 		'identifier' => 'menu',
+		'threaded' => false,
 	];
 	/**
 	 * @inheritDoc

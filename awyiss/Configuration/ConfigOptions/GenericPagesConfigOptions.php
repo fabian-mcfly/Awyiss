@@ -246,22 +246,11 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	protected function getMediaFolders(?string $languageShortcode): array {
 		$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_mediaFolders = $lo_mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode)->find('threaded')->where([
+		$lo_query = $lo_mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode, includeGlobal: false)->where([
 			'id !=' => 1,
 			'hidden' => false,
-			'OR' => [
-				'language_shortcode' . ($languageShortcode === null ? ' IS' : '') => $languageShortcode,
-			],
-		])->all();
-		$lo_mediaFolders = $lo_mediaFolders->listNested();
-
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		foreach ($lo_mediaFolders as $lo_page) {
-			$lo_page->setVirtual(['level'], true);
-			//Add the current depth as a level-property to the entity
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_page->level = $lo_mediaFolders->getDepth();
-		}
+		]);
+		$lo_mediaFolders = $lo_mediaFoldersTable->listNested($lo_query);
 
 		return $lo_mediaFolders->printer('label', 'id', '- ')->toArray();
 	}
@@ -273,16 +262,8 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	protected function getPages(?string $languageShortcode): array {
 		$lo_pagesTable = $this->fetchTable('Pages');
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_pages = $lo_pagesTable->find('forCurrentLanguage', languageShortcode: $languageShortcode)->find('threaded')->all();
-		$lo_pages = $lo_pages->listNested();
-
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		foreach ($lo_pages as $lo_page) {
-			$lo_page->setVirtual(['level'], true);
-			//Add the current depth as a level-property to the entity
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_page->level = $lo_pages->getDepth();
-		}
+		$lo_query = $lo_pagesTable->find('forCurrentLanguage', languageShortcode: $languageShortcode);
+		$lo_pages = $lo_pagesTable->listNested($lo_query);
 
 		return $lo_pages->printer('label', 'id', '- ')->toArray();
 	}

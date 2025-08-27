@@ -34,6 +34,7 @@ class UsersTable extends Table {
 		'associationName' => 'Usergroups',
 		'enabled' => true,
 		'identifier' => 'usergroup',
+		'threaded' => false,
 	];
 
 

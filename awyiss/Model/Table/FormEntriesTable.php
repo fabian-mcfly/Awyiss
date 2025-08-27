@@ -35,6 +35,7 @@ class FormEntriesTable extends Table {
 		'associationName' => 'Forms',
 		'enabled' => true,
 		'identifier' => 'form',
+		'threaded' => false,
 	];
 	/**
 	 * @inheritDoc

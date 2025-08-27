@@ -380,19 +380,15 @@ class MenuEntriesController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function findLinkablePages(bool $listNested = false): CollectionInterface {
+		$lo_table = $this->fetchTable('Pages');
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_pages = $this->fetchTable('Pages')->find('forCurrentLanguage')->find('threaded')->all();
+		$lo_query = $lo_table->find('forCurrentLanguage');
 
 		if ($listNested) {
-			$lo_pages = $lo_pages->listNested();
-
-			/** @var \Awyiss\Model\Entity\Page $lo_page */
-			foreach ($lo_pages as $lo_page) {
-				$lo_page->setVirtual(['level'], true);
-				//Add the current depth as a level-property to the entity
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_page->level = $lo_pages->getDepth();
-			}
+			$lo_pages = $lo_table->listNested($lo_query);
+		}
+		else {
+			$lo_pages = $lo_query->all();
 		}
 
 		return $lo_pages;
