@@ -17,6 +17,7 @@ use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\Behavior;
+use Awyiss\ORM\BehaviorRegistry;
 use Awyiss\ORM\Marshaller;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Inflector;
@@ -202,7 +203,10 @@ class Table extends BaseTable {
 			$this->setConfig('implementedEvents', $this->defaultEvents);
 		}
 
-		parent::__construct($config + ['eventManager' => new EventManager()]);
+		parent::__construct($config + [
+			'behaviors' => new BehaviorRegistry(),
+			'eventManager' => new EventManager(),
+		]);
 	}
 
 
