@@ -6,10 +6,7 @@ namespace Awyiss\Middleware;
 
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\AuthorizationServiceProviderInterface;
-use Awyiss\Awyiss;
 use Awyiss\Event\EventDispatcherTrait;
-use Awyiss\Event\EventListenersProvider;
-use Awyiss\Routing\Router;
 use Cake\Core\InstanceConfigTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -32,6 +29,11 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 * Authentication service or application instance.
 	 */
 	protected AuthorizationServiceProviderInterface|AuthorizationServiceInterface $subject;
+	/**
+	 * Default config
+	 *
+	 * @var array<string, mixed>
+	 */
 	protected array $_defaultConfig = [];
 
 
@@ -50,24 +52,15 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 
 	/**
 	 * @inheritDoc
-	 * @throws \ReflectionException
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		EventListenersProvider::loadListener('authorization', Awyiss::getRealm());
-
 		$lo_service = $this->getAuthorizationService($request);
 		$lo_service->setAuthenticationService($request->getAttribute('authentication'));
 
-		$lo_request = $request->withAttribute('authorization', $lo_service);
-		/** @noinspection PhpParamsInspection */
-		Router::setRequest($lo_request);
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$request = $request->withAttribute('authorization', $lo_service);
 
-		$this->dispatchEvent('Authorization.afterMiddlewareProcess', [
-			'authorizationService' => $lo_service,
-		], $this);
-
-
-		return $handler->handle($lo_request);
+		return $handler->handle($request);
 	}
 
 

@@ -14,6 +14,7 @@ use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Event\EventDispatcherTrait;
 use Awyiss\Model\Entity;
+use Awyiss\Routing\Router;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Hash;
 use RuntimeException;
@@ -111,9 +112,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			return $this->permissionCollection;
 		}
 
-		$lo_event = $this->dispatchEvent('Authorization.requestAuthorizationService', [], $this);
-		/** @var ?\Awyiss\Authorization\AuthorizationService $lo_authorizationService */
-		$lo_authorizationService = $lo_event->getResult();
+		$lo_authorizationService = Router::getRequest()->getAttribute('authorization');
 
 		if (!$lo_authorizationService) {
 			throw new RuntimeException(sprintf('Could not retreive `AuthorizationService` in `%s`.', static::class));
