@@ -16,6 +16,13 @@ use RuntimeException;
  */
 class App extends BaseApp {
 	/**
+	 * @var array
+	 */
+	protected static array $classNamesCache = [];
+
+
+
+	/**
 	 * Return the class name namespaced.
 	 *
 	 * This method checks if the class is defined
@@ -33,6 +40,11 @@ class App extends BaseApp {
 			return class_exists($class) ? $class : null;
 		}
 
+		$ls_cacheName = $class . '::' . $type . '::' . $suffix;
+		if (isset(static::$classNamesCache[ $ls_cacheName ])) {
+			return static::$classNamesCache[ $ls_cacheName ];
+		}
+
 		[$ls_plugin, $ls_name] = pluginSplit($class);
 
 		if ($ls_plugin) {
@@ -40,38 +52,44 @@ class App extends BaseApp {
 			$ls_fullname = '\\' . str_replace('/', '\\', $type . '\\' . $ls_name) . $suffix;
 
 			if (static::_classExistsInBase($ls_fullname, $ls_base)) {
+				static::$classNamesCache[ $ls_cacheName ] = $ls_base . $ls_fullname;
+
 				/** @var class-string */
 				return $ls_base . $ls_fullname;
 			}
-
 
 			return null;
 		}
 
 
-		//No Plugin? Let's check if the class exists in the CUSTOM_NAMESPACE
+		// No Plugin? Let's check if the class exists in the CUSTOM_NAMESPACE
 		$ls_fullname = '\\' . str_replace('/', '\\', $type . '\\' . $ls_name) . $suffix;
 		if (defined('CUSTOM_NAMESPACE') && static::_classExistsInBase($ls_fullname, CUSTOM_NAMESPACE)) {
+			static::$classNamesCache[ $ls_cacheName ] = '\\' . CUSTOM_NAMESPACE . $ls_fullname;
+
 			/** @var class-string */
 			return '\\' . CUSTOM_NAMESPACE . $ls_fullname;
 		}
 
 
-		//No class in the CUSTOM_NAMESPACE? It should be an Awyiss-class then.
+		// No class in the CUSTOM_NAMESPACE? It should be an Awyiss-class then.
 		$ls_base = Configure::read('App.namespace');
 		$ls_fullname = '\\' . str_replace('/', '\\', $type . '\\' . $ls_name) . $suffix;
 		if (static::_classExistsInBase($ls_fullname, $ls_base)) {
+			static::$classNamesCache[ $ls_cacheName ] = '\\' . $ls_base . $ls_fullname;
+
 			/** @var class-string */
 			return '\\' . $ls_base . $ls_fullname;
 		}
 
 
-		//Neither CUSTOM_NAMESPACE, nor Awyiss-class? CakePHP it is.
+		// Neither CUSTOM_NAMESPACE, nor Awyiss-class? CakePHP it is.
 		if (static::_classExistsInBase($ls_fullname, 'Cake')) {
+			static::$classNamesCache[ $ls_cacheName ] = 'Cake' . $ls_fullname;
+
 			/** @var class-string */
 			return 'Cake' . $ls_fullname;
 		}
-
 
 		return null;
 	}
