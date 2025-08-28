@@ -69,7 +69,7 @@ class MediaController extends Controller {
 
 		$li_mediaFolderId = $this->request->getParam('mediaFolderId') ?? $this->request->getData('media_folder_id');
 		if ($li_mediaFolderId) {
-			/** @var MediaFolder $lo_mediaFolder */
+			/** @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder */
 			$lo_mediaFolder = $this->Media->MediaFolders->findById($li_mediaFolderId)->first();
 			if ($lo_mediaFolder && $lo_mediaFolder->hidden) {
 				$this->activeHiddenFolder = true;
@@ -164,20 +164,20 @@ class MediaController extends Controller {
 
 		$ls_currentLanguageShortcode = $this->request->getParam('lang');
 		// Sort the grouped media folders by the global and the current language first
-		uksort($la_mediaFolders, function ($a, $b) use ($ls_currentLanguageShortcode) {
-			if ($a === 'hidden') {
+		uksort($la_mediaFolders, function (string $a, string $b) use ($ls_currentLanguageShortcode): int {
+			if (
+				($a === 'hidden' && $b === 'hidden') ||
+				($a === '' && $b === '') ||
+				($a === $ls_currentLanguageShortcode && $b === $ls_currentLanguageShortcode)
+			) {
+				return 0;
+			}
+
+			if ($a === 'hidden' || $a === '') {
 				return -1;
 			}
 
-			if ($b === 'hidden') {
-				return 1;
-			}
-
-			if ($a === '' || $a === $ls_currentLanguageShortcode) {
-				return -1;
-			}
-
-			if ($b === '' || $b === $ls_currentLanguageShortcode) {
+			if ($b === 'hidden' || $b === '') {
 				return 1;
 			}
 

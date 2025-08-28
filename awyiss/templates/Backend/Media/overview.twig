@@ -37,7 +37,10 @@
 		<div class="ButtonArea">
 			{% block categoriesFilterOverview %}
 				{% if isAjax == false %}
-					{{ CategoriesHelper.filter('mediaFolder', null, {groupBy: 'languageShortcode', groupLabels: LocaleHelper.languagesForRealm(languageRealm)|merge({general: 'Global'})}) }}
+					{{ CategoriesHelper.filter('mediaFolder', null, {
+						groupBy: 'languageShortcode',
+						groupLabels: {general: 'Global'}|merge(LocaleHelper.languagesForRealm(languageRealm))
+					}) }}
 				{% endif %}
 			{% endblock %}
 
