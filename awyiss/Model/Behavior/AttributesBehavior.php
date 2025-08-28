@@ -386,7 +386,7 @@ class AttributesBehavior extends Behavior {
 						return !empty($entity->{$ls_identifier});
 					}, 'validValue' . Inflector::camelize($ls_identifier), [
 						'errorField' => $ls_identifier,
-						'message' => __df($ls_source, 'attributes', 'error_valid_value'),
+						'message' => __df($ls_source, 'validation', 'error_valid_value'),
 					]);
 				}
 
@@ -398,7 +398,7 @@ class AttributesBehavior extends Behavior {
 				return $lo_attributeOptions->validateValue($ls_identifier, $entity->get($ls_identifier), $entity->getEntity());
 			}, 'validValue' . Inflector::camelize($ls_identifier), [
 				'errorField' => $lo_attribute->identifier,
-				'message' => __df($ls_source, 'attributes', 'error_valid_value'),
+				'message' => __df($ls_source, 'validation', 'error_valid_value'),
 			]);
 		}
 	}
