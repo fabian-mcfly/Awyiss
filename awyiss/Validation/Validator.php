@@ -214,6 +214,10 @@ class Validator extends BaseValidator {
 			elseif ($ls_name == 'dateTime') {
 				$lx_param = is_string($lx_param) ? $lx_param : ($lx_param[0] ?? 'Ymd');
 			}
+			elseif ($ls_name == 'enum') {
+				$la_cases = array_map(fn ($case) => $case->value, $lx_param::cases());
+				$lx_param = '`' . implode('`, `', $la_cases) . '`';
+			}
 			elseif ($ls_name == 'inList') {
 				$lx_param = implode(', ', $lx_param);
 			}

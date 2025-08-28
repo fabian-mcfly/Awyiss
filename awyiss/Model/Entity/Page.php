@@ -227,9 +227,8 @@ class Page extends Entity {
 	 */
 	protected function _setPageRoleId(mixed $pageRoleId): PageRoleEnumInterface|int|null {
 		if (is_string($pageRoleId)) {
-			return (int)$pageRoleId;
+			return (int)$pageRoleId ?: null;
 		}
-
 
 		return $pageRoleId;
 	}

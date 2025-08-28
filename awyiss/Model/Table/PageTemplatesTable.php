@@ -122,9 +122,10 @@ class PageTemplatesTable extends Table {
 
 
 		$validator->notEmptyString('pageRoleId');
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		$validator->add('pageRoleId', [
-			'isInteger' => ['rule' => 'isInteger'],
-			'maxLength' => ['rule' => ['maxLength', 11]],
+			'enum' => ['rule' => ['enum', $ls_pageRoleEnum]],
 		]);
 
 

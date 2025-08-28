@@ -6,6 +6,7 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
+use Awyiss\Model\Entity\SurveySurveyQuestion;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -21,7 +22,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\SurveyQuestionsTable&\Awyiss\ORM\Association\BelongsTo $SurveyQuestions
  * @property \Awyiss\Model\Table\SurveySurveyAnswersTable&\Awyiss\ORM\Association\HasMany $SurveySurveyAnswers
  * @method \Awyiss\Model\Entity\SurveySurveyQuestion newDefaultEntity(array $additionalData = [], array $options = [])
- * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class SurveySurveyQuestionsTable extends Table {
 	/**
@@ -146,11 +147,10 @@ class SurveySurveyQuestionsTable extends Table {
 		]);
 
 
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
+		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 		$validator->add('nextAction', [
-			'isScalar' => ['rule' => 'isScalar'],
-			'notBoolean' => ['rule' => 'notBoolean'],
-			'maxLength' => ['rule' => ['maxLength', 20]],
-			'notBlank' => ['rule' => 'notBlank'],
+			'enum' => ['rule' => ['enum', $ls_surveyNextActionEnum]],
 		]);
 
 
@@ -222,6 +222,25 @@ class SurveySurveyQuestionsTable extends Table {
 			[
 				'errorField' => 'surveyQuestionId',
 				'message' => __df('surveys', 'validation', 'error_valid_survey_question_id'),
+			]
+		);
+
+
+		$rules->add(
+			function (SurveySurveyQuestion $entity): bool {
+				if ($entity->nextAction === null) {
+					return true;
+				}
+
+				/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
+				$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+
+				return in_array($entity->nextAction, $ls_surveyNextActionEnum::cases());
+			},
+			'validNextAction',
+			[
+				'errorField' => 'nextAction',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_next_action'),
 			]
 		);
 

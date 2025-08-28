@@ -268,9 +268,10 @@ class PagesTable extends Table {
 
 
 		$validator->notEmptyString('pageRoleId');
+		/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		$validator->add('pageRoleId', [
-			'isInteger' => ['rule' => 'isInteger'],
-			'maxLength' => ['rule' => ['maxLength', 11]],
+			'enum' => ['rule' => ['enum', $ls_pageRoleEnum]],
 		]);
 
 
@@ -346,11 +347,20 @@ class PagesTable extends Table {
 
 
 		$rules->add(
-			$rules->existsIn('pageRoleId', 'PageRoles'),
-			'validPageRole',
+			function (Page $entity): bool {
+				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+				$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+				if (is_int($entity->pageRoleId)) {
+					return $ls_pageRoleEnum::tryFrom($entity->pageRoleId) !== null;
+				}
+
+				return in_array($entity->pageRoleId, $ls_pageRoleEnum::cases());
+			},
+			'validPageRoleId',
 			[
 				'errorField' => 'pageRoleId',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_role'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_role_id'),
 			]
 		);
 
@@ -525,6 +535,7 @@ class PagesTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
+		/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		$schema->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));

@@ -95,6 +95,14 @@ class SurveysTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('type');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
+		$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
+		$validator->add('type', [
+			'enum' => ['rule' => ['enum', $ls_surveyTypeEnum]],
+		]);
+
+
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -128,11 +136,10 @@ class SurveysTable extends Table {
 
 
 		$validator->notEmptyString('finalAction');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
+		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 		$validator->add('finalAction', [
-			'isScalar' => ['rule' => 'isScalar'],
-			'notBoolean' => ['rule' => 'notBoolean'],
-			'maxLength' => ['rule' => ['maxLength', 20]],
-			'notBlank' => ['rule' => 'notBlank'],
+			'enum' => ['rule' => ['enum', $ls_surveyNextActionEnum]],
 		]);
 
 
@@ -178,6 +185,25 @@ class SurveysTable extends Table {
 
 		$rules->add(
 			function (Survey $entity): bool {
+				/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
+				$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
+
+				return in_array($entity->type, $ls_surveyTypeEnum::cases());
+			},
+			'validType',
+			[
+				'errorField' => 'type',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_type'),
+			]
+		);
+
+
+		$rules->add(
+			function (Survey $entity): bool {
+				if (!$entity->finalAction instanceof BackedEnum) {
+					return false;
+				}
+
 				return array_key_exists($entity->finalAction->value, $this->availableFinalActions());
 			},
 			'validFinalAction',

@@ -4,7 +4,8 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Authorization\Permission\PermissionAccess;
+use Awyiss\Core\App;
+use Awyiss\Model\Entity\UsergroupPermission;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -18,7 +19,7 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\UsergroupsTable&\Awyiss\ORM\Association\BelongsTo $Usergroups
  * @method \Awyiss\Model\Entity\UsergroupPermission newDefaultEntity(array $additionalData = [], array $options = [])
- * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class UsergroupPermissionsTable extends Table {
 	/**
@@ -84,16 +85,11 @@ class UsergroupPermissionsTable extends Table {
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
+
+		/** @var class-string<\Awyiss\Authorization\Permission\PermissionAccess> $ls_permissionAccessEnum */
+		$ls_permissionAccessEnum = App::className('PermissionAccess', 'Authorization/Permission');
 		$validator->add('access', [
-			'isInteger' => ['rule' => 'isInteger'],
-			'maxLength' => ['rule' => ['maxLength', 1]],
-			'inList' => ['rule' => [
-				'inList',
-				[
-					PermissionAccess::Granted->value,
-					PermissionAccess::Denied->value,
-				],
-			]],
+			'enum' => ['rule' => ['enum', $ls_permissionAccessEnum]],
 		]);
 
 
@@ -132,6 +128,21 @@ class UsergroupPermissionsTable extends Table {
 		);
 
 
+		$rules->add(
+			function (UsergroupPermission $entity): bool {
+				/** @var class-string<\Awyiss\Authorization\Permission\PermissionAccess> $ls_permissionAccessEnum */
+				$ls_permissionAccessEnum = App::className('PermissionAccess', 'Authorization/Permission');
+
+				return in_array($entity->access, $ls_permissionAccessEnum::cases());
+			},
+			'validAccess',
+			[
+				'errorField' => 'access',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_access'),
+			]
+		);
+
+
 		return $rules;
 	}
 
@@ -142,8 +153,10 @@ class UsergroupPermissionsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		//$schema->setColumnType('access', 'integer');
-		$schema->setColumnType('access', EnumType::from(PermissionAccess::class));
+		/** @var class-string<\Awyiss\Authorization\Permission\PermissionAccess> $ls_permissionAccessEnum */
+		$ls_permissionAccessEnum = App::className('PermissionAccess', 'Authorization/Permission');
+		$schema->setColumnType('access', EnumType::from($ls_permissionAccessEnum));
+
 		$schema->setColumnType('settings', 'json');
 	}
 }

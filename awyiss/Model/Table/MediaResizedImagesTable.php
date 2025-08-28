@@ -4,9 +4,9 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
-use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
@@ -124,7 +124,19 @@ class MediaResizedImagesTable extends Table {
 		]);
 
 
-		$validator->enum('strategy', ResizeStrategy::class);
+		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
+		$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+		$validator->add('status', [
+			'enum' => ['rule' => ['enum', $ls_processStatusEnumClass]],
+		]);
+
+
+		$validator->notEmptyString('strategy');
+		/** @var class-string<\Awyiss\Model\Enum\ResizeStrategy> $ls_resizeStrategyEnumClass */
+		$ls_resizeStrategyEnumClass = App::className('ResizeStrategy', 'Model/Enum');
+		$validator->add('strategy', [
+			'enum' => ['rule' => ['enum', $ls_resizeStrategyEnumClass]],
+		]);
 
 
 		return $validator;
@@ -140,6 +152,47 @@ class MediaResizedImagesTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn(['mediaId'], 'Media'), 'validMediaId', ['errorField' => 'mediaId']);
 
+		$rules->add(
+			function (MediaResizedImage $entity): bool {
+				if ($entity->status === null) {
+					return true;
+				}
+
+				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
+				$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+
+				if (is_int($entity->status)) {
+					return $ls_processStatusEnumClass::tryFrom($entity->status) !== null;
+				}
+
+				return in_array($entity->status, $ls_processStatusEnumClass::cases());
+			},
+			'validStatus',
+			[
+				'errorField' => 'status',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_status'),
+			]
+		);
+
+
+		$rules->add(
+			function (MediaResizedImage $entity): bool {
+				/** @var class-string<\Awyiss\Model\Enum\ResizeStrategy> $ls_resizeStrategyEnumClass */
+				$ls_resizeStrategyEnumClass = App::className('ResizeStrategy', 'Model/Enum');
+
+				if (is_int($entity->strategy)) {
+					return $ls_resizeStrategyEnumClass::tryFrom($entity->strategy) !== null;
+				}
+
+				return in_array($entity->strategy, $ls_resizeStrategyEnumClass::cases());
+			},
+			'validStrategy',
+			[
+				'errorField' => 'strategy',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_strategy'),
+			]
+		);
+
 		return $rules;
 	}
 
@@ -150,7 +203,14 @@ class MediaResizedImagesTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$schema->setColumnType('strategy', EnumType::from(ResizeStrategy::class));
-		$schema->setColumnType('status', EnumType::from(ProcessStatus::class));
+		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
+		$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+
+		$schema->setColumnType('status', EnumType::from($ls_processStatusEnumClass));
+
+		/** @var class-string<\Awyiss\Model\Enum\ResizeStrategy> $ls_resizeStrategyEnumClass */
+		$ls_resizeStrategyEnumClass = App::className('ResizeStrategy', 'Model/Enum');
+
+		$schema->setColumnType('strategy', EnumType::from($ls_resizeStrategyEnumClass));
 	}
 }

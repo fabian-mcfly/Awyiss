@@ -5,8 +5,8 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\Media;
-use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Core\Configure;
@@ -182,6 +182,24 @@ class MediaTable extends Table {
 		]);
 
 
+		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
+		$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+		$validator->add('preview', [
+			'enum' => ['rule' => ['enum', $ls_processStatusEnumClass]],
+		]);
+
+
+		$validator->add('avif', [
+			'enum' => ['rule' => ['enum', $ls_processStatusEnumClass]],
+		]);
+
+
+		$validator->add('webp', [
+			'enum' => ['rule' => ['enum', $ls_processStatusEnumClass]],
+		]);
+
+
+
 		$validator->add('metaData', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
@@ -292,6 +310,75 @@ class MediaTable extends Table {
 		);
 
 
+		$rules->add(
+			function (Media $entity): bool {
+				if ($entity->preview === null) {
+					return true;
+				}
+
+				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
+				$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+
+				if (is_int($entity->preview)) {
+					return $ls_processStatusEnumClass::tryFrom($entity->preview) !== null;
+				}
+
+				return in_array($entity->preview, $ls_processStatusEnumClass::cases());
+			},
+			'validPreview',
+			[
+				'errorField' => 'preview',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_preview'),
+			]
+		);
+
+
+		$rules->add(
+			function (Media $entity): bool {
+				if ($entity->webp === null) {
+					return true;
+				}
+
+				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
+				$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+
+				if (is_int($entity->webp)) {
+					return $ls_processStatusEnumClass::tryFrom($entity->webp) !== null;
+				}
+
+				return in_array($entity->webp, $ls_processStatusEnumClass::cases());
+			},
+			'validWebp',
+			[
+				'errorField' => 'webp',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_webp'),
+			]
+		);
+
+
+		$rules->add(
+			function (Media $entity): bool {
+				if ($entity->avif === null) {
+					return true;
+				}
+
+				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
+				$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+
+				if (is_int($entity->avif)) {
+					return $ls_processStatusEnumClass::tryFrom($entity->avif) !== null;
+				}
+
+				return in_array($entity->avif, $ls_processStatusEnumClass::cases());
+			},
+			'validAvif',
+			[
+				'errorField' => 'avif',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_avif'),
+			]
+		);
+
+
 		$rules->addUpdate(
 			function (Media $entity) {
 				return !$entity->isDirty('mimeType') || $entity->getOriginal('mimeType') === $entity->mimeType;
@@ -374,9 +461,14 @@ class MediaTable extends Table {
 		parent::initializeSchema($schema);
 
 		$schema->setColumnType('meta_data', 'json');
-		$schema->setColumnType('preview', EnumType::from(ProcessStatus::class));
-		$schema->setColumnType('avif', EnumType::from(ProcessStatus::class));
-		$schema->setColumnType('webp', EnumType::from(ProcessStatus::class));
+
+		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
+		$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+
+		$schema->setColumnType('preview', EnumType::from($ls_processStatusEnumClass));
+		$schema->setColumnType('avif', EnumType::from($ls_processStatusEnumClass));
+		$schema->setColumnType('webp', EnumType::from($ls_processStatusEnumClass));
+
 		$schema->setColumnType('crop', 'json');
 	}
 

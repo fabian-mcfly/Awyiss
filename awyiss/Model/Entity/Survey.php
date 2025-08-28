@@ -26,7 +26,7 @@ use InvalidArgumentException;
  * @property string $identifier
  * @property string|null $successMessage
  * @property string|null $failureMessage
- * @property \Awyiss\Model\Enum\Survey\NextAction&\BackedEnum $finalAction
+ * @property \Awyiss\Model\Enum\Survey\NextAction|\BackedEnum $finalAction
  * @property int|null $formId
  * @property bool $active
  * @property bool $deleted

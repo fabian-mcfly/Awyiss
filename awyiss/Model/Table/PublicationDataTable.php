@@ -4,15 +4,21 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Enum\PublicationDataType;
+use Awyiss\Core\App;
+use Awyiss\Model\Entity\PublicationData;
 use Awyiss\Model\Table;
+use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * PublicationDataTable class
+ *
+ * @method \Awyiss\Model\Entity\PublicationData newDefaultEntity(array $additionalData = [], array $options = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PublicationDataTable extends Table {
 	/**
@@ -62,11 +68,12 @@ class PublicationDataTable extends Table {
 
 
 		$validator->notEmptyString('type');
+		/** @var class-string<\Awyiss\Model\Enum\PublicationDataType> $ls_publicationDataTypeEnumClass */
+		$ls_publicationDataTypeEnumClass = App::className('PublicationDataType', 'Model/Enum');
 		$validator->add('type', [
-			'isScalar' => ['rule' => 'isScalar'],
-			'notBoolean' => ['rule' => 'notBoolean'],
-			'maxLength' => ['rule' => ['maxLength', 20]],
+			'enum' => ['rule' => ['enum', $ls_publicationDataTypeEnumClass]],
 		]);
+
 
 		$validator->allowEmptyDateTime('dateTime');
 		$validator->add('dateTime', [
@@ -79,11 +86,49 @@ class PublicationDataTable extends Table {
 
 
 	/**
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|BaseRulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
+	 */
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			function (PublicationData $entity): bool {
+				/** @var class-string<\Awyiss\Model\Enum\PublicationDataType> $ls_publicationDataTypeEnumClass */
+				$ls_publicationDataTypeEnumClass = App::className('PublicationDataType', 'Model/Enum');
+
+				return in_array($entity->type, $ls_publicationDataTypeEnumClass::cases());
+			},
+			'validType',
+			[
+				'errorField' => 'type',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_type'),
+			]
+		);
+
+
+		$rules->addDelete(
+			$rules->isNotLinkedTo('SurveySurveyQuestions', 'surveys'),
+			'noLinkedSurveys',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_surveys'),
+			]
+		);
+
+		return $rules;
+	}
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$schema->setColumnType('type', EnumType::from(PublicationDataType::class));
+		/** @var class-string<\Awyiss\Model\Enum\PublicationDataType> $ls_publicationDataTypeEnumClass */
+		$ls_publicationDataTypeEnumClass = App::className('PublicationDataType', 'Model/Enum');
+
+		$schema->setColumnType('type', EnumType::from($ls_publicationDataTypeEnumClass));
 	}
 }

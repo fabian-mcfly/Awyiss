@@ -6,6 +6,7 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
+use Awyiss\Model\Entity\SurveyQuestion;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -20,7 +21,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\SurveyAnswersTable&\Awyiss\ORM\Association\HasMany $SurveyAnswers
  * @property \Awyiss\Model\Table\SurveySurveyQuestionsTable&\Awyiss\ORM\Association\HasMany $SurveySurveyQuestions
  * @method \Awyiss\Model\Entity\SurveyQuestion newDefaultEntity(array $additionalData = [], array $options = [])
- * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class SurveyQuestionsTable extends Table {
 	/**
@@ -82,11 +83,10 @@ class SurveyQuestionsTable extends Table {
 
 
 		$validator->notEmptyString('type');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_surveyQuestionTypeEnum */
+		$ls_surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 		$validator->add('type', [
-			'isScalar' => ['rule' => 'isScalar'],
-			'notBoolean' => ['rule' => 'notBoolean'],
-			'maxLength' => ['rule' => ['maxLength', 20]],
-			'notBlank' => ['rule' => 'notBlank'],
+			'enum' => ['rule' => ['enum', $ls_surveyQuestionTypeEnum]],
 		]);
 
 
@@ -136,6 +136,21 @@ class SurveyQuestionsTable extends Table {
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			function (SurveyQuestion $entity): bool {
+				/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_surveyQuestionTypeEnum */
+				$ls_surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
+
+				return in_array($entity->type, $ls_surveyQuestionTypeEnum::cases());
+			},
+			'validType',
+			[
+				'errorField' => 'type',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_type'),
+			]
+		);
+
+
 		$rules->addDelete(
 			$rules->isNotLinkedTo('SurveySurveyQuestions', 'surveys'),
 			'noLinkedSurveys',

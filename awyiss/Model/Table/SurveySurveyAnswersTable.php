@@ -128,11 +128,10 @@ class SurveySurveyAnswersTable extends Table {
 		]);
 
 
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
+		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 		$validator->add('nextAction', [
-			'isScalar' => ['rule' => 'isScalar'],
-			'notBoolean' => ['rule' => 'notBoolean'],
-			'maxLength' => ['rule' => ['maxLength', 20]],
-			'notBlank' => ['rule' => 'notBlank'],
+			'enum' => ['rule' => ['enum', $ls_surveyNextActionEnum]],
 		]);
 
 
@@ -197,6 +196,25 @@ class SurveySurveyAnswersTable extends Table {
 			[
 				'errorField' => 'surveySurveyQuestionId',
 				'message' => __df('surveys', 'validation', 'error_valid_survey_survey_question_id'),
+			]
+		);
+
+
+		$rules->add(
+			function (SurveySurveyAnswer $entity): bool {
+				if ($entity->nextAction === null) {
+					return true;
+				}
+
+				/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
+				$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+
+				return in_array($entity->nextAction, $ls_surveyNextActionEnum::cases());
+			},
+			'validNextAction',
+			[
+				'errorField' => 'nextAction',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_next_action'),
 			]
 		);
 

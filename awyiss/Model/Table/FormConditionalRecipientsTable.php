@@ -4,7 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Enum\ComparisonOperator;
+use Awyiss\Core\App;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -92,7 +92,11 @@ class FormConditionalRecipientsTable extends Table {
 
 
 		$validator->notEmptyString('operator');
-		$validator->enum('operator', ComparisonOperator::class);
+		/** @var class-string<\Awyiss\Model\Enum\ComparisonOperator> $ls_comparisonOperatorEnumClass */
+		$ls_comparisonOperatorEnumClass = App::className('ComparisonOperator', 'Model/Enum');
+		$validator->add('operator', [
+			'enum' => ['rule' => ['enum', $ls_comparisonOperatorEnumClass]],
+		]);
 
 
 		$validator->allowEmptyString('value');
@@ -150,6 +154,9 @@ class FormConditionalRecipientsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$schema->setColumnType('operator', EnumType::from(ComparisonOperator::class));
+		/** @var class-string<\Awyiss\Model\Enum\ComparisonOperator> $ls_comparisonOperatorEnumClass */
+		$ls_comparisonOperatorEnumClass = App::className('ComparisonOperator', 'Model/Enum');
+
+		$schema->setColumnType('operator', EnumType::from($ls_comparisonOperatorEnumClass));
 	}
 }

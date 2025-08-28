@@ -17,7 +17,7 @@ use Awyiss\Utility\Inflector;
  * @property int|null $usergroupId
  * @property string|null $scope
  * @property string|null $identifier
- * @property PermissionAccess|null $access
+ * @property \Awyiss\Authorization\Permission\PermissionAccess|null $access
  * @property array|null $settings
  * @property \Awyiss\Model\Entity\Usergroup $usergroup
  */
