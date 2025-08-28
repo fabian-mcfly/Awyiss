@@ -56,6 +56,7 @@ class NestBehavior extends Behavior {
 		'children' => [
 			'associationName' => null,
 			'bindingKey' => 'id',
+			'blocklistedColumns' => [],
 			'finder' => null,
 			'foreignKey' => 'parent_id',
 			'maxLevel' => null,
@@ -551,7 +552,14 @@ class NestBehavior extends Behavior {
 		$entity->{$ls_propertyName} = $lo_children->nest('id', 'parentId', $ls_propertyName)->toList();
 
 		$la_relatedColumns = $lo_table->getBehavior('Nest')->getConfig('relatedColumns');
-		$la_relatedColumnValues = $entity->extract($this->getConfig('relatedColumns'));
+
+		// Remove all blocklisted columns from the related columns
+		$la_blocklistedColumns = $lo_table->getBehavior('Nest')->getConfig('children.blocklistedColumns');
+		if ($la_blocklistedColumns) {
+			$la_relatedColumns = array_diff($la_relatedColumns, $la_blocklistedColumns);
+		}
+
+		$la_relatedColumnValues = $entity->extract($la_relatedColumns);
 
 		/** @var \Awyiss\Model\Entity $lo_child */
 		foreach ($lo_children as $lo_child) {
@@ -667,6 +675,12 @@ class NestBehavior extends Behavior {
 		}
 
 		$la_relatedColumns = $this->getConfig('relatedColumns');
+
+		// Remove all blocklisted columns from the related columns
+		$la_blocklistedColumns = $this->getConfig('children.blocklistedColumns');
+		if ($la_blocklistedColumns) {
+			$la_relatedColumns = array_diff($la_relatedColumns, $la_blocklistedColumns);
+		}
 
 		// Extract all values of related columns in the entity
 		$la_data = $entity->extract(array_filter($la_relatedColumns, fn ($field) => !str_starts_with($field, 'attributes.')));

@@ -41,6 +41,9 @@ class MediaFoldersTable extends Table {
 	 */
 	protected array $nest = [
 		'enabled' => true,
+		'children' => [
+			'blocklistedColumns' => ['hidden'],
+		],
 		'relatedColumns' => ['languageShortcode', 'hidden'],
 	];
 	/**
