@@ -429,6 +429,13 @@ class CategoriesHelper extends Helper {
 
 				$la_groupedOptions = $this->groupOptions($lx_options, $ls_groupBy, $la_attributes);
 
+				$la_groupOrderKeys = array_keys($la_attributes['groupLabels'] ?? $la_groupedOptions);
+
+				// Sort the groups according to the order of the provided group labels
+				uksort($la_groupedOptions, function (string $a, string $b) use ($la_groupOrderKeys): int {
+					return array_search($a ?: 'general', $la_groupOrderKeys, true) <=> array_search($b ?: 'general', $la_groupOrderKeys, true);
+				});
+
 				foreach ($la_groupedOptions as $lx_key => $lx_options) {
 					$la_attributes['options'][] = [
 						'id' => null,
