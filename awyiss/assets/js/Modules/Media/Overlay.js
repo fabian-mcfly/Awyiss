@@ -259,7 +259,7 @@ export default class Overlay {
 		this.bindAutoOverwriteChangeLabel();
 
 		// Bind the click event to the folder list items
-		this.bindFolderListItemClick();
+		this.initFolderList();
 
 		this.eventHandler.add('cancel', (event) => {
 			event.preventDefault();
@@ -528,13 +528,34 @@ export default class Overlay {
 	 *
 	 * @return {void}
 	 */
-	bindFolderListItemClick() {
+	initFolderList() {
 		this.folderList.querySelectorAll('.MediaFolders-ListItem').forEach(listItem => {
 			window.eventHandler.add('click', this.fetchFolderFiles.bind(this), listItem);
 		});
 
 		// Create a new instance of the nested list handler
 		new NestedListHandler('ul#MediaFolders-List');
+
+		// Check if an active folder exists
+		const activeFolder = this.folderList.querySelector('.MediaFolders-ListItem.Active');
+		if (!activeFolder) {
+			return;
+		}
+
+		// Recursively open all parent folders
+		let parentList = activeFolder.closest('ul.MediaFolders-List');
+		while (parentList) {
+			if (parentList.classList.contains('Collapsed')) {
+				const listItem = parentList.closest('.MediaFolders-ListItem');
+				const nestedListToggle = listItem.querySelector('.NestedListToggle.Collapsed');
+
+				if (nestedListToggle) {
+					nestedListToggle.dispatchEvent(new MouseEvent('click', {bubbles: true}));
+				}
+			}
+
+			parentList = parentList.parentElement.closest('ul.MediaFolders-List');
+		}
 	}
 
 	/**
@@ -687,7 +708,7 @@ export default class Overlay {
 
 			this.folderList.dataset.includeHidden = includeHidden ? 'true' : 'false';
 
-			this.bindFolderListItemClick();
+			this.initFolderList();
 
 			this.initSortableReceiver();
 
