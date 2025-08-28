@@ -107,6 +107,12 @@ export default class NestedListHandler {
 	 * @param {HTMLElement} element - The nested list element
 	 */
 	initList(element) {
+		if (element.dataset.nestedListInitialized === 'true') {
+			return;
+		}
+
+		element.dataset.nestedListInitialized = 'true';
+
 		// Check if the "nestable" data attribute is set to "false"
 		if (element.dataset.nestable !== 'false') {
 			// Add a child list to each list item that doesn't already have one
