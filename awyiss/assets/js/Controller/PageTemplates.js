@@ -17,6 +17,9 @@ export default class PageTemplatesController {
 		}
 		else if (document.querySelector('.PageTemplates.Form')) {
 			this.initializeForm();
+
+			const observer = window.observer;
+			observer.addObserver(this.observeMutations.bind(this));
 		}
 	}
 
@@ -67,6 +70,12 @@ export default class PageTemplatesController {
 		// Select the ContentAreaNew list and the Row element
 		const contentAreas = document.querySelectorAll('.ContentAreas-List');
 		contentAreas.forEach(contentArea => {
+			if (contentArea.dataset.sortableInitialized === 'true') {
+				return;
+			}
+
+			contentArea.dataset.sortableInitialized = 'true';
+
 			contentArea.sortable = Sortable.create(contentArea, {
 				chosenClass: 'SortableChosen',
 				direction: 'vertical',
@@ -85,6 +94,29 @@ export default class PageTemplatesController {
 					}, 50);
 				}
 			});
+		});
+	}
+
+	/**
+	 * Observe mutations in the DOM and initialize the form if necessary.
+	 *
+	 * @param {MutationRecord} mutation - The mutation to observe.
+	 */
+	observeMutations(mutation) {
+		if (!mutation.addedNodes.length > 0) {
+			return;
+		}
+
+		mutation.addedNodes.forEach((node) => {
+			const selector = '.ContentAreas-List';
+
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				const elements = node.querySelectorAll(selector)
+
+				if (node.matches(selector) || elements.length) {
+					this.initializeForm();
+				}
+			}
 		});
 	}
 }
