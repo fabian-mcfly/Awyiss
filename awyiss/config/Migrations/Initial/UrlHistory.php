@@ -54,7 +54,7 @@ class UrlHistory {
 		])->addColumn('target', 'string', [
 			'default' => null,
 			'limit' => 1024,
-			'null' => false,
+			'null' => true,
 		])->addColumn('status', 'integer', [
 			'default' => null,
 			'limit' => 3,
