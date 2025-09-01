@@ -407,7 +407,7 @@ class HtmlCleaner {
 				$ls_replacement = "\u{A0}";
 			}
 
-			$ls_content = preg_replace('/([\s\n\r\t]|\xC2\xA0)+/', $ls_replacement, $ls_content);
+			$ls_content = preg_replace('/([\s\n\r\t]|\xC2\xA0){2,}/', $ls_replacement, $ls_content);
 
 			$lo_textNode->nodeValue = $ls_content;
 		}
