@@ -71,6 +71,7 @@ class FormSender {
 	/**
 	 * @param \Awyiss\Model\Entity\Form $form
 	 * @param \Awyiss\Model\Entity\Page|null $page
+	 * @throws \Exception
 	 */
 	public function __construct(Form $form, ?Page $page = null) {
 		$this->form = $form;
@@ -408,7 +409,7 @@ class FormSender {
 			];
 		}
 
-		$la_formData['data'] = $this->createDataString($type);
+		// Underscored keys since replacePlaceholder() uses underscored keys.
 		$la_formData['base_url'] = Router::url('/', true);
 
 		$la_data = array_merge(
@@ -425,6 +426,15 @@ class FormSender {
 			 */
 			$ls_body = preg_replace_callback('/<p([^>]*)>(.*?)(\{\{\$data\}\})(.*?)<\/p>/Um', $this->unwrapDataString(...), $ls_body);
 		}
+
+		$ls_body = $this->replacePlaceholders($ls_body, $la_data, ['data']);
+
+		/**
+		 * Only after all placeholders have been replaced, replace the actual data string.
+		 *
+		 * This is done to prevent users from injecting placeholders into their form data.
+		 */
+		$la_data = ['data' => $this->createDataString($type)];
 
 		return $this->replacePlaceholders($ls_body, $la_data, ['data']);
 	}
@@ -487,6 +497,7 @@ class FormSender {
 		$la_formFields = array_keys(array_filter($this->form->getAccessible()));
 
 		$la_formData = $this->getFormData();
+		// Underscored keys since replacePlaceholder() uses underscored keys.
 		$la_formData['base_url'] = Router::url('/', true);
 
 		foreach ($la_formFields as $ls_field) {
@@ -536,8 +547,18 @@ class FormSender {
 			$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacedPlaceholdersOrAlternative($match, $values, $safeList), $ls_string);
 		}
 
+		if (isset($this->page)) {
+			// Find all placeholders in the form of `$page.identifier`, with identifier in camelBacked or under_scored format
+			$ls_pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
+			$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $this->page->extract(), $safeList), $ls_string);
+		}
+
+		// Find all placeholders in the form of `$form.identifier`, with identifier in camelBacked or under_scored format
+		$ls_pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
+		$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $this->form->extract(), $safeList), $ls_string);
+
 		// Find all placeholders in the form of `$identifier`
-		$ls_pattern = '/(\$(?<identifier>[A-Za-z0-9_]+))/';
+		$ls_pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
 
 		return preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $values, $safeList), $ls_string);
 	}
@@ -597,7 +618,17 @@ class FormSender {
 			return $ls_alternative;
 		}
 
-		$ls_pattern = '/(\$(?<identifier>[A-Za-z0-9_]+))/';
+		if (isset($this->page)) {
+			// Find all placeholders in the form of `$page.identifier`, with identifier in camelBacked or underscored format
+			$ls_pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
+			$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $this->page->extract(), $safeList), $ls_string);
+		}
+
+		// Find all placeholders in the form of `$form.identifier`, with identifier in camelBacked or underscored format
+		$ls_pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
+		$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $this->form->extract(), $safeList), $ls_string);
+
+		$ls_pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
 		$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $values, $safeList), $ls_string);
 
 		if (str_contains($ls_string, '$') && $ls_alternative !== null) {
