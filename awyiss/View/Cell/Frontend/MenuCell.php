@@ -7,6 +7,7 @@ namespace Awyiss\View\Cell\Frontend;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Menu as MenuEntity;
 use Awyiss\Model\Entity\MenuEntry;
+use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\FrontendView;
@@ -71,7 +72,7 @@ class MenuCell extends Cell {
 	public function display(string $identifier, string $languageShortcode, array $options = []): void {
 		$la_options = $options + [
 			'includeWrapper' => true,
-			'currentRoute' => $this->request->getRequestTarget(),
+			'currentRoute' => Router::url($this->request->getRequestTarget()),
 			'viewVars' => [],
 		];
 
@@ -107,7 +108,7 @@ class MenuCell extends Cell {
 		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenuItem> $ls_menuItemClass */
 		$ls_menuItemClass = App::className('FrontendMenuItem', 'Utility/Menu');
 
-		/** @see \Awyiss\Utility\Menu\Menu::__construct() */
+		/** @see \Awyiss\Utility\Menu\FrontendMenu::__construct() */
 		$lo_menu = new $ls_menuClass($lo_menuEntries->toArray(), [
 			'active' => $lb_active,
 			'menuClass' => $ls_menuClass,

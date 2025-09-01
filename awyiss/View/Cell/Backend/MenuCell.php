@@ -7,6 +7,7 @@ namespace Awyiss\View\Cell\Backend;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -124,7 +125,7 @@ class MenuCell extends Cell {
 			$ls_url .= Inflector::dasherize($this->request->getParam('controller'));
 			$ls_url .= '/' . $this->request->getParam('action') . '/';
 		}
-		$lo_renderer->setCurrentRoute($ls_url);
+		$lo_renderer->setCurrentRoute(Router::url($ls_url));
 
 		// Render the menu
 		$ls_menu = $lo_renderer->render('System');

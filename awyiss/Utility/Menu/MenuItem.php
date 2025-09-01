@@ -157,15 +157,14 @@ abstract class MenuItem implements ArrayAccess {
 			return false;
 		}
 
-		$ls_currentRoute = rtrim($currentRoute, '/') . '/';
-		$ls_testUrl = rtrim($ls_testUrl, '/') . '/';
+		$ls_currentRoute = trim($currentRoute, '/') . '/';
+		$ls_testUrl = trim($ls_testUrl, '/') . '/';
 
 		if (!isset($ls_fullBaseUrl)) {
-			$ls_fullBaseUrl = Router::fullBaseUrl();
+			$ls_fullBaseUrl = Router::url('/', true);
 		}
-
 		if (str_starts_with($ls_testUrl, $ls_fullBaseUrl)) {
-			$ls_testUrl = substr_replace($ls_testUrl, '', 0, strlen($ls_fullBaseUrl));
+			$ls_testUrl = ltrim(substr_replace($ls_testUrl, '', 0, strlen($ls_fullBaseUrl)), '/');
 		}
 
 		if ($ls_testUrl === $ls_currentRoute) {
@@ -181,7 +180,7 @@ abstract class MenuItem implements ArrayAccess {
 				return $this->isCurrentRoute;
 			});
 
-			$ls_cleanRoute = '/' . implode('/', $la_segments) . '/';
+			$ls_cleanRoute = implode('/', $la_segments) . '/';
 
 			$this->isCurrentRoute = $ls_testUrl === $ls_cleanRoute;
 

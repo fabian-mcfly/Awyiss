@@ -67,6 +67,7 @@ abstract class Menu {
 				$lo_item->identifier = $lx_identifier;
 			}
 
+			/** @uses \Awyiss\Utility\Menu\MenuItem */
 			$this->items[ $lx_identifier ] = new $la_config['menuItemClass']($lo_item, $la_config, $level);
 		}
 
