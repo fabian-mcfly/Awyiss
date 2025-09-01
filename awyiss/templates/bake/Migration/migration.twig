@@ -49,10 +49,14 @@ class {{ name }} extends AbstractMigration {
 {% for column, config in columns['fields'] %}
 		$table->{{ columnMethod }}('{{ column }}');
 {% endfor %}
-{% for column, config in columns['indexes'] %}
-		$table->{{ indexMethod }}([{{
-			Migration.stringifyList(config['columns'])|raw
-		}}]);
+{% for indexName, config in columns['indexes'] %}
+{% if indexMethod == 'removeIndex' %}
+		if ($table->hasIndexByName('{{ indexName }}')) {
+			$table->{{ indexMethod }}([{{
+				Migration.stringifyList(config['columns'])|raw
+			}}]);
+		}
+{% endif %}
 {% endfor %}
 {% else %}
 {% for column, config in columns['fields'] %}
@@ -63,12 +67,24 @@ class {{ name }} extends AbstractMigration {
 			Migration.stringifyList(config['options'], {'indent': 3}, wantedOptions)|raw
 		}}]);
 {% endfor %}
-{% for column, config in columns['indexes'] %}
-		$table->{{ indexMethod }}([{{
-			Migration.stringifyList(config['columns'], {'indent': 3})|raw }}
+{% for indexName, config in columns['indexes'] %}
+{% if indexMethod == 'removeIndex' %}
+		if ($table->hasIndexByName('{{ indexName }}')) {
+{% else %}
+		if (!$table->hasIndexByName('{{ indexName }}')) {
+{% endif %}
+			$table->{{ indexMethod }}([{{
+				Migration.stringifyList(config['columns'], {'indent': 4})|raw -}}
 			], [{{
-				Migration.stringifyList(config['options'], {'indent': 3})|raw
-		}}]);
+				Migration.stringifyList(config['options'], {'indent': 4})|raw
+			}}]);
+		}
+{% else %}
+{% for column, config in columns['fields'] %}
+		if ($table->hasIndexByName('BY_{{ column|upper }}')) {
+			$table->removeIndexByName('BY_{{ column|upper }}');
+		}
+{% endfor %}
 {% endfor %}
 {% if tableMethod == 'create' and columns['primaryKey'] is not empty %}
 		$table->addPrimaryKey([{{
