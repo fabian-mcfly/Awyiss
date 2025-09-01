@@ -140,48 +140,10 @@ class NewsListingModule extends AbstractModule {
 		$li_itemsPerPage = $settings['itemsPerPage'] ?? 9;
 		$li_offset = $settings['offset'] ?? 0;
 
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$lo_query = static::getQuery($lb_paginate, $settings, $entity);
 
-		try {
-			/** @var \Awyiss\Model\Table $lo_newsTable */
-			$lo_newsTable = $lo_tableLocator->get('News');
-		}
-		catch (MissingTableClassException) {
+		if (!$lo_query) {
 			return '';
-		}
-
-		if (static::isPreview()) {
-			$lo_query = $lo_newsTable->find('all');
-		}
-		else {
-			/**
-			 * @uses \Awyiss\Model\Table::findActive()
-			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
-			 */
-			$lo_query = $lo_newsTable->find('active')->find('published');
-		}
-
-		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_query->find('forCurrentLanguage')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
-
-		$lo_query->orderBy(['date' => 'DESC']);
-
-		if (!$lb_paginate && isset($lo_newsTable->getAttributes()['inTeaser'])) {
-			$lo_query->where(['in_teaser' => true]);
-		}
-
-		if (isset($settings['categories'])) {
-			if (is_array($settings['categories'])) {
-				$lo_query->where(['parent_id IN' => $settings['categories']]);
-			}
-		}
-		elseif ($entity instanceof Page) {
-			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-
-			if ($entity->pageRoleId === $ls_pageRoleEnum::Newscategory) {
-				$lo_query->where(['parent_id' => $entity->id]);
-			}
 		}
 
 		if ($lb_paginate) {
@@ -262,5 +224,60 @@ class NewsListingModule extends AbstractModule {
 		return [
 			'settings.categories' => $la_categoriesField,
 		];
+	}
+
+
+	/**
+	 * @param bool $paginate
+	 * @param array $settings
+	 * @param \Awyiss\Model\Entity|null $entity
+	 * @return \Cake\ORM\Query\SelectQuery|null
+	 */
+	protected static function getQuery(bool $paginate, array $settings, ?Entity $entity): ?SelectQuery {
+		$lo_tableLocator = FactoryLocator::get('Table');
+
+		try {
+			/** @var \Awyiss\Model\Table $lo_newsTable */
+			$lo_newsTable = $lo_tableLocator->get('News');
+		}
+		catch (MissingTableClassException) {
+			return null;
+		}
+
+		if (static::isPreview()) {
+			$lo_query = $lo_newsTable->find('all');
+		}
+		else {
+			/**
+			 * @uses \Awyiss\Model\Table::findActive()
+			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+			 */
+			$lo_query = $lo_newsTable->find('active')->find('published');
+		}
+
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
+		$lo_query->find('forCurrentLanguage')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+
+		$lo_query->orderBy(['date' => 'DESC']);
+
+		if (!$paginate && isset($lo_newsTable->getAttributes()['inTeaser'])) {
+			$lo_query->where(['in_teaser' => true]);
+		}
+
+		if (isset($settings['categories'])) {
+			if (is_array($settings['categories'])) {
+				$lo_query->where(['parent_id IN' => $settings['categories']]);
+			}
+		}
+		elseif ($entity instanceof Page) {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+			if ($entity->pageRoleId === $ls_pageRoleEnum::Newscategory) {
+				$lo_query->where(['parent_id' => $entity->id]);
+			}
+		}
+
+		return $lo_query;
 	}
 }
