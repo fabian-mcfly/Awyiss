@@ -102,7 +102,11 @@ body {
 		.tox-toolbar {
 			padding:0 5px;
 			background-image:none;
-			background-color:transparent;
+			background-color:var(--colorMedium);
+
+			html.🌚 & {
+				background-color:var(--colorSemiDark);
+			}
 
 			&-overlord {
 				padding:5px;
@@ -261,6 +265,11 @@ body {
 					padding-top:0;
 				}
 			}
+		}
+
+		.tox-collection__item:has(> .tox-collection__item-label > [style*="color:"]) {
+			background-color:var(--colorBright);
+			color:var(--colorText);
 		}
 
 		.tox-collection__item-label {
