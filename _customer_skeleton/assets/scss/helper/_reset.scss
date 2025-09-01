@@ -145,9 +145,12 @@
 		resize:vertical;
 	}
 
-	ul, ol {
-		margin-top:1.5rem;
+	:is(ul, ol) {
 		padding:0;
+
+		&:where(:not(:first-child)) {
+			margin-top:1.5rem;
+		}
 	}
 
 	li {
