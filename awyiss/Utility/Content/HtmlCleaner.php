@@ -495,9 +495,23 @@ class HtmlCleaner {
 		for ($li_i = $lo_brTags->length - 1; $li_i >= 0; $li_i--) {
 			$lo_brTag = $lo_brTags->item($li_i);
 
-			if ($lo_brTag->isSameNode($lo_brTag->parentNode->lastChild)) {
-				$lo_brTag->parentNode->removeChild($lo_brTag);
+			if (!$lo_brTag->isSameNode($lo_brTag->parentNode->lastChild)) {
+				continue;
 			}
+
+			// Check if the parent node ha a follow-up sibling of type text node and not empty
+			if (
+				$lo_brTag->parentNode->nextSibling &&
+				$lo_brTag->parentNode->nextSibling->nodeName === '#text' &&
+				!preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_brTag->parentNode->nextSibling->nodeValue)
+			) {
+				// If a next sibling exists, move the br between the parent and the next sibling
+				$lo_brTag->parentNode->parentNode->insertBefore($lo_brTag, $lo_brTag->parentNode->nextSibling);
+				continue;
+			}
+
+			// Remove the <br> tag
+			$lo_brTag->parentNode->removeChild($lo_brTag);
 		}
 	}
 
