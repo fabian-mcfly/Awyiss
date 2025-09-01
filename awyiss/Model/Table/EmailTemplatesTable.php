@@ -68,17 +68,29 @@ class EmailTemplatesTable extends Table {
 	 */
 	public function findWithUsages(SelectQuery $query): SelectQuery {
 		return $query->enableAutoFields()->select([
-			'used_for_emails' => $query->func()->count('FormEmails.id'),
-			'used_for_confirmation_emails' => $query->func()->count('FormConfirmationEmails.id'),
+			'used_for_emails' => $query->func()->count('DISTINCT FormEmails.id'),
+			'used_for_confirmation_emails' => $query->func()->count('DISTINCT FormConfirmationEmails.id'),
 		])->leftJoinWith('FormEmails', function (SelectQuery $query) {
-			return $query->applyOptions([
+			return $query->disableAutoFields()->select(['email_template_id'])->applyOptions([
 				'attributes' => [
+					'skip' => true,
+				],
+				'publicationData' => [
+					'skip' => true,
+				],
+				'translate' => [
 					'skip' => true,
 				],
 			]);
 		})->leftJoinWith('FormConfirmationEmails', function (SelectQuery $query) {
-			return $query->applyOptions([
+			return $query->disableAutoFields()->select(['confirmation_email_template_id'])->applyOptions([
 				'attributes' => [
+					'skip' => true,
+				],
+				'publicationData' => [
+					'skip' => true,
+				],
+				'translate' => [
 					'skip' => true,
 				],
 			]);
