@@ -20,6 +20,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
+use Cake\Utility\Hash;
 use LogicException;
 
 
@@ -46,6 +47,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			'publishedEndingAfter' => 'findPublishedEndingAfter',
 		],
 		'referenceName' => '',
+		'skip' => false,
 		'strategy' => 'subquery',
 		'tableLocator' => null,
 	];
@@ -441,6 +443,11 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 */
 	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void {
 		if (!$this->getConfig('enabled')) {
+			return;
+		}
+
+		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'publicationData'));
+		if ($la_options['skip'] === true) {
 			return;
 		}
 
