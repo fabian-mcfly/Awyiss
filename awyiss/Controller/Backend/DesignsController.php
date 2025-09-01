@@ -315,6 +315,15 @@ class DesignsController extends Controller {
 				}
 			}
 
+			// Don't save empty font stacks
+			if (
+				$la_variableOptions &&
+				$la_variableOptions['type'] === ScssVariableType::FontStack &&
+				empty($lx_value)
+			) {
+				continue;
+			}
+
 			$ls_key = $la_variableMap[ $ls_key ] ?? $ls_key;
 
 			if (str_ends_with($ls_key, '_unit')) {
