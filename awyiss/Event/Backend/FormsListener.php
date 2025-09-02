@@ -79,6 +79,7 @@ class FormsListener implements EventListenerInterface {
 		$lo_table->FormElements->saveMany($lo_elements->toList(), [
 			'checkRules' => false,
 			'isCopy' => true,
+			'_primary' => false,
 		]);
 	}
 

@@ -79,6 +79,7 @@ class MenusListener implements EventListenerInterface {
 		$lo_table->MenuEntries->saveMany($lo_entries->toList(), [
 			'checkRules' => false,
 			'isCopy' => true,
+			'_primary' => false,
 		]);
 	}
 

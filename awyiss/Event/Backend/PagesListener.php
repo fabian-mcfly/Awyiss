@@ -316,6 +316,7 @@ class PagesListener implements EventListenerInterface {
 		$lo_table->Contents->saveMany($lo_entries->toList(), [
 			'checkRules' => false,
 			'isCopy' => true,
+			'_primary' => false,
 		]);
 	}
 
