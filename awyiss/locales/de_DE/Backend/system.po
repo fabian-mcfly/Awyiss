@@ -507,3 +507,12 @@ msgstr "Benutzer & Benutzergruppen"
 
 msgid "system_overview_category_configuration"
 msgstr "Konfiguration"
+
+msgid "bake_page_roles_seed"
+msgstr "Datenbankabbild für Seiten-Rollen erstellen"
+
+msgid "create_page_role_model"
+msgstr "Dateien für Seitenrollen-Model erstellen"
+
+msgid "drop_datatables_table"
+msgstr "Eigene Datentabelle löschen"

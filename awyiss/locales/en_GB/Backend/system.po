@@ -507,3 +507,12 @@ msgstr "Users & Usergroups"
 
 msgid "system_overview_category_configuration"
 msgstr "Configuration"
+
+msgid "bake_page_roles_seed"
+msgstr "Create database seed for page roles"
+
+msgid "create_page_role_model"
+msgstr "Create Page Role model files"
+
+msgid "drop_datatables_table"
+msgstr "Delete Datatables"
