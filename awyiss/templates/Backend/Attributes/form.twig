@@ -24,162 +24,201 @@
 
 {{ FormHelper.create(attribute, {method: 'post', id: 'AttributeForm', idPrefix: 'attribute'}) }}
 
+{% set fieldsetGeneral %}
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{% block formControlTitle %}
+					{{ FormHelper.control('title') }}
+				{% endblock %}
+
+				{% block formControlIdentifier %}
+					{{ FormHelper.control('identifier', {'data-autofill-from': 'title'}) }}
+				{% endblock %}
+
+				{% block formControlDefaultValue %}
+					{{ FormHelper.control('default_value', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlType %}
+					{{ FormHelper.control('type', {
+						columnSpan: 6,
+						readonly: attribute.inputType in ['input_list', 'input_key_value_list'],
+					}) }}
+				{% endblock %}
+
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetContent %}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMedia %}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{{ cell('Backend/MediaElements', [attribute]) }}
+
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMediaElementAssignments %}
+	{% block fieldsetMediaElementAssignments %}
+		{{ cell('Backend/MediaElements::elementAssignments', [attribute]) }}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetPresentation %}
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
+
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlTranslatable %}
+					{{ FormHelper.control('translatable', {columnSpan: 6, disabled: translatableDisabled}) }}
+				{% endblock %}
+
+				{% block formControlRequired %}
+					{{ FormHelper.control('required', {disabled: requiredDisabled}) }}
+				{% endblock %}
+
+				{% block formControlInputType %}
+					{{ FormHelper.control('input_type', {
+						columnSpan: 6,
+						empty: false,
+						options: combine(availableInputTypes, availableInputTypes|map(inputType => __('input_type_' ~ inputType))),
+						'data-form-updater': true,
+					}) }}
+				{% endblock %}
+
+				{% block formControlColumnSpan %}
+					{{ FormHelper.control('column_span', {columnSpan: 6, disabled: columnSpanDisabled, empty: false, options: columnSpans, type: 'select'}) }}
+				{% endblock %}
+
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetConditions %}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block formControlScope %}
+					{{ CategoriesHelper.control('scope', {'data-form-updater': true}) }}
+				{% endblock %}
+
+				{% block formControlFieldset %}
+					{{ FormHelper.control('fieldset', {
+						columnSpan: 6,
+						empty: false,
+						options: combine(availableFieldsets, availableFieldsets|map(fieldset => __d(attribute.scope, 'fieldset_' ~ fieldset))),
+						disabled: attribute.scope in ['contents', 'widgets'],
+						'data-form-updater': true
+					}) }}
+				{% endblock %}
+
+				{% block formControlSystemOrder %}
+					{{ SystemOrderHelper.control('system_order', {columnSpan: 6, entity: attribute}) }}
+				{% endblock %}
+
+				{% block formControlHasIndex %}
+					{{ FormHelper.control('has_index', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetAttributes %}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
 {% block sidebarToggle %}
-	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+		{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% endif %}
 {% endblock %}
 
 {% block fieldsets %}
 	<div class="Fieldsets">
+		{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+			{{ fieldsetPresentation }}
+			{{ fieldsetConditions }}
+			{{ fieldsetGeneral }}
+			{{ fieldsetContent }}
+			{{ fieldsetMedia }}
+			{{ fieldsetMediaElementAssignments }}
+			{{ fieldsetAttributes }}
+		{% endif %}
+
 		{% block mainFieldsets %}
-			<div class="Main-Fieldsets">
-				{% block fieldsetGeneral %}
-					<fieldset class="Fieldset-General">
-						<legend>{{ __('fieldset_general') }}</legend>
-
-						{% block fieldsetGeneralInner %}
-							{% block formControlTitle %}
-								{{ FormHelper.control('title') }}
-							{% endblock %}
-
-							{% block formControlIdentifier %}
-								{{ FormHelper.control('identifier', {'data-autofill-from': 'title'}) }}
-							{% endblock %}
-
-							{% block formControlDefaultValue %}
-								{{ FormHelper.control('default_value', {columnSpan: 6}) }}
-							{% endblock %}
-
-							{% block formControlType %}
-								{{ FormHelper.control('type', {
-									columnSpan: 6,
-									readonly: attribute.inputType in ['input_list', 'input_key_value_list'],
-								}) }}
-							{% endblock %}
-
-							{% block fieldsetGeneralAttributes %}
-								{{ AttributesHelper.allControls('general') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetContent %}
-					<fieldset class="Fieldset-Content">
-						<legend>{{ __('fieldset_content') }}</legend>
-
-						{% block fieldsetContentInner %}
-							{% block fieldsetContentAttributes %}
-								{{ AttributesHelper.allControls('content') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMedia %}
-					<fieldset class="Fieldset-Media">
-						<legend>{{ __('fieldset_media') }}</legend>
-
-						{% block fieldsetMediaInner %}
-							{{ cell('Backend/MediaElements', [attribute]) }}
-
-							{% block fieldsetMediaAttributes %}
-								{{ AttributesHelper.allControls('media') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMediaElementAssignments %}
-					{{ cell('Backend/MediaElements::elementAssignments', [attribute]) }}
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Main-Fieldsets">
+					{{ fieldsetGeneral }}
+					{{ fieldsetContent }}
+					{{ fieldsetMedia }}
+					{{ fieldsetMediaElementAssignments }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block sidebarFieldsets %}
-			<div class="Sidebar-Fieldsets">
-				{% block fieldsetPresentation %}
-					<fieldset class="Fieldset-Presentation">
-						<legend>{{ __('fieldset_presentation') }}</legend>
-
-						{% block fieldsetPresentationInner %}
-							{% block formControlActive %}
-								{{ FormHelper.control('active', {columnSpan: 6}) }}
-							{% endblock %}
-
-							{% block formControlTranslatable %}
-								{{ FormHelper.control('translatable', {columnSpan: 6, disabled: translatableDisabled}) }}
-							{% endblock %}
-
-							{% block formControlRequired %}
-								{{ FormHelper.control('required', {disabled: requiredDisabled}) }}
-							{% endblock %}
-
-							{% block formControlInputType %}
-								{{ FormHelper.control('input_type', {
-									columnSpan: 6,
-									empty: false,
-									options: combine(availableInputTypes, availableInputTypes|map(inputType => __('input_type_' ~ inputType))),
-									'data-form-updater': true,
-								}) }}
-							{% endblock %}
-
-							{% block formControlColumnSpan %}
-								{{ FormHelper.control('column_span', {columnSpan: 6, disabled: columnSpanDisabled, empty: false, options: columnSpans, type: 'select'}) }}
-							{% endblock %}
-
-							{% block fieldsetPresentationAttributes %}
-								{{ AttributesHelper.allControls('presentation') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetConditions %}
-					<fieldset class="Fieldset-Conditions">
-						<legend>{{ __('fieldset_conditions') }}</legend>
-
-						{% block fieldsetConditionsInner %}
-							{% block formControlScope %}
-								{{ CategoriesHelper.control('scope', {'data-form-updater': true}) }}
-							{% endblock %}
-
-							{% block formControlFieldset %}
-								{{ FormHelper.control('fieldset', {
-									columnSpan: 6,
-									empty: false,
-									options: combine(availableFieldsets, availableFieldsets|map(fieldset => __d(attribute.scope, 'fieldset_' ~ fieldset))),
-									disabled: attribute.scope in ['contents', 'widgets'],
-									'data-form-updater': true
-								}) }}
-							{% endblock %}
-
-							{% block formControlSystemOrder %}
-								{{ SystemOrderHelper.control('system_order', {columnSpan: 6, entity: attribute}) }}
-							{% endblock %}
-
-							{% block formControlHasIndex %}
-								{{ FormHelper.control('has_index', {columnSpan: 6}) }}
-							{% endblock %}
-
-							{% block fieldsetConditionsAttributes %}
-								{{ AttributesHelper.allControls('conditions') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetAttributes %}
-					<fieldset class="Fieldset-Attributes">
-						<legend>{{ __('fieldset_attributes') }}</legend>
-
-						{% block fieldsetAttributesInner %}
-							{% block fieldsetAttributesAttributes %}
-								{{ AttributesHelper.allControls('attributes') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Sidebar-Fieldsets">
+					{{ fieldsetPresentation }}
+					{{ fieldsetConditions }}
+					{{ fieldsetAttributes }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block formInputReloadForm %}

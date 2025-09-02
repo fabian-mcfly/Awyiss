@@ -3,20 +3,37 @@
 		padding:0;
 		box-shadow:none;
 		background-color:transparent;
-		grid-template-columns:repeat(2, 1fr);
+		gap:var(--rowGap) var(--lineHeightMain);
+		grid-template-columns:2fr 3fr;
+
+		@media screen and (width <= 1080px) {
+			grid-template-columns:1fr;
+		}
 
 		@media screen and (width <= 768px) {
 			padding:0;
 		}
 
 		@media screen and (width <= 640px) {
-			grid-template-columns:1fr;
 			row-gap:calc(var(--lineHeightMain) * 1.5);
 		}
 
 		html.Scale-Small & {
 			@media screen and (width > 768px) {
 				padding:0;
+			}
+		}
+
+		.Fieldset-ContentAreasAvailable {
+			@media screen and (width <= 1080px) {
+				position:relative;
+				top:auto;
+			}
+
+			.List {
+				@media screen and (width <= 1080px) {
+					max-height:none;
+				}
 			}
 		}
 	}
@@ -75,7 +92,6 @@
 		display:grid;
 		min-height:50px;
 		margin:5px 0 0 0;
-		padding:10px 20px;
 		border-radius:5px;
 		background-color:var(--colorNeutralLight);
 		list-style-type:none;
@@ -83,7 +99,6 @@
 		align-items:center;
 
 		@media screen and (width <= 540px) {
-			padding:0 10px;
 			line-height:1.2;
 		}
 
@@ -125,8 +140,13 @@
 
 		.Title {
 			display:block;
+			padding:10px 20px;
 			line-height:1;
 			cursor:move;
+
+			@media screen and (width <= 540px) {
+				padding:10px;
+			}
 		}
 
 		> .FormInputType-Checkbox {
@@ -138,6 +158,7 @@
 		margin-top:10px;
 
 		.Title {
+			padding-block:0;
 			font-size:.8rem;
 		}
 	}
@@ -145,8 +166,13 @@
 	.ContentTemplates-List {
 		display:grid;
 		margin-top:5px;
+		padding:0 20px 10px;
 		gap:5px;
 		grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));
+
+		@media screen and (width <= 540px) {
+			padding-inline:10px;
+		}
 	}
 
 	.ContentTemplates-ListItem {

@@ -21,183 +21,222 @@
 
 {{ FormHelper.create(urlHistory, {method: 'post', id: 'UrlHistoryForm', idPrefix: 'urlHistory'}) }}
 
+{% set fieldsetGeneral %}
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block formControlUrl %}
+				{% set deletedPages %}
+					{{ FormHelper.select('url_options', hashPrinter(deletedPages, 'title', 'link'), {
+						'data-options-for': 'UrlHistory-Url',
+					}) }}
+				{% endset %}
+
+				{{ FormHelper.control('url', {
+					templateVars: {
+						additionalContent: deletedPages,
+					},
+				}) }}
+			{% endblock %}
+
+			{% block formControlScope %}
+				{{ FormHelper.control('scope', {
+					columnSpan: 4,
+					options: scopes,
+					'data-form-updater': true
+				}) }}
+			{% endblock %}
+
+			{% block formControlForeignKey %}
+				{% if urlHistory.scope == 'pages' %}
+					{{ FormHelper.control('foreign_key', {
+						columnSpan: 4,
+						options: hashPrinter(threadedPages, 'label', 'id', '- '),
+						label: __('target'),
+					}) }}
+				{% elseif urlHistory.scope == 'media' %}
+					<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-SingleFile ColumnSpan-4">
+						<label class="Label">{{ __('target') }}</label>
+
+						<div class="MediaSelector-Preview">
+							<span class="MediaSelector-MediaSelect">{{ __d('media', 'select_file') }}</span>
+
+							{% set mediaItem = urlHistory.media ?? null %}
+							{% if mediaItem %}
+								{% set imageSizeInfo = '' %}
+								{% if mediaItem.mimeType in ['image/gif', 'image/jpeg', 'image/png', 'image/webp'] or mediaItem.preview %}
+									{% set imageSizeInfo = ' / ' ~ mediaItem.width ~ 'x' ~ mediaItem.height ~ 'px' %}
+								{% endif %}
+
+								<div class="Media-ListItem" title="{{ mediaItem.name }} (ID: {{ mediaItem.id }}{{ imageSizeInfo }})">
+									{{ MediaHelper.preview(mediaItem, {
+										class: 'Preview',
+										resize: {
+											width: 275,
+											height: 275,
+											strategy: enum(ResizeStrategy).Cover,
+										},
+									}) }}
+									<span class="Name">{{ mediaItem.name }}</span>
+								</div>
+							{% endif %}
+						</div>
+
+						<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
+
+						{{ FormHelper.input('foreign_key', {
+							class: 'MediaSelector-MediaId',
+							type: 'text',
+							value: urlHistory.foreignKey,
+							'data-form-updater': true,
+						}) }}
+
+						{{ FormHelper.error('foreign_key') }}
+					</div>
+				{% else %}
+					{{ FormHelper.control('target', {
+						columnSpan: 4,
+					}) }}
+				{% endif %}
+			{% endblock %}
+
+			{% block formControlStatus %}
+				{{ FormHelper.control('status', {
+					columnSpan: 4,
+					options: {
+						301: __('status_301'),
+						302: __('status_302'),
+						307: __('status_307'),
+						308: __('status_308'),
+					},
+				}) }}
+			{% endblock %}
+
+			{% block fieldsetGeneralInner %}
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetContent %}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMedia %}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{{ cell('Backend/MediaElements', [urlHistory]) }}
+
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMediaElementAssignments %}
+	{% block fieldsetMediaElementAssignments %}
+		{{ cell('Backend/MediaElements::elementAssignments', [urlHistory]) }}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetPresentation %}
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
+
+			{% block fieldsetPresentationInner %}
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetConditions %}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetAttributes %}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
 {% block sidebarToggle %}
-	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+		{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% endif %}
 {% endblock %}
 
 {% block fieldsets %}
 	<div class="Fieldsets">
+		{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+			{{ fieldsetPresentation }}
+			{{ fieldsetConditions }}
+			{{ fieldsetGeneral }}
+			{{ fieldsetContent }}
+			{{ fieldsetMedia }}
+			{{ fieldsetMediaElementAssignments }}
+			{{ fieldsetAttributes }}
+		{% endif %}
+
 		{% block mainFieldsets %}
-			<div class="Main-Fieldsets">
-				{% block fieldsetGeneral %}
-					<fieldset class="Fieldset-General">
-						<legend>{{ __('fieldset_general') }}</legend>
-
-						{% block formControlUrl %}
-							{% set deletedPages %}
-								{{ FormHelper.select('url_options', hashPrinter(deletedPages, 'title', 'link'), {
-									'data-options-for': 'UrlHistory-Url',
-								}) }}
-							{% endset %}
-
-							{{ FormHelper.control('url', {
-								templateVars: {
-									additionalContent: deletedPages,
-								},
-							}) }}
-						{% endblock %}
-
-						{% block formControlScope %}
-							{{ FormHelper.control('scope', {
-								columnSpan: 4,
-								options: scopes,
-								'data-form-updater': true
-							}) }}
-						{% endblock %}
-
-						{% block formControlForeignKey %}
-							{% if urlHistory.scope == 'pages' %}
-								{{ FormHelper.control('foreign_key', {
-									columnSpan: 4,
-									options: hashPrinter(threadedPages, 'label', 'id', '- '),
-									label: __('target'),
-								}) }}
-							{% elseif urlHistory.scope == 'media' %}
-								<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-SingleFile ColumnSpan-4">
-									<label class="Label">{{ __('target') }}</label>
-
-									<div class="MediaSelector-Preview">
-										<span class="MediaSelector-MediaSelect">{{ __d('media', 'select_file') }}</span>
-
-										{% set mediaItem = urlHistory.media ?? null %}
-										{% if mediaItem %}
-											{% set imageSizeInfo = '' %}
-											{% if mediaItem.mimeType in ['image/gif', 'image/jpeg', 'image/png', 'image/webp'] or mediaItem.preview %}
-												{% set imageSizeInfo = ' / ' ~ mediaItem.width ~ 'x' ~ mediaItem.height ~ 'px' %}
-											{% endif %}
-
-											<div class="Media-ListItem" title="{{ mediaItem.name }} (ID: {{ mediaItem.id }}{{ imageSizeInfo }})">
-												{{ MediaHelper.preview(mediaItem, {
-													class: 'Preview',
-													resize: {
-														width: 275,
-														height: 275,
-														strategy: enum(ResizeStrategy).Cover,
-													},
-												}) }}
-												<span class="Name">{{ mediaItem.name }}</span>
-											</div>
-										{% endif %}
-									</div>
-
-									<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
-
-									{{ FormHelper.input('foreign_key', {
-										class: 'MediaSelector-MediaId',
-										type: 'text',
-										value: urlHistory.foreignKey,
-										'data-form-updater': true,
-									}) }}
-
-									{{ FormHelper.error('foreign_key') }}
-								</div>
-							{% else %}
-								{{ FormHelper.control('target', {
-									columnSpan: 4,
-								}) }}
-							{% endif %}
-						{% endblock %}
-
-						{% block formControlStatus %}
-							{{ FormHelper.control('status', {
-								columnSpan: 4,
-								options: {
-									301: __('status_301'),
-									302: __('status_302'),
-									307: __('status_307'),
-									308: __('status_308'),
-								},
-							}) }}
-						{% endblock %}
-
-						{% block fieldsetGeneralInner %}
-							{% block fieldsetGeneralAttributes %}
-								{{ AttributesHelper.allControls('general') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetContent %}
-					<fieldset class="Fieldset-Content">
-						<legend>{{ __('fieldset_content') }}</legend>
-
-						{% block fieldsetContentInner %}
-							{% block fieldsetContentAttributes %}
-								{{ AttributesHelper.allControls('content') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMedia %}
-					<fieldset class="Fieldset-Media">
-						<legend>{{ __('fieldset_media') }}</legend>
-
-						{% block fieldsetMediaInner %}
-							{{ cell('Backend/MediaElements', [urlHistory]) }}
-
-							{% block fieldsetMediaAttributes %}
-								{{ AttributesHelper.allControls('media') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMediaElementAssignments %}
-					{{ cell('Backend/MediaElements::elementAssignments', [urlHistory]) }}
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Main-Fieldsets">
+					{{ fieldsetGeneral }}
+					{{ fieldsetContent }}
+					{{ fieldsetMedia }}
+					{{ fieldsetMediaElementAssignments }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block sidebarFieldsets %}
-			<div class="Sidebar-Fieldsets">
-				{% block fieldsetPresentation %}
-					<fieldset class="Fieldset-Presentation">
-						<legend>{{ __('fieldset_presentation') }}</legend>
-
-						{% block fieldsetPresentationInner %}
-							{% block fieldsetPresentationAttributes %}
-								{{ AttributesHelper.allControls('presentation') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetConditions %}
-					<fieldset class="Fieldset-Conditions">
-						<legend>{{ __('fieldset_conditions') }}</legend>
-
-						{% block fieldsetConditionsInner %}
-							{% block fieldsetConditionsAttributes %}
-								{{ AttributesHelper.allControls('conditions') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetAttributes %}
-					<fieldset class="Fieldset-Attributes">
-						<legend>{{ __('fieldset_attributes') }}</legend>
-
-						{% block fieldsetAttributesInner %}
-							{% block fieldsetAttributesAttributes %}
-								{{ AttributesHelper.allControls('attributes') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Sidebar-Fieldsets">
+					{{ fieldsetPresentation }}
+					{{ fieldsetConditions }}
+					{{ fieldsetAttributes }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block formInputReloadForm %}

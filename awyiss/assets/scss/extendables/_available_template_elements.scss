@@ -43,9 +43,13 @@
 		top:0;
 	}
 
-	@media screen and (width <= 768px) {
-		&:not(.Collapsed) {
+	&:not(.Collapsed) {
+		@media screen and (width <= 768px) {
 			padding-bottom:20px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-bottom:10px;
 		}
 	}
 

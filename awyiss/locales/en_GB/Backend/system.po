@@ -3,9 +3,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1.0\n"
+"Project-Id-Version: 0.1.1\n"
 "POT-Creation-Date: 2024-05-11 19:35+0000\n"
-"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2025-09-02 14:58+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -438,6 +438,9 @@ msgstr "Rich Text Editor"
 
 msgid "configuration_identifier_backend_interface_scale"
 msgstr "Scaling"
+
+msgid "configuration_identifier_backend_interface_sidebar_mode"
+msgstr "Sidebar Mode"
 
 msgid "configuration_identifier_backend_html_cleaning"
 msgstr "HTML Cleaning"

@@ -152,6 +152,14 @@ class SystemConfigOptions extends AbstractConfigOptions {
 						'regular' => __d('system', 'interface_scale_regular'),
 					],
 				),
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'sidebarMode',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::Bool,
+				),
 			],
 			'lock' => [
 				new ConfigOption(

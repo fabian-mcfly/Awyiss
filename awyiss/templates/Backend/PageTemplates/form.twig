@@ -20,236 +20,278 @@
 
 {{ FormHelper.create(pageTemplate, {method: 'post', id: 'PageTemplateForm', idPrefix: 'PageTemplate'}) }}
 
+{% set fieldsetGeneral %}
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{% block formControlTitle %}
+					{{ FormHelper.control('title') }}
+				{% endblock %}
+
+				{% block formControlFilename %}
+					{{ FormHelper.control('file_name', {'data-autofill-from': 'title'}) }}
+				{% endblock %}
+
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set assignedContentAreas = pageTemplate.contentAreas ? pageTemplate.contentAreas|column('id') : [] %}
+{% set assignedContentAreasListItems = '' %}
+{% set availableContentAreasListItems = '' %}
+
+{% for key, contentArea in contentAreas %}
+	{% set content %}
+		{% block contentAreasListItem %}
+			<li class="ListItem ContentAreas-ListItem">
+				{% block contentAreasListItemLabel %}
+				<label class="Title">{{ contentArea.label }} (<em>{{ contentArea.identifier }}</em>)</label>
+				{% endblock %}
+
+				{% block contentAreasListItemControl %}
+					{{ FormHelper.control('content_areas[' ~ key ~'][id]', {
+						checked: contentArea.id in assignedContentAreas,
+						escape: false,
+						hiddenField: false,
+						label: contentArea.label ~ ' (<em>' ~ contentArea.identifier ~ '</em>)',
+						id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|camelize,
+						value: contentArea.id,
+					}) }}
+				{% endblock %}
+
+				{% block contentAreasContentTemplates %}
+					<div class="ContentTemplates">
+						{% block contentAreasContentTemplatesLabel %}
+							<label class="Title">{{ __('content_templates') }}</label>
+						{% endblock %}
+
+						{% block contentAreasContentTemplatesInner %}
+							<ul class="NoList ContentTemplates-List">
+								{% for contentTemplate in contentTemplates %}
+									{% block contentAreasContentTemplatesListItem %}
+										<li class="ListItem ContentTemplates-ListItem">
+											{{ FormHelper.control('content_template_content_areas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][content_template_id]', {
+												checked: contentArea.contentTemplates[ contentTemplate.id ] is defined,
+												escape: false,
+												hiddenField: false,
+												id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|camelize ~ '-ContentTemplate-' ~ contentTemplate.fileName|camelize,
+												label: contentTemplate.title,
+												type: 'checkbox',
+												value: contentTemplate.id,
+											}) }}
+
+											{{ FormHelper.hidden('content_template_content_areas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][content_area_id]', {
+												value: contentArea.id,
+											}) }}
+
+											{% if contentArea.contentTemplates[ contentTemplate.id ] is defined %}
+												{{ FormHelper.hidden('content_template_content_areas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][id]', {
+													value: contentArea.contentTemplates[ contentTemplate.id ].id,
+												}) }}
+											{% endif %}
+										</li>
+									{% endblock %}
+								{% endfor %}
+							</ul>
+						{% endblock %}
+					</div>
+				{% endblock %}
+			</li>
+		{% endblock %}
+	{% endset %}
+
+	{% if contentArea.id in assignedContentAreas %}
+		{% set assignedContentAreasListItems = assignedContentAreasListItems ~ content %}
+	{% else %}
+		{% set availableContentAreasListItems = availableContentAreasListItems ~ content %}
+	{% endif %}
+{% endfor %}
+
+{% set fieldsetContentAreaAssignments %}
+	{% block fieldsetContentAreaAssignments %}
+		<fieldset class="Fieldset-ContentAreaAssignments">
+			{% block fieldsetContentAreaAssignmentsInner %}
+				{% block formControlContentAreasAvailable %}
+					<fieldset class="Fieldset-ContentAreasAvailable Collapsible">
+						<legend>{{ __('content_areas_available') }}</legend>
+
+						{% block formControlContentAreasAvailableInner %}
+							<ul class="NoList ContentAreas-List ContentAreas-List-Available">
+								{{ availableContentAreasListItems|raw }}
+							</ul>
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+
+				{% block formControlContentAreasAssigned %}
+					<fieldset class="Fieldset-ContentAreasAssigned Collapsible">
+						<legend>{{ __('content_areas_assigned') }}</legend>
+
+						{% block formControlContentAreasAssignedInner %}
+							<ul class="NoList ContentAreas-List ContentAreas-List-Assigned">
+								{{ assignedContentAreasListItems|raw }}
+							</ul>
+						{% endblock %}
+
+						<div
+							class="FormInput FormInputType-List FormInputName-ContentAreasNew"
+							data-list-item-add="{{ __('list_item_add') }}"
+							data-list-item-remove="{{ __('list_item_remove') }}">
+							<div class="FormInputType-ListItem">
+								{{ FormHelper.control('content_areas[new][title][0]') }}
+								{{ FormHelper.control('content_areas[new][identifier][0]') }}
+							</div>
+						</div>
+
+						{% block fieldsetContentElementsErrors %}
+							{% if contentTemplate.error('contentAreas') %}
+								{{ FormHelper.error('contentAreas') }}
+							{% endif %}
+						{% endblock %}
+					{% endblock %}
+				</fieldset>
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetContent %}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMedia %}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{{ cell('Backend/MediaElements', [pageTemplate]) }}
+
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMediaElementAssignments %}
+	{% block fieldsetMediaElementAssignments %}
+		{{ cell('Backend/MediaElements::elementAssignments', [pageTemplate]) }}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetPresentation %}
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
+
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active') }}
+				{% endblock %}
+
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetConditions %}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block formControlPageRoleId %}
+					{{ CategoriesHelper.control('page_role', {
+						'data-form-updater': true,
+					}) }}
+				{% endblock %}
+
+				{% block formControlSystemOrder %}
+					{{ SystemOrderHelper.control('system_order', {entity: pageTemplate}) }}
+				{% endblock %}
+
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetAttributes %}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
 {% block sidebarToggle %}
-	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+		{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% endif %}
 {% endblock %}
 
 {% block fieldsets %}
 	<div class="Fieldsets">
+		{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+			{{ fieldsetPresentation }}
+			{{ fieldsetConditions }}
+			{{ fieldsetGeneral }}
+			{{ fieldsetContentAreaAssignments }}
+			{{ fieldsetContent }}
+			{{ fieldsetMedia }}
+			{{ fieldsetMediaElementAssignments }}
+			{{ fieldsetAttributes }}
+		{% endif %}
+
 		{% block mainFieldsets %}
-			<div class="Main-Fieldsets">
-				{% block fieldsetGeneral %}
-					<fieldset class="Fieldset-General">
-						<legend>{{ __('fieldset_general') }}</legend>
-
-						{% block fieldsetGeneralInner %}
-							{% block formControlTitle %}
-								{{ FormHelper.control('title') }}
-							{% endblock %}
-
-							{% block formControlFilename %}
-								{{ FormHelper.control('file_name', {'data-autofill-from': 'title'}) }}
-							{% endblock %}
-
-							{% block fieldsetGeneralAttributes %}
-								{{ AttributesHelper.allControls('general') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-
-				{% set assignedContentAreas = pageTemplate.contentAreas ? pageTemplate.contentAreas|column('id') : [] %}
-				{% set assignedContentAreasListItems = '' %}
-				{% set availableContentAreasListItems = '' %}
-
-				{% for key, contentArea in contentAreas %}
-					{% set content %}
-						{% block contentAreasListItem %}
-							<li class="ListItem ContentAreas-ListItem">
-								{% block contentAreasListItemLabel %}
-								<label class="Title">{{ contentArea.label }} (<em>{{ contentArea.identifier }}</em>)</label>
-								{% endblock %}
-
-								{% block contentAreasListItemControl %}
-									{{ FormHelper.control('content_areas[' ~ key ~'][id]', {
-										checked: contentArea.id in assignedContentAreas,
-										escape: false,
-										hiddenField: false,
-										label: contentArea.label ~ ' (<em>' ~ contentArea.identifier ~ '</em>)',
-										id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|camelize,
-										value: contentArea.id,
-									}) }}
-								{% endblock %}
-
-								{% block contentAreasContentTemplates %}
-									<div class="ContentTemplates">
-										{% block contentAreasContentTemplatesLabel %}
-											<label class="Title">{{ __('content_templates') }}</label>
-										{% endblock %}
-
-										{% block contentAreasContentTemplatesInner %}
-											<ul class="NoList ContentTemplates-List">
-												{% for contentTemplate in contentTemplates %}
-													{% block contentAreasContentTemplatesListItem %}
-														<li class="ListItem ContentTemplates-ListItem">
-															{{ FormHelper.control('content_template_content_areas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][content_template_id]', {
-																checked: contentArea.contentTemplates[ contentTemplate.id ] is defined,
-																escape: false,
-																hiddenField: false,
-																id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|camelize ~ '-ContentTemplate-' ~ contentTemplate.fileName|camelize,
-																label: contentTemplate.title,
-																type: 'checkbox',
-																value: contentTemplate.id,
-															}) }}
-
-															{{ FormHelper.hidden('content_template_content_areas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][content_area_id]', {
-																value: contentArea.id,
-															}) }}
-
-															{% if contentArea.contentTemplates[ contentTemplate.id ] is defined %}
-																{{ FormHelper.hidden('content_template_content_areas[' ~ contentTemplate.id ~ '][' ~ contentArea.id ~ '][id]', {
-																	value: contentArea.contentTemplates[ contentTemplate.id ].id,
-																}) }}
-															{% endif %}
-														</li>
-													{% endblock %}
-												{% endfor %}
-											</ul>
-										{% endblock %}
-									</div>
-								{% endblock %}
-							</li>
-						{% endblock %}
-					{% endset %}
-
-					{% if contentArea.id in assignedContentAreas %}
-						{% set assignedContentAreasListItems = assignedContentAreasListItems ~ content %}
-					{% else %}
-						{% set availableContentAreasListItems = availableContentAreasListItems ~ content %}
-					{% endif %}
-				{% endfor %}
-
-				{% block fieldsetContentAreaAssignments %}
-					<fieldset class="Fieldset-ContentAreaAssignments">
-						{% block fieldsetContentAreaAssignmentsInner %}
-							{% block formControlContentAreasAvailable %}
-								<fieldset class="Fieldset-ContentAreasAvailable Collapsible">
-									<legend>{{ __('content_areas_available') }}</legend>
-
-									{% block formControlContentAreasAvailableInner %}
-										<ul class="NoList ContentAreas-List ContentAreas-List-Available">
-											{{ availableContentAreasListItems|raw }}
-										</ul>
-									{% endblock %}
-								</fieldset>
-							{% endblock %}
-
-							{% block formControlContentAreasAssigned %}
-								<fieldset class="Fieldset-ContentAreasAssigned Collapsible">
-									<legend>{{ __('content_areas_assigned') }}</legend>
-
-									{% block formControlContentAreasAssignedInner %}
-										<ul class="NoList ContentAreas-List ContentAreas-List-Assigned">
-											{{ assignedContentAreasListItems|raw }}
-										</ul>
-									{% endblock %}
-
-									<div
-										class="FormInput FormInputType-List FormInputName-ContentAreasNew"
-										data-list-item-add="{{ __('list_item_add') }}"
-										data-list-item-remove="{{ __('list_item_remove') }}">
-										<div class="FormInputType-ListItem">
-											{{ FormHelper.control('content_areas[new][title][0]') }}
-											{{ FormHelper.control('content_areas[new][identifier][0]') }}
-										</div>
-									</div>
-
-									{% block fieldsetContentElementsErrors %}
-										{% if contentTemplate.error('contentAreas') %}
-											{{ FormHelper.error('contentAreas') }}
-										{% endif %}
-									{% endblock %}
-								{% endblock %}
-							</fieldset>
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetContent %}
-					<fieldset class="Fieldset-Content">
-						<legend>{{ __('fieldset_content') }}</legend>
-
-						{% block fieldsetContentInner %}
-							{% block fieldsetContentAttributes %}
-								{{ AttributesHelper.allControls('content') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMedia %}
-					<fieldset class="Fieldset-Media">
-						<legend>{{ __('fieldset_media') }}</legend>
-
-						{% block fieldsetMediaInner %}
-							{{ cell('Backend/MediaElements', [pageTemplate]) }}
-
-							{% block fieldsetMediaAttributes %}
-								{{ AttributesHelper.allControls('media') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMediaElementAssignments %}
-					{{ cell('Backend/MediaElements::elementAssignments', [pageTemplate]) }}
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Main-Fieldsets">
+					{{ fieldsetGeneral }}
+					{{ fieldsetContentAreaAssignments }}
+					{{ fieldsetContent }}
+					{{ fieldsetMedia }}
+					{{ fieldsetMediaElementAssignments }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block sidebarFieldsets %}
-			<div class="Sidebar-Fieldsets">
-				{% block fieldsetPresentation %}
-					<fieldset class="Fieldset-Presentation">
-						<legend>{{ __('fieldset_presentation') }}</legend>
-
-						{% block fieldsetPresentationInner %}
-							{% block formControlActive %}
-								{{ FormHelper.control('active') }}
-							{% endblock %}
-
-							{% block fieldsetPresentationAttributes %}
-								{{ AttributesHelper.allControls('presentation') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetConditions %}
-					<fieldset class="Fieldset-Conditions">
-						<legend>{{ __('fieldset_conditions') }}</legend>
-
-						{% block fieldsetConditionsInner %}
-							{% block formControlPageRoleId %}
-								{{ CategoriesHelper.control('page_role', {
-									'data-form-updater': true,
-								}) }}
-							{% endblock %}
-
-							{% block formControlSystemOrder %}
-								{{ SystemOrderHelper.control('system_order', {entity: pageTemplate}) }}
-							{% endblock %}
-
-							{% block fieldsetConditionsAttributes %}
-								{{ AttributesHelper.allControls('conditions') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetAttributes %}
-					<fieldset class="Fieldset-Attributes">
-						<legend>{{ __('fieldset_attributes') }}</legend>
-
-						{% block fieldsetAttributesInner %}
-							{% block fieldsetAttributesAttributes %}
-								{{ AttributesHelper.allControls('attributes') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Sidebar-Fieldsets">
+					{{ fieldsetPresentation }}
+					{{ fieldsetConditions }}
+					{{ fieldsetAttributes }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block formInputReloadForm %}

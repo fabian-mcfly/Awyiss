@@ -48,126 +48,175 @@
 
 {{ FormHelper.create(content, {method: 'post', id: 'ContentForm', idPrefix: 'content'}) }}
 
+{% set fieldsetGeneral %}
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{{ _self.renderFormControls(contentElementsByFieldset.general ?? [], macroSettings) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetContent %}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{{ _self.renderFormControls(contentElementsByFieldset.content ?? [], macroSettings) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMedia %}
+	{% block fieldsetMedia %}
+		{% if allowedKeys is empty %}
+			<fieldset class="Fieldset-Media">
+				<legend>{{ __('fieldset_media') }}</legend>
+
+				{% block fieldsetMediaInner %}
+					{{ cell('Backend/MediaElements', [content]) }}
+
+					{{ _self.renderFormControls(contentElementsByFieldset.media ?? [], macroSettings) }}
+				{% endblock %}
+			</fieldset>
+		{% endif %}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMediaElementAssignments %}
+	{% block fieldsetMediaElementAssignments %}
+		{% if allowedKeys is empty %}
+			{{ cell('Backend/MediaElements::elementAssignments', [content]) }}
+		{% endif %}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetPresentation %}
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
+
+			{% block fieldsetPresentationInner %}
+				{{ _self.renderFormControls(contentElementsByFieldset.presentation ?? [], macroSettings) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetConditions %}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{{ _self.renderFormControls(contentElementsByFieldset.conditions ?? [], macroSettings) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetAttributes %}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{{ _self.renderFormControls(contentElementsByFieldset.attributes ?? [], macroSettings) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetData %}
+	{% block fieldsetData %}
+		{% if allowedKeys is empty %}
+			<fieldset class="Fieldset-Data">
+				<legend>{{ __('fieldset_data') }}</legend>
+
+				{% block fieldsetDataInner %}
+					{% block formControlData %}
+						<div
+								class="FormInput FormInputType-List FormInputName-Data" data-list-item-add="{{ __('list_item_add') }}"
+								data-list-item-remove="{{ __('list_item_remove') }}">
+							<label class="Label">{{ __('data') }}</label>
+
+							{% set counter = 0 %}
+							{% for key, value in content.data %}
+								<div class="FormInputType-ListItem">
+									{{ FormHelper.text('data.' ~ counter ~ '.key', {val: key}) }}
+									{{ FormHelper.text('data.' ~ counter ~ '.value', {val: value}) }}
+									{% set counter = counter + 1 %}
+								</div>
+							{% endfor %}
+
+							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+								{{ FormHelper.text('data.' ~ counter ~ '.key') }}
+								{{ FormHelper.text('data.' ~ counter ~ '.value') }}
+							</div>
+						</div>
+					{% endblock %}
+
+					{{ _self.renderFormControls(contentElementsByFieldset.data ?? [], macroSettings) }}
+				{% endblock %}
+			</fieldset>
+		{% endif %}
+	{% endblock %}
+{% endset %}
+
+{% set elementPublicationData %}
+	{% block elementPublicationData %}
+		{% if allowedKeys is empty %}
+			{{ element('publication_data/fieldset', {fields: _self.renderFormControls(contentElementsByFieldset.publication ?? [], macroSettings)}) }}
+		{% endif %}
+	{% endblock %}
+{% endset %}
+
 {% block sidebarToggle %}
-	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+		{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% endif %}
 {% endblock %}
 
 {% block fieldsets %}
 	<div class="Fieldsets">
+		{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+			{{ fieldsetPresentation }}
+			{{ fieldsetConditions }}
+			{{ fieldsetGeneral }}
+			{{ fieldsetContent }}
+			{{ fieldsetMedia }}
+			{{ fieldsetMediaElementAssignments }}
+			{{ fieldsetAttributes }}
+			{{ fieldsetData }}
+			{{ elementPublicationData }}
+		{% endif %}
+
 		{% block mainFieldsets %}
-			<div class="Main-Fieldsets">
-				{% block fieldsetGeneral %}
-					<fieldset class="Fieldset-General">
-						<legend>{{ __('fieldset_general') }}</legend>
-
-						{% block fieldsetGeneralInner %}
-							{{ _self.renderFormControls(contentElementsByFieldset.general ?? [], macroSettings) }}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetContent %}
-					<fieldset class="Fieldset-Content">
-						<legend>{{ __('fieldset_content') }}</legend>
-
-						{% block fieldsetContentInner %}
-							{{ _self.renderFormControls(contentElementsByFieldset.content ?? [], macroSettings) }}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMedia %}
-					{% if allowedKeys is empty %}
-						<fieldset class="Fieldset-Media">
-							<legend>{{ __('fieldset_media') }}</legend>
-
-							{% block fieldsetMediaInner %}
-								{{ cell('Backend/MediaElements', [content]) }}
-
-								{{ _self.renderFormControls(contentElementsByFieldset.media ?? [], macroSettings) }}
-							{% endblock %}
-						</fieldset>
-					{% endif %}
-				{% endblock %}
-
-				{% block fieldsetMediaElementAssignments %}
-					{% if allowedKeys is empty %}
-						{{ cell('Backend/MediaElements::elementAssignments', [content]) }}
-					{% endif %}
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Main-Fieldsets">
+					{{ fieldsetGeneral }}
+					{{ fieldsetContent }}
+					{{ fieldsetMedia }}
+					{{ fieldsetMediaElementAssignments }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block sidebarFieldsets %}
-			<div class="Sidebar-Fieldsets">
-				{% block fieldsetPresentation %}
-					<fieldset class="Fieldset-Presentation">
-						<legend>{{ __('fieldset_presentation') }}</legend>
-
-						{% block fieldsetPresentationInner %}
-							{{ _self.renderFormControls(contentElementsByFieldset.presentation ?? [], macroSettings) }}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetConditions %}
-					<fieldset class="Fieldset-Conditions">
-						<legend>{{ __('fieldset_conditions') }}</legend>
-
-						{% block fieldsetConditionsInner %}
-							{{ _self.renderFormControls(contentElementsByFieldset.conditions ?? [], macroSettings) }}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetAttributes %}
-					<fieldset class="Fieldset-Attributes">
-						<legend>{{ __('fieldset_attributes') }}</legend>
-
-						{% block fieldsetAttributesInner %}
-							{{ _self.renderFormControls(contentElementsByFieldset.attributes ?? [], macroSettings) }}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetData %}
-					{% if allowedKeys is empty %}
-						<fieldset class="Fieldset-Data">
-							<legend>{{ __('fieldset_data') }}</legend>
-
-							{% block fieldsetDataInner %}
-								{% block formControlData %}
-									<div class="FormInput FormInputType-List FormInputName-Data" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
-										<label class="Label">{{ __('data') }}</label>
-
-										{% set counter = 0 %}
-										{% for key, value in content.data %}
-											<div class="FormInputType-ListItem">
-												{{ FormHelper.input('data.' ~ counter ~ '.key', {val: key}) }}
-												{{ FormHelper.input('data.' ~ counter ~ '.value', {val: value}) }}
-												{% set counter = counter + 1 %}
-											</div>
-										{% endfor %}
-
-										<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-											{{ FormHelper.input('data.' ~ counter ~ '.key') }}
-											{{ FormHelper.input('data.' ~ counter ~ '.value') }}
-										</div>
-									</div>
-								{% endblock %}
-
-								{{ _self.renderFormControls(contentElementsByFieldset.data ?? [], macroSettings) }}
-							{% endblock %}
-						</fieldset>
-					{% endif %}
-				{% endblock %}
-
-				{% block elementPublicationData %}
-					{% if allowedKeys is empty %}
-						{{ element('publication_data/fieldset', {fields: _self.renderFormControls(contentElementsByFieldset.publication ?? [], macroSettings)}) }}
-					{% endif %}
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Sidebar-Fieldsets">
+					{{ fieldsetPresentation }}
+					{{ fieldsetConditions }}
+					{{ fieldsetAttributes }}
+					{{ fieldsetData }}
+					{{ elementPublicationData }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block formInputReloadForm %}

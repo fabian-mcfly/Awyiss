@@ -27,175 +27,226 @@
 	method: 'post',
 }) }}
 
+{% set fieldsetGeneral %}
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{% block formControlTitle %}
+					{{ FormHelper.control('title', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlIdentifier %}
+					{{ FormHelper.control('identifier', {columnSpan: 6, 'data-autofill-from': 'title'}) }}
+				{% endblock %}
+
+				{% block formControlSuccessMessage %}
+					{{ FormHelper.control('success_message', {'data-editor': true}) }}
+				{% endblock %}
+
+				{% block formControlFailureMessage %}
+					{{ FormHelper.control('failure_message', {'data-editor': true}) }}
+				{% endblock %}
+
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetContent %}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetQuestionsAssigned %}
+	{% block fieldsetQuestionsAssigned %}
+		<fieldset class="Fieldset-Questions-Assigned">
+			<legend>{{ __('fieldset_questions_assigned') }}</legend>
+
+			{% block fieldsetQuestionsAssignedInner %}
+				{% from '@Backend/macro/nested_list.twig' import nestedList %}
+				{{ nestedList(survey.surveySurveyQuestions, _context|merge({
+					identifier: 'AssignedQuestions',
+					template: '@Backend/Surveys/form_question_list_item_assigned.twig',
+					data: {
+						nestable: false,
+						'next-index': availableQuestions|length + survey.surveySurveyQuestions|length,
+						'repeated-questions': survey.type == enum('Awyiss\\Model\\Enum\\Survey\\Type').Configurator,
+					},
+				})) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMedia %}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{{ cell('Backend/MediaElements', [survey]) }}
+
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMediaElementAssignments %}
+	{% block fieldsetMediaElementAssignments %}
+		{{ cell('Backend/MediaElements::elementAssignments', [survey]) }}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetPresentation %}
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
+
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active') }}
+				{% endblock %}
+
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetConditions %}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block formControlType %}
+				{{ FormHelper.control('type', {
+					empty: false,
+					'data-form-updater': true,
+				}) }}
+			{% endblock %}
+
+			{% block formControlFinalAction %}
+				{{ FormHelper.control('final_action', {
+					empty: false,
+					options: finalActions,
+					'data-form-updater': true,
+				}) }}
+			{% endblock %}
+
+			{% block formControlFormId %}
+				{{ FormHelper.control('form_id', {
+					options: availableForms,
+				}) }}
+			{% endblock %}
+
+			{% block fieldsetConditionsInner %}
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetAttributes %}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetQuestionsAvailable %}
+	{% block fieldsetQuestionsAvailable %}
+		<fieldset class="Fieldset-Questions-Available">
+			<legend>{{ __('fieldset_questions_available') }}</legend>
+
+			{% block fieldsetQuestionsAvailableInner %}
+				{% from '@Backend/macro/nested_list.twig' import nestedList %}
+				{{ nestedList(availableQuestions, _context|merge({
+					identifier: 'AvailableQuestions',
+					template: '@Backend/Surveys/form_question_list_item_available.twig',
+					data: {
+						nestable: false,
+						sortable: false,
+					},
+					assignedQuestionIds: survey.surveySurveyQuestions and survey.type == enum('Awyiss\\Model\\Enum\\Survey\\Type').Linear ? survey.surveySurveyQuestions|column('surveyQuestionId') : [],
+				})) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
 {% block sidebarToggle %}
-	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+		{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% endif %}
 {% endblock %}
 
 {% block fieldsets %}
 	<div class="Fieldsets">
+		{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+			{{ fieldsetPresentation }}
+			{{ fieldsetConditions }}
+			{{ fieldsetGeneral }}
+			{{ fieldsetContent }}
+
+			<fieldset class="Fieldset-Questions">
+				{{ fieldsetQuestionsAvailable }}
+				{{ fieldsetQuestionsAssigned }}
+			</fieldset>
+
+			{{ fieldsetMedia }}
+			{{ fieldsetMediaElementAssignments }}
+			{{ fieldsetAttributes }}
+		{% endif %}
+
 		{% block mainFieldsets %}
-			<div class="Main-Fieldsets">
-				{% block fieldsetGeneral %}
-					<fieldset class="Fieldset-General">
-						<legend>{{ __('fieldset_general') }}</legend>
-
-						{% block fieldsetGeneralInner %}
-							{% block formControlTitle %}
-								{{ FormHelper.control('title', {columnSpan: 6}) }}
-							{% endblock %}
-
-							{% block formControlIdentifier %}
-								{{ FormHelper.control('identifier', {columnSpan: 6, 'data-autofill-from': 'title'}) }}
-							{% endblock %}
-
-							{% block formControlSuccessMessage %}
-								{{ FormHelper.control('success_message', {'data-editor': true}) }}
-							{% endblock %}
-
-							{% block formControlFailureMessage %}
-								{{ FormHelper.control('failure_message', {'data-editor': true}) }}
-							{% endblock %}
-
-							{% block fieldsetGeneralAttributes %}
-								{{ AttributesHelper.allControls('general') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetContent %}
-					<fieldset class="Fieldset-Content">
-						<legend>{{ __('fieldset_content') }}</legend>
-
-						{% block fieldsetContentInner %}
-							{% block fieldsetContentAttributes %}
-								{{ AttributesHelper.allControls('content') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetQuestionsAssigned %}
-					<fieldset class="Fieldset-Questions-Assigned">
-						<legend>{{ __('fieldset_questions_assigned') }}</legend>
-
-						{% block fieldsetQuestionsAssignedInner %}
-							{% from '@Backend/macro/nested_list.twig' import nestedList %}
-							{{ nestedList(survey.surveySurveyQuestions, _context|merge({
-								identifier: 'AssignedQuestions',
-								template: '@Backend/Surveys/form_question_list_item_assigned.twig',
-								data: {
-									nestable: false,
-									'next-index': availableQuestions|length + survey.surveySurveyQuestions|length,
-									'repeated-questions': survey.type == enum('Awyiss\\Model\\Enum\\Survey\\Type').Configurator,
-								},
-							})) }}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMedia %}
-					<fieldset class="Fieldset-Media">
-						<legend>{{ __('fieldset_media') }}</legend>
-
-						{% block fieldsetMediaInner %}
-							{{ cell('Backend/MediaElements', [survey]) }}
-
-							{% block fieldsetMediaAttributes %}
-								{{ AttributesHelper.allControls('media') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMediaElementAssignments %}
-					{{ cell('Backend/MediaElements::elementAssignments', [survey]) }}
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Main-Fieldsets">
+					{{ fieldsetGeneral }}
+					{{ fieldsetContent }}
+					{{ fieldsetQuestionsAssigned }}
+					{{ fieldsetMedia }}
+					{{ fieldsetMediaElementAssignments }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block sidebarFieldsets %}
-			<div class="Sidebar-Fieldsets">
-				{% block fieldsetPresentation %}
-					<fieldset class="Fieldset-Presentation">
-						<legend>{{ __('fieldset_presentation') }}</legend>
-
-						{% block fieldsetPresentationInner %}
-							{% block formControlActive %}
-								{{ FormHelper.control('active') }}
-							{% endblock %}
-
-							{% block fieldsetPresentationAttributes %}
-								{{ AttributesHelper.allControls('presentation') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetConditions %}
-					<fieldset class="Fieldset-Conditions">
-						<legend>{{ __('fieldset_conditions') }}</legend>
-
-						{% block formControlType %}
-							{{ FormHelper.control('type', {
-								empty: false,
-								'data-form-updater': true,
-							}) }}
-						{% endblock %}
-
-						{% block formControlFinalAction %}
-							{{ FormHelper.control('final_action', {
-								empty: false,
-								options: finalActions,
-								'data-form-updater': true,
-							}) }}
-						{% endblock %}
-
-						{% block formControlFormId %}
-							{{ FormHelper.control('form_id', {
-								options: availableForms,
-							}) }}
-						{% endblock %}
-
-						{% block fieldsetConditionsInner %}
-							{% block fieldsetConditionsAttributes %}
-								{{ AttributesHelper.allControls('conditions') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetAttributes %}
-					<fieldset class="Fieldset-Attributes">
-						<legend>{{ __('fieldset_attributes') }}</legend>
-
-						{% block fieldsetAttributesInner %}
-							{% block fieldsetAttributesAttributes %}
-								{{ AttributesHelper.allControls('attributes') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetQuestionsAvailable %}
-					<fieldset class="Fieldset-Questions-Available">
-						<legend>{{ __('fieldset_questions_available') }}</legend>
-
-						{% block fieldsetQuestionsAvailableInner %}
-							{% from '@Backend/macro/nested_list.twig' import nestedList %}
-							{{ nestedList(availableQuestions, _context|merge({
-								identifier: 'AvailableQuestions',
-								template: '@Backend/Surveys/form_question_list_item_available.twig',
-								data: {
-									nestable: false,
-									sortable: false,
-								},
-								assignedQuestionIds: survey.surveySurveyQuestions and survey.type == enum('Awyiss\\Model\\Enum\\Survey\\Type').Linear ? survey.surveySurveyQuestions|column('surveyQuestionId') : [],
-							})) }}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Sidebar-Fieldsets">
+					{{ fieldsetPresentation }}
+					{{ fieldsetConditions }}
+					{{ fieldsetAttributes }}
+					{{ fieldsetQuestionsAvailable }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block formInputReloadForm %}

@@ -23,270 +23,317 @@
 
 {{ FormHelper.create(formElement, {method: 'post', id: 'FormElementForm', idPrefix: 'formElement'}) }}
 
+{% set fieldsetGeneral %}
+	{% block fieldsetGeneral %}
+	<fieldset class="Fieldset-General">
+		<legend>{{ __('fieldset_general') }}</legend>
+
+		{% block fieldsetGeneralInner %}
+			{% block formControlTitle %}
+				{% if 'title' not in blocklistedElements %}
+					{{ FormHelper.control('title') }}
+				{% endif %}
+			{% endblock %}
+
+			{% block formControlIdentifier %}
+				{% if 'identifier' not in blocklistedElements %}
+					{{ FormHelper.control('identifier', {
+						'data-autofill-from': 'title',
+					}) }}
+				{% endif %}
+			{% endblock %}
+
+			{% block formControlTitleEmail %}
+				{% if 'title_email' not in blocklistedElements %}
+					{{ FormHelper.control('title_email') }}
+				{% endif %}
+			{% endblock %}
+
+			{% block formControlPlaceholder %}
+				{% if 'placeholder' not in blocklistedElements %}
+					{{ FormHelper.control('placeholder') }}
+				{% endif %}
+			{% endblock %}
+
+			{% block formControlText %}
+				{% if 'text' not in blocklistedElements %}
+					{{ FormHelper.control('text', {'data-editor': true}) }}
+				{% endif %}
+			{% endblock %}
+
+			{% block fieldsetGeneralAttributes %}
+				{{ AttributesHelper.allControls('general') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+{% endset %}
+
+{% set fieldsetContent %}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetOptions %}
+	{% block fieldsetOptions %}
+		<fieldset class="Fieldset-Options">
+			<legend>{{ __('fieldset_options') }}</legend>
+
+			{% block fieldsetOptionsInner %}
+				{% block formControlOptions %}
+					{% if 'options' not in blocklistedElements %}
+						<div
+								class="FormInput FormInputType-List FormInputName-Options" data-list-item-add="{{ __('list_item_add') }}"
+								data-list-item-remove="{{ __('list_item_remove') }}">
+							<label class="Label">{{ __('options') }}</label>
+
+							{% set counter = 0 %}
+							{% set translatable = languages.Frontend|filter(language => language.active)|length > 1 %}
+							{% for option in formElement.options %}
+								<div class="FormInputType-ListItem">
+									{{ FormHelper.control('options.' ~ counter ~ '.key', {
+										label: __('option_key'),
+										type: translatable ? 'translatableText' : null,
+										templateVars: {
+											dialogTitle: __d('system', 'translations_dialog_title', __('option_key')),
+										},
+									}) }}
+
+									{{ FormHelper.control('options.' ~ counter ~ '.value', {
+										label: __('option_value'),
+										type: translatable ? 'translatableText' : null,
+										templateVars: {
+											dialogTitle: __d('system', 'translations_dialog_title', __('option_value')),
+										},
+									}) }}
+
+									{% set counter = counter + 1 %}
+								</div>
+							{% endfor %}
+
+							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+								{{ FormHelper.control('options.' ~ counter ~ '.key', {
+									label: __('option_key'),
+									type: translatable ? 'translatableText' : null,
+									templateVars: {
+										dialogTitle: __d('system', 'translations_dialog_title', __('option_key')),
+									},
+								}) }}
+
+								{{ FormHelper.control('options.' ~ counter ~ '.value', {
+									label: __('option_value'),
+									type: translatable ? 'translatableText' : null,
+									templateVars: {
+										dialogTitle: __d('system', 'translations_dialog_title', __('option_value')),
+									},
+								}) }}
+							</div>
+						</div>
+					{% endif %}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMedia %}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{{ cell('Backend/MediaElements', [formElement]) }}
+
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetElementAssignments %}
+	{% block fieldsetMediaElementAssignments %}
+		{{ cell('Backend/MediaElements::elementAssignments', [formElement]) }}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetPresentation %}
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
+
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlRequired %}
+					{% if 'required' not in blocklistedElements %}
+						{{ FormHelper.control('required', {columnSpan: 6}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block formControlType %}
+					{{ FormHelper.control('type', {
+						columnSpan: 6,
+						empty: false,
+						options: availableTypes,
+						type: 'select',
+						'data-form-updater': true,
+					}) }}
+				{% endblock %}
+
+				{% block formControlCssClass %}
+					{{ FormHelper.control('css_class', {
+						columnSpan: 6,
+					}) }}
+				{% endblock %}
+
+				{% block formControlColumnWidth %}
+					{% if 'column_width' not in blocklistedElements %}
+						{{ FormHelper.control('column_width', {
+							columnSpan: 6,
+							empty: false,
+							options: columnWidths,
+							type: 'select'
+						}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block formControlColumnIndent %}
+					{% if 'column_indent' not in blocklistedElements %}
+						{{ FormHelper.control('column_indent', {
+							columnSpan: 6,
+							options: columnIndents,
+							type: 'select'
+						}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block formControlColumnLast %}
+					{% if 'column_last' not in blocklistedElements %}
+						{{ FormHelper.control('column_last', {
+							columnSpan: 6,
+						}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block formControlColumnRtl %}
+					{% if 'column_rtl' not in blocklistedElements %}
+						{{ FormHelper.control('column_rtl', {
+							columnSpan: 6,
+						}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetConditions %}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block formControlFormId %}
+					{{ CategoriesHelper.control('form', {
+						options: naturalSort(CategoriesHelper.getCategories('form')),
+						'data-form-updater': true,
+					}) }}
+				{% endblock %}
+
+				{% block formControlParentId %}
+					{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentFormElements, 'label', 'id', '- '), 'data-form-updater': true}) }}
+				{% endblock %}
+
+				{% block formControlSystemOrder %}
+					{{ SystemOrderHelper.control('system_order', {entity: formElement}) }}
+				{% endblock %}
+
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetAttributes %}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set elementPublicationData %}
+	{% block elementPublicationData %}
+		{{ element('publication_data/fieldset', {fields: AttributesHelper.allControls('publication')}) }}
+	{% endblock %}
+{% endset %}
+
 {% block sidebarToggle %}
-	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+		{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% endif %}
 {% endblock %}
 
 {% block fieldsets %}
 	<div class="Fieldsets">
+		{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+			{{ fieldsetPresentation }}
+			{{ fieldsetConditions }}
+			{{ fieldsetGeneral }}
+			{{ fieldsetContent }}
+			{{ fieldsetOptions }}
+			{{ fieldsetMedia }}
+			{{ fieldsetElementAssignments }}
+			{{ fieldsetAttributes }}
+			{{ elementPublicationData }}
+		{% endif %}
+
 		{% block mainFieldsets %}
-			<div class="Main-Fieldsets">
-				{% block fieldsetGeneral %}
-					<fieldset class="Fieldset-General">
-						<legend>{{ __('fieldset_general') }}</legend>
-
-						{% block fieldsetGeneralInner %}
-							{% block formControlTitle %}
-								{% if 'title' not in blocklistedElements %}
-									{{ FormHelper.control('title') }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlIdentifier %}
-								{% if 'identifier' not in blocklistedElements %}
-									{{ FormHelper.control('identifier', {
-											'data-autofill-from': 'title',
-									}) }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlTitleEmail %}
-								{% if 'title_email' not in blocklistedElements %}
-									{{ FormHelper.control('title_email') }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlPlaceholder %}
-								{% if 'placeholder' not in blocklistedElements %}
-									{{ FormHelper.control('placeholder') }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlText %}
-								{% if 'text' not in blocklistedElements %}
-									{{ FormHelper.control('text', {'data-editor': true}) }}
-								{% endif %}
-							{% endblock %}
-
-							{% block fieldsetGeneralAttributes %}
-								{{ AttributesHelper.allControls('general') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetContent %}
-					<fieldset class="Fieldset-Content">
-						<legend>{{ __('fieldset_content') }}</legend>
-
-						{% block fieldsetContentInner %}
-							{% block fieldsetContentAttributes %}
-								{{ AttributesHelper.allControls('content') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetOptions %}
-					<fieldset class="Fieldset-Options">
-						<legend>{{ __('fieldset_options') }}</legend>
-
-						{% block fieldsetOptionsInner %}
-							{% block formControlOptions %}
-								{% if 'options' not in blocklistedElements %}
-									<div
-											class="FormInput FormInputType-List FormInputName-Options" data-list-item-add="{{ __('list_item_add') }}"
-											data-list-item-remove="{{ __('list_item_remove') }}">
-										<label class="Label">{{ __('options') }}</label>
-
-										{% set counter = 0 %}
-										{% set translatable = languages.Frontend|filter(language => language.active)|length > 1 %}
-										{% for option in formElement.options %}
-											<div class="FormInputType-ListItem">
-												{{ FormHelper.control('options.' ~ counter ~ '.key', {
-													label: __('option_key'),
-													type: translatable ? 'translatableText' : null,
-													templateVars: {
-														dialogTitle: __d('system', 'translations_dialog_title', __('option_key')),
-													},
-												}) }}
-
-												{{ FormHelper.control('options.' ~ counter ~ '.value', {
-													label: __('option_value'),
-													type: translatable ? 'translatableText' : null,
-													templateVars: {
-														dialogTitle: __d('system', 'translations_dialog_title', __('option_value')),
-													},
-												}) }}
-
-												{% set counter = counter + 1 %}
-											</div>
-										{% endfor %}
-
-										<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-											{{ FormHelper.control('options.' ~ counter ~ '.key', {
-												label: __('option_key'),
-												type: translatable ? 'translatableText' : null,
-												templateVars: {
-													dialogTitle: __d('system', 'translations_dialog_title', __('option_key')),
-												},
-											}) }}
-
-											{{ FormHelper.control('options.' ~ counter ~ '.value', {
-												label: __('option_value'),
-												type: translatable ? 'translatableText' : null,
-												templateVars: {
-													dialogTitle: __d('system', 'translations_dialog_title', __('option_value')),
-												},
-											}) }}
-										</div>
-									</div>
-								{% endif %}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMedia %}
-					<fieldset class="Fieldset-Media">
-						<legend>{{ __('fieldset_media') }}</legend>
-
-						{% block fieldsetMediaInner %}
-							{{ cell('Backend/MediaElements', [formElement]) }}
-
-							{% block fieldsetMediaAttributes %}
-								{{ AttributesHelper.allControls('media') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMediaElementAssignments %}
-					{{ cell('Backend/MediaElements::elementAssignments', [formElement]) }}
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Main-Fieldsets">
+					{{ fieldsetGeneral }}
+					{{ fieldsetContent }}
+					{{ fieldsetOptions }}
+					{{ fieldsetMedia }}
+					{{ fieldsetElementAssignments }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block sidebarFieldsets %}
-			<div class="Sidebar-Fieldsets">
-				{% block fieldsetPresentation %}
-					<fieldset class="Fieldset-Presentation">
-						<legend>{{ __('fieldset_presentation') }}</legend>
-
-						{% block fieldsetPresentationInner %}
-							{% block formControlActive %}
-								{{ FormHelper.control('active', {columnSpan: 6}) }}
-							{% endblock %}
-
-							{% block formControlRequired %}
-								{% if 'required' not in blocklistedElements %}
-									{{ FormHelper.control('required', {columnSpan: 6}) }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlType %}
-								{{ FormHelper.control('type', {
-									columnSpan: 6,
-									empty: false,
-									options: availableTypes,
-									type: 'select',
-									'data-form-updater': true,
-								}) }}
-							{% endblock %}
-
-							{% block formControlCssClass %}
-								{{ FormHelper.control('css_class', {
-									columnSpan: 6,
-								}) }}
-							{% endblock %}
-
-							{% block formControlColumnWidth %}
-								{% if 'column_width' not in blocklistedElements %}
-								{{ FormHelper.control('column_width', {
-									columnSpan: 6,
-									empty: false,
-									options: columnWidths,
-									type: 'select'
-								}) }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlColumnIndent %}
-								{% if 'column_indent' not in blocklistedElements %}
-								{{ FormHelper.control('column_indent', {
-									columnSpan: 6,
-									options: columnIndents,
-									type: 'select'
-								}) }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlColumnLast %}
-								{% if 'column_last' not in blocklistedElements %}
-									{{ FormHelper.control('column_last', {
-										columnSpan: 6,
-									}) }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlColumnRtl %}
-								{% if 'column_rtl' not in blocklistedElements %}
-									{{ FormHelper.control('column_rtl', {
-										columnSpan: 6,
-									}) }}
-								{% endif %}
-							{% endblock %}
-
-							{% block fieldsetPresentationAttributes %}
-								{{ AttributesHelper.allControls('presentation') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetConditions %}
-					<fieldset class="Fieldset-Conditions">
-						<legend>{{ __('fieldset_conditions') }}</legend>
-
-						{% block fieldsetConditionsInner %}
-							{% block formControlFormId %}
-								{{ CategoriesHelper.control('form', {
-									options: naturalSort(CategoriesHelper.getCategories('form')),
-									'data-form-updater': true,
-								}) }}
-							{% endblock %}
-
-							{% block formControlParentId %}
-								{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentFormElements, 'label', 'id', '- '), 'data-form-updater': true}) }}
-							{% endblock %}
-
-							{% block formControlSystemOrder %}
-								{{ SystemOrderHelper.control('system_order', {entity: formElement}) }}
-							{% endblock %}
-
-							{% block fieldsetConditionsAttributes %}
-								{{ AttributesHelper.allControls('conditions') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetAttributes %}
-					<fieldset class="Fieldset-Attributes">
-						<legend>{{ __('fieldset_attributes') }}</legend>
-
-						{% block fieldsetAttributesInner %}
-							{% block fieldsetAttributesAttributes %}
-								{{ AttributesHelper.allControls('attributes') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block elementPublicationData %}
-					{{ element('publication_data/fieldset', {fields: AttributesHelper.allControls('publication')}) }}
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Sidebar-Fieldsets">
+					{{ fieldsetPresentation }}
+					{{ fieldsetConditions }}
+					{{ fieldsetAttributes }}
+					{{ elementPublicationData }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block formInputReloadForm %}

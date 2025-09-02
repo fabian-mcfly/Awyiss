@@ -85,13 +85,73 @@
 	}
 
 	.Fieldsets {
+		--columns:12;
+
 		display:grid;
+		container:fieldsets / inline-size;
 		gap:var(--rowGap) var(--lineHeightMain);
 		grid-column:1 / -1;
-		grid-template-columns:[main] auto [sidebar] calc((100% - var(--lineHeightMain)) / 3);
+		grid-template-columns:repeat(var(--columns), 1fr);
 
-		@media screen and (width <= 1024px) {
-			grid-template-columns:[main sidebar] auto;
+		&:has(.Main-Fieldsets) {
+			grid-template-columns:[main] auto [sidebar] calc((100% - var(--lineHeightMain)) / 3);
+
+			@media screen and (width <= 1024px) {
+				grid-template-columns:[main sidebar] auto;
+			}
+		}
+
+		&:not(:has(> fieldset:is(.Fieldset-Presentation.Hidden, .Fieldset-Conditions.Hidden))) {
+			> fieldset {
+				&:is(
+					.Fieldset-Presentation,
+					.Fieldset-Conditions
+				) {
+					container-type:inline-size;
+					grid-column:auto / span 6;
+
+					@media screen and (width <= 1280px) {
+						--columns:6;
+					}
+
+					@container fieldsets (width <= 680px) {
+						--columns:1;
+						grid-column:1 / -1;
+					}
+
+					@for $i from 2 through 12 {
+						> .ColumnSpan-#{$i} {
+							@media screen and (width > 1280px) {
+								grid-column-end:span #{$i};
+							}
+
+							@container fieldsets (width <= 680px) {
+								@if $i < 6 {
+									grid-column-end:span ceil($i / 2);
+								} @else {
+									grid-column-end:span floor($i / 2);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		@media screen and (width <= 540px) {
+			gap:20px 10px;
+		}
+
+		@container (width <= 680px) {
+			--columns:6;
+		}
+
+		@media screen and (width <= 640px) {
+			row-gap:calc(var(--lineHeightMain) * 1.5);
+		}
+
+		@container (width <= 460px) {
+			--columns:1;
 		}
 
 		> fieldset {

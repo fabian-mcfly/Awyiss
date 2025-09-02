@@ -94,6 +94,51 @@ html.PickQuestionMode {
 		}
 	}
 
+	.Fieldset-Questions {
+		padding:0;
+		box-shadow:none;
+		background-color:transparent;
+		gap:var(--rowGap) var(--lineHeightMain);
+		grid-template-columns:1fr 2fr;
+
+		@media screen and (width <= 1080px) {
+			grid-template-columns:1fr;
+		}
+
+		@media screen and (width <= 768px) {
+			padding:0;
+		}
+
+		@media screen and (width <= 640px) {
+			row-gap:calc(var(--lineHeightMain) * 1.5);
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding:0;
+			}
+		}
+
+		.Fieldset-Questions-Available {
+			@media screen and (width <= 1080px) {
+				position:relative;
+				top:auto;
+			}
+
+			.AvailableQuestions-List {
+				@media screen and (width <= 1080px) {
+					max-height:none;
+				}
+			}
+
+			.Button-Add {
+				@media screen and (width <= 1080px) {
+					display:inline-block;
+				}
+			}
+		}
+	}
+
 	:where(
 		.Fieldset-Questions-Available,
 		.Fieldset-Questions-Assigned
@@ -154,6 +199,10 @@ html.PickQuestionMode {
 			overflow-y:auto;
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
+
+			@media screen and (width <= 540px) {
+				padding:0;
+			}
 
 			html.🌚 & {
 				--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
@@ -238,6 +287,10 @@ html.PickQuestionMode {
 			margin-inline:-32px 0;
 			grid-template-rows:auto 1fr;
 			transition:grid-template-rows .3s ease-in-out;
+
+			@media screen and (width <= 540px) {
+				padding-inline:42px 10px;
+			}
 
 			&:nth-child(even) {
 				--backgroundColorOdd:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
@@ -352,6 +405,10 @@ html.PickQuestionMode {
 			align-self:start;
 			transition:opacity .3s ease-in-out;
 
+			@media screen and (width <= 1024px) {
+				line-height:20px;
+			}
+
 			&:empty {
 				opacity:0;
 			}
@@ -364,6 +421,10 @@ html.PickQuestionMode {
 			position:absolute;
 			top:9px;
 			right:10px;
+
+			@media screen and (width <= 1024px) {
+				top:6px;
+			}
 
 			&:has(.Button-Configure) {
 				width:36px;
@@ -384,6 +445,16 @@ html.PickQuestionMode {
 
 			.Button-Delete {
 				margin-left:0;
+
+				@media screen and (width <= 768px) {
+					bottom:3px;
+				}
+
+				@media screen and (width <= 540px) {
+					aspect-ratio:1;
+					position:absolute;
+					left:100%;
+				}
 			}
 		}
 
@@ -463,12 +534,22 @@ html.PickQuestionMode {
 
 			.Actions {
 				top:6px;
+
+				.Button-Delete {
+					@media screen and (width <= 768px) {
+						bottom:6px;
+					}
+				}
 			}
 
 			.FormInputType-Checkbox {
 				position:absolute;
 				top:13px;
 				left:20px;
+
+				@media screen and (width <= 768px) {
+					top:10px;
+				}
 
 				.Label {
 					padding-left:0;

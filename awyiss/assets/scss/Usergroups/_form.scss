@@ -162,6 +162,10 @@
 		grid-template-columns:1fr;
 	}
 
+	&:focus-within {
+		box-shadow:none;
+	}
+
 	&:first-child {
 		margin-top:0;
 	}

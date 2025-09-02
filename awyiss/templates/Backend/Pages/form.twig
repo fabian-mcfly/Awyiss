@@ -29,8 +29,190 @@
 	{{ FormHelper.create(page, {method: 'post', id: 'PageForm', idPrefix: 'page'}) }}
 {% endblock %}
 
+{% set fieldsetGeneral %}
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{% block formControlTitle %}
+					{{ FormHelper.control('title') }}
+				{% endblock %}
+
+				{% block formControlSlug %}
+					{{ FormHelper.control('slug', {
+						required: false,
+						templateVars: {
+							additionalContent: (config.Route.includeLanguageShortcode or parentRecord.slug)
+								? '<span class="PrePath">' ~ (config.Route.includeLanguageShortcode ? page.languageShortcode ~ '/' : null) ~ (parentRecord.slug ? (parentRecord.slug ~ '/') : '') ~ '</span>'
+								: '',
+						},
+						'data-autofill-from': 'title',
+						'data-replacement-char': '-',
+					}) }}
+				{% endblock %}
+
+				{% block formControlDuplicateOf %}
+					{{ FormHelper.control('duplicate_of', {columnSpan: 6, disabled: isDuplicated ? true : [page.id], options: threadedPages.printer('label', 'id', '- ')}) }}
+				{% endblock %}
+
+				{% block formControlRedirectLink %}
+					{{ FormHelper.control('redirect_link', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetContent %}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMedia %}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{{ cell('Backend/MediaElements', [page]) }}
+
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMediaElementAssignments %}
+	{% block fieldsetMediaElementAssignments %}
+		{{ cell('Backend/MediaElements::elementAssignments', [page]) }}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetSeo %}
+	{% block fieldsetSeo %}
+		<fieldset class="Fieldset-Seo">
+			<legend>{{ __d('seo', 'fieldset_seo') }}</legend>
+
+			{% block fieldsetSeoInner %}
+				{{ element('Pages/seo_snippet') }}
+
+				{% block fieldsetSeoAttributes %}
+					{{ AttributesHelper.allControls('seo') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetPresentation %}
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
+
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active') }}
+				{% endblock %}
+
+				{% block formControlPageTemplateId %}
+					{{ FormHelper.control('page_template_id', {empty: false, options: pageTemplates.combine('id', 'label')}) }}
+				{% endblock %}
+
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetConditions %}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block formControlLanguageShortcode %}
+					{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
+				{% endblock %}
+
+				{% block formControlParentId %}
+					{% if (_categoriesIdentifier is defined) %}
+						{{ CategoriesHelper.control(_categoriesIdentifier, {'data-form-updater': true}) }}
+					{% endif %}
+
+					{% if nestable and possibleParentPages is not null %}
+						{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentPages, 'label', 'id', '- '), 'data-form-updater': true}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block formControlSystemOrder %}
+					{% if sortable %}
+						{{ SystemOrderHelper.control('system_order') }}
+					{% endif %}
+				{% endblock %}
+
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetAttributes %}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetAddPageToMenus %}
+	{% block fieldsetAddPageToMenus %}
+		<fieldset class="Fieldset-AddPageToMenus">
+			<legend>{{ __('fieldset_menus') }}</legend>
+
+			{# @var menu \Awyiss\Model\Entity\Menu #}
+			{% for key, menu in menus %}
+				{{ FormHelper.control('add_menu_entry[' ~ key ~ ']', {columnSpan: 3, hiddenField: false, label: menu.label, type: 'checkbox', value: menu.id}) }}
+			{% endfor %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set elementPublicationData %}
+	{% block elementPublicationData %}
+		{{ element('publication_data/fieldset', {fields: AttributesHelper.allControls('publication')}) }}
+	{% endblock %}
+{% endset %}
+
 {% block sidebarToggle %}
-	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+		{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% endif %}
 {% endblock %}
 
 {% block fieldsets %}
@@ -50,172 +232,41 @@
 			}) }}
 		{% endif %}
 
+		{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+			{{ fieldsetPresentation }}
+			{{ fieldsetConditions }}
+			{{ fieldsetGeneral }}
+			{{ fieldsetContent }}
+			{{ fieldsetMedia }}
+			{{ fieldsetMediaElementAssignments }}
+			{{ fieldsetSeo }}
+			{{ fieldsetAttributes }}
+			{{ fieldsetAddPageToMenus }}
+			{{ elementPublicationData }}
+		{% endif %}
+
 		{% block mainFieldsets %}
-			<div class="Main-Fieldsets">
-				{% block fieldsetGeneral %}
-					<fieldset class="Fieldset-General">
-						<legend>{{ __('fieldset_general') }}</legend>
-
-						{% block fieldsetGeneralInner %}
-							{% block formControlTitle %}
-								{{ FormHelper.control('title') }}
-							{% endblock %}
-
-							{% block formControlSlug %}
-								{{ FormHelper.control('slug', {
-									required: false,
-									templateVars: {
-										additionalContent: (config.Route.includeLanguageShortcode or parentRecord.slug)
-											? '<span class="PrePath">' ~ (config.Route.includeLanguageShortcode ? page.languageShortcode ~ '/' : null) ~ (parentRecord.slug ? (parentRecord.slug ~ '/') : '') ~ '</span>'
-											: '',
-									},
-									'data-autofill-from': 'title',
-									'data-replacement-char': '-',
-								}) }}
-							{% endblock %}
-
-							{% block fieldsetGeneralAttributes %}
-								{{ AttributesHelper.allControls('general') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetContent %}
-					<fieldset class="Fieldset-Content">
-						<legend>{{ __('fieldset_content') }}</legend>
-
-						{% block fieldsetContentInner %}
-							{% block fieldsetContentAttributes %}
-								{{ AttributesHelper.allControls('content') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMedia %}
-					<fieldset class="Fieldset-Media">
-						<legend>{{ __('fieldset_media') }}</legend>
-
-						{% block fieldsetMediaInner %}
-							{{ cell('Backend/MediaElements', [page]) }}
-
-							{% block fieldsetMediaAttributes %}
-								{{ AttributesHelper.allControls('media') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetMediaElementAssignments %}
-					{{ cell('Backend/MediaElements::elementAssignments', [page]) }}
-				{% endblock %}
-
-				{% block fieldsetSeo %}
-					<fieldset class="Fieldset-Seo">
-						<legend>{{ __d('seo', 'fieldset_seo') }}</legend>
-
-						{% block fieldsetSeoInner %}
-							{{ element('Pages/seo_snippet') }}
-
-							{% block fieldsetSeoAttributes %}
-								{{ AttributesHelper.allControls('seo') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Main-Fieldsets">
+					{{ fieldsetGeneral }}
+					{{ fieldsetContent }}
+					{{ fieldsetMedia }}
+					{{ fieldsetMediaElementAssignments }}
+					{{ fieldsetSeo }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block sidebarFieldsets %}
-			<div class="Sidebar-Fieldsets">
-				{% block fieldsetPresentation %}
-					<fieldset class="Fieldset-Presentation">
-						<legend>{{ __('fieldset_presentation') }}</legend>
-
-						{% block fieldsetPresentationInner %}
-							{% block formControlActive %}
-								{{ FormHelper.control('active') }}
-							{% endblock %}
-
-							{% block formControlPageTemplateId %}
-								{{ FormHelper.control('page_template_id', {empty: false, options: pageTemplates.combine('id', 'label')}) }}
-							{% endblock %}
-
-							{% block fieldsetPresentationAttributes %}
-								{{ AttributesHelper.allControls('presentation') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetConditions %}
-					<fieldset class="Fieldset-Conditions">
-						<legend>{{ __('fieldset_conditions') }}</legend>
-
-						{% block fieldsetConditionsInner %}
-							{% block formControlLanguageShortcode %}
-								{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
-							{% endblock %}
-
-							{% block formControlParentId %}
-								{% if (_categoriesIdentifier is defined) %}
-									{{ CategoriesHelper.control(_categoriesIdentifier, {'data-form-updater': true}) }}
-								{% endif %}
-
-								{% if nestable and possibleParentPages is not null %}
-									{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentPages, 'label', 'id', '- '), 'data-form-updater': true}) }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlSystemOrder %}
-								{% if sortable %}
-									{{ SystemOrderHelper.control('system_order') }}
-								{% endif %}
-							{% endblock %}
-
-							{% block formControlDuplicateOf %}
-								{{ FormHelper.control('duplicate_of', {columnSpan: 6, disabled: isDuplicated ? true : [page.id], options: threadedPages.printer('label', 'id', '- ')}) }}
-							{% endblock %}
-
-							{% block formControlRedirectLink %}
-								{{ FormHelper.control('redirect_link', {columnSpan: 6}) }}
-							{% endblock %}
-
-							{% block fieldsetConditionsAttributes %}
-								{{ AttributesHelper.allControls('conditions') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetAttributes %}
-					<fieldset class="Fieldset-Attributes">
-						<legend>{{ __('fieldset_attributes') }}</legend>
-
-						{% block fieldsetAttributesInner %}
-							{% block fieldsetAttributesAttributes %}
-								{{ AttributesHelper.allControls('attributes') }}
-							{% endblock %}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
-
-				{% block fieldsetAddPageToMenus %}
-					<fieldset class="Fieldset-AddPageToMenus">
-						<legend>{{ __('fieldset_menus') }}</legend>
-
-						{# @var menu \Awyiss\Model\Entity\Menu #}
-						{% for key, menu in menus %}
-							{{ FormHelper.control('add_menu_entry[' ~ key ~ ']', {columnSpan: 3, hiddenField: false, label: menu.label, type: 'checkbox', value: menu.id}) }}
-						{% endfor %}
-					</fieldset>
-				{% endblock %}
-
-				{% block elementPublicationData %}
-					{{ element('publication_data/fieldset', {fields: AttributesHelper.allControls('publication')}) }}
-				{% endblock %}
-			</div>
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				<div class="Sidebar-Fieldsets">
+					{{ fieldsetPresentation }}
+					{{ fieldsetConditions }}
+					{{ fieldsetAttributes }}
+					{{ fieldsetAddPageToMenus }}
+					{{ elementPublicationData }}
+				</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block formInputReloadForm %}
