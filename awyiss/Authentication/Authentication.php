@@ -8,7 +8,6 @@ use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
 use Authentication\Authenticator\FormAuthenticator;
 use Authentication\Identifier\AbstractIdentifier;
-use Authentication\Identifier\PasswordIdentifier;
 use Authentication\Identifier\Resolver\OrmResolver;
 use Awyiss\Authentication\Authenticator\SessionAuthenticator;
 use Awyiss\Awyiss;
@@ -158,8 +157,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 				return false;
 			},
+			'identifier' => $this->getIdentifiers(),
 		], 10);
-
 
 		$this->addAuthenticator(FormAuthenticator::class, [
 			'fields' => [
@@ -167,6 +166,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
 			],
 			'loginUrl' => $this->dispatchEvent('Authentication.requestLoginUrl', [], $this)->getResult(),
+			'identifier' => $this->getIdentifiers(),
 		], 20);
 	}
 
@@ -174,21 +174,20 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Registers the default identifiers if not disabled, sorts all Identifiers by priority and adds them to the `AuthenticationServiceInterface`
 	 *
-	 * @param AuthenticationServiceInterface $service
-	 * @param ServerRequestInterface $request
+	 * @return array
 	 * @throws Exception
 	 */
-	protected function loadIdentifiers(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
+	protected function getIdentifiers(): array {
 		if (!static::$disableDefaultIdentifiers) {
-			$this->addDefaultIdentifiers($service, $request);
+			$this->addDefaultIdentifiers();
 		}
 
-		$la_identifiers = static::$identifiers;
-		usort($la_identifiers, function (array $a, array $b): int {
+		usort(static::$identifiers, function (array $a, array $b): int {
 			return $a['priority'] <=> $b['priority'];
 		});
 
-		foreach ($la_identifiers as $la_identifier) {
+		$la_identifiers = [];
+		foreach (static::$identifiers as $la_identifier) {
 			$lx_identifier = $la_identifier['identifier'];
 
 			/*
@@ -209,18 +208,20 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				}
 			}
 
-			$service->loadIdentifier($lx_identifier['name'], $lx_identifier['config']);
+			$la_identifiers[ $lx_identifier['name'] ] = $lx_identifier['config'];
 		}
+
+		return $la_identifiers;
 	}
 
 
 	/**
-	 * Register the default identifiers for backend users
+	 * Register the default identifiers for backend users#
 	 *
-	 * @noinspection PhpUnusedParameterInspection
+	 * @return void
 	 */
-	protected function addDefaultIdentifiers(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
-		$this->addIdentifier(PasswordIdentifier::class, [
+	protected function addDefaultIdentifiers(): void {
+		$this->addIdentifier('Authentication.Password', [
 			'resolver' => [
 				'className' => OrmResolver::class,
 				/** @see \Awyiss\Model\Table\UsersTable::findActive() */
@@ -241,7 +242,6 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	protected function getBackendAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface {
 		$lo_service = new AuthenticationService();
 
-		//$lb_isLogoutPage = strtolower(Router::getRequest()->getParam('controller') . '/' . Router::getRequest()->getParam('action')) === 'users/logout';
 		// Define where users should be redirected to when they are not authenticated
 		$lo_service->setConfig([
 			'unauthenticatedRedirect' => Router::url([
@@ -256,8 +256,6 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		]);
 
 		$this->loadAuthenticators($lo_service, $request);
-		$this->loadIdentifiers($lo_service, $request);
-
 
 		return $lo_service;
 	}

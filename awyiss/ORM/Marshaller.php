@@ -173,7 +173,7 @@ class Marshaller extends BaseMarshaller {
 			foreach ($data as $field => $value) {
 				$unmappedField = $entityClass::unmapField($field);
 
-				if ($unmappedField === $field || array_key_exists($unmappedField, $data)) {
+				if ($unmappedField === $field) {
 					continue;
 				}
 

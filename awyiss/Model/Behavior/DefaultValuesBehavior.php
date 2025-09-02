@@ -15,6 +15,7 @@ use ArrayObject;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
+use BackedEnum;
 use Cake\Database\Type\EnumType;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
@@ -25,6 +26,7 @@ use Cake\I18n\DateTime;
 use Cake\I18n\Time;
 use Cake\ORM\Association;
 use Cake\Utility\Hash;
+use ReflectionEnum;
 use RuntimeException;
 use UnhandledMatchError;
 
@@ -376,10 +378,22 @@ class DefaultValuesBehavior extends Behavior {
 				continue;
 			}
 
+			if (str_starts_with($la_typeMap[ $ls_column ], 'enum-')) {
+				$lo_dbType = TypeFactory::build($la_typeMap[ $ls_column ]);
+				if ($lo_dbType instanceof EnumType) {
+					$lx_default = $this->typecastEnumDefault($lx_default, $lo_dbType);
+					continue;
+				}
+			}
+
 			//Typecast each default value, depending on the column type
 			try {
 				$lx_default = match ($la_typeMap[ $ls_column ]) {
-					'boolean' => boolval($lx_default),
+					'boolean' => match ($lx_default) {
+						'1', 'true', 'TRUE' => true,
+						'0', 'false', 'FALSE' => false,
+						default => boolval($lx_default),
+					},
 					'date' => $lx_default ? new Date($lx_default) : null,
 					'datetime' => $lx_default && $lx_default !== 'current_timestamp()' ? new DateTime($lx_default) : null,
 					'float' => floatval($lx_default),
@@ -391,19 +405,43 @@ class DefaultValuesBehavior extends Behavior {
 			}
 			/** @noinspection PhpMultipleClassDeclarationsInspection */
 			catch (UnhandledMatchError) {
-				if (str_starts_with($la_typeMap[ $ls_column ], 'enum-')) {
-					$lo_dbType = TypeFactory::build($la_typeMap[ $ls_column ]);
-					if ($lo_dbType instanceof EnumType) {
-						$lx_default = $lo_dbType->toPHP($lx_default, $this->table()->getConnection()->getDriver());
-
-
-						return;
-					}
-				}
-
 				dd($la_typeMap[ $ls_column ], __FILE__, __LINE__, $lx_default);
 			}
 		}
 		unset($lx_default);
+	}
+
+
+	/**
+	 * @param mixed $default
+	 * @param \Cake\Database\Type\EnumType $dbType
+	 * @return \BackedEnum|null
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	protected function typecastEnumDefault(mixed $default, EnumType $dbType): ?BackedEnum {
+		/**
+		 * Since CakePHP 5.2.6 or .7 sqlite will return "FALSE" as default value for columns with default 0
+		 * and "TRUE" for columns with default 1.
+		 * This does not match the enum backing type and will throw an exception in EnumType::toPHP().
+		 * Here we convert "FALSE" to 0 and "TRUE" to 1 for int backed enums.
+		 */
+		$ls_className = $dbType->getEnumClassName();
+
+		// Check if it's an int-backed enum using reflection
+		$lb_isIntBackedEnum = false;
+		if (enum_exists($ls_className)) {
+			$lo_reflection = new ReflectionEnum($ls_className);
+			$lb_isIntBackedEnum = $lo_reflection->getBackingType()->getName() === 'int';
+		}
+
+		if ($lb_isIntBackedEnum) {
+			$default = match ($default) {
+				'true', 'TRUE' => 1,
+				'false', 'FALSE' => 0,
+				default => intval($default),
+			};
+		}
+
+		return $dbType->toPHP($default, $this->table()->getConnection()->getDriver());
 	}
 }

@@ -19,8 +19,6 @@ use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
 
-//awyiss: $2y$10$B1IWA5ic5yFJCbxB7kvKD.hnfrA3M34LPtOH5y.zrK0b6PpAHj.Eu
-
 /**
  * Users Controller
  *
@@ -212,6 +210,7 @@ class UsersController extends Controller {
 
 				$lo_lastLogin = $lo_user->lastLogin;
 
+				/** @noinspection PhpConditionAlreadyCheckedInspection */
 				if ($lo_user instanceof User) {
 					//Track lastLogin and reset the failed login attempts
 					$lo_user->patch([
@@ -245,7 +244,7 @@ class UsersController extends Controller {
 			if ($ls_username) {
 				$lo_user = $this->Users->find()->where(['username' => $ls_username])->first();
 				if ($lo_user) {
-					$lo_user->set([
+					$lo_user->patch([
 						'failedAttempts' => $lo_user->failedAttempts + 1,
 						'lastLogin' => DateTime::now(),
 					], ['guard' => false]);

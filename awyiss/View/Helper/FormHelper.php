@@ -99,7 +99,9 @@ class FormHelper extends BaseFormHelper {
 		$lo_sourceTable = $lo_context->fetchTable($lo_context->entity()->getSource());
 
 		$lo_behavior = $lo_sourceTable->hasBehavior('Translate') ? $lo_sourceTable->getBehavior('Translate') : null;
-		$this->translatableFields = $lo_behavior?->getConfig('fields') ?? [];
+
+		$this->translatableFields = array_map(fn ($field) => Inflector::underscore($field), $lo_behavior?->getConfig('fields') ?? []);
+
 		$this->languageRealm = $options['languageRealm'] ?? $lo_behavior?->getConfig('realm') ?? Awyiss::REALM_BACKEND;
 
 		foreach (LocaleMiddleware::getLanguages($this->languageRealm) as $lo_language) {

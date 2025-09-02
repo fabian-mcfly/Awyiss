@@ -101,7 +101,7 @@ class EavStrategy extends BaseEavStrategy {
 
 		// If there are no fields and no bundled translations, or both fields
 		// in the default locale and bundled translations we can
-		// skip the remaining logic as it's not necessary.
+		// skip the remaining logic as it is not necessary.
 		if ($lb_noFields || ($la_fields && $la_bundled)) {
 			return;
 		}

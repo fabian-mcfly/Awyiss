@@ -1,0 +1,15 @@
+// pulled icons
+// -------------------------
+
+
+.#{$css-prefix}-pull-left,
+.#{$css-prefix}-pull-start {
+  float: inline-start;
+  margin-inline-end: var(--#{$css-prefix}-pull-margin, #{$pull-margin});
+}
+
+.#{$css-prefix}-pull-right,
+.#{$css-prefix}-pull-end {
+  float: inline-end;
+  margin-inline-start: var(--#{$css-prefix}-pull-margin, #{$pull-margin});
+}

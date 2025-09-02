@@ -23,25 +23,25 @@ class Css extends BaseCSS {
 	 */
 	protected function stripWhitespace($content) {
 		// remove leading & trailing whitespace
-		$content = preg_replace('/^\s*/m', '', $content);
-		$content = preg_replace('/\s*$/m', '', $content);
+		$content = $this->pregReplace('/^\s*/m', '', $content);
+		$content = $this->pregReplace('/\s*$/m', '', $content);
 
 		// replace newlines with a single space
-		$content = preg_replace('/\s+/', ' ', $content);
+		$content = $this->pregReplace('/\s+/', ' ', $content);
 
 		// remove whitespace around meta characters
 		// inspired by stackoverflow.com/questions/15195750/minify-compress-css-with-regex
-		$content = preg_replace('/\s*([\*$~^|]?+=|[{};,>~]|!important\b)\s*/', '$1', $content);
-		$content = preg_replace('/([\[(:>\+])\s+/', '$1', $content);
-		$content = preg_replace('/\s+([\]\)>\+])/', '$1', $content);
-		$content = preg_replace('/\s+(:)(?![^\}]*\{)/', '$1', $content);
+		$content = $this->pregReplace('/\s*([\*$~^|]?+=|[{};,>~]|!important\b)\s*/', '$1', $content);
+		$content = $this->pregReplace('/([\[(:>\+])\s+/', '$1', $content);
+		$content = $this->pregReplace('/\s+([\]\)>\+])/', '$1', $content);
+		$content = $this->pregReplace('/\s+(:)(?![^\}]*\{)/', '$1', $content);
 
 		// whitespace around + and - can only be stripped inside some pseudo-
 		// classes, like `:nth-child(3+2n)`
 		// not in things like `calc(3px + 2px)`, shorthands like `3px -2px`, or
 		// selectors like `div.weird- p`
 		$pseudos = ['nth-child', 'nth-last-child', 'nth-last-of-type', 'nth-of-type'];
-		$content = preg_replace(
+		$content = $this->pregReplace(
 			'/:(' . implode('|', $pseudos) . ')\(\s*([+-]?)\s*(.+?)\s*([+-]?)\s*(\s+of\s+[^\)]+)?\s*\)/',
 			':$1($2$3$4$5$6)',
 			$content

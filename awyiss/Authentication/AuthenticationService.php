@@ -7,6 +7,7 @@ namespace Awyiss\Authentication;
 use Authentication\AuthenticationService as BaseAuthenticationService;
 use Authentication\Authenticator\ResultInterface;
 use Authentication\Authenticator\StatelessInterface;
+use Awyiss\Authentication\Authenticator\AuthenticatorCollection;
 use Awyiss\Authentication\Identifier\IdentifierCollection;
 use Awyiss\Event\EventDispatcherTrait;
 use Psr\Http\Message\ServerRequestInterface;
@@ -83,7 +84,7 @@ class AuthenticationService extends BaseAuthenticationService {
 		/*
 		 * This one's hacky and needs a serious rework but works for now
 		 * We write the current Uri to the session since we don't like having an uri-encoded
-		 * paramter containing the old path. That looks amateurish.
+		 * parameter containing the old path. That looks amateurish.
 		 */
 
 		$lo_uri = $request->getUri();
@@ -113,6 +114,22 @@ class AuthenticationService extends BaseAuthenticationService {
 
 
 		return $lo_session->read('unauthenticatedRedirectUrl');
+	}
+
+
+	/**
+	 * Reimplemented 1:1 to use \Awyiss\Authentication\Authenticator\AuthenticatorCollection
+	 *
+	 * @inheritDoc
+	 */
+	public function authenticators(): AuthenticatorCollection {
+		if ($this->_authenticators === null) {
+			$lo_identifiers = $this->identifiers();
+			$lx_authenticators = $this->getConfig('authenticators');
+			$this->_authenticators = new AuthenticatorCollection($lo_identifiers, $lx_authenticators);
+		}
+
+		return $this->_authenticators;
 	}
 
 

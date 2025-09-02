@@ -85,7 +85,12 @@ class TranslateBehavior extends BaseTranslateBehavior {
 		// Alle Energie auf die Deflektorschilde
 		$la_forcedFields = $this->getConfig('forcedFields', ['title']);
 
+		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
+		$ls_entityClass = $event->getSubject()->getEntityClass();
+
 		foreach ($this->getConfig('fields') as $ls_field) {
+			$ls_field = $ls_entityClass::unmapField($ls_field);
+
 			// Set the main entity's field to the first language's translation
 			$data[ $ls_field ] = $data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? null;
 
