@@ -11,9 +11,8 @@ use Awyiss\Utility\Media\MediaRenderOptions;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\View\View;
-use DOMDocument;
-use DOMElement;
-use DOMXPath;
+use Dom\Element;
+use Dom\HTMLDocument;
 
 
 /**
@@ -43,7 +42,6 @@ class ImageHandler {
 	 * @param array $fields
 	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return void
-	 * @throws \DOMException
 	 */
 	public static function replaceImageTags(EntityInterface $entity, array $fields = [], ?EntityInterface $referenceEntity = null): void {
 		$la_fields = $fields ?: static::getDefaultFields($entity);
@@ -70,7 +68,6 @@ class ImageHandler {
 	 * @param string|null $value
 	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return string|null
-	 * @throws \DOMException
 	 */
 	public static function replaceImageTagsInField(
 		EntityInterface $entity,
@@ -84,13 +81,10 @@ class ImageHandler {
 			return $ls_value;
 		}
 
-		$lo_dom = static::getDomDocument($ls_value);
-
-		// Create an XPath instance
-		$lo_xpath = new DOMXPath($lo_dom);
+		$lo_dom = static::getDom($ls_value);
 
 		// Find all <img> tags
-		$lo_tags = $lo_xpath->query('//img');
+		$lo_tags = $lo_dom->querySelectorAll('img');
 
 		$la_foundSources = [];
 
@@ -161,7 +155,6 @@ class ImageHandler {
 	 * @param array $fields
 	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return void
-	 * @throws \DOMException
 	 */
 	public static function rebuildSimpleImageTags(EntityInterface $entity, array $fields = [], ?EntityInterface $referenceEntity = null): void {
 		$la_fields = $fields ?: static::getDefaultFields($entity);
@@ -190,7 +183,6 @@ class ImageHandler {
 	 * @param string|null $value
 	 * @param \Cake\Datasource\EntityInterface|null $referenceEntity
 	 * @return string|null
-	 * @throws \DOMException
 	 */
 	public static function rebuildSimpleImageTagsInField(
 		EntityInterface $entity,
@@ -205,13 +197,10 @@ class ImageHandler {
 			return $ls_value;
 		}
 
-		$lo_dom = static::getDomDocument($ls_value);
-
-		// Create an XPath instance
-		$lo_xpath = new DOMXPath($lo_dom);
+		$lo_dom = static::getDom($ls_value);
 
 		// Find all <awyiss-responsive-image> tags
-		$lo_tags = $lo_xpath->query('//awyiss-responsive-image');
+		$lo_tags = $lo_dom->querySelectorAll('awyiss-responsive-image');
 
 		foreach ($lo_tags as $lo_tag) {
 			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $referenceEntity ?? $entity);
@@ -249,20 +238,16 @@ class ImageHandler {
 	 * @param array $media
 	 * @param bool $absolutePath
 	 * @return string|null
-	 * @throws \DOMException
 	 */
 	public static function rebuildSimpleImageTagsInText(?string $value, array $media, bool $absolutePath = false): ?string {
 		if (!is_string($value) || !str_contains($value, '<awyiss-responsive-image')) {
 			return $value;
 		}
 
-		$lo_dom = static::getDomDocument($value);
-
-		// Create an XPath instance
-		$lo_xpath = new DOMXPath($lo_dom);
+		$lo_dom = static::getDom($value);
 
 		// Find all <awyiss-responsive-image> tags
-		$lo_tags = $lo_xpath->query('//awyiss-responsive-image');
+		$lo_tags = $lo_dom->querySelectorAll('awyiss-responsive-image');
 
 		$ls_baseUrl = $absolutePath ? Router::url('/', true) : '';
 
@@ -362,13 +347,10 @@ class ImageHandler {
 		/** @var \Awyiss\View\Helper\MediaHelper $lo_mediaHelper */
 		$lo_mediaHelper = $view->helpers()->get('Media');
 
-		$lo_dom = static::getDomDocument($ls_value);
-
-		// Create an XPath instance
-		$lo_xpath = new DOMXPath($lo_dom);
+		$lo_dom = static::getDom($ls_value);
 
 		// Find all <awyiss-responsive-image> tags
-		$lo_tags = $lo_xpath->query('//awyiss-responsive-image');
+		$lo_tags = $lo_dom->querySelectorAll('awyiss-responsive-image');
 
 		foreach ($lo_tags as $lo_tag) {
 			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $referenceEntity ?? $entity);
@@ -403,59 +385,34 @@ class ImageHandler {
 
 
 	/**
-	 * Creates a DOMDocument from the given HTML string
-	 *
-	 * @param string $value
-	 * @return \DOMDocument
+	 * @param string|null $text
+	 * @return \Dom\HTMLDocument
 	 */
-	protected static function getDomDocument(string $value): DOMDocument {
-		$lo_dom = new DOMDocument('1.0', 'UTF-8');
-
-		// Suppress errors due to malformed HTML
-		libxml_use_internal_errors(true);
-
-		// Load the HTML string into the DOMDocument
-		$lo_dom->loadHTML('<!DOCTYPE html>' . mb_encode_numericentity($value, [0x80, 0x10FFFF, 0, ~0], 'UTF-8'));
-
-		// Clear any errors collected during loadHTML
-		libxml_clear_errors();
-
-		return $lo_dom;
+	protected static function getDom(?string $text): HTMLDocument {
+		return HTMLDocument::createFromString($text, LIBXML_NOERROR, 'UTF-8');
 	}
 
 
 	/**
-	 * Returns the contents of `<body>`-tag of the given DOMDocument as a string
+	 * Returns the contents of `<body>`-tag of the given \Dom\HTMLDocument as a string
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return string|false
 	 * @noinspection DuplicatedCode
 	 */
-	protected static function getBody(DOMDocument $dom): string|false {
-		if ($dom->doctype) {
-			// Remove the doctype
-			$dom->removeChild($dom->doctype);
-		}
-
-		// Remove the opening and closing `<html>`-tags
-		$dom->replaceChild($dom->firstChild->firstChild, $dom->firstChild);
+	protected static function getBody(HTMLDocument $dom): string|false {
+		$ls_html = '';
 
 		// Remove the opening and closing `<body>`-tags
-		$lo_body = $dom->getElementsByTagName('body')->item(0);
-
-		if (!$lo_body) {
-			// Return the cleaned HTML
-			return $dom->saveHTML();
-		}
+		$lo_body = $dom->querySelector('body');
 
 		while ($lo_body->firstChild) {
-			$dom->appendChild($lo_body->firstChild);
+			$ls_html .= $dom->saveHTML($lo_body->firstChild);
+			$lo_body->removeChild($lo_body->firstChild);
 		}
 
-		$dom->removeChild($lo_body);
-
 		// Return the cleaned HTML
-		return $dom->saveHTML();
+		return $ls_html;
 	}
 
 
@@ -515,12 +472,12 @@ class ImageHandler {
 
 
 	/**
-	 * @param \DOMDocument $dom
-	 * @param \DOMElement $tag
+	 * @param \Dom\HTMLDocument $dom
+	 * @param \Dom\Element $tag
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return array
 	 */
-	protected static function extractMediaAttributes(DOMDocument $dom, DOMElement $tag, EntityInterface $entity): array {
+	protected static function extractMediaAttributes(HTMLDocument $dom, Element $tag, EntityInterface $entity): array {
 		// The attributes are stored as a JSON string in the textContent
 		$la_attributes = json_decode($tag->textContent, true);
 

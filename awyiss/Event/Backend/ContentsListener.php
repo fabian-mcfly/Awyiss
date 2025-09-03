@@ -12,8 +12,7 @@ use Awyiss\Model\Table\ContentsTable;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use DOMDocument;
-use DOMXPath;
+use Dom\HTMLDocument;
 
 
 /**
@@ -93,19 +92,17 @@ class ContentsListener implements EventListenerInterface {
 				continue;
 			}
 
-			$lo_dom = static::getDomDocument($entity->get($ls_field));
+			$lo_dom = static::getDom($entity->get($ls_field));
 
-			$lo_xpath = new DOMXpath($lo_dom);
+			$lo_elements = $lo_dom->querySelectorAll('a[href^="#"]');
 
-			$lo_elements = $lo_xpath->query('//a[starts-with(@href, "#")]');
-
-			if (!$lo_elements || $lo_elements->length === 0) {
+			if ($lo_elements->length === 0) {
 				continue;
 			}
 
 			$ls_slug = $la_pages[ $entity->get('pageId') ] . '/';
 
-			/** @var \DOMElement $element */
+			/** @var \Dom\Element $element */
 			foreach ($lo_elements as $lo_element) {
 				$lo_element->setAttribute('href', $ls_slug . $lo_element->getAttribute('href'));
 			}
@@ -162,56 +159,35 @@ class ContentsListener implements EventListenerInterface {
 
 
 	/**
-	 * Creates a DOMDocument from the given HTML string
+	 * Creates a \Dom\HTMLDocument from the given HTML string
 	 *
 	 * @param string $value
-	 * @return \DOMDocument
+	 * @return \Dom\HTMLDocument
 	 */
-	protected static function getDomDocument(string $value): DOMDocument {
-		$lo_dom = new DOMDocument('1.0', 'UTF-8');
-
-		// Suppress errors due to malformed HTML
-		libxml_use_internal_errors(true);
-
-		// Load the HTML string into the DOMDocument
-		$lo_dom->loadHTML('<!DOCTYPE html>' . mb_encode_numericentity($value, [0x80, 0x10FFFF, 0, ~0], 'UTF-8'));
-
-		// Clear any errors collected during loadHTML
-		libxml_clear_errors();
-
-		return $lo_dom;
+	protected static function getDom(string $value): HTMLDocument {
+		return HTMLDocument::createFromString($value, LIBXML_NOERROR, 'UTF-8');
 	}
 
 
 	/**
-	 * Returns the contents of `<body>`-tag of the given DOMDocument as a string
+	 * Returns the contents of `<body>`-tag of the given \Dom\HTMLDocument as a string
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return string|false
 	 * @noinspection DuplicatedCode
 	 */
-	protected static function getBody(DOMDocument $dom): string|false {
-		// Remove the doctype
-		$dom->removeChild($dom->doctype);
-
-		// Remove the opening and closing `<html>`-tags
-		$dom->replaceChild($dom->firstChild->firstChild, $dom->firstChild);
+	protected static function getBody(HTMLDocument $dom): string|false {
+		$ls_html = '';
 
 		// Remove the opening and closing `<body>`-tags
-		$lo_body = $dom->getElementsByTagName('body')->item(0);
-
-		if (!$lo_body) {
-			// Return the cleaned HTML
-			return $dom->saveHTML();
-		}
+		$lo_body = $dom->querySelector('body');
 
 		while ($lo_body->firstChild) {
-			$dom->appendChild($lo_body->firstChild);
+			$ls_html .= $dom->saveHTML($lo_body->firstChild);
+			$lo_body->removeChild($lo_body->firstChild);
 		}
 
-		$dom->removeChild($lo_body);
-
 		// Return the cleaned HTML
-		return $dom->saveHTML();
+		return $ls_html;
 	}
 }

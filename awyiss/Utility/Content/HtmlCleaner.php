@@ -7,8 +7,8 @@ namespace Awyiss\Utility\Content;
 use Awyiss\Model\Entity;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
-use DOMDocument;
-use DOMXPath;
+use Dom\HTMLDocument;
+use Dom\XPath;
 use InvalidArgumentException;
 
 
@@ -19,7 +19,7 @@ class HtmlCleaner {
 	/**
 	 * No cleaning at all
 	 */
-	public const CLEAN_NONE = 'none';
+	public const string CLEAN_NONE = 'none';
 	/**
 	 * Moderate cleaning.
 	 *
@@ -29,7 +29,7 @@ class HtmlCleaner {
 	 * - Removes leading and trailing whitespaces (including non-breaking spaces) from each tag
 	 * - Combines consecutive whitespaces (including non-breaking spaces)
 	 */
-	public const CLEAN_MODERATE = 'moderate';
+	public const string CLEAN_MODERATE = 'moderate';
 	/**
 	 * Strict cleaning.
 	 *
@@ -38,7 +38,7 @@ class HtmlCleaner {
 	 * - Converts multiple consecutive `<br>`-tags to a single `<br>`-tag
 	 * - Removes leading and trailing empty tags
 	 */
-	public const CLEAN_STRICT = 'strict';
+	public const string CLEAN_STRICT = 'strict';
 
 	/**
 	 * The default fields to clean
@@ -53,7 +53,6 @@ class HtmlCleaner {
 	 * @param string $method
 	 * @param array $fields
 	 * @return void
-	 * @throws \DOMException
 	 */
 	public static function clean(EntityInterface $entity, string $method = self::CLEAN_STRICT, array $fields = []): void {
 		$la_fields = $fields ?: static::getDefaultFields($entity);
@@ -121,11 +120,10 @@ class HtmlCleaner {
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param string $field
 	 * @return void
-	 * @throws \DOMException
 	 */
 	protected static function cleanModerate(EntityInterface $entity, string $field): void {
 		$ls_value = $entity->get($field);
-		$lo_dom = static::getDomDocument($ls_value);
+		$lo_dom = static::getDom($ls_value);
 
 		// Convert all leading and trailing `<br>`-tags to `<p>`-tags
 		static::convertLeadingAndTrailingBrTags($lo_dom);
@@ -153,11 +151,10 @@ class HtmlCleaner {
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param string $field
 	 * @return void
-	 * @throws \DOMException
 	 */
 	protected static function cleanStrict(EntityInterface $entity, string $field): void {
 		$ls_value = $entity->get($field);
-		$lo_dom = static::getDomDocument($ls_value);
+		$lo_dom = static::getDom($ls_value);
 
 		// Convert all leading and trailing `<br>`-tags to `<p>`-tags
 		static::convertLeadingAndTrailingBrTags($lo_dom);
@@ -192,43 +189,33 @@ class HtmlCleaner {
 
 
 	/**
-	 * Creates a DOMDocument from the given HTML string
+	 * Creates a \Dom\HTMLDocument from the given HTML string
 	 *
 	 * @param string $value
-	 * @return \DOMDocument
+	 * @return \Dom\HTMLDocument
 	 */
-	protected static function getDomDocument(string $value): DOMDocument {
-		$lo_dom = new DOMDocument('1.0', 'UTF-8');
-
-		// Suppress errors due to malformed HTML
-		libxml_use_internal_errors(true);
-
-		// Load the HTML string into the DOMDocument
-		$lo_dom->loadHTML('<!DOCTYPE html>' . mb_encode_numericentity($value, [0x80, 0x10FFFF, 0, ~0], 'UTF-8'));
-
-		// Clear any errors collected during loadHTML
-		libxml_clear_errors();
-
-		return $lo_dom;
+	protected static function getDom(string $value): HTMLDocument {
+		// Load the HTML string into the \Dom\HTMLDocument
+		return HTMLDocument::createFromString($value, LIBXML_NOERROR, 'UTF-8');
 	}
 
 
 	/**
 	 * Cleans up all tags that have nothing inside but whitespaces, `<br>`-tags` or,
 	 * non-breaking spaces as either `&nbsp;` or `\xC2\xA0`
-	 *
 	 * and replaces the content with a non-breaking space
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function cleanEmptyTags(DOMDocument $dom): void {
+	protected static function cleanEmptyTags(HtmlDocument $dom): void {
 		// Get all tags inside the `<body>`-tag
 		$lo_body = $dom->getElementsByTagName('body')->item(0);
 		$lo_tags = $lo_body->getElementsByTagName('*');
 
+		/** @var \Dom\Node $lo_tag */
 		foreach ($lo_tags as $lo_tag) {
-			if (in_array($lo_tag->nodeName, ['br', 'hr', 'img'])) {
+			if (in_array($lo_tag->nodeName, ['BR', 'HR', 'IMG'])) {
 				continue;
 			}
 
@@ -241,7 +228,7 @@ class HtmlCleaner {
 
 			// Check if the content of the tag is empty or only contains whitespaces or non-breaking spaces
 			if (preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $ls_content)) {
-				if (in_array($lo_tag->nodeName, ['ul', 'ol', 'dl'])) {
+				if (in_array($lo_tag->nodeName, ['UL', 'OL', 'DL'])) {
 					if ($lo_tag->nextSibling && $lo_tag->nextSibling->nodeName === '#text') {
 						$lo_tag->parentNode->removeChild($lo_tag->nextSibling);
 					}
@@ -251,7 +238,12 @@ class HtmlCleaner {
 					continue;
 				}
 
-				$lo_tag->nodeValue = '&nbsp;';
+				while ($lo_tag->firstChild) {
+					$lo_tag->removeChild($lo_tag->firstChild);
+				}
+
+				// Add a non-breaking space to the tag
+				$lo_tag->textContent = "\xC2\xA0";
 			}
 		}
 	}
@@ -259,12 +251,12 @@ class HtmlCleaner {
 
 	/**
 	 * Converts multiple consecutive `<br>`-tags to a single `<br>`-tag
-	 * in all text nodes of the given DOMDocument
+	 * in all text nodes of the given \Dom\HTMLDocument
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 */
-	protected static function combineConsecutiveBrTags(DOMDocument $dom): void {
-		$lo_brTags = $dom->getElementsByTagName('br');
+	protected static function combineConsecutiveBrTags(HtmlDocument $dom): void {
+		$lo_brTags = $dom->querySelectorAll('br');
 
 		$li_brTags = $lo_brTags->length;
 
@@ -277,7 +269,7 @@ class HtmlCleaner {
 
 			// Check if the next sibling is a <br>-tag
 			if ($lo_brTag->nextSibling) {
-				if ($lo_brTag->nextSibling->nodeName === 'br') {
+				if ($lo_brTag->nextSibling->nodeName === 'BR') {
 					$lo_brTag->parentNode->removeChild($lo_brTag->nextSibling);
 					$li_i--;
 					$li_brTags--;
@@ -302,7 +294,7 @@ class HtmlCleaner {
 			}
 
 			// Remove the next sibling if it is a <br>-tag to avoid multiple consecutive <br>-tags
-			if ($lo_brTag->nextSibling->nodeName === 'br') {
+			if ($lo_brTag->nextSibling->nodeName === 'BR') {
 				$lo_brTag->parentNode->removeChild($lo_brTag->nextSibling);
 				$li_i--;
 				$li_brTags--;
@@ -314,13 +306,14 @@ class HtmlCleaner {
 	/**
 	 * Combines consecutive empty `<p>`-tags
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function combineConsecutiveEmptyPTags(DOMDocument $dom): void {
-		$lo_pTags = $dom->getElementsByTagName('p');
+	protected static function combineConsecutiveEmptyPTags(HtmlDocument $dom): void {
+		$lo_pTags = $dom->querySelectorAll('p');
 
 		$li_pTags = $lo_pTags->length;
+		$la_removeIndices = [];
 
 		for ($li_i = 0; $li_i < $li_pTags; $li_i++) {
 			$lo_pTag = $lo_pTags->item($li_i);
@@ -335,7 +328,7 @@ class HtmlCleaner {
 
 			// If the current node has any non-textnode children, skip it
 			if ($lo_pTag->hasChildNodes()) {
-				/** @var \DOMNode $lo_childNode */
+				/** @var \Dom\Node $lo_childNode */
 				foreach ($lo_pTag->childNodes as $lo_childNode) {
 					if ($lo_childNode->nodeName !== '#text' && $lo_childNode->nodeType !== XML_ENTITY_REF_NODE) {
 						continue 2;
@@ -353,8 +346,7 @@ class HtmlCleaner {
 				$lo_nextSibling = $lo_nextSibling->nextSibling;
 			}
 
-
-			if (!$lo_nextSibling || $lo_nextSibling->nodeName !== 'p') {
+			if (!$lo_nextSibling || $lo_nextSibling->nodeName !== 'P') {
 				continue;
 			}
 
@@ -375,27 +367,33 @@ class HtmlCleaner {
 					$lo_pTag->parentNode->removeChild($lo_pTag->nextSibling);
 				}
 
-				$lo_pTag->parentNode->removeChild($lo_nextSibling);
-				$li_i--;
-				$li_pTags--;
+				$la_removeIndices[] = $li_i + 1;
 			}
+		}
+
+		// Remove the empty <p>-tags in reverse order to avoid index issues
+		rsort($la_removeIndices);
+		foreach ($la_removeIndices as $li_index) {
+			$lo_pTag = $lo_pTags->item($li_index);
+
+			$lo_pTag->parentNode?->removeChild($lo_pTag);
 		}
 	}
 
 
 	/**
 	 * Combines consecutive whitespaces (including non-breaking spaces)
-	 * in all text nodes of the given DOMDocument
+	 * in all text nodes of the given \Dom\HTMLDocument
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function combineConsecutiveWhitespace(DOMDocument $dom): void {
-		$lo_path = new DOMXPath($dom);
+	protected static function combineConsecutiveWhitespace(HtmlDocument $dom): void {
+		$lo_path = new XPath($dom);
 		$lo_textNodes = $lo_path->query('//text()');
 
 		foreach ($lo_textNodes as $lo_textNode) {
-			if (in_array($lo_textNode->parentNode->nodeName, ['pre', 'code', 'script', 'style', 'textarea', 'body', 'ul', 'ol', 'dl'])) {
+			if (in_array($lo_textNode->parentNode->nodeName, ['PRE', 'CODE', 'SCRIPT', 'STYLE', 'TEXTAREA', 'BODY', 'UL', 'OL', 'DL'])) {
 				continue;
 			}
 
@@ -417,21 +415,22 @@ class HtmlCleaner {
 	/**
 	 * Converts all leading and trailing `<br>`-tags inside `<p>`-tags to `<p>`-tags
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return void
-	 * @throws \DOMException
 	 */
-	protected static function convertLeadingAndTrailingBrTags(DOMDocument $dom): void {
-		$lo_pTags = $dom->getElementsByTagName('p');
+	protected static function convertLeadingAndTrailingBrTags(HtmlDocument $dom): void {
+		$lo_pTags = $dom->querySelectorAll('p');
 
-		/** @var \DOMNode $lo_pTag */
+		/** @var \Dom\Node $lo_pTag */
 		foreach ($lo_pTags as $lo_pTag) {
 			// As long as the first child of the <p>-tag is a <br>-tag, remove it and prepend a <p>-tag
-			while ($lo_pTag->firstChild && $lo_pTag->firstChild->nodeName === 'br') {
+			while ($lo_pTag->firstChild && $lo_pTag->firstChild->nodeName === 'BR') {
 				$lo_brTag = $lo_pTag->firstChild;
 				$lo_pTag->removeChild($lo_brTag);
 
-				$lo_newPTag = $dom->createElement('p', '&nbsp;');
+				$lo_newPTag = $dom->createElement('p');
+				$lo_newPTag->textContent = "\xC2\xA0";
+
 				$lo_pTag->parentNode->insertBefore($lo_newPTag, $lo_pTag);
 
 				// Create a new newline text node
@@ -441,11 +440,13 @@ class HtmlCleaner {
 			}
 
 			// As long as the last child of the <p>-tag is a <br>-tag, remove it and append a <p>-tag
-			while ($lo_pTag->lastChild && $lo_pTag->lastChild->nodeName === 'br') {
+			while ($lo_pTag->lastChild && $lo_pTag->lastChild->nodeName === 'BR') {
 				$lo_brTag = $lo_pTag->lastChild;
 				$lo_pTag->removeChild($lo_brTag);
 
-				$lo_newPTag = $dom->createElement('p', '&nbsp;');
+				$lo_newPTag = $dom->createElement('p');
+				$lo_newPTag->textContent = "\xC2\xA0";
+
 				if ($lo_pTag->nextSibling === null) {
 					// Create a new \n text node
 					$lo_newTextNode = $dom->createTextNode("\n");
@@ -472,11 +473,11 @@ class HtmlCleaner {
 	/**
 	 * Removes leading and trailing `<br>`-tags inside any tag
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function removeLeadingAndTrailingBrTags(DOMDocument $dom): void {
-		$lo_brTags = $dom->getElementsByTagName('br');
+	protected static function removeLeadingAndTrailingBrTags(HtmlDocument $dom): void {
+		$lo_brTags = $dom->querySelectorAll('br');
 
 		foreach ($lo_brTags as $lo_brTag) {
 			// Check if the <br> tag is the first child of its parent
@@ -490,7 +491,7 @@ class HtmlCleaner {
 		 * It's necessary to get the <br> tags again, because the NodeList is updated after removing a child,
 		 * and it's necessary to remove the last <br> tag multiple times, if there are multiple <br> tags at the end
 		 */
-		$lo_brTags = $dom->getElementsByTagName('br');
+		$lo_brTags = $dom->querySelectorAll('br');
 
 		for ($li_i = $lo_brTags->length - 1; $li_i >= 0; $li_i--) {
 			$lo_brTag = $lo_brTags->item($li_i);
@@ -517,13 +518,13 @@ class HtmlCleaner {
 
 
 	/**
-	 * Removes leading and trailing empty tags from the given DOMDocument
+	 * Removes leading and trailing empty tags from the given \Dom\HTMLDocument
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function removeLeadingAndTrailingEmptyTags(DOMDocument $dom): void {
-		$lo_body = $dom->getElementsByTagName('body')->item(0);
+	protected static function removeLeadingAndTrailingEmptyTags(HtmlDocument $dom): void {
+		$lo_body = $dom->querySelector('body');
 
 		while ($lo_body->firstChild) {
 			if (!preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_body->firstChild->textContent)) {
@@ -531,12 +532,12 @@ class HtmlCleaner {
 			}
 
 			// If the first tag is a hr, break
-			if ($lo_body->firstChild->nodeName === 'hr') {
+			if ($lo_body->firstChild->nodeName === 'HR') {
 				break;
 			}
 
 			// If the first child has a link or an img tag inside
-			if (in_array($lo_body->firstChild->firstChild?->nodeName, ['a', 'awyiss-responsive-image', 'img', 'module'])) {
+			if (in_array($lo_body->firstChild->firstChild?->nodeName, ['A', 'AWYISS-RESPONSIVE-IMAGE', 'IMG', 'MODULE'])) {
 				break;
 			}
 
@@ -549,12 +550,12 @@ class HtmlCleaner {
 			}
 
 			// If the last tag is a hr, break
-			if ($lo_body->lastChild->nodeName === 'hr') {
+			if ($lo_body->lastChild->nodeName === 'HR') {
 				break;
 			}
 
 			// If the last child has a link or an img tag inside
-			if (in_array($lo_body->lastChild->lastChild?->nodeName, ['a', 'awyiss-responsive-image', 'img', 'module'])) {
+			if (in_array($lo_body->lastChild->lastChild?->nodeName, ['A', 'AWYISS-RESPONSIVE-IMAGE', 'IMG', 'MODULE'])) {
 				break;
 			}
 
@@ -565,15 +566,15 @@ class HtmlCleaner {
 
 	/**
 	 * Removes leading and trailing whitespaces (including non-breaking spaces)
-	 * from each `<p>`- and `<li>`-tag of the given DOMDocument
+	 * from each `<p>`- and `<li>`-tag of the given \Dom\HTMLDocument
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function removeLeadingAndTrailingWhitespace(DOMDocument $dom): void {
+	protected static function removeLeadingAndTrailingWhitespace(HtmlDocument $dom): void {
 		// Get all `<p>`- and `<li>`-tags
-		$lo_pTags = $dom->getElementsByTagName('p');
-		$lo_liTags = $dom->getElementsByTagName('li');
+		$lo_pTags = $dom->querySelectorAll('p');
+		$lo_liTags = $dom->querySelectorAll('li');
 
 		$lo_tags = array_merge(iterator_to_array($lo_pTags), iterator_to_array($lo_liTags));
 
@@ -591,13 +592,13 @@ class HtmlCleaner {
 
 					if ($lo_tag->lastChild->isSameNode($lo_tag->firstChild)) {
 						// Create a new text node with a non-breaking space
-						$lo_tag->appendChild($dom->createTextNode("\u{A0}"));
+						$lo_tag->textContent = "\xC2\xA0";
 						break;
 					}
 
 					$lo_tag->removeChild($lo_tag->firstChild);
 				}
-				elseif ($lo_tag->firstChild->nodeName === 'br') {
+				elseif ($lo_tag->firstChild->nodeName === 'BR') {
 					$lo_tag->removeChild($lo_tag->firstChild);
 				}
 				else {
@@ -618,7 +619,7 @@ class HtmlCleaner {
 
 					if ($lo_tag->firstChild->isSameNode($lo_tag->lastChild)) {
 						// Create a new text node with a non-breaking space
-						$lo_tag->appendChild($dom->createTextNode("\u{A0}"));
+						$lo_tag->textContent = "\xC2\xA0";
 						break;
 					}
 
@@ -634,13 +635,13 @@ class HtmlCleaner {
 
 	/**
 	 * Replaces `&nbsp;` after a dot, comma, question mark, or exclamation mark with a regular space
-	 * in all text nodes of the given DOMDocument
+	 * in all text nodes of the given \Dom\HTMLDocument
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return void
 	 */
-	protected static function replaceNbspAfterPunctuation(DOMDocument $dom): void {
-		$lo_path = new DOMXPath($dom);
+	protected static function replaceNbspAfterPunctuation(HtmlDocument $dom): void {
+		$lo_path = new XPath($dom);
 		$lo_textNodes = $lo_path->query('//text()');
 
 		foreach ($lo_textNodes as $lo_textNode) {
@@ -652,35 +653,24 @@ class HtmlCleaner {
 
 
 	/**
-	 * Returns the contents of `<body>`-tag of the given DOMDocument as a string
+	 * Returns the contents of `<body>`-tag of the given \Dom\HTMLDocument as a string
 	 *
-	 * @param \DOMDocument $dom
+	 * @param \Dom\HTMLDocument $dom
 	 * @return string|false
-	 * @noinspection DuplicatedCode
 	 */
-	protected static function getBody(DOMDocument $dom): string|false {
-		// Remove the doctype
-		$dom->removeChild($dom->doctype);
-
-		// Remove the opening and closing `<html>`-tags
-		$dom->replaceChild($dom->firstChild->firstChild, $dom->firstChild);
+	protected static function getBody(HtmlDocument $dom): string|false {
+		$ls_html = '';
 
 		// Remove the opening and closing `<body>`-tags
-		$lo_body = $dom->getElementsByTagName('body')->item(0);
-
-		if (!$lo_body) {
-			// Return the cleaned HTML
-			return $dom->saveHTML();
-		}
+		$lo_body = $dom->querySelector('body');
 
 		while ($lo_body->firstChild) {
-			$dom->appendChild($lo_body->firstChild);
+			$ls_html .= $dom->saveHTML($lo_body->firstChild);
+			$lo_body->removeChild($lo_body->firstChild);
 		}
 
-		$dom->removeChild($lo_body);
-
 		// Return the cleaned HTML
-		return $dom->saveHTML();
+		return $ls_html;
 	}
 
 

@@ -17,8 +17,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\View;
-use DOMDocument;
-use DOMXPath;
+use Dom\HTMLDocument;
 
 
 /**
@@ -185,14 +184,11 @@ trait FrontendRenderingTrait {
 
 		$lo_dom = $this->getDom($entity->get($field));
 
-		// Create an XPath instance
-		$lo_xpath = new DOMXPath($lo_dom);
-
 		// Find all <module> tags
-		$lo_moduleTags = $lo_xpath->query('//module');
+		$lo_moduleTags = $lo_dom->querySelectorAll('module');
 
 		// Iterate over the <module> tags
-		/** @var \DOMElement $lo_moduleTag */
+		/** @var \Dom\HTMLElement $lo_moduleTag */
 		foreach ($lo_moduleTags as $lo_moduleTag) {
 			// Get the value of the data-identifier attribute
 			$ls_identifier = Inflector::variable($lo_moduleTag->getAttribute('data-identifier'));
@@ -210,17 +206,25 @@ trait FrontendRenderingTrait {
 			/** @noinspection PhpParamsInspection */
 			$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->getView(), $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
 
-			// Re-encode the html entities. Otherwise, calling `saveHTML()`
-			// would include unencoded html entities like `ü` instead of `&uuml;`.
-			$lo_moduleTag->nodeValue = htmlentities($lo_moduleTag->textContent ?? '', ENT_NOQUOTES, 'UTF-8', false);
+			// Replace the <module> tag with the rendered output
+			if (!empty($ls_moduleOutput)) {
+				$lo_newNode = $this->getDom($ls_moduleOutput);
+				// Remove the opening and closing `<body>`-tags
+				$lo_body = $lo_newNode->querySelector('body');
 
-			if ($ls_moduleOutput) {
-				$entity->set($field, str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), $ls_moduleOutput, $entity->get($field)));
+				$la_nodes = [];
+				foreach ($lo_body->childNodes as $lo_childNode) {
+					$la_nodes[] = $lo_dom->importNode($lo_childNode, true);
+				}
+
+				$lo_moduleTag->replaceWith(...$la_nodes);
 			}
 			else {
-				$entity->set($field, str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), '', $entity->get($field)));
+				$lo_moduleTag->remove();
 			}
 		}
+
+		$entity->set($field, $this->getBody($lo_dom));
 	}
 
 
@@ -247,21 +251,31 @@ trait FrontendRenderingTrait {
 
 	/**
 	 * @param string|null $text
-	 * @return \DOMDocument
+	 * @return \Dom\HTMLDocument
 	 */
-	protected function getDom(?string $text): DOMDocument {
-		// Create a new DOMDocument instance
-		$lo_dom = new DOMDocument('1.0', 'UTF-8');
+	protected function getDom(?string $text): HTMLDocument {
+		return HTMLDocument::createFromString($text, LIBXML_NOERROR, 'UTF-8');
+	}
 
-		// Suppress errors due to malformed HTML
-		libxml_use_internal_errors(true);
 
-		// Load the HTML string into the DOMDocument
-		$lo_dom->loadHTML('<!DOCTYPE html>' . mb_encode_numericentity($text, [0x80, 0x10FFFF, 0, ~0], 'UTF-8'));
+	/**
+	 * Returns the contents of `<body>`-tag of the given \Dom\HTMLDocument as a string
+	 *
+	 * @param \Dom\HTMLDocument $dom
+	 * @return string|false
+	 */
+	protected function getBody(HTMLDocument $dom): string|false {
+		$ls_html = '';
 
-		// Clear any errors collected during loadHTML
-		libxml_clear_errors();
+		// Remove the opening and closing `<body>`-tags
+		$lo_body = $dom->querySelector('body');
 
-		return $lo_dom;
+		while ($lo_body->firstChild) {
+			$ls_html .= $dom->saveHTML($lo_body->firstChild);
+			$lo_body->removeChild($lo_body->firstChild);
+		}
+
+		// Return the cleaned HTML
+		return $ls_html;
 	}
 }

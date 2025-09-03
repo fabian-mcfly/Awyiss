@@ -38,6 +38,7 @@ class MediaHelper extends Helper {
 	protected string $lazyLoadClass = 'Lazyload';
 	/**
 	 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @noinspection PhpGetterAndSetterCanBeReplacedWithPropertyHooksInspection
 	 */
 	protected MediaRenderOptions $mediaRenderOptions;
 	/**
@@ -709,7 +710,6 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param array $fields
 	 * @return void
-	 * @throws \DOMException
 	 */
 	public function rebuildSimpleImageTags(Entity $entity, array $fields = []): void {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
@@ -728,7 +728,6 @@ class MediaHelper extends Helper {
 	 * @param string $field
 	 * @param string|null $value
 	 * @return string|null
-	 * @throws \DOMException
 	 */
 	public function rebuildSimpleImageTagsInField(Entity $entity, string $field, ?string $value = null): ?string {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
@@ -747,7 +746,6 @@ class MediaHelper extends Helper {
 	 * @param array $media
 	 * @param bool $absolutePath
 	 * @return string|null
-	 * @throws \DOMException
 	 */
 	public function rebuildSimpleImageTagsInText(?string $value, array $media, bool $absolutePath = false): ?string {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */

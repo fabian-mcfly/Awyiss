@@ -230,7 +230,6 @@ class FormHelper extends BaseFormHelper {
 	 * @param string $fieldName
 	 * @param array $options
 	 * @return string
-	 * @throws \DOMException
 	 */
 	public function textarea(string $fieldName, array $options = []): string {
 		if (

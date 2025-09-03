@@ -79,11 +79,11 @@ class Table extends BaseTable {
 	 *
 	 * @var bool
 	 */
-	public const ATTRIBUTABLE = true;
+	public const bool ATTRIBUTABLE = true;
 	/**
 	 * @inheritDoc
 	 */
-	public const RULES_CLASS = RulesChecker::class;
+	public const string RULES_CLASS = RulesChecker::class;
 	/**
 	 * Name of the database table. Used in static::initialize() ($this->setTable(static::TABLE)) and in
 	 * \Awyiss\Model\Table\AttributesTable::getAvailableScopes()
@@ -91,7 +91,7 @@ class Table extends BaseTable {
 	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableScopes();
 	 * @var string
 	 */
-	public const TABLE = '';
+	public const string TABLE = '';
 
 
 	/**
@@ -1118,7 +1118,6 @@ class Table extends BaseTable {
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
 	 * @return void
-	 * @throws \DOMException
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeRules(Event $event, Entity $entity, ArrayObject $options): void {
@@ -1154,7 +1153,6 @@ class Table extends BaseTable {
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
-	 * @throws \DOMException
 	 */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options): void {
 		// Do not clean HTML if this is not the primary entity
