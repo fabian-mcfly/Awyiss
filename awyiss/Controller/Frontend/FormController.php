@@ -12,6 +12,7 @@ use Awyiss\View\FrontendView;
 use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Event\EventManagerInterface;
+use Cake\Http\Client;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -246,42 +247,14 @@ class FormController extends AppController {
 	 * @return string
 	 */
 	protected function buildCaptcha(string $identifier, string $languageShortcode): string {
-		$la_params = ['number' => 6];
+		$la_words = $this->getRandomWikipediaWords($languageShortcode);
 
-		if (in_array($languageShortcode, ['de', 'it', 'fr', 'es'])) {
-			$la_params['lang'] = $languageShortcode;
-		}
-
-		// Fetch random words from https://random-word-api.herokuapp.com/word
-		$lo_curlHandle = curl_init();
-		curl_setopt($lo_curlHandle, CURLOPT_HTTPHEADER, ['Accept: application/json']);
-		curl_setopt($lo_curlHandle, CURLOPT_URL, 'https://random-word-api.herokuapp.com/word?' . http_build_query($la_params));
-		curl_setopt($lo_curlHandle, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($lo_curlHandle, CURLOPT_CONNECTTIMEOUT, 10);
-		curl_setopt($lo_curlHandle, CURLOPT_TIMEOUT, 10);
-		$lx_result = curl_exec($lo_curlHandle);
-		curl_close($lo_curlHandle);
-
-		$lb_error = false;
-		if (!$lx_result) {
-			$lb_error = true;
-		}
-		else {
-			$la_words = json_decode($lx_result, true);
-
-			if (!$la_words) {
-				$lb_error = true;
-			}
-		}
-
-		if ($lb_error) {
+		if (!$la_words || count($la_words) < 6) {
 			// Generate 6 random words
 			$la_words = $this->generateRandomWords(6);
 		}
 
-
 		$lo_session = $this->getRequest()->getSession();
-		/** @noinspection PhpUndefinedVariableInspection */
 		$lo_session->write('awyiss_captcha.' . $identifier . '.words', $la_words);
 
 		$ls_ipAddress = $this->getRequest()->clientIp();
@@ -290,7 +263,7 @@ class FormController extends AppController {
 
 		$lo_session->write('awyiss_captcha.' . $identifier . '.word', $li_randomWord);
 
-		$ls_fieldName = md5(json_encode($lx_result));
+		$ls_fieldName = md5(json_encode($la_words));
 		$lo_session->write('awyiss_captcha.' . $identifier . '.fieldName', $ls_fieldName);
 
 		return $this->View->element('form/form_captcha', [
@@ -421,5 +394,72 @@ class FormController extends AppController {
 		}
 
 		return $ls_string;
+	}
+
+
+	/**
+	 * @param string $html
+	 * @param int $limit
+	 * @param int $minLength
+	 * @return array
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	protected function extractWordsFromText(string $html, int $limit, int $minLength = 6): array {
+		// Remove all style tags
+		$ls_html = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $html);
+		$ls_html = html_entity_decode(strip_tags($ls_html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+		$la_words = preg_split('/\s+/', $ls_html);
+
+		// Filter out all words that are too short or have non-alphabetic characters
+		$la_words = array_filter($la_words, function (string $word) use ($minLength): bool {
+			return strlen($word) >= $minLength && ctype_alpha($word);
+		});
+
+		// Remove duplicates
+		$la_words = array_unique($la_words);
+
+		// Shuffle the words to get a random selection
+		shuffle($la_words);
+
+		// Limit the number of words to the specified limit
+		return array_slice($la_words, 0, $limit);
+	}
+
+
+	/**
+	 * @param string $languageShortcode
+	 * @return array
+	 */
+	protected function getRandomWikipediaWords(string $languageShortcode): array {
+		$lo_client = new Client([
+			'timeout' => 30,
+			'http_errors' => false,
+		]);
+
+		$lo_randomResponse = $lo_client->get('https://' . $languageShortcode . '.wikipedia.org/w/api.php', [
+			'action' => 'query',
+			'list' => 'random',
+			'rnnamespace' => 0,
+			'format' => 'json',
+		]);
+		$la_randomData = $lo_randomResponse->getJson();
+
+		$ls_title = $la_randomData['query']['random'][0]['title'] ?? null;
+
+		if (!$ls_title) {
+			return [];
+		}
+
+		// Step 2: Get the article content
+		$lo_articleResponse = $lo_client->get('https://' . $languageShortcode . '.wikipedia.org/w/api.php', [
+			'action' => 'parse',
+			'page' => $ls_title,
+			'format' => 'json',
+			'prop' => 'text',
+		]);
+		$la_parseData = $lo_articleResponse->getJson();
+
+		return $this->extractWordsFromText($la_parseData['parse']['text']['*'] ?? '', 6);
 	}
 }
