@@ -7,6 +7,7 @@ namespace Awyiss\Model\Behavior;
 use Awyiss\Attribute\AttributeOptionsProvider;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Behavior\Search\FilterColumnSettings;
 use Awyiss\Model\Enum\ComparisonOperator;
 use Awyiss\ORM\Behavior;
 use Awyiss\Routing\Router;
@@ -74,41 +75,41 @@ class SearchBehavior extends Behavior {
 	 * Get columns that should be included in the filter form.
 	 *
 	 * @param array $blocklistedColumns
-	 * @return array<string, {disabledOperators: ?array, nullable: bool, maxLength: ?int, order: int, operator: string, type: string, value: mixed, values: ?array}>
+	 * @return array<string, \Awyiss\Model\Behavior\Search\FilterColumnSettings>
 	 */
 	public function getFilterColumns(array $blocklistedColumns = []): array {
-		if ($this->getConfig('columns')) {
-			return $this->getConfig('columns');
-		}
-
 		$lo_schema = $this->table()->getSchema();
 
 		$la_blocklistedColumns = array_merge($blocklistedColumns, $this->getConfig('blocklistedColumns', []), ['deleted', 'deleted_on', 'deleted_by']);
+
+		if ($this->getConfig('columns')) {
+			$la_columns = $this->getConfig('columns');
+
+			$la_columns = array_diff_key($la_columns, array_flip($la_blocklistedColumns));
+
+			return $la_columns;
+		}
 
 		$la_selectedOperators = $this->getConfig('operators');
 		$la_selectedValues = $this->getConfig('values');
 
 		$la_columns = [];
 		foreach ($lo_schema->columns() as $ls_column) {
-			if (in_array($ls_column, $la_blocklistedColumns)) {
-				continue;
-			}
-
 			$la_column = $lo_schema->getColumn($ls_column);
 			$ls_type = $this->table()->normalizeColumnType($la_column['type']);
 			$la_values = $this->table()->getPossibleFieldValues($ls_column, $la_column['type']);
 
 			$la_disabledOperators = $this->disabledOperators($ls_type);
 
-			$la_columns[ $ls_column ] = [
-				'disabledOperators' => $la_disabledOperators,
-				'nullable' => $la_column['null'],
-				'maxLength' => $la_column['length'],
-				'operator' => $la_selectedOperators[ $ls_column ] ?? null,
-				'type' => $ls_type,
-				'value' => $la_selectedValues[ $ls_column ] ?? null,
-				'values' => $la_values,
-			];
+			$la_columns[$ls_column] = new FilterColumnSettings(
+				disabledOperators: $la_disabledOperators,
+				nullable: $la_column['null'],
+				maxLength: $la_column['length'],
+				operator: $la_selectedOperators[ $ls_column ] ?? null,
+				type: $ls_type,
+				value: $la_selectedValues[ $ls_column ] ?? null,
+				values: $la_values,
+			);
 		}
 
 		if ($this->table()->hasAttributes()) {
@@ -125,20 +126,22 @@ class SearchBehavior extends Behavior {
 
 				$la_disabledOperators = $this->disabledOperators($ls_type);
 
-				$la_columns['attributes__' . $lo_attribute->identifier ] = [
-					'disabledOperators' => $la_disabledOperators,
-					'nullable' => $la_column['null'],
-					'maxLength' => $la_column['length'],
-					'operator' => $la_selectedOperators['attributes__' . $lo_attribute->identifier ] ?? null,
-					'title' => $lo_attribute->title,
-					'type' => $ls_type,
-					'value' => $la_selectedValues['attributes__' . $lo_attribute->identifier ] ?? null,
-					'values' => $la_values,
-				];
+				$la_columns['attributes__' . $lo_attribute->identifier] = new FilterColumnSettings(
+					disabledOperators: $la_disabledOperators,
+					nullable: $la_column['null'],
+					maxLength: $la_column['length'],
+					operator: $la_selectedOperators['attributes__' . $lo_attribute->identifier ] ?? null,
+					title: $lo_attribute->title,
+					type: $ls_type,
+					value: $la_selectedValues['attributes__' . $lo_attribute->identifier ] ?? null,
+					values: $la_values,
+				);
 			}
 		}
 
 		$this->setConfig('columns', $la_columns);
+
+		$la_columns = array_diff_key($la_columns, array_flip($la_blocklistedColumns));
 
 		return $la_columns;
 	}
@@ -264,12 +267,12 @@ class SearchBehavior extends Behavior {
 			return $query;
 		}
 
-		foreach ($this->getFilterColumns() as $ls_column => $la_columnSettings) {
-			if ($la_columnSettings['operator'] === null) {
+		foreach ($this->getFilterColumns() as $ls_column => $lo_columnSettings) {
+			if ($lo_columnSettings->operator === null) {
 				continue;
 			}
 
-			$this->addFilterCondition($query, $ls_column, $la_columnSettings);
+			$this->addFilterCondition($query, $ls_column, $lo_columnSettings);
 		}
 
 		return $query;
@@ -279,16 +282,16 @@ class SearchBehavior extends Behavior {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $column
-	 * @param array $columnSettings
+	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addFilterCondition(SelectQuery $query, string $column, array $columnSettings): SelectQuery {
-		$ls_operator = $columnSettings['operator'] ?? '=';
-		if (in_array($ls_operator, $columnSettings['disabledOperators'] ?? [])) {
+	protected function addFilterCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings): SelectQuery {
+		$ls_operator = $columnSettings->operator ?? '=';
+		if (is_array($columnSettings->disabledOperators) && in_array($ls_operator, $columnSettings->disabledOperators)) {
 			return $query;
 		}
 
-		if ($columnSettings['type'] === 'boolean' && $columnSettings['value'] === null) {
+		if ($columnSettings->type === 'boolean' && $columnSettings->value === null) {
 			return $query;
 		}
 
@@ -331,12 +334,12 @@ class SearchBehavior extends Behavior {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $column
-	 * @param array $columnSettings
+	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addEqualsCondition(SelectQuery $query, string $column, array $columnSettings, bool $not = false): SelectQuery {
-		$lx_value = $this->normalizeValue($columnSettings['value'], $columnSettings);
+	protected function addEqualsCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
+		$lx_value = $this->normalizeValue($columnSettings->value, $columnSettings);
 
 		if ($lx_value === null) {
 			$ls_operator = $not ? ' IS NOT' : ' IS';
@@ -369,13 +372,13 @@ class SearchBehavior extends Behavior {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $column
-	 * @param array $columnSettings
+	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @param bool $orEqual
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addGreaterThanCondition(SelectQuery $query, string $column, array $columnSettings, bool $orEqual = false, bool $not = false): SelectQuery {
-		$lx_value = $this->normalizeValue($columnSettings['value'], $columnSettings);
+	protected function addGreaterThanCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $orEqual = false, bool $not = false): SelectQuery {
+		$lx_value = $this->normalizeValue($columnSettings->value, $columnSettings);
 
 		if ($lx_value === null) {
 			return $query;
@@ -410,12 +413,12 @@ class SearchBehavior extends Behavior {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $column
-	 * @param array $columnSettings
+	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addBetweenCondition(SelectQuery $query, string $column, array $columnSettings, bool $not = false): SelectQuery {
-		$la_values = $columnSettings['value'] ?? [];
+	protected function addBetweenCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
+		$la_values = $columnSettings->value ?? [];
 
 		if (!is_array($la_values)) {
 			$la_values = explode(',', $la_values);
@@ -467,17 +470,17 @@ class SearchBehavior extends Behavior {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $column
-	 * @param array $columnSettings
+	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	protected function addLengthEqualToCondition(SelectQuery $query, string $column, array $columnSettings, bool $not = false): SelectQuery {
-		if ($columnSettings['value'] === null) {
+	protected function addLengthEqualToCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
+		if ($columnSettings->value === null) {
 			return $query;
 		}
 
-		$li_value = (int)$columnSettings['value'];
+		$li_value = (int)$columnSettings->value;
 
 		if (
 			$this->getConfig('handleNulls', true) === true &&
@@ -519,18 +522,18 @@ class SearchBehavior extends Behavior {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $column
-	 * @param array $columnSettings
+	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @param bool $orEqual
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	protected function addLongerThanCondition(SelectQuery $query, string $column, array $columnSettings, bool $orEqual = false, bool $not = false): SelectQuery {
-		if ($columnSettings['value'] === null) {
+	protected function addLongerThanCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $orEqual = false, bool $not = false): SelectQuery {
+		if ($columnSettings->value === null) {
 			return $query;
 		}
 
-		$li_value = (int)$columnSettings['value'];
+		$li_value = (int)$columnSettings->value;
 
 		$ls_operator = $not ? ' <' : ' >';
 		if ($orEqual) {
@@ -603,12 +606,12 @@ class SearchBehavior extends Behavior {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $column
-	 * @param array $columnSettings
+	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function addInCondition(SelectQuery $query, string $column, array $columnSettings, bool $not = false): SelectQuery {
-		$la_values = $columnSettings['value'] ?? [];
+	protected function addInCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
+		$la_values = $columnSettings->value ?? [];
 
 		if (!is_array($la_values)) {
 			$la_values = explode(',', $la_values);
@@ -663,14 +666,14 @@ class SearchBehavior extends Behavior {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string $column
-	 * @param array $columnSettings
+	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @param bool $not
 	 * @param string $wildcard
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	protected function addContainsCondition(SelectQuery $query, string $column, array $columnSettings, bool $not = false, string $wildcard = 'both'): SelectQuery {
-		$lx_value = $this->normalizeValue($columnSettings['value'], $columnSettings);
+	protected function addContainsCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false, string $wildcard = 'both'): SelectQuery {
+		$lx_value = $this->normalizeValue($columnSettings->value, $columnSettings);
 
 		$ls_wildcard = $wildcard;
 		if (!in_array($wildcard, ['both', 'start', 'end'])) {
@@ -801,13 +804,13 @@ class SearchBehavior extends Behavior {
 
 	/**
 	 * @param mixed $value
-	 * @param array $columnSettings
+	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @return mixed|string
 	 */
-	protected function normalizeValue(mixed $value, array $columnSettings): mixed {
+	protected function normalizeValue(mixed $value, FilterColumnSettings $columnSettings): mixed {
 		$lx_value = $value;
 
-		if (!$columnSettings['nullable'] && $lx_value === null) {
+		if (!$columnSettings->nullable && $lx_value === null) {
 			$lx_value = '';
 		}
 
@@ -815,19 +818,19 @@ class SearchBehavior extends Behavior {
 			return null;
 		}
 
-		if ($columnSettings['type'] === 'boolean') {
-			if ($columnSettings['nullable'] && empty($lx_value)) {
+		if ($columnSettings->type === 'boolean') {
+			if ($columnSettings->nullable && empty($lx_value)) {
 				return null;
 			}
 
 			return $lx_value !== '0';
 		}
 
-		if ($columnSettings['type'] === 'float') {
+		if ($columnSettings->type === 'float') {
 			return (float)str_replace(',', '.', (string)$lx_value);
 		}
 
-		if ($columnSettings['type'] === 'integer') {
+		if ($columnSettings->type === 'integer') {
 			return (int)$lx_value;
 		}
 

@@ -33,6 +33,7 @@
 
 		<form class="Columns" method="post" id="FilterForm-{{ scope|camelize }}">
 			{% for column, settings in _filter[ scope ]['columns'] %}
+				{# @var settings Awyiss\Model\Behavior\Search\FilterColumnSettings #}
 				<div class="Column Column-{{ column|camelize }}{% if column in _filter[ scope ]['selectedColumns'] %} Active{% endif %}" data-column="{{ column }}"
 					data-list-item-remove="{{ __d('search', 'filter_remove_column') }}">
 					{{ FormHelper.label(

@@ -68,7 +68,7 @@ class SearchComponent extends Component {
 
 
 	/**
-	 * @param string|null $tableName
+	 * @param string $tableName
 	 * @param array $blocklistedColumns
 	 * @return void
 	 */
@@ -104,12 +104,11 @@ class SearchComponent extends Component {
 		$this->handleSessionFilterSettings($la_filterSettings, $tableName);
 
 		// Set the selected columns to the default columns if they are not set
-		//$la_filterSettings[ $ls_name ]['selectedColumns'] ??= $this->getDefaultSelectedColumns($la_vars, $tableName);
 		$la_filterSettings[ $ls_name ]['selectedColumns'] ??= [];
 		$la_filterSettings[ $ls_name ]['active'] ??= false;
 
 		// Order the columns by the order in the selectedColumns array
-		$this->orderVars($la_vars, $la_filterSettings[ $ls_name ]['selectedColumns']);
+		$this->orderVars($la_vars);
 
 		// Set the vars in the array
 		$la_filterSettings[ $ls_name ]['columns'] = $la_vars;
@@ -143,31 +142,11 @@ class SearchComponent extends Component {
 
 	/**
 	 * @param array &$vars
-	 * @param array $selectedColumns
 	 * @return void
 	 */
-	protected function orderVars(array &$vars, array $selectedColumns): void {
-		// Set the order-property for each column, depending on the order in the selectedColumns array
-		$li_unselectedOrder = count($selectedColumns);
-		foreach ($vars as $ls_column => &$la_settings) {
-			if (!in_array($ls_column, $selectedColumns)) {
-				$la_settings['order'] = ++$li_unselectedOrder;
-				continue;
-			}
-
-			// Get the position of the column in the selectedColumns array
-			$li_order = array_search($ls_column, $selectedColumns);
-			$la_settings['order'] = $li_order + 1;
-		}
-		unset($la_settings);
-
-		// Sort the columns by their order
+	protected function orderVars(array &$vars): void {
 		/** @noinspection PhpVariableNamingConventionInspection */
-		//uasort($vars, static function ($a, $b) {
-		//	return $a['order'] <=> $b['order'];
-		//});
-
-		uksort($vars, function ($a, $b) {
+		uksort($vars, function (string $a, string $b): int {
 			// Always put 'active' first
 			if ($a === 'active') {
 				return -1;
