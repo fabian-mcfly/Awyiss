@@ -20,6 +20,7 @@ return [
 		'\\Cake\\Datasource\\Paging\\NumericPaginator::getQuery' => 'af25e79b2709702a0b6099851fd9c257',
 		'\\Cake\\Datasource\\Paging\\NumericPaginator::validateSort' => '2ba756971537fe2585ea0ecb71456857',
 		'\\Cake\\I18n\\MessagesFileLoader::__invoke' => 'ab8bb9bb6c666c25ddbd7d213af2df90',
+		'\\Cake\\I18n\\MessagesFileLoader::translationsFolders' => 'f21d853b86170c58ef5cb0d2f2f5a6a8',
 		'\\Cake\\Mailer\\Renderer::render' => '81e0742c2f0ee81a3c00d90a453a1bdc',
 		'\\Cake\\ORM\\AssociationCollection::saveParents' => 'e9de8cce2fc52a8ecedfcc91b0e9c833',
 		'\\Cake\\ORM\\Behavior\\TranslateBehavior::beforeMarshal' => 'fed13bdeccb8f795184a82cdc1d714f8',
