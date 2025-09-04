@@ -86,6 +86,15 @@ class FormConditionalRecipients {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
+		])->addColumn('deleted_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('deleted_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
 		])->addIndex(
 			[
 				'system_order',
