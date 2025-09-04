@@ -14,6 +14,7 @@ use Cake\I18n\DateTime;
 use Cake\I18n\Time;
 use InvalidArgumentException;
 use OutOfBoundsException;
+use Stringable;
 
 
 /**
@@ -141,7 +142,7 @@ class FormConditionalRecipients {
 	 * @param array $requestData
 	 * @return bool
 	 */
-	public function ruleMatches(FormConditionalRecipient $conditionalRecipient, array $requestData): bool {
+	protected function ruleMatches(FormConditionalRecipient $conditionalRecipient, array $requestData): bool {
 		try {
 			$lx_value = $this->getFieldValue($conditionalRecipient->type, $conditionalRecipient->field, $requestData);
 		}
@@ -185,7 +186,7 @@ class FormConditionalRecipients {
 	 * @param array $requestData
 	 * @return mixed
 	 */
-	public function getFieldValue(string $type, string $field, array $requestData): mixed {
+	protected function getFieldValue(string $type, string $field, array $requestData): mixed {
 		if ($type === 'element_identifier') {
 			if (!array_key_exists($field, $requestData)) {
 				throw new OutOfBoundsException('Field not found in request data');
@@ -251,7 +252,7 @@ class FormConditionalRecipients {
 	 * @param bool $not
 	 * @return bool
 	 */
-	public function compareEqualTo(mixed $value, mixed $compareValue, bool $not = false): bool {
+	protected function compareEqualTo(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (empty($value) && empty($compareValue)) {
 			return !$not;
 		}
@@ -289,12 +290,10 @@ class FormConditionalRecipients {
 	 * @param bool $not
 	 * @return bool
 	 */
-	public function compareGreaterThan(mixed $value, mixed $compareValue, bool $orEqual = false, bool $not = false): bool {
+	protected function compareGreaterThan(mixed $value, mixed $compareValue, bool $orEqual = false, bool $not = false): bool {
 		if (
-			(!is_numeric($value) || !is_numeric($compareValue)) &&
-			!($value instanceof Date) &&
-			!($value instanceof Time) &&
-			!($value instanceof DateTime)
+			!(is_numeric($value) || $this->isDateOrTime($value)) ||
+			!(is_numeric($compareValue) || $this->isDateOrTime($value))
 		) {
 			if (is_null($compareValue)) {
 				return !$not;
@@ -327,7 +326,7 @@ class FormConditionalRecipients {
 	 * @param bool $not
 	 * @return bool
 	 */
-	public function compareBetween(mixed $value, mixed $compareValue, bool $not = false): bool {
+	protected function compareBetween(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (
 			!is_array($compareValue) ||
 			count($compareValue) !== 2
@@ -341,18 +340,15 @@ class FormConditionalRecipients {
 		if (
 			array_filter(
 				$la_compareValues,
-				fn($value) => !is_numeric($value) && !($value instanceof Date) && !($value instanceof Time) && !($value instanceof DateTime)
+				function (mixed $value): bool {
+					return !(is_numeric($value) || $this->isDateOrTime($value));
+				}
 			)
 		) {
 			return false;
 		}
 
-		if (
-			!is_numeric($value) &&
-			!($value instanceof Date) &&
-			!($value instanceof Time) &&
-			!($value instanceof DateTime)
-		) {
+		if (!(is_numeric($value) || $this->isDateOrTime($value))) {
 			return false;
 		}
 
@@ -372,7 +368,7 @@ class FormConditionalRecipients {
 	 * @param bool $not
 	 * @return bool
 	 */
-	public function compareLengthEqualTo(mixed $value, mixed $compareValue, bool $not = false): bool {
+	protected function compareLengthEqualTo(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (!is_scalar($value) && !is_array($value)) {
 			return false;
 		}
@@ -397,7 +393,7 @@ class FormConditionalRecipients {
 	 * @param bool $not
 	 * @return bool
 	 */
-	public function compareLongerThan(mixed $value, mixed $compareValue, bool $orEqual = false, bool $not = false): bool {
+	protected function compareLongerThan(mixed $value, mixed $compareValue, bool $orEqual = false, bool $not = false): bool {
 		if (!is_scalar($value) && !is_array($value)) {
 			return false;
 		}
@@ -432,7 +428,7 @@ class FormConditionalRecipients {
 	 * @param bool $not
 	 * @return bool
 	 */
-	public function compareIn(mixed $value, mixed $compareValue, bool $not = false): bool {
+	protected function compareIn(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (!is_array($compareValue)) {
 			return false;
 		}
@@ -470,7 +466,7 @@ class FormConditionalRecipients {
 	 * @param bool $not
 	 * @return bool
 	 */
-	public function compareContains(mixed $value, mixed $compareValue, bool $not = false): bool {
+	protected function compareContains(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (
 			(
 				!is_scalar($value) &&
@@ -508,7 +504,7 @@ class FormConditionalRecipients {
 	 * @param bool $not
 	 * @return bool
 	 */
-	public function compareStartsWith(mixed $value, mixed $compareValue, bool $not = false): bool {
+	protected function compareStartsWith(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (
 			!is_scalar($value) ||
 			!is_scalar($compareValue)
@@ -535,7 +531,7 @@ class FormConditionalRecipients {
 	 * @param bool $not
 	 * @return bool
 	 */
-	public function compareEndsWith(mixed $value, mixed $compareValue, bool $not = false): bool {
+	protected function compareEndsWith(mixed $value, mixed $compareValue, bool $not = false): bool {
 		if (
 			!is_scalar($value) ||
 			!is_scalar($compareValue)
@@ -561,7 +557,7 @@ class FormConditionalRecipients {
 	 * @param mixed $compareValue
 	 * @return bool
 	 */
-	public function compareRegexp(mixed $value, mixed $compareValue): bool {
+	protected function compareRegexp(mixed $value, mixed $compareValue): bool {
 		if (
 			!is_scalar($value) ||
 			!is_scalar($compareValue)
@@ -621,45 +617,103 @@ class FormConditionalRecipients {
 				])
 			)
 		) {
-			$lx_compareValue = is_null($lx_compareValue) ? [] : explode(',', $lx_compareValue);
+			$lx_compareValue ??= [];
+			$lx_compareValue = !is_array($lx_compareValue) ? explode(',', $lx_compareValue) : $lx_compareValue;
 
 			// Trim all values
-			$lx_compareValue = array_map('trim', $lx_compareValue);
+			$lx_compareValue = array_map(function (mixed $value): mixed {
+				return is_string($value) ? trim($value) : $value;
+			}, $lx_compareValue);
 		}
 
-		if (is_object($lx_value)) {
-			if ($lx_value instanceof BackedEnum) {
-				$lx_value = (string)$lx_value->value;
+		if (!is_object($lx_value)) {
+			return [$lx_compareValue, $lx_value];
+		}
+
+		if ($lx_value instanceof BackedEnum) {
+			$lx_value = (string)$lx_value->value;
+		}
+		elseif ($lx_value instanceof Date && $lx_compareValue) {
+			if (is_array($lx_compareValue)) {
+				// Convert all values to Date instances
+				$lx_compareValue = array_map(function (mixed $value): Date {
+					if ($value instanceof Date) {
+						return $value;
+					}
+
+					return new Date($value);
+				}, $lx_compareValue);
 			}
-			elseif ($lx_value instanceof Date && $lx_compareValue) {
-				if (is_array($lx_compareValue)) {
-					// Convert all values to Date instances
-					$lx_compareValue = array_map(fn($value) => new Date($value), $lx_compareValue);
-				}
-				else {
-					$lx_compareValue = new Date($lx_compareValue);
-				}
+			elseif (!$lx_compareValue instanceof Date) {
+				$lx_compareValue = new Date($lx_compareValue);
 			}
-			elseif ($lx_value instanceof Time && $lx_compareValue) {
-				if (is_array($lx_compareValue)) {
-					// Convert all values to Time instances
-					$lx_compareValue = array_map(fn($value) => new Time($value), $lx_compareValue);
-				}
-				else {
-					$lx_compareValue = new Time($lx_compareValue);
-				}
+		}
+		elseif ($lx_value instanceof Time && $lx_compareValue) {
+			if (is_array($lx_compareValue)) {
+				// Convert all values to Time instances
+				$lx_compareValue = array_map(function (mixed $value): Time {
+					if ($value instanceof Time) {
+						return $value;
+					}
+
+					return new Time($value);
+				}, $lx_compareValue);
 			}
-			elseif ($lx_value instanceof DateTime && $lx_compareValue) {
-				if (is_array($lx_compareValue)) {
-					// Convert all values to DateTime instances
-					$lx_compareValue = array_map(fn($value) => new DateTime($value), $lx_compareValue);
-				}
-				else {
-					$lx_compareValue = new DateTime($lx_compareValue);
-				}
+			elseif (!$lx_compareValue instanceof Time) {
+				$lx_compareValue = new Time($lx_compareValue);
+			}
+		}
+		elseif ($lx_value instanceof DateTime && $lx_compareValue) {
+			if (is_array($lx_compareValue)) {
+				// Convert all values to DateTime instances
+				$lx_compareValue = array_map(function (mixed $value): DateTime {
+					if ($value instanceof DateTime) {
+						return $value;
+					}
+
+					return new DateTime($value);
+				}, $lx_compareValue);
+			}
+			elseif (!$lx_compareValue instanceof DateTime) {
+				$lx_compareValue = new DateTime($lx_compareValue);
 			}
 		}
 
 		return [$lx_compareValue, $lx_value];
+	}
+
+
+	/**
+	 * @param mixed $value
+	 * @return bool
+	 */
+	protected function isDateOrTime(mixed $value): bool {
+		if ($value instanceof Date || $value instanceof Time || $value instanceof DateTime) {
+			return true;
+		}
+
+		if (!is_scalar($value) && !($value instanceof Stringable)) {
+			return false;
+		}
+
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$value = (string)$value;
+
+		// If the value matches \d{4}-\d{2}-\d{2} it is a date
+		if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+			return true;
+		}
+
+		// If the value matches \d{2}:\d{2}(:\d{2})? it is a time
+		if (preg_match('/^\d{2}:\d{2}(:\d{2})?$/', $value)) {
+			return true;
+		}
+
+		// If the value matches \d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})? it is a datetime
+		if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/', $value)) {
+			return true;
+		}
+
+		return false;
 	}
 }
