@@ -21,9 +21,9 @@ class KontaktformularFormOptions extends FormOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function getValidator(Validator $validator, Form $form): Validator {
+	public function setValidationRules(Validator $validator, Form $form): Validator {
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$validator = parent::getValidator($validator, $form);
+		$validator = parent::setValidationRules($validator, $form);
 
 		// Add custom validation rules
 		//$validator->email('email');

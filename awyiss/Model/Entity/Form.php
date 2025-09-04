@@ -339,7 +339,7 @@ class Form extends Entity {
 	 * @return \Awyiss\Model\Entity\Form
 	 */
 	public function validate(?array $formData = null, ?Validator $validator = null, ?bool $validateProtection = null): static {
-		$lo_validator = $validator ?? $this->getFormOptions()->getValidator($this->getValidator(), $this);
+		$lo_validator = $validator ?? $this->getFormOptions()->setValidationRules($this->getValidator(), $this);
 
 		$this->setErrors($lo_validator->validate($formData ?? $this->getFormData()));
 

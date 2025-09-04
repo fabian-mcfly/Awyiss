@@ -22,7 +22,7 @@ interface FormOptionsInterface {
 	 * @param \Awyiss\Model\Entity\Form $form
 	 * @return \Awyiss\Validation\Validator
 	 */
-	public function getValidator(Validator $validator, Form $form): Validator;
+	public function setValidationRules(Validator $validator, Form $form): Validator;
 
 
 	/**
