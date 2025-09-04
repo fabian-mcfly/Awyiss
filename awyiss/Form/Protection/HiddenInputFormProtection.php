@@ -48,7 +48,7 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 
 
 	/**
-	 * @return array
+	 * @return string
 	 */
 	protected function getFieldName(): string {
 		$ls_elementName = $this->options['elementName'];
@@ -75,8 +75,8 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 		$this->view = $view;
 
 		$this->options = Hash::merge(
-			$this->formOptions->getProtectionOptions('hiddenInput') ?? [],
 			$this->defaultOptions,
+			$this->formOptions->getProtectionOptions('hiddenInput') ?? [],
 		);
 
 		return $this;

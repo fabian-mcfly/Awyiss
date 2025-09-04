@@ -76,8 +76,8 @@ class AltchaFormProtection implements FormProtectionInterface {
 		$this->view = $view;
 
 		$this->options = Hash::merge(
-			$this->formOptions->getProtectionOptions('altcha') ?? [],
 			$this->defaultOptions,
+			$this->formOptions->getProtectionOptions('altcha') ?? [],
 		);
 
 		return $this;
@@ -103,7 +103,7 @@ class AltchaFormProtection implements FormProtectionInterface {
 
 				// Create a new challenge
 				$lo_options = new ChallengeOptions(
-					expires: (new DateTimeImmutable())->add(new DateInterval('PT20M')),
+					expires: new DateTimeImmutable()->add(new DateInterval('PT20M')),
 					maxNumber: $this->options['maxNumber'] ?? 200_000,
 				);
 

@@ -64,8 +64,8 @@ class DuplicateCheckFormProtection implements FormProtectionInterface {
 		$this->view = $view;
 
 		$this->options = Hash::merge(
-			$this->formOptions->getProtectionOptions('duplicateCheck') ?? [],
 			$this->defaultOptions,
+			$this->formOptions->getProtectionOptions('duplicateCheck') ?? [],
 		);
 
 		return $this;

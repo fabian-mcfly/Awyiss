@@ -65,8 +65,8 @@ class IpCheckFormProtection implements FormProtectionInterface {
 		$this->view = $view;
 
 		$this->options = Hash::merge(
-			$this->formOptions->getProtectionOptions('ipCheck') ?? [],
 			$this->defaultOptions,
+			$this->formOptions->getProtectionOptions('ipCheck') ?? [],
 		);
 
 		return $this;
