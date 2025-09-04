@@ -24,7 +24,7 @@ class {{ name }}Table extends GenericDatatablesTable {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = '{{ table }}';
+	public const string TABLE = '{{ table }}';
 {% endif %}
 {% if userConstants %}
 	{{~ Bake.concat('\n\n\n', userConstants) }}

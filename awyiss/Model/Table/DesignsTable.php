@@ -22,11 +22,11 @@ class DesignsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'designs';
+	public const string TABLE = 'designs';
 
 
 	/**

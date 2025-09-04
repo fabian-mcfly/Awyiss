@@ -46,7 +46,7 @@ class WidgetsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'widgets';
+	public const string TABLE = 'widgets';
 
 
 	/**

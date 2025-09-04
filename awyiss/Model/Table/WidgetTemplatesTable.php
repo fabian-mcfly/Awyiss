@@ -28,7 +28,7 @@ class WidgetTemplatesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'widget_templates';
+	public const string TABLE = 'widget_templates';
 
 
 	/**

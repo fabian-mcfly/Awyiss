@@ -32,11 +32,11 @@ class FormsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'forms';
+	public const string TABLE = 'forms';
 
 
 	/**

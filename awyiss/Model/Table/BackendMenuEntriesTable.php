@@ -32,11 +32,11 @@ class BackendMenuEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'backend_menu_entries';
+	public const string TABLE = 'backend_menu_entries';
 
 
 	/**

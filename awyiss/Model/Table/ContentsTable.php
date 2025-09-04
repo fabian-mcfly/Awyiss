@@ -53,7 +53,7 @@ class ContentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'contents';
+	public const string TABLE = 'contents';
 
 
 	/**

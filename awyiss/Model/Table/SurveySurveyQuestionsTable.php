@@ -28,11 +28,11 @@ class SurveySurveyQuestionsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'survey_survey_questions';
+	public const string TABLE = 'survey_survey_questions';
 	/**
 	 * @inheritDoc
 	 */

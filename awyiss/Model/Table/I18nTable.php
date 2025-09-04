@@ -14,11 +14,11 @@ class I18nTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'i18n';
+	public const string TABLE = 'i18n';
 
 
 	/**

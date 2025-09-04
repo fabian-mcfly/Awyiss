@@ -21,11 +21,11 @@ class FormEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'form_entries';
+	public const string TABLE = 'form_entries';
 
 
 	/**

@@ -23,7 +23,7 @@ class UrlHistoryTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'url_history';
+	public const string TABLE = 'url_history';
 
 
 	/**

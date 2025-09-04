@@ -22,11 +22,11 @@ class UsergroupsUsersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'usergroups_users';
+	public const string TABLE = 'usergroups_users';
 
 
 	/**

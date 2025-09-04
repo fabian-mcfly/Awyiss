@@ -27,7 +27,7 @@ class LanguagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'languages';
+	public const string TABLE = 'languages';
 
 
 	/**

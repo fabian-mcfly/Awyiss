@@ -22,11 +22,11 @@ class WidgetTemplateElementsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'widget_template_elements';
+	public const string TABLE = 'widget_template_elements';
 
 
 	/**

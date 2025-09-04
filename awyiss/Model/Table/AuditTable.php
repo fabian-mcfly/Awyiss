@@ -19,11 +19,11 @@ class AuditTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'audit';
+	public const string TABLE = 'audit';
 
 
 	/**

@@ -22,11 +22,11 @@ class MediaElementAssignmentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'media_element_assignments';
+	public const string TABLE = 'media_element_assignments';
 
 
 	/**

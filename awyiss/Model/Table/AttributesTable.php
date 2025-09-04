@@ -29,16 +29,16 @@ class AttributesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'attributes';
+	public const string TABLE = 'attributes';
 	/**
 	 * @var string Regex that matches "type(length)", like "varchar(255)" or "int(10,4)" or "tinyint"
 	 * https://regex101.com/r/0h9ziN/1
 	 */
-	public const TYPE_PATTERN = '/^(\w*)(?:\((\d+(?:,\d+)*)+\)+)?$/';
+	public const string TYPE_PATTERN = '/^(\w*)(?:\((\d+(?:,\d+)*)+\)+)?$/';
 
 
 	/**

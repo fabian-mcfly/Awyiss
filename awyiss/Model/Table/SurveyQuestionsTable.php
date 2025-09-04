@@ -27,7 +27,7 @@ class SurveyQuestionsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'survey_questions';
+	public const string TABLE = 'survey_questions';
 
 
 	/**

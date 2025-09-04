@@ -11,10 +11,7 @@ use RuntimeException;
 
 
 /**
- * A generic translations package factory that will load translations files
- * based on the file extension and the package name.
- *
- * This class is a callable, so it can be used as a package loader argument.
+ * @inheritDoc
  */
 class MessagesFileLoader extends BaseMessagesFileLoader {
 	/**

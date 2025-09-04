@@ -29,7 +29,7 @@ class ContentTemplatesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'content_templates';
+	public const string TABLE = 'content_templates';
 
 
 	/**

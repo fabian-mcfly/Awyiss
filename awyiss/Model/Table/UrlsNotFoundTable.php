@@ -18,7 +18,7 @@ class UrlsNotFoundTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'urls_not_found';
+	public const string TABLE = 'urls_not_found';
 
 
 	/**

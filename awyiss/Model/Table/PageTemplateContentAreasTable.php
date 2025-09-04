@@ -22,11 +22,11 @@ class PageTemplateContentAreasTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'page_template_content_areas';
+	public const string TABLE = 'page_template_content_areas';
 
 
 	/**

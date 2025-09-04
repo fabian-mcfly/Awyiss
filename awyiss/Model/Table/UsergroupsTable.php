@@ -22,7 +22,7 @@ class UsergroupsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'usergroups';
+	public const string TABLE = 'usergroups';
 
 
 	/**

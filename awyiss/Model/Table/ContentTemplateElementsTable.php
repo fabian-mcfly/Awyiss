@@ -22,11 +22,11 @@ class ContentTemplateElementsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'content_template_elements';
+	public const string TABLE = 'content_template_elements';
 
 
 	/**

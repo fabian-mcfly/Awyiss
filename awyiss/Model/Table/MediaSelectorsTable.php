@@ -22,11 +22,11 @@ class MediaSelectorsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'media_selectors';
+	public const string TABLE = 'media_selectors';
 
 
 	/**

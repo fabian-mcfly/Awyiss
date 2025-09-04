@@ -31,7 +31,7 @@ class MediaTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'media';
+	public const string TABLE = 'media';
 
 
 	/**

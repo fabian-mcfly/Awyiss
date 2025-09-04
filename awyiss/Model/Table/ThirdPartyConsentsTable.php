@@ -19,11 +19,11 @@ class ThirdPartyConsentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'third_party_consents';
+	public const string TABLE = 'third_party_consents';
 
 
 	/**

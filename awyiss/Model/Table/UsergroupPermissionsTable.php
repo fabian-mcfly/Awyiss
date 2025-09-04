@@ -25,11 +25,11 @@ class UsergroupPermissionsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'usergroup_permissions';
+	public const string TABLE = 'usergroup_permissions';
 
 
 	/**

@@ -24,11 +24,11 @@ class FormConditionalRecipientsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'form_conditional_recipients';
+	public const string TABLE = 'form_conditional_recipients';
 
 
 	/**

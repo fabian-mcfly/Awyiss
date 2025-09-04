@@ -33,7 +33,7 @@ class MediaFoldersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'media_folders';
+	public const string TABLE = 'media_folders';
 
 
 	/**

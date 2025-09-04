@@ -29,7 +29,7 @@ class MenuEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'menu_entries';
+	public const string TABLE = 'menu_entries';
 
 
 	/**

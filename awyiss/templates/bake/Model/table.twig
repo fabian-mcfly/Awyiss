@@ -31,13 +31,13 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 {% endif %}
 {% if userConstants.TABLE is not defined %}
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = '{{ table }}';
+	public const string TABLE = '{{ table }}';
 {% endif %}
 {% if userConstants %}
 	{{~ Bake.concat('\n\n\n', userConstants) }}

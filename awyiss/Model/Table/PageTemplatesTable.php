@@ -31,7 +31,7 @@ class PageTemplatesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'page_templates';
+	public const string TABLE = 'page_templates';
 
 
 	/**

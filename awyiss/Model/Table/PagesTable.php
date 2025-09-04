@@ -46,7 +46,7 @@ class PagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'pages';
+	public const string TABLE = 'pages';
 
 
 	/**

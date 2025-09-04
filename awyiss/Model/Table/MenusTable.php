@@ -22,11 +22,11 @@ class MenusTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'menus';
+	public const string TABLE = 'menus';
 
 
 	/**

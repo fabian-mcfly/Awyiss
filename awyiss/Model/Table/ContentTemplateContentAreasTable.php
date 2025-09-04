@@ -25,11 +25,11 @@ class ContentTemplateContentAreasTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'content_template_content_areas';
+	public const string TABLE = 'content_template_content_areas';
 
 
 	/**

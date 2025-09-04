@@ -32,11 +32,11 @@ class UserConfigurationTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'user_configuration';
+	public const string TABLE = 'user_configuration';
 
 
 	/**

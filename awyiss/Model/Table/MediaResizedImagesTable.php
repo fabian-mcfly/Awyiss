@@ -28,11 +28,11 @@ class MediaResizedImagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'media_resized_images';
+	public const string TABLE = 'media_resized_images';
 
 
 	/**

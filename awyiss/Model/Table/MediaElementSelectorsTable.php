@@ -24,11 +24,11 @@ class MediaElementSelectorsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'media_element_selectors';
+	public const string TABLE = 'media_element_selectors';
 
 
 	/**

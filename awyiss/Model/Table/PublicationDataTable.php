@@ -24,11 +24,11 @@ class PublicationDataTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'publication_data';
+	public const string TABLE = 'publication_data';
 
 
 	/**

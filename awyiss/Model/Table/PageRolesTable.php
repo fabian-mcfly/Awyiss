@@ -27,7 +27,7 @@ class PageRolesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'page_roles';
+	public const string TABLE = 'page_roles';
 
 
 	/**

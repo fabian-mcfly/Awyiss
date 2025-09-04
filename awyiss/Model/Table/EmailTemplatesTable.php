@@ -26,11 +26,11 @@ class EmailTemplatesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'email_templates';
+	public const string TABLE = 'email_templates';
 
 
 	/**
