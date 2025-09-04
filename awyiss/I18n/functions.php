@@ -31,20 +31,20 @@ if (!function_exists('__')) {
 		if ($ls_controller) {
 			$ls_controller = Inflector::underscore(Router::getRequest()->getParam('controller'));
 
-			$ls_return = __d($ls_controller, $string, $la_args);
+			return __d($ls_controller, $string, $la_args);
 		}
-		elseif (
+
+		if (
 			!in_array($string, [
 				'meta_title_overview',
 				'menu_title',
 				'headline_overview',
 			])
 		) {
-			$ls_return = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
+			return I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
 		}
 
-
-		return $ls_return;
+		return $string;
 	}
 }
 
@@ -58,7 +58,7 @@ if (!function_exists('__d')) {
 	 * @param mixed ...$args
 	 * @return string Translated string.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__d
-	 * @noinspection PhpFunctionNamingConventionInspection
+	 * @noinspection DuplicatedCode, PhpFunctionNamingConventionInspection
 	 */
 	function __d(string $domain, string $string, mixed ...$args): string {
 		if (!$string) {
@@ -70,32 +70,36 @@ if (!function_exists('__d')) {
 			$la_args = $args[0];
 		}
 
-		$ls_domain = $domain;
-		if (!str_contains($ls_domain, '/') && $ls_domain !== 'cake') {
-			$ls_domain = Awyiss::getRealm() . '/' . Inflector::underscore($ls_domain);
-		}
+		$ls_domain = __buildDomain($domain);
 		$ls_return = I18n::getTranslator($ls_domain)->translate($string, $la_args);
 
-		if (($ls_return === $string || empty($ls_return)) && $domain !== 'cake') {
-			$ls_return = $domain . '::' . $string;
-
-			// Fallback to system domain
-			if (
-				$domain !== 'system' &&
-				!in_array($string, [
-					'meta_title_overview',
-					'menu_title',
-					'headline_overview',
-				])
-			) {
-				$ls_fallback = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
-
-				if ($ls_fallback !== $string && !empty($ls_fallback)) {
-					$ls_return = $ls_fallback;
-				}
-			}
+		if (
+			(
+				!empty($ls_return) &&
+				$ls_return !== $string
+			) ||
+			$domain === 'cake'
+		) {
+			return $ls_return;
 		}
 
+		$ls_return = Inflector::underscore($domain) . '::' . $string;
+
+		// Fallback to system domain
+		if (
+			$domain !== 'system' &&
+			!in_array($string, [
+				'meta_title_overview',
+				'menu_title',
+				'headline_overview',
+			])
+		) {
+			$ls_fallback = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
+
+			if ($ls_fallback !== $string && !empty($ls_fallback)) {
+				$ls_return = $ls_fallback;
+			}
+		}
 
 		return $ls_return;
 	}
@@ -113,7 +117,7 @@ if (!function_exists('__df')) {
 	 * @param mixed ...$args
 	 * @return string The translated text.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
-	 * @noinspection PhpFunctionNamingConventionInspection
+	 * @noinspection DuplicatedCode, PhpFunctionNamingConventionInspection
 	 */
 	function __df(string $domain, string $fallbackDomain, string $string, mixed ...$args): string {
 		if (!$string) {
@@ -125,22 +129,16 @@ if (!function_exists('__df')) {
 			$la_args = $args[0];
 		}
 
-		$ls_domain = $domain;
-		if (!str_contains($ls_domain, '/')) {
-			$ls_domain = Awyiss::getRealm() . '/' . Inflector::underscore($ls_domain);
-		}
+		$ls_domain = __buildDomain($domain);
 		$ls_return = I18n::getTranslator($ls_domain)->translate($string, $la_args);
 
 		if ($ls_return === $string || empty($ls_return)) {
-			$ls_fallbackDomain = $fallbackDomain;
-			if (!str_contains($ls_fallbackDomain, '/')) {
-				$ls_fallbackDomain = Awyiss::getRealm() . '/' . Inflector::underscore($ls_fallbackDomain);
-			}
+			$ls_fallbackDomain = __buildDomain($fallbackDomain);
 			$ls_return = I18n::getTranslator($ls_fallbackDomain)->translate($string, $la_args);
 		}
 
 		if ($ls_return === $string || empty($ls_return)) {
-			$ls_return = $domain . '::' . $string;
+			$ls_return = Inflector::underscore($domain) . '::' . $string;
 		}
 
 
@@ -182,7 +180,7 @@ if (!function_exists('__dx')) {
 if (!function_exists('__dfx')) {
 	/**
 	 * Allows you to override the current domain for a single message lookup.
-	 * If no translation for the given domain can be found, a fallbackdomain will be used
+	 * If no translation for the given domain can be found, a fallback domain will be used
 	 * The context is a unique identifier for the translations string that makes it unique
 	 * within the same domain.
 	 *
@@ -247,4 +245,26 @@ if (!function_exists('__x')) {
 
 		return $ls_return;
 	}
+}
+
+/**
+ * @param string $domain
+ * @return string
+ */
+function __buildDomain(string $domain): string {
+	if (!str_contains($domain, '/')) {
+		return Awyiss::getRealm() . '/' . Inflector::underscore($domain);
+	}
+
+	$la_parts = explode('/', $domain);
+	array_walk($la_parts, function (string &$value, int $key): void {
+		if ($key === 0) {
+			return;
+		}
+
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$value = Inflector::underscore($value);
+	});
+
+	return count($la_parts) > 1 ? implode('/', $la_parts) : $domain;
 }
