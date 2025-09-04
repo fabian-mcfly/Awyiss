@@ -23,16 +23,16 @@ class FormConditionalRecipients {
 	/**
 	 * The first rule that matches will be used.
 	 */
-	public const PROCESS_STRATEGY_MATCH_FIRST = 'match_first';
+	public const string PROCESS_STRATEGY_MATCH_FIRST = 'match_first';
 	/**
 	 * All rules must match.
 	 * The last rule defines the recipient.
 	 */
-	public const PROCESS_STRATEGY_MATCH_ALL = 'match_all';
+	public const string PROCESS_STRATEGY_MATCH_ALL = 'match_all';
 	/**
 	 * The last rule that matches will be used.
 	 */
-	public const PROCESS_STRATEGY_MATCH_LAST = 'match_last';
+	public const string PROCESS_STRATEGY_MATCH_LAST = 'match_last';
 
 
 	/**
