@@ -43,14 +43,12 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function afterCommandExecute(EventInterface $event, Arguments $args): void {
-		/** @var \Cake\Command\Command $foo */
-		$lo_command = $event->getSubject();
-
-		if ($lo_command::class === EnumCommand::class && $args->getOption('is-pagerole')) {
+		if ($event->getSubject() instanceof EnumCommand && $args->getOption('is-pagerole')) {
 			/**
-			 * Trigger the creation of the custom configuriation
+			 * Trigger the creation of the custom configuration
 			 *
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
+			 * @see \Awyiss\Event\Backend\ConfigurationListener::deleteCustomConfiguration()
 			 */
 			$lo_eventManager = EventManager::instance();
 			$lo_eventManager->dispatch('Configuration.deleteCustomConfiguration');
@@ -69,7 +67,7 @@ class GeneralEventsListener implements EventListenerInterface {
 		/** @var \Cake\View\View $lo_view */
 		$lo_view = $event->getSubject();
 
-		if ($lo_view->get('actions') == ['index', 'view', 'add', 'edit', 'delete']) {
+		if (array_diff(['index', 'view', 'add', 'edit', 'delete'], $lo_view->get('actions')) === []) {
 			$lo_view->set('actions', ['overview', 'add', 'edit', 'delete', 'save']);
 		}
 	}

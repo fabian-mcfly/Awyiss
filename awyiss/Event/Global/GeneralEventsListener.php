@@ -7,7 +7,7 @@ namespace Awyiss\Event\Global;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Table;
-use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 
 
@@ -45,23 +45,19 @@ class GeneralEventsListener implements EventListenerInterface {
 
 
 	/**
-	 * @param Event $event
-	 * @return string
-	 * @noinspection PhpUnused
-	 * @noinspection PhpUnusedParameterInspection
+	 * @param \Cake\Event\EventInterface $event
+	 * @return void
 	 */
-	public function awyissGetRealm(Event $event): string {
-		return $this->realm;
+	public function awyissGetRealm(EventInterface $event): void {
+		$event->setResult($this->realm);
 	}
 
 
 	/**
-	 * @param Event $event
+	 * @param \Cake\Event\EventInterface $event
 	 * @return void
-	 * @throws \ReflectionException
-	 * @noinspection PhpUnused
 	 */
-	public function awyissSetRealm(Event $event): void {
+	public function awyissSetRealm(EventInterface $event): void {
 		$this->realm = $event->getData('realm');
 
 		/** @var Table $lo_model */
@@ -75,12 +71,10 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * For every model that is loaded, load the event listener if the realm is known
 	 * If not, save the model to be handled in `awyissSetRealm()`
 	 *
-	 * @param Event $event
+	 * @param \Cake\Event\EventInterface $event
 	 * @return void
-	 * @noinspection PhpUnused
-	 * @throws \ReflectionException
 	 */
-	public function modelInitialize(Event $event): void {
+	public function modelInitialize(EventInterface $event): void {
 		/** @var Table $lo_model */
 		$lo_model = $event->getSubject();
 
