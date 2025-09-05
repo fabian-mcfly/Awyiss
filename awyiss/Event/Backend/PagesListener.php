@@ -101,7 +101,8 @@ class PagesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Entity\Page $lo_childPage */
 		foreach ($lo_children as $lo_childPage) {
 			$la_primaryKeys = $lo_childPage->extract((array)$lo_table->getPrimaryKey());
-			$lo_childPage->originalPrimaryKeyValues = $la_primaryKeys;
+			/** @noinspection PhpUndefinedFieldInspection */
+			$lo_childPage->originalPrimaryKeyValues ??= $la_primaryKeys;
 
 			$lo_childPage->unset((array)$lo_table->getPrimaryKey());
 			$lo_childPage->setNew(true);

@@ -566,7 +566,7 @@ class NestBehavior extends Behavior {
 			$la_primaryKeys = (array)$lo_table->getPrimaryKey();
 			$la_primaryKeyValues = $lo_child->extract($la_primaryKeys);
 			/** @noinspection PhpUndefinedFieldInspection */
-			$lo_child->originalPrimaryKeyValues = $la_primaryKeyValues;
+			$lo_child->originalPrimaryKeyValues ??= $la_primaryKeyValues;
 			$lo_child->unset($la_primaryKeys);
 			$lo_child->setNew(true);
 

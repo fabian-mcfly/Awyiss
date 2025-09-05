@@ -756,7 +756,7 @@ class Table extends BaseTable {
 			$la_primaryKeys = $entity->extractOriginal((array)$this->getPrimaryKey());
 			if ($la_primaryKeys) {
 				/** @noinspection PhpDynamicFieldDeclarationInspection */
-				$entity->originalPrimaryKeyValues = $la_primaryKeys;
+				$entity->originalPrimaryKeyValues ??= $la_primaryKeys;
 				$entity->unset((array)$this->getPrimaryKey());
 			}
 
