@@ -1,7 +1,14 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * @noinspection PhpInternalEntityUsedInspection
+ */
 
 
-namespace Awyiss\Event\Frontend;
+declare(strict_types=1); // phpcs:ignore
+
+
+namespace Awyiss\Event\Global;
 
 
 use ArrayObject;
@@ -19,7 +26,7 @@ use Cake\ORM\Query\SelectQuery;
 
 
 /**
- * Event listeners for the Pages (and dynamically created page roles) scope of the frontend
+ * Event listeners for the Pages (and dynamically created page roles) scope
  */
 class PagesListener implements EventListenerInterface {
 	use EventListenerTrait;
@@ -49,7 +56,6 @@ class PagesListener implements EventListenerInterface {
 			];
 		}
 
-
 		return $la_events;
 	}
 
@@ -65,46 +71,46 @@ class PagesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		if (($options['skipPageRoleCheck'] ?? false) === true) {
-			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-
-			$ls_prefixedColumn = $query->getRepository()->getAlias() . '.page_role_id';
-
-			$lo_dialect = $query->getConnection()->getDriver()->schemaDialect();
-			/**
-			 * SQLite does not support FIND_IN_SET(),
-			 * so ordering using CASE WHEN is used instead
-			 */
-			if ($lo_dialect instanceof SqliteSchemaDialect) {
-				$query->orderBy(function (QueryExpression $exp) use ($ls_pageRoleEnum, $ls_prefixedColumn) {
-					$li_index = 0;
-
-					$lo_case = $exp->case();
-					foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
-						$lo_case->when([$ls_prefixedColumn => $le_pageRole->value])->then($li_index, 'integer');
-
-						$li_index++;
-					}
-
-					$lo_case->else(999, 'integer');
-
-					return $lo_case;
-				});
-
-				return;
-			}
-
-			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-				$ls_prefixedColumn => 'identifier',
-				implode(',', array_map(function (PageRoleEnumInterface $pageRole) {
-					return $pageRole->value;
-				}, $ls_pageRoleEnum::cases())),
-			])));
-		}
-		else {
+		if (($options['skipPageRoleCheck'] ?? false) !== true) {
 			$query->where(['page_role_id' => $lo_table->getPageRole()]);
+			return;
 		}
+
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+		$ls_prefixedColumn = $query->getRepository()->getAlias() . '.page_role_id';
+
+		$lo_dialect = $query->getConnection()->getDriver()->schemaDialect();
+		/**
+		 * SQLite does not support FIND_IN_SET(),
+		 * so ordering using CASE WHEN is used instead
+		 */
+		if ($lo_dialect instanceof SqliteSchemaDialect) {
+			$query->orderBy(function (QueryExpression $exp) use ($ls_pageRoleEnum, $ls_prefixedColumn) {
+				$li_index = 0;
+
+				$lo_case = $exp->case();
+				foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
+					$lo_case->when([$ls_prefixedColumn => $le_pageRole->value])->then($li_index, 'integer');
+
+					$li_index++;
+				}
+
+				$lo_case->else(999, 'integer');
+
+				return $lo_case;
+			});
+
+			return;
+		}
+
+		/** @noinspection PhpUndefinedMethodInspection */
+		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+			$ls_prefixedColumn => 'identifier',
+			implode(',', array_map(function (PageRoleEnumInterface $pageRole) {
+				return $pageRole->value;
+			}, $ls_pageRoleEnum::cases())),
+		])));
 	}
 }
