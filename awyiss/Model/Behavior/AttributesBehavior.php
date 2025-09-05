@@ -15,6 +15,7 @@ use ArrayObject;
 use Awyiss\Attribute\AttributeOptionsProvider;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
@@ -441,22 +442,18 @@ class AttributesBehavior extends Behavior {
 			if (!is_a($entity, Entity::class)) {
 				$mapReduce->emit($entity);
 
-
 				return;
 			}
 
 			if (!$entity->attributes) {
-				/** @var \Awyiss\ORM\Association\HasOne|\Awyiss\Model\Table $lo_association */
-				$lo_association = $this->table()->{$this->getAttributesTableName(true)};
-
-				$entity->attributes = $lo_association->newDefaultEntity();
+				$this->findAttributes($entity);
 			}
 
 			/**
 			 * @noinspection PhpUndefinedMethodInspection
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
-			if (isset($entity->attributes) && !$entity->attributes->getEntity()) {
+			if ($entity->attributes && !$entity->attributes->getEntity()) {
 				/**
 				 * @noinspection PhpUndefinedMethodInspection
 				 * @noinspection PhpPossiblePolymorphicInvocationInspection
@@ -547,6 +544,77 @@ class AttributesBehavior extends Behavior {
 				unset($entity->attributes);
 			}
 		}
+	}
+
+
+	/**
+	 * Finds and sets the attributes entity for the provided entity.
+	 *
+	 * If the entity is a page and not of the current page role,
+	 * the attributes entity of the page role will be fetched before
+	 * setting a default attributes entity.
+	 *
+	 * @param \Awyiss\Model\Entity $entity
+	 * @return void
+	 */
+	protected function findAttributes(Entity $entity): void {
+		$lo_table = $this->table();
+
+		// If the entity is not a Page, just return the default attributes entity
+		if (!$entity instanceof Page) {
+			/** @var \Awyiss\Model\Table $lo_attributesTable */
+			$lo_attributesTable = $lo_table->{$lo_table->getAttributesTableName(true)};
+			$entity->attributes = $lo_attributesTable->newDefaultEntity();
+
+			return;
+		}
+
+		$ls_alias = $this->table()->getAlias();
+
+		if (str_starts_with($ls_alias, 'Child')) {
+			$ls_alias = substr($ls_alias, 5);
+		}
+		elseif (str_starts_with($ls_alias, 'Parent')) {
+			$ls_alias = substr($ls_alias, 6);
+		}
+
+		$ls_pageRole = $entity->pageRoleId ? Inflector::pluralize($entity->pageRoleId->name) : $ls_alias;
+		// If the page role matches the current table, return the default attributes entity
+		if ($ls_alias === $ls_pageRole) {
+			/** @var \Awyiss\Model\Table $lo_attributesTable */
+			$lo_attributesTable = $lo_table->{$lo_table->getAttributesTableName(true)};
+			$entity->attributes = $lo_attributesTable->newDefaultEntity();
+
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table\PagesTable $lo_pageRoleTable */
+		$lo_pageRoleTable = $this->fetchTable($ls_pageRole);
+
+		/** @var \Awyiss\Model\Table|null $lo_table */
+		if (!$lo_pageRoleTable->hasAttributes()) {
+			return;
+		}
+
+		// No id? Just return the default attributes entity
+		if (!$entity->id) {
+			/** @var \Awyiss\Model\Table $lo_attributesTable */
+			$lo_attributesTable = $lo_pageRoleTable->{$lo_pageRoleTable->getAttributesTableName(true)};
+			$entity->attributes = $lo_attributesTable->newDefaultEntity();
+
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table|\Awyiss\ORM\Association\HasOne $lo_attributesTable */
+		$lo_attributesTable = $lo_pageRoleTable->{$lo_pageRoleTable->getAttributesTableName(true)};
+
+		$lo_attributes = $lo_attributesTable->find('all')->where([
+			$lo_attributesTable->getForeignKey() => $entity->id,
+		])->first();
+
+		$entity->attributes = $lo_attributes ?? $lo_attributesTable->newDefaultEntity();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$entity->attributes->setEntity($entity);
 	}
 
 
