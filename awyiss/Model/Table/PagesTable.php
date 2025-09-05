@@ -62,6 +62,9 @@ class PagesTable extends Table {
 	 */
 	protected array $nest = [
 		'enabled' => true,
+		'children' => [
+			'blocklistedColumns' => ['pageRoleId'],
+		],
 		'relatedColumns' => ['languageShortcode', 'pageRoleId'],
 	];
 	/**

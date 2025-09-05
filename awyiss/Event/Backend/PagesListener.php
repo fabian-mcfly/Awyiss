@@ -97,6 +97,13 @@ class PagesListener implements EventListenerInterface {
 		$lo_nestedChildren = $lo_children->nest('id', 'parentId', 'childPages')->toList();
 
 		$la_relatedColumns = $lo_table->getBehavior('Nest')->getConfig('relatedColumns');
+		// Remove all blocklisted columns from the related columns
+		$la_blocklistedColumns = $lo_table->getBehavior('Nest')->getConfig('children.blocklistedColumns');
+		if ($la_blocklistedColumns) {
+			$la_relatedColumns = array_diff($la_relatedColumns, $la_blocklistedColumns);
+		}
+
+		$la_relatedColumnValues = $entity->extract($la_relatedColumns);
 
 		/** @var \Awyiss\Model\Entity\Page $lo_childPage */
 		foreach ($lo_children as $lo_childPage) {
@@ -107,7 +114,7 @@ class PagesListener implements EventListenerInterface {
 			$lo_childPage->unset((array)$lo_table->getPrimaryKey());
 			$lo_childPage->setNew(true);
 
-			$lo_childPage->set($entity->extract($la_relatedColumns));
+			$lo_childPage->patch($la_relatedColumnValues);
 		}
 
 		$ls_childrenPropertyName = 'child' . $lo_table->getAlias();
