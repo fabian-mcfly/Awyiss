@@ -1,40 +1,166 @@
+{#
+/**
+ * Copyright (c) Awyiss
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ */
+#}
+{% set annotations = DocBlock.buildTableAnnotations(associations, associationInfo, behaviors, entity, namespace) %}
 {% set generatedFunctions = ['initialize'] %}
 {{ element('file_header', {
 	namespace: fileBuilder.namespace,
-	classImports: fileBuilder.classImports([
-		'Awyiss\\Model\\Table\\PagesTable',
-	]),
+	classImports: fileBuilder.classImports({
+		0: 'Awyiss\\Model\\Entity',
+		1: 'Awyiss\\Model\\Table',
+		2: 'Awyiss\\ORM\\RulesChecker',
+		BaseRulesChecker: 'Cake\\ORM\\RulesChecker',
+		3: 'Cake\\Validation\\Validator',
+	}),
 }) }}
 
 /**
  * {{ name }} Model
  *
- * @property \Awyiss\Model\Table\LanguagesTable&\Awyiss\ORM\Association\BelongsTo $Languages
- * @property \Awyiss\Model\Table\PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
- * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\BelongsTo $PageTemplates
- * @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\HasMany $Duplicating{{ name }}
- * @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\BelongsTo $DuplicateOf{{ name }}
- * @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\BelongsTo $Parent{{ name }}
- * @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\HasMany $Child{{ name }}
- * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $additionalData = [], array $options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(\Cake\Datasource\EntityInterface $entity, array $options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  */
-class {{ name }}Table extends PagesTable {
+class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
+{% if userConstants.ATTRIBUTABLE is not defined and name[0:10] == 'Attributes'%}
+	/**
+	 * @inheritDoc
+	 */
+	public const bool ATTRIBUTABLE = false;
+{% endif %}
+{% if userConstants.TABLE is not defined %}
+	/**
+	 * @inheritDoc
+	 */
+	public const string TABLE = '{{ table }}';
+{% endif %}
 {% if userConstants %}
 	{{~ Bake.concat('\n\n\n', userConstants) }}
-
-{% else %}
 {% endif %}
 {% set userProperties = fileBuilder.classBuilder.userProperties([]) %}
 {% if userProperties %}
 	{{~ Bake.concat('\n\n\n', userProperties) }}
 
+{% endif %}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(array $config): void {
+		parent::initialize($config);
+{%~ if primaryKey %}
+	{%~ if primaryKey is iterable and primaryKey|length > 1 %}
+		$this->setPrimaryKey({{ Bake.exportArray(primaryKey)|raw }});
+		{{- "\n" }}
+	{%~ elseif primaryKey|as_array|first != 'id' %}
+		$this->setPrimaryKey('{{ primaryKey|as_array|first }}');
+		{{- "\n" }}
+	{%~ endif %}
+{% endif %}
+{%~ for behavior, behaviorData in behaviors %}
+		$this->addBehavior('{{ behavior }}'{{ (behaviorData ? (", " ~ Bake.exportArray(behaviorData, 2)|raw ~ '') : '')|raw }});
+		{{- "\n" }}
+{% endfor %}
+{%~ if associations.belongsTo or associations.hasMany or associations.belongsToMany %}
+{% endif %}
+{%~ for type, assocs in associations %}
+{%~ for assoc in assocs %}
+
+{% if assoc.foreignKey != 'parentId' %}
+{%~ set assocData = [] %}
+{%~ for key, val in assoc %}
+{%~ if key is not same as('alias') %}
+{%~ set assocData = assocData|merge({(key): val}) %}
+{%~ endif %}
+{%~ endfor %}
+		$this->{{ type }}('{{ assoc.alias }}', {{ Bake.exportArray(assocData, 2)|raw }});
+{%~ endif %}
+{%~ endfor %}
+{%~ endfor %}
+	}
+{{- "\n" }}
+
+{%- if validation %}
+{% set generatedFunctions = generatedFunctions|merge(['validationDefault']) %}
+
+
+	/**
+	 * @inheritDoc
+	 * @noinspection DuplicatedCode
+	 */
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
+
+{% for field, rules in validation %}
+{% set validationMethods = Bake.getValidationMethods(field, rules) %}
+{% if validationMethods %}
+		$validator
+{% for validationMethod in validationMethods %}
+{% if loop.last %}
+{% set validationMethod = validationMethod ~ ';' %}
+{% endif %}
+			{{ validationMethod|raw }}
+{% endfor %}
+
+{% endif %}
+{% endfor %}
+		return $validator;
+	}
+{% endif %}
+
+{%- if rulesChecker %}
+{% set generatedFunctions = generatedFunctions|merge(['buildRules']) %}
+
+
+	/**
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+{% for field, rule in rulesChecker %}
+{% set fields = rule.fields is defined ? Bake.exportArray(rule.fields) : Bake.exportVar(field) %}
+{% set options = '' %}
+{% for optionName, optionValue in rule.options %}
+{%~ set options = (loop.first ? '[' : options) ~ "'#{optionName}' => " ~ Bake.exportVar(optionValue) ~ (loop.last ? ']' : ', ') %}
+{% endfor %}
+{% if rule.fields[0] != 'parentId' %}
+		$rules->add(function (Entity $entity, array $options) use ($rules) {
+			// Do not care about the pageId when copying a nested entity (isCopy and not primary)
+			if (($options['_primary'] ?? false) === false && ($options['isCopy'] ?? false) === true) {
+				return true;
+			}
+
+			$lo_existsIn = $rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }});
+
+			return $lo_existsIn($entity, $options);
+		}, 'valid{{ rule.fields[0]|camelize }}', ['errorField' => '{{ rule.fields[0]|variable }}']);
+{% endif %}
+{% endfor %}
+
+		return $rules;
+	}
+{% endif %}
+
+{%- if connection is not same as('default') %}
+{% set generatedFunctions = generatedFunctions|merge(['defaultConnectionName']) %}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function defaultConnectionName(): string {
+		return '{{ connection }}';
+	}
 {% endif %}
 {% set userFunctions = fileBuilder.classBuilder.userFunctions(generatedFunctions) %}
 {% if userFunctions %}

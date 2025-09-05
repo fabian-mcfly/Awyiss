@@ -110,7 +110,7 @@ class ModelCommand extends BaseModelCommand {
 
 		$ls_template = 'Model/entity';
 		if ($args->getOption('is-pagerole')) {
-			$ls_template = 'Model/entity_for_pagerole';
+			$ls_template = 'Model/entity_is_pagerole';
 		}
 
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
@@ -186,11 +186,14 @@ class ModelCommand extends BaseModelCommand {
 			];
 
 		$ls_template = 'Model/table';
+		if ($args->getOption('for-pagerole')) {
+			$ls_template = 'Model/table_for_pagerole';
+		}
 		if ($args->getOption('is-datatable')) {
-			$ls_template = 'Model/table_for_datatable';
+			$ls_template = 'Model/table_is_datatable';
 		}
 		if ($args->getOption('is-pagerole')) {
-			$ls_template = 'Model/table_for_pagerole';
+			$ls_template = 'Model/table_is_pagerole';
 		}
 
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
