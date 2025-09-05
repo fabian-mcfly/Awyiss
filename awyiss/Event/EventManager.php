@@ -42,7 +42,6 @@ class EventManager extends BaseEventManager {
 
 	/**
 	 * @inheritDoc
-	 * @throws \ReflectionException
 	 */
 	public function dispatch(EventInterface|string $event): EventInterface {
 		$lo_event = $event;
@@ -66,7 +65,6 @@ class EventManager extends BaseEventManager {
 	 *
 	 * @param string $name
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	protected function lazyLoadListeners(string $name): void {
 		if (!isset(static::$pageRoleEnum)) {
@@ -80,7 +78,7 @@ class EventManager extends BaseEventManager {
 		}
 
 		$ls_scope = $la_parts[0];
-		//Don't use general event scopes, as they aren't what Awyiss understands as scopes.
+		// Don't use general event scopes, as they aren't what Awyiss understands as scopes.
 		$lb_generalScope = in_array($ls_scope, [
 			'Application',
 			'Awyiss',
@@ -100,7 +98,7 @@ class EventManager extends BaseEventManager {
 				empty($la_parts[1]) ||
 				$la_parts[1][0] !== strtoupper($la_parts[1][0])
 			) {
-				//No second part, or it starts with a lower case letter: do nothing as it's not a scope
+				// No second part, or it starts with a lower case letter: do nothing as it's not a scope
 				return;
 			}
 
@@ -109,7 +107,7 @@ class EventManager extends BaseEventManager {
 
 		$ls_scope = EventListenersProvider::sanitizeScope($ls_scope);
 
-		//If a regex-matching event for the scope exists, do nothing. This means that this event was most likely never set anywhere
+		// If a regex-matching event for the scope exists, do nothing. This means that this event was most likely never set anywhere
 		if (
 			$this->matchingListeners('/(?<=\.|^)' . $ls_scope . '\./') ||
 			static::instance()->matchingListeners('/(?<=\.|^)' . $ls_scope . '\./')
@@ -120,26 +118,24 @@ class EventManager extends BaseEventManager {
 		if (!in_array($ls_scope, static::$lazyLoadAttempts['global'])) {
 			static::$lazyLoadAttempts['global'][] = $ls_scope;
 
-			//Try loading the scope from for the global realm
-			//\Cake\Log\Log::debug(sprintf('Trying to lazyload global event listeners for: `%s` (`%s` fired)', $ls_scope, $name));
-			$lb_loaded = EventListenersProvider::loadListener($ls_scope, 'Global'); // phpcs:ignore
-			//\Cake\Log\Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+			// Try loading the scope from for the global realm
+			EventListenersProvider::loadListener($ls_scope, 'Global');
+
+			if (static::$pageRoleEnum::tryFromName($ls_scope)) {
+				//Try loading the pages listener from for the current realm
+				EventListenersProvider::loadListener('Pages', 'Global');
+			}
 		}
 
 		if (Awyiss::getRealm() && !in_array($ls_scope, static::$lazyLoadAttempts['current'])) {
 			static::$lazyLoadAttempts['current'][] = $ls_scope;
 
-			//Try loading the scope from for the current realm
-			//\Cake\Log\Log::debug(sprintf('Trying to lazyload `%s` event listeners for: `%s` (`%s` fired)', Awyiss::getRealm(), $ls_scope, $name));
-			$lb_loaded = EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm()); // phpcs:ignore
-			//\Cake\Log\Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+			// Try loading the scope from for the current realm
+			EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm());
 
-			if (!$lb_loaded && static::$pageRoleEnum::tryFromName($ls_scope)) {
-				//\Cake\Log\Log::debug(sprintf('Found a page role for scope `%s`', $ls_scope));
+			if (static::$pageRoleEnum::tryFromName($ls_scope)) {
 				//Try loading the pages listener from for the current realm
-				//\Cake\Log\Log::debug('Trying to lazyload fallback event listeners for pages');
-				$lb_loaded = EventListenersProvider::loadListener('Pages', Awyiss::getRealm()); // phpcs:ignore
-				//\Cake\Log\Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+				EventListenersProvider::loadListener('Pages', Awyiss::getRealm());
 			}
 		}
 	}
