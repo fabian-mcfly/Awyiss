@@ -6,12 +6,11 @@ namespace Awyiss\Event\Frontend;
 
 use ArrayObject;
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
-use DebugKit\Model\Entity\Panel;
-use DebugKit\Model\Entity\Request;
 
 
 /**
@@ -40,23 +39,20 @@ class GeneralEventsListener implements EventListenerInterface {
 	/**
 	 * Before saving a page, make sure its slug is unique.
 	 *
-	 * @param EventInterface $event
+	 * @param \Cake\Event\EventInterface $event
 	 * @param \Awyiss\Model\Entity\Media $entity
 	 * @param \ArrayObject $options
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (
-			$entity instanceof Panel ||
-			$entity instanceof Request ||
-			$entity instanceof MediaResizedImage
+			!$entity instanceof Entity ||
+			$entity instanceof MediaResizedImage ||
+			($options['allowFrontendSave'] ?? false) === true
 		) {
 			return;
 		}
 
-		if (isset($options['allowFrontendSave']) && $options['allowFrontendSave']) {
-			return;
-		}
-
+		// Stop the save operation and set an error on the entity
 		$event->stopPropagation();
 		$entity->setError('_general', 'Saving inside the Frontend Realm is not allowed.');
 	}
