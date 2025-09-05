@@ -80,14 +80,14 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 *
 	 * If such an active job exists, stop the save event and return an error.
 	 *
-	 * This is neccesary since a second file rename job could interfere with the first one.
+	 * This is necessary since a second file rename job could interfere with the first one.
 	 *
 	 * @param Event $event
 	 * @param ContentTemplate $entity
 	 * @return void
 	 */
 	public function beforeSave(Event $event, ContentTemplate $entity): void {
-		if ($entity->hasOriginal('fileName') && $entity->fileName != $entity->getOriginal('fileName')) {
+		if ($entity->hasOriginal('fileName') && $entity->get('fileName') != $entity->getOriginal('fileName')) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
@@ -111,7 +111,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, ContentTemplate $entity, ArrayObject $options): void {
-		$ls_fileName = Text::slug($entity->fileName, ['replacement' => '_']);
+		$ls_fileName = Text::slug($entity->get('fileName'), ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
 
@@ -127,20 +127,20 @@ class ContentTemplatesListener implements EventListenerInterface {
 
 		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
 
-		if (!($options['isCopy'] ?? false) && $entity->hasOriginal('fileName') && $entity->fileName != $entity->getOriginal('fileName')) {
+		if (!($options['isCopy'] ?? false) && $entity->hasOriginal('fileName') && $entity->get('fileName') != $entity->getOriginal('fileName')) {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
 			$ls_currentFileName = Text::slug($entity->getOriginal('fileName'), ['replacement' => '_']);
 			$ls_currentFilePath = $ls_folderPath . $ls_currentFileName . $ls_extension;
 			$lb_fileExists = file_exists($ls_currentFilePath);
 			if ($lb_fileExists) {
-				$la_commands[] = 'mv ' . $ls_currentFilePath . ' ' . $ls_filePath;
+				$la_commands[] = 'mv -f ' . $ls_currentFilePath . ' ' . $ls_filePath;
 			}
 		}
 		else {
 			$lb_fileExists = file_exists($ls_filePath);
 		}
 
-		//If the file does not exist, we create one based on a twig-template for frontent content templates
+		//If the file does not exist, we create one based on a twig-template for frontend content templates
 		if (!$lb_fileExists) {
 			$la_commands[] = 'bin' . DS . 'cake bake template content_templates content_template ' . $ls_fileName . ' --prefix Frontend --controller content';
 			$la_commands[] = 'chmod 0755 ' . $ls_filePath;
@@ -175,7 +175,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDelete(Event $event, ContentTemplate $entity): void {
-		$ls_fileName = Text::slug($entity->fileName, ['replacement' => '_']);
+		$ls_fileName = Text::slug($entity->get('fileName'), ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
 
@@ -187,13 +187,13 @@ class ContentTemplatesListener implements EventListenerInterface {
 		if (file_exists($ls_filePath)) {
 			$ls_newFilePath = $ls_filePath;
 			while (file_exists($ls_newFilePath)) {
-				$ls_newFilePath = $ls_folderPath . '_deleted-' . $ls_fileName . '-' . (new DateTime())->getTimestamp() . $ls_extension;
+				$ls_newFilePath = $ls_folderPath . '_deleted-' . $ls_fileName . '-' . new DateTime()->getTimestamp() . $ls_extension;
 			}
 
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 			$lo_queue->createJob('Queue.Execute', [
-				'command' => 'mv ' . $ls_filePath . ' ' . $ls_newFilePath,
+				'command' => 'mv -f ' . $ls_filePath . ' ' . $ls_newFilePath,
 				'log' => true,
 			], [
 				'group' => 'general',
