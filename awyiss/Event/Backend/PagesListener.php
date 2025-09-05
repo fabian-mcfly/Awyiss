@@ -75,11 +75,27 @@ class PagesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		/** @var \Awyiss\Model\Entity\Page $lo_originalEntity */
+		/**
+		 * @var \Awyiss\Model\Entity\Page $lo_originalEntity
+		 * @noinspection PhpUndefinedFieldInspection
+		 */
 		$lo_originalEntity = $entity->originalEntity;
 
+		if (!$lo_originalEntity) {
+			return;
+		}
+
 		if (($options['copyDescendantsWithDifferentPageRole'] ?? false) === true) {
-			$lo_children = $lo_table->getNestedPages($lo_originalEntity);
+			$lo_children = $lo_table->getNestedChildren($lo_originalEntity, [
+				'forceEnable' => true,
+				'finders' => [
+					'all' => [
+						'skipPageRoleCheck' => true,
+					],
+					'mediaAssignments' => ['formatResult' => false],
+					'translations',
+				],
+			]);
 		}
 		else {
 			$lo_children = $lo_table->getNestedChildren($lo_originalEntity, [
@@ -115,6 +131,11 @@ class PagesListener implements EventListenerInterface {
 			$lo_childPage->setNew(true);
 
 			$lo_childPage->patch($la_relatedColumnValues);
+
+			if ($lo_childPage->pageRoleId !== $entity->pageRoleId) {
+				// Unset attributes as they cannot make their way into the copied entity since the page role is different
+				$lo_childPage->unset('attributes');
+			}
 		}
 
 		$ls_childrenPropertyName = 'child' . $lo_table->getAlias();
@@ -241,7 +262,18 @@ class PagesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		/** @var \Awyiss\Model\Entity\Page $lo_originalEntity */
+		if (
+			($options['_primary'] ?? false) === true &&
+			($options['copyDescendantsWithDifferentPageRole'] ?? false) === true &&
+			$entity->childPages
+		) {
+			$this->transferAttributes($entity);
+		}
+
+		/**
+		 * @var \Awyiss\Model\Entity\Page $lo_originalEntity
+		 * @noinspection PhpUndefinedFieldInspection
+		 */
 		$lo_originalEntity = $entity->originalEntity;
 
 		/** @uses \Awyiss\Model\Table::findTranslations() */
@@ -273,7 +305,7 @@ class PagesListener implements EventListenerInterface {
 	 * @param Event $event
 	 * @param \Awyiss\Model\Entity\Page $entity
 	 * @param ArrayObject $options
-	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $event, Page $entity, ArrayObject $options): void {
 		foreach ($entity->addMenuEntry ?? [] as $li_menuId) {
@@ -597,5 +629,100 @@ class PagesListener implements EventListenerInterface {
 		]);
 
 		$lo_query->execute();
+	}
+
+
+	/**
+	 * Transfers attributes from the database to newly copied pages that have a different page role than their original entity.
+	 *
+	 * When copying a page with descendants that have a different page role than the original entity of the copied page,
+	 * the attributes of those descendants will not be copied automatically, as the attributes belong to a different table.
+	 *
+	 * For example, if you copy a "Page" that has a child "News" page, the attributes of the "News" page will not be copied automatically,
+	 * as the "AttributesNews" table is not associated with the "Pages" table.
+	 *
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function transferAttributes(Page $entity): void {
+		/**
+		 * Filter child pages to only include those with different page roles and original entities
+		 * This ensures we only process pages that need attribute transfer due to page role differences
+		 */
+		$la_children = collection($entity->childPages)->listNested('desc', 'childPages')->filter(function (Page $page) use ($entity): bool {
+			return isset($page->originalEntity) && $page->pageRoleId !== $entity->pageRoleId;
+		})->groupBy(function (Page $page) {
+			// Group by page role ID value
+			return $page->pageRoleId->value;
+		})->toArray();
+
+		// Early return if no child pages with different page roles are found
+		if (!$la_children) {
+			return;
+		}
+
+		// Process each group of pages by page role
+		foreach ($la_children as $li_pageRoleId => $la_pages) {
+			/** @var \Awyiss\Model\Enum\PageRole $le_pageRole */
+			$le_pageRole = $la_pages[0]->pageRoleId;
+			/** @var \Awyiss\Model\Table\PagesTable $lo_pageRoleTable */
+			$lo_pageRoleTable = $this->fetchTable(Inflector::pluralize($le_pageRole->name));
+
+			// Skip page roles that don't have attributes
+			if (!$lo_pageRoleTable->hasAttributes()) {
+				unset($la_children[ $li_pageRoleId ]);
+				continue;
+			}
+
+			// Extract original page IDs
+			$la_originalIds = array_map(function (Page $page) {
+				return $page->originalEntity->id;
+			}, $la_pages);
+
+			// Skip if no valid original IDs are found
+			if (!$la_originalIds) {
+				unset($la_children[ $li_pageRoleId ]);
+				continue;
+			}
+
+			// Retrieve all attributes for the original pages
+			$lo_attributesTable = $this->fetchTable($lo_pageRoleTable->getAttributesTableName(true));
+			$la_attributes = $lo_attributesTable->find()->where(['page_id IN' => $la_originalIds])->all()->indexBy('page_id')->toArray();
+
+			// Skip if no attributes are found for any of the original pages
+			if (!$la_attributes) {
+				continue;
+			}
+
+			// Process each page and prepare its attributes for copying
+			foreach ($la_pages as $lo_page) {
+				$lo_originalPage = $lo_page->originalEntity;
+
+				// Skip if no attribute for the page is found
+				if (!isset($la_attributes[ $lo_originalPage->id ])) {
+					continue;
+				}
+
+				/** @var \Awyiss\Model\Entity $lo_attribute */
+				$lo_attribute = $la_attributes[ $lo_originalPage->id ];
+
+				// Mark the attribute as new and unset its ID to prepare for insertion
+				$lo_attribute->setNew(true);
+				$lo_attribute->unset('id');
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$lo_attribute->pageId = $lo_page->id;
+			}
+
+			// Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
+			$lo_attributesTable->saveMany($la_attributes, [
+				'audit' => ['skip' => true],
+				'atomic' => false,
+				'checkRules' => false,
+				'nest' => ['skip' => true],
+				'systemOrder' => ['skip' => true],
+				'transaction' => false,
+			]);
+		}
 	}
 }
