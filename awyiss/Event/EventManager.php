@@ -21,7 +21,8 @@ class EventManager extends BaseEventManager {
 	 */
 	protected static array $lazyLoadAttempts = [
 		'global' => [],
-		'current' => [],
+		Awyiss::REALM_FRONTEND => [],
+		Awyiss::REALM_BACKEND => [],
 	];
 	/**
 	 * @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface>
@@ -127,8 +128,8 @@ class EventManager extends BaseEventManager {
 			}
 		}
 
-		if (Awyiss::getRealm() && !in_array($ls_scope, static::$lazyLoadAttempts['current'])) {
-			static::$lazyLoadAttempts['current'][] = $ls_scope;
+		if (Awyiss::getRealm() && !in_array($ls_scope, static::$lazyLoadAttempts[ Awyiss::getRealm() ])) {
+			static::$lazyLoadAttempts[ Awyiss::getRealm() ][] = $ls_scope;
 
 			// Try loading the scope from for the current realm
 			EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm());
@@ -161,7 +162,8 @@ class EventManager extends BaseEventManager {
 	public function reset(): void {
 		static::$lazyLoadAttempts = [
 			'global' => [],
-			'current' => [],
+			Awyiss::REALM_FRONTEND => [],
+			Awyiss::REALM_BACKEND => [],
 		];
 	}
 }
