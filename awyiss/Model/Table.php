@@ -753,36 +753,24 @@ class Table extends BaseTable {
 		$la_options['asCopy'] ??= false;
 
 		if ($la_options['asCopy'] === true || $la_options['isCopy'] === true) {
-			$la_primaryKeys = $entity->extractOriginal((array)$this->getPrimaryKey());
-			if ($la_primaryKeys) {
+			if (!isset($entity->originalEntity)) {
 				/** @noinspection PhpDynamicFieldDeclarationInspection */
-				$entity->originalPrimaryKeyValues ??= $la_primaryKeys;
-				$entity->unset((array)$this->getPrimaryKey());
-			}
+				$entity->originalEntity = unserialize(serialize($entity));
+				$entity->setVirtual(['originalEntity'], true);
 
-			/**
-			 * Serialize and unserialize the entity to create a deep copy of it.
-			 *
-			 * @noinspection PhpDynamicFieldDeclarationInspection
-			 */
-			$entity->originalEntity = unserialize(serialize($entity));
-			$entity->setVirtual(['originalEntity'], true);
-
-			/** @noinspection PhpUndefinedFieldInspection */
-			if ($entity->originalPrimaryKeyValues) {
-				/** @noinspection PhpUndefinedFieldInspection */
-				$entity->originalEntity->patch($entity->originalPrimaryKeyValues, ['guard' => false]);
-				$entity->unset('originalPrimaryKeyValues');
-			}
-
-			if ($entity->originalEntity->isDirty()) {
 				$entity->originalEntity->patch(
-					$entity->originalEntity->extractOriginalChanged(
-						$entity->originalEntity->getOriginalFields()
+					$entity->extractOriginalChanged(
+						$entity->getOriginalFields()
 					)
 				);
 
 				$entity->originalEntity->clean();
+			}
+
+			$la_primaryKeys = $entity->extractOriginal((array)$this->getPrimaryKey());
+			if ($la_primaryKeys) {
+				$entity->originalPrimaryKeyValues ??= $la_primaryKeys;
+				$entity->unset((array)$this->getPrimaryKey());
 			}
 		}
 

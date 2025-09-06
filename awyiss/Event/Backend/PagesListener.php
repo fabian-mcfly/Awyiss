@@ -66,9 +66,10 @@ class PagesListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Page $entity
 	 * @param \ArrayObject $options
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	public function beforeCopy(Event $event, Page $entity, ArrayObject $options): void {
-		if ($options['_primary'] !== true) {
+		if (($options['_primary'] ?? false) !== true) {
 			return;
 		}
 
@@ -123,11 +124,30 @@ class PagesListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Model\Entity\Page $lo_childPage */
 		foreach ($lo_children as $lo_childPage) {
-			$la_primaryKeys = $lo_childPage->extract((array)$lo_table->getPrimaryKey());
-			/** @noinspection PhpUndefinedFieldInspection */
-			$lo_childPage->originalPrimaryKeyValues ??= $la_primaryKeys;
+			if (!isset($lo_childPage->originalEntity)) {
+				/**
+				 * Serialize and unserialize the entity to create a deep copy of it.
+				 *
+				 * @noinspection PhpUndefinedFieldInspection
+				 */
+				$lo_childPage->originalEntity = unserialize(serialize($lo_childPage));
+				$lo_childPage->setVirtual(['originalEntity'], true);
 
-			$lo_childPage->unset((array)$lo_table->getPrimaryKey());
+				$lo_childPage->originalEntity->patch(
+					$lo_childPage->extractOriginalChanged(
+						$lo_childPage->getOriginalFields()
+					)
+				);
+
+				$lo_childPage->originalEntity->clean();
+			}
+
+			$la_primaryKeys = $lo_childPage->extractOriginal((array)$lo_table->getPrimaryKey());
+			if ($la_primaryKeys) {
+				$lo_childPage->originalPrimaryKeyValues ??= $la_primaryKeys;
+				$lo_childPage->unset((array)$lo_table->getPrimaryKey());
+			}
+
 			$lo_childPage->setNew(true);
 
 			$lo_childPage->patch($la_relatedColumnValues);
@@ -194,7 +214,7 @@ class PagesListener implements EventListenerInterface {
 		$ls_slug = $ls_preSlug . $ls_slug;
 
 		$ls_originalSlug = $entity->hasOriginal('slug') ? $entity->getOriginal('slug') : null;
-		//When the slug has changed
+		// When the slug has changed
 		if ($entity->isNew() || $ls_slug != $ls_originalSlug) {
 			$ls_field = $lo_table->getAlias() . '.slug';
 
@@ -210,8 +230,8 @@ class PagesListener implements EventListenerInterface {
 			}
 
 			/**
-			 * `$la_conditions` holds an array of query conditions that are used to find pages with the same
-			 * slug
+			 * `$la_conditions` holds an array of query conditions that are used to
+			 * find pages with the same slug
 			 * ```
 			 * [
 			 *    "Pages.slug" => "new/slug/of/the/current/page"
@@ -226,7 +246,7 @@ class PagesListener implements EventListenerInterface {
 			$li_i = 1;
 			$ls_suffix = '';
 
-			//As long as a page with the same slug exists, append an increasing number to the slug and try again
+			// As long as a page with the same slug exists, append an increasing number to the slug and try again
 			while ($lo_table->exists($la_conditions, ['skipPageRoleCheck' => true])) {
 				$li_i++;
 				$ls_suffix = '-' . $li_i;
@@ -238,7 +258,7 @@ class PagesListener implements EventListenerInterface {
 				$la_conditions[ $ls_field ] = $ls_slug . $ls_suffix;
 			}
 
-			//Append the suffix, if it's not empty
+			// Append the suffix, if it's not empty
 			if ($ls_suffix) {
 				$ls_slug .= $ls_suffix;
 			}
@@ -446,7 +466,8 @@ class PagesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function createHistoricalSlugs(PagesTable $table, Page $entity, ?string $originalLanguage, ?string $originalSlug): void {
-		$ls_originalSlug = $originalSlug;
+		$ls_slug = $originalSlug ?? $entity->slug;
+		$ls_languageShortcode = $originalLanguage ?? $entity->languageShortcode;
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$li_userId = $this->getIdentity()?->id;
@@ -455,7 +476,7 @@ class PagesListener implements EventListenerInterface {
 		// Create a new historical slug entry for the original slug of the provided page
 		$lo_query = $table->UrlHistory->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
 		$lo_query->values([
-			'url' => ($originalLanguage ?? $entity->languageShortcode) . '/' . $originalSlug,
+			'url' => $ls_languageShortcode . '/' . $ls_slug,
 			'scope' => 'pages',
 			'foreign_key' => $entity->id,
 			'status' => 308,
@@ -464,8 +485,8 @@ class PagesListener implements EventListenerInterface {
 		]);
 
 		// Find all pages whose slug starts with the original slug of the provided page
-		$lo_records = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($ls_originalSlug) {
-			return $expression->like('slug', $ls_originalSlug . '/%');
+		$lo_records = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($ls_slug) {
+			return $expression->like('slug', $ls_slug . '/%');
 		})->all();
 
 		if (!$lo_records->count()) {
@@ -561,7 +582,6 @@ class PagesListener implements EventListenerInterface {
 			$lo_query->set('parents_active', $lb_parentsActive);
 		}
 
-
 		/**
 		 * WHERE slug LIKE 'oldslug/%'
 		 */
@@ -580,6 +600,10 @@ class PagesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function updateMenuEntries(Page $entity, ?string $originalLanguage, ?string $originalSlug): void {
+		$lo_entity = $entity;
+		$ls_slug = $originalSlug ?? $entity->slug;
+		$ls_languageShortcode = $originalLanguage ?? $entity->languageShortcode;
+
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = $this->fetchTable('MenuEntries');
 
@@ -591,19 +615,15 @@ class PagesListener implements EventListenerInterface {
 		 * @noinspection PhpUndefinedMethodInspection
 		 */
 		$lo_query->set('link', $lo_query->newExpr($lo_query->func()->concat([
-			$entity->languageShortcode . '/' . $entity->slug,
+			$lo_entity->languageShortcode . '/' . $lo_entity->slug,
 			$lo_query->func()->substr([
 				'link' => 'identifier',
-				mb_strlen($originalSlug) + 4,
+				mb_strlen($ls_slug) + 4,
 			], [
 				null,
 				'integer',
 			]),
 		])));
-
-		$lo_entity = $entity;
-		$ls_originalLanguage = $originalLanguage;
-		$ls_originalSlug = $originalSlug;
 
 		/**
 		 * WHERE
@@ -616,14 +636,14 @@ class PagesListener implements EventListenerInterface {
 		 */
 		$lo_query->where([
 			'OR' => [
-				function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_originalLanguage, $ls_originalSlug) {
-					return $expression->like('link', ($ls_originalLanguage ?? $lo_entity->languageShortcode) . '/' . ($ls_originalSlug ?? $lo_entity->slug) . '/%');
+				function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_languageShortcode, $ls_slug) {
+					return $expression->like('link', $ls_languageShortcode . '/' . ($ls_slug ?? $lo_entity->slug) . '/%');
 				},
-				function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_originalLanguage, $ls_originalSlug) {
-					return $expression->like('link', ($ls_originalLanguage ?? $lo_entity->languageShortcode) . '/' . ($ls_originalSlug ?? $lo_entity->slug) . '#%');
+				function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_languageShortcode, $ls_slug) {
+					return $expression->like('link', $ls_languageShortcode . '/' . ($ls_slug ?? $lo_entity->slug) . '#%');
 				},
 				[
-					'link' => ($ls_originalLanguage ?? $lo_entity->languageShortcode) . '/' . ($ls_originalSlug ?? $lo_entity->slug),
+					'link' => $ls_languageShortcode . '/' . ($ls_slug ?? $lo_entity->slug),
 				],
 			],
 		]);
