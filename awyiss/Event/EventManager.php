@@ -108,13 +108,6 @@ class EventManager extends BaseEventManager {
 
 		$ls_scope = EventListenersProvider::sanitizeScope($ls_scope);
 
-		// If a regex-matching event for the scope exists, do nothing. This means that this event was most likely never set anywhere
-		if (
-			$this->matchingListeners('/(?<=\.|^)' . $ls_scope . '\./') ||
-			static::instance()->matchingListeners('/(?<=\.|^)' . $ls_scope . '\./')
-		) {
-			return;
-		}
 
 		if (!in_array($ls_scope, static::$lazyLoadAttempts['global'])) {
 			static::$lazyLoadAttempts['global'][] = $ls_scope;
