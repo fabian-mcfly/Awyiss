@@ -278,6 +278,7 @@ trait ForcedTitleTrait {
 		// Get the first media element
 		$la_medias = current($this->mediaAssignments);
 		// Get the first assigned media
+		$la_medias = is_array($la_medias) ? $la_medias : $la_medias->toArray();
 		$lx_media = current($la_medias);
 
 		// If the media is an array, get the first element
