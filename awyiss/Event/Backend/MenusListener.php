@@ -24,7 +24,10 @@ class MenusListener implements EventListenerInterface {
 	protected static string $scope;
 
 
-	protected string $menuEntriesFinder;
+	/**
+	 * @var array|string
+	 */
+	protected array|string $originalMenuEntriesFinder = 'all';
 
 
 	/**
@@ -56,11 +59,20 @@ class MenusListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		/** @var \Awyiss\Model\Entity\Menu $lo_originalEntity */
+		/**
+		 * @var \Awyiss\Model\Entity\Menu $lo_originalEntity
+		 * @noinspection PhpUndefinedFieldInspection
+		 */
 		$lo_originalEntity = $entity->originalEntity;
 
-		/** @uses \Awyiss\Model\Table::findTranslations() */
-		$lo_entries = $lo_table->AllMenuEntries->find('threaded', nestingKey: 'childMenuEntries')
+		$this->originalMenuEntriesFinder = $lo_table->MenuEntries->getFinder();
+		$lo_table->MenuEntries->setFinder('all');
+
+		/**
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
+		$lo_entries = $lo_table->MenuEntries->find('threaded', nestingKey: 'childMenuEntries')
 		->find('mediaAssignments', formatResult: false)
 		->find('translations')
 		->where(['menu_id' => $lo_originalEntity->id])
@@ -81,6 +93,8 @@ class MenusListener implements EventListenerInterface {
 			'isCopy' => true,
 			'_primary' => false,
 		]);
+
+		$lo_table->MenuEntries->setFinder($this->originalMenuEntriesFinder);
 	}
 
 
@@ -92,7 +106,10 @@ class MenusListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		$lo_table->AllMenuEntries->disableCascadeCallbacks();
+		$this->originalMenuEntriesFinder = $lo_table->MenuEntries->getFinder();
+		$lo_table->MenuEntries->setFinder('all');
+
+		$lo_table->MenuEntries->disableCascadeCallbacks();
 	}
 
 
@@ -104,7 +121,10 @@ class MenusListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		$lo_table->AllMenuEntries->disableCascadeCallbacks();
+		$this->originalMenuEntriesFinder = $lo_table->MenuEntries->getFinder();
+		$lo_table->MenuEntries->setFinder('all');
+
+		$lo_table->MenuEntries->disableCascadeCallbacks();
 	}
 
 
@@ -116,7 +136,9 @@ class MenusListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		$lo_table->AllMenuEntries->enableCascadeCallbacks();
+		$lo_table->MenuEntries->enableCascadeCallbacks();
+
+		$lo_table->MenuEntries->setFinder($this->originalMenuEntriesFinder);
 	}
 
 
@@ -128,6 +150,8 @@ class MenusListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		$lo_table->AllMenuEntries->enableCascadeCallbacks();
+		$lo_table->MenuEntries->enableCascadeCallbacks();
+
+		$lo_table->MenuEntries->setFinder($this->originalMenuEntriesFinder);
 	}
 }

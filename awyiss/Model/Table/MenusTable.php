@@ -13,7 +13,6 @@ use Cake\Validation\Validator;
 /**
  * Menus Model
  *
- * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $AllMenuEntries
  * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $MenuEntries
  * @method \Awyiss\Model\Entity\Menu newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
@@ -41,15 +40,9 @@ class MenusTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		//Used only internally to delete all entries, no matter the current language
-		$this->hasMany('AllMenuEntries', [
-			'cascadeCallbacks' => true,
-			'className' => 'MenuEntries',
-			'dependent' => true,
-			'foreignKey' => 'menu_id',
-		]);
-
 		$this->hasMany('MenuEntries', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 			'finder' => 'forCurrentLanguage',
 			'foreignKey' => 'menu_id',
