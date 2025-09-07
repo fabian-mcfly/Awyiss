@@ -302,28 +302,26 @@ class MediaListener implements EventListenerInterface {
 	protected function getSvgDimensions(string $fileContents): array {
 		$lf_width = $lf_height = null;
 
-		/** @noinspection RegExpRedundantEscape */
-		preg_match('/viewbox="(?<sizes>[0-9\. ]*)"/i', $fileContents, $la_matches);
-		if (!empty($la_matches['sizes'])) {
-			$la_coordinates = explode(' ', $la_matches['sizes'], 4);
-
-			$lf_width = (float)$la_coordinates[2];
-			$lf_height = (float)$la_coordinates[3];
-		}
-		else {
-			preg_match('/<svg[^>]*\s(width|height)="(\d+)"\s.*?(width|height)="(\d+)"/', $fileContents, $la_matches);
-			if ($la_matches) {
-				if (strtolower($la_matches[1]) === 'width') {
-					$lf_width = (float)$la_matches[2];
-					$lf_height = (float)$la_matches[4];
-				}
-				else {
-					$lf_width = (float)$la_matches[4];
-					$lf_height = (float)$la_matches[2];
-				}
+		preg_match('/<svg[^>]*\s(width|height)="(\d+)"[^>]*\s(width|height)="(\d+)"[^>]*>/i', $fileContents, $la_matches);
+		if ($la_matches) {
+			if (strtolower($la_matches[1]) === 'width') {
+				$lf_width = (float)$la_matches[2];
+				$lf_height = (float)$la_matches[4];
+			}
+			else {
+				$lf_width = (float)$la_matches[4];
+				$lf_height = (float)$la_matches[2];
 			}
 		}
-
+		else {
+			/** @noinspection RegExpRedundantEscape */
+			preg_match('/viewbox="(?<sizes>[0-9\. ]*)"/i', $fileContents, $la_matches);
+			if (!empty($la_matches['sizes'])) {
+				$la_coordinates = explode(' ', $la_matches['sizes'], 4);
+				$lf_width = (float)$la_coordinates[2];
+				$lf_height = (float)$la_coordinates[3];
+			}
+		}
 
 		return [
 			'width' => $lf_width,
@@ -371,19 +369,19 @@ class MediaListener implements EventListenerInterface {
 		$lo_stream = $entity->file->getStream();
 		$ls_tempName = $lo_stream->getMetadata('uri');
 
-		if ($entity->isImage()) {
-			if ($entity->mimeType === 'image/svg+xml') {
-				$la_dimensions = $this->getSvgDimensions(file_get_contents($ls_tempName));
+		if ($entity->mimeType === 'image/svg+xml') {
+			$la_dimensions = $this->getSvgDimensions(file_get_contents($ls_tempName));
 
-				$entity->width = $la_dimensions['width'];
-				$entity->height = $la_dimensions['height'];
-			}
-			else {
-				$la_imageSize = $this->getImageSize($ls_tempName);
+			$entity->width = $la_dimensions['width'];
+			$entity->height = $la_dimensions['height'];
 
-				$entity->width = $la_imageSize[0];
-				$entity->height = $la_imageSize[1];
-			}
+			$entity->preview = ProcessStatus::NotRequired;
+		}
+		elseif ($entity->isImage()) {
+			$la_imageSize = $this->getImageSize($ls_tempName);
+
+			$entity->width = (float)$la_imageSize[0];
+			$entity->height = (float)$la_imageSize[1];
 
 			$entity->preview = ProcessStatus::NotRequired;
 
