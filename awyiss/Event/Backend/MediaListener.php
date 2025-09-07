@@ -1,4 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * @noinspection PhpComposerExtensionStubsInspection
+ */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 namespace Awyiss\Event\Backend;
@@ -115,7 +122,12 @@ class MediaListener implements EventListenerInterface {
 			$entity->name .= '.' . $ls_realExtension;
 		}
 
-		if ($entity->file && !$entity->file->getError()) {
+		// Unset file if there was an error during upload
+		if ($entity->file && $entity->file->getError()) {
+			$entity->file = null;
+		}
+
+		if ($entity->file) {
 			$this->setDimensions($entity);
 
 			$entity->avif = in_array($entity->mimeType, ['image/avif', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
@@ -128,14 +140,8 @@ class MediaListener implements EventListenerInterface {
 				$this->ensureUniqueFileName($lo_table, $entity);
 			}
 		}
-		else {
-			if ($entity->file && $entity->file->getError()) {
-				$entity->file = null;
-			}
-
-			if ($entity->isDirty('name') || $entity->isDirty('mediaFolderId')) {
-				$this->ensureUniqueFileName($lo_table, $entity);
-			}
+		elseif ($entity->isDirty('name') || $entity->isDirty('mediaFolderId')) {
+			$this->ensureUniqueFileName($lo_table, $entity);
 		}
 
 		$ls_path = 'media/';
@@ -163,27 +169,13 @@ class MediaListener implements EventListenerInterface {
 			$entity->file->moveTo(WWW_ROOT . str_replace('/', DS, $entity->path));
 
 			if ($entity->hasOriginal('path') && $entity->getOriginal('path') !== $entity->get('path')) {
-				if (
-					in_array(LocalConfig::read('createHistoricalPaths', false, 'Media'), [
-						MediaConfigOptions::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE,
-						MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS,
-					])
-				) {
-					$this->createHistoricalPaths($entity, $entity->getOriginal('path'));
-				}
+				$this->createHistoricalPaths($entity, $entity->getOriginal('path'));
 
 				unlink(WWW_ROOT . str_replace('/', DS, $entity->getOriginal('path')));
 			}
 		}
 		elseif ($entity->hasOriginal('path') && $entity->getOriginal('path') !== $entity->get('path')) {
-			if (
-				in_array(LocalConfig::read('createHistoricalPaths', false, 'Media'), [
-					MediaConfigOptions::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE,
-					MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS,
-				])
-			) {
-				$this->createHistoricalPaths($entity, $entity->getOriginal('path'));
-			}
+			$this->createHistoricalPaths($entity, $entity->getOriginal('path'));
 
 			$entity->moveConvertedFiles();
 			$entity->moveResizedFiles();
@@ -197,6 +189,8 @@ class MediaListener implements EventListenerInterface {
 		if ($entity->hasOriginal('focusPoint') && $entity->getOriginal('focusPoint') !== $entity->get('focusPoint')) {
 			$entity->deleteResizedFiles();
 		}
+
+		static::clearMediaFoldersCache();
 	}
 
 
@@ -224,6 +218,15 @@ class MediaListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function createHistoricalPaths(Media $entity, string $originalPath): void {
+		if (
+			!in_array(LocalConfig::read('createHistoricalPaths', false, 'Media'), [
+				MediaConfigOptions::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE,
+				MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS,
+			])
+		) {
+			return;
+		}
+
 		$ls_originalPath = $originalPath;
 		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
 
