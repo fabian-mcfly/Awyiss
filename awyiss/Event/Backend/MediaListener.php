@@ -426,4 +426,15 @@ class MediaListener implements EventListenerInterface {
 			}
 		}
 	}
+
+
+	/**
+	 * Clears the cached media folder data
+	 *
+	 * @return void
+	 */
+	public static function clearMediaFoldersCache(): void {
+		static::$mediaFolders = null;
+		static::$media = [];
+	}
 }

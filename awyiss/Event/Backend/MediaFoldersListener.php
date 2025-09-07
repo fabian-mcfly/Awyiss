@@ -19,7 +19,6 @@ use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Exception;
-use ReflectionClass;
 
 
 /**
@@ -212,7 +211,7 @@ class MediaFoldersListener implements EventListenerInterface {
 			mkdir(WWW_ROOT . str_replace('/', DS, $entity->path), 0755, true);
 		}
 
-		$this->emptyMediaFoldersCache();
+		$this->clearMediaFoldersCache();
 	}
 
 
@@ -238,7 +237,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function asterDeleteCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
-		$this->emptyMediaFoldersCache();
+		$this->clearMediaFoldersCache();
 	}
 
 
@@ -250,7 +249,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function asterSoftDeleteCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
-		$this->emptyMediaFoldersCache();
+		$this->clearMediaFoldersCache();
 	}
 
 
@@ -502,17 +501,13 @@ class MediaFoldersListener implements EventListenerInterface {
 
 
 	/**
-	 * Unset the static property "mediaFolders" in the MediaListener class
-	 * to empty the cache of media folders.
+	 * Clear the media folders cache
+	 * in the `\Awyiss\Event\Backend\MediaListener` class.
 	 *
 	 * @return void
-	 * @see \Awyiss\Event\Backend\MediaListener::$mediaFolders
+	 * @see \Awyiss\Event\Backend\MediaListener::clearMediaFoldersCache
 	 */
-	protected function emptyMediaFoldersCache(): void {
-		$lo_reflection = new ReflectionClass(MediaListener::class);
-		$ls_property = $lo_reflection->getProperty('mediaFolders');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$ls_property->setAccessible(true);
-		$ls_property->setValue(null, null);
+	protected function clearMediaFoldersCache(): void {
+		MediaListener::clearMediaFoldersCache();
 	}
 }
