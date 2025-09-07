@@ -49,7 +49,7 @@ class PageRolesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function beforeSave(Event $event, PageRole $entity): void {
-		//If the page role has an attributes table and there is a table change in progress, stop the event.
+		// If the page role has an attributes table and there is a table change in progress, stop the event.
 		$ls_attributesTable = 'attributes_' . Inflector::tableize($entity->identifier);
 		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		if (in_array($ls_attributesTable, $la_tables)) {
@@ -108,7 +108,7 @@ class PageRolesListener implements EventListenerInterface {
 		$lo_menuEntries = $lo_tableLocator->get('BackendMenuEntries');
 		$lo_menuEntries->deleteAll([
 			'OR' => [
-				'link LIKE' => Inflector::tableize($entity->identifier) . '::%',
+				'link LIKE' => Inflector::camelize(Inflector::pluralize($entity->identifier)) . '::%',
 				'link' => 'Configuration::overview::scope:' . Inflector::pluralize($entity->identifier),
 			],
 		]);
@@ -160,7 +160,7 @@ class PageRolesListener implements EventListenerInterface {
 			/** @var \Awyiss\Model\Table $lo_attributesTable */
 			$lo_attributesTable = $lo_tableLocator->get('Attributes');
 
-			/** @noinspection PhpUndefinedMethodInspection */
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$li_identityId = $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id;
 
 			$lo_queue->createJob('Attributes/Delete', [
