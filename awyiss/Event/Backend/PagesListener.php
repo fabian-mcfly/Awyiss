@@ -212,10 +212,17 @@ class PagesListener implements EventListenerInterface {
 		$la_parts = explode('/', $entity->slug);
 		$ls_slug = end($la_parts);
 		$ls_slug = $ls_preSlug . $ls_slug;
+		$ls_languageShortcode = $entity->languageShortcode;
 
-		$ls_originalSlug = $entity->hasOriginal('slug') ? $entity->getOriginal('slug') : null;
-		// When the slug has changed
-		if ($entity->isNew() || $ls_slug != $ls_originalSlug) {
+		$ls_originalSlug = $entity->hasOriginal('slug') ? $entity->getOriginal('slug') : $ls_slug;
+		$ls_originalLanguageShortcode = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode') : $entity->languageShortcode;
+
+		// When the slug or the language has changed, or if it's a new entity, ensure the slug is unique
+		if (
+			$entity->isNew() ||
+			$ls_slug != $ls_originalSlug ||
+			$ls_languageShortcode != $ls_originalLanguageShortcode
+		) {
 			$ls_field = $lo_table->getAlias() . '.slug';
 
 			$la_conditions = [
