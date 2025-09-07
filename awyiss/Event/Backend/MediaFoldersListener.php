@@ -67,14 +67,17 @@ class MediaFoldersListener implements EventListenerInterface {
 		$li_fieldLength = $ls_field ? $ls_field['length'] : 0;
 
 		if (empty($entity->path)) {
-			//Make sure the path is set. Use the title if it's empty.
+			// Make sure the path is set. Use the title if it's empty.
 			$entity->set('path', $entity->title);
 		}
 
 		if (
-			!$entity->isDirty('path') && !$entity->isDirty('languageShortcode') && !$entity->isDirty('parentId') && !$entity->isDirty('deleted')
+			!$entity->isDirty('path') &&
+			!$entity->isDirty('languageShortcode') &&
+			!$entity->isDirty('parentId') &&
+			!$entity->isDirty('deleted')
 		) {
-			//If neither the path, the language nor the parent id have changed, skip the path logic
+			// If neither the path, language, parent nor deleted have changed, skip the path logic
 			return;
 		}
 
@@ -82,7 +85,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		if (!empty($entity->parentId)) {
 			/** @var \Awyiss\Model\Entity\MediaFolder $lo_parentMediaFolder */
 			$lo_parentMediaFolder = $lo_table->get($entity->parentId);
-			//If there's a parent media folder, add its path the one of the current media folder
+			// If there's a parent media folder, add its path the one of the current media folder
 			$ls_prePath = trim($lo_parentMediaFolder->path, '/') . '/';
 
 			$entity->parentsActive = $lo_parentMediaFolder->active && $lo_parentMediaFolder->parentsActive;
@@ -94,16 +97,22 @@ class MediaFoldersListener implements EventListenerInterface {
 		$la_parts = explode('/', $entity->path);
 		$ls_path = array_pop($la_parts);
 		$ls_path = $ls_prePath . rtrim($ls_path, '-');
+		$ls_languageShortcode = $entity->languageShortcode;
 
 		$ls_originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : $entity->path;
+		$ls_originalLanguageShortcode = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode') : $entity->languageShortcode;
 
 		if (!str_starts_with($ls_path, 'media/') && $ls_path !== 'media') {
 			$ls_path = 'media/' . $ls_path;
 		}
 
-		//When the path has changed
-		if ($entity->isNew() || $ls_path != $ls_originalPath) {
-			$ls_path = $this->ensureUniqueSlug($lo_table, $entity, $ls_path, $li_fieldLength);
+		// When the path has changed
+		if (
+			$entity->isNew() ||
+			$ls_path != $ls_originalPath ||
+			$ls_languageShortcode != $ls_originalLanguageShortcode
+		) {
+			$ls_path = $this->ensureUniquePath($lo_table, $entity, $ls_path, $li_fieldLength);
 		}
 
 		$entity->set('path', $ls_path, ['setter' => false]);
@@ -124,7 +133,10 @@ class MediaFoldersListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		/** @var \Awyiss\Model\Entity\MediaFolder $lo_originalEntity */
+		/**
+		 * @var \Awyiss\Model\Entity\MediaFolder $lo_originalEntity
+		 * @noinspection PhpUndefinedFieldInspection
+		 */
 		$lo_originalEntity = $entity->originalEntity;
 
 		$this->copyMediaEntities($entity, $lo_originalEntity, $lo_table);
@@ -149,7 +161,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @param Event $event
 	 * @param \Awyiss\Model\Entity\MediaFolder $entity
 	 * @param \ArrayObject $options
-	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $event, MediaFolder $entity, ArrayObject $options): void {
 		if ($entity->isNew()) {
@@ -169,14 +181,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $entity->parentsActive !== $lb_originalParentsActive;
 
 		if ($lb_pathChanged) {
-			if (
-				in_array(LocalConfig::read('createHistoricalPaths', false, 'Media'), [
-					MediaConfigOptions::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE,
-					MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS,
-				])
-			) {
-				$this->createHistoricalPaths($ls_originalPath);
-			}
+			$this->createHistoricalPaths($ls_originalPath);
 
 			foreach ([$lo_table->getTable(), 'media', 'media_resized_images'] as $ls_table) {
 				$this->rebuildDatabasePath($ls_table, $entity, $ls_originalPath);
@@ -258,6 +263,15 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function createHistoricalPaths(string $originalPath): void {
+		if (
+			!in_array(LocalConfig::read('createHistoricalPaths', false, 'Media'), [
+				MediaConfigOptions::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE,
+				MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS,
+			])
+		) {
+			return;
+		}
+
 		$ls_originalPath = $originalPath;
 		$lo_mediaTable = $this->fetchTable('Media');
 		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
@@ -347,8 +361,9 @@ class MediaFoldersListener implements EventListenerInterface {
 
 		if ($lb_parentsActive) {
 			/**
-			 * When updating all media folders with the same path (LIKE 'oldpath/%'), do not set the parents_active to true
-			 * for media folders that descendants of inactive sites.
+			 * When updating all media folders with the same path (LIKE 'oldpath/%'),
+			 * do not set the parents_active to true for media folders that
+			 * are descendants of inactive folders.
 			 */
 			$lo_subFolders = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($lo_entity, $ls_originalPath) {
 				return $expression->like('path', ($ls_originalPath ?? $lo_entity->path) . '/%');
@@ -448,7 +463,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @param int $fieldLength
 	 * @return string
 	 */
-	protected function ensureUniqueSlug(MediaFoldersTable $table, MediaFolder $entity, string $path, int $fieldLength): string {
+	protected function ensureUniquePath(MediaFoldersTable $table, MediaFolder $entity, string $path, int $fieldLength): string {
 		$ls_field = $table->getAlias() . '.path';
 
 		$ls_path = $path;
