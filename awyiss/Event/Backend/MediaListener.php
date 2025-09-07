@@ -70,9 +70,8 @@ class MediaListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Media $entity
 	 * @param \ArrayObject $options
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \ImagickException
-	 * @noinspection PhpComposerExtensionStubsInspection
+	 * @noinspection PhpUnusedParameterInspection, PhpComposerExtensionStubsInspection
 	 */
 	public function beforeSave(Event $event, Media $entity, ArrayObject $options): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
@@ -145,12 +144,16 @@ class MediaListener implements EventListenerInterface {
 		}
 
 		$ls_path = 'media/';
+		$ls_originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : $entity->path;
 
 		if (isset(static::$mediaFolders[ $entity->mediaFolderId ])) {
 			$ls_path = static::$mediaFolders[ $entity->mediaFolderId ]->path . '/';
 		}
 
 		$entity->path = $ls_path . $entity->name;
+		if (!$entity->isNew() && $ls_path . $entity->name === $ls_originalPath) {
+			$entity->setDirty('path', false);
+		}
 	}
 
 
@@ -270,27 +273,27 @@ class MediaListener implements EventListenerInterface {
 		}
 
 
-		$ls_field = $table->getSchema()->getColumn('slug');
+		$ls_field = $table->getSchema()->getColumn('name');
 		$li_length = $ls_field ? $ls_field['length'] : 0;
 
 		$li_i = 1;
 		$ls_suffix = '';
 
-		//As long as a page with the same slug exists, append an increasing number to the slug and try again
+		// As long as a page with the same slug exists, append an increasing number to the slug and try again
 		while ($table->exists($la_conditions)) {
 			$li_i++;
-			$ls_suffix = '-' . $li_i;
+			$ls_suffix = '-' . $li_i . '.' . $ls_extension;
 
 			if ($li_length && (mb_strlen($ls_fileName . $ls_suffix) > $li_length)) {
 				$ls_fileName = mb_substr($ls_fileName, 0, $li_length - mb_strlen($ls_suffix));
 			}
 
-			$la_conditions['name'] = $ls_fileName . $ls_suffix . '.' . $ls_extension;
+			$la_conditions['name'] = $ls_fileName . $ls_suffix;
 		}
 
-		//Append the suffix if it's not empty
+		// Append the suffix if it's not empty
 		if ($ls_suffix) {
-			$entity->name = $ls_fileName . $ls_suffix . '.' . $ls_extension;
+			$entity->name = $ls_fileName . $ls_suffix;
 		}
 	}
 
