@@ -46,8 +46,8 @@ class MediaFoldersListener implements EventListenerInterface {
 			'Model.MediaFolders.afterSave' => 'afterSave',
 			'Model.MediaFolders.afterSaveCommit' => 'afterSaveCommit',
 			'Model.MediaFolders.beforeSoftDelete' => 'beforeSoftDelete',
-			'Model.MediaFolders.asterDeleteCommit' => 'asterDeleteCommit',
-			'Model.MediaFolders.asterSoftDeleteCommit' => 'asterSoftDeleteCommit',
+			'Model.MediaFolders.afterDeleteCommit' => 'afterDeleteCommit',
+			'Model.MediaFolders.afterSoftDeleteCommit' => 'afterSoftDeleteCommit',
 		];
 	}
 
@@ -236,7 +236,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function asterDeleteCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
+	public function afterDeleteCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
 		$this->clearMediaFoldersCache();
 	}
 
@@ -248,7 +248,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function asterSoftDeleteCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
+	public function afterSoftDeleteCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
 		$this->clearMediaFoldersCache();
 	}
 
