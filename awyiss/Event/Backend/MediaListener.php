@@ -85,15 +85,15 @@ class MediaListener implements EventListenerInterface {
 
 		if (!isset(static::$mediaFolders)) {
 			/**
-			 * @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolderse
+			 * @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolders
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
-			$lo_mediaFolderse = $lo_table->getBehavior('Categories')->getCategories(true)->compile(false);
-			static::$mediaFolders = $lo_mediaFolderse->indexBy('id')->toArray();
+			$lo_mediaFolders = $lo_table->MediaFolders->find()->select(['id', 'title', 'path'])->all();
+			static::$mediaFolders = $lo_mediaFolders->indexBy('id')->toArray();
 		}
 
 		if (!isset(static::$media[ $entity->mediaFolderId ])) {
-			/** @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolderse */
+			/** @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolders */
 			$lo_media = $lo_table->find()->where(['media_folder_id' => $entity->mediaFolderId])->all();
 			static::$media[ $entity->mediaFolderId ] = $lo_media->indexBy('name')->toArray();
 		}
