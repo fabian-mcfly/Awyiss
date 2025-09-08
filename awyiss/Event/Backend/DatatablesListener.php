@@ -88,7 +88,7 @@ class DatatablesListener implements EventListenerInterface {
 
 		if ($entity->isNew()) {
 			/**
-			 * Trigger the creation of the custom configuriation
+			 * Trigger the creation of the custom configuration
 			 *
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 			 */
@@ -144,23 +144,13 @@ class DatatablesListener implements EventListenerInterface {
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
 
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
-		if (file_exists($ls_filePath)) {
-			unlink($ls_filePath);
-		}
-
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize($entity->identifier) . 'Table.php']);
-		if (file_exists($ls_filePath)) {
-			unlink($ls_filePath);
-		}
-
 		$ls_attributesTable = 'attributes_' . $entity->identifier;
 		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		if (in_array($ls_attributesTable, $la_tables)) {
 			/** @var \Awyiss\Model\Table $lo_attributesTable */
 			$lo_attributesTable = $lo_tableLocator->get('Attributes');
 
-			/** @noinspection PhpUndefinedMethodInspection */
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$li_identityId = $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id;
 
 			$lo_queue->createJob('Attributes/Delete', [
@@ -174,6 +164,16 @@ class DatatablesListener implements EventListenerInterface {
 		}
 
 		$la_commands = [];
+
+		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
+		if (file_exists($ls_filePath)) {
+			$la_commands[] = 'unlink ' . $ls_filePath;
+		}
+
+		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize($entity->identifier) . 'Table.php']);
+		if (file_exists($ls_filePath)) {
+			$la_commands[] = 'unlink ' . $ls_filePath;
+		}
 
 		//Bake a `drop`-migration
 		$la_commands[] = 'bin' . DS . 'cake bake migration drop_' . $entity->identifier . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
