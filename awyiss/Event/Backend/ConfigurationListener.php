@@ -157,7 +157,6 @@ class ConfigurationListener implements EventListenerInterface {
 		if ($deleted) {
 			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($entity->scope);
 			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
-
 			$lb_defaultNest = $lo_configOption?->getDefaultValue() ?? false;
 		}
 
@@ -189,7 +188,7 @@ class ConfigurationListener implements EventListenerInterface {
 			// If the column is the same as the foreign key of the Categories behavior, we don't need to unnest the entries
 			if ($lo_table->hasBehavior('Categories')) {
 				$ls_foreignKey = $lo_table->getBehavior('Categories')->getConfig('foreignKey');
-				if (Inflector::underscore($ls_foreignKey) === Inflector::underscore($ls_column)) {
+				if ($ls_foreignKey && Inflector::underscore($ls_foreignKey) === Inflector::underscore($ls_column)) {
 					return;
 				}
 			}
@@ -227,16 +226,19 @@ class ConfigurationListener implements EventListenerInterface {
 	protected function rebuildSystemOrder(Event $event, Configuration $entity): void {
 		if (
 			$entity->identifier === 'system_order.field' &&
-			$entity->isDirty('value') &&
+			(
+				$entity->isNew() ||
+				(
+					$entity->hasOriginal('value') &&
+					$entity->getOriginal('value') !== $entity->value
+				)
+			) &&
 			Inflector::variable($entity->value) !== 'systemOrder'
 		) {
-			$li_direction = Configure::read(implode('.', [
-				'Awyiss',
-				Inflector::camelize($entity->scope),
-				Awyiss::getRealm(),
+			$li_direction = LocalConfig::read([
 				'systemOrder',
 				'direction',
-			]));
+			], SORT_ASC, Inflector::camelize($entity->scope));
 
 			/** @var \Awyiss\Model\Table $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
@@ -248,15 +250,18 @@ class ConfigurationListener implements EventListenerInterface {
 		}
 		elseif (
 			$entity->identifier === 'system_order.direction' &&
-			$entity->isDirty('value')
+			(
+				$entity->isNew() ||
+				(
+					$entity->hasOriginal('value') &&
+					$entity->getOriginal('value') !== $entity->value
+				)
+			)
 		) {
-			$ls_field = Configure::read(implode('.', [
-				'Awyiss',
-				Inflector::camelize($entity->scope),
-				Awyiss::getRealm(),
+			$ls_field = LocalConfig::read([
 				'systemOrder',
 				'field',
-			]));
+			], 'systemOrder', Inflector::camelize($entity->scope));;
 
 			// If the field is set to 'systemOrder', we don't need to rebuild the system order
 			if ($ls_field === 'systemOrder') {
