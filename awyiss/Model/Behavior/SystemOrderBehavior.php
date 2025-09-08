@@ -35,7 +35,7 @@ class SystemOrderBehavior extends Behavior {
 	/**
 	 * Placeholder in <select>-elements that mark the current position. If this one's selected, no changes were made
 	 */
-	final public const CURRENT_VALUE_PLACEHOLDER = '__CURRENT__';
+	final public const string CURRENT_VALUE_PLACEHOLDER = '__CURRENT__';
 
 
 	/**
@@ -716,7 +716,11 @@ class SystemOrderBehavior extends Behavior {
 			// Enable natural sorting for numbers
 			$lo_collator->setAttribute(Collator::NUMERIC_COLLATION, Collator::ON);
 
-			uasort($la_records, function (EntityInterface $a, EntityInterface $b) use ($ls_field, $lo_collator) {
+			uasort($la_records, function (EntityInterface $a, EntityInterface $b) use ($direction, $ls_field, $lo_collator) {
+				if ($direction === SORT_DESC) {
+					return $lo_collator->compare($b->get($ls_field), $a->get($ls_field));
+				}
+
 				return $lo_collator->compare($a->get($ls_field), $b->get($ls_field));
 			});
 
