@@ -208,20 +208,13 @@ trait FrontendRenderingTrait {
 
 			// Replace the <module> tag with the rendered output
 			if (!empty($ls_moduleOutput)) {
-				$lo_newNode = $this->getDom($ls_moduleOutput);
-				// Remove the opening and closing `<body>`-tags
-				$lo_body = $lo_newNode->querySelector('body');
-
-				$la_nodes = [];
-				foreach ($lo_body->childNodes as $lo_childNode) {
-					$la_nodes[] = $lo_dom->importNode($lo_childNode, true);
+				$lo_moduleTag->innerHTML = $ls_moduleOutput;
+				while ($lo_moduleTag->firstChild) {
+					$lo_moduleTag->parentNode->insertBefore($lo_moduleTag->firstChild, $lo_moduleTag);
 				}
+			}
 
-				$lo_moduleTag->replaceWith(...$la_nodes);
-			}
-			else {
-				$lo_moduleTag->remove();
-			}
+			$lo_moduleTag->remove();
 		}
 
 		$entity->set($field, $this->getBody($lo_dom));
