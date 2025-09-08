@@ -193,9 +193,7 @@ class SoftDeleteBehavior extends Behavior {
 		// At this point, rules have already been checked, so we can safely unset the checkRules option
 		// to not check `update`-rules in the process of saving.
 		$lo_options = $options;
-		if ($lo_options->offsetExists('checkRules')) {
-			$lo_options->offsetUnset('checkRules');
-		}
+		$lo_options['checkRules'] = false;
 
 		//Stop the beforeDelete event
 		$event->stopPropagation();
