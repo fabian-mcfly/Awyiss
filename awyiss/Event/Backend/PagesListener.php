@@ -566,6 +566,7 @@ class PagesListener implements EventListenerInterface {
 
 		$lo_entity = $entity;
 		$ls_originalSlug = $originalSlug;
+		$lo_subQuery = null;
 
 		if ($activeChanged || $parentsActiveChanged) {
 			$lb_parentsActive = $entity->active && $entity->parentsActive;
@@ -579,24 +580,30 @@ class PagesListener implements EventListenerInterface {
 					return $expression->like('slug', ($ls_originalSlug ?? $lo_entity->slug) . '/%');
 				})->where(['active' => false])->all();
 
+				$lo_subQuery = $slugChanged ? clone $lo_query : null;
+
 				foreach ($lo_subPages as $lo_subPage) {
-					$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($lo_subPage) {
+					($lo_subQuery ?? $lo_query)->where(function (QueryExpression $expression/*, Query $query*/) use ($lo_subPage) {
 						return $expression->notLike('slug', $lo_subPage->slug . '/%');
 					});
 				}
 			}
 
-			$lo_query->set('parents_active', $lb_parentsActive);
+			($lo_subQuery ?? $lo_query)->set('parents_active', $lb_parentsActive);
 		}
 
 		/**
 		 * WHERE slug LIKE 'oldslug/%'
 		 */
-		$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_originalSlug) {
+		$lc_where = function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_originalSlug) {
 			return $expression->like('slug', ($ls_originalSlug ?? $lo_entity->slug) . '/%');
-		});
+		};
 
-		$lo_query->execute();
+		if ($lo_subQuery) {
+			$lo_subQuery->where($lc_where)->execute();
+		}
+
+		$lo_query->where($lc_where)->execute();
 	}
 
 
