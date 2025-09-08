@@ -19,6 +19,24 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
  */
 class RouteController extends AppController {
 	/**
+	 * @var string The default route preference (shortest, fastest, recommended)
+	 */
+	final public const string ROUTE_PREFERENCE_DEFAULT = self::ROUTE_PREFERENCE_SHORTEST;
+	/**
+	 * @var string Route preference for the fastest route
+	 */
+	final public const string ROUTE_PREFERENCE_FASTEST = 'fastest';
+	/**
+	 * @var string Route preference for the shortest route
+	 */
+	final public const string ROUTE_PREFERENCE_SHORTEST = 'shortest';
+	/**
+	 * @var string Route preference for the recommended route
+	 */
+	final public const string ROUTE_PREFERENCE_RECOMMENDED = 'recommended';
+
+
+	/**
 	 * @var \Awyiss\Utility\Route\RoutingServiceInterface
 	 */
 	protected RoutingServiceInterface $routingService;
@@ -178,7 +196,16 @@ class RouteController extends AppController {
 			default => 'driving-car',
 		};
 
-		$lo_route = $this->routingService->getRoute($lo_start, $lo_end, $ls_transportationMode, $this->request->getParam('lang'));
+		$la_params = [
+			'preference' => match ($this->request->getParam('routePreference')) {
+				self::ROUTE_PREFERENCE_FASTEST => self::ROUTE_PREFERENCE_FASTEST,
+				self::ROUTE_PREFERENCE_SHORTEST => self::ROUTE_PREFERENCE_SHORTEST,
+				self::ROUTE_PREFERENCE_RECOMMENDED => self::ROUTE_PREFERENCE_RECOMMENDED,
+				default => self::ROUTE_PREFERENCE_DEFAULT,
+			},
+		];
+
+		$lo_route = $this->routingService->getRoute($lo_start, $lo_end, $ls_transportationMode, $this->request->getParam('lang'), $la_params);
 		$ls_message = __d('route', $lo_route !== false ? 'route_planner_directions_found' : 'route_planner_no_directions_found');
 
 		$this->set([
