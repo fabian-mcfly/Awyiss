@@ -46,7 +46,7 @@ class UserConfigurationListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \ReflectionException
 	 */
-	public function beforeSave(Event $event, UserConfiguration $entity): void {
+	public function beforeRules(Event $event, UserConfiguration $entity): void {
 		$entity->value = ConfigOptionsProvider::typecastConfigValue(
 			$entity->scope,
 			Awyiss::REALM_BACKEND,
@@ -57,7 +57,16 @@ class UserConfigurationListener implements EventListenerInterface {
 		if (in_array(getType($entity->value), ['array', 'object'])) {
 			$entity->value = json_encode($entity->value);
 		}
+	}
 
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\UserConfiguration $entity
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeSave(Event $event, UserConfiguration $entity): void {
 		$entity->userId = $this->getIdentity()->getIdentifier();
 	}
 
