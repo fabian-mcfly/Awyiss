@@ -40,8 +40,8 @@ class ConfigurationListener implements EventListenerInterface {
 			'Model.Configuration.beforeRules' => 'beforeRules',
 			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
 			'Model.Configuration.afterDelete' => 'afterDelete',
-			'Configuration.createCustomConfiguration' => 'createCustomConfiguration',
-			'Configuration.deleteCustomConfiguration' => 'deleteCustomConfiguration',
+			'Awyiss.Configuration.createCustomConfiguration' => 'createCustomConfiguration',
+			'Awyiss.Configuration.deleteCustomConfiguration' => 'deleteCustomConfiguration',
 		];
 	}
 

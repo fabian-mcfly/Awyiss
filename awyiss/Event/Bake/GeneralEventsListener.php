@@ -51,7 +51,7 @@ class GeneralEventsListener implements EventListenerInterface {
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::deleteCustomConfiguration()
 			 */
 			$lo_eventManager = EventManager::instance();
-			$lo_eventManager->dispatch('Configuration.deleteCustomConfiguration');
+			$lo_eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
 		}
 	}
 

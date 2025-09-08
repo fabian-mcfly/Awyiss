@@ -50,12 +50,12 @@ class LanguagesListener implements EventListenerInterface {
 			$entity->isDirty('shortcode')
 		) {
 			/**
-			 * Trigger the creation of the custom configuriation
+			 * Trigger the creation of the custom configuration
 			 *
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 			 */
 			$lo_eventManager = EventManager::instance();
-			$lo_eventManager->dispatch('Configuration.deleteCustomConfiguration');
+			$lo_eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
 		}
 	}
 
@@ -92,11 +92,11 @@ class LanguagesListener implements EventListenerInterface {
 
 
 		/**
-		 * Trigger the creation of the custom configuriation
+		 * Trigger the creation of the custom configuration
 		 *
 		 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 		 */
 		$lo_eventManager = EventManager::instance();
-		$lo_eventManager->dispatch('Configuration.deleteCustomConfiguration');
+		$lo_eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
 	}
 }

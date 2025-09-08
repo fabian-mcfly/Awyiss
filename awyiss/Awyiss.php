@@ -405,7 +405,7 @@ class Awyiss extends BaseApplication {
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 			 */
 			$lo_eventManager = EventManager::instance();
-			$lo_eventManager->dispatch('Configuration.createCustomConfiguration');
+			$lo_eventManager->dispatch('Awyiss.Configuration.createCustomConfiguration');
 
 			// Try to load the config file again
 			Configure::load($ls_fileName, 'default', false);
