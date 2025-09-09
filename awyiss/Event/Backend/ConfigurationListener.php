@@ -37,7 +37,7 @@ class ConfigurationListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
-			'Model.Configuration.beforeRules' => 'beforeRules',
+			'Model.Configuration.beforeSave' => 'beforeSave',
 			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
 			'Model.Configuration.afterDelete' => 'afterDelete',
 			'Awyiss.Configuration.createCustomConfiguration' => 'createCustomConfiguration',
@@ -51,9 +51,8 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
-	 * @throws \ReflectionException
 	 */
-	public function beforeRules(Event $event, Configuration $entity): void {
+	public function beforeSave(Event $event, Configuration $entity): void {
 		$entity->value = ConfigOptionsProvider::typecastConfigValue(
 			$entity->scope,
 			$entity->realm,
@@ -87,8 +86,8 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \Exception
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterDelete(Event $event, Configuration $entity): void {
 		$this->unnestEntries($event, $entity, true);
@@ -101,11 +100,12 @@ class ConfigurationListener implements EventListenerInterface {
 	 * After saving or deleting a config item, we delete and create new cached config files.
 	 * We are too lazy to delete only those of the current language.
 	 * It's easier and doesn't affect performance that much to recreate each file once.
-
+	 *
+	 * @return void
 	 * @throws \Exception
 	 */
 	public function createCustomConfiguration(): void {
-		//Remember the current config
+		// Remember the current config
 		$la_rememberedConfig = Configure::read('Awyiss');
 
 		$this->deleteCustomConfiguration();
@@ -117,7 +117,7 @@ class ConfigurationListener implements EventListenerInterface {
 		unset($la_realmLanguages);
 
 		foreach (collection($la_languages)->cartesianProduct()->toArray() as $la_languages) {
-			//Load the config with the provided languages
+			// Load the config with the provided languages
 			Awyiss::loadConfiguration($la_languages[0] ?? null, $la_languages[1] ?? null, true);
 
 			$ls_frontendLanguage = $la_languages[0] ?? null;
@@ -132,7 +132,7 @@ class ConfigurationListener implements EventListenerInterface {
 				}
 			}
 
-			//Dump the config to a file
+			// Dump the config to a file
 			Configure::dump($ls_fileName, 'default', ['Awyiss']);
 		}
 
@@ -146,7 +146,7 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @param bool $deleted
 	 * @return void
-	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	protected function unnestEntries(Event $event, Configuration $entity, bool $deleted = false): void {
 		if ($entity->identifier !== 'nest.enabled') {
@@ -222,6 +222,7 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @return void
+	 * @throws \Exception
 	 */
 	protected function rebuildSystemOrder(Event $event, Configuration $entity): void {
 		if (
@@ -261,7 +262,7 @@ class ConfigurationListener implements EventListenerInterface {
 			$ls_field = LocalConfig::read([
 				'systemOrder',
 				'field',
-			], 'systemOrder', Inflector::camelize($entity->scope));;
+			], 'systemOrder', Inflector::camelize($entity->scope));
 
 			// If the field is set to 'systemOrder', we don't need to rebuild the system order
 			if ($ls_field === 'systemOrder') {
@@ -282,10 +283,10 @@ class ConfigurationListener implements EventListenerInterface {
 	/**
 	 * Removes all custom config files
 	 *
-	 * @return string
+	 * @return void
 	 */
 	public function deleteCustomConfiguration(): void {
-		//Delete all files
+		// Delete all files
 		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE) . '\[??\]\[??\].php';
 		foreach (glob(ENV_CUSTOM_CONFIG . $ls_fileName) as $ls_filePath) {
 			unlink($ls_filePath);
