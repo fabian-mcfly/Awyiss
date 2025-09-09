@@ -114,7 +114,7 @@ class App extends BaseApp {
 	public static function classes(
 		string $name,
 		string $folder,
-		string $suffix,
+		string $suffix = '',
 		?string $interface = null,
 		?string $subfolders = null,
 		array $blocklistedClassNames = []
@@ -166,6 +166,10 @@ class App extends BaseApp {
 					$interface &&
 					!in_array($interface, class_implements($ls_fqClassName))
 				) {
+					if ($ls_name === '*') {
+						continue;
+					}
+
 					throw new RuntimeException(
 						sprintf('The provided class `%s` does not implement `%s`.', $ls_fqClassName, $interface)
 					);
