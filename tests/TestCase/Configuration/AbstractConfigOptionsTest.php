@@ -59,7 +59,6 @@ class AbstractConfigOptionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAddAndRetrieveConfigOptionForInvalidRealm(): void {
 		$realm = 'InvalidRealm';
@@ -169,6 +168,7 @@ class AbstractConfigOptionsTest extends TestCase {
 
 		$this->assertFalse($isValid);
 
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$isValid = $this->configOptions->validateConfigValue('Backend', 'unknownPath', true, null, true);
 
 		$this->assertTrue($isValid);
@@ -182,7 +182,6 @@ class AbstractConfigOptionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testValidateConfigValueForLocalizableOption(): void {
 		$isValid = $this->configOptions->validateConfigValue('Backend', 'contents.enabled', true, 'en');

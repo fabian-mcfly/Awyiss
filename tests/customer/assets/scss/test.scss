@@ -1,0 +1,16 @@
+/**
+ * scss/test.scss
+ * Boolean value determines whether or not to include
+ * the column system-specific styles.
+ * Needs to be marked as default.
+ */
+$includeColumnSystem:true !default;
+
+@import 'variables';
+
+.foo {
+	width:$pageWidth;
+	padding-inline:$pagePadding;
+	color:$colorMain;
+	font-family:$fontStackMain;
+}

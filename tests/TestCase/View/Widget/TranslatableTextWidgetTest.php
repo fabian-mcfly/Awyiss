@@ -16,6 +16,7 @@ use Cake\View\Form\ContextInterface;
 class TranslatableTextWidgetTest extends TestCase {
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Widget\TranslatableTextWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */

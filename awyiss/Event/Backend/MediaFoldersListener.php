@@ -174,12 +174,6 @@ class MediaFoldersListener implements EventListenerInterface {
 		$ls_originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : null;
 		$lb_pathChanged = $ls_originalPath && $entity->path != $ls_originalPath;
 
-		$lb_originalActive = $entity->hasOriginal('active') ? $entity->getOriginal('active') : null;
-		$lb_activeChanged = $lb_originalActive !== null && $entity->active !== $lb_originalActive;
-
-		$lb_originalParentsActive = $entity->hasOriginal('parentsActive') ? $entity->getOriginal('parentsActive') : null;
-		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $entity->parentsActive !== $lb_originalParentsActive;
-
 		if ($lb_pathChanged) {
 			$this->createHistoricalPaths($ls_originalPath);
 
@@ -194,6 +188,12 @@ class MediaFoldersListener implements EventListenerInterface {
 				);
 			}
 		}
+
+		$lb_originalActive = $entity->hasOriginal('active') ? $entity->getOriginal('active') : null;
+		$lb_activeChanged = $lb_originalActive !== null && $entity->active !== $lb_originalActive;
+
+		$lb_originalParentsActive = $entity->hasOriginal('parentsActive') ? $entity->getOriginal('parentsActive') : null;
+		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $entity->parentsActive !== $lb_originalParentsActive;
 
 		if ($lb_activeChanged || $lb_parentsActiveChanged) {
 			$this->updateDescendants(
@@ -212,7 +212,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
-		if (!is_dir(WWW_ROOT . str_replace('/', DS, $entity->path)) && ($options['isCopy'] ?? false) === false) {
+		if (($options['isCopy'] ?? false) === false && !is_dir(WWW_ROOT . str_replace('/', DS, $entity->path))) {
 			mkdir(WWW_ROOT . str_replace('/', DS, $entity->path), 0755, true);
 		}
 
@@ -315,10 +315,10 @@ class MediaFoldersListener implements EventListenerInterface {
 	/**
 	 * @param string $table
 	 * @param \Awyiss\Model\Entity\MediaFolder $entity
-	 * @param mixed $ls_originalPath
+	 * @param mixed $originalPath
 	 * @return void
 	 */
-	protected function rebuildDatabasePath(string $table, MediaFolder $entity, mixed $ls_originalPath): void {
+	protected function rebuildDatabasePath(string $table, MediaFolder $entity, string $originalPath): void {
 		$lo_query = FactoryLocator::get('Table')->get(Inflector::camelize($table))->updateQuery();
 
 		/**
@@ -330,13 +330,13 @@ class MediaFoldersListener implements EventListenerInterface {
 			$entity->path,
 			$lo_query->func()->substr([
 				'path' => 'identifier',
-				mb_strlen($ls_originalPath) + 1,
+				mb_strlen($originalPath) + 1,
 			], [
 				null,
 				'integer',
 			]),
-		])))->where(function (QueryExpression $expression/*, Query $query*/) use ($ls_originalPath) {
-			return $expression->like('path', $ls_originalPath . '/%');
+		])))->where(function (QueryExpression $expression/*, Query $query*/) use ($originalPath) {
+			return $expression->like('path', $originalPath . '/%');
 		})->execute();
 	}
 

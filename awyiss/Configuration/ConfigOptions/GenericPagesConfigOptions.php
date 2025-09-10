@@ -250,6 +250,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 			'id !=' => 1,
 			'hidden' => false,
 		]);
+		/** @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolders */
 		$lo_mediaFolders = $lo_mediaFoldersTable->listNested($lo_query);
 
 		return $lo_mediaFolders->printer('label', 'id', '- ')->toArray();
@@ -263,6 +264,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 		$lo_pagesTable = $this->fetchTable('Pages');
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$lo_query = $lo_pagesTable->find('forCurrentLanguage', languageShortcode: $languageShortcode);
+		/** @var \Cake\Collection\Iterator\TreeIterator $lo_pages */
 		$lo_pages = $lo_pagesTable->listNested($lo_query);
 
 		return $lo_pages->printer('label', 'id', '- ')->toArray();

@@ -19,7 +19,6 @@ use Customer\Model\Enum\PageRole;
 class ConfigOptionsProviderTest extends TestCase {
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFiles(): void {
@@ -44,7 +43,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFilesLoaded(): void {
@@ -69,7 +67,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFile(): void {
@@ -89,7 +86,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFileLoaded(): void {
@@ -109,7 +105,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFileNotFound(): void {
@@ -123,7 +118,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadConfigOptions(): void {
@@ -143,7 +137,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadConfigOptionsNotFound(): void {
@@ -154,7 +147,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValue(): void {
@@ -174,7 +166,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValueNotFound(): void {
@@ -185,7 +176,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastConfigValue(): void {

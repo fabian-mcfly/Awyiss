@@ -47,7 +47,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @param \ArrayObject $data
 	 * @param \ArrayObject $options
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options): void {
 		if (empty($data['content_template_elements'])) {
@@ -58,8 +58,11 @@ class ContentTemplatesListener implements EventListenerInterface {
 		$lb_hasTitle = Hash::check($la_elements, '{n}[identifier=title]');
 		$lb_hasSubtitle = Hash::check($la_elements, '{n}[identifier=subtitle]');
 
-		//Filter out the title_tag and subtitle_tag elements when the title and subtitle are not present
-		/** @noinspection PhpVariableNamingConventionInspection */
+		/**
+		 * Filter out the title_tag and subtitle_tag elements when the title and subtitle are not present
+		 *
+		 * @noinspection PhpVariableNamingConventionInspection
+		 */
 		$data['content_template_elements'] = array_filter($la_elements, function ($element) use ($lb_hasTitle, $lb_hasSubtitle) {
 			if ($element['identifier'] == 'title_tag' && !$lb_hasTitle) {
 				return false;
@@ -107,8 +110,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\ContentTemplate $entity
 	 * @param \ArrayObject $options
-	 * @noinspection DuplicatedCode
-	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, ContentTemplate $entity, ArrayObject $options): void {
 		$ls_fileName = Text::slug($entity->get('fileName'), ['replacement' => '_']);
@@ -170,7 +172,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * - append '-' and the current timestamp
 	 *
 	 * @param Event $event
-	 * @param ContentTemplate $entity
+	 * @param \Awyiss\Model\Entity\ContentTemplate $entity
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */

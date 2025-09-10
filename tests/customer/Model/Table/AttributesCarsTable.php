@@ -6,6 +6,7 @@ namespace Customer\Model\Table;
 
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -19,11 +20,11 @@ class AttributesCarsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const bool ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'attributes_cars';
+	public const string TABLE = 'attributes_cars';
 
 
 	/**
@@ -40,11 +41,8 @@ class AttributesCarsTable extends Table {
 
 
 	/**
-	 * Returns the default validator object.
-	 *
-	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
-	 * add some rules to it.
-	 * @return \Cake\Validation\Validator
+	 * @inheritDoc
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
@@ -70,12 +68,23 @@ class AttributesCarsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add($rules->existsIn(['carId'], 'Cars'), 'validCarId', ['errorField' => 'carId']);
 
 		return $rules;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
+
+		$schema->setColumnType('input_list', 'json');
+		$schema->setColumnType('input_key_value_list', 'json');
 	}
 }

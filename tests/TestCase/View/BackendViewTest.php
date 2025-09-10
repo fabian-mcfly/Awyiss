@@ -11,7 +11,6 @@ use Awyiss\Twig\FileLoader;
 use Awyiss\View\BackendView;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
-use ReflectionClass;
 use Twig\Environment;
 
 
@@ -32,24 +31,6 @@ class BackendViewTest extends TestCase {
 	 * @inheritDoc
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public static function tearDownAfterClass(): void {
-		$reflection = new ReflectionClass(BackendView::class);
-		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -60,6 +41,7 @@ class BackendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\BackendView::initialize()
 	 * @throws \Twig\Error\LoaderError
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -77,6 +59,7 @@ class BackendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\BackendView::initialize()
 	 * @throws \Twig\Error\LoaderError
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -96,6 +79,7 @@ class BackendViewTest extends TestCase {
 		$this->assertContains('Locale', $helpers);
 		$this->assertContains('Media', $helpers);
 		$this->assertContains('Paginator', $helpers);
+		$this->assertContains('Survey', $helpers);
 		$this->assertContains('SystemOrder', $helpers);
 		$this->assertContains('Url', $helpers);
 	}
@@ -103,6 +87,24 @@ class BackendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\BackendView::initialize()
+	 * @throws \Twig\Error\LoaderError
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testInitializeSetsTwigGlobals(): void {
+		$view = $this->getMockBuilder(BackendView::class)
+			->onlyMethods(['addTwigGlobals'])
+			->getMock();
+
+		$view->expects($this->once())->method('addTwigGlobals');
+
+		$view->initialize();
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\BackendView::addTwigGlobals()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -115,15 +117,12 @@ class BackendViewTest extends TestCase {
 			->getMock();
 
 		$view = $this->getMockBuilder(BackendView::class)
-			->onlyMethods(['addFrontendLanguage', 'addUserLanguage', 'getLoginLogoPath', 'getTwig'])
+			->onlyMethods(['getTwig'])
 			->getMock();
 
 		$view->expects($this->once())->method('getTwig')->willReturn($twig);
-		$view->expects($this->once())->method('getLoginLogoPath')->willReturn('');
-		$view->expects($this->once())->method('addFrontendLanguage')->with($twig);
-		$view->expects($this->once())->method('addUserLanguage')->with($twig);
 
-		$twig->expects($this->atLeastOnce())->method('addGlobal');
+		$twig->expects($this->exactly(11))->method('addGlobal');
 
 		$this->callProtectedMethod($view, 'addTwigGlobals');
 	}
@@ -131,18 +130,20 @@ class BackendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\BackendView::getLoginLogoPath()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLoginLogoPath(): void {
 		$path = $this->callProtectedMethod($this->view, 'getLoginLogoPath');
 
-		$this->assertSame('assets/img/login-logo.png', $path);
+		$this->assertSame('/assets/img/login-logo.png', $path);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\BackendView::cleanLanguage()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -176,12 +177,14 @@ class BackendViewTest extends TestCase {
 			'timezone' => 'Europe/Berlin',
 			'locale' => 'de_DE',
 			'title' => 'Deutsch',
+			'label' => 'Deutsch',
 		], $languageArray);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\BackendView::addFrontendLanguage()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 * @throws \Twig\Error\LoaderError
@@ -200,6 +203,7 @@ class BackendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\BackendView::addUserLanguage()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 * @throws \Twig\Error\LoaderError

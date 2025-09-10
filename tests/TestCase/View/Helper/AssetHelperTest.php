@@ -10,7 +10,6 @@ use Awyiss\View\BackendView;
 use Awyiss\View\Helper\AssetHelper;
 use Cake\Core\Configure;
 use InvalidArgumentException;
-use ReflectionClass;
 
 
 /**
@@ -21,25 +20,6 @@ class AssetHelperTest extends TestCase {
 	 * @var \Awyiss\View\Helper\AssetHelper
 	 */
 	protected AssetHelper $helper;
-
-
-	/**
-	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public static function tearDownAfterClass(): void {
-		$reflection = new ReflectionClass(BackendView::class);
-
-		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
-	}
 
 
 	/**
@@ -62,6 +42,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssets()
 	 * @throws \Exception
 	 */
 	public function testGetAssets(): void {
@@ -86,6 +67,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getNoScriptAssets()
 	 * @throws \Exception
 	 */
 	public function testGetNoScriptAssets(): void {
@@ -95,6 +77,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAutoMinify()
 	 * @throws \Exception
 	 */
 	public function testGetAutoMinify(): void {
@@ -104,6 +87,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::setAutoMinify()
 	 * @throws \Exception
 	 */
 	public function testSetAutoMinify(): void {
@@ -115,6 +99,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getRealm()
 	 * @throws \Exception
 	 */
 	public function testGetRealm(): void {
@@ -124,6 +109,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::setRealm()
 	 * @throws \Exception
 	 */
 	public function testSetRealm(): void {
@@ -135,6 +121,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -164,6 +151,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -193,6 +181,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -222,6 +211,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -252,6 +242,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -290,6 +281,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -337,9 +329,9 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAddWithUnknownFileExtensionIgnoresWithDebugDisabled(): void {
 		$this->helper->add('dummy.unknown');
@@ -352,9 +344,9 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAddWithUnknownFileExtensionThrowsExceptionWithDebugEnabled(): void {
 		Configure::write('debug', true);
@@ -368,6 +360,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -400,6 +393,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -429,6 +423,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -458,6 +453,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -487,6 +483,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -516,6 +513,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::add()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -547,6 +545,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -570,6 +569,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -584,6 +584,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -598,6 +599,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -622,6 +624,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -651,6 +654,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -689,9 +693,9 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAddNoScriptWithUnknownFileExtensionIgnoresWithDebugDisabled(): void {
 		$this->helper->addNoScriptAsset('dummy.unknown');
@@ -704,9 +708,9 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAddNoScriptWithUnknownFileExtensionThrowsExceptionWithDebugEnabled(): void {
 		Configure::write('debug', true);
@@ -720,6 +724,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -747,6 +752,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -770,6 +776,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -794,9 +801,9 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAddNoScriptWithPriority(): void {
 		$this->helper->addNoScriptAsset('dummy.css', [], false, 5);
@@ -818,9 +825,9 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addNoScriptAsset()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAddNoScriptConsecutiveIgnoresDuplicate(): void {
 		$this->helper->addNoScriptAsset('dummy.css');
@@ -844,6 +851,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::remove()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -869,6 +877,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::remove()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -889,6 +898,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::remove()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -909,6 +919,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::remove()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -931,6 +942,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::remove()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -947,6 +959,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -962,6 +975,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -977,6 +991,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -992,6 +1007,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
@@ -1007,6 +1023,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1022,6 +1039,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1040,6 +1058,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1054,6 +1073,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1068,9 +1088,9 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testCreateAssetTagForCriticalJsWithAttributes(): void {
 		$assetPath = 'assets/js/dummy.js';
@@ -1085,6 +1105,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1101,9 +1122,9 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testCreateAssetTagForCriticalCssWithAttributes(): void {
 		$assetPath = 'assets/css/dummy.css';
@@ -1118,6 +1139,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createAssetTag()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1137,6 +1159,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1164,6 +1187,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1188,6 +1212,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1214,9 +1239,9 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetTagsAllNonCriticalAssetsWithoutNoScript(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -1241,6 +1266,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1270,6 +1296,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1290,6 +1317,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1301,11 +1329,14 @@ class AssetHelperTest extends TestCase {
 		$fileMTimeCss = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
 
 		$this->assertStringContainsString('dummy.min.' . $fileMTimeCss . '.css', $result);
+
+		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1321,6 +1352,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1335,6 +1367,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1349,6 +1382,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getNoScriptTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1366,6 +1400,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getNoScriptTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1383,6 +1418,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getNoScriptTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1397,6 +1433,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getNoScriptTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1415,6 +1452,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getNoScriptTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1429,6 +1467,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getNoScriptTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1443,6 +1482,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getNoScriptTags()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1457,6 +1497,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::inlineStyles()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1471,6 +1512,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::inlineStyles()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1485,6 +1527,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::inlineStyles()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1497,6 +1540,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::inlineStyles()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1513,6 +1557,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1525,6 +1570,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1538,6 +1584,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1550,6 +1597,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1565,6 +1613,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1580,6 +1629,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1595,6 +1645,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1624,6 +1675,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1639,6 +1691,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1654,6 +1707,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::removeJsModule()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1670,6 +1724,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1685,6 +1740,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1699,6 +1755,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1714,6 +1771,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1724,11 +1782,14 @@ class AssetHelperTest extends TestCase {
 
 		$this->assertStringContainsString('<script', $importMap);
 		$this->assertStringContainsString('{"imports":{"dummy":"http:\/\/localhost\/assets\/awyiss\/js\/dummy.min', $importMap);
+
+		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/js/dummy.min.js');
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1744,6 +1805,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1769,6 +1831,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1793,6 +1856,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1809,6 +1873,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1823,6 +1888,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createImportMap()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1837,6 +1903,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getFinalAssets()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1863,6 +1930,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getFinalAssets()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1884,14 +1952,16 @@ class AssetHelperTest extends TestCase {
 		];
 
 		$this->assertEquals($testArray, $finalAssets);
+
+		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getFinalAssets()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetFinalAssetsNotContainsNonExistentFile(): void {
 		$this->helper->add(['dummy.js', 'nonexistent.css']);
@@ -1904,6 +1974,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getFinalAssets()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1919,6 +1990,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getScriptNonce()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1935,6 +2007,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getScriptNonce()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1945,6 +2018,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getStyleNonce()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1961,6 +2035,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getStyleNonce()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1971,6 +2046,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1985,6 +2061,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -1996,7 +2073,9 @@ class AssetHelperTest extends TestCase {
 
 		$path = $this->helper->getAssetPath('dummy2.css', ['minified' => true]);
 
-		$this->assertStringContainsString('dummy2.min.' . time() . '.css', $path);
+		$time = filemtime($filePath);
+
+		$this->assertStringContainsString('dummy2.min.' . $time . '.css', $path);
 		$this->assertFileExists($filePath);
 		$this->assertSame('.foo{color:red}', file_get_contents($filePath));
 
@@ -2006,6 +2085,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2022,6 +2102,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2033,6 +2114,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2045,6 +2127,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2057,19 +2140,22 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetAssetPathWithMinifiedWithoutTimestamp(): void {
 		$path = $this->helper->getAssetPath('dummy.css', ['minified' => true, 'includeTimestamp' => false]);
 
 		$this->assertStringContainsString('dummy.min.css', $path);
+
+		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2077,11 +2163,14 @@ class AssetHelperTest extends TestCase {
 		$path = $this->helper->getAssetPath('dummy.css', ['minified' => true, 'localPath' => true]);
 
 		$this->assertSame(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css', $path);
+
+		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::afterLayout()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2101,6 +2190,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::afterLayout()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2115,11 +2205,14 @@ class AssetHelperTest extends TestCase {
 		$fileMTime = filemtime(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
 
 		$this->assertContains('Link: <http://localhost/assets/awyiss/css/dummy.min.' . $fileMTime . '.css>; rel=preload; as=style; nopush', $response->getHeader('Link'));
+
+		unlink(ROOT . DS . CUSTOM_DIR . '/assets/awyiss/css/dummy.min.css');
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::afterLayout()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2143,6 +2236,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::afterLayout()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2157,6 +2251,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::afterLayout()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -2173,6 +2268,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addCssLayer()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCssLayer(): void {
@@ -2196,6 +2292,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addCssLayer()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCssLayerWithPriority(): void {
@@ -2220,6 +2317,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addCssLayer()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCssLayerDuplicate(): void {
@@ -2240,6 +2338,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addCssLayer()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCssLayerWithArray(): void {
@@ -2259,6 +2358,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createLayerTag()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateLayerTag(): void {
@@ -2274,6 +2374,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createLayerTag()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateLayerTagWithPriority(): void {
@@ -2289,6 +2390,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createLayerTag()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateLayerTagWithEmptyLayers(): void {
@@ -2300,6 +2402,7 @@ class AssetHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::createLayerTag()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateLayerTagWithNonce(): void {
@@ -2312,5 +2415,54 @@ class AssetHelperTest extends TestCase {
 		$tag = $this->helper->createLayerTag();
 
 		$this->assertStringContainsString('<style nonce="test-nonce">@layer layer1;</style>', $tag);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testMinifyCss(): void {
+		$filePath = ROOT . DS . CUSTOM_DIR . '/assets/css/main.min.css';
+		if (file_exists($filePath)) {
+			unlink($filePath);
+		}
+
+		$this->helper->getAssetPath('main.css', [
+			'minified' => true,
+			'realm' => Awyiss::REALM_FRONTEND,
+		]);
+
+		$this->assertFileExists($filePath);
+		// Make sure "2 of .dummy" keeps the spaces, otherwise it would be invalid CSS
+		$this->assertStringEqualsFile($filePath, '.foo{color:red}.bar{color:blue}.foo .bar{color:green}.foo .nested{color:purple}.bar .nested:nth-child(2 of .dummy){color:orange}');
+
+		unlink($filePath);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::getAssetPath()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testMinifyJs(): void {
+		$filePath = ROOT . DS . CUSTOM_DIR . '/assets/js/main.min.js';
+		if (file_exists($filePath)) {
+			unlink($filePath);
+		}
+
+		$this->helper->getAssetPath('main.js', [
+			'minified' => true,
+			'realm' => Awyiss::REALM_FRONTEND,
+		]);
+
+		$this->assertFileExists($filePath);
+		$this->assertStringEqualsFile($filePath, 'console.log("This is a dummy JavaScript file for testing purposes.");const name="Test User";let count=0;function incrementCount(){count+=1;console.log(`Count is now: ${count}`);return count}' . PHP_EOL . 'const config={enabled:!0,timeout:3000};document.addEventListener(\'click\',function(){incrementCount()});export{incrementCount,config}');
+
+		unlink($filePath);
 	}
 }

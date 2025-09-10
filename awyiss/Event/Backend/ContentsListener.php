@@ -4,7 +4,6 @@
 namespace Awyiss\Event\Backend;
 
 
-use ArrayObject;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
@@ -55,11 +54,9 @@ class ContentsListener implements EventListenerInterface {
 	/**
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Content $entity
-	 * @param \ArrayObject $options
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(Event $event, Content $entity, ArrayObject $options): void {
+	public function beforeSave(Event $event, Content $entity): void {
 		// Unset titleTag and subtitleTag if title and subtitle are empty
 		if (!$entity->title && $entity->titleTag) {
 			$entity->titleTag = null;

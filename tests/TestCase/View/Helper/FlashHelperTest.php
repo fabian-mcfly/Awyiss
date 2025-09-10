@@ -9,7 +9,6 @@ use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
 use Awyiss\View\Helper\FlashHelper;
 use Cake\Http\ServerRequest;
-use ReflectionClass;
 
 
 /**
@@ -50,26 +49,8 @@ class FlashHelperTest extends TestCase {
 
 
 	/**
-	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public static function tearDownAfterClass(): void {
-		$reflection = new ReflectionClass(BackendView::class);
-		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
-	}
-
-
-	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @see \Awyiss\View\Helper\FlashHelper::render()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRender(): void {
@@ -87,7 +68,7 @@ class FlashHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @see \Awyiss\View\Helper\FlashHelper::render()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderSpecificFlashMessageRendersOnlySpecifiedMessage(): void {
@@ -105,7 +86,7 @@ class FlashHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @see \Awyiss\View\Helper\FlashHelper::render()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderNoFlashMessagesReturnsNull(): void {
@@ -120,7 +101,7 @@ class FlashHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @see \Awyiss\View\Helper\FlashHelper::render()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderFlashMessageEscapesHtml(): void {
@@ -138,7 +119,7 @@ class FlashHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @see \Awyiss\View\Helper\FlashHelper::render()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderFlashMessageWithoutEscapingDoesNotEscapeHtml(): void {
@@ -155,7 +136,7 @@ class FlashHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @see \Awyiss\View\Helper\FlashHelper::render()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderFlashMessageWithClassIncludesClassAttribute(): void {

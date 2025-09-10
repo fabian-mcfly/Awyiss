@@ -1,0 +1,172 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\Test\TestCase\Model\Entity;
+
+
+use Awyiss\Model\Entity\MediaElementSelector;
+use Awyiss\Test\TestSuite\TestCase;
+use Cake\Datasource\FactoryLocator;
+
+
+/**
+ * MediaElementSelector Entity Test Case
+ *
+ * @see \Awyiss\Model\Entity\MediaElementSelector
+ */
+class MediaElementSelectorTest extends TestCase {
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\MediaElementSelector::$fieldMap
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testFieldMapCompleteness(): void {
+		/** @var \Awyiss\Model\Table\MediaElementSelectorsTable $table */
+		$table = FactoryLocator::get('Table')->get('MediaElementSelectors');
+		$entity = $table->newDefaultEntity();
+		$entityArray = $entity->toArray();
+
+		foreach ($entityArray as $key => $value) {
+			$this->assertStringNotContainsString('_', $key);
+		}
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\MediaElementSelector::$_accessible
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAccessibleFields(): void {
+		$entity = new MediaElementSelector();
+
+		$this->assertSame([
+			'mediaElementId' => true,
+			'mediaSelectorId' => true,
+			'title' => true,
+			'identifier' => true,
+			'columnSpan' => true,
+			'required' => true,
+			'systemOrder' => true,
+			'_translations' => true,
+			'_publicationData' => true,
+			'mediaAssignments' => true,
+			'mediaElementAssignments' => true,
+		], $entity->getAccessible());
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\MediaElementSelector::$_virtual
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testVirtualFields(): void {
+		$entity = new MediaElementSelector();
+
+		$this->assertSame(['column', 'label'], $entity->getVirtual());
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\MediaElementSelector::_getColumn()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testColumnVirtualProperty(): void {
+		$entity = new MediaElementSelector(['columnSpan' => '6/12']);
+
+		$column = $entity->column;
+
+		$this->assertIsArray($column);
+		$this->assertArrayHasKey('span', $column);
+		// The actual column span implementation depends on the AttributesTable::getColumnSpans() method
+		$this->assertNotNull($column['span']);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\MediaElementSelector::_getColumn()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testColumnVirtualPropertyWithInvalidSpan(): void {
+		$entity = new MediaElementSelector(['columnSpan' => 'invalid-span']);
+
+		$column = $entity->column;
+
+		$this->assertIsArray($column);
+		$this->assertArrayHasKey('span', $column);
+		// Should return the first (reset) column span when invalid
+		$this->assertNotNull($column['span']);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\MediaElementSelector::_getColumn()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testColumnVirtualPropertyWithNullSpan(): void {
+		$entity = new MediaElementSelector(['columnSpan' => null]);
+
+		$column = $entity->column;
+
+		$this->assertIsArray($column);
+		$this->assertArrayHasKey('span', $column);
+		// Should return the first (reset) column span when null
+		$this->assertNotNull($column['span']);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\MediaElementSelector
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testEntityConstruction(): void {
+		$properties = [
+			'id' => 1,
+			'media_element_id' => 123,
+			'media_selector_id' => 456,
+			'title' => 'Test Media Element Selector',
+			'identifier' => 'test_selector',
+			'column_span' => '4/12',
+			'required' => true,
+			'system_order' => 10,
+		];
+
+		$entity = new MediaElementSelector($properties);
+
+		$this->assertEquals(1, $entity->id);
+		$this->assertEquals(123, $entity->mediaElementId);
+		$this->assertEquals(456, $entity->mediaSelectorId);
+		$this->assertEquals('Test Media Element Selector', $entity->title);
+		$this->assertEquals('test_selector', $entity->identifier);
+		$this->assertEquals('4/12', $entity->columnSpan);
+		$this->assertTrue($entity->required);
+		$this->assertEquals(10, $entity->systemOrder);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\MediaElementSelector::$fieldMap
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testFieldMapDuringConstruction(): void {
+		$properties = [
+			'media_element_id' => 789,
+			'media_selector_id' => 101,
+			'column_span' => '8/12',
+			'system_order' => 5,
+		];
+
+		$entity = new MediaElementSelector($properties);
+		$entityArray = $entity->toArray();
+
+		foreach ($entityArray as $key => $value) {
+			$this->assertStringNotContainsString('_', $key);
+		}
+	}
+}

@@ -15,7 +15,6 @@ use Customer\Authorization\Policy\Backend\FoobarsPolicy;
 class FoobarsPolicyTest extends TestCase {
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testGetScope(): void {
 		$this->assertSame('foobars', FoobarsPolicy::getScope());
@@ -24,7 +23,7 @@ class FoobarsPolicyTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPermissionOptions(): void {
@@ -38,7 +37,7 @@ class FoobarsPolicyTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPermissionOption(): void {

@@ -1,0 +1,755 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\Test\TestCase\Event\Backend;
+
+
+use ArrayObject;
+use Awyiss\Event\Backend\PageTemplatesListener;
+use Awyiss\Event\EventListenersProvider;
+use Awyiss\Test\TestSuite\TestCase;
+use Cake\Core\Configure;
+use Cake\Datasource\FactoryLocator;
+use Cake\Event\Event;
+use Queue\Model\Table\QueuedJobsTable;
+use Symfony\Component\Process\Process;
+
+
+/**
+ * PageTemplatesListener Test Case
+ *
+ * @see \Awyiss\Event\Backend\PageTemplatesListener
+ */
+class PageTemplatesListenerTest extends TestCase {
+	/**
+	 * @var \Awyiss\Event\Backend\PageTemplatesListener
+	 */
+	protected PageTemplatesListener $listener;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function setUp(): void {
+		parent::setUp();
+
+		$this->listener = new PageTemplatesListener();
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	protected function tearDown(): void {
+		parent::tearDown();
+
+		EventListenersProvider::reset();
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+
+		new Process(['rm', '-rf', TMP . DS . 'test_templates'])->run();
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::implementedEvents()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testImplementedEvents(): void {
+		$result = $this->listener->implementedEvents();
+
+		$this->assertSame([
+			'Model.PageTemplates.beforeSave' => 'beforeSave',
+			'Model.PageTemplates.afterSaveCommit' => 'afterSaveCommit',
+			'Model.PageTemplates.afterSoftDelete' => 'afterSoftDelete',
+		], $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::beforeSave()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBeforeSaveWithNoFileNameChange(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		$event = new Event('Model.PageTemplates.beforeSave');
+
+		$this->listener->beforeSave($event, $entity);
+
+		$this->assertFalse($event->isStopped());
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::beforeSave()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBeforeSaveWithSameFileName(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
+		$entity->fileName = 'new_template';
+		$entity->fileName = 'test_template';
+
+		$this->assertTrue($entity->isDirty('fileName'));
+
+		$event = new Event('Model.PageTemplates.beforeSave');
+
+		$this->listener->beforeSave($event, $entity);
+
+		$this->assertFalse($event->isStopped());
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::beforeSave()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBeforeSaveWithFileNameChangeAndNoQueuedJob(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		$entity->fileName = 'new_template';
+
+		$this->assertTrue($entity->isDirty('fileName'));
+
+		$event = new Event('Model.PageTemplates.beforeSave');
+
+		// Mock the queue table to return false for isQueued
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
+
+		$queueTable->expects($this->once())->method('isQueued')->with('page_templates::file_changes')->willReturn(false);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->beforeSave($event, $entity);
+
+		$this->assertFalse($event->isStopped());
+		$this->assertFalse($entity->hasErrors());
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::beforeSave()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBeforeSaveWithFileNameChangeAndQueuedJob(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		$entity->fileName = 'new_template';
+
+		$this->assertTrue($entity->isDirty('fileName'));
+
+		$event = new Event('Model.PageTemplates.beforeSave');
+
+		// Mock the queue table to return false for isQueued
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['isQueued'])->getMock();
+
+		$queueTable->expects($this->once())->method('isQueued')->with('page_templates::file_changes')->willReturn(true);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->beforeSave($event, $entity);
+
+		$this->assertTrue($event->isStopped());
+		$this->assertTrue($entity->hasErrors());
+
+		$errors = $entity->getErrors();
+		$this->assertArrayHasKey('_general', $errors);
+		$this->assertSame(['page_templates::file_changes_in_progress'], $errors['_general']);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithNewEntity(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+
+		$options = new ArrayObject(['isCopy' => false]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure to return template paths
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob')->with(
+			'Queue.Execute',
+			$this->callback(function ($data) {
+				return isset($data['command']) && $data['command'] === implode(' && ', [
+						'mkdir -m 0755 -p ' . TMP . 'test_templates/Frontend/page/',
+						'bin/cake bake template page_templates page_template test_template --prefix Frontend --controller page',
+						'chmod 0755 ' . TMP . 'test_templates/Frontend/page/test_template.twig',
+					]);
+			}),
+			[
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]
+		);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithNewEntityAndExistingFile(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+
+		$options = new ArrayObject(['isCopy' => false]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure to return template paths
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Create the file to simulate existing file
+		$existingFilePath = TMP . 'test_templates/Frontend/page/test_template.twig';
+		if (!is_dir(dirname($existingFilePath))) {
+			mkdir(dirname($existingFilePath), 0755, true);
+		}
+		file_put_contents($existingFilePath, 'Existing content');
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->never())->method('createJob');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithExistingEntity(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
+		$entity->fileName = 'new_template';
+		$entity->fileName = 'test_template';
+
+		$this->assertTrue($entity->isDirty('fileName'));
+
+		$options = new ArrayObject(['isCopy' => false]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure to return template paths
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob')->with(
+			'Queue.Execute',
+			$this->callback(function ($data) {
+				return isset($data['command']) && $data['command'] === implode(' && ', [
+						'mkdir -m 0755 -p ' . TMP . 'test_templates/Frontend/page/',
+						'bin/cake bake template page_templates page_template test_template --prefix Frontend --controller page',
+						'chmod 0755 ' . TMP . 'test_templates/Frontend/page/test_template.twig',
+					]);
+			}),
+			[
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]
+		);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithExistingEntityAndExistingFile(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
+		$entity->fileName = 'new_template';
+		$entity->fileName = 'test_template';
+
+		$this->assertTrue($entity->isDirty('fileName'));
+
+		$options = new ArrayObject(['isCopy' => false]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure to return template paths
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Create the file to simulate existing file
+		$existingFilePath = TMP . 'test_templates/Frontend/page/test_template.twig';
+		if (!is_dir(dirname($existingFilePath))) {
+			mkdir(dirname($existingFilePath), 0755, true);
+		}
+		file_put_contents($existingFilePath, 'Existing content');
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->never())->method('createJob');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithExistingEntityAndFileNameChange(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
+		$entity->fileName = 'new_template';
+
+		$this->assertTrue($entity->isDirty('fileName'));
+
+		$options = new ArrayObject(['isCopy' => false]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob')->with(
+			'Queue.Execute',
+			$this->callback(function ($data) {
+				return isset($data['command']) && $data['command'] === implode(' && ', [
+						'mkdir -m 0755 -p ' . TMP . 'test_templates/Frontend/page/',
+						'bin/cake bake template page_templates page_template new_template --prefix Frontend --controller page',
+						'chmod 0755 ' . TMP . 'test_templates/Frontend/page/new_template.twig',
+					]);
+			}),
+			[
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]
+		);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithExistingEntityAndFileNameChangeAndExistingOldFile(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
+		$entity->fileName = 'new_template';
+
+		$this->assertTrue($entity->isDirty('fileName'));
+
+		$options = new ArrayObject(['isCopy' => false]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Create the file to simulate existing file
+		$existingFilePath = TMP . 'test_templates/Frontend/page/test_template.twig';
+		if (!is_dir(dirname($existingFilePath))) {
+			mkdir(dirname($existingFilePath), 0755, true);
+		}
+		file_put_contents($existingFilePath, 'Existing content');
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob')->with(
+			'Queue.Execute',
+			$this->callback(function ($data) {
+				return isset($data['command']) &&
+					   $data['command'] === 'mv -f ' . TMP . 'test_templates/Frontend/page/test_template.twig ' . TMP . 'test_templates/Frontend/page/new_template.twig';
+			}),
+			[
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]
+		);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithExistingEntityAndFileNameChangeAndExistingNewFile(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
+		$entity->fileName = 'new_template';
+
+		$this->assertTrue($entity->isDirty('fileName'));
+
+		$options = new ArrayObject(['isCopy' => false]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Create the file to simulate existing file
+		$existingFilePath = TMP . 'test_templates/Frontend/page/new_template.twig';
+		if (!is_dir(dirname($existingFilePath))) {
+			mkdir(dirname($existingFilePath), 0755, true);
+		}
+		file_put_contents($existingFilePath, 'Existing content');
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob')->with(
+			'Queue.Execute',
+			$this->callback(function ($data) {
+				return isset($data['command']) && $data['command'] === implode(' && ', [
+						'bin/cake bake template page_templates page_template new_template --prefix Frontend --controller page',
+						'chmod 0755 ' . TMP . 'test_templates/Frontend/page/new_template.twig',
+					]);
+			}),
+			[
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]
+		);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithExistingEntityAndFileNameChangeAndExistingOldFileAndExistingNewFile(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+		$entity->clean();
+
+		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
+		$entity->fileName = 'new_template';
+
+		$this->assertTrue($entity->isDirty('fileName'));
+
+		$options = new ArrayObject(['isCopy' => false]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Create the files to simulate existing files
+		$existingOldFilePath = TMP . 'test_templates/Frontend/page/test_template.twig';
+		if (!is_dir(dirname($existingOldFilePath))) {
+			mkdir(dirname($existingOldFilePath), 0755, true);
+		}
+		file_put_contents($existingOldFilePath, 'Existing old content');
+
+		$existingNewFilePath = TMP . 'test_templates/Frontend/page/new_template.twig';
+		if (!is_dir(dirname($existingNewFilePath))) {
+			mkdir(dirname($existingNewFilePath), 0755, true);
+		}
+		file_put_contents($existingNewFilePath, 'Existing new content');
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob')->with(
+			'Queue.Execute',
+			$this->callback(function ($data) {
+				return isset($data['command']) &&
+					   $data['command'] === 'mv -f ' . TMP . 'test_templates/Frontend/page/test_template.twig ' . TMP . 'test_templates/Frontend/page/new_template.twig';
+			}),
+			[
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]
+		);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithCopyOption(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+
+		$options = new ArrayObject(['isCopy' => true]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob')->with(
+			'Queue.Execute',
+			$this->callback(function ($data) {
+				return isset($data['command']) && $data['command'] === implode(' && ', [
+						'mkdir -m 0755 -p ' . TMP . 'test_templates/Frontend/page/',
+						'bin/cake bake template page_templates page_template test_template --prefix Frontend --controller page',
+						'chmod 0755 ' . TMP . 'test_templates/Frontend/page/test_template.twig',
+					]);
+			}),
+			[
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]
+		);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSaveCommit()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitWithCopyOptionAndExistingFile(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+
+		$options = new ArrayObject(['isCopy' => true]);
+		$event = new Event('Model.PageTemplates.afterSaveCommit');
+
+		// Mock Configure
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Create the file to simulate existing file
+		$existingFilePath = TMP . 'test_templates/Frontend/page/test_template.twig';
+		if (!is_dir(dirname($existingFilePath))) {
+			mkdir(dirname($existingFilePath), 0755, true);
+		}
+		file_put_contents($existingFilePath, 'Existing content');
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->never())->method('createJob');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSoftDelete()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSoftDeleteWithExistingFile(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+
+		$event = new Event('Model.PageTemplates.afterSoftDelete');
+
+		// Mock Configure
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Create the file to simulate existing file
+		$existingFilePath = TMP . 'test_templates/Frontend/page/test_template.twig';
+		if (!is_dir(dirname($existingFilePath))) {
+			mkdir(dirname($existingFilePath), 0755, true);
+		}
+		file_put_contents($existingFilePath, 'Existing content');
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob')->with(
+			'Queue.Execute',
+			$this->callback(function ($data) {
+				return isset($data['command']) &&
+					   str_starts_with(
+						   $data['command'],
+						   'mv -f ' . TMP . 'test_templates/Frontend/page/test_template.twig ' . TMP . 'test_templates/Frontend/page/_deleted-test_template-'
+					   ) &&
+					   str_ends_with($data['command'], '.twig');
+			}),
+			[
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]
+		);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		// Mock file_exists to return true
+		$this->listener->afterSoftDelete($event, $entity);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\PageTemplatesListener::afterSoftDelete()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSoftDeleteWithoutExistingFile(): void {
+		$entity = $this->fetchTable('PageTemplates')->newDefaultEntity([
+			'fileName' => 'test_template',
+		]);
+
+		$event = new Event('Model.PageTemplates.afterSoftDelete');
+
+		// Mock Configure
+		Configure::write('App.paths.templates', [
+			'customer' => TMP . 'test_templates/',
+		]);
+
+		// Mock the queue table
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->never())->method('createJob');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->clear();
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		// Mock file_exists to return true
+		$this->listener->afterSoftDelete($event, $entity);
+	}
+}

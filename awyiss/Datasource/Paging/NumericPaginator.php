@@ -50,11 +50,11 @@ class NumericPaginator extends BaseNumericPaginator {
 		parent::addSortingParams($la_data);
 	}
 
+
 	/**
-	 * @param \Cake\Datasource\RepositoryInterface $object
-	 * @param \Cake\Datasource\QueryInterface|null $query
-	 * @param array $data
-	 * @return \Cake\Datasource\QueryInterface
+	 * Re-implementation of the original method to allow for sorting by multiple fields.
+	 *
+	 * @inheritDoc
 	 */
 	protected function getQuery(RepositoryInterface $object, ?QueryInterface $query, array $data): QueryInterface {
 		$la_options = $data['options'];
@@ -103,6 +103,7 @@ class NumericPaginator extends BaseNumericPaginator {
 
 		return $lo_query;
 	}
+
 
 	/**
 	 * Re-implementation of the original method to allow for sorting by multiple fields.

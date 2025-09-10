@@ -50,13 +50,13 @@ class ClearCacheCommandTest extends TestCase {
 		parent::tearDown();
 
 		if (is_dir(TMP . 'media' . DS . 'testfolder1')) {
-			(new Process(['rm', '-r', TMP . 'media' . DS . 'testfolder1']))->run();
+			new Process(['rm', '-r', TMP . 'media' . DS . 'testfolder1'])->run();
 		}
 		if (is_dir(TMP . 'media' . DS . 'testfolder2')) {
-			(new Process(['rm', '-r', TMP . 'media' . DS . 'testfolder2']))->run();
+			new Process(['rm', '-r', TMP . 'media' . DS . 'testfolder2'])->run();
 		}
 		if (is_dir(TMP . 'media' . DS . 'testfolder3')) {
-			(new Process(['rm', '-r', TMP . 'media' . DS . 'testfolder3']))->run();
+			new Process(['rm', '-r', TMP . 'media' . DS . 'testfolder3'])->run();
 		}
 	}
 
@@ -200,7 +200,6 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpMethodNamingConventionInspection
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveDeletedFoldersFromDatabaseWithUnknownType(): void {
@@ -267,7 +266,6 @@ class ClearCacheCommandTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testDeleteResizedDatabaseRecordsWithUnknownType(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
@@ -292,6 +290,7 @@ class ClearCacheCommandTest extends TestCase {
 
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = $this->fetchTable('MediaFolders');
+		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
 		$lo_records = $lo_table->find('withDeleted')->all();
 
 		$table = $this->createMock(MediaFoldersTable::class);
@@ -333,6 +332,7 @@ class ClearCacheCommandTest extends TestCase {
 
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = $this->fetchTable('MediaFolders');
+		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findDeleted() */
 		$lo_records = $lo_table->find('deleted')->all();
 
 		$table = $this->createMock(MediaFoldersTable::class);

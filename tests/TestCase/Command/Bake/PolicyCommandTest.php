@@ -46,7 +46,7 @@ class PolicyCommandTest extends TestCase {
 	 */
 	public function testPolicyCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Authorization' . DS . 'Policy' . DS . 'DummyPolicy.php';
-		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Authorization' . DS . 'Policy' . DS . 'DummyPolicy.php';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Authorization' . DS . 'Policy' . DS . 'DummyPolicy.txt';
 
 		$this->exec('bake policy dummy --namespace Customer');
 
@@ -63,7 +63,7 @@ class PolicyCommandTest extends TestCase {
 	 */
 	public function testPolicyPrefixCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Authorization' . DS . 'Policy' . DS . 'Backend' . DS . 'DummyPolicy.php';
-		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Authorization' . DS . 'Policy' . DS . 'Backend' . DS . 'DummyPolicy.php';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Authorization' . DS . 'Policy' . DS . 'Backend' . DS . 'DummyPolicy.txt';
 
 		$this->exec('bake policy dummy --namespace Customer --prefix Backend');
 

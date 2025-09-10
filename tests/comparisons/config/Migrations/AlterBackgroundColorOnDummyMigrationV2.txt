@@ -1,0 +1,32 @@
+<?php declare(strict_types=1);
+
+
+use Migrations\BaseMigration;
+
+
+class AlterBackgroundColorOnDummyMigrationV2 extends BaseMigration {
+	/**
+	 * Change Method.
+	 *
+	 * More information on this method is available here:
+	 * https://book.cakephp.org/migrations/4/en/migrations.html#the-change-method
+	 * @return void
+	 */
+	public function change(): void {
+		$table = $this->table('dummy_migration');
+		$table->changeColumn('background_color', 'string', [
+            'default' => null,
+            'limit' => 10,
+            'null' => false,
+        ]);
+		if (!$table->hasIndexByName('BY_BACKGROUND_COLOR')) {
+			$table->addIndex([
+                'background_color',
+            ], [
+                'name' => 'BY_BACKGROUND_COLOR',
+                'unique' => false,
+            ]);
+		}
+		$table->update();
+	}
+}

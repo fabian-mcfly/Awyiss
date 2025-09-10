@@ -99,7 +99,7 @@ class InstallCommandTest extends TestCase {
 	/**
 	 * Test the installation
 	 *
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @return void
 	 */
 	public function testInstallCommandWithBlocklistedCustomerName(): void {
 		$this->exec('awyiss install --dry-run', [
@@ -122,7 +122,7 @@ class InstallCommandTest extends TestCase {
 	/**
 	 * Test the installation
 	 *
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @return void
 	 */
 	public function testInstallCommandWithInvalidCustomerName(): void {
 		$this->exec('awyiss install --dry-run', [

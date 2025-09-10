@@ -23,9 +23,9 @@ class FormCellTest extends TestCase {
 
 
 	/**
-	 * @var mixed
+	 * @var \Cake\Http\Response
 	 */
-	protected mixed $response;
+	protected Response $response;
 	/**
 	 * @var \Cake\Http\ServerRequest
 	 */
@@ -35,7 +35,6 @@ class FormCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
@@ -68,6 +67,7 @@ class FormCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplay(): void {
@@ -88,7 +88,7 @@ class FormCellTest extends TestCase {
 		$output = str_replace('> ', '>' . PHP_EOL, $output);
 		$output = str_replace('> ', '>' . PHP_EOL, $output);
 
-		// The form uses the current timestamp for the id of the action. The comparion file uses the string '{{now}}' instead.
+		// The form uses the current timestamp for the id of the action. The comparison file uses the string '{{now}}' instead.
 		$output = preg_replace('/data-[0-9]{10}/', 'data-{{now}}', $output);
 		$output = preg_replace('/formElementsChecksum = \'[0-9]{10}/', 'formElementsChecksum = \'{{now}}', $output);
 
@@ -98,6 +98,7 @@ class FormCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayForUnknownForm(): void {
@@ -109,5 +110,147 @@ class FormCellTest extends TestCase {
 		]);
 
 		$this->assertSame('', $output);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testDisplayLoadsFormEntry(): void {
+		$page = $this->getTableLocator()->get('Pages')->get(1);
+
+		$this->request = $this->request->withParam('formEntry', 'aa43b23308dd6bdff9edb15deb2b3b41');
+
+		$output = (string)$this->cell('Frontend/Form', [
+			1,
+			$page,
+			[
+				'fullWidth' => 1440.00,
+				'singleColumnBreakpoint' => 768.00,
+			],
+		]);
+
+		$this->assertStringNotContainsString('<form', $output);
+		$this->assertStringNotContainsString('$firstname', $output);
+		$this->assertStringNotContainsString('$lastname', $output);
+		$this->assertStringContainsString('<div class="Form Form-SuccessMessage"', $output);
+	}
+
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
+	 * @noinspection HtmlRequiredAltAttribute
+	 */
+	public function testDisplayLoadsFormEntryAndReplacesAwyissImageTagInSuccessMessage(): void {
+		$page = $this->getTableLocator()->get('Pages')->get(1);
+
+		$this->request = $this->request->withParam('formEntry', 'aa43b23308dd6bdff9edb15deb2b3b41');
+
+		$output = (string)$this->cell('Frontend/Form', [
+			1,
+			$page,
+			[
+				'fullWidth' => 1440.00,
+				'singleColumnBreakpoint' => 768.00,
+			],
+		]);
+
+		$this->assertStringContainsString('<div class="Form Form-SuccessMessage" id="Form-Contact">', $output);
+		$this->assertStringContainsString('<picture>', $output);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif"', $output);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif"', $output);
+	}
+
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
+	 * @noinspection HtmlRequiredAltAttribute
+	 */
+	public function testDisplayLoadsFormEntryAndReplacesAwyissImageTagInSuccessMessageWithColumnWidth(): void {
+		$page = $this->getTableLocator()->get('Pages')->get(1);
+
+		$this->request = $this->request->withParam('formEntry', 'aa43b23308dd6bdff9edb15deb2b3b41');
+
+		$output = (string)$this->cell('Frontend/Form', [
+			1,
+			$page,
+			[
+				'fullWidth' => 1440.00,
+				'singleColumnBreakpoint' => 768.00,
+				'columnWidth' => 50,
+			],
+		]);
+
+		$this->assertStringContainsString('<div class="Form Form-SuccessMessage" id="Form-Contact">', $output);
+		$this->assertStringContainsString('<picture>', $output);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w768].avif"', $output);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w768].avif"', $output);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\FormCell::parseAwyissImageTags()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection HtmlRequiredAltAttribute
+	 * @noinspection HtmlUnknownTarget
+	 */
+	public function testParseAwyissImageTagInFreeTextFormElement(): void {
+		$page = $this->getTableLocator()->get('Pages')->get(1);
+
+		$output = (string)$this->cell('Frontend/Form', [
+			2,
+			$page,
+			[
+				'fullWidth' => 1440.00,
+				'singleColumnBreakpoint' => 768.00,
+			],
+		]);
+
+		$this->assertStringContainsString('<p>Form element with inline img tag</p><p><picture>', $output);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1152].avif"', $output);
+		$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">', $output);
+		$this->assertStringContainsString('<source media="(width <= 1280px)" data-srcset="_resized/dummypath/logo-awyiss-[w1024].avif 1x, _resized/dummypath/logo-awyiss-[w2048].avif 2x" type="image/avif">', $output);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1152].avif"', $output);
+		$this->assertStringContainsString('</picture></p><p>between two paragraphs</p>', $output);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\FormCell::parseAwyissImageTags()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection HtmlRequiredAltAttribute
+	 * @noinspection HtmlUnknownTarget
+	 */
+	public function testParseAwyissImageTagInFreeTextFormElementWithColumnWidth(): void {
+		$page = $this->getTableLocator()->get('Pages')->get(1);
+
+		$output = (string)$this->cell('Frontend/Form', [
+			2,
+			$page,
+			[
+				'fullWidth' => 1440.00,
+				'singleColumnBreakpoint' => 768.00,
+				'columnWidth' => 50,
+			],
+		]);
+
+		$this->assertStringContainsString('<p>Form element with inline img tag</p><p><picture>', $output);
+		$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">', $output);
+		$this->assertStringContainsString('<source media="(width <= 1280px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w512].avif 1x, _resized/dummypath/logo-awyiss-[w1024].avif 2x" type="image/avif">', $output);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w576].avif"', $output);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w576].avif"', $output);
+		$this->assertStringContainsString('</picture></p><p>between two paragraphs</p>', $output);
 	}
 }

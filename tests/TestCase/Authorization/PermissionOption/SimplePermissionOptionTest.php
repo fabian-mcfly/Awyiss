@@ -19,7 +19,6 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testConstructorInitializesOptionsCorrectly(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -41,7 +40,6 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testHarmonizeOptionValueReturnsNullForEmptyValue(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -57,7 +55,6 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testHarmonizeOptionValueReturnsPermissionAccess(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -80,7 +77,6 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testIsAccessibleReturnsTrueForGrantedAccess(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -99,7 +95,6 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testIsAccessibleReturnsFalseForDeniedAccess(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -119,7 +114,6 @@ class SimplePermissionOptionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testIsAccessibleReturnsNullForIndifferentAccess(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);

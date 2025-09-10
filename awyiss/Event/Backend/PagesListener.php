@@ -573,8 +573,9 @@ class PagesListener implements EventListenerInterface {
 
 			if ($lb_parentsActive) {
 				/**
-				 * When updating all pages with the same slug (LIKE 'oldslug/%'), do not set the parents_active to true
-				 * for pages that descendants of inactive sites.
+				 * When updating all pages with the same slug (LIKE 'oldslug/%'),
+				 * do not set the parents_active to true for pages that
+				 * are descendants of inactive sites.
 				 */
 				$lo_subPages = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($lo_entity, $ls_originalSlug) {
 					return $expression->like('slug', ($ls_originalSlug ?? $lo_entity->slug) . '/%');

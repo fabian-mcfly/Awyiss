@@ -16,6 +16,8 @@ use Cake\View\Form\ContextInterface;
 class SelectBoxWidgetTest extends TestCase {
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptions()
+	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptgroup()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -48,6 +50,8 @@ class SelectBoxWidgetTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptions()
+	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptgroup()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -93,6 +97,8 @@ class SelectBoxWidgetTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptions()
+	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptgroup()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */

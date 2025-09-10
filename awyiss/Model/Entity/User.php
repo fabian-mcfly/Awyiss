@@ -85,7 +85,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * Retrieves the unique identifier of this identity
 	 *
-	 * @see IdentityInterface::getIdentifier
+	 * @see \Authentication\IdentityInterface::getIdentifier
 	 */
 	public function getIdentifier(): ?int {
 		return $this->id;
@@ -95,7 +95,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * Retrieve the data of this identity. Required by IdentityInterface
 	 *
-	 * @see IdentityInterface::getOriginalData
+	 * @see \Authentication\IdentityInterface::getOriginalData
 	 */
 	public function getOriginalData(): static {
 		return $this;
@@ -105,7 +105,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * Returns the PermissionCollection that contains all set permissions for this user
 	 *
-	 * @return PermissionCollection
+	 * @return \Awyiss\Authorization\Permission\PermissionCollection
 	 */
 	public function getPermissionCollection(): PermissionCollection {
 		if (isset($this->permissionCollection)) {

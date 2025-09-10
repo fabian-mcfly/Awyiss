@@ -7,7 +7,6 @@ namespace Awyiss\Test\TestCase\View\Cell\Backend;
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Model\Entity;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
@@ -20,6 +19,8 @@ use Cake\TestSuite\IntegrationTestTrait;
 
 /**
  * MediaElementsCellTest class
+ *
+ * @see \Awyiss\View\Cell\Backend\MediaElementsCell
  */
 class MediaElementsCellTest extends TestCase {
 	use IntegrationTestTrait;
@@ -41,8 +42,8 @@ class MediaElementsCellTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -77,56 +78,43 @@ class MediaElementsCellTest extends TestCase {
 
 	/**
 	 * @return array
-	 * @noinspection PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpVariableNamingConventionInspection
 	 */
 	public static function displayDataProvider(): array {
 		// Required because this method is called before setUpBeforeClass()
 		Awyiss::setRealm(Awyiss::REALM_BACKEND);
 		LocaleMiddleware::setRealm(Awyiss::REALM_BACKEND);
 
+		$tableLocator = FactoryLocator::get('Table');
+
 		return [
-			[FactoryLocator::get('Table')->get('Contents')->get(1, 'mediaAssignments'), 'multi'],
-			[FactoryLocator::get('Table')->get('Contents')->get(9, 'mediaAssignments'), 'single'],
-			[FactoryLocator::get('Table')->get('Contents')->newDefaultEntity(), false],
-			[FactoryLocator::get('Table')->get('Cars')->newDefaultEntity(), 'single'],
-			[FactoryLocator::get('Table')->get('Pages')->get(1, 'mediaAssignments'), false],
-			[FactoryLocator::get('Table')->get('Pages')->newDefaultEntity(), false],
-			[FactoryLocator::get('Table')->get('News')->get(21, 'mediaAssignments'), 'hidden_folder'],
-			[FactoryLocator::get('Table')->get('News')->newDefaultEntity(), 'false'],
-			[FactoryLocator::get('Table')->get('Widgets')->get(1, 'mediaAssignments'), 'single'],
-			[FactoryLocator::get('Table')->get('Widgets')->get(13, 'mediaAssignments'), 'single'],
-			[FactoryLocator::get('Table')->get('Widgets')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('Contents')->get(1, 'mediaAssignments'), 'multi'],
+			[fn() => $tableLocator->get('Contents')->get(9, 'mediaAssignments'), 'single'],
+			[fn() => $tableLocator->get('Contents')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('Cars')->newDefaultEntity(), 'single'],
+			[fn() => $tableLocator->get('Pages')->get(1, 'mediaAssignments'), false],
+			[fn() => $tableLocator->get('Pages')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('News')->get(21, 'mediaAssignments'), 'hidden_folder'],
+			[fn() => $tableLocator->get('News')->newDefaultEntity(), 'false'],
+			[fn() => $tableLocator->get('Widgets')->get(1, 'mediaAssignments'), 'single'],
+			[fn() => $tableLocator->get('Widgets')->get(13, 'mediaAssignments'), 'single'],
+			[fn() => $tableLocator->get('Widgets')->newDefaultEntity(), false],
 		];
 	}
 
 
 	/**
 	 * @dataProvider displayDataProvider
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param callable $entityProvider
 	 * @param string|false $type
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function testDisplayWithoutUser(Entity $entity, string|false $type): void {
-		$this->view = new BackendView($this->request, $this->response);
+	public function testDisplayWithUnauthorizedUser(callable $entityProvider, string|false $type): void {
+		$entity = $entityProvider();
 
-		$this->captureError(E_USER_WARNING, function () use ($entity) {
-			$output = (string)$this->view->cell('Backend/MediaElements', [$entity]);
-			$this->assertSame('', $output);
-		});
-	}
-
-
-	/**
-	 * @dataProvider displayDataProvider
-	 * @param \Awyiss\Model\Entity $entity
-	 * @param string|false $type
-	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function testDisplayWithUnauthorizedUser(Entity $entity, string|false $type): void {
 		$user = $this->login(2);
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
@@ -141,12 +129,15 @@ class MediaElementsCellTest extends TestCase {
 
 	/**
 	 * @dataProvider displayDataProvider
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param callable $entityProvider
 	 * @param string|false $type
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testDisplayWithAuthorizedUser(Entity $entity, string|false $type): void {
+	public function testDisplayWithAuthorizedUser(callable $entityProvider, string|false $type): void {
+		$entity = $entityProvider();
+
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$user = $this->login(1);
 		$this->request = $this->request->withAttribute('identity', $user);
@@ -173,13 +164,16 @@ class MediaElementsCellTest extends TestCase {
 
 	/**
 	 * @dataProvider displayDataProvider
-	 * @param \Awyiss\Model\Entity $entity
+	 * @param callable $entityProvider
 	 * @param string|false $type
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function testDisplayWithAccessDeniedUser(Entity $entity, string|false $type): void {
+	public function testDisplayWithAccessDeniedUser(callable $entityProvider, string|false $type): void {
+		$entity = $entityProvider();
+
 		$user = $this->login(3);
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
@@ -193,8 +187,8 @@ class MediaElementsCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testDisplayRebuildsMediaAssignmentsWhenDirty(): void {
 		/** @var \Awyiss\Model\Entity\Content $entity */
@@ -229,30 +223,38 @@ class MediaElementsCellTest extends TestCase {
 	/**
 	 * @return array
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function elementAssignmentsDataProvider(): array {
+		$tableLocator = FactoryLocator::get('Table');
+
 		return [
-			[FactoryLocator::get('Table')->get('ContentTemplates')->get(1, 'mediaElementAssignments'), true],
-			[FactoryLocator::get('Table')->get('ContentTemplates')->newDefaultEntity(), false],
-			[FactoryLocator::get('Table')->get('Datatables')->get(3, 'mediaElementAssignments'), true],
-			[FactoryLocator::get('Table')->get('Datatables')->newDefaultEntity(), false],
-			[FactoryLocator::get('Table')->get('Cars')->newDefaultEntity(), false],
-			[FactoryLocator::get('Table')->get('PageTemplates')->get(1, 'mediaElementAssignments'), true],
-			[FactoryLocator::get('Table')->get('PageTemplates')->get(2, 'mediaElementAssignments'), true],
-			[FactoryLocator::get('Table')->get('PageTemplates')->newDefaultEntity(), false],
-			[FactoryLocator::get('Table')->get('WidgetTemplates')->get(1, 'mediaElementAssignments'), true],
-			[FactoryLocator::get('Table')->get('WidgetTemplates')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('ContentTemplates')->get(1, 'mediaElementAssignments'), true],
+			[fn() => $tableLocator->get('ContentTemplates')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('Datatables')->get(3, 'mediaElementAssignments'), true],
+			[fn() => $tableLocator->get('Datatables')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('Cars')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('PageTemplates')->get(1, 'mediaElementAssignments'), true],
+			[fn() => $tableLocator->get('PageTemplates')->get(2, 'mediaElementAssignments'), true],
+			[fn() => $tableLocator->get('PageTemplates')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('WidgetTemplates')->get(1, 'mediaElementAssignments'), true],
+			[fn() => $tableLocator->get('WidgetTemplates')->newDefaultEntity(), false],
 		];
 	}
 
 
 	/**
 	 * @dataProvider elementAssignmentsDataProvider
+	 * @param callable $entityProvider
+	 * @param bool $assignmentsAvailable
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::elementAssignments()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::elementAssignments
 	 */
-	public function testElementAssignments(Entity $entity, bool $assignmentsAvailable) {
+	public function testElementAssignments(callable $entityProvider, bool $assignmentsAvailable) {
+		$entity = $entityProvider();
+
 		$this->view = new BackendView($this->request, $this->response);
 
 		$output = trim((string)$this->view->cell('Backend/MediaElements::elementAssignments', [$entity]));

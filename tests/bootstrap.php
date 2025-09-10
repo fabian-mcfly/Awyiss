@@ -25,6 +25,9 @@ use Cake\TestSuite\ConnectionHelper;
 use Migrations\Migrations;
 use Migrations\TestSuite\Migrator;
 
+putenv('HTTP_HOST=localhost');
+
+define('CONFIG_ENV', 'development');
 define('CUSTOM_DIR', 'tests' . DS . 'customer');
 define('CUSTOM_NAMESPACE', 'Customer');
 
@@ -72,6 +75,7 @@ ConnectionHelper::addTestAliases();
 (new Migrator())->runMany([
 	['source' => 'Migrations'],
 	['source' => '..' . DS . '..' . DS . 'tests' . DS . 'customer' . DS . 'config' . DS . 'Migrations'],
+	['plugin' => 'Queue']
 ]);
 
 // Seed the database
@@ -82,7 +86,7 @@ FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(true)->set
 
 // Use a locale that won't ever be present as translations
 // Here it's 'en_ZW' (English in Zimbabwe)
-ini_set('intl.default_locale', 'en_ZW');
-\Cake\I18n\I18n::setLocale('en_ZW');
+ini_set('intl.default_locale', 'en_AG');
+\Cake\I18n\I18n::setLocale('en_AG');
 
 \Cake\Utility\Text::setTransliteratorId('de-ASCII; Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove');

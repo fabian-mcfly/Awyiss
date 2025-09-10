@@ -22,6 +22,18 @@ class CreateAttributesCars extends AbstractMigration {
 		])->addColumn('free_text', 'text', [
 			'default' => null,
 			'null' => true,
+		])->addColumn('input_list', 'text', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('input_key_value_list', 'text', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('dummy_pw', 'text', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
 		])->create();
 	}
 }

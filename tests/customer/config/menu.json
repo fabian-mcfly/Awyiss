@@ -1,4 +1,22 @@
 {
-	"appendTo": null,
-	"insertAfter": null
+	"appendTo": {
+		"media": {
+			"dummy_entry1": {
+				"title": "Dummy Entry 1",
+				"link": "https://example.com/dummy",
+				"access": null,
+				"children": null
+			}
+		}
+	},
+	"insertAfter": {
+		"media": {
+			"dummy_entry2": {
+				"title": "Dummy Entry 2",
+				"link": "https://example.com/dummy",
+				"access": null,
+				"children": null
+			}
+		}
+	}
 }

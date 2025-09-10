@@ -1,0 +1,194 @@
+/**
+ * scss/test.scss
+ * Boolean value determines whether or not to include
+ * the column system-specific styles.
+ * Needs to be marked as default.
+ */
+/**
+ * Will be ignored due to blocklisting
+ */
+.foo {
+  width: 1280px;
+  padding-inline: 50px;
+  color: #17bbe1;
+  font-family: "Comic Sans MS", Arial, Geneva, sans-serif;
+}
+
+@layer columnSystem {
+  :is(.ContentRow,
+  .FormRow) {
+    --elementMargin:var(--columnMargin, 0);
+    display: flex;
+    flex-wrap: wrap;
+  }
+  :is(.ContentRow,
+  .FormRow):has(.Column-Rtl) {
+    justify-content: flex-end;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement) {
+    width: var(--elementWidth, 100%);
+    margin-left: var(--elementMargin);
+    position: relative;
+    align-self: flex-start;
+    flex: 0 0 var(--elementWidth, 100%);
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).FlexAlign-Top, :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).FlexAlign-FlexStart {
+    align-self: flex-start;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).FlexAlign-Center {
+    align-self: center;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).FlexAlign-Bottom, :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).FlexAlign-FlexEnd {
+    align-self: flex-end;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).FlexAlign-Stretch {
+    align-self: stretch;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).Centered:last-of-type :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).Centered:first-of-type {
+    margin-inline: auto;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement):not([class*=ColumnIndent-]):first-child {
+    margin-left: 0;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).Column-Rtl:nth-child(1) {
+    order: 5;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).Column-Rtl:nth-child(2) {
+    order: 4;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).Column-Rtl:nth-child(3) {
+    order: 3;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).Column-Rtl:nth-child(4) {
+    order: 2;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).Column-Rtl:nth-child(5) {
+    order: 1;
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).Column-Rtl:first-child {
+    margin-left: var(--columnMargin, 0);
+  }
+  :is(.ContentElement,
+  .FormElement,
+  .WidgetElement).Column-Rtl ~ .ContentElement:last-child {
+    margin-left: 0;
+  }
+  .Column-100 {
+    --elementWidth:var(--columnWidth100);
+  }
+  .Column-20 {
+    --elementWidth:var(--columnWidth20);
+  }
+  .Column-25 {
+    --elementWidth:var(--columnWidth25);
+  }
+  .Column-33 {
+    --elementWidth:var(--columnWidth33);
+  }
+  .Column-40 {
+    --elementWidth:var(--columnWidth40);
+  }
+  .Column-50 {
+    --elementWidth:var(--columnWidth50);
+  }
+  .Column-60 {
+    --elementWidth:var(--columnWidth60);
+  }
+  .Column-67 {
+    --elementWidth:var(--columnWidth67);
+  }
+  .Column-75 {
+    --elementWidth:var(--columnWidth75);
+  }
+  .Column-80 {
+    --elementWidth:var(--columnWidth80);
+  }
+  .ColumnIndent-20 {
+    --elementMargin:var(--columnIndent20);
+  }
+  .ColumnIndent-25 {
+    --elementMargin:var(--columnIndent25);
+  }
+  .ColumnIndent-33 {
+    --elementMargin:var(--columnIndent33);
+  }
+  .ColumnIndent-40 {
+    --elementMargin:var(--columnIndent40);
+  }
+  .ColumnIndent-50 {
+    --elementMargin:var(--columnIndent50);
+  }
+  .ColumnIndent-60 {
+    --elementMargin:var(--columnIndent60);
+  }
+  .ColumnIndent-67 {
+    --elementMargin:var(--columnIndent67);
+  }
+  .ColumnIndent-75 {
+    --elementMargin:var(--columnIndent75);
+  }
+  .ColumnIndent-80 {
+    --elementMargin:var(--columnIndent80);
+  }
+  :root {
+    --columnWidth100: 100%;
+    --columnWidth20: 17.6%;
+    --columnWidth25: 22.75%;
+    --columnWidth33: 31.33%;
+    --columnWidth40: 38.2%;
+    --columnWidth50: 48.5%;
+    --columnWidth60: 58.8%;
+    --columnWidth67: 65.66%;
+    --columnWidth75: 74.25%;
+    --columnWidth80: 79.4%;
+    --columnIndent20: 20.6%;
+    --columnIndent25: 25.75%;
+    --columnIndent33: 34.33%;
+    --columnIndent40: 41.2%;
+    --columnIndent50: 51.5%;
+    --columnIndent60: 61.8%;
+    --columnIndent67: 68.66%;
+    --columnIndent75: 77.25%;
+    --columnIndent80: 82.4%;
+  }
+  @media screen and (width <= 860px) {
+    .Column-100, .Column-20, .Column-25, .Column-33, .Column-40, .Column-50, .Column-60, .Column-67, .Column-75, .Column-80 {
+      --elementWidth:100%;
+      --elementMargin:0;
+    }
+  }
+}
+
+/*# sourceMappingURL=test.css.map */

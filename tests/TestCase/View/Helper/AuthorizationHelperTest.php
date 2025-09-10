@@ -18,7 +18,6 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\TestWith;
-use ReflectionClass;
 use RuntimeException;
 
 
@@ -37,24 +36,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @var \Awyiss\View\Helper\AuthorizationHelper
 	 */
 	protected AuthorizationHelper $helper;
-
-
-	/**
-	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public static function tearDownAfterClass(): void {
-		$reflection = new ReflectionClass(BackendView::class);
-		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
-	}
 
 
 	/**
@@ -95,6 +76,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::getAdditionalData()
 	 */
 	public function testGetAdditionalData(): void {
 		$this->helper->setConfig('additionalData', ['key' => 'value']);
@@ -104,6 +86,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::setAdditionalData()
 	 */
 	public function testSetAdditionalData(): void {
 		$this->helper->setAdditionalData(['key' => 'value']);
@@ -113,6 +96,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::resetAdditionalData()
 	 */
 	public function testResetAdditionalData(): void {
 		$this->helper->setAdditionalData(['key' => 'value']);
@@ -123,8 +107,8 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::getIdentity()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetIdentityThrowsExceptionWithoutIdentityInRequest(): void {
 		$helper = new AuthorizationHelper($this->view);
@@ -138,9 +122,9 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::getIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetIdentityReturnsIdentityFromRequestIfNotSet(): void {
 		$helper = new AuthorizationHelper($this->view);
@@ -159,6 +143,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::getIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -173,6 +158,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::setIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -187,6 +173,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::resetIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -202,8 +189,8 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::getScope()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetScopeReturnsControllerNameIfNotSet(): void {
 		$helper = new AuthorizationHelper($this->view);
@@ -216,6 +203,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::setScope()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetScope(): void {
@@ -227,6 +215,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::resetScope()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResetScope(): void {
@@ -239,6 +228,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::isAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -258,10 +248,10 @@ class AuthorizationHelperTest extends TestCase {
 	 * and passes the configured additional data to it.
 	 *
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::isAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testIsAccessibleCallsScopeIsAccessibleWithCurrentScope(): void {
 		$helper = $this->getMockBuilder(AuthorizationHelper::class)
@@ -286,10 +276,10 @@ class AuthorizationHelperTest extends TestCase {
 	 * identifiers spread as arguments.
 	 *
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::isAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testIsAccessibleCallsScopeIsAccessibleWithSpreadIdentifiers(): void {
 		$helper = $this->getMockBuilder(AuthorizationHelper::class)
@@ -312,6 +302,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::scopeIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -329,10 +320,10 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::scopeIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testScopeIsAccessiblePassesAdditionDataAsIs(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -359,10 +350,10 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::scopeIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testScopeIsAccessiblePassesSpreadIdentifiers(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -378,6 +369,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::anyIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -421,6 +413,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::anyIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -441,6 +434,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::anyIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -462,6 +456,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::anyIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -482,7 +477,10 @@ class AuthorizationHelperTest extends TestCase {
 
 
 	/**
+	 * @param array $data
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::anyIsAccessible()
+	 * @throws \Exception
 	 */
 	#[TestWith([['foo']])]
 	#[TestWith([['foo' => 'bar']])]
@@ -497,7 +495,7 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::permissionOptions()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -516,12 +514,12 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::permissionOptions()
 	 * @throws \Exception
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testPermissionOptionsCallsElementOnView(): void {
+	public function testPermissionOptionsRendersElement(): void {
 		$service = new AuthorizationService('Backend');
 		/** @var class-string<\Customer\Authorization\Policy\Backend\FoobarsPolicy> $policy */
 		$policy = $service->getPolicy('foobars');
@@ -553,9 +551,9 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AuthorizationHelper::permissionOptions()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testPermissionOptionsThrowsExceptionWithoutIdentifier(): void {
 		$this->expectException(RuntimeException::class);

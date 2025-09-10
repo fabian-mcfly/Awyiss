@@ -23,6 +23,7 @@ return [
 		'\\Cake\\I18n\\MessagesFileLoader::translationsFolders' => 'f21d853b86170c58ef5cb0d2f2f5a6a8',
 		'\\Cake\\Mailer\\Renderer::render' => '81e0742c2f0ee81a3c00d90a453a1bdc',
 		'\\Cake\\ORM\\AssociationCollection::saveParents' => 'e9de8cce2fc52a8ecedfcc91b0e9c833',
+		'\\Cake\\ORM\\BehaviorRegistry::className' => '318bf19490270377ea9027dc2647e31e',
 		'\\Cake\\ORM\\Behavior\\TranslateBehavior::beforeMarshal' => 'fed13bdeccb8f795184a82cdc1d714f8',
 		'\\Cake\\ORM\\Behavior\\TranslateBehavior::referenceName' => 'cc59bb272ae75d37e4474948451921c5',
 		'\\Cake\\ORM\\Behavior\\Translate\\EavStrategy::beforeSave' => '95b063652c357ef5f1467ba37a22a13a',

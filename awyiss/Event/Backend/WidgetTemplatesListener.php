@@ -109,8 +109,7 @@ class WidgetTemplatesListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\WidgetTemplate $entity
 	 * @param \ArrayObject $options
-	 * @noinspection DuplicatedCode
-	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, WidgetTemplate $entity, ArrayObject $options): void {
 		$ls_fileName = Text::slug($entity->get('fileName'), ['replacement' => '_']);
@@ -167,8 +166,7 @@ class WidgetTemplatesListener implements EventListenerInterface {
 
 
 	/**
-	 * After deleting a widget template entity, rename the existing file:
-	 *
+	 * After deleting a content template entity, rename the existing file:
 	 * - prepend '_deleted-'
 	 * - append '-' and the current timestamp
 	 *

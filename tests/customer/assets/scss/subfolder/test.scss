@@ -1,0 +1,16 @@
+/**
+ * scss/subfolder/test.scss
+ */
+$includeColumnSystem:false !default;
+$colorMain:#e117d0 !default;
+// Will not be overridden
+$fontNameMain:'Roboto Serif';
+
+@import '../variables';
+
+.foo {
+	width:$pageWidth;
+	padding-inline:$pagePadding;
+	color:$colorMain;
+	font-family:$fontStackMain;
+}

@@ -40,7 +40,7 @@ class DesignsListener implements EventListenerInterface {
 
 	/**
 	 * @param \Cake\Event\Event $event
-	 * @param \Awyiss\Model\Entity\Datatable $entity
+	 * @param \Awyiss\Model\Entity\Design $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -69,10 +69,10 @@ class DesignsListener implements EventListenerInterface {
 
 	/**
 	 * @param \Cake\Event\Event $event
-	 * @param \Awyiss\Model\Entity\Datatable $entity
+	 * @param \Awyiss\Model\Entity\Design $entity
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, Design $entity): void {
 		if (!$entity->inUse) {

@@ -48,7 +48,7 @@ class SurveyQuestionsCustomSeed extends BaseSeed {
 				'type' => 'info_text',
 				'title' => 'Question #3',
 				'subtitle' => null,
-				'text' => null,
+				'text' => '<p>Info text with inline img tag<br><awyiss-responsive-image>{"mediaId":"4"}</awyiss-responsive-image></p>',
 				'active' => 0,
 				'deleted' => 0,
 				'created_by' => 1,

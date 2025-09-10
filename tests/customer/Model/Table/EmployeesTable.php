@@ -23,5 +23,5 @@ class EmployeesTable extends GenericDatatablesTable {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'employees';
+	public const string TABLE = 'employees';
 }

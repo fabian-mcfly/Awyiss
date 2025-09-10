@@ -19,6 +19,8 @@
 <style>#Image-e317da1bbeff8df { --imageAspectRatio: 0.56; }</style>
 </picture>
 </div>
+<div class="Title" id="TranslatedTitle">
+Translated title </div>
 <div class="Text">
 <p>Child of inactive</p>
 </div>

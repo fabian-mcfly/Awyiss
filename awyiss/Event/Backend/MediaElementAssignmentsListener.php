@@ -42,6 +42,8 @@ class MediaElementAssignmentsListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\MediaElementAssignment $entity
 	 * @return void
+	 * @throws \ReflectionException
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterDelete(Event $event, MediaElementAssignment $entity): void {
 		$ls_scope = $entity->scope;

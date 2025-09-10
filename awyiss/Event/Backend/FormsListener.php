@@ -24,9 +24,6 @@ class FormsListener implements EventListenerInterface {
 	protected static string $scope;
 
 
-	protected string $formElementsFinder;
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -56,7 +53,10 @@ class FormsListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\FormsTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		/** @var \Awyiss\Model\Entity\Form $lo_originalEntity */
+		/**
+		 * @var \Awyiss\Model\Entity\Form $lo_originalEntity
+		 * @noinspection PhpUndefinedFieldInspection
+		 */
 		$lo_originalEntity = $entity->originalEntity;
 
 		/** @uses \Awyiss\Model\Table::findTranslations() */

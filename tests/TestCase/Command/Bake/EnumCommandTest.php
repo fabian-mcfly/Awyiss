@@ -46,7 +46,7 @@ class EnumCommandTest extends TestCase {
 	 */
 	public function testEnumCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Enum' . DS . 'FoobarEnum.php';
-		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Enum' . DS . 'FoobarEnum.php';
+		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Enum' . DS . 'FoobarEnum.txt';
 
 		$this->exec('bake enum foobar_enum case1:1,case2:2,case3:3 -i --namespace Customer');
 
@@ -64,7 +64,7 @@ class EnumCommandTest extends TestCase {
 	 */
 	public function testPageRoleEnumCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Enum' . DS . 'PageRoleTest.php';
-		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Enum' . DS . 'PageRoleTest.php';
+		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Enum' . DS . 'PageRoleTest.txt';
 
 		$this->exec('bake enum PageRoleTest page:1,newscategory:2 -i --namespace Customer --is-pagerole');
 

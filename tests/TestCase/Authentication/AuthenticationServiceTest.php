@@ -7,7 +7,6 @@ namespace Awyiss\Test\TestCase\Authentication;
 use Authentication\Authenticator\FormAuthenticator;
 use Authentication\Authenticator\Result;
 use Authentication\Identifier\AbstractIdentifier;
-use Authentication\Identifier\PasswordIdentifier;
 use Authentication\Identifier\Resolver\OrmResolver;
 use Awyiss\Authentication\AuthenticationService;
 use Awyiss\Authentication\Authenticator\SessionAuthenticator;
@@ -44,12 +43,12 @@ class AuthenticationServiceTest extends TestCase {
 	 * Test that the authenticators method returns an instance of AuthenticatorCollection
 	 *
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifiersReturnsIdentifierCollection(): void {
 		$service = new AuthenticationService();
 		$result = $service->identifiers();
+		/** @noinspection PhpConditionAlreadyCheckedInspection */
 		$this->assertInstanceOf(IdentifierCollection::class, $result);
 	}
 
@@ -58,7 +57,6 @@ class AuthenticationServiceTest extends TestCase {
 	 * Tests that the `unauthenticatedRedirect` config value is set correctly
 	 *
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \Exception
 	 */
@@ -98,33 +96,8 @@ class AuthenticationServiceTest extends TestCase {
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testLoadIdentifier(): void {
-		$service = new AuthenticationService();
-
-		$service->loadIdentifier(PasswordIdentifier::class, [
-			'resolver' => [
-				'className' => OrmResolver::class,
-				'finder' => 'active',
-			],
-		]);
-
-		$this->assertInstanceOf(PasswordIdentifier::class, $service->identifiers()->get('Authentication\Identifier\PasswordIdentifier'));
-	}
-
-
-	/**
-	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
 	public function testLogin(): void {
 		$service = new AuthenticationService();
-
-		$service->loadIdentifier(PasswordIdentifier::class, [
-			'resolver' => [
-				'className' => OrmResolver::class,
-				'finder' => 'active',
-			],
-		]);
 
 		$service->loadAuthenticator(FormAuthenticator::class, [
 			'fields' => [
@@ -132,6 +105,15 @@ class AuthenticationServiceTest extends TestCase {
 				AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
 			],
 			'loginUrl' => $this->dispatchEvent('Authentication.requestLoginUrl', [], $this)->getResult(),
+			'identifier' => [
+				'Authentication.Password' => [
+					'resolver' => [
+						'className' => OrmResolver::class,
+						/** @see \Awyiss\Model\Table\UsersTable::findActive() */
+						'finder' => 'active',
+					],
+				],
+			],
 		]);
 
 
@@ -143,6 +125,7 @@ class AuthenticationServiceTest extends TestCase {
 
 		$result = $service->authenticate($request);
 
+		/** @noinspection PhpConditionAlreadyCheckedInspection */
 		$this->assertInstanceOf(Result::class, $result);
 		$this->assertFalse($result->isValid());
 		$this->assertEquals('FAILURE_IDENTITY_NOT_FOUND', $result->getStatus());

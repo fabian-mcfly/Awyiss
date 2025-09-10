@@ -9,6 +9,9 @@ use Awyiss\Model\Entity\User;
 use Awyiss\Test\TestSuite\TestCase;
 
 
+/**
+ * Test class for Awyiss\Authentication\IdentityAwareTrait
+ */
 class IdentityAwareTraitTest extends TestCase {
 	use IdentityAwareTrait;
 

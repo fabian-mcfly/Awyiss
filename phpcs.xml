@@ -23,6 +23,8 @@
 	<exclude-pattern>./awyiss/templates/*</exclude-pattern>
 	<exclude-pattern>./tmp/*</exclude-pattern>
 	<exclude-pattern>./tests/bootstrap.php</exclude-pattern>
+	<exclude-pattern>./tests/comparisons/output/test.css</exclude-pattern>
+	<exclude-pattern>./tests/customer/assets/js/main.min.js</exclude-pattern>
 	<exclude-pattern>./tests/customer/config/awyiss.php</exclude-pattern>
 	<exclude-pattern>./vendor/*</exclude-pattern>
 

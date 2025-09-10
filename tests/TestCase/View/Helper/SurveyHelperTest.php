@@ -39,6 +39,7 @@ class SurveyHelperTest extends TestCase {
 	 * or when there's an active question after the current one
 	 *
 	 * @return void
+	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithSameActiveStatus(): void {
@@ -84,6 +85,7 @@ class SurveyHelperTest extends TestCase {
 	 * or when there's an active question after the current one
 	 *
 	 * @return void
+	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithActiveStatus(): void {
@@ -132,6 +134,7 @@ class SurveyHelperTest extends TestCase {
 	 * Test realNextQuestion method when there's no next question
 	 *
 	 * @return void
+	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithNoNextQuestion(): void {
@@ -176,6 +179,7 @@ class SurveyHelperTest extends TestCase {
 	 * Test realNextQuestion method with an empty array
 	 *
 	 * @return void
+	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithEmptyArray(): void {
@@ -187,6 +191,7 @@ class SurveyHelperTest extends TestCase {
 	 * Test realNextQuestion method with an invalid identifier
 	 *
 	 * @return void
+	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithInvalidIdentifier(): void {
@@ -232,6 +237,7 @@ class SurveyHelperTest extends TestCase {
 	 * based on either being active or having the same active status as the current question
 	 *
 	 * @return void
+	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithMultipleQuestionsWithSameActiveStatus(): void {

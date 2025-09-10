@@ -26,32 +26,31 @@ class MediaConfigOptions extends AbstractConfigOptions {
 	/**
 	 * @var string Create historical paths disabled
 	 */
-	final public const CREATE_HISTORICAL_PATHS_DISABLED = 'disabled';
+	final public const string CREATE_HISTORICAL_PATHS_DISABLED = 'disabled';
 	/**
 	 * @var string Create historical paths on file name change
 	 */
-	final public const CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE = 'file_name_change';
+	final public const string CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE = 'file_name_change';
 	/**
 	 * @var string Create historical paths on folder name change
-	 * @noinspection PhpConstantNamingConventionInspection
 	 */
-	final public const CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE = 'folder_name_change';
+	final public const string CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE = 'folder_name_change';
 	/**
 	 * @var string Create historical paths when file or folder name changes
 	 */
-	final public const CREATE_HISTORICAL_PATHS_ALWAYS = 'always';
+	final public const string CREATE_HISTORICAL_PATHS_ALWAYS = 'always';
 	/**
 	 * @var string Resize media file type match source
 	 */
-	final public const RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE = 'match_source';
+	final public const string RESIZE_MEDIA_FILE_TYPE_MATCH_SOURCE = 'match_source';
 	/**
 	 * @var string Resize media file type avif
 	 */
-	final public const RESIZE_MEDIA_FILE_TYPE_AVIF = 'avif';
+	final public const string RESIZE_MEDIA_FILE_TYPE_AVIF = 'avif';
 	/**
 	 * @var string Resize media file type webp
 	 */
-	final public const RESIZE_MEDIA_FILE_TYPE_WEBP = 'webp';
+	final public const string RESIZE_MEDIA_FILE_TYPE_WEBP = 'webp';
 
 
 	/**
