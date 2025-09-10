@@ -53,7 +53,7 @@ class FormElementsConfigOptions extends AbstractConfigOptions {
 					values: function () {
 						$la_fields = $this->getTableFields();
 
-						unset($la_fields['id']);
+						unset($la_fields['id'], $la_fields['title']);
 
 						return $la_fields;
 					},
