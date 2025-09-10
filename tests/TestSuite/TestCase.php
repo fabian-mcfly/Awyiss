@@ -11,6 +11,8 @@ use Awyiss\Event\EventManager;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\User;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Media\ResizedImageManager;
+use Awyiss\View\AppView;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\EventDispatcherTrait;
@@ -33,6 +35,8 @@ class TestCase extends BaseTestCase {
 	 * @inheritDoc
 	 */
 	protected function setUp(): void {
+		ResizedImageManager::clear();
+
 		parent::setUp();
 
 		EventManager::instance(new EventManager(true));
@@ -56,13 +60,34 @@ class TestCase extends BaseTestCase {
 
 	/**
 	 * @inheritDoc
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
 
 		if (is_dir(TESTS . 'customer' . DS . 'config' . DS . CONFIG_ENV)) {
-			(new Process(['rm', '-rf', TESTS . 'customer' . DS . 'config' . DS . CONFIG_ENV]))->run();
+			new Process(['rm', '-rf', TESTS . 'customer' . DS . 'config' . DS . CONFIG_ENV])->run();
 		}
+
+		$reflection = new ReflectionClass(AppView::class);
+		$property = $reflection->getProperty('twig');
+		/** @noinspection PhpExpressionResultUnusedInspection */
+		$property->setAccessible(true);
+		$property->setValue(null, null);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public static function tearDownAfterClass(): void {
+		parent::tearDownAfterClass();
+
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
+		// Delete all resized images created by tests (id > 27)
+		$mediaResizedImagesTable->deleteAll(['id >' => 27]);
 	}
 
 
@@ -109,18 +134,23 @@ class TestCase extends BaseTestCase {
 
 
 	/**
-	 * @param object $object
+	 * @param object|string $object
 	 * @param string $methodName
 	 * @param mixed ...$args
 	 * @return mixed
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	protected function callProtectedMethod(object $object, string $methodName, mixed ...$args): mixed {
+	protected function callProtectedMethod(object|string $object, string $methodName, mixed ...$args): mixed {
 		$reflection = new ReflectionClass($object);
 		$method = $reflection->getMethod($methodName);
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$method->setAccessible(true);
+
+		// Handle static methods when $object is a class name (string)
+		if (is_string($object) || $method->isStatic()) {
+			return $method->invokeArgs(null, $args);
+		}
 
 		return $method->invokeArgs($object, $args);
 	}
