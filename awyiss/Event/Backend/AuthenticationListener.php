@@ -24,25 +24,23 @@ class AuthenticationListener implements EventListenerInterface {
 
 
 	/**
-	 * @var array|array<array>
+	 * @var array<array>
 	 */
-	protected array $initializedClasses = [
-		'identity' => [],
-	];
+	protected static array $initializedClasses = [];
 	/**
-	 * @var array|array<array>
+	 * @var array<array>
 	 */
-	protected array $initializedModels = [
-		'identity' => [],
-	];
-	/**
-	 * @var IdentityInterface
-	 */
-	protected IdentityInterface $identity;
+	protected static array $initializedModels = [];
 	/**
 	 * @var string
 	 */
 	protected static string $scope;
+
+
+	/**
+	 * @var IdentityInterface
+	 */
+	protected IdentityInterface $identity;
 
 
 	/**
@@ -71,16 +69,17 @@ class AuthenticationListener implements EventListenerInterface {
 		$this->identity = $identity;
 
 		/** @var \Awyiss\Authentication\IdentityAwareTrait $lo_class */
-		foreach ($this->initializedClasses['identity'] as $lo_class) {
+		foreach (static::$initializedClasses as $li_key => $lo_class) {
 			$lo_class->setIdentity($this->identity);
+			unset(static::$initializedClasses[ $li_key ]);
 		}
 
 		/** @var Table $lo_model */
-		foreach ($this->initializedModels['identity'] as $lo_model) {
+		foreach (static::$initializedModels as $li_key => $lo_model) {
 			if ($lo_model->hasBehavior('Audit')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$lo_model->getBehavior('Audit')->setIdentity($this->identity);
 			}
+			unset(static::$initializedModels[ $li_key ]);
 		}
 	}
 
@@ -98,17 +97,22 @@ class AuthenticationListener implements EventListenerInterface {
 			$lo_class = null;
 		}
 
-		if ($lo_class && method_exists($lo_class, 'setIdentity')) {
-			if (!isset($this->identity)) {
-				$this->initializedClasses['identity'][] = $lo_class;
-			}
-			else {
-				$lo_class->setIdentity($this->identity);
-				$event->setResult($this->identity);
-			}
-		}
-		elseif (isset($this->identity)) {
+		if (isset($this->identity)) {
 			$event->setResult($this->identity);
+		}
+
+		if (!$lo_class || !method_exists($lo_class, 'setIdentity')) {
+			return;
+		}
+
+		if (isset($this->identity)) {
+			$lo_class->setIdentity($this->identity);
+
+			return;
+		}
+
+		if (!in_array($lo_class, static::$initializedClasses, true)) {
+			static::$initializedClasses[] = $lo_class;
 		}
 	}
 
@@ -148,15 +152,20 @@ class AuthenticationListener implements EventListenerInterface {
 	public function modelInitialize(Event $event): void {
 		/** @var Table $lo_model */
 		$lo_model = $event->getSubject();
+		if (!$lo_model instanceof Table) {
+			return;
+		}
 
-		if ($lo_model instanceof Table) {
-			if (!isset($this->identity)) {
-				$this->initializedModels['identity'][] = $lo_model;
-			}
-			elseif ($lo_model->hasBehavior('Audit')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		if (isset($this->identity)) {
+			if ($lo_model->hasBehavior('Audit')) {
 				$lo_model->getBehavior('Audit')->setIdentity($this->identity);
 			}
+
+			return;
+		}
+
+		if (!in_array($lo_model, static::$initializedModels, true)) {
+			static::$initializedModels[] = $lo_model;
 		}
 	}
 }
