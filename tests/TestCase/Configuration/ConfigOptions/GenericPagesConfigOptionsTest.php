@@ -7,7 +7,6 @@ namespace Awyiss\Test\TestCase\Configuration\ConfigOptions;
 use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Test\TestSuite\TestCase;
-use Cake\Core\Configure;
 
 
 /**
