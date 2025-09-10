@@ -6,13 +6,13 @@ namespace Awyiss\Test\TestCase\View;
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\DesignMiddleware;
+use Awyiss\Model\Entity\Language;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\Exception\MissingContentException;
 use Awyiss\View\Exception\MissingWidgetException;
 use Awyiss\View\FrontendView;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
-use ReflectionClass;
 
 
 /**
@@ -90,24 +90,6 @@ class FrontendViewTest extends TestCase {
 	 * @inheritDoc
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public static function tearDownAfterClass(): void {
-		$reflection = new ReflectionClass(FrontendView::class);
-		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
 	protected function setUp(): void {
 		$this->configApplication(Awyiss::class, []);
 
@@ -137,6 +119,7 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::initialize()
 	 * @throws \Twig\Error\LoaderError
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -157,32 +140,80 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::initialize()
 	 * @throws \Twig\Error\LoaderError
+	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTwigHasGlobals(): void {
+		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock->method('getDesignVariables')->willReturn($this->designVariables);
+
+		$request = $this->view->getRequest();
+		$request = $request->withAttribute('design', $designMiddlewareMock);
+
+		$this->view->setRequest($request);
+
 		$this->view->initialize();
 
 		$twig = $this->view->getTwig();
 
 		$globals = $twig->getGlobals();
 
-		$expectedGlobals = [
-			'currentUrl' => 'http://localhost/',
-			'languageShortcode' => 'de',
-			'previewMode' => [],
-			'webfontTimestamp' => filemtime(ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'css' . DS . 'webfonts.css'),
-		];
+		$this->assertArrayHasKey('baseUrl', $globals);
+		$this->assertSame('http://localhost/', $globals['baseUrl']);
 
-		foreach ($expectedGlobals as $key => $value) {
-			$this->assertArrayHasKey($key, $globals);
-			$this->assertSame($value, $globals[$key]);
-		}
+		$this->assertArrayHasKey('config', $globals);
+		$this->assertIsArray($globals['config']);
+
+		$this->assertArrayHasKey('currentLanguage', $globals);
+		$this->assertInstanceOf(Language::class, $globals['currentLanguage']);
+
+		$this->assertArrayHasKey('currentPath', $globals);
+		$this->assertSame('/', $globals['currentPath']);
+
+		$this->assertArrayHasKey('currentUrl', $globals);
+		$this->assertSame('http://localhost/', $globals['currentUrl']);
+
+		$this->assertArrayHasKey('designSettings', $globals);
+		$this->assertSame($this->designVariables, $globals['designSettings']);
+
+		$this->assertArrayHasKey('environment', $globals);
+		$this->assertSame(null, $globals['environment']);
+
+		$this->assertArrayHasKey('folder', $globals);
+		$this->assertSame('/', $globals['folder']);
+
+		$this->assertArrayHasKey('languages', $globals);
+		$this->assertIsArray($globals['languages']);
+
+		$this->assertArrayHasKey('languageShortcode', $globals);
+		$this->assertSame('de', $globals['languageShortcode']);
+
+		$this->assertArrayHasKey('previewMode', $globals);
+		$this->assertSame([], $globals['previewMode']);
+
+		$this->assertArrayHasKey('webfont', $globals);
+		$this->assertSame([
+			'fontNameMain' => [
+				'name' => 'Red Hat Text',
+				'variants' => ['300', '300i', '400', '400i', '700', '700i'],
+			],
+			'fontNameAlternative' => [
+				'name' => 'Merienda',
+				'variants' => ['400', '700'],
+			],
+		], $globals['webfont']);
+
+		$this->assertArrayHasKey('webfontTimestamp', $globals);
+		$this->assertSame(filemtime(ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'css' . DS . 'webfonts.css'), $globals['webfontTimestamp']);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::getRowClass()
+	 * @see \Awyiss\View\FrontendView::setRowClass()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetRowClass(): void {
@@ -193,8 +224,22 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @see \Awyiss\View\BackendView::getLoginLogoPath()
 	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testGetLoginLogoPath(): void {
+		$path = $this->callProtectedMethod($this->view, 'getLoginLogoPath');
+
+		$this->assertSame('/assets/img/login-logo.png', $path);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\FrontendView::setOgImage()
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetOgImage(): void {
 		$this->view->set('ogImage');
@@ -209,6 +254,41 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::setOgImage()
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testSetOgImageSkipsIfExistsBySet(): void {
+		$this->view->set('ogImage', 'existing-image.png');
+
+		$this->callProtectedMethod($this->view, 'setOgImage');
+
+		$ogImage = $this->view->get('ogImage');
+
+		$this->assertSame('existing-image.png', $ogImage);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\FrontendView::setOgImage()
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testSetOgImageSkipsIfExistsByAssign(): void {
+		$this->view->assign('ogImage', 'existing-image.png');
+
+		$this->callProtectedMethod($this->view, 'setOgImage');
+
+		$ogImage = $this->view->fetch('ogImage');
+
+		$this->assertSame('existing-image.png', $ogImage);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\FrontendView::content()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContent(): void {
@@ -221,8 +301,8 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::content()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testContentThrowsExceptionForMissingContent(): void {
 		$this->expectException(MissingContentException::class);
@@ -232,8 +312,8 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::content()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testContentThrowsNoExceptionForMissingContentWhenIgnoring(): void {
 		$result = $this->view->content('not_existing_test_content', ['key' => 'value'], ['ignoreMissing' => true]);
@@ -244,6 +324,7 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::content()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContentCache(): void {
@@ -271,6 +352,7 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::widget()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidget(): void {
@@ -283,8 +365,8 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::widget()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testWidgetThrowsExceptionForMissingWidget(): void {
 		$this->expectException(MissingWidgetException::class);
@@ -294,8 +376,8 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::widget()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testWidgetThrowsNoExceptionForMissingWidgetWhenIgnoring(): void {
 		$result = $this->view->widget('not_existing_test_widget', ['key' => 'value'], ['ignoreMissing' => true]);
@@ -306,6 +388,7 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::widget()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidgetCache(): void {
@@ -333,6 +416,7 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::getWebfontData()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -365,12 +449,25 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\FrontendView::getContentFileName()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetContentFileName(): void {
 		$name = 'test_content';
 		$result = $this->view->content($name);
-		$this->assertIsString($result);
+		$this->assertSame('', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\FrontendView::getContentFileName()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testGetContentFileNameWithData(): void {
+		$name = 'test_content';
+		$result = $this->view->content($name, ['key' => 'value']);
+		$this->assertSame('value', $result);
 	}
 
 
@@ -381,6 +478,17 @@ class FrontendViewTest extends TestCase {
 	public function testGetWidgetFileName(): void {
 		$name = 'test_widget';
 		$result = $this->view->widget($name);
-		$this->assertIsString($result);
+		$this->assertSame('', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testGetWidgetFileNameWithData(): void {
+		$name = 'test_widget';
+		$result = $this->view->widget($name, ['key' => 'value']);
+		$this->assertSame('value', $result);
 	}
 }

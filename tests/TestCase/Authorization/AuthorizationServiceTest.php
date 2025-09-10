@@ -53,7 +53,6 @@ class AuthorizationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @throws \ReflectionException
 	 */
 	public function testGetPolicies(): void {
 		$service = new AuthorizationService('Backend');
@@ -85,7 +84,6 @@ class AuthorizationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @throws \ReflectionException
 	 */
 	public function testGetPolicy(): void {
 		$service = new AuthorizationService('frontend');

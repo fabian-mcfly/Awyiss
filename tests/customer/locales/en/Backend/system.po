@@ -1,0 +1,15 @@
+# Dummy translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-09-04 08:50+0000\n"
+"PO-Revision-Date: 2025-09-04 08:50+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "dummy_string"
+msgstr "This is a dummy string for testing purposes in en locale and Backend/system domain."

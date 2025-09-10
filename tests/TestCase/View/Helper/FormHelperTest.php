@@ -5,13 +5,15 @@ namespace Awyiss\Test\TestCase\View\Helper;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Form\Protection\FormProtectionInterface;
 use Awyiss\Model\Entity;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
 use Awyiss\View\Helper\FormHelper;
+use Cake\Core\Configure;
 use Cake\I18n\DateTime;
 use Cake\View\Form\EntityContext;
-use ReflectionClass;
+use DateTimeImmutable;
 use RuntimeException;
 
 
@@ -23,24 +25,6 @@ class FormHelperTest extends TestCase {
 	 * @var \Awyiss\View\Helper\FormHelper
 	 */
 	protected FormHelper $formHelper;
-
-
-	/**
-	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public static function tearDownAfterClass(): void {
-		$reflection = new ReflectionClass(BackendView::class);
-		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
-	}
 
 
 	/**
@@ -63,6 +47,75 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::create()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateAddsLockAttributes() {
+		$lockedUntil = new DateTimeImmutable('+1 day');
+		$lockData = [
+			'lockedUntil' => $lockedUntil,
+			'isOwnLock' => false,
+		];
+
+		$result = $this->formHelper->create(null, ['lock' => $lockData, 'url' => '/foo']);
+		$this->assertStringContainsString('data-locked-until="' . $lockedUntil->format('c') . '"', $result);
+		$this->assertStringContainsString('data-locked="true"', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::create()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateReplacesActionWithDataActionWhenNotOwnLock() {
+		$lockedUntil = new DateTimeImmutable('+2 days');
+		$lockData = [
+			'lockedUntil' => $lockedUntil,
+			'isOwnLock' => false,
+		];
+
+		$result = $this->formHelper->create(null, ['lock' => $lockData, 'url' => '/dummy']);
+		$this->assertStringContainsString('data-action="/dummy"', $result);
+		$this->assertStringNotContainsString(' action="/dummy"', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::create()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateKeepsActionWhenOwnLock() {
+		$lockedUntil = new DateTimeImmutable('+3 days');
+		$lockData = [
+			'lockedUntil' => $lockedUntil,
+			'isOwnLock' => true,
+		];
+
+		$result = $this->formHelper->create(null, ['lock' => $lockData, 'url' => '/dummy']);
+		$this->assertStringContainsString('action="/dummy"', $result);
+		$this->assertStringNotContainsString('data-action="/dummy"', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::create()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testCreateReturnsFormWithoutLockAttributesWhenNoLock() {
+		$result = $this->formHelper->create(null, ['url' => '/dummy']);
+		$this->assertStringContainsString('<form', $result);
+		$this->assertStringContainsString('action="/dummy"', $result);
+		$this->assertStringNotContainsString('data-locked', $result);
+		$this->assertStringNotContainsString('data-locked-until', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::_domId()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDomId(): void {
@@ -82,6 +135,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::label()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelWithProvidedText(): void {
@@ -93,6 +147,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::label()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelWithoutProvidedText(): void {
@@ -109,9 +164,66 @@ class FormHelperTest extends TestCase {
 		$this->assertSame('<label class="Label" for="Usergroups-Title">title</label>', $result);
 	}
 
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::label()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testLabelAddsCustomClassAndTemplateVars(): void {
+		$result = $this->formHelper->label('username', null, ['class' => 'foo', 'bar' => 'baz']);
+		$this->assertStringContainsString('class="Label foo"', $result);
+		$this->assertStringContainsString('bar="baz"', $result);
+	}
+
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::label()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testLabelHandlesEmptyClassOption(): void {
+		$result = $this->formHelper->label('username', null, ['class' => '']);
+		$this->assertStringContainsString('class="Label"', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::labelTextFromFieldname()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testLabelTextFromFieldnameHandlesMultipleDots(): void {
+		$text = $this->formHelper->labelTextFromFieldname('user.profile.name');
+		$this->assertSame('name', $text);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::labelTextFromFieldname()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testLabelTextFromFieldnameHandlesIdsSuffix(): void {
+		$text = $this->formHelper->labelTextFromFieldname('groups._ids');
+		$this->assertSame('groups', $text);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::labelTextFromFieldname()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testLabelTextFromFieldnameReturnsTranslatedString(): void {
+		// Assuming __() returns the same string in test, but this checks the call path.
+		$text = $this->formHelper->labelTextFromFieldname('email');
+		$this->assertSame('email', $text);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::labelTextFromFieldname()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelWithOptions(): void {
@@ -125,6 +237,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::select()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSelectReturnsSelectWithEmptyOption(): void {
@@ -139,6 +252,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::select()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSelectWithEmptyOptionDisabled(): void {
@@ -164,6 +278,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::select()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSelectWithCustomOptionTitle(): void {
@@ -191,8 +306,136 @@ class FormHelperTest extends TestCase {
 		$this->assertStringContainsString('<option value="2" title="Custom-Option 2">Option 2</option>', $result);
 	}
 
+
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::select()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testSelectCutsOffLongTitles(): void {
+		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
+		$entity = $this->fetchTable('ContentTemplates')->get(2);
+
+		$this->formHelper->create($entity);
+
+		$longText = trim(str_repeat('Long Option Text ', 10));
+
+		$result = $this->formHelper->select('category', [
+			[
+				'text' => 'Option 1',
+				'value' => 1,
+			],
+			[
+				'text' => $longText,
+				'value' => 2,
+			],
+			[
+				'text' => 'Option 3',
+				'value' => 3,
+			],
+		]);
+
+		$this->assertStringContainsString('<select name="category"', $result);
+		$this->assertStringContainsString('<option value=""', $result);
+		$this->assertStringContainsString('<option value="1" title="Option 1">Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="2" title="' . $longText . '">' . mb_substr($longText, 0, 100) . '</option>', $result);
+		$this->assertStringContainsString('<option value="3" title="Option 3">Option 3</option>', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::select()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testSelectCutsOffLongGroupTitles(): void {
+		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
+		$entity = $this->fetchTable('ContentTemplates')->get(2);
+
+		$this->formHelper->create($entity);
+
+		$longGroup = trim(str_repeat('Long Option Group Text ', 10));
+
+		$result = $this->formHelper->select('category', [
+			$longGroup => [
+				'1' => 'Option 1',
+				'2' => 'Option 2',
+			],
+			'Group 2' => [
+				'3' => 'Option 3',
+				'4' => 'Option 4',
+			],
+		]);
+
+		$this->assertStringContainsString('<select name="category"', $result);
+		$this->assertStringContainsString('<option value=""', $result);
+		$this->assertStringContainsString('<optgroup label="' . mb_substr($longGroup, 0, 100) . '" title="' . $longGroup . '">', $result);
+		$this->assertStringContainsString('<option value="1" title="Option 1">Option 1</option>', $result);
+		$this->assertStringContainsString('<option value="2" title="Option 2">Option 2</option>', $result);
+		$this->assertStringContainsString('<optgroup label="Group 2" title="Group 2">', $result);
+		$this->assertStringContainsString('<option value="3" title="Option 3">Option 3</option>', $result);
+		$this->assertStringContainsString('<option value="4" title="Option 4">Option 4</option>', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::textarea()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testTextareaWithoutEditorIgnoresInlineImageTags(): void {
+		$table = $this->fetchTable('Contents');
+		$entity = $table->findById(44)->first();
+
+		$this->formHelper->create($entity);
+
+		$result = $this->formHelper->textarea('text');
+
+		$this->assertSame('<textarea name="text" rows="5">&lt;p&gt;&lt;awyiss-responsive-image&gt;{&quot;mediaId&quot;:&quot;2&quot;}&lt;/awyiss-responsive-image&gt;&lt;/p&gt;</textarea>', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::textarea()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testTextareaWithEditorRebuildsImageTags(): void {
+		$table = $this->fetchTable('Contents');
+		$entity = $table->findById(44)->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)->first();
+
+		$this->formHelper->create($entity);
+
+		$result = $this->formHelper->textarea('text', [
+			'data-editor' => true,
+		]);
+
+		$this->assertSame('<textarea name="text" data-editor="1" rows="5">&lt;p&gt;&lt;img src=&quot;../awyiss/Command/Media/TestFiles/logo-awyiss.jpg&quot;&gt;&lt;/p&gt;</textarea>', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::textarea()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testTextareaWithEditorRemovesImageTagsIfNotFound(): void {
+		$table = $this->fetchTable('Contents');
+		$entity = $table->findById(44)->first();
+
+		$this->formHelper->create($entity);
+
+		$result = $this->formHelper->textarea('text', [
+			'data-editor' => true,
+		]);
+
+		$this->assertSame('<textarea name="text" data-editor="1" rows="5">&lt;p&gt;&lt;/p&gt;</textarea>', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -212,9 +455,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testTranslatableTextMarksOnlyFirstAsRequired(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -231,9 +474,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testTranslatableTextThrowsExceptionWhithoutCreateCall(): void {
 		$this->expectException(RuntimeException::class);
@@ -245,9 +488,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testTranslatableTextReturnsRegularInputWhenFieldNotTranslatable(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -265,9 +508,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testTranslatableTextReturnsRegularInputWhenRealmHasLessThanTwoLanguages(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -294,6 +537,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -306,9 +550,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlNotAddsColumnSpanWhenNotProvided(): void {
 		$result = $this->formHelper->control('username', ['columnSpan' => null]);
@@ -319,9 +563,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlCreatesTranslatableTextForTranslatableField(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -339,35 +583,49 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlAddsTimezoneInfoWhenSet(): void {
 		$result = $this->formHelper->control('created', ['type' => 'datetime', 'timezone' => 'America/New_York']);
 
-		$this->assertStringContainsString('<span class="Timezone">', $result);
+		$this->assertStringContainsString('<span class="Timezone">America/New_York</span>', $result);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testControlAddsTimezoneInfoWhenOmitted(): void {
+	public function testControlAddsConfigTimezoneInfoWhenOmitted(): void {
+		Configure::write('Awyiss.System.' . Awyiss::getRealm() . '.timezone', 'Africa/Abidjan');
 		$result = $this->formHelper->control('created', ['type' => 'datetime']);
 
-		$this->assertStringContainsString('<span class="Timezone">', $result);
+		$this->assertStringContainsString('<span class="Timezone">Africa/Abidjan</span>', $result);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testControlAddsDefaultTimezoneInfoWhenOmitted(): void {
+		$result = $this->formHelper->control('created', ['type' => 'datetime']);
+
+		$this->assertStringContainsString('<span class="Timezone">' . date_default_timezone_get() . '</span>', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::control()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlSetsCorrectDateTimeValueForTimezone(): void {
 		$now = new DateTime('now');
@@ -379,6 +637,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassFromArray(): void {
@@ -392,6 +651,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassFromString(): void {
@@ -405,8 +665,8 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassWhenOnlyOneClassInString(): void {
 		$options = ['foo' => 'bar', 'class' => 'class1'];
@@ -417,8 +677,8 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testRemoveClassDoesNotRemoveClassIfNotPresent(): void {
 		$options = ['foo' => 'bar', 'class' => 'class1 class2 class3'];
@@ -429,6 +689,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassFromCustomKey(): void {
@@ -440,8 +701,8 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassFromEmptyString(): void {
 		$options = ['foo' => 'bar', 'class' => ''];
@@ -452,6 +713,8 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
+	 * @see \Awyiss\View\Helper\FormHelper::setTranslatableField()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -479,6 +742,8 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
+	 * @see \Awyiss\View\Helper\FormHelper::setTranslatableField()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -512,6 +777,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::isFieldError()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -527,6 +793,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::isFieldError()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -546,9 +813,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::isFieldError()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testIsFieldErrorWithDotNoAssociatedEntity(): void {
 		$entity = $this->createMock(Entity::class);
@@ -565,9 +832,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::isFieldError()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testIsFieldErrorWithDotNoErrorInAssociatedEntity(): void {
 		$entity = $this->createMock(Entity::class);
@@ -584,9 +851,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \Exception
+	 * @see \Awyiss\View\Helper\FormHelper::_inputContainerTemplate()
+	 * @throws \Exception|\PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testInputContainerTemplateContainsCorrectClasses(): void {
 		$entity = $this->createMock(Entity::class);
@@ -636,6 +903,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -651,9 +919,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testErrorWithErrorWithMultipleErrorMessage(): void {
 		$context = $this->createMock(EntityContext::class);
@@ -673,6 +941,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -690,9 +959,9 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testErrorWithErrorWithMultipleNestedErrorMessage(): void {
 		$context = $this->createMock(EntityContext::class);
@@ -709,6 +978,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -723,6 +993,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -741,6 +1012,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -759,6 +1031,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -776,6 +1049,7 @@ class FormHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -787,5 +1061,61 @@ class FormHelperTest extends TestCase {
 
 		$customText = ['Error message' => 'Custom error message'];
 		$this->assertEquals('<div class="Error">Custom error message</div>', $this->formHelper->error('field', $customText));
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::renderFormProtection()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testRenderFormProtectionRendersAllProtectionMethods(): void {
+		$formsTable = $this->fetchTable('Forms');
+		$form = $formsTable->get(1);
+
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$form->initialize($this->formHelper->getView());
+
+		/** @noinspection PhpParamsInspection */
+		$result = $this->formHelper->renderFormProtection($form, 'before');
+
+		$this->assertSame('', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::renderFormProtection()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpParamsInspection
+	 */
+	public function testRenderFormProtectionReturnsEmptyStringWhenNoProtectionMethods(): void {
+		$formsTable = $this->fetchTable('Forms');
+		$form = $formsTable->get(1);
+
+		Configure::write('Awyiss.Forms.Frontend.protection.methods', [
+			'hidden_input',
+		]);
+
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$form->initialize($this->formHelper->getView());
+
+		$result = $this->formHelper->renderFormProtection($form, 'before');
+		$this->assertSame('<div class="hidden-input-protection">This is a test for the before position.</div>' . PHP_EOL, $result);
+
+		$result = $this->formHelper->renderFormProtection($form, FormProtectionInterface::POSITION_BEFORE);
+		$this->assertSame('<div class="hidden-input-protection">This is a test for the before position.</div>' . PHP_EOL, $result);
+
+		$result = $this->formHelper->renderFormProtection($form, 'before_submit');
+		$this->assertSame('<div class="hidden-input-protection">This is a test for the before submit position.</div>' . PHP_EOL, $result);
+
+		$result = $this->formHelper->renderFormProtection($form, FormProtectionInterface::POSITION_BEFORE_SUBMIT);
+		$this->assertSame('<div class="hidden-input-protection">This is a test for the before submit position.</div>' . PHP_EOL, $result);
+
+		$result = $this->formHelper->renderFormProtection($form, 'after');
+		$this->assertSame('<div class="hidden-input-protection">This is a test for the after position.</div>' . PHP_EOL, $result);
+
+		$result = $this->formHelper->renderFormProtection($form, FormProtectionInterface::POSITION_AFTER);
+		$this->assertSame('<div class="hidden-input-protection">This is a test for the after position.</div>' . PHP_EOL, $result);
 	}
 }

@@ -10,7 +10,7 @@ use Awyiss\Test\TestSuite\TestCase;
 
 
 /**
- * Test class for Awyiss\Attribute\AttributeOptiosProvider
+ * Test class for Awyiss\Attribute\AttributeOptionsProvider
  */
 class AttributeOptionsProviderTest extends TestCase {
 	/**

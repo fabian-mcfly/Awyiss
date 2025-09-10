@@ -31,13 +31,13 @@ class CreateEmployees extends AbstractMigration {
 			'default' => '0',
 			'limit' => 11,
 			'null' => false,
-		])->addColumn('active', 'tinyinteger', [
-			'default' => '1',
-			'limit' => 1,
+		])->addColumn('active', 'boolean', [
+			'default' => true,
+			'limit' => null,
 			'null' => false,
-		])->addColumn('deleted', 'tinyinteger', [
-			'default' => '0',
-			'limit' => 1,
+		])->addColumn('deleted', 'boolean', [
+			'default' => false,
+			'limit' => null,
 			'null' => false,
 		])->addColumn('created_by', 'integer', [
 			'default' => null,

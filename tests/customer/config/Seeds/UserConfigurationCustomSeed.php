@@ -237,6 +237,13 @@ class UserConfigurationCustomSeed extends AbstractSeed {
 				'identifier' => 'interface.dark_mode',
 				'value' => '1',
 			],
+			[
+				'id' => 66,
+				'user_id' => 2,
+				'scope' => 'system',
+				'identifier' => 'interface.dark_mode',
+				'value' => '1',
+			],
 		];
 
 		$lo_table = $this->table('user_configuration');

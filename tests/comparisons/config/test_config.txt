@@ -1,0 +1,17 @@
+<?php declare(strict_types=1);
+
+return [
+	'SomeArray' => [
+		'SubKey' => 'SubValue',
+		'SubArray' => [
+			1,
+			2,
+			3,
+		],
+	],
+	'SomeBoolean' => true,
+	'SomeFloat' => 123.45,
+	'SomeInteger' => 123,
+	'SomeKey' => 'SomeValue',
+	'SomeNull' => null,
+];

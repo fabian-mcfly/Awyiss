@@ -22,7 +22,6 @@ use stdClass;
 class PermissionTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testPermissionThrowsExceptionWhenScopeIsEmpty(): void {
 		$this->expectException(RuntimeException::class);
@@ -32,7 +31,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testPermissionThrowsExceptionWhenIdentifierIsEmpty(): void {
 		$this->expectException(RuntimeException::class);
@@ -52,7 +50,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetIdentifierReturnsSanitizedIdentifier(): void {
@@ -74,7 +71,6 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPolicyClassReturnsNullWhenNotSet(): void {
@@ -91,7 +87,6 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPolicyClassReturnsPolicyWhenSet(): void {
@@ -110,8 +105,6 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
-	 * @throws \ReflectionException
 	 */
 	public function testSetPolicyClassThrowsExceptionForInvalidPolicy(): void {
 		$this->expectException(RuntimeException::class);
@@ -123,9 +116,8 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
-	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 */
 	public function testIsAccessibleReturnsDefaultPermissionWhenNoPolicy(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -141,9 +133,8 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
-	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 */
 	public function testIsAccessibleReturnsDefaultPermissionWhenGetPermissionOptionReturnsNull(): void {
 		$policy = $this->createMock(AbstractGenericPolicy::class);
@@ -162,9 +153,8 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
-	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 */
 	public function testIsAccessibleReturnsCorrectAccesssible(): void {
 		$permissionOptionDenied = $this->createMock(PermissionOptionInterface::class);
@@ -195,7 +185,6 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testCreateFromArrayCreatesPermissionCorrectly(): void {
 		$data = ['scope' => 'FoobarScope', 'identifier' => 'unknown identifier', 'access' => 'access', 'settings' => ['setting1']];
@@ -211,7 +200,6 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpMethodNamingConventionInspection
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateFromObjectCreatesPermissionCorrectly(): void {

@@ -20,6 +20,7 @@ use Cake\Utility\Hash;
 class AwyissTest extends TestCase {
 	/**
 	 * @return void
+	 * @see \Awyiss\Awyiss::console()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConsoleAddsCommands(): void {
@@ -48,6 +49,7 @@ class AwyissTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Awyiss::getRealm()
 	 */
 	public function testGetRealm(): void {
 		Awyiss::setRealm('Frontend');
@@ -57,8 +59,9 @@ class AwyissTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @see \Awyiss\Awyiss::setRealm()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetRealm(): void {
 		$eventManager = $this->createMock(EventManager::class);
@@ -89,6 +92,7 @@ class AwyissTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Awyiss::getRealms()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetRealms(): void {
@@ -99,8 +103,8 @@ class AwyissTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Awyiss::getDatabaseConfiguration()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @throws \ReflectionException
 	 */
 	public function testGetDatabaseConfiguration(): void {
 		$frontendLanguage = 'en';
@@ -141,8 +145,8 @@ class AwyissTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Awyiss::getFileConfiguration()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @throws \ReflectionException
 	 */
 	public function testGetFileConfiguration(): void {
 		$result = Awyiss::getFileConfiguration([]);
@@ -162,6 +166,7 @@ class AwyissTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Awyiss::loadUserConfiguration()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddUserConfiguration(): void {

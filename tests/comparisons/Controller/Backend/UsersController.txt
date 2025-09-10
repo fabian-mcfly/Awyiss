@@ -1,0 +1,202 @@
+<?php declare(strict_types=1);
+
+
+namespace Customer\Controller\Backend;
+
+
+use Awyiss\Annotation\NoDirectAccess;
+use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Model\Entity\User;
+use Awyiss\Routing\Router;
+use Cake\Http\Exception\RedirectException;
+use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
+
+
+/**
+ * Users Controller
+ *
+ * @property \Awyiss\Model\Table\UsersTable $Users
+ * @method User[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ */
+class UsersController extends Controller {
+	/**
+	 * @inheritDoc
+	 */
+	#[NoDirectAccess]
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->Users->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
+	}
+
+
+	/**
+	 * Overview method
+	 *
+	 * @throws \Exception
+	 */
+	public function overview(): void {
+		$this->Authorization->ensure('read');
+
+
+		$lo_query = $this->getOverviewQuery();
+		$lo_users = $this->paginate($lo_query);
+
+		$this->set([
+			'users' => $lo_users,
+			'attributes' => $this->Users->getAttributes(),
+		]);
+	}
+
+
+	/**
+	 * Add method
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function add(): void {
+		$this->Authorization->ensure('create');
+
+		$lo_user = $this->Users->newDefaultEntity();
+
+		if ($this->request->is('post')) {
+			$this->save($lo_user);
+		}
+
+		$this->set([
+			'user' => $lo_user,
+		]);
+	}
+
+
+	/**
+	 * Edit method
+	 *
+	 * @param int $id
+	 * @return \Cake\Http\Response|void
+	 * @throws \Exception
+	 */
+	public function edit(int $id) {
+		$this->Authorization->ensure('update');
+
+		/**
+		 * @var \Customer\Model\Entity\User $lo_user
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
+		$lo_user = $this->Users->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$lo_user) {
+			$this->Flash->error(__('record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$this->save($lo_user, 'edit');
+		}
+
+		$this->set([
+			'user' => $lo_user,
+		]);
+	}
+
+
+	/**
+	 * Delete method
+	 *
+	 * @param int $id
+	 * @return \Cake\Http\Response
+	 * @throws \Exception
+	 */
+	public function delete(int $id): Response {
+		$this->Authorization->ensure('delete');
+
+		$this->request->allowMethod(['get', 'delete']);
+
+		/** @var \Customer\Model\Entity\User $lo_user */
+		$lo_user = $this->Users->findById($id)->first();
+		if (!$lo_user) {
+			$this->Flash->error(__('record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
+		if ($this->Users->delete($lo_user)) {
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
+		}
+		else {
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__('delete_failed'));
+				foreach ($lo_user->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
+			}
+		}
+
+		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
+	 * @param \Customer\Model\Entity\User $user
+	 * @param string $method
+	 * @return void
+	 * @throws \Cake\Http\Exception\RedirectException
+	 */
+	protected function save(User $user, string $method = 'add'): void {
+		$la_associated = [];
+		if ($this->Users->hasAttributes()) {
+			$la_associated[] = $this->Users->getAttributesTableName(true);
+			$user->setAccess('attributes', true);
+		}
+
+		$this->Users->patchEntity($user, $this->request->getData(), [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
+
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+
+			if ($this->Users->save($user, ['asCopy' => $lb_saveAsCopy])) {
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+				}
+
+				if ($this->request->getData('submit_type') == 'submit_close') {
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($user),
+					], true), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $user->id], true), 302);
+			}
+
+			if (!$this->request->is('ajax')) {
+				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($user->getError('_general') as $ls_error) {
+					$this->Flash->error($ls_error);
+				}
+			}
+		}
+		elseif ($this->Users->hasBehavior('SystemOrder')) {
+			if ($this->Users->hasDirtyRelatedSystemOrderColumns($user)) {
+				$user->systemOrder = null;
+			}
+			else {
+				$user->systemOrder = $user->hasOriginal('systemOrder') ? $user->getOriginal('systemOrder') : $user->get('systemOrder');
+			}
+
+			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
+			$lo_request = $this->request->withData('system_order', $user->systemOrder);
+			$this->setRequest($lo_request);
+		}
+	}
+}

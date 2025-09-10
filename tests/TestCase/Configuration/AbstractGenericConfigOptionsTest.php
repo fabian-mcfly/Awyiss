@@ -81,6 +81,32 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
+	public function testMultipleInstancesNotShareDynamicScope(): void {
+		$configOptions1 = ConfigOptionsProvider::loadConfigOptions('News');
+		$configOptions2 = ConfigOptionsProvider::loadConfigOptions('Product');
+
+		$this->assertSame('News', $configOptions1->getDynamicScope());
+		$this->assertSame('Products', $configOptions2->getDynamicScope());
+
+		$this->assertNotSame($configOptions1, $configOptions2);
+
+		$configOptions1->setDynamicScope('AnotherScope');
+		$this->assertSame('AnotherScopes', $configOptions1->getDynamicScope());
+		$this->assertSame('Products', $configOptions2->getDynamicScope());
+
+		$configOptions2->setDynamicScope('DifferentScope');
+		$this->assertSame('AnotherScopes', $configOptions1->getDynamicScope());
+		$this->assertSame('DifferentScopes', $configOptions2->getDynamicScope());
+
+		$configOptions1->setDynamicScope('News');
+		$configOptions2->setDynamicScope('Products');
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
 	public function testAddAndRetrieveConfigOption(): void {
 		$realm = 'Backend';
 
@@ -101,7 +127,6 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAddConfigOptionThrowsExceptionForInvalidRealm(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -143,7 +168,6 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastConfigValue(): void {

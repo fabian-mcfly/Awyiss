@@ -1,0 +1,37 @@
+/**
+ * Will be ignored due to blocklisting
+ */
+$includeColumnSystem:true !default;
+
+$fontNameMain:'Comic Sans MS' !default;
+$fontStackFallbackMain:Arial, Geneva, sans-serif !default;
+$fontStackMain:quote($fontNameMain), inspect($fontStackFallbackMain);
+$fontWeightMain:400 !default;
+$fontStyleMain:'normal' !default;
+$fontSizeMain:18px !default;
+$lineHeightMain:1.625rem !default;
+
+$fontNameAlternative:'' !default;
+$fontStackFallbackAlternative:Georgia, Times, serif !default;
+$fontStackAlternative:quote($fontNameAlternative), inspect($fontStackFallbackAlternative);
+$fontWeightAlternative:400 !default;
+$fontStyleAlternative:'normal' !default;
+$fontSizeAlternative:1em !default;
+$lineHeightAlternative:1.5rem !default;
+
+$colorText:#043a4f !default;
+$colorDark:#101820 !default;
+$colorMedium:#686e77 !default;
+$colorLight:#f2f5f6 !default;
+$colorBright:#FFFFFF !default;
+$colorMain:#17bbe1 !default;
+$colorContrast:#d22e45 !default;
+
+$pageWidth:1280px !default;
+$pagePadding:50px !default;
+$columnMargin:3% !default;
+$menuBreakpoint:768px !default;
+$singleColumnBreakpoint:860px !default;
+
+$exampleFunction:linear-gradient(45deg, red, yellow, blue) !default;
+$exampleVariable:$pageWidth !default;

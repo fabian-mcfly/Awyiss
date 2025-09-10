@@ -23,5 +23,5 @@ class CarsTable extends GenericDatatablesTable {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'cars';
+	public const string TABLE = 'cars';
 }

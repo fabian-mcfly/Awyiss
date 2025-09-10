@@ -12,6 +12,8 @@ use Cake\Validation\ValidationSet;
 
 /**
  * ValidatorTest class
+ *
+ * @see \Awyiss\Validation\Validator
  */
 class ValidatorTest extends TestCase {
 	/**
@@ -35,6 +37,8 @@ class ValidatorTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::getI18nDomain()
+	 * @see \Awyiss\Validation\Validator::setI18nDomain()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetI18nDomain(): void {
@@ -47,6 +51,7 @@ class ValidatorTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::validate()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidate(): void {
@@ -62,6 +67,7 @@ class ValidatorTest extends TestCase {
 
 		$this->validator->add('fieldName', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'minLength' => ['rule' => ['minLength', 8]],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 		]);
@@ -76,6 +82,7 @@ class ValidatorTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::validate()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithValue(): void {
@@ -85,6 +92,7 @@ class ValidatorTest extends TestCase {
 
 		$this->validator->add('fieldName', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'minLength' => ['rule' => ['minLength', 8]],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 		]);
@@ -93,12 +101,75 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('field_name', $result);
-		$this->assertSame('The field must be at least 8 characters long.', $result['field_name']['minLength']);
+		$this->assertSame('test_domain::error_min_length', $result['field_name']['minLength']);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::validate()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testValidateWithBoolValue(): void {
+		$data = [
+			'fieldName' => true,
+		];
+
+		$this->validator->add('fieldName', [
+			'isScalar' => ['rule' => 'isScalar'],
+		]);
+
+		$result = $this->validator->validate($data);
+
+		$this->assertEmpty($result);
+
+		$data = [
+			'fieldName' => false,
+		];
+
+		$result = $this->validator->validate($data);
+
+		$this->assertEmpty($result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Validation\Validator::validate()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testValidateNotBooleanWithBoolValue(): void {
+		$data = [
+			'fieldName' => true,
+		];
+
+		/** @uses \Awyiss\Validation\Validation::notBoolean() */
+		$this->validator->add('fieldName', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+		]);
+
+		$result = $this->validator->validate($data);
+
+		$this->assertIsArray($result);
+		$this->assertArrayHasKey('field_name', $result);
+		$this->assertSame('test_domain::error_not_boolean', $result['field_name']['notBoolean']);
+
+		$data = [
+			'fieldName' => false,
+		];
+
+		$result = $this->validator->validate($data);
+
+		$this->assertIsArray($result);
+		$this->assertArrayHasKey('field_name', $result);
+		$this->assertSame('test_domain::error_not_boolean', $result['field_name']['notBoolean']);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Validation\Validator::validate()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithValueAndCompareWith(): void {
@@ -109,6 +180,7 @@ class ValidatorTest extends TestCase {
 
 		$this->validator->add('fieldName', [
 			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
 			'minLength' => ['rule' => ['minLength', 8]],
 			'maxLength' => ['rule' => ['maxLength', 10]],
 		]);
@@ -123,12 +195,13 @@ class ValidatorTest extends TestCase {
 		$this->assertArrayHasKey('field_name', $result);
 		$this->assertSame('test_domain::error_max_length', $result['field_name']['maxLength']);
 		$this->assertArrayHasKey('another_field_name', $result);
-		$this->assertSame('The field must be equal to field "Testfield".', $result['another_field_name']['compareWith']);
+		$this->assertSame('test_domain::error_compare_with', $result['another_field_name']['compareWith']);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::validate()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithRuleInList(): void {
@@ -145,12 +218,13 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('field_name', $result);
-		$this->assertSame('The field must be one of the following: "Frontend, Backend".', $result['field_name']['inList']);
+		$this->assertSame('test_domain::error_in_list', $result['field_name']['inList']);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::validate()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithRuleDateTime(): void {
@@ -167,12 +241,13 @@ class ValidatorTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertArrayHasKey('field_name', $result);
-		$this->assertSame('The field must be a valid date and time (Y-m-d H:i:s).', $result['field_name']['dateTime']);
+		$this->assertSame('test_domain::error_date_time', $result['field_name']['dateTime']);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::allowEmptyFor()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAllowEmptyFor(): void {
@@ -185,16 +260,19 @@ class ValidatorTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::field()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testField(): void {
 		$validationSet = $this->validator->field('fieldName');
+		/** @noinspection PhpConditionAlreadyCheckedInspection */
 		$this->assertInstanceOf(ValidationSet::class, $validationSet);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::hasField()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasField(): void {
@@ -210,6 +288,7 @@ class ValidatorTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::remove()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveField(): void {
@@ -227,6 +306,7 @@ class ValidatorTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::getRequiredMessage()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetRequiredMessage(): void {
@@ -241,6 +321,7 @@ class ValidatorTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::getNotEmptyMessage()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNotEmptyMessage(): void {
@@ -252,6 +333,7 @@ class ValidatorTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::underscoreFields()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -283,6 +365,7 @@ class ValidatorTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Validation\Validator::underscoreField()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */

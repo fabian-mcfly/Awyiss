@@ -37,25 +37,6 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public static function tearDownAfterClass(): void {
-		$reflection = new ReflectionClass(BackendView::class);
-
-		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
-	}
-
-
-	/**
-	 * @inheritDoc
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -92,9 +73,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAllControlsThrowsExceptionWithoutFormContext(): void {
 		$this->expectException(RuntimeException::class);
@@ -106,9 +87,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAllControls(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -126,9 +107,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAllControlsForEmptyFieldset(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -136,7 +117,7 @@ class AttributesHelperTest extends TestCase {
 
 		$this->helper->Form->create($entity);
 
-		$result = $this->helper->allControls('presentation');
+		$result = $this->helper->allControls('conditions');
 
 		$this->assertStringContainsString('<input type="hidden" name="attributes"', $result);
 		$this->assertStringContainsString('value="">', $result);
@@ -146,6 +127,7 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -164,9 +146,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testAllControlsNotContainsHiddenOnConsecutiveCalls(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -188,9 +170,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlThrowsExceptionWithoutFormContext(): void {
 		$this->expectException(RuntimeException::class);
@@ -202,6 +184,7 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -219,6 +202,7 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -236,9 +220,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlNotContainsHiddenOnConsecutiveCalls(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -259,6 +243,7 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -279,6 +264,7 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -305,6 +291,7 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -334,9 +321,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlIncludesAttributeOptionsCollectionOptions(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -358,6 +345,7 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -383,9 +371,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlIncludesTimezoenForTranslatableDateTime(): void {
 		Configure::write('Awyiss.Cars.Backend.translatable', true);
@@ -406,9 +394,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlReturnsEmptyFieldWhenAttributeNotFound(): void {
 		$entity = $this->fetchTable('Pages')->newDefaultEntity();
@@ -423,9 +411,9 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlReturnsEmptyStringWhenAttributeNotFoundOnConsecutiveCalls(): void {
 		$entity = $this->fetchTable('Pages')->newDefaultEntity();

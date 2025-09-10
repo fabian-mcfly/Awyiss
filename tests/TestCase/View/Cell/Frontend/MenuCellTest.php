@@ -9,13 +9,16 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Menu;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Test\TestSuite\TestCase;
-use Awyiss\Utility\Menu\MenuItem;
+use Awyiss\Utility\Menu\FrontendMenuItem;
 use Awyiss\View\Cell\Frontend\MenuCell;
+use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\View\CellTrait;
 use Cake\View\StringTemplate;
+use Customer\Utility\Menu\FrontendMenu as CustomFrontendMenu;
+use Customer\Utility\Menu\FrontendMenuItem as CustomFrontendMenuItem;
 
 
 /**
@@ -30,9 +33,9 @@ class MenuCellTest extends TestCase {
 	 */
 	protected MenuCell $cell;
 	/**
-	 * @var mixed
+	 * @var \Cake\Http\Response
 	 */
-	protected mixed $response;
+	protected Response $response;
 	/**
 	 * @var \Cake\Http\ServerRequest
 	 */
@@ -42,7 +45,6 @@ class MenuCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
@@ -75,6 +77,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::getMenu()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -87,6 +90,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::getMenu()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -118,6 +122,7 @@ class MenuCellTest extends TestCase {
 	 * @param bool $isPreview
 	 * @param bool $expectedAvailability
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::getMenu()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -166,6 +171,7 @@ class MenuCellTest extends TestCase {
 	 * @param int $firstLevelEntries
 	 * @param int $totalEntries
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::getMenuEntries()
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -201,6 +207,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderList()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -233,6 +240,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderList()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -250,7 +258,7 @@ class MenuCellTest extends TestCase {
 			'level' => 1,
 			'menuConfig' => ['active' => false],
 			'title' => 'Test Content',
-			'isPreview' => ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME,
+			'isPreview' => ' ' . FrontendView::getPreviewModeElementClass(),
 		])->willReturn('Test Content');
 
 		$data = [
@@ -265,10 +273,10 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderList()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testRenderListWithPreviewNotSetsPreviewForNotLevel1(): void {
 		$cell = $this->getMockBuilder(MenuCell::class)
@@ -298,6 +306,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderItem()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -310,8 +319,9 @@ class MenuCellTest extends TestCase {
 
 		$cell->method('isPreview')->willReturn(false);
 
+		/** @var \Awyiss\Model\Entity\MenuEntry $entity */
 		$entity = $this->fetchTable('MenuEntries')->get(19);
-		$item = new MenuItem($entity);
+		$item = new FrontendMenuItem($entity);
 
 		$template = $this->createMock(StringTemplate::class);
 		$template->expects($this->once())->method('format')->with('item', [
@@ -335,6 +345,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderItem()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -347,14 +358,15 @@ class MenuCellTest extends TestCase {
 
 		$cell->method('isPreview')->willReturn(true);
 
+		/** @var \Awyiss\Model\Entity\MenuEntry $entity */
 		$entity = $this->fetchTable('MenuEntries')->get(31);
-		$item = new MenuItem($entity);
+		$item = new FrontendMenuItem($entity);
 
 		$template = $this->createMock(StringTemplate::class);
 		$template->expects($this->once())->method('format')->with('item', [
 			'level' => 1,
 			'title' => 'Test Content',
-			'isPreview' => ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME,
+			'isPreview' => ' ' . FrontendView::getPreviewModeElementClass(),
 			'item' => $item,
 			'id' => 31,
 			'identifier' => 'TestContent',
@@ -372,6 +384,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderItem()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -384,14 +397,15 @@ class MenuCellTest extends TestCase {
 
 		$cell->method('isPreview')->willReturn(true);
 
+		/** @var \Awyiss\Model\Entity\MenuEntry $entity */
 		$entity = $this->fetchTable('MenuEntries')->get(27);
-		$item = new MenuItem($entity);
+		$item = new FrontendMenuItem($entity);
 
 		$template = $this->createMock(StringTemplate::class);
 		$template->expects($this->once())->method('format')->with('item', [
 			'level' => 1,
 			'title' => 'Test Content',
-			'isPreview' => ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME,
+			'isPreview' => ' ' . FrontendView::getPreviewModeElementClass(),
 			'item' => $item,
 			'id' => 27,
 			'identifier' => 'TestContent',
@@ -409,6 +423,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderItem()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -421,8 +436,9 @@ class MenuCellTest extends TestCase {
 
 		$cell->method('isPreview')->willReturn(false);
 
+		/** @var \Awyiss\Model\Entity\MenuEntry $entity */
 		$entity = $this->fetchTable('MenuEntries')->get(19);
-		$item = new MenuItem($entity);
+		$item = new FrontendMenuItem($entity);
 
 		$template = $this->createMock(StringTemplate::class);
 		$template->expects($this->once())->method('format')->with('item', [
@@ -450,6 +466,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderContent()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -483,6 +500,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderContent()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -516,6 +534,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::renderContent()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -549,6 +568,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplay(): void {
@@ -560,5 +580,32 @@ class MenuCellTest extends TestCase {
 		$output = str_replace('> ', '>' . PHP_EOL, $output);
 
 		$this->assertStringEqualsFile(ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'output' . DS . 'Menu-Main.txt', $output);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\MenuCell::display()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testDisplayUsesCustomerClasses(): void {
+		$cell = $this->cell('Frontend/Menu', [
+			'main',
+			'languageShortcode' => 'de',
+		]);
+
+		/** @noinspection PhpUnusedLocalVariableInspection */
+		$output = (string)$cell; // phpcs:ignore
+
+		$menu = $cell->viewBuilder()->getVar('menu');
+		$this->assertInstanceOf(CustomFrontendMenu::class, $menu);
+
+		$item25 = $menu->getItem(25);
+		$this->assertInstanceOf(CustomFrontendMenuItem::class, $item25);
+
+		$this->assertInstanceOf(CustomFrontendMenu::class, $item25->getChildren());
+
+		$item28 = $menu->getItem(28);
+		$this->assertInstanceOf(CustomFrontendMenuItem::class, $item28);
 	}
 }

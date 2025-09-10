@@ -14,6 +14,7 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\IntegrationTestTrait;
+use Cake\View\CellTrait;
 use ReflectionClass;
 
 
@@ -21,6 +22,7 @@ use ReflectionClass;
  * MenuCellTest class
  */
 class MenuCellTest extends TestCase {
+	use CellTrait;
 	use IntegrationTestTrait;
 
 
@@ -32,17 +34,12 @@ class MenuCellTest extends TestCase {
 	 * @var \Cake\Http\Response
 	 */
 	protected Response $response;
-	/**
-	 * @var \Awyiss\View\BackendView
-	 */
-	protected BackendView $view;
 
 
 	/**
 	 * @inheritDoc
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @throws \ReflectionException
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -83,101 +80,83 @@ class MenuCellTest extends TestCase {
 		$property = $reflection->getProperty('twig');
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
+		$property->setValue(null, null);
 
 		$reflection = new ReflectionClass(BackendMenuItem::class);
 
 		$property = $reflection->getProperty('testUrl');
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
-		$property->setValue(null);
+		$property->setValue(null, null);
 	}
 
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testDisplayWithoutUser(): void {
-		$this->view = new BackendView($this->request, $this->response);
-
-		$this->captureError(E_USER_WARNING, function () {
-			$output = (string)$this->view->cell('Backend/Menu');
-			$this->assertSame('', $output);
-		});
-	}
-
-
-	/**
-	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithAuthorizedUser(): void {
 		$user = $this->login();
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
-		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/Menu');
+		$output = (string)$this->cell('Backend/Menu');
 
 		$this->assertStringContainsString('<nav id="Menu-System">', $output);
 		$this->assertStringContainsString('<li class="Level1 MenuItem-Dashboard">', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
 		$this->assertStringContainsString('<li class="Level1 MenuItem-System">', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/system/overview/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="/backend/xy/system/overview/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
 		$this->assertStringContainsString('<ul class="Level2">', $output);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithUnauthorizedUser(): void {
 		$user = $this->login(2);
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
-		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/Menu');
+		$output = (string)$this->cell('Backend/Menu');
 
 		$this->assertStringContainsString('<nav id="Menu-System">', $output);
 		$this->assertStringContainsString('<li class="Level1 MenuItem-Dashboard">', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
-		$this->assertStringNotContainsString('<a href="http://localhost/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
+		$this->assertStringNotContainsString('<a href="/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithAccessDeniedUser(): void {
 		$user = $this->login(3);
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
-		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/Menu');
+		$output = (string)$this->cell('Backend/Menu');
 
 		$this->assertStringContainsString('<nav id="Menu-System">', $output);
 		$this->assertStringContainsString('<li class="Level1 MenuItem-Dashboard">', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="/backend/xy/dashboard/overview/" class="Level1 MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
-		$this->assertStringNotContainsString('<a href="http://localhost/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
+		$this->assertStringNotContainsString('<a href="/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplaySavesMenuStructureToSession(): void {
@@ -189,9 +168,8 @@ class MenuCellTest extends TestCase {
 		$user = $this->login();
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
-		$this->view = new BackendView($this->request, $this->response);
 
-		(string)$this->view->cell('Backend/Menu');
+		(string)$this->cell('Backend/Menu');
 
 		$menu = $session->read('Backend.menu.de');
 
@@ -201,6 +179,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayReloadsWhenMenuIsOutdated(): void {
@@ -220,9 +199,8 @@ class MenuCellTest extends TestCase {
 		$user = $this->login();
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
-		$this->view = new BackendView($this->request, $this->response);
 
-		(string)$this->view->cell('Backend/Menu');
+		(string)$this->cell('Backend/Menu');
 
 		$menu = $session->read('Backend.menu.de');
 
@@ -235,6 +213,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayReloadsWhenUserIsOutdated(): void {
@@ -248,9 +227,8 @@ class MenuCellTest extends TestCase {
 		$user->changedOn = (new DateTime())->subMinutes(10);
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
-		$this->view = new BackendView($this->request, $this->response);
 
-		(string)$this->view->cell('Backend/Menu');
+		(string)$this->cell('Backend/Menu');
 
 		$menu = $session->read('Backend.menu.de');
 
@@ -263,6 +241,7 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithActiveItem(): void {
@@ -286,25 +265,24 @@ class MenuCellTest extends TestCase {
 		$this->request = $this->request->withAttribute('identity', $user);
 
 		Router::setRequest($this->request);
-		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/Menu');
+		$output = (string)$this->cell('Backend/Menu');
 
 		$this->assertStringContainsString('<nav id="Menu-System">', $output);
 		$this->assertStringContainsString('<li class="Level1 Active MenuItem-Dashboard">', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/dashboard/overview/" class="Level1 Active MenuItem-Dashboard">dashboard::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="/backend/xy/dashboard/overview/" class="Level1 Active MenuItem-Dashboard">dashboard::menu_title</a>', $output);
 
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/system/overview/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="/backend/xy/system/overview/" class="Level1 MenuItem-System">system::menu_title</a>', $output);
 		$this->assertStringContainsString('<li class="Level1 HasSubmenu MenuItem-Components">', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="/backend/xy/menus/overview/" class="Level2 MenuItem-Menus">menus::menu_title</a>', $output);
 		$this->assertStringContainsString('<ul class="Level2">', $output);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testDisplayWithActiveItemForCurrentController(): void {
 		$user = $this->login();
@@ -327,12 +305,11 @@ class MenuCellTest extends TestCase {
 		$this->request = $this->request->withAttribute('identity', $user);
 
 		Router::setRequest($this->request);
-		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/Menu');
+		$output = (string)$this->cell('Backend/Menu');
 
 		$this->assertStringContainsString('<nav id="Menu-System">', $output);
 		$this->assertStringContainsString('<li class="Level1 Active HasSubmenu MenuItem-Pages">', $output);
-		$this->assertStringContainsString('<a href="http://localhost/backend/xy/pages/overview/" class="Level1 Active MenuItem-Pages">pages::menu_title</a>', $output);
+		$this->assertStringContainsString('<a href="/backend/xy/pages/overview/" class="Level1 Active MenuItem-Pages">pages::menu_title</a>', $output);
 	}
 }

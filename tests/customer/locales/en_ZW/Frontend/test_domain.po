@@ -1,0 +1,8 @@
+msgid "error_compare_with"
+msgstr "The field must be equal to field \"{0}\"."
+
+msgid "field_name"
+msgstr "Testfield"
+
+msgid "headline_overview"
+msgstr "This is a test headline for the en_ZW locale in the Frontend/test_domain domain."

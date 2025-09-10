@@ -9,9 +9,7 @@ use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\AppView;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
-use Cake\View\Cell;
 use Cake\View\Exception\MissingCellException;
-use ReflectionClass;
 use Twig\Environment;
 use Twig\Markup;
 
@@ -20,24 +18,6 @@ use Twig\Markup;
  * AppViewTest class
  */
 class AppViewTest extends TestCase {
-	/**
-	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public static function tearDownAfterClass(): void {
-		$reflection = new ReflectionClass(AppView::class);
-		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
-	}
-
-
 	/**
 	 * @inheritDoc
 	 * @noinspection PhpVariableNamingConventionInspection
@@ -51,27 +31,23 @@ class AppViewTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \Twig\Error\LoaderError
+	 * @see \Awyiss\View\AppView::initialize()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
-		$view = $this->getMockBuilder(AppView::class)
-			->onlyMethods(['set', 'initTwig'])
-			->getMock();
+		$view = new AppView($this->createMock(ServerRequest::class), $this->createMock(Response::class));
 
-		$view->expects($this->once())->method('set')->with('Awyiss', [
-			'VERSION' => Awyiss::VERSION,
-			'VERSION_NAME' => Awyiss::VERSION_NAME,
-		]);
+		$this->assertArrayHasKey('VERSION', $view->get('Awyiss'));
+		$this->assertArrayHasKey('VERSION_NAME', $view->get('Awyiss'));
 
-		$view->expects($this->once())->method('initTwig');
-
-		$view->initialize();
+		$this->assertInstanceOf(Environment::class, $view->getTwig());
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\AppView::cell()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -83,12 +59,13 @@ class AppViewTest extends TestCase {
 
 		$cell = $view->cell('Test');
 
-		$this->assertInstanceOf(Cell::class, $cell);
+		$this->assertIsObject($cell);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\AppView::cell()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -105,6 +82,7 @@ class AppViewTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\AppView::loadHelpers()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection

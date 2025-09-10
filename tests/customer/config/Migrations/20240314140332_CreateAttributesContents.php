@@ -22,6 +22,9 @@ class CreateAttributesContents extends AbstractMigration {
 		])->addColumn('teaser', 'text', [
 			'default' => null,
 			'null' => true,
+		])->addColumn('free_text', 'text', [
+			'default' => null,
+			'null' => true,
 		])->create();
 	}
 }

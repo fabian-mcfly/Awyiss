@@ -12,7 +12,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
  * Permission will be ignored due to
  * the underscore in the file name
  */
-class IgnoredTestPolicy extends AbstractPolicy {
+class _IgnoredTestPolicy extends AbstractPolicy { // phpcs:ignore
 	/**
 	 * @var PermissionOptionCollection
 	 */

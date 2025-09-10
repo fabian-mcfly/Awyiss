@@ -15,6 +15,7 @@ use Cake\TestSuite\TestCase;
 class StringTemplateTest extends TestCase {
 	/**
 	 * @return void
+	 * @see \Awyiss\View\StringTemplate::load()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadValidFile(): void {
@@ -23,6 +24,7 @@ class StringTemplateTest extends TestCase {
 
 		$result = $stringTemplate->getConfig();
 
+		/** @noinspection HtmlUnknownAttribute */
 		$expectedTemplates = [
 			'checkboxWrapper' => '<figure>Totally different Checkbox-Wrapper</figure>',
 			'inputContainer' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}}"{{containerAttrs}}>{{content}}{{additionalContent}}</div>',
@@ -38,6 +40,7 @@ class StringTemplateTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\StringTemplate::load()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadEmptyFileThrowsException(): void {

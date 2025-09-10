@@ -46,7 +46,7 @@ class ControllerCommandTest extends TestCase {
 	 */
 	public function testControllerCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Controller' . DS . 'Backend' . DS . 'UsersController.php';
-		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Controller' . DS . 'Backend' . DS . 'UsersController.php';
+		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Controller' . DS . 'Backend' . DS . 'UsersController.txt';
 
 		$this->exec('bake controller users --prefix Backend --namespace Customer --no-test');
 

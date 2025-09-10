@@ -20,7 +20,6 @@ class PermissionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpMethodNamingConventionInspection
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorInitializesPermissionsCorrectly(): void {
@@ -82,9 +81,7 @@ class PermissionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetPermissionsReturnsNullWhenScopeNotFound(): void {
 		$collection = new PermissionCollection(null);
@@ -103,7 +100,6 @@ class PermissionCollectionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetPermissionsReturnsNullWhenIdentifierNotFound(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -125,7 +121,6 @@ class PermissionCollectionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetPermissionsReturnsPermissionsForScope(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -149,7 +144,6 @@ class PermissionCollectionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testGetPermissionsReturnsPermissionsForScopeAndIdentifier(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -169,9 +163,7 @@ class PermissionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testHasPermissionsReturnsFalseWhenScopeNotFound(): void {
 		$collection = new PermissionCollection(null);
@@ -184,7 +176,6 @@ class PermissionCollectionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testHasPermissionsReturnsFalseWhenIdentifierNotFound(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -206,7 +197,6 @@ class PermissionCollectionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testHasPermissionsReturnsTrueWhenScopeFound(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -228,7 +218,6 @@ class PermissionCollectionTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testHasPermissionsReturnsTrueWhenScopeAndIdentifierFound(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -248,9 +237,8 @@ class PermissionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testScopeIsAccessibleReturnsFalseWhenNoPermissions(): void {
 		$collection = new PermissionCollection(null);
@@ -262,8 +250,8 @@ class PermissionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testScopeIsAccessibleReturnsTrueWhenPermissionIsAccessible(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -283,8 +271,8 @@ class PermissionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testScopeIsAccessibleReturnsFalseWhenPermissionIsNotAccessible(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -303,9 +291,8 @@ class PermissionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testIdentifierIsAccessibleThrowsExceptionForInvalidIdentifier(): void {
 		$this->expectException(TypeError::class);
@@ -318,8 +305,8 @@ class PermissionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testMultipleIdentifiers(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -361,8 +348,8 @@ class PermissionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testMultipleCombinedIdentifiers(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);

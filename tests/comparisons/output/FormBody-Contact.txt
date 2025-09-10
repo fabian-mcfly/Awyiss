@@ -1,0 +1,153 @@
+<fieldset class="FormRow FormElement Column-100 FormElementType-Fieldset FormElement-PersoenlicheDaten" id="FormElement1">
+<legend>Persönliche Daten</legend>
+<div class="FormRow">
+<div class="FormElement Column-50 FormElementType-Select FormElement-Anrede" id="FormElement4">
+<label for="FormInput4" class="FormElement-Label">Anrede</label>
+<select id="FormInput4" name="anrede" class="FormInputType-Select" >
+<option value="" selected ></option>
+<option value="Frau" >Frau</option>
+<option value="Herr" >Herr</option>
+<option value="Divers" >Divers</option>
+</select>
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-50 FormElementType-Text FormElement-Vorname" id="FormElement2">
+<label for="FormInput2" class="FormElement-Label">Vorname</label>
+<input id="FormInput2" type="text" name="vorname" value="" required class="FormInputType-Input">
+</div>
+<div class="FormElement Column-50 FormElementType-Text FormElement-Nachname BackgroundColor-Light" id="FormElement3">
+<label for="FormInput3" class="FormElement-Label">Nachname</label>
+<input id="FormInput3" type="text" name="nachname" value="" required class="FormInputType-Input">
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Text FormElement-Telefon" id="FormElement5">
+<label for="FormInput5" class="FormElement-Label">Telefon</label>
+<input id="FormInput5" type="text" name="telefon" value="" class="FormInputType-Input">
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Email FormElement-Email" id="FormElement6">
+<label for="FormInput6" class="FormElement-Label">E-Mail</label>
+<input id="FormInput6" type="email" name="email" value="" required class="FormInputType-Input">
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Date FormElement-Datum" id="FormElement47">
+<label for="FormInput47" class="FormElement-Label">Datum</label>
+<input id="FormInput47" type="date" name="datum" value="" placeholder="Datum bitte" class="FormInputType-Input">
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Time FormElement-Uhrzeit" id="FormElement48">
+<label for="FormInput48" class="FormElement-Label">Uhrzeit</label>
+<input id="FormInput48" type="time" name="uhrzeit" value="" placeholder="Uhrzeit bitte" class="FormInputType-Input">
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Datetime FormElement-DatumUndUhrzeit" id="FormElement49">
+<label for="FormInput49" class="FormElement-Label">Datum und Uhrzeit</label>
+<input id="FormInput49" type="datetime-local" name="datum_und_uhrzeit" value="" placeholder="Datum und Uhrzeit bitte" class="FormInputType-Input">
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Checkbox FormElement-MultiCheckbox" id="FormElement50">
+<label for="FormInput50" class="FormElement-Label">Multi Checkbox</label>
+<span class="FormElement-Checkboxes">
+<span class="FormInputType-Checkbox-Item">
+<input type="hidden" name="multi_checkbox" value="">
+<input id="FormInput50-A" type="checkbox" name="multi_checkbox[]" value="a" class="FormInputType-Checkbox">
+<label for="FormInput50-A" class="FormInputType-Checkbox-Label">Label A</label>
+</span>
+<span class="FormInputType-Checkbox-Item">
+<input id="FormInput50-B" type="checkbox" name="multi_checkbox[]" value="b" class="FormInputType-Checkbox">
+<label for="FormInput50-B" class="FormInputType-Checkbox-Label">Label B</label>
+</span>
+<span class="FormInputType-Checkbox-Item">
+<input id="FormInput50-LabelC(keinValue)" type="checkbox" name="multi_checkbox[]" value="Label C (kein Value)" class="FormInputType-Checkbox">
+<label for="FormInput50-LabelC(keinValue)" class="FormInputType-Checkbox-Label">Label C (kein Value)</label>
+</span>
+<span class="FormInputType-Checkbox-Item">
+<input id="FormInput50-ValueD(keinWert)" type="checkbox" name="multi_checkbox[]" value="Value D (kein Wert)" class="FormInputType-Checkbox">
+<label for="FormInput50-ValueD(keinWert)" class="FormInputType-Checkbox-Label">Value D (kein Wert)</label>
+</span>
+</span>
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Radio FormElement-MultiRadio" id="FormElement51">
+<label for="FormInput51" class="FormElement-Label">Multi Radio</label>
+<span class="FormElement-Radios">
+<span class="FormInputType-Radio-Item">
+<input type="hidden" name="multi_radio" value="">
+<input id="FormInput51-A" type="Radio" name="multi_radio" value="a" class="FormInputType-Radio">
+<label for="FormInput51-A" class="FormInputType-Radio-Label">Label A</label>
+</span>
+<span class="FormInputType-Radio-Item">
+<input id="FormInput51-B" type="Radio" name="multi_radio" value="b" class="FormInputType-Radio">
+<label for="FormInput51-B" class="FormInputType-Radio-Label">Label B</label>
+</span>
+<span class="FormInputType-Radio-Item">
+<input id="FormInput51-LabelC(keinValue)" type="Radio" name="multi_radio" value="Label C (kein Value)" class="FormInputType-Radio">
+<label for="FormInput51-LabelC(keinValue)" class="FormInputType-Radio-Label">Label C (kein Value)</label>
+</span>
+<span class="FormInputType-Radio-Item">
+<input id="FormInput51-ValueD(keinWert)" type="Radio" name="multi_radio" value="Value D (kein Wert)" class="FormInputType-Radio">
+<label for="FormInput51-ValueD(keinWert)" class="FormInputType-Radio-Label">Value D (kein Wert)</label>
+</span>
+</span>
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-SelectMultiple FormElement-MultiSelect" id="FormElement52">
+<label for="FormInput52" class="FormElement-Label">Multi Select</label>
+<select id="FormInput52" name="multi_select[]" class="FormInputType-Select" multiple>
+<option value="a" >Label A</option>
+<option value="b" >Label B</option>
+<option value="Label C (kein Value)" >Label C (kein Value)</option>
+<option value="Value D (kein Wert)" >Value D (kein Wert)</option>
+</select>
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Select FormElement-Select" id="FormElement53">
+<label for="FormInput53" class="FormElement-Label">Select</label>
+<select id="FormInput53" name="select" class="FormInputType-Select" >
+<option value="" selected ></option>
+<option value="a" >Label A</option>
+<option value="b" >Label B</option>
+<option value="Label C (kein Value)" >Label C (kein Value)</option>
+<option value="Value D (kein Wert)" >Value D (kein Wert)</option>
+</select>
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-File FormElement-Dateiupload" id="FormElement54">
+<label for="FormInput54" class="FormElement-Label">Dateiupload</label>
+<input id="FormInput54" type="file" name="dateiupload" class="FormInputType-File">
+</div>
+</div>
+<input type="hidden" name="verstecktes_feld" value="Verstecktes Feld">
+</fieldset>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Textarea FormElement-Nachricht" id="FormElement7">
+<label for="FormInput7" class="FormElement-Label">Nachricht</label>
+<textarea id="FormInput7" name="nachricht" required class="FormInputType-Textarea"></textarea>
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Checkbox FormElement-DatenschutzAkzeptiert" id="FormElement9">
+<label for="FormInput9" class="FormElement-Label">Datenschutz akzeptiert</label>
+<span class="FormInputType-Checkbox-Item">
+<input type="hidden" name="datenschutz_akzeptiert" value="">
+<input id="FormInput9-Ja" type="checkbox" name="datenschutz_akzeptiert" value="Ja" required class="FormInputType-Checkbox">
+<label for="FormInput9-Ja" class="FormInputType-Checkbox-Label">Ich habe die Datenschutzerklärung gelesen und akzeptiert</label>
+</span>
+</div>
+</div>
+<div class="FormRow">
+<div class="FormElement Column-100 FormElementType-Submit FormElement-8" id="FormElement8">
+<button type="submit" name="" class="FormInputType-Button Button">Absenden</button>
+</div>
+</div>

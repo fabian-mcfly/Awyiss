@@ -13,6 +13,9 @@ use Awyiss\Model\Entity;
  * @property int $id
  * @property int $carId
  * @property string|null $freeText
+ * @property array|null $inputList
+ * @property array|null $inputKeyValueList
+ * @property array|null $dummyPw
  * @property string $dropdownSelect
  */
 class AttributesCar extends Entity {
@@ -23,6 +26,9 @@ class AttributesCar extends Entity {
 		'car_id' => 'carId',
 		'free_text' => 'freeText',
 		'dropdown_select' => 'dropdownSelect',
+		'input_list' => 'inputList',
+		'input_key_value_list' => 'inputKeyValueList',
+		'dummy_pw' => 'dummyPw',
 	];
 
 
@@ -33,6 +39,9 @@ class AttributesCar extends Entity {
 		'carId' => true,
 		'freeText' => true,
 		'dropdownSelect' => true,
+		'inputList' => true,
+		'inputKeyValueList' => true,
+		'dummyPw' => true,
 		'car' => true,
 	];
 	/**

@@ -1,0 +1,25 @@
+/**
+ * scss/main.scss
+ * Dummy CSS file
+ */
+.foo {
+  color: red;
+}
+
+.bar {
+  color: blue;
+}
+
+.foo .bar {
+  color: green;
+}
+
+.foo .nested {
+  color: purple;
+}
+
+.bar .nested:nth-child(2 of .dummy) {
+  color: orange;
+}
+
+/*# sourceMappingURL=main.css.map */

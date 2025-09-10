@@ -46,7 +46,7 @@ class CarsAttributeOptionsCollection extends AttributeOptionsCollection {
 				 * Allows only the values 'main' and null for the background color attribute.
 				 */
 				'validate' => function (mixed $value) {
-					return $value === null || $value === 'main';
+					return $value === null || $value === 'main' || $value === 'dark';
 				},
 			],
 		]);

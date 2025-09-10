@@ -60,10 +60,10 @@ class ModelCommandTest extends TestCase {
 	 */
 	public function testModelCommand(): void {
 		$this->generatedFiles[0] = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'DummyUser.php';
-		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Entity' . DS . 'DummyUser.php';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Entity' . DS . 'DummyUser.txt';
 
 		$this->generatedFiles[1] = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'DummyUsersTable.php';
-		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'DummyUsersTable.php';
+		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'DummyUsersTable.txt';
 
 		$this->exec('bake model dummy_users --namespace Customer --no-fixture --no-test');
 
@@ -83,10 +83,10 @@ class ModelCommandTest extends TestCase {
 	 */
 	public function testForPageRoleModelCommand(): void {
 		$generatedEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesNews.php';
-		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Entity' . DS . 'AttributesNews.php';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Entity' . DS . 'AttributesNews.txt';
 
 		$generatedTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesNewsTable.php';
-		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'AttributesNewsTable.php';
+		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'AttributesNewsTable.txt';
 
 		$this->exec('bake model attributes_news --namespace Customer --no-fixture --no-test --for-pagerole news --force');
 
@@ -104,12 +104,35 @@ class ModelCommandTest extends TestCase {
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
+	public function testAttributesModelCommand(): void {
+		$generatedEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesContent.php';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Entity' . DS . 'AttributesContent.txt';
+
+		$generatedTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'AttributesContentsTable.php';
+		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'AttributesContentsTable.txt';
+
+		$this->exec('bake model attributes_contents --namespace Customer --force --no-fixture --no-hidden --no-test');
+
+		$this->assertExitSuccess();
+
+		$result = file_get_contents($generatedEntityFile);
+		$this->assertSameAsFile($comparisonEntityFile, $result);
+
+		$result = file_get_contents($generatedTableFile);
+		$this->assertSameAsFile($comparisonTableFile, $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
 	public function testPageRoleModelCommand(): void {
 		$generatedEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'Newscategory.php';
-		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Entity' . DS . 'Newscategory.php';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Entity' . DS . 'Newscategory.txt';
 
 		$generatedTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'NewscategoriesTable.php';
-		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'NewscategoriesTable.php';
+		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'NewscategoriesTable.txt';
 
 		$this->exec('bake model newscategories --namespace Customer --force --is-pagerole --no-associations --no-fixture --no-hidden --no-rules --no-test --no-validation --skip-relation-check --table pages');
 
@@ -129,10 +152,10 @@ class ModelCommandTest extends TestCase {
 	 */
 	public function testDatatableModelCommand(): void {
 		$generatedEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'Employer.php';
-		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Entity' . DS . 'Employer.php';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Entity' . DS . 'Employer.txt';
 
 		$generatedTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . 'EmployersTable.php';
-		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'EmployersTable.php';
+		$comparisonTableFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'Model' . DS . 'Table' . DS . 'EmployersTable.txt';
 
 		$this->exec('bake model employers --namespace Customer --no-fixture --no-test --is-datatable --force');
 

@@ -70,6 +70,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -84,6 +85,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -98,6 +100,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -111,6 +114,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -124,6 +128,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -147,6 +152,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -170,6 +176,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -192,6 +199,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -215,6 +223,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -238,21 +247,24 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlForDatabaseRecords(): void {
 		$table = $this->fetchTable('MediaFolders');
+		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
 		$entity = $table->findById(3)->find('withDeleted')->first();
 
-		$records = $table->find('withDeleted')->where(['language_shortcode' => 'de']);
+		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
+		$query = $table->find('withDeleted')->where(['language_shortcode' => 'de']);
+		$records = $table->addSystemOrderQueryConditions($query, $entity)->all();
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $records]);
 
 		$this->assertStringContainsString(
 			'<option value="2" title="-&gt; system_order_after Testfolder1" selected="selected">-&gt; system_order_after Testfolder1</option>' .
-			'<option value="__CURRENT__" title="Testfolder2" disabled="disabled">Testfolder2</option>' .
-			'<option value="3" title="system_order_after media_folders::inactive Testfolder3">system_order_after media_folders::inactive Testfolder3</option>',
+			'<option value="__CURRENT__" title="Testfolder2" disabled="disabled">Testfolder2</option>',
 			$result
 		);
 	}
@@ -260,23 +272,26 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlForDatabaseRecordsAndChangedSystemOrder(): void {
 		$table = $this->fetchTable('MediaFolders');
+		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
 		$entity = $table->findById(3)->find('withDeleted')->first();
 		$entity->systemOrder = 3;
 
-		$records = $table->find('withDeleted')->where(['language_shortcode' => 'de']);
+		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
+		$query = $table->find('withDeleted')->where(['language_shortcode' => 'de']);
+		$records = $table->addSystemOrderQueryConditions($query, $entity)->all();
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $records]);
 
 		$this->assertStringContainsString(
+			'<option value="1" title="system_order_first">system_order_first</option>' .
 			'<option value="2" title="system_order_after Testfolder1">system_order_after Testfolder1</option>' .
-			'<option value="__CURRENT__" title="Testfolder2" disabled="disabled">Testfolder2</option>' .
-			'<option value="3" title="-&gt; system_order_after media_folders::inactive Testfolder3" selected="selected">-&gt; system_order_after media_folders::inactive Testfolder3</option>',
+			'<option value="__CURRENT__" title="Testfolder2" disabled="disabled">Testfolder2</option>',
 			$result
 		);
 	}
@@ -284,28 +299,31 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlForDatabaseRecordsAndChangedSystemOrderAndDirtyRelatedColumn(): void {
 		$table = $this->fetchTable('MediaFolders');
 		$entity = $table->newDefaultEntity(['languageShortcode' => 'de', 'systemOrder' => 3, 'title' => 'Testfolder New']);
 
-		$records = $table->find('withDeleted')->where(['language_shortcode' => 'de']);
+		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
+		$query = $table->find('withDeleted')->where(['language_shortcode' => 'de']);
+		$records = $table->addSystemOrderQueryConditions($query, $entity)->all();
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $records]);
 
 		$this->assertStringContainsString(
+			'<option value="1" title="system_order_first">system_order_first</option>' .
 			'<option value="2" title="system_order_after Testfolder1">system_order_after Testfolder1</option>' .
-			'<option value="3" title="-&gt; system_order_after Testfolder2" selected="selected">-&gt; system_order_after Testfolder2</option>' .
-			'<option value="4" title="system_order_after media_folders::inactive Testfolder3">system_order_after media_folders::inactive Testfolder3</option>',
+			'<option value="3" title="-&gt; system_order_after Testfolder2" selected="selected">-&gt; system_order_after Testfolder2</option>',
 			$result
 		);
 	}
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -327,6 +345,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -352,6 +371,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -365,6 +385,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -385,6 +406,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -398,6 +420,7 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */

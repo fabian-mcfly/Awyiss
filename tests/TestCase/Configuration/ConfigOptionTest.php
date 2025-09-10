@@ -30,7 +30,7 @@ class ConfigOptionTest extends TestCase {
 			function ($value) {
 				return (string)$value;
 			},
-			function ($value) {
+			function () {
 				return true;
 			},
 			['value1', 'value2']

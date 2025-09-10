@@ -49,7 +49,7 @@ class SeedCommandTest extends TestCase {
 	 */
 	public function testSeedCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Seeds' . DS . 'DummyUsersSeed.php';
-		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Seeds' . DS . 'DummyUsersSeed.php';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Seeds' . DS . 'DummyUsersSeed.txt';
 
 		$this->exec('bake seed dummy_users --data --table users --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds', ['a']);
 
@@ -68,7 +68,7 @@ class SeedCommandTest extends TestCase {
 	 */
 	public function testPolicyTruncateCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Seeds' . DS . 'DummyUsersTruncatingSeed.php';
-		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Seeds' . DS . 'DummyUsersTruncatingSeed.php';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Seeds' . DS . 'DummyUsersTruncatingSeed.txt';
 
 		$this->exec('bake seed dummy_users_truncating --data --table users --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --truncate', ['a']);
 

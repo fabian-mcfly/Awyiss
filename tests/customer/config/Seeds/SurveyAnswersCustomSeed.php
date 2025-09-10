@@ -157,6 +157,22 @@ class SurveyAnswersCustomSeed extends BaseSeed {
 				'deleted_by' => null,
 				'deleted_on' => null,
 			],
+			[
+				'id' => 10,
+				'survey_question_id' => 5,
+				'title' => 'Answer #5.4',
+				'subtitle' => null,
+				'text' => null,
+				'system_order' => 4,
+				'active' => 0,
+				'deleted' => 0,
+				'created_by' => 1,
+				'created_on' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+				'changed_by' => null,
+				'changed_on' => null,
+				'deleted_by' => null,
+				'deleted_on' => null,
+			],
 		];
 
 		$lo_table = $this->table('survey_answers');

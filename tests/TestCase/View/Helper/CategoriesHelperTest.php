@@ -19,7 +19,6 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
-use ReflectionClass;
 use RuntimeException;
 use TypeError;
 
@@ -39,24 +38,6 @@ class CategoriesHelperTest extends TestCase {
 	 * @var \Awyiss\View\Helper\CategoriesHelper
 	 */
 	protected CategoriesHelper $helper;
-
-
-	/**
-	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public static function tearDownAfterClass(): void {
-		$reflection = new ReflectionClass(BackendView::class);
-		$property = $reflection->getProperty('twig');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
-	}
 
 
 	/**
@@ -105,13 +86,11 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpMethodNamingConventionInspection
+	 * @see \Awyiss\View\Helper\CategoriesHelper::__construct()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContructorSetsWidgetLocatorAndWidgets(): void {
 		$widgetLocator = $this->helper->getWidgetLocator();
-
-		$this->assertInstanceOf(WidgetLocator::class, $widgetLocator);
 
 		$this->assertInstanceOf(LinkSelectWidget::class, $widgetLocator->get('linkSelect'));
 	}
@@ -119,6 +98,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::setWidgetLocator()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -133,6 +113,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::setWidgetLocator()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetWidgetLocatorWithNull(): void {
@@ -144,6 +125,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::widget()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -164,6 +146,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::widget()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidgetWithInvalidName(): void {
@@ -174,9 +157,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlReturnsEmptyStringWithoutConfig(): void {
 		$result = $this->helper->control('media_folders');
@@ -187,9 +170,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlThrowsExceptionWithoutField(): void {
 		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true]]]);
@@ -203,6 +186,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -218,6 +202,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -232,6 +217,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \Exception
 	 */
@@ -247,6 +233,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -262,9 +249,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithCollectionAsOptions(): void {
 		$this->view->set('_categories', [
@@ -293,9 +280,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithCollectionAsOptionsAndCombinatorSet(): void {
 		$this->view->set('_categories', [
@@ -330,9 +317,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingEnabled(): void {
 		$this->view->set('_categories', [
@@ -379,9 +366,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingDisabledOverridesIncludeParentCategories(): void {
 		$this->view->set('_categories', [
@@ -415,9 +402,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingEnabledWithoutGroupLabels(): void {
 		$this->view->set('_categories', [
@@ -452,9 +439,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingEnabledAndGroupingValueIsArray(): void {
 		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder', 'includeParentCategories' => true]]]);
@@ -497,9 +484,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingEnabledAndGroupingValueIsArrayThrowsExceptionWhenGroupingValueNotScalarAndNotObject(): void {
 		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder', 'includeParentCategories' => true]]]);
@@ -522,6 +509,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -550,6 +538,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -571,6 +560,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -591,6 +581,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -611,6 +602,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -629,6 +621,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -650,9 +643,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithProvidedOptionsWithDisabledConfigTrue(): void {
 		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
@@ -665,9 +658,9 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::control()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithProvidedOptionsWithDisabledConfigArray(): void {
 		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
@@ -681,6 +674,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilter(): void {
@@ -694,6 +688,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithEnabledConfig(): void {
@@ -707,6 +702,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithDisabledConfig(): void {
@@ -720,6 +716,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithProvidedOptions(): void {
@@ -734,6 +731,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithUriParam(): void {
@@ -749,6 +747,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithCollectionAsOptions(): void {
@@ -770,6 +769,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithGroupingEnabled(): void {
@@ -815,8 +815,8 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testFilterWithGroupingDisabledOverridesIncludeParentCategories(): void {
 		$this->view->set('_categories', [
@@ -845,8 +845,8 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testFilterWithGroupingEnabledWithoutGroupLabels(): void {
 		$this->view->set('_categories', [
@@ -876,6 +876,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithAggregationEnabled(): void {
@@ -893,6 +894,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::filter()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithUnassignedEnabled(): void {
@@ -910,6 +912,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::linkSelect()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkSelect(): void {
@@ -923,8 +926,8 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::linkSelect()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testLinkSelectWithDisabledConfigWithOutOptionsNotContainsDisabled(): void {
 		$result = $this->helper->linkSelect('media_folders', [], ['disabled' => true]);
@@ -935,6 +938,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::linkSelect()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkSelectWithProvidedOptions(): void {
@@ -953,8 +957,8 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::linkSelect()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testLinkSelectWithProvidedOptionsWithDisabledConfigTrue(): void {
 		$result = $this->helper->linkSelect('media_folders', ['option1', 'option2'], ['disabled' => true]);
@@ -966,8 +970,8 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::linkSelect()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testLinkSelectWithProvidedOptionsWithDisabledConfigArray(): void {
 		$result = $this->helper->linkSelect('media_folders', ['option1', 'option2'], ['disabled' => [1]]);
@@ -982,8 +986,8 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::linkSelect()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testLinkSelectWithCollectionAsOptions(): void {
 		$options = new Collection([
@@ -1000,6 +1004,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::linkSelect()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkSelectWithGroupingEnabled(): void {
@@ -1023,6 +1028,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::linkSelect()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkSelectWithAggregationEnabled(): void {
@@ -1038,6 +1044,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::linkSelect()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkSelectWithUnassignedEnabled(): void {
@@ -1056,6 +1063,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::getConfiguration()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfiguration(): void {
@@ -1076,6 +1084,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::getConfiguration()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigurationWithEmptyConfig(): void {
@@ -1089,6 +1098,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::getCategories()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategories(): void {
@@ -1102,6 +1112,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::getCategories()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategoriesWithSimple(): void {
@@ -1116,6 +1127,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::getSelectedCategory()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSelectedCategory(): void {
@@ -1129,6 +1141,7 @@ class CategoriesHelperTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Helper\CategoriesHelper::getSelectedCategory()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSelectedCategoryWithNull(): void {

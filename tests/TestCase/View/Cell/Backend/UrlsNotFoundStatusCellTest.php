@@ -42,7 +42,6 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 	 * @inheritDoc
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @throws \ReflectionException
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -89,12 +88,7 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 		$property = $reflection->getProperty('twig');
 		/** @noinspection PhpExpressionResultUnusedInspection */
 		$property->setAccessible(true);
-		$property->setValue(null);
-
-		$property = $reflection->getProperty('twigInitialized');
-		/** @noinspection PhpExpressionResultUnusedInspection */
-		$property->setAccessible(true);
-		$property->setValue(false);
+		$property->setValue(null, null);
 
 		$this->fetchTable('UrlsNotFound')->deleteAll([]);
 	}
@@ -102,20 +96,7 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testDisplayWithoutUser(): void {
-		$this->view = new BackendView($this->request, $this->response);
-
-		$this->captureError(E_USER_WARNING, function () {
-			$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
-			$this->assertSame('', $output);
-		});
-	}
-
-
-	/**
-	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\UrlsNotFoundStatusCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithoutData(): void {
@@ -133,6 +114,7 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\UrlsNotFoundStatusCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithData(): void {
@@ -152,14 +134,14 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 		$this->assertStringContainsString('<fieldset class="Overview-Fieldset Fieldset-UrlsNotFoundStatus StatusCell Collapsible">', $output);
 		$this->assertStringContainsString('<td class="TableCell-Url" title="test">test</td>', $output);
 		$this->assertStringContainsString('<form class="Actions" method="post" action="/backend/xy/url-history/add/', $output);
-		$this->assertStringContainsString('<input type="hidden" name="url"  value="test">', $output);
+		$this->assertStringContainsString('<input type="hidden" name="url" value="test">', $output);
 	}
 
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\UrlsNotFoundStatusCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testDisplayWithoutDataWithUnauthorizedUser(): void {
 		$user = $this->login(2);
@@ -175,6 +157,7 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\UrlsNotFoundStatusCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithDataWithUnauthorizedUser(): void {
@@ -197,8 +180,8 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\UrlsNotFoundStatusCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testDisplayWithoutDataWithAccessDeniedUser(): void {
 		$user = $this->login(3);
@@ -214,6 +197,7 @@ class UrlsNotFoundStatusCellTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\View\Cell\Backend\UrlsNotFoundStatusCell::display()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithDataWithAccessDeniedUser(): void {

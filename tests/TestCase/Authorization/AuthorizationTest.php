@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Customer\Test\TestCase\Authorization;
+namespace Awyiss\Test\TestCase\Authorization;
 
 
 use Awyiss\Authorization\Authorization;
@@ -17,7 +17,6 @@ class AuthorizationTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAuthorizationService(): void {
@@ -25,6 +24,7 @@ class AuthorizationTest extends TestCase {
 
 		$service = $authorization->getAuthorizationService($this->createMock(ServerRequestInterface::class));
 
+		/** @noinspection PhpConditionAlreadyCheckedInspection */
 		$this->assertInstanceOf(AuthorizationService::class, $service);
 
 		$policies = $service->getPolicies();

@@ -1,0 +1,108 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\Test\TestCase\Model\Entity;
+
+
+use Awyiss\Model\Entity\ContentTemplateContentArea;
+use Awyiss\Test\TestSuite\TestCase;
+use Cake\Datasource\FactoryLocator;
+
+
+/**
+ * ContentTemplateContentArea Entity Test Case
+ *
+ * @see \Awyiss\Model\Entity\ContentTemplateContentArea
+ */
+class ContentTemplateContentAreaTest extends TestCase {
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea::$fieldMap
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testFieldMapCompleteness(): void {
+		/** @var \Awyiss\Model\Table\ContentTemplateContentAreasTable $table */
+		$table = FactoryLocator::get('Table')->get('ContentTemplateContentAreas');
+		$entity = $table->newDefaultEntity();
+		$entityArray = $entity->toArray();
+
+		foreach ($entityArray as $key => $value) {
+			$this->assertStringNotContainsString('_', $key);
+		}
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea::$_accessible
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAccessibleFields(): void {
+		$entity = new ContentTemplateContentArea();
+
+		$this->assertSame([
+			'contentTemplateId' => true,
+			'contentAreaId' => true,
+			'pageTemplateId' => true,
+			'_translations' => true,
+			'_publicationData' => true,
+			'mediaAssignments' => true,
+			'mediaElementAssignments' => true,
+		], $entity->getAccessible());
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea::$_virtual
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testVirtualFields(): void {
+		$entity = new ContentTemplateContentArea();
+
+		$this->assertSame([], $entity->getVirtual());
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testEntityConstruction(): void {
+		$properties = [
+			'id' => 1,
+			'content_template_id' => 123,
+			'content_area_id' => 456,
+			'page_template_id' => 789,
+		];
+
+		$entity = new ContentTemplateContentArea($properties);
+
+		$this->assertEquals(1, $entity->id);
+		$this->assertEquals(123, $entity->contentTemplateId);
+		$this->assertEquals(456, $entity->contentAreaId);
+		$this->assertEquals(789, $entity->pageTemplateId);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea::$fieldMap
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testFieldMapDuringConstruction(): void {
+		$properties = [
+			'content_template_id' => 123,
+			'content_area_id' => 456,
+			'page_template_id' => 789,
+		];
+
+		$entity = new ContentTemplateContentArea($properties);
+		$entityArray = $entity->toArray();
+
+		foreach ($entityArray as $key => $value) {
+			$this->assertStringNotContainsString('_', $key);
+		}
+	}
+}

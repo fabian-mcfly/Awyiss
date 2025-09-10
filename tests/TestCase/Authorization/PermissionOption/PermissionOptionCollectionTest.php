@@ -17,7 +17,7 @@ use RuntimeException;
 class PermissionOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorAndGetScope(): void {
@@ -30,7 +30,7 @@ class PermissionOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithConfig(): void {
@@ -47,7 +47,7 @@ class PermissionOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAdd(): void {
@@ -67,7 +67,7 @@ class PermissionOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoad(): void {
@@ -81,9 +81,8 @@ class PermissionOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testLoadThrowsExceptionForMissingClassName(): void {
 		$this->expectException(RuntimeException::class);
@@ -91,6 +90,7 @@ class PermissionOptionCollectionTest extends TestCase {
 
 		$collection = new PermissionOptionCollection('TestScope');
 
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$collection->load('testPermission', []);
 	}
 }
