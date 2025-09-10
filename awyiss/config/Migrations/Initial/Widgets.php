@@ -55,9 +55,17 @@ class Widgets {
 			'default' => null,
 			'limit' => 255,
 			'null' => true,
+		])->addColumn('title_tag', 'string', [
+			'default' => null,
+			'limit' => 2,
+			'null' => true,
 		])->addColumn('subtitle', 'string', [
 			'default' => null,
 			'limit' => 255,
+			'null' => true,
+		])->addColumn('subtitle_tag', 'string', [
+			'default' => null,
+			'limit' => 2,
 			'null' => true,
 		])->addColumn('text', 'text', [
 			'default' => null,
