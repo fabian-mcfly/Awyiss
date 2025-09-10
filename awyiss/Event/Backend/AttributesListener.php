@@ -71,7 +71,6 @@ class AttributesListener implements EventListenerInterface {
 			$event->stopPropagation();
 			$entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
 
-
 			return;
 		}
 

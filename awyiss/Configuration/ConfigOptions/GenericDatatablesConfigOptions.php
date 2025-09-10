@@ -140,7 +140,7 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					localizable: false,
 					nullable: false,
 					type: ConfigOptionType::ListKey,
-					typecast: function (mixed $value): string|int|null {
+					typecast: function (mixed $value): int|null {
 						if ($value === 'asc' || intval($value) === SORT_ASC) {
 							return SORT_ASC;
 						}
@@ -148,7 +148,6 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 						if ($value === 'desc' || intval($value) === SORT_DESC) {
 							return SORT_DESC;
 						}
-
 
 						return null;
 					},

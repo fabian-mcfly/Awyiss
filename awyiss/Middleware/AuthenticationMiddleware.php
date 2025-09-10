@@ -18,7 +18,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class AuthenticationMiddleware extends BaseAuthenticationMiddleware {
 	/**
 	 * @inheritDoc
-	 * @throws \ReflectionException
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		EventListenersProvider::loadListener('authentication', Awyiss::getRealm());

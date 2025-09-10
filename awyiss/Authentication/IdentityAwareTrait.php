@@ -12,7 +12,7 @@ use Cake\Event\EventManagerInterface;
 
 
 /**
- * Allows retreiving the identiy from the Authentication Service using an event
+ * Allows retrieving the identity from the Authentication Service using an event
  */
 trait IdentityAwareTrait {
 	use EventDispatcherTrait;

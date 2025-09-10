@@ -64,6 +64,13 @@ class UsergroupsListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Entity\User $lo_currentUser */
 		$lo_currentUser = $this->getIdentity();
 
+		/*
+		 * No users found in this group means the group was saved without
+		 * any users assigned to it.
+		 * That also means that the current user is surely no longer in this group
+		 * and we need to unset the usergroups and permission collection
+		 * for the current user in case they were in this group before.
+		 */
 		if (!$lo_users->count()) {
 			$lo_currentUser->unset('usergroups');
 			$lo_currentUser->unsetPermissionCollection();
@@ -73,7 +80,7 @@ class UsergroupsListener implements EventListenerInterface {
 		}
 
 		$lo_now = DateTime::now();
-		//Decrease the system order of all records
+		// Decrease the system order of all records
 		$lo_users = $lo_users->compile()->each(function (User $user) use ($entity, $lo_now, $lo_currentUser): void {
 			$user->changedOn = $lo_now;
 
@@ -84,7 +91,7 @@ class UsergroupsListener implements EventListenerInterface {
 		});
 
 		try {
-			//Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
+			// Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
 			$lo_usersTable->saveMany($lo_users, [
 				'audit' => ['skip' => true],
 				'atomic' => false,

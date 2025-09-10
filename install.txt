@@ -13,7 +13,7 @@ sudo runuser -u www-data -- bin/cake generate phpstorm
 
 
 // Medienzeugs
-sudo runuser -u www-data -- bin/cake media convert_files --include-webp
+sudo runuser -u www-data -- bin/cake media convert_files --include-avif --include-webp
 sudo runuser -u www-data -- bin/cake media detect_available_commands
 sudo runuser -u www-data -- bin/cake media clear_cache
 

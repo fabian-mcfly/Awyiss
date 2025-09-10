@@ -43,7 +43,7 @@ class FormElementsListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeCopy(Event $event, FormElement $entity, ArrayObject $options): void {
-		if ($options['_primary'] !== true || !$entity->childFormElements) {
+		if (($options['_primary'] ?? false) !== true || !$entity->childFormElements) {
 			return;
 		}
 
@@ -64,7 +64,7 @@ class FormElementsListener implements EventListenerInterface {
 				$lo_childFormElement->identifier = substr($lo_childFormElement->identifier, 0, 36);
 			}
 
-			$lo_childFormElement->identifier .= '-copy-' . Security::randomString(8);
+			$lo_childFormElement->identifier .= '_copy_' . Security::randomString(8);
 		}
 	}
 }

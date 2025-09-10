@@ -33,8 +33,8 @@ class UserConfigurationListener implements EventListenerInterface {
 	public function implementedEvents(): array {
 		return [
 			'Model.UserConfiguration.beforeSave' => 'beforeSave',
-			'Model.UserConfiguration.afterSave' => 'resetConfiguration',
-			'Model.UserConfiguration.afterDelete' => 'resetConfiguration',
+			'Model.UserConfiguration.afterSave' => 'afterSave',
+			'Model.UserConfiguration.afterDelete' => 'afterDelete',
 		];
 	}
 
@@ -44,7 +44,6 @@ class UserConfigurationListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\UserConfiguration $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
-	 * @throws \ReflectionException
 	 */
 	public function beforeSave(Event $event, UserConfiguration $entity): void {
 		$entity->value = ConfigOptionsProvider::typecastConfigValue(
@@ -59,6 +58,22 @@ class UserConfigurationListener implements EventListenerInterface {
 		}
 
 		$entity->userId = $this->getIdentity()->getIdentifier();
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function afterSave(): void {
+		$this->resetConfiguration();
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function afterDelete(): void {
+		$this->resetConfiguration();
 	}
 
 

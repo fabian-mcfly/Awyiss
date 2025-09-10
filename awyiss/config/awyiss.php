@@ -113,7 +113,7 @@ return [
 			'className' => Connection::class,
 			'database' => TMP . 'awyiss_test.sqlite',
 			'driver' => Sqlite::class,
-			'log' => !false,
+			'log' => false,
 			'persistent' => false,
 			'quoteIdentifiers' => false,
 			'timezone' => 'UTC',
