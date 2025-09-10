@@ -21,7 +21,9 @@ class GeneralEventsListener implements EventListenerInterface {
 	/**
 	 * @var array
 	 */
-	protected array $initializedModels = [];
+	protected static array $initializedModels = [];
+
+
 	/**
 	 * @var string
 	 */
@@ -61,8 +63,9 @@ class GeneralEventsListener implements EventListenerInterface {
 		$this->realm = $event->getData('realm');
 
 		/** @var Table $lo_model */
-		foreach ($this->initializedModels as $lo_model) {
+		foreach (static::$initializedModels as $li_key => $lo_model) {
 			EventListenersProvider::loadListener($lo_model->getAlias(), $this->realm);
+			unset(static::$initializedModels[ $li_key ]);
 		}
 	}
 
@@ -78,13 +81,18 @@ class GeneralEventsListener implements EventListenerInterface {
 		/** @var Table $lo_model */
 		$lo_model = $event->getSubject();
 
-		if ($lo_model instanceof Table) {
-			if (!isset($this->realm)) {
-				$this->initializedModels[] = $lo_model;
-			}
-			else {
-				EventListenersProvider::loadListener($lo_model->getAlias(), $this->realm);
-			}
+		if (!$lo_model instanceof Table) {
+			return;
 		}
+
+		if (!isset($this->realm)) {
+			if (!in_array($lo_model, static::$initializedModels, true)) {
+				static::$initializedModels[] = $lo_model;
+			}
+
+			return;
+		}
+
+		EventListenersProvider::loadListener($lo_model->getAlias(), $this->realm);
 	}
 }
