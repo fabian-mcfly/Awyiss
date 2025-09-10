@@ -47,16 +47,19 @@ class SurveysConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.overview.displayedFields']->isLocalizable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isNullable());
 		$this->assertTrue($configOptions['Backend.overview.displayedFields']->isPersonalizable());
-		$this->assertSame([], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
-		$this->assertSame('', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
+		$this->assertSame(['identifier'], $configOptions['Backend.overview.displayedFields']->getDefaultValue());
+		$this->assertSame('surveys::identifier', $configOptions['Backend.overview.displayedFields']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Backend.overview.displayedFields']->getType());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
 		$this->assertSame([
 			'type' => 'surveys::type',
-			'subtitle' => 'surveys::subtitle',
-			'text' => 'surveys::text',
+			'identifier' => 'surveys::identifier',
+			'success_message' => 'surveys::success_message',
+			'failure_message' => 'surveys::failure_message',
+			'final_action' => 'surveys::final_action',
+			'form_id' => 'surveys::form_id',
 			'active' => 'surveys::active',
 			'created_by' => 'surveys::created_by',
 			'created_on' => 'surveys::created_on',

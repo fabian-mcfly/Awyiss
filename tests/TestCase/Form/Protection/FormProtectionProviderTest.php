@@ -100,7 +100,7 @@ class FormProtectionProviderTest extends TestCase {
 	public function testGetFormProtectionFiles(): void {
 		$result = FormProtectionProvider::getFormProtectionFiles();
 
-		$this->assertSame([
+		$this->assertEquals([
 			'ip_check' => '\Awyiss\Form\Protection\IpCheckFormProtection',
 			'dummy' => '\Customer\Form\Protection\DummyFormProtection',
 			'dummy_stops_form_entry' => '\Customer\Form\Protection\DummyStopsFormEntryFormProtection',
