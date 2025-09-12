@@ -2,12 +2,14 @@
 
 /*
  * Local configuration file to provide any overrides to our awyiss.php configuration
- * Note: It is not recommended committing files with credentials into source code version control.
+ * Note: It is not recommended committing files with credentials into version control.
  */
 
 
 use Awyiss\Utility\Design\ScssVariableType;
+use Cake\Mailer\Transport\DebugTransport;
 use Cake\Mailer\Transport\MailTransport;
+use Cake\Mailer\Transport\SmtpTransport;
 
 
 return [
@@ -243,10 +245,10 @@ return [
 	 */
 	'EmailTransport' => [
 		'default' => [
-			'className' => \Cake\Mailer\Transport\MailTransport::class,
+			'className' => MailTransport::class,
 		],
 		'smtp' => [
-			'className' => \Cake\Mailer\Transport\SmtpTransport::class, //To use a smtp server
+			'className' => SmtpTransport::class, //To use a smtp server
 			'host' => '',
 			'password' => '',
 			'port' => 25,
@@ -254,7 +256,7 @@ return [
 			'username' => '',
 		],
 		'debug' => [
-			'className' => \Cake\Mailer\Transport\DebugTransport::class, //To not send any mails
+			'className' => DebugTransport::class, //To not send any mails
 		],
 	],
 
@@ -269,7 +271,7 @@ return [
 
 	'MimeTypes' => [
 		//Example to add a valid file extension to a mimetype
-		'application/zip' => ['sh3d'],
+		//'application/zip' => ['sh3d'],
 	],
 
 	/*'Log' => [
