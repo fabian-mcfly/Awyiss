@@ -167,35 +167,31 @@ trait ConfigTrait {
 		// Determine if the environment resembles a production environment
 		$lb_isProductionEnvironment = in_array($this->installEnvironment, ['production', 'prod', 'live']);
 
-		// Set the log, debug, forceEnable flags and error level based on the environment
+		// Set the log and debug flags and error level based on the environment
 		$ls_logFlag = !$lb_isProductionEnvironment;
 		$ls_debugFlag = !$lb_isProductionEnvironment;
-		$ls_forceEnableFlag = !$lb_isProductionEnvironment;
 		$ls_errorLevel = $lb_isProductionEnvironment ? 0 : E_ALL;
 
 		// Load the environment config file
 		$la_environmentConfig = include $ls_environmentConfigFilePath;
 
-		// Replace the placeholders with the correct values in the environment config file
+		// Set the database configuration based on user inputs
 		$la_environmentConfig['Datasources']['default']['database'] = $this->dbName;
 		$la_environmentConfig['Datasources']['default']['host'] = $this->dbHost;
 		$la_environmentConfig['Datasources']['default']['log'] = $ls_logFlag;
 		$la_environmentConfig['Datasources']['default']['password'] = $this->dbPassword;
 		$la_environmentConfig['Datasources']['default']['username'] = $this->dbUsername;
 
-
-		// If it does, drop the existing configuration
+		// Temporarily set the 'custom' connection as the default connection to apply the new database configuration immediately
 		$la_config = ConnectionManager::get('default')->config();
-		//ConnectionManager::drop('default');
 		ConnectionManager::setConfig('custom', array_merge($la_config, $la_environmentConfig['Datasources']['default'], [
 			'className' => Connection::class,
 		]));
 		ConnectionManager::alias('custom', 'default');
 
 
-		// Set the debug, forceEnable flags and error level based on the environment
+		// Set the debug flag and error level based on the environment
 		$la_environmentConfig['debug'] = $ls_debugFlag;
-		$la_environmentConfig['DebugKit']['forceEnable'] = $ls_forceEnableFlag;
 		$la_environmentConfig['Error']['errorLevel'] = $ls_errorLevel;
 
 		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
