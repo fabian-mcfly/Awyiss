@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
 return [
-	/*
+	/**
 	 * Connection information used by the ORM to connect
 	 * to your application's datastores.
 	 *
-	 * See awyiss/config/awyiss.php for more configuration options.
+	 * @see /awyiss/config/awyiss.php for more configuration options.
 	 */
 	'Datasources' => [
 		'default' => [
