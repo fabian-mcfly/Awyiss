@@ -35,6 +35,13 @@ body {
 		}
 	}
 
+	&:has(.EditFrontendEditor) {
+		.tox-editor-header.tox-editor-dock-fadeout {
+			opacity:initial;
+			visibility:initial;
+		}
+	}
+
 	fieldset {
 		&:has(.tox-fullscreen) {
 			z-index:3000;
