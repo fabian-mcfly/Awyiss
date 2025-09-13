@@ -8,6 +8,12 @@ namespace Awyiss\Utility\Content;
  * Class AwyissColumn
  */
 class BootstrapColumn extends AbstractColumn {
+		/**
+	 * @var string
+	 */
+	protected string $cssClassPrefix = 'col-md';
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -26,5 +32,13 @@ class BootstrapColumn extends AbstractColumn {
 
 
 		return $this->label;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getCssClass(): string {
+		return $this->cssClassPrefix . '-' . $this->numerator;
 	}
 }
