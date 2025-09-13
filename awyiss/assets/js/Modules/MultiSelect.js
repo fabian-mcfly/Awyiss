@@ -179,8 +179,8 @@ export default class MultiSelect {
 	 */
 	handleMouseDown(event) {
 		this.initialPosition = {
-			x: event.clientX + window.scrollX,
-			y: event.clientY + window.scrollY,
+			x: event.clientX/* + window.scrollX*/,
+			y: event.clientY/* + window.scrollY*/,
 		};
 
 		this.selectionRectangle = document.createElement('div');
@@ -212,8 +212,8 @@ export default class MultiSelect {
 
 		// Only if the selection has a certain width and height, it will be considered a selection
 		if (!this.isDragging && (
-			Math.abs(this.initialPosition.x - (event.clientX + window.scrollX)) > 10 ||
-			Math.abs(this.initialPosition.y - (event.clientY + window.scrollY)) > 10
+			Math.abs(this.initialPosition.x - (event.clientX/* + window.scrollX*/)) > 10 ||
+			Math.abs(this.initialPosition.y - (event.clientY/* + window.scrollY*/)) > 10
 		)) {
 			this.isDragging = true;
 
@@ -231,10 +231,10 @@ export default class MultiSelect {
 
 		clearTimeout(this.eventTimeout);
 
-		const width = Math.abs(this.initialPosition.x - (event.clientX + window.scrollX)) + 'px';
-		const height = Math.abs(this.initialPosition.y - (event.clientY + window.scrollY)) + 'px';
-		const top = Math.min(this.initialPosition.y, event.clientY + window.scrollY) + 'px';
-		const left = Math.min(this.initialPosition.x, event.clientX + window.scrollX) + 'px';
+		const width = Math.abs(this.initialPosition.x - (event.clientX/* + window.scrollX*/)) + 'px';
+		const height = Math.abs(this.initialPosition.y - (event.clientY/* + window.scrollY*/)) + 'px';
+		const top = Math.min(this.initialPosition.y, event.clientY/* + window.scrollY*/) + 'px';
+		const left = Math.min(this.initialPosition.x, event.clientX/* + window.scrollX*/) + 'px';
 
 		Object.assign(this.selectionRectangle.style, {
 			width,
