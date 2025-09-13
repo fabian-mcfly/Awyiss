@@ -5,6 +5,7 @@ namespace Awyiss\Utility\Content;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Entity\MediaAssignment;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
@@ -431,7 +432,10 @@ class ImageHandler {
 		$la_originalInlineAssignments = $la_originalMediaAssignments['inlineImgTag'] ?? [];
 
 		// Remember the media ids
-		$la_mediaIdsFound = array_column($la_mediaAssignments, 'mediaId');
+		$la_inlineAssignments = array_filter($la_mediaAssignments, function (MediaAssignment $assignment): bool {
+			return $assignment->mediaElementSelectorIdentifier === 'inline_img_tag';
+		});
+		$la_mediaIdsFound = array_column($la_inlineAssignments, 'mediaId');
 		foreach ($media as $lo_media) {
 			// If the media id is already in the assignments, skip it
 			// There's no need to create multiple assignments for the same media
