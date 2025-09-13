@@ -216,7 +216,7 @@ class BootstrapColumnTest extends TestCase {
 		$data = json_decode($json, true);
 
 		$this->assertSame([
-			'cssClass' => 'Column-50',
+			'cssClass' => 'col-md-6',
 			'denominator' => 12,
 			'fraction' => '6/12',
 			'label' => 'column_system::column_width (50%)',

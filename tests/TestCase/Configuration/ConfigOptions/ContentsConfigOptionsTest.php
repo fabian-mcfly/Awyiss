@@ -55,7 +55,7 @@ class ContentsConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'\Awyiss\Utility\Content\AwyissColumnSystem' => 'Awyiss',
 			'\Awyiss\Utility\Content\BootstrapColumnSystem' => 'Bootstrap',
-		], $configOptions['Backend.columnSystem.className']->getValues());
+		], $configOptions['Backend.columnSystem.className']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.columnSystem.maxColumns', $configOptions);
 		$this->assertFalse($configOptions['Backend.columnSystem.maxColumns']->isLocalizable());

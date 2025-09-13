@@ -9,7 +9,7 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utility\Content\BootstrapColumnSystem;
+use Awyiss\Utility\Content\BackendColumnSystem;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -65,7 +65,7 @@ class MediaElementsTable extends Table {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$this->columnSpans = BootstrapColumnSystem::getColumnWidths();
+		$this->columnSpans = BackendColumnSystem::getColumnWidths();
 	}
 
 

@@ -9,7 +9,7 @@ use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utility\Content\BootstrapColumnSystem;
+use Awyiss\Utility\Content\BackendColumnSystem;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
@@ -171,7 +171,7 @@ class AttributesTable extends Table {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$this->columnSpans = BootstrapColumnSystem::getColumnWidths();
+		$this->columnSpans = BackendColumnSystem::getColumnWidths();
 	}
 
 

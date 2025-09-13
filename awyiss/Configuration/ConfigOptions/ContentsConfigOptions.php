@@ -9,6 +9,8 @@ use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
+use Awyiss\Core\App;
+use Awyiss\Utility\Content\ColumnSystemInterface;
 
 
 /**
@@ -36,7 +38,7 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 					localizable: false,
 					nullable: false,
 					type: ConfigOptionType::ListKey,
-					values: $this->getColumnSystemClasses()
+					values: $this->getColumnSystemClasses(...),
 				),
 				new ConfigOption(
 					defaultValue: 5,
@@ -90,33 +92,16 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 
 
 	/**
-	 * @return array
+	 * @return array<<class-string<ColumnSystemInterface>, string>
 	 */
 	protected function getColumnSystemClasses(): array {
-		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Utility\Content\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Utility', 'Content', '*ColumnSystem.php',]),
-			'\Awyiss\Utility\Content\\' => implode(DS, [ROOT, APP_DIR, 'Utility', 'Content', '*ColumnSystem.php']),
-		];
+		$la_classes = [];
 
-		$la_columnSystemClasses = [];
-
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_configurationName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				/**
-				 * @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $ls_configurationClass
-				 */
-				$ls_configurationClass = $ls_namespace . $ls_configurationName;
-
-				if (!is_callable([$ls_configurationClass, 'getName']) || isset($la_columnSystemClasses[ $ls_configurationClass ])) {
-					continue;
-				}
-
-				$la_columnSystemClasses[ $ls_configurationClass ] = $ls_configurationClass::getName();
-			}
+		/** @var class-string<ColumnSystemInterface> $ls_class */
+		foreach (App::classes('*', 'Utility/Content', 'ColumnSystem', ColumnSystemInterface::class, null, ['BackendColumnSystem']) as $ls_class) {
+			$la_classes[ $ls_class ] = $ls_class::getName();
 		}
 
-
-		return $la_columnSystemClasses;
+		return $la_classes;
 	}
 }

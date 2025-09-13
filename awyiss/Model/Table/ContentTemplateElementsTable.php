@@ -6,7 +6,7 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utility\Content\BootstrapColumnSystem;
+use Awyiss\Utility\Content\BackendColumnSystem;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -59,7 +59,7 @@ class ContentTemplateElementsTable extends Table {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$this->columnSpans = BootstrapColumnSystem::getColumnWidths();
+		$this->columnSpans = BackendColumnSystem::getColumnWidths();
 	}
 
 

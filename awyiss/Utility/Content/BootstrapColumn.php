@@ -5,10 +5,10 @@ namespace Awyiss\Utility\Content;
 
 
 /**
- * Class AwyissColumn
+ * Class BootstrapColumn
  */
 class BootstrapColumn extends AbstractColumn {
-		/**
+	/**
 	 * @var string
 	 */
 	protected string $cssClassPrefix = 'col-md';
