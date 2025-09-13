@@ -77,9 +77,14 @@
 			outline-offset:-3px;
 		}
 
-		.Fieldsets {
+		/*.Fieldsets {
 			grid-template-columns:[main sidebar] auto;
-		}
+
+			> .Fieldset-Presentation,
+			> .Fieldset-Conditions {
+				grid-column-end:auto;
+			}
+		}*/
 
 		.Sidebar-Fieldsets {
 			width:100%;

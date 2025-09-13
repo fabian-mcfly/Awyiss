@@ -77,7 +77,7 @@
 			}
 
 			.RoutePlanner-Loader {
-				--bgColor:var(--backgroundColorRoutePlannerLoading, var(--colorMain, #63d1a5));
+				--bgColor:var(--backgroundColorRoutePlannerLoading, var(--colorMain, var(--awyissColor, #63d1a5)));
 				--textColor:var(--colorRoutePlannerLoading, var(--colorBright, #FFFFFF));
 
 				width:100%;
@@ -339,7 +339,7 @@
 			}
 
 			&-Distance {
-				--bgColor:var(--backgroundColorRoutePlannerRouteDistance, var(--colorText, #63d1a5));
+				--bgColor:var(--backgroundColorRoutePlannerRouteDistance, var(--colorText, var(--awyissColor, #63d1a5)));
 				--textColor:var(--colorRoutePlannerRouteDistance, var(--colorBackground, #FFFFFF));
 
 				width:60px;

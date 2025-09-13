@@ -12,7 +12,7 @@ $relativePath:'../../' !default;
 	#AwyissFrontendPreview-Info {
 		display:flex;
 		width:fit-content;
-		background-color:var(--colorFrontendPreviewColor, #63d1a5);
+		background-color:var(--colorFrontendPreviewColor, var(--awyissColor, #63d1a5));
 		color:var(--colorFrontendPreviewTextColor, #fff);
 		margin:auto;
 		padding:10px 20px;
@@ -129,8 +129,8 @@ $relativePath:'../../' !default;
 			transition:all .3s ease-in-out;
 
 			&:not(:hover) {
-				outline-color:var(--colorFrontendPreviewColor, #63d1a5);
-				background-color:color-mix(in srgb, var(--colorFrontendPreviewColor, #63d1a5), transparent 75%);
+				outline-color:var(--colorFrontendPreviewColor, var(--awyissColor, #63d1a5));
+				background-color:color-mix(in srgb, var(--colorFrontendPreviewColor, var(--awyissColor, #63d1a5)), transparent 75%);
 			}
 		}
 	}

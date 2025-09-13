@@ -79,7 +79,7 @@
 		}
 
 		&:hover {
-			color:var(--colorMain, #63d1a5);
+			color:var(--colorMain, var(--awyissColor, #63d1a5));
 		}
 	}
 
@@ -281,7 +281,7 @@
 
 			&.Active {
 				button {
-					background-color:var(--colorMain, #63d1a5);
+					background-color:var(--colorMain, var(--awyissColor, #63d1a5));
 					opacity:1;
 				}
 			}
@@ -298,7 +298,7 @@
 			transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
 
 			&:focus-visible {
-				outline:2px solid var(--colorMain, #63d1a5);
+				outline:2px solid var(--colorMain, var(--awyissColor, #63d1a5));
 				outline-offset:2px;
 				opacity:1;
 			}

@@ -239,6 +239,14 @@ code {
 	-webkit-user-select:none;
 	-moz-user-select:none;
 	-ms-user-select:none;
+
+	@at-root #{selector-append(body, &)} {
+		&:has(.Contents-ListItem.Resizing) {
+			* {
+				cursor:ew-resize !important;
+			}
+		}
+	}
 }
 
 .NoList {

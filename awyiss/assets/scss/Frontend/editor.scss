@@ -32,7 +32,7 @@
 		width:40px;
 		height:40px;
 		border-radius:5px;
-		background-color:var(--colorFrontendEditorColor, #63d1a5);
+		background-color:var(--colorFrontendEditorColor, var(--awyissColor, #63d1a5));
 		background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAYZJREFUeNrs2YFtwjAQAEAHMYA3aEZwN3A3yEZVJ2g3yAh0A9gAugEbhA1Sv+RUIf0mNvw/38gvvUDGQn/ym8jGmDVF3/da04ZsQ3b9dcBYPczTDnEIYBzwWTNAqgGiLFzIfUi7MO8S8rmqqvNGYaenIkyc86qxtf5qJxjzcV8cpx9qg8wh3GhejUE2ytsJ9sBLyNOknX7FNr56oYLPMe9BtMi8n9aSiGmL5LTT8Ew5InNbSQgXAuZaKQgnwk2f7P8WsQTxD/6JTUY8AsKCkIawISQhrAgpCDtCAiKC4IaIITghogguiDiCA8KFcOOLBgnIjgnRLdVDfbByieeJfeLcnLM72YpY5DsagpVIqodyRRwydutKmOyVIIR4pEA40tYhm0yEyUWMz+z3xhMy1s0UNIe4KbZMrWUXbgdJEdx7RAxBBUm5SoL98smFoGotjxQNxX6FPMT3F+4LMwoIFPkmWTQX5EPDnavGvxUKpEAKpEAKpEDUPNndWiDvpbUKpEDWFd8CDADUxOn0SJCdQAAAAABJRU5ErkJggg==');
 		background-repeat:no-repeat;
 		background-position:11px 8px;
@@ -45,7 +45,7 @@
 
 	#AwyissFrontendEditorHighlight {
 		border-radius:5px;
-		outline:3px solid var(--colorFrontendEditorColor, #63d1a5);
+		outline:3px solid var(--colorFrontendEditorColor, var(--awyissColor, #63d1a5));
 		pointer-events:none;
 	}
 

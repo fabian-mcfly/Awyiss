@@ -61,6 +61,12 @@
 						{%- endif -%}
 					{% endblock %}
 
+					<style nonce="{{ AssetHelper.getStyleNonce() }}">{% verbatim %}
+						:root {
+							--awyissColor:{% endverbatim %}{{ config.Awyiss.System.Backend.interface.highlightColor ?? '#63d1a5' }}{% verbatim %};
+						}
+					{% endverbatim %}</style>
+
 					{% block metaRobots %}
 						{% if designPreview %}
 							<meta name="robots" content="noindex,nofollow">
