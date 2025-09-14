@@ -70,6 +70,23 @@
 			display:none;
 		}
 	}
+
+	.FormInputType-Checkbox-Item {
+		display:grid;
+		grid-template-columns:30px auto;
+
+		> .FormInputType-Checkbox {
+			margin-top:.5em;
+			align-self:start;
+			justify-self:start;
+
+			.BackgroundColor-Main & {
+				color:var(--colorMain);
+				accent-color:var(--colorText);
+				caret-color:var(--colorText);
+			}
+		}
+	}
 }
 
 :is(
