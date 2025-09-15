@@ -131,6 +131,7 @@ class AttributesTable extends Table {
 	 */
 	protected array $defaultAvailableInputTypes = [
 		'text',
+		'color',
 		'date',
 		'datetime',
 		'time',

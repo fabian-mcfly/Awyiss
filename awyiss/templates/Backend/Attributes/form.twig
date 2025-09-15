@@ -42,10 +42,28 @@
 					{{ FormHelper.control('default_value', {columnSpan: 6}) }}
 				{% endblock %}
 
+				{% set typeHelperFormControl %}
+					{{ FormHelper.select('link_helper_options', {
+						'datetime': 'datetime',
+						'date': 'date',
+						'decimal(10,2)': 'decimal(10,2)',
+						'int(11)': 'int(11)',
+						'text': 'text',
+						'time': 'time',
+						'tinyint(1)': 'tinyint(1)',
+						'varchar(255)': 'varchar(255)',
+					}, {
+						'data-options-for': 'Attribute-Type',
+					}) }}
+				{% endset %}
+
 				{% block formControlType %}
 					{{ FormHelper.control('type', {
 						columnSpan: 6,
 						readonly: attribute.inputType in ['input_list', 'input_key_value_list'],
+						templateVars: {
+							additionalContent: typeHelperFormControl
+						},
 					}) }}
 				{% endblock %}
 

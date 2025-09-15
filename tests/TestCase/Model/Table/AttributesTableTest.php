@@ -753,6 +753,7 @@ class AttributesTableTest extends TestCase {
 		$this->assertIsArray($inputTypes);
 		$this->assertSame([
 			'text',
+			'color',
 			'date',
 			'datetime',
 			'time',

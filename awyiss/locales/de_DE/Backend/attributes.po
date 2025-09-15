@@ -89,6 +89,9 @@ msgstr "Spaltenbreite"
 msgid "input_type_text"
 msgstr "Text"
 
+msgid "input_type_color"
+msgstr "Farbe"
+
 msgid "input_type_date"
 msgstr "Datum"
 

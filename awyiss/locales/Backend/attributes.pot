@@ -89,6 +89,9 @@ msgstr "Column Span"
 msgid "input_type_text"
 msgstr "Text"
 
+msgid "input_type_color"
+msgstr "Color"
+
 msgid "input_type_date"
 msgstr "Date"
 
