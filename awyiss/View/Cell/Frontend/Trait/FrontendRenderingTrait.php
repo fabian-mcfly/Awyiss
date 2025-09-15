@@ -45,7 +45,7 @@ trait FrontendRenderingTrait {
 	public function initCellOptions(array $options): array {
 		$la_options = $options + [
 			'columnWidth' => 100.00,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 		];
 

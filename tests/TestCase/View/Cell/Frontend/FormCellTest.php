@@ -81,6 +81,7 @@ class FormCellTest extends TestCase {
 			$page,
 			[
 				'fullWidth' => 1440.00,
+				'includeWrapper' => true,
 				'singleColumnBreakpoint' => 768.00,
 			],
 		]);

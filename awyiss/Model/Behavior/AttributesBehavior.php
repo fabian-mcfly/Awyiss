@@ -278,7 +278,7 @@ class AttributesBehavior extends Behavior {
 
 		$lo_attributesQuery = $this->addOrderByFieldset($lo_attributesQuery, $lo_attributesTable);
 
-		static::$attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function ($attributes) {
+		static::$attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function (array $attributes): array {
 			return collection($attributes)->indexBy('identifier')->toArray();
 		})->toArray();
 

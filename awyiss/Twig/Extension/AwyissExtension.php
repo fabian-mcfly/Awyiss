@@ -101,7 +101,7 @@ class AwyissExtension extends AbstractExtension {
 						throw new InvalidArgumentException('The "form" function requires a Page entity in the context.');
 					}
 
-					$la_options = ['viewVars' => $context];
+					$la_options = ['viewVars' => $context, 'includeWrapper' => true];
 					$la_options = Hash::merge($la_options, $options);
 
 					return $context['_view']->cell('Frontend/Form', [$identifier, $context['page'], $la_options])->render() ?: null;

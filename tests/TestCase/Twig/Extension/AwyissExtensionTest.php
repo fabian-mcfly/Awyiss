@@ -9,11 +9,6 @@ use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Twig\Extension\AwyissExtension;
 use Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor;
-use Awyiss\View\Cell\Frontend\ContentsCell;
-use Awyiss\View\Cell\Frontend\FormCell;
-use Awyiss\View\Cell\Frontend\MenuCell;
-use Awyiss\View\Cell\Frontend\SurveyCell;
-use Awyiss\View\Cell\Frontend\WidgetsCell;
 use Awyiss\View\FrontendView;
 use Cake\Core\Configure;
 use Cake\Http\ServerRequest;
@@ -348,6 +343,7 @@ class AwyissExtensionTest extends TestCase {
 			'ContentArea',
 			[
 				'fullWidth' => 1440.00,
+				'includeWrapper' => true,
 				'singleColumnBreakpoint' => 768.00,
 			]
 		);

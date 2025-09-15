@@ -87,7 +87,7 @@ class ContentsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => null,
 			'singleColumnBreakpoint' => null,
@@ -133,7 +133,7 @@ class ContentsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => 123.00,
 			'singleColumnBreakpoint' => null,
@@ -158,7 +158,7 @@ class ContentsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => 234.00,
 			'singleColumnBreakpoint' => null,
@@ -181,7 +181,7 @@ class ContentsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => null,
 			'singleColumnBreakpoint' => 1234.00,
@@ -206,7 +206,7 @@ class ContentsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => null,
 			'singleColumnBreakpoint' => 2345.00,
@@ -1278,6 +1278,7 @@ class ContentsCellTest extends TestCase {
 			$page,
 			[
 				'fullWidth' => 1440.00,
+				'includeWrapper' => true,
 				'singleColumnBreakpoint' => 768.00,
 			],
 		]);
@@ -1301,8 +1302,8 @@ class ContentsCellTest extends TestCase {
 			$page,
 			[
 				'fullWidth' => 1440.00,
-				'singleColumnBreakpoint' => 768.00,
 				'includeWrapper' => false,
+				'singleColumnBreakpoint' => 768.00,
 			],
 		]);
 

@@ -86,7 +86,7 @@ class WidgetsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => null,
 			'singleColumnBreakpoint' => null,
@@ -132,7 +132,7 @@ class WidgetsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => 123.00,
 			'singleColumnBreakpoint' => null,
@@ -157,7 +157,7 @@ class WidgetsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => 234.00,
 			'singleColumnBreakpoint' => null,
@@ -180,7 +180,7 @@ class WidgetsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => null,
 			'singleColumnBreakpoint' => 1234.00,
@@ -205,7 +205,7 @@ class WidgetsCellTest extends TestCase {
 
 		$this->assertEquals([
 			'columnWidth' => 100,
-			'includeWrapper' => true,
+			'includeWrapper' => false,
 			'viewVars' => [],
 			'fullWidth' => null,
 			'singleColumnBreakpoint' => 1234.00,
