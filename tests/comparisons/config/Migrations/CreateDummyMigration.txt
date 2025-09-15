@@ -24,12 +24,6 @@ class CreateDummyMigration extends BaseMigration {
             'limit' => 255,
             'null' => true,
         ]);
-		if ($table->hasIndexByName('BY_CONTENT_ID')) {
-			$table->removeIndexByName('BY_CONTENT_ID');
-		}
-		if ($table->hasIndexByName('BY_TESTATTRIBUTE')) {
-			$table->removeIndexByName('BY_TESTATTRIBUTE');
-		}
 		$table->create();
 	}
 }
