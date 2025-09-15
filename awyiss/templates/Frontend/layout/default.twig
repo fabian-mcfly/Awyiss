@@ -21,7 +21,8 @@
 {%- block html %}
 {%- set htmlClass = fetch('htmlClass') %}
 {%- if htmlClass == '' %}
-	{%- set htmlClass = page.slug|split('/')|map(e => e|ucparts)|map(e => e|prefixNumericClass)|join(' ')|trim %}
+	{%- set htmlClass = 'Page-' ~ page.title|trim|slug|ucparts(false) %}
+	{%- set htmlClass = htmlClass ~ ' ' ~ page.slug|split('/')|map(e => e|ucparts(false))|map(e => e|prefixNumericClass)|join('-')|trim %}
 	{%- set htmlClass = htmlClass ~ ' PageRole-' ~ page.pageRoleId.name|ucparts %}
 	{%- set htmlClass = htmlClass ~ ' ' ~ page.pageRoleId.name|ucparts ~ 'Template-' ~ page.pageTemplate.fileName|ucparts %}
 	{%- if environment %}
@@ -39,25 +40,26 @@
 					<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 					<meta http-equiv="X-UA-Compatible" content="ie=edge">
 					{% block metaTitle -%}
-						{% set metaTitle = fetch('metaTitle') -%}
-						{% if metaTitle == '' -%}
-							{% set metaTitle = page.metaTitle -%}
-							{% if metaTitle is empty -%}
-								{% set metaTitle = page.title -%}
-								{% set metaTitle = metaTitle ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix') -%}
-							{% endif -%}
+						{% set metaTitle = page.metaTitle ?? fetch('metaTitle') -%}
+						{% if metaTitle is empty -%}
+							{% set metaTitle = page.title ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix') -%}
 						{% endif -%}
-						<title>{{ metaTitle }}</title>
-						<meta property="og:title" content="{{ metaTitle }}">
+						{%- block metaTitleTag %}
+							<title>{{ metaTitle }}</title>
+						{%- endblock %}
+						{%- block metaTitleOgTag %}
+							<meta property="og:title" content="{{ metaTitle }}">
+						{%- endblock %}
 					{% endblock %}
 					{% block metaDescription %}
-						{%- set metaDescription = fetch('metaDescription') -%}
-						{%- if metaDescription == '' -%}
-							{%- set metaDescription = page.metaDescription -%}
-						{%- endif -%}
+						{%- set metaDescription = page.metaDescription ?? fetch('metaDescription') -%}
 						{%- if metaDescription is not empty -%}
-							<meta name="description" content="{{ metaDescription }}">
-							<meta property="og:description"	content="{{ metaDescription }}">
+							{%- block metaDescriptionTag %}
+								<meta name="description" content="{{ metaDescription }}">
+							{%- endblock %}
+							{%- block metaDescriptionOgTag %}
+								<meta property="og:description"	content="{{ metaDescription }}">
+							{%- endblock %}
 						{%- endif -%}
 					{% endblock %}
 
@@ -67,7 +69,7 @@
 						}
 					{% endverbatim %}</style>
 
-					{% block metaRobots %}
+					{% block metaRobotsTag %}
 						{% if designPreview %}
 							<meta name="robots" content="noindex,nofollow">
 						{% else %}
@@ -75,23 +77,33 @@
 						{% endif %}
 					{% endblock %}
 
-					{%- if config('Awyiss.System.Frontend.meta.googleSiteVerification') %}
-						<meta name="google-site-verification" content="{{ config('Awyiss.System.Frontend.meta.googleSiteVerification') }}">
-					{%- endif %}
+					{% block metaGoogleSiteVerificationTag %}
+						{%- if config('Awyiss.System.Frontend.meta.googleSiteVerification') %}
+							<meta name="google-site-verification" content="{{ config('Awyiss.System.Frontend.meta.googleSiteVerification') }}">
+						{%- endif %}
+					{% endblock %}
+
+					{% block metaOgImageTag %}
+						<meta property="og:image" content="{{ fetch('ogImage') ?: ogImage }}">
+					{% endblock %}
 				{% endblock %}
 
-				{%- block baseUrl -%}
+				{%- block baseUrlTag -%}
 					<base href="{{ baseUrl }}">
 				{%- endblock -%}
 
-				{%- set canonical = fetch('canonical') -%}
-				{%- if canonical == '' and page.duplicateOf and page.duplicate.slug != '404' -%}
-					{% set canonical = UrlHelper.build({lang: page.duplicate.languageShortcode, slug: page.duplicate.slug}) -%}
-				{%- endif %}
+				{% block canonical %}
+					{%- set canonical = fetch('canonical') ?: page.canonical -%}
+					{%- if canonical is empty and page.duplicateOf and page.duplicate.slug != '404' -%}
+						{% set canonical = UrlHelper.build({lang: page.duplicate.languageShortcode, slug: page.duplicate.slug}) -%}
+					{%- endif %}
 
-				{%- if canonical != '' -%}
-					<link rel="canonical" href="{{ canonical }}">
-				{%- endif -%}
+					{% block canonicalTag %}
+						{%- if canonical != '' -%}
+							<link rel="canonical" href="{{ canonical }}">
+						{%- endif -%}
+					{% endblock %}
+				{% endblock %}
 
 				{%- block favicons -%}
 					<link rel="apple-touch-icon" sizes="180x180" href="{{ baseUrl }}assets/favicon/apple-touch-icon.png">
@@ -105,11 +117,9 @@
 					<meta name="theme-color" content="#ffffff">
 				{%- endblock -%}
 
-				<meta property="og:image" content="{{ fetch('ogImage') ?: ogImage }}">
-
 				{%- block headStylesheets -%}
 					{%- block headStylesheetsFullStylesheet -%}
-						{%- do AssetHelper.add('full.css', [], true, null, 0) -%}
+						{%- do AssetHelper.add('full.css', critical: true, priority: 0) -%}
 					{%- endblock -%}
 
 					{%- block headStylesheetsCssLayer -%}

@@ -39,7 +39,7 @@
 	{%- endblock -%}
 
 	{%- block scriptsAddMainScript %}
-		{% do AssetHelper.add('main.js', {type: 'module'}, true, null, 0) %}
+		{% do AssetHelper.add('main.js', {type: 'module'}, critical: true, priority: 0) %}
 	{%- endblock -%}
 
 	{%- block scriptsAddFrontendEditor -%}
