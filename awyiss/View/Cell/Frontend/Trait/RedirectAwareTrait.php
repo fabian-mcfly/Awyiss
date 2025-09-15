@@ -24,7 +24,7 @@ trait RedirectAwareTrait {
 	 */
 	public function __toString(): string {
 		try {
-			return $this->render();
+			return trim($this->render());
 		}
 		catch (RedirectException $ex) {
 			// Redirects are handled by the middleware

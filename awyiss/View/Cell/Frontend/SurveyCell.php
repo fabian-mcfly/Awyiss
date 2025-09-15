@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\FrontendRenderingTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
+use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
 use Cake\View\Cell;
 
 
@@ -19,6 +20,7 @@ class SurveyCell extends Cell {
 	use FrontendRenderingTrait;
 	use PreviewTrait;
 	use RedirectAwareTrait;
+	use RenderTrimmedTrait;
 
 
 	/**

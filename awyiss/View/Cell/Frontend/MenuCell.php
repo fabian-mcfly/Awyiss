@@ -10,6 +10,7 @@ use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
+use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
 use Awyiss\View\FrontendView;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -25,6 +26,7 @@ use Cake\View\StringTemplate;
  */
 class MenuCell extends Cell {
 	use PreviewTrait;
+	use RenderTrimmedTrait;
 
 
 	/**

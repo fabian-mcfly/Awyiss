@@ -10,6 +10,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
+use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\ORM\Query\SelectQuery;
@@ -25,6 +26,7 @@ class ContentsCell extends Cell {
 	use ContentElementTrait;
 	use PreviewTrait;
 	use RedirectAwareTrait;
+	use RenderTrimmedTrait;
 
 
 	/**

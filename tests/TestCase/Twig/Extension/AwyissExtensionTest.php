@@ -322,13 +322,12 @@ class AwyissExtensionTest extends TestCase {
 		$contentFunction = $functions[1];
 		$callable = $contentFunction->getCallable();
 
-		$result = $callable([
+		$output = $callable([
 			'page' => $this->fetchTable('Pages')->get(1),
 			'_view' => $this->view,
 		], 'ContentArea');
 
-		$this->assertIsObject($result);
-		$this->assertInstanceOf(ContentsCell::class, $result);
+		$this->assertIsString($output);
 	}
 
 
@@ -341,7 +340,7 @@ class AwyissExtensionTest extends TestCase {
 		$contentFunction = $functions[1];
 		$callable = $contentFunction->getCallable();
 
-		$result = $callable(
+		$output = $callable(
 			[
 				'page' => $this->fetchTable('Pages')->get(1),
 				'_view' => $this->view,
@@ -352,8 +351,6 @@ class AwyissExtensionTest extends TestCase {
 				'singleColumnBreakpoint' => 768.00,
 			]
 		);
-
-		$output = (string)$result;
 
 		$output = trim(preg_replace('/\s+/', ' ', $output));
 		$output = str_replace('> ', '>' . PHP_EOL, $output);
@@ -387,22 +384,19 @@ class AwyissExtensionTest extends TestCase {
 		$formFunction = $functions[3];
 		$callable = $formFunction->getCallable();
 
-		$result = $callable([
+		$output = $callable([
 			'page' => $this->fetchTable('Pages')->get(1),
 			'_view' => $this->view,
 		], 1);
 
-		$this->assertInstanceOf(FormCell::class, $result);
+		$this->assertIsString($output);
 
-		$result = $callable(
-			[
-				'page' => $this->fetchTable('Pages')->get(1),
-				'_view' => $this->view,
-			],
-			'contact'
-		);
+		$output = $callable([
+			'page' => $this->fetchTable('Pages')->get(1),
+			'_view' => $this->view,
+		], 'contact');
 
-		$this->assertInstanceOf(FormCell::class, $result);
+		$this->assertIsString($output);
 	}
 
 
@@ -415,7 +409,7 @@ class AwyissExtensionTest extends TestCase {
 		$formFunction = $functions[3];
 		$callable = $formFunction->getCallable();
 
-		$result = $callable(
+		$output = $callable(
 			[
 				'page' => $this->fetchTable('Pages')->get(1),
 				'_view' => $this->view,
@@ -426,8 +420,6 @@ class AwyissExtensionTest extends TestCase {
 				'singleColumnBreakpoint' => 768.00,
 			]
 		);
-
-		$output = (string)$result;
 
 		$output = trim(preg_replace('/\s+/', ' ', $output));
 		$output = str_replace('> ', '>' . PHP_EOL, $output);
@@ -544,7 +536,7 @@ class AwyissExtensionTest extends TestCase {
 		$menuFunction = $functions[16];
 		$callable = $menuFunction->getCallable();
 
-		$result = $callable(
+		$output = $callable(
 			[
 				'languageShortcode' => 'de',
 				'_view' => $this->view,
@@ -552,9 +544,7 @@ class AwyissExtensionTest extends TestCase {
 			'main'
 		);
 
-		$this->assertInstanceOf(MenuCell::class, $result);
-
-		$output = trim(preg_replace('/\s+/', ' ', (string)$result));
+		$output = trim(preg_replace('/\s+/', ' ', $output));
 		$output = str_replace('> ', '>' . PHP_EOL, $output);
 
 		$this->assertStringEqualsFile(ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'output' . DS . 'Menu-Main.txt', $output);
@@ -663,17 +653,13 @@ class AwyissExtensionTest extends TestCase {
 		$surveyFunction = $functions[20];
 		$callable = $surveyFunction->getCallable();
 
-		$result = $callable(
+		$output = $callable(
 			[
 				'page' => $this->fetchTable('Pages')->get(1),
 				'_view' => $this->view,
 			],
 			'dummy_survey'
 		);
-
-		$this->assertInstanceOf(SurveyCell::class, $result);
-
-		$output = (string)$result;
 
 		$this->assertStringContainsString('<div class="Survey" id="Survey-DummySurvey">', $output);
 		$this->assertStringContainsString('<form method="post" action="#Survey-DummySurvey">', $output);
@@ -716,7 +702,7 @@ class AwyissExtensionTest extends TestCase {
 		$request = $this->view->getRequest()->withParsedBody($postData);
 		$this->view->setRequest($request);
 
-		$result = $callable(
+		$output = $callable(
 			[
 				'page' => $this->fetchTable('Pages')->get(1),
 				'_view' => $this->view,
@@ -728,8 +714,6 @@ class AwyissExtensionTest extends TestCase {
 				'columnWidth' => 40.00,
 			]
 		);
-
-		$output = (string)$result;
 
 		// Deactivate the third question
 		$surveyQuestionsTable->updateAll(['active' => false], ['id' => 3]);
@@ -766,14 +750,10 @@ class AwyissExtensionTest extends TestCase {
 		$widgetFunction = $functions[21];
 		$callable = $widgetFunction->getCallable();
 
-		$result = $callable(['_view' => $this->view], 'dummy_row_overflow', [
+		$output = $callable(['_view' => $this->view], 'dummy_row_overflow', [
 			'fullWidth' => 1440.00,
 			'singleColumnBreakpoint' => 768.00,
 		]);
-
-		$this->assertInstanceOf(WidgetsCell::class, $result);
-
-		$output = (string)$result;
 
 		$output = trim(preg_replace('/\s+/', ' ', $output));
 		$output = str_replace('> ', '>' . PHP_EOL, $output);
@@ -791,7 +771,7 @@ class AwyissExtensionTest extends TestCase {
 		$widgetFunction = $functions[21];
 		$callable = $widgetFunction->getCallable();
 
-		$result = $callable(
+		$output = $callable(
 			['_view' => $this->view],
 			'inline_img',
 			[
@@ -799,8 +779,6 @@ class AwyissExtensionTest extends TestCase {
 				'singleColumnBreakpoint' => 768.00,
 			]
 		);
-
-		$output = (string)$result;
 
 		$this->assertStringContainsString('<p>Widget with inline img tag</p><p><picture>', $output);
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1152].avif"', $output);

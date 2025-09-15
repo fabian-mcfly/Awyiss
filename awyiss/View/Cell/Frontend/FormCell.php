@@ -10,6 +10,7 @@ use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
+use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
 use Cake\Core\Configure;
 use Cake\View\Cell;
 
@@ -20,6 +21,7 @@ use Cake\View\Cell;
 class FormCell extends Cell {
 	use ContentElementTrait;
 	use RedirectAwareTrait;
+	use RenderTrimmedTrait;
 
 
 	/**

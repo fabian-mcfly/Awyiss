@@ -77,7 +77,7 @@ class AwyissExtension extends AbstractExtension {
 
 			new TwigFunction(
 				'content',
-				function (array $context, string $name, array $options = []) {
+				function (array $context, string $name, array $options = []): ?string {
 					if (empty($context['page']) || !$context['page'] instanceof Page) {
 						throw new InvalidArgumentException('The "content" function requires a Page entity in the context.');
 					}
@@ -85,7 +85,7 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Contents', [$name, $context['page'], $la_options]);
+					return $context['_view']->cell('Frontend/Contents', [$name, $context['page'], $la_options])->render() ?: null;
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
@@ -96,7 +96,7 @@ class AwyissExtension extends AbstractExtension {
 
 			new TwigFunction(
 				'form',
-				function (array $context, string|int $identifier, array $options = []) {
+				function (array $context, string|int $identifier, array $options = []): ?string {
 					if (empty($context['page']) || !$context['page'] instanceof Page) {
 						throw new InvalidArgumentException('The "form" function requires a Page entity in the context.');
 					}
@@ -104,7 +104,7 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Form', [$identifier, $context['page'], $la_options]);
+					return $context['_view']->cell('Frontend/Form', [$identifier, $context['page'], $la_options])->render() ?: null;
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
@@ -141,7 +141,7 @@ class AwyissExtension extends AbstractExtension {
 
 			new TwigFunction(
 				'menu',
-				function (array $context, string $name, array $options = []) {
+				function (array $context, string $name, array $options = []): ?string {
 					if (empty($context['languageShortcode']) || strlen($context['languageShortcode']) !== 2) {
 						throw new InvalidArgumentException('The "menu" function requires languageShortcode string in the context.');
 					}
@@ -149,7 +149,7 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Menu', [$name, $context['languageShortcode'], $la_options]);
+					return $context['_view']->cell('Frontend/Menu', [$name, $context['languageShortcode'], $la_options])->render() ?: null;
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
@@ -197,7 +197,7 @@ class AwyissExtension extends AbstractExtension {
 
 			new TwigFunction(
 				'survey',
-				function (array $context, string|int $identifier, array $options = []) {
+				function (array $context, string|int $identifier, array $options = []): ?string {
 					if (!($context['page'] ?? null) instanceof Page) {
 						throw new InvalidArgumentException('The "content" function requires a Page entity in the context.');
 					}
@@ -205,18 +205,18 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Survey', [$identifier, $context['page'], $la_options]);
+					return $context['_view']->cell('Frontend/Survey', [$identifier, $context['page'], $la_options])->render() ?: null;
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
 
 			new TwigFunction(
 				'widget',
-				function (array $context, string $name, array $options = []) {
+				function (array $context, string $name, array $options = []): ?string {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Widgets', [$name, $la_options]);
+					return $context['_view']->cell('Frontend/Widgets', [$name, $la_options])->render() ?: null;
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
