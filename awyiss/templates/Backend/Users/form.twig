@@ -18,6 +18,7 @@
 #}
 
 {{ FormHelper.create(user, {method: 'post', id: 'UserForm', idPrefix: 'User'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

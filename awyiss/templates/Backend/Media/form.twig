@@ -17,6 +17,7 @@
 #}
 
 {{ FormHelper.create(media, {enctype: 'multipart/form-data', method: 'post', id: 'MediaForm', idPrefix: 'media'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

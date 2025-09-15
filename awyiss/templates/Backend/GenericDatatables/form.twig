@@ -25,6 +25,7 @@
 #}
 
 {{ FormHelper.create(record, {method: 'post', id: 'GenericDatatableForm', idPrefix: datatable.identifier}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

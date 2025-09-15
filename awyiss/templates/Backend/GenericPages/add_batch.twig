@@ -68,6 +68,7 @@
 	{% endblock %}
 
 	{{ FormHelper.create(page, {method: 'post', id: 'GenericPageForm', idPrefix: pageRoleName}) }}
+	<input type="hidden" name="attributes" value="">
 
 	{% block fieldsets %}
 		<div class="Fieldsets">

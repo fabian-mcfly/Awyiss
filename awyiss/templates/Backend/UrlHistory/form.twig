@@ -20,6 +20,7 @@
 #}
 
 {{ FormHelper.create(urlHistory, {method: 'post', id: 'UrlHistoryForm', idPrefix: 'urlHistory'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

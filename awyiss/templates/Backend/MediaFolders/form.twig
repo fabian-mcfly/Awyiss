@@ -20,6 +20,7 @@
 #}
 
 {{ FormHelper.create(mediaFolder, {method: 'post', id: 'MediaFolderForm', idPrefix: 'MediaFolder'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

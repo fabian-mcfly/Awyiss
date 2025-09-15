@@ -37,6 +37,7 @@
 {% endmacro %}
 
 {{ FormHelper.create(widget, {method: 'post', id: 'WidgetForm', idPrefix: 'widget'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

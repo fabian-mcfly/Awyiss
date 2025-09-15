@@ -21,6 +21,7 @@
 #}
 
 {{ FormHelper.create(usergroup, {method: 'post', id: 'UsergroupForm', idPrefix: 'Usergroup'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

@@ -18,11 +18,8 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{{ FormHelper.create(surveyAnswer, {
-	id: 'SurveyAnswerForm',
-	idPrefix: 'surveyAnswer',
-	method: 'post',
-}) }}
+{{ FormHelper.create(surveyAnswer, {id: 'SurveyAnswerForm', idPrefix: 'surveyAnswer', method: 'post'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

@@ -24,6 +24,7 @@
 {% set entities = combine(assignableModels|keys, assignableModels|map(assignableModel => assignableModel.entities)) %}
 
 {{ FormHelper.create(mediaElement, {method: 'post', id: 'MediaElementForm', idPrefix: 'mediaElement'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

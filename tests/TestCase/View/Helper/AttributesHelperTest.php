@@ -99,7 +99,6 @@ class AttributesHelperTest extends TestCase {
 
 		$result = $this->helper->allControls('content');
 
-		$this->assertStringContainsString('<input type="hidden" name="attributes"', $result);
 		$this->assertStringContainsString('value="">', $result);
 		$this->assertStringContainsString('<div class="FormInput', $result);
 	}
@@ -119,8 +118,7 @@ class AttributesHelperTest extends TestCase {
 
 		$result = $this->helper->allControls('conditions');
 
-		$this->assertStringContainsString('<input type="hidden" name="attributes"', $result);
-		$this->assertStringContainsString('value="">', $result);
+		$this->assertStringNotContainsString('value="">', $result);
 		$this->assertStringNotContainsString('<div class="FormInput', $result);
 	}
 
@@ -141,30 +139,6 @@ class AttributesHelperTest extends TestCase {
 
 		$this->assertStringContainsString('<textarea name="attributes[free_text]"', $result);
 		$this->assertStringNotContainsString('<select name="attributes[dropdown_select][]', $result);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
-	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testAllControlsNotContainsHiddenOnConsecutiveCalls(): void {
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$entity = $this->fetchTable('Cars')->newDefaultEntity();
-
-		$this->helper->Form->create($entity);
-
-		$result = $this->helper->allControls('presentation');
-
-		$this->assertStringContainsString('<input type="hidden" name="attributes"', $result);
-		$this->assertStringContainsString('value="">', $result);
-
-		$result = $this->helper->allControls('presentation');
-
-		$this->assertStringNotContainsString('<input type="hidden" name="attributes"', $result);
-		$this->assertStringNotContainsString('value="">', $result);
 	}
 
 
@@ -195,7 +169,6 @@ class AttributesHelperTest extends TestCase {
 
 		$result = $this->helper->control('date');
 
-		$this->assertStringContainsString('<input type="hidden" name="attributes"', $result);
 		$this->assertStringContainsString('<input type="date" name="attributes[date]"', $result);
 	}
 
@@ -224,29 +197,6 @@ class AttributesHelperTest extends TestCase {
 	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testControlNotContainsHiddenOnConsecutiveCalls(): void {
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$entity = $this->fetchTable('News')->newDefaultEntity();
-		$this->helper->Form->create($entity);
-
-		$result = $this->helper->control('date');
-
-		$this->assertStringContainsString('<input type="hidden" name="attributes"', $result);
-		$this->assertStringContainsString('<input type="date" name="attributes[date]"', $result);
-
-		$result = $this->helper->control('date');
-
-		$this->assertStringNotContainsString('<input type="hidden" name="attributes"', $result);
-		$this->assertStringContainsString('<input type="date" name="attributes[date]"', $result);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\View\Helper\AttributesHelper::control()
-	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
 	public function testControlIncludesError(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$entity = $this->fetchTable('News')->newDefaultEntity();
@@ -256,7 +206,6 @@ class AttributesHelperTest extends TestCase {
 
 		$result = $this->helper->control('date');
 
-		$this->assertStringContainsString('<input type="hidden" name="attributes"', $result);
 		$this->assertStringContainsString('<input type="date" name="attributes[date]"', $result);
 		$this->assertStringContainsString('<div class="Error">This is an error.</div>', $result);
 	}
@@ -401,27 +350,6 @@ class AttributesHelperTest extends TestCase {
 	public function testControlReturnsEmptyFieldWhenAttributeNotFound(): void {
 		$entity = $this->fetchTable('Pages')->newDefaultEntity();
 		$this->helper->Form->create($entity);
-
-		$result = $this->helper->control('nonExistentField');
-
-		$this->assertStringContainsString('<input type="hidden" name="attributes"', $result);
-		$this->assertStringContainsString('value="">', $result);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\View\Helper\AttributesHelper::control()
-	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testControlReturnsEmptyStringWhenAttributeNotFoundOnConsecutiveCalls(): void {
-		$entity = $this->fetchTable('Pages')->newDefaultEntity();
-		$this->helper->Form->create($entity);
-
-		$result = $this->helper->control('nonExistentField');
-
-		$this->assertNotEmpty($result);
 
 		$result = $this->helper->control('nonExistentField');
 

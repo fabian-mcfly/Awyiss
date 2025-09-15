@@ -21,6 +21,7 @@
 #}
 
 {{ FormHelper.create(backendMenuEntry, {method: 'post', id: 'MenuEntryForm', idPrefix: 'menuEntry'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

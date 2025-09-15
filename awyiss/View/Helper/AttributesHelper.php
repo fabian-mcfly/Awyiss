@@ -91,19 +91,18 @@ class AttributesHelper extends Helper {
 	 * - `onlyProvided` Set to true to only output fields that are present in the `$fields`-parameter.
 	 *     Otherwise, fields will get merged.
 	 * @return string Completed form controls.
-	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	public function allControls(string $fieldset, array $fields = [], array $options = []): string {
 		$ls_source = $this->getSource();
-		$ls_emptyField = $this->initializeSource($ls_source);
+		$this->initializeSource($ls_source);
 
 		if (!isset(static::$attributesByFieldset)) {
 			$this->buildAttributesGroupedByFieldset($ls_source);
 		}
 
 		if (empty(static::$attributesByFieldset[ $fieldset ])) {
-			return $ls_emptyField;
+			return '';
 		}
 
 		$la_attributeFields = static::$attributesByFieldset[ $fieldset ];
@@ -121,7 +120,7 @@ class AttributesHelper extends Helper {
 		}
 
 		if (empty($la_fields)) {
-			return $ls_emptyField;
+			return '';
 		}
 
 		$ls_fields = '';
@@ -135,7 +134,7 @@ class AttributesHelper extends Helper {
 			$ls_fields .= $this->Form->control($ls_field, $la_options);
 		}
 
-		return $ls_emptyField . $ls_fields;
+		return $ls_fields;
 	}
 
 
@@ -148,14 +147,14 @@ class AttributesHelper extends Helper {
 	 */
 	public function control(string $fieldName, array $options = []): string {
 		$ls_source = $this->getSource();
-		$ls_emptyField = $this->initializeSource($ls_source);
+		$this->initializeSource($ls_source);
 
 		if (!isset(static::$attributes)) {
 			$this->buildAttributes($ls_source);
 		}
 
 		if (empty(static::$attributes[ $fieldName ])) {
-			return $ls_emptyField;
+			return '';
 		}
 
 		$la_field = $this->prepareField(
@@ -171,7 +170,7 @@ class AttributesHelper extends Helper {
 		/** @noinspection PhpAutovivificationOnFalseValuesInspection */
 		$la_options['templateVars']['identifier'] = 'Attributes-' . Inflector::camelize($fieldName);
 
-		return $ls_emptyField . $this->Form->control($ls_fieldName, $la_options);
+		return $this->Form->control($ls_fieldName, $la_options);
 	}
 
 
@@ -356,7 +355,7 @@ class AttributesHelper extends Helper {
 			return;
 		}
 
-		$la_groupedByFieldset = (new Collection($la_attributes))->combine(
+		$la_groupedByFieldset = new Collection($la_attributes)->combine(
 			'identifier',
 			function (Attribute $entity) {
 				return $entity;
@@ -550,27 +549,21 @@ class AttributesHelper extends Helper {
 	 * if the source has not been initialized yet.
 	 *
 	 * @param string $source
-	 * @return string
+	 * @return void
 	 * @throws \ReflectionException
 	 */
-	protected function initializeSource(string $source): string {
-		$ls_emptyField = '';
-
-		if (!isset(static::$initiatedSources[ $source ])) {
-			static::$initiatedSources[ $source ] = true;
-
-			$ls_emptyField = $this->Form->hidden('attributes', [
-				'val' => [],
-			]);
-
-			/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
-			$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
-			static::$attributeOptions[ $source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($source, true);
-
-			$this->initializeTranslate();
+	protected function initializeSource(string $source): void {
+		if (isset(static::$initiatedSources[ $source ])) {
+			return;
 		}
 
-		return $ls_emptyField;
+		static::$initiatedSources[ $source ] = true;
+
+		/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
+		$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
+		static::$attributeOptions[ $source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($source, true);
+
+		$this->initializeTranslate();
 	}
 
 

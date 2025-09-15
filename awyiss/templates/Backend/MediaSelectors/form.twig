@@ -19,6 +19,7 @@
 #}
 
 {{ FormHelper.create(mediaSelector, {method: 'post', id: 'MediaSelectorForm', idPrefix: 'mediaSelector'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

@@ -20,6 +20,7 @@
 {% use '@Backend/Configuration/blocks.twig' %}
 
 {{ FormHelper.create(configuration, {method: 'post', id: 'ConfigurationForm', idPrefix: 'Configuration'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% macro recursiveConfigOptions(items, level = 0, parent = []) %}
 	{% for key, configuration in items %}

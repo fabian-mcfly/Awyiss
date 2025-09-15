@@ -19,6 +19,7 @@
 #}
 
 {{ FormHelper.create(pageTemplate, {method: 'post', id: 'PageTemplateForm', idPrefix: 'PageTemplate'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

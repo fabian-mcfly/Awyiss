@@ -28,6 +28,7 @@
 {% block formOpen %}
 	{{ FormHelper.create(page, {method: 'post', id: 'PageForm', idPrefix: 'page'}) }}
 {% endblock %}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

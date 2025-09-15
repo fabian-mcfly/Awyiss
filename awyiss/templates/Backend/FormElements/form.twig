@@ -22,6 +22,7 @@
 #}
 
 {{ FormHelper.create(formElement, {method: 'post', id: 'FormElementForm', idPrefix: 'formElement'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set fieldsetGeneral %}
 	{% block fieldsetGeneral %}

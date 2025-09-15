@@ -21,6 +21,7 @@
 #}
 
 {{ FormHelper.create(contentTemplate, {method: 'post', id: 'ContentTemplateForm', idPrefix: 'ContentTemplate'}) }}
+<input type="hidden" name="attributes" value="">
 
 {% set originalAvailableFieldsets = availableFieldsets %}
 {% set availableFieldsets = [] %}
