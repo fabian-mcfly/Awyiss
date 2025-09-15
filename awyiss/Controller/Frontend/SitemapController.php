@@ -103,8 +103,8 @@ class SitemapController extends AppController {
 			$la_urls[] = [
 				'loc' => $ls_url,
 				'lastmod' => $lo_lastMod->format('Y-m-d'),
-				'changefreq' => 'weekly',
-				'priority' => '0.5',
+				'changefreq' => $lo_page->sitemapChangefreq ?? 'weekly',
+				'priority' => $lo_page->sitemapPriority ?? '0.5',
 			];
 		}
 
