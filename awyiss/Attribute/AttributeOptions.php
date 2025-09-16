@@ -18,7 +18,7 @@ use RuntimeException;
  *
  * It's used in classes that implement `AttributeOptionsInterface`
  *
- * @see AttributeOptionsInterface::initializeAttributeOptions
+ * @see \Awyiss\Attribute\AttributeOptionsCollectionInterface::initializeAttributeOptions
  */
 class AttributeOptions {
 	/**
@@ -95,7 +95,6 @@ class AttributeOptions {
 			$this->setValue($value);
 		}
 
-
 		if (!isset($this->identifier)) {
 			throw new RuntimeException('The `identifier` attribute is not set.');
 		}
@@ -117,7 +116,6 @@ class AttributeOptions {
 	 */
 	public function setIdentifier(string $identifier): static {
 		$this->identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
-
 
 		return $this;
 	}
@@ -152,7 +150,6 @@ class AttributeOptions {
 			$la_currentOptions['val'] = $lx_value;
 		}
 
-
 		return $la_currentOptions;
 	}
 
@@ -168,7 +165,6 @@ class AttributeOptions {
 			return call_user_func_array($this->disabled, [$entity, &$currentOptions]);
 		}
 
-
 		return $this->disabled;
 	}
 
@@ -180,7 +176,6 @@ class AttributeOptions {
 	 */
 	public function setDisabled(array|bool|callable $disabled): static {
 		$this->disabled = $disabled;
-
 
 		return $this;
 	}
@@ -195,7 +190,6 @@ class AttributeOptions {
 			return call_user_func_array($this->options, [$entity, &$currentOptions]);
 		}
 
-
 		return $this->options;
 	}
 
@@ -206,7 +200,6 @@ class AttributeOptions {
 	 */
 	public function setOptions(mixed $options): static {
 		$this->options = $options;
-
 
 		return $this;
 	}
@@ -221,7 +214,6 @@ class AttributeOptions {
 			return call_user_func_array($this->readonly, [$entity, &$currentOptions]);
 		}
 
-
 		return $this->readonly;
 	}
 
@@ -233,7 +225,6 @@ class AttributeOptions {
 	 */
 	public function setReadonly(bool|callable $readonly): static {
 		$this->readonly = $readonly;
-
 
 		return $this;
 	}
@@ -251,7 +242,6 @@ class AttributeOptions {
 			return call_user_func_array($this->toScalar, [$value, $entity, &$currentOptions]);
 		}
 
-
 		return $this->toScalar;
 	}
 
@@ -263,7 +253,6 @@ class AttributeOptions {
 	 */
 	public function setToScalar(?callable $toScalar = null): static {
 		$this->toScalar = $toScalar;
-
 
 		return $this;
 	}
@@ -293,7 +282,6 @@ class AttributeOptions {
 			return call_user_func_array($this->value, [$entity, &$currentOptions]);
 		}
 
-
 		return $this->value;
 	}
 
@@ -304,7 +292,6 @@ class AttributeOptions {
 	 */
 	public function setValue(mixed $value): static {
 		$this->value = $value;
-
 
 		return $this;
 	}
@@ -318,50 +305,52 @@ class AttributeOptions {
 	public function validateValue(mixed $value, ?Entity $entity = null): bool|string {
 		$lx_validate = $this->getValidate();
 
-		//No validation? Every value is valid.
+		// No validation? Every value is valid.
 		if ($lx_validate === false) {
 			return true;
 		}
-		//No validate option set? We need to check the other options
-		elseif ($lx_validate === null) {
-			$lx_disabled = $this->getDisabled(true, $entity);
 
-			//Disabled means no value is allowed
-			if (in_array($lx_disabled, ['disabled', true], true) && !empty($value)) {
-				return false;
-			}
+		// Return the result of the callable, if given
+		if (is_callable($lx_validate)) {
+			return $lx_validate($value, $entity, $this);
+		}
 
-			$lx_value = $value;
-			if ($value === null) {
-				return true;
-			}
+		// Any other value is invalid
+		if ($lx_validate !== null) {
+			throw new RuntimeException(sprintf('No valid `valite` option set in `%s`.', static::class));
+		}
 
-			$la_options = $this->getOptions(true, $entity);
+		$lx_disabled = $this->getDisabled(true, $entity);
 
-			// If the value is an array, we need to check if all values are valid
-			if (is_array($lx_value)) {
-				$lb_inOptions = count(array_intersect_key($la_options, array_flip($lx_value))) === count($lx_value);
-				$lb_inDisabled = array_intersect($lx_value, (array)$lx_disabled);
+		// Disabled means no value is allowed
+		if (in_array($lx_disabled, ['disabled', true], true) && !empty($value)) {
+			return false;
+		}
 
+		$lx_value = $value;
+		if ($value === null) {
+			return true;
+		}
 
-				return $lb_inOptions && !$lb_inDisabled;
-			}
+		$la_options = $this->getOptions(true, $entity);
 
-			if (!is_scalar($lx_value)) {
-				$lx_value = $this->toScalar($lx_value, $entity);
-			}
-
-			$lb_inOptions = array_key_exists($lx_value, $la_options);
-			$lb_inDisabled = is_array($lx_disabled) && in_array($lx_value, $lx_disabled) ? $lx_disabled : false;
+		// If the value is an array, we need to check if all values are valid
+		if (is_array($lx_value)) {
+			$lb_inOptions = count(array_intersect_key($la_options, array_flip($lx_value))) === count($lx_value);
+			$lb_inDisabled = array_intersect($lx_value, (array)$lx_disabled);
 
 
 			return $lb_inOptions && !$lb_inDisabled;
 		}
-		elseif (is_callable($lx_validate)) {
-			return $lx_validate($value, $entity, $this);
+
+		if (!is_scalar($lx_value)) {
+			$lx_value = $this->toScalar($lx_value, $entity);
 		}
 
-		throw new RuntimeException(sprintf('No valid `valite` option set in `%s`.', static::class));
+		$lb_inOptions = array_key_exists($lx_value, $la_options);
+		$lb_inDisabled = is_array($lx_disabled) && in_array($lx_value, $lx_disabled) ? $lx_disabled : false;
+
+		return $lb_inOptions && !$lb_inDisabled;
 	}
 
 
@@ -380,7 +369,6 @@ class AttributeOptions {
 	 */
 	public function setValidate(mixed $validate = null): static {
 		$this->validate = $validate;
-
 
 		return $this;
 	}

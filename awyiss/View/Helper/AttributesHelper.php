@@ -4,7 +4,7 @@
 namespace Awyiss\View\Helper;
 
 
-use Awyiss\Attribute\AttributeOptionsInterface;
+use Awyiss\Attribute\AttributeOptionsCollectionInterface;
 use Awyiss\Attribute\AttributeOptionsProvider;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -201,11 +201,11 @@ class AttributesHelper extends Helper {
 	 * @param string $fieldName
 	 * @param array $options
 	 * @param array $attributeFields
-	 * @param AttributeOptionsInterface|null $attributeOptions
+	 * @param \Awyiss\Attribute\AttributeOptionsCollectionInterface|null $attributeOptions
 	 * @return array<string, array>
 	 * @throws \Exception
 	 */
-	protected function prepareField(string $fieldName, array $options, array $attributeFields, ?AttributeOptionsInterface $attributeOptions): array {
+	protected function prepareField(string $fieldName, array $options, array $attributeFields, ?AttributeOptionsCollectionInterface $attributeOptions): array {
 		if (!array_key_exists($fieldName, $attributeFields)) {
 			return [];
 		}
@@ -248,11 +248,11 @@ class AttributesHelper extends Helper {
 	/**
 	 * @param array $fields
 	 * @param array $attributeFields
-	 * @param AttributeOptionsInterface|null $attributeOptions
+	 * @param \Awyiss\Attribute\AttributeOptionsCollectionInterface|null $attributeOptions
 	 * @return array<string, array>
 	 * @throws \Exception
 	 */
-	protected function prepareFields(array $fields, array $attributeFields, ?AttributeOptionsInterface $attributeOptions): array {
+	protected function prepareFields(array $fields, array $attributeFields, ?AttributeOptionsCollectionInterface $attributeOptions): array {
 		static $ls_categoryFieldName;
 
 		// Get the category field name

@@ -9,12 +9,12 @@ use Cake\View\Form\ContextInterface;
 
 
 /**
- * Signature of all neccessary methods to connect `AttributeOptionsCollection` with `AttributeOptionsProvider`
+ * Signature of all necessary methods to connect `AttributeOptionsCollection` with `AttributeOptionsProvider`
  *
- * @see AttributeOptions
- * @see AttributeOptionsProvider
+ * @see \Awyiss\Attribute\AttributeOptions
+ * @see \Awyiss\Attribute\AttributeOptionsProvider
  */
-interface AttributeOptionsInterface {
+interface AttributeOptionsCollectionInterface {
 	/**
 	 * Initializes the attribute options and adds them to the current object (`AttributeOptionsCollection`)
 	 *
@@ -46,7 +46,7 @@ interface AttributeOptionsInterface {
 
 
 	/**
-	 * Retreives an options class and validates the provided value for the given attributeOptionIdentifier
+	 * Retrieves an options class and validates the provided value for the given attributeOptionIdentifier
 	 *
 	 * Returns a string with an error message if the value is not valid.
 	 *
@@ -56,13 +56,4 @@ interface AttributeOptionsInterface {
 	 * @return string|bool
 	 */
 	public function validateValue(string $identifier, mixed $value, ?Entity $entity = null): bool|string;
-
-
-	/**
-	 * Return the scope of the options-collection.
-	 * If none is set, use the name of the class that extends this one
-	 *
-	 * @return string
-	 */
-	public static function getScope(): string;
 }

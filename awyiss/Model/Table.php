@@ -78,6 +78,7 @@ class Table extends BaseTable {
 	 * Allows \Awyiss\Model\Table\AttributesTable to set attributes for this table.
 	 *
 	 * @var bool
+	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableScopes()
 	 */
 	public const bool ATTRIBUTABLE = true;
 	/**
@@ -88,7 +89,7 @@ class Table extends BaseTable {
 	 * Name of the database table. Used in static::initialize() ($this->setTable(static::TABLE)) and in
 	 * \Awyiss\Model\Table\AttributesTable::getAvailableScopes()
 	 *
-	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableScopes();
+	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableScopes()
 	 * @var string
 	 */
 	public const string TABLE = '';

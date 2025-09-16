@@ -14,24 +14,13 @@ use RuntimeException;
 /**
  * A class to collect multiple AttributeOptions instances
  */
-abstract class AttributeOptionsCollection extends ArrayIterator implements AttributeOptionsInterface {
+abstract class AttributeOptionsCollection extends ArrayIterator implements AttributeOptionsCollectionInterface {
 	/**
 	 * Construct a new AttributeOptionsCollection
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
 	public function __construct() {
-		$ls_scope = static::getScope();
-		$ls_testScope = AttributeOptionsProvider::sanitizeScope($ls_scope);
-
-		if (empty($ls_testScope)) {
-			throw new RuntimeException('The scope cannot be empty.');
-		}
-
-		if ($ls_testScope !== $ls_scope) {
-			static::$scope = $ls_testScope;
-		}
-
 		$this->initializeAttributeOptions();
 	}
 
@@ -130,21 +119,5 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 
 
 		return $lo_attributeOptions->validateValue($value, $entity);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public static function getScope(): string {
-		if (!isset(static::$scope)) {
-			$la_parts = explode('\\', static::class);
-			static::$scope = array_pop($la_parts);
-			static::$scope = substr(static::$scope, 0, -16);
-			static::$scope = AttributeOptionsProvider::sanitizeScope(static::$scope);
-		}
-
-
-		return static::$scope;
 	}
 }

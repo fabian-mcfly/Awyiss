@@ -15,21 +15,6 @@ use RuntimeException;
  */
 class AttributeOptionsCollectionTest extends TestCase {
 	/**
-	 * Test constructor and the scope
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testConstructorAndScope(): void {
-		$attributeOptionsCollection = new EmptyAttributeOptionsCollection();
-
-		$this->assertNotNull($attributeOptionsCollection);
-
-		// The scope will be sanitized and not 'Empty', but 'Empties'
-		$this->assertEquals('Empties', $attributeOptionsCollection::getScope());
-	}
-
-
-	/**
 	 * Test if adding AttributeOptions instances works
 	 * Either by passing an array or an instance
 	 *

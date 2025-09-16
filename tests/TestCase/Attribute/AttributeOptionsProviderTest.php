@@ -4,7 +4,7 @@
 namespace Awyiss\Test\TestCase\Attribute;
 
 
-use Awyiss\Attribute\AttributeOptionsInterface;
+use Awyiss\Attribute\AttributeOptionsCollectionInterface;
 use Awyiss\Attribute\AttributeOptionsProvider;
 use Awyiss\Test\TestSuite\TestCase;
 
@@ -46,7 +46,7 @@ class AttributeOptionsProviderTest extends TestCase {
 		$files = AttributeOptionsProvider::getAttributeOptionsFiles(true);
 
 		foreach ($files as $file) {
-			$this->assertInstanceOf(AttributeOptionsInterface::class, $file);
+			$this->assertInstanceOf(AttributeOptionsCollectionInterface::class, $file);
 		}
 	}
 
@@ -62,7 +62,7 @@ class AttributeOptionsProviderTest extends TestCase {
 	public function testLoadAttributeOptions(): void {
 		$attributeOptions = AttributeOptionsProvider::loadAttributeOptions('Empty');
 
-		$this->assertInstanceOf(AttributeOptionsInterface::class, $attributeOptions);
+		$this->assertInstanceOf(AttributeOptionsCollectionInterface::class, $attributeOptions);
 
 		$attributeOptions = AttributeOptionsProvider::loadAttributeOptions('Abstract');
 
@@ -89,7 +89,7 @@ class AttributeOptionsProviderTest extends TestCase {
 
 		$file = AttributeOptionsProvider::getAttributeOptionsFile('Contents', true);
 
-		$this->assertInstanceOf(AttributeOptionsInterface::class, $file);
+		$this->assertInstanceOf(AttributeOptionsCollectionInterface::class, $file);
 	}
 
 

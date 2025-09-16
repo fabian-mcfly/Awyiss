@@ -90,7 +90,7 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @var array<string, string|\Awyiss\Attribute\AttributeOptionsInterface>
+	 * @var array<string, string|\Awyiss\Attribute\AttributeOptionsCollectionInterface>
 	 */
 	protected static array $attributeOptions;
 	/**
@@ -374,7 +374,7 @@ class AttributesBehavior extends Behavior {
 
 		/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
 		$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
-		/** @var \Awyiss\Attribute\AttributeOptionsInterface $lo_attributeOptions */
+		/** @var \Awyiss\Attribute\AttributeOptionsCollectionInterface $lo_attributeOptions */
 		$lo_attributeOptions = static::$attributeOptions[ $ls_source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($ls_source, true);
 
 		/** @var \Awyiss\Model\Entity\Attribute $lo_attribute */

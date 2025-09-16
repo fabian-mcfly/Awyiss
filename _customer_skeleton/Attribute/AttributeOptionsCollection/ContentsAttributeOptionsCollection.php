@@ -16,9 +16,7 @@ class ContentsAttributeOptionsCollection extends AttributeOptionsCollection {
 
 
 	/**
-	 * Initializes the attribute options for the Contents scope.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function initializeAttributeOptions(): void {
 		$this->add([
@@ -33,18 +31,14 @@ class ContentsAttributeOptionsCollection extends AttributeOptionsCollection {
 
 					return $la_options;
 				},*/
-				'options' => function(?EntityInterface $entity = null, array &$currentOptions = []) {
-					$la_options = [
-						'text' => 'Text',
-						'dark' => 'Dunkel',
-						'medium' => 'Mittel',
-						'light' => 'Hell',
-						'main' => 'Hauptfarbe',
-						'contrast' => 'Kontrastfarbe',
-					];
-
-					return $la_options;
-				},
+				'options' => [
+					'text' => 'Text',
+					'dark' => 'Dunkel',
+					'medium' => 'Mittel',
+					'light' => 'Hell',
+					'main' => 'Hauptfarbe',
+					'contrast' => 'Kontrastfarbe',
+				],
 				/*'validate' => function() {
 					return FALSE;
 				},
