@@ -467,10 +467,34 @@ class BackendMenuItemTest extends TestCase {
 		// Test ArrayAccess
 		$this->assertTrue(isset($menuItem['title']));
 		$this->assertSame('Test Menu Item', $menuItem['title']);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetSet()
+	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetUnset()
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testOffsetSetIsDisabled(): void {
+		$menuItem = new BackendMenuItem($this->menuEntry, $this->menuConfig);
 
 		// Test exceptions
 		$this->expectException(RuntimeException::class);
 		$menuItem['title'] = 'New Title';
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetSet()
+	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetUnset()
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testOffsetUnsetIsDisabled(): void {
+		$menuItem = new BackendMenuItem($this->menuEntry, $this->menuConfig);
 
 		// Test exceptions
 		$this->expectException(RuntimeException::class);

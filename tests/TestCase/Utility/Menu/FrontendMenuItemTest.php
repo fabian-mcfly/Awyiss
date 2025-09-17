@@ -200,19 +200,19 @@ class FrontendMenuItemTest extends TestCase {
 	 */
 	public function testPublicationDates(): void {
 		// Test with future publication start date
-		$this->menuEntry->publicationStart = (new DateTime())->modify('+1 day');
+		$this->menuEntry->publicationStart = new DateTime()->modify('+1 day');
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
 		$this->assertFalse($menuItem->getActive());
 
 		// Test with past publication end date
 		$this->menuEntry->publicationStart = null;
-		$this->menuEntry->publicationEnd = (new DateTime())->modify('-1 day');
+		$this->menuEntry->publicationEnd = new DateTime()->modify('-1 day');
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
 		$this->assertFalse($menuItem->getActive());
 
 		// Test with valid publication dates
-		$this->menuEntry->publicationStart = (new DateTime())->modify('-1 day');
-		$this->menuEntry->publicationEnd = (new DateTime())->modify('+1 day');
+		$this->menuEntry->publicationStart = new DateTime()->modify('-1 day');
+		$this->menuEntry->publicationEnd = new DateTime()->modify('+1 day');
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
 		$this->assertTrue($menuItem->getActive());
 	}
@@ -410,10 +410,32 @@ class FrontendMenuItemTest extends TestCase {
 		// Test ArrayAccess
 		$this->assertTrue(isset($menuItem['title']));
 		$this->assertSame('Test Menu Item', $menuItem['title']);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::offsetSet()
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testOffsetSetIsDisabled(): void {
+		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
 
 		// Test exceptions
 		$this->expectException(RuntimeException::class);
 		$menuItem['title'] = 'New Title';
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::offsetUnset()
+	 * @throws \ReflectionException
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testOffsetUnsetIsDisabled(): void {
+		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
 
 		// Test exceptions
 		$this->expectException(RuntimeException::class);

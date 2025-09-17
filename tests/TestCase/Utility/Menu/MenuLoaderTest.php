@@ -7,9 +7,11 @@ namespace Awyiss\Test\TestCase\Utility\Menu;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Menu\BackendMenu;
 use Awyiss\Utility\Menu\BackendMenuItem;
+use Awyiss\Utility\Menu\Exception\MenuDuplicateIdentifierException;
+use Awyiss\Utility\Menu\Exception\MenuFileException;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Awyiss\Utility\Menu\MenuLoader;
 use Error;
-use RuntimeException;
 use Symfony\Component\Process\Process;
 
 
@@ -164,7 +166,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::validateData()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithValidData(): void {
@@ -197,7 +198,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::validateData()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithInvalidData(): void {
@@ -227,7 +227,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::validateData()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithSchemaPath(): void {
@@ -262,7 +261,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithoutClasses(): void {
@@ -286,7 +284,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithClasses(): void {
@@ -314,7 +311,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithSchemaValidation(): void {
@@ -352,7 +348,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithSchemaValidationFailure(): void {
@@ -369,7 +364,7 @@ class MenuLoaderTest extends TestCase {
 			'validate' => ['schema' => $this->menuSchema],
 		];
 
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		MenuLoader::fromObject($data, $config);
 	}
 
@@ -380,7 +375,6 @@ class MenuLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
 	 * @see \Awyiss\Utility\Menu\MenuLoader::validateUniqueIdentifiers()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithUniqueIdentifiersValidation(): void {
@@ -421,7 +415,7 @@ class MenuLoaderTest extends TestCase {
 			],
 		];
 
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuDuplicateIdentifierException::class);
 		$this->expectExceptionMessage('Cannot use identifier `subitem1` twice in `Awyiss\Utility\Menu\MenuLoader`');
 		MenuLoader::fromObject($data, $config);
 	}
@@ -432,7 +426,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromJsonFile()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromJsonFile(): void {
@@ -459,10 +452,9 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromJsonFile()
-	 * @throws \ReflectionException
 	 */
 	public function testFromJsonFileWithNonExistentFile(): void {
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuFileException::class);
 		MenuLoader::fromJsonFile($this->testDir . 'nonexistent.json');
 	}
 
@@ -472,7 +464,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromJsonString()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromJsonString(): void {
@@ -496,10 +487,9 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromJsonString()
-	 * @throws \ReflectionException
 	 */
 	public function testFromJsonStringWithInvalidJson(): void {
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		MenuLoader::fromJsonString('{invalid:json}');
 	}
 
@@ -531,7 +521,7 @@ class MenuLoaderTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\MenuLoader::loadJsonFile()
 	 */
 	public function testLoadJsonFileWithNonExistentFile(): void {
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuFileException::class);
 		$this->expectExceptionMessage('File');
 		MenuLoader::loadJsonFile($this->testDir . 'nonexistent.json');
 	}
@@ -560,7 +550,7 @@ class MenuLoaderTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadJsonStringWithInvalidJson(): void {
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		$this->expectExceptionMessage('Invalid JSON string');
 		MenuLoader::loadJsonString('{invalid:json}');
 	}

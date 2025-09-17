@@ -4,7 +4,7 @@
 namespace Awyiss\Utility\Menu;
 
 
-use RuntimeException;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 
 
 /**
@@ -25,7 +25,7 @@ class BackendMenu extends Menu {
 		if (!$this->hasItem($identifier)) {
 			if (!$this->hasItem('system')) {
 				// If an item to append to is still not found, throw an exception
-				throw new RuntimeException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $identifier));
+				throw new MenuValidationException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $identifier));
 			}
 
 			/** @noinspection PhpVariableNamingConventionInspection */

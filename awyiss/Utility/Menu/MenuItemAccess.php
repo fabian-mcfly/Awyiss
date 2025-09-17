@@ -4,7 +4,7 @@
 namespace Awyiss\Utility\Menu;
 
 
-use RuntimeException;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 
 
 /**
@@ -30,11 +30,11 @@ class MenuItemAccess {
 	 */
 	public function __construct(object $access) {
 		if (!isset($access->scope)) {
-			throw new RuntimeException('Access scope is required');
+			throw new MenuValidationException('Access scope is required');
 		}
 
 		if (!isset($access->identifier)) {
-			throw new RuntimeException('Access identifier is required');
+			throw new MenuValidationException('Access identifier is required');
 		}
 
 		$this->scope = $access->scope;

@@ -5,10 +5,12 @@ namespace Awyiss\Utility\Menu;
 
 
 use Awyiss\Core\App;
+use Awyiss\Utility\Menu\Exception\MenuDuplicateIdentifierException;
+use Awyiss\Utility\Menu\Exception\MenuFileException;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use JsonSchema\Constraints\Factory;
 use JsonSchema\SchemaStorage;
 use JsonSchema\Validator;
-use RuntimeException;
 
 
 /**
@@ -20,7 +22,6 @@ class MenuLoader {
 	 * @param object $data
 	 * @param array $config
 	 * @return bool
-	 * @throws \ReflectionException
 	 */
 	public static function validateData(object $data, array $config): bool {
 		$lo_factory = null;
@@ -55,7 +56,6 @@ class MenuLoader {
 	 * @param object $data
 	 * @param array $config
 	 * @return \Awyiss\Utility\Menu\Menu
-	 * @throws \ReflectionException
 	 */
 	public static function fromObject(object $data, array $config = []): Menu {
 		$lb_validateUniqueIdentifiers = $config['validate']['uniqueIdentifiers'] ?? false;
@@ -65,7 +65,7 @@ class MenuLoader {
 		if (isset($la_config['validate'])) {
 			$lb_valid = static::validateData($data, $la_config['validate']);
 			if (!$lb_valid) {
-				throw new RuntimeException('The data is not valid according to the specified schema');
+				throw new MenuValidationException('The data is not valid according to the specified schema');
 			}
 		}
 
@@ -89,7 +89,6 @@ class MenuLoader {
 	 * @param string $filePath
 	 * @param array $config
 	 * @return \Awyiss\Utility\Menu\Menu
-	 * @throws \ReflectionException
 	 */
 	public static function fromJsonFile(string $filePath, array $config = []): Menu {
 		$lo_data = static::loadJsonFile($filePath);
@@ -103,7 +102,6 @@ class MenuLoader {
 	 * @param string $jsonString
 	 * @param array $config
 	 * @return \Awyiss\Utility\Menu\Menu
-	 * @throws \ReflectionException
 	 */
 	public static function fromJsonString(string $jsonString, array $config = []): Menu {
 		$lo_data = static::loadJsonString($jsonString);
@@ -121,7 +119,7 @@ class MenuLoader {
 		$ls_filePath = realpath($filePath);
 
 		if (!$ls_filePath || !file_exists($ls_filePath)) {
-			throw new RuntimeException(sprintf('File `%s` does not exist.', $ls_filePath));
+			throw new MenuFileException(sprintf('File `%s` does not exist.', $ls_filePath));
 		}
 
 		$ls_jsonString = file_get_contents($ls_filePath);
@@ -138,7 +136,7 @@ class MenuLoader {
 	public static function loadJsonString(string $jsonString): object {
 		$lo_data = json_decode($jsonString);
 		if (json_last_error() !== JSON_ERROR_NONE) {
-			throw new RuntimeException('Invalid JSON string.');
+			throw new MenuValidationException('Invalid JSON string.');
 		}
 
 
@@ -154,7 +152,7 @@ class MenuLoader {
 		$la_knownIdentifiers = [];
 		foreach ($menu->items() as $ls_identifier => $lo_item) {
 			if (in_array($ls_identifier, $la_knownIdentifiers)) {
-				throw new RuntimeException(sprintf('Cannot use identifier `%s` twice in `%s`', $ls_identifier, self::class));
+				throw new MenuDuplicateIdentifierException(sprintf('Cannot use identifier `%s` twice in `%s`', $ls_identifier, self::class));
 			}
 
 			$la_knownIdentifiers[] = $ls_identifier;

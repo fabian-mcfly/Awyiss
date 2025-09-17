@@ -9,6 +9,7 @@ use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Core\App;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Cake\Core\InstanceConfigTrait;
 use Generator;
 use RuntimeException;
@@ -88,7 +89,7 @@ abstract class MenuItem implements ArrayAccess {
 	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $identity The identity to check accessibility for.
 	 * @return bool|null Returns true if the menu item is accessible by the provided identity, false otherwise.
 	 * If the accessibility is not set, it returns null.
-	 * @throws \ReflectionException If the class does not exist.
+	 * @throws \ReflectionException
 	 */
 	public function isAccessibleBy(?IdentityPermissionsInterface $identity = null): ?bool {
 		//No access settings means the item is always accessible
@@ -495,7 +496,7 @@ abstract class MenuItem implements ArrayAccess {
 
 		if (is_object($entity->title)) {
 			if (!isset($entity->title->translate)) {
-				throw new RuntimeException(sprintf('Missing property `translate` for `title` in `%s`', static::class));
+				throw new MenuValidationException(sprintf('Missing property `translate` for `title` in `%s`', static::class));
 			}
 
 			return __d(... (array)$entity->title->translate);

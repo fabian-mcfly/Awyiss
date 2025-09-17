@@ -57,7 +57,7 @@ class BackendMenuProviderTest extends TestCase {
 
 		$this->loadRoutes();
 
-		$this->request = (new ServerRequest([
+		$this->request = new ServerRequest([
 			'url' => '/backend/xy/dummy/overview/',
 			'params' => [
 				'lang' => 'xy',
@@ -69,7 +69,7 @@ class BackendMenuProviderTest extends TestCase {
 				'pass' => [],
 				'plugin' => null,
 			],
-		]))->withAttribute('authorization', new AuthorizationService('Backend'));
+		])->withAttribute('authorization', new AuthorizationService('Backend'));
 
 		Router::setRequest($this->request);
 

@@ -119,7 +119,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderMenuWithItems(): void {
@@ -151,7 +150,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderMenuWithNestedItems(): void {
@@ -195,7 +193,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderMenuWithInaccessibleItems(): void {
@@ -240,7 +237,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCustomClasses(): void {
@@ -281,7 +277,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCurrentRoute(): void {
@@ -312,7 +307,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see\Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCurrentRouteInChildren(): void {
@@ -350,7 +344,6 @@ class MenuRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::optimizeUrl()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderLinkAttributes(): void {
@@ -377,7 +370,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::optimizeUrl()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderHomepageLink(): void {
@@ -426,7 +418,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::optimizeUrl()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderNonHomepageLink(): void {
@@ -475,7 +466,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::optimizeUrl()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderEscapesTitle(): void {
@@ -505,7 +495,6 @@ class MenuRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderActiveOnly(): void {
@@ -546,7 +535,6 @@ class MenuRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderMaxLevel(): void {
@@ -594,7 +582,6 @@ class MenuRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @throws \ReflectionException
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderUsesFormatters(): void {

@@ -23,6 +23,7 @@ class MenuRenderer {
 
 	/**
 	 * @var array
+	 * @noinspection HtmlUnknownAttribute
 	 */
 	protected array $_defaultConfig = [
 		'activeOnly' => true,

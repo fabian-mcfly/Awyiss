@@ -7,9 +7,9 @@ namespace Awyiss\Utility\Menu;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\BackendMenuEntry;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
-use RuntimeException;
 
 
 /**
@@ -20,9 +20,21 @@ class BackendMenuProvider {
 	use LocatorAwareTrait;
 
 
+	/**
+	 * @var \Awyiss\Authorization\IdentityPermissionsInterface|null
+	 */
 	protected ?IdentityPermissionsInterface $identity = null;
+	/**
+	 * @var \Awyiss\Utility\Menu\BackendMenu|null
+	 */
 	protected ?Menu $menu = null;
+	/**
+	 * @var \Awyiss\Utility\Menu\BackendMenu|null
+	 */
 	protected ?Menu $customMenu = null;
+	/**
+	 * @var \Awyiss\Utility\Menu\BackendMenu|null
+	 */
 	protected ?Menu $dynamicMenu = null;
 
 
@@ -68,7 +80,6 @@ class BackendMenuProvider {
 
 	/**
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	protected function createMenu(): void {
 		$la_config = [
@@ -105,7 +116,7 @@ class BackendMenuProvider {
 		]);
 
 		if (!$lb_valid) {
-			throw new RuntimeException('The data is not valid according to menu-extension.schema.json');
+			throw new MenuValidationException('The data is not valid according to menu-extension.schema.json');
 		}
 
 		/**

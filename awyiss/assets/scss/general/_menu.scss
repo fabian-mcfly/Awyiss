@@ -1,3 +1,4 @@
+#MenuException,
 #Menu-System {
 	display:flex;
 	box-shadow:0 0 10px rgba(0, 0, 0, .25);
@@ -6,7 +7,17 @@
 	background-color:var(--backgroundColorMenu);
 	flex:0 1 auto;
 	position:relative;
+}
 
+#MenuException {
+	height:100%;
+	padding-inline:20px;
+	font-size:14px;
+	line-height:1.2;
+	align-items:center;
+}
+
+#Menu-System {
 	&.Calculating {
 		overflow:hidden;
 	}

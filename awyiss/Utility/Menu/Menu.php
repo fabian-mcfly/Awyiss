@@ -5,9 +5,9 @@ namespace Awyiss\Utility\Menu;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Cake\Core\InstanceConfigTrait;
 use Generator;
-use RuntimeException;
 
 
 /**
@@ -94,11 +94,11 @@ abstract class Menu {
 
 		if (!$lo_item) {
 			// If an item to append to is still not found, throw an exception
-			throw new RuntimeException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $identifier));
+			throw new MenuValidationException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $identifier));
 		}
 
 		if (!$entries) {
-			throw new RuntimeException('Cannot append empty entries.');
+			throw new MenuValidationException('Cannot append empty entries.');
 		}
 
 		$lo_subMenu = $lo_item->getChildren();
@@ -120,7 +120,7 @@ abstract class Menu {
 	 * @param mixed $menuData
 	 * @return $this
 	 * @throws \ReflectionException
-	 * @see awyiss/config/menu-extension.schema.json
+	 * @see /awyiss/config/menu-extension.schema.json
 	 */
 	public function extend(iterable|object $menuData): static {
 		$la_menuData = (array)$menuData;
@@ -187,7 +187,7 @@ abstract class Menu {
 	 */
 	public function insertEntriesAfter(array $entries, ?string $identifier = null, bool $determineVisibility = true): void {
 		if ($identifier && !isset($this->items[ $identifier ]) && !$this->getItem($identifier)) {
-			throw new RuntimeException(sprintf('Cannot insert entries after an unknown identifier. `%s` given.', $identifier));
+			throw new MenuValidationException(sprintf('Cannot insert entries after an unknown identifier. `%s` given.', $identifier));
 		}
 
 		$lo_newMenu = new static($entries, $this->getConfig() + ['identity' => $this->identity], $this->level);

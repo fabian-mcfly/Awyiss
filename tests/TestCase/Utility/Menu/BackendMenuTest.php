@@ -9,10 +9,10 @@ use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Menu\BackendMenu;
 use Awyiss\Utility\Menu\BackendMenuItem;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Customer\Utility\Menu\BackendMenu as CustomBackendMenu;
 use Customer\Utility\Menu\BackendMenuItem as CustomBackendMenuItem;
 use ReflectionClass;
-use RuntimeException;
 
 
 /**
@@ -214,7 +214,7 @@ class BackendMenuTest extends TestCase {
 			'item1' => new BackendMenuEntry(['title' => 'Item 1', 'active' => true]),
 		], $this->menuConfig);
 
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		$this->expectExceptionMessage('Cannot append empty entries.');
 
 		$menu->appendEntries([], 'item1');

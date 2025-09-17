@@ -7,12 +7,12 @@ namespace Awyiss\Test\TestCase\Utility\Menu;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Test\TestSuite\TestCase;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Awyiss\Utility\Menu\FrontendMenu;
 use Awyiss\Utility\Menu\FrontendMenuItem;
 use Customer\Utility\Menu\FrontendMenu as CustomFrontendMenu;
 use Customer\Utility\Menu\FrontendMenuItem as CustomFrontendMenuItem;
 use ReflectionClass;
-use RuntimeException;
 
 
 /**
@@ -194,7 +194,7 @@ class FrontendMenuTest extends TestCase {
 			'item1_1' => new MenuEntry(['title' => 'Item 1.1', 'active' => true]),
 		];
 
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		$this->expectExceptionMessage('Cannot append entries to an unknown identifier. `nonexistent` given.');
 		$menu->appendEntries($entries, 'nonexistent');
 	}
@@ -213,7 +213,7 @@ class FrontendMenuTest extends TestCase {
 			'item1' => new MenuEntry(['title' => 'Item 1', 'active' => true]),
 		], $this->menuConfig);
 
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		$this->expectExceptionMessage('Cannot append empty entries.');
 
 		$menu->appendEntries([], 'item1');
@@ -293,7 +293,7 @@ class FrontendMenuTest extends TestCase {
 			'item3' => new MenuEntry(['title' => 'Item 3', 'active' => true]),
 		];
 
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		$this->expectExceptionMessage('Cannot insert entries after an unknown identifier. `nonexistent` given.');
 		$menu->insertEntriesAfter($entries, 'nonexistent');
 	}
@@ -381,7 +381,7 @@ class FrontendMenuTest extends TestCase {
 			],
 		];
 
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		$menu->extend($menuData);
 	}
 
@@ -439,7 +439,7 @@ class FrontendMenuTest extends TestCase {
 			],
 		];
 
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		$this->expectExceptionMessage('Cannot insert entries after an unknown identifier. `nonexistent` given.');
 		$menu->extend($menuData);
 	}

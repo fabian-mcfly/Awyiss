@@ -5,8 +5,8 @@ namespace Awyiss\Test\TestCase\Utility\Menu;
 
 
 use Awyiss\Test\TestSuite\TestCase;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Awyiss\Utility\Menu\MenuItemAccess;
-use RuntimeException;
 use stdClass;
 
 
@@ -72,7 +72,7 @@ class MenuItemAccessTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorThrowsExceptionWhenScopeIsMissing(): void {
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		$this->expectExceptionMessage('Access scope is required');
 
 		$access = new stdClass();
@@ -87,7 +87,7 @@ class MenuItemAccessTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorThrowsExceptionWhenIdentifierIsMissing(): void {
-		$this->expectException(RuntimeException::class);
+		$this->expectException(MenuValidationException::class);
 		$this->expectExceptionMessage('Access identifier is required');
 
 		$access = new stdClass();

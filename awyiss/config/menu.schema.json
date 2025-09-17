@@ -132,7 +132,11 @@
 					]
 				}
 			},
-			"required": ["title", "link"],
+			"required": ["title"],
+			"anyOf": [
+				{ "required": ["link"] },
+				{ "required": ["children"] }
+			],
 			"additionalProperties": false
 		}
 	}

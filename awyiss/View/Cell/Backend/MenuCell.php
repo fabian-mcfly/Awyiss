@@ -9,6 +9,9 @@ use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
+use Awyiss\Utility\Menu\Exception\MenuDuplicateIdentifierException;
+use Awyiss\Utility\Menu\Exception\MenuFileException;
+use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\Cell;
@@ -72,7 +75,11 @@ class MenuCell extends Cell {
 			$la_menuData = json_decode($ls_menu, true);
 			$lo_time = new DateTime($la_menuData['time']);
 
-			// If the cached menu is outdated, clear the menu data
+			/**
+			 * If the user hasn't changed since the menu was changed,
+			 * check if there are any new, changed or deleted menu entries
+			 * in the database since the menu was cached. If there are, invalidate the menu cache.
+			 */
 			if ($lo_time >= $lo_identity->changedOn) {
 				$lo_table = $this->fetchTable('BackendMenuEntries');
 				/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
@@ -84,19 +91,36 @@ class MenuCell extends Cell {
 					],
 				])->first();
 
+				// If there are newer menu entries, invalidate the menu cache.
 				if ($lo_entity) {
 					$la_menuData = [];
 				}
 			}
+			else {
+				// If the user has changed since the menu was cached, invalidate the menu cache.
+				$la_menuData = [];
+			}
 		}
-		// If the menu data is not in the session or is outdated, regenerate the menu data
-		/** @noinspection PhpUndefinedVariableInspection */
-		if (!$la_menuData || $lo_time < $lo_identity->changedOn) {
+
+		if (!$la_menuData) {
 			/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $ls_backendMenuProviderClass */
 			$ls_backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
 
-			$lo_menu = new $ls_backendMenuProviderClass();
-			$lo_menu = $lo_menu->getDynamicMenu();
+			try {
+				$lo_menu = new $ls_backendMenuProviderClass();
+				$lo_menu = $lo_menu->getDynamicMenu();
+			}
+			catch (MenuDuplicateIdentifierException | MenuFileException | MenuValidationException $ex) {
+				// Set the menu in the view variables
+				$this->set([
+					'menu' => '<div id="MenuException">' . $ex->getMessage() . '</div>',
+				]);
+
+				// Set the template for the view
+				$this->viewBuilder()->setTemplatePath('Backend/cell/Menu')->setTemplate('menu');
+
+				return;
+			}
 
 			// Cache the menu data and the time it was cached
 			$lo_session->write($ls_sessionIdentifier, json_encode([
