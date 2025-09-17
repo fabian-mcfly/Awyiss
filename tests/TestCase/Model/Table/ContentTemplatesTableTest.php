@@ -680,7 +680,7 @@ class ContentTemplatesTableTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedContentsInvalid(): void {
-		$contentTemplate = $this->contentTemplatesTable->get(1); // Content template that has linked contents
+		$contentTemplate = $this->contentTemplatesTable->get(1); // Content Template that has linked contents
 
 		$result = $this->contentTemplatesTable->checkRules($contentTemplate, RulesChecker::DELETE);
 		$this->assertFalse($result);

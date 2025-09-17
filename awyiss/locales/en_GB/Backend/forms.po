@@ -27,7 +27,7 @@ msgid "menu_add"
 msgstr "New Form"
 
 msgid "headline_overview"
-msgstr "Forms"
+msgstr "New Form"
 
 msgid "create"
 msgstr "Create"

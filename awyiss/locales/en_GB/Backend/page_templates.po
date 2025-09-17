@@ -33,7 +33,7 @@ msgid "menu_configure"
 msgstr "Configuration"
 
 msgid "page_role_filter_label"
-msgstr "Page role"
+msgstr "Page Role"
 
 msgid "page_role_filter_all"
 msgstr "All"
@@ -72,10 +72,10 @@ msgid "delete_failed"
 msgstr "The Page Template could not be deleted"
 
 msgid "page_role_id"
-msgstr "Page role"
+msgstr "Page Role"
 
 msgid "page_role_title"
-msgstr "Page role"
+msgstr "Page Role"
 
 msgid "file_name"
 msgstr "File name"
@@ -84,10 +84,10 @@ msgid "used_for_pages"
 msgstr "Used for Pages"
 
 msgid "content_areas_available"
-msgstr "Available Content areas"
+msgstr "Available Content Areas"
 
 msgid "content_areas_assigned"
-msgstr "Assigned Content areas"
+msgstr "Assigned Content Areas"
 
 msgid "content_areas[new][title][0]"
 msgstr "Title"
@@ -99,4 +99,4 @@ msgid "file_changes_in_progress"
 msgstr "A file change is currently in progress. Please wait until it is completed."
 
 msgid "content_templates"
-msgstr "Content templates"
+msgstr "Content Templates"

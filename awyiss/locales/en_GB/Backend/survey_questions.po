@@ -30,7 +30,7 @@ msgid "headline_overview"
 msgstr "Survey Questions"
 
 msgid "create"
-msgstr "Create"
+msgstr "New Question"
 
 msgid "headline_add"
 msgstr "Add Question"

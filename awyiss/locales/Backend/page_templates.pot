@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "meta_title_overview"
-msgstr "Page templates"
+msgstr "Page Templates"
 
 msgid "meta_title_add"
 msgstr "Add page template"
@@ -21,19 +21,19 @@ msgid "meta_title_edit"
 msgstr "Edit page template"
 
 msgid "menu_title"
-msgstr "Page templates"
+msgstr "Page Templates"
 
 msgid "menu_add"
 msgstr "New page template"
 
 msgid "headline_overview"
-msgstr "Page templates"
+msgstr "Page Templates"
 
 msgid "menu_configure"
 msgstr "Configuration"
 
 msgid "page_role_filter_label"
-msgstr "Page role"
+msgstr "Page Role"
 
 msgid "page_role_filter_all"
 msgstr "All"
@@ -72,10 +72,10 @@ msgid "delete_failed"
 msgstr "The page template could not be deleted"
 
 msgid "page_role_id"
-msgstr "Page role"
+msgstr "Page Role"
 
 msgid "page_role_title"
-msgstr "Page role"
+msgstr "Page Role"
 
 msgid "file_name"
 msgstr "File name"
@@ -84,10 +84,10 @@ msgid "used_for_pages"
 msgstr "Used for pages"
 
 msgid "content_areas_available"
-msgstr "Available Content areas"
+msgstr "Available Content Areas"
 
 msgid "content_areas_assigned"
-msgstr "Assigned Content areas"
+msgstr "Assigned Content Areas"
 
 msgid "content_areas[new][title][0]"
 msgstr "Title"
@@ -99,5 +99,5 @@ msgid "file_changes_in_progress"
 msgstr "A file change is currently in progress. Please wait until it is completed."
 
 msgid "content_templates"
-msgstr "Content templates"
+msgstr "Content Templates"
 

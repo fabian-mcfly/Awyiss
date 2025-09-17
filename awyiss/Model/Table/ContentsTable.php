@@ -477,7 +477,7 @@ class ContentsTable extends Table {
 				);
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
-				//Content template not found
+				//Content Template not found
 				$entity->setError('content_template_id', [
 					'validContentTemplateId' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_template_id'),
 				]);
@@ -486,7 +486,7 @@ class ContentsTable extends Table {
 			}
 
 
-			//Content area not found in the content template
+			//Content Area not found in the content template
 			if (!in_array($entity->contentAreaId, array_column($lo_contentTemplate->contentAreas, 'id'))) {
 				$entity->setError('content_area_id', [
 					'validContentAreaId' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id'),

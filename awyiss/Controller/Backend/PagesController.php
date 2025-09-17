@@ -41,7 +41,7 @@ class PagesController extends Controller {
 	 */
 	protected PageRoleEnumInterface $pageRole;
 	/**
-	 * @var string Page role name
+	 * @var string Page Role name
 	 */
 	protected string $pageRoleName = 'page';
 	/**

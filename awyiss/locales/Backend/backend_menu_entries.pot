@@ -30,7 +30,7 @@ msgid "headline_overview"
 msgstr "Backend Menu"
 
 msgid "create"
-msgstr "Create"
+msgstr "New Backend Menu Entry"
 
 msgid "headline_add"
 msgstr "Add Backend Menu Entry"

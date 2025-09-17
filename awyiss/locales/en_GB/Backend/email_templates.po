@@ -36,7 +36,7 @@ msgid "headline_preview"
 msgstr "Preview Email Template"
 
 msgid "create"
-msgstr "Create"
+msgstr "New Email Template"
 
 msgid "headline_add"
 msgstr "Add Email Template"

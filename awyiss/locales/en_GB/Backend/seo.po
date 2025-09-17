@@ -24,7 +24,7 @@ msgid "meta_title_analyze"
 msgstr "SEO-Analysis"
 
 msgid "page_role_filter_label"
-msgstr "Page role"
+msgstr "Page Role"
 
 msgid "page_role_filter_all"
 msgstr "All"

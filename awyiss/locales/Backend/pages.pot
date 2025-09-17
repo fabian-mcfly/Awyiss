@@ -90,10 +90,10 @@ msgid "pages"
 msgstr "Pages"
 
 msgid "page_role_id"
-msgstr "Page role"
+msgstr "Page Role"
 
 msgid "page_template_id"
-msgstr "Page template"
+msgstr "Page Template"
 
 msgid "parent_id"
 msgstr "Subpage of"

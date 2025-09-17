@@ -39,7 +39,7 @@ msgid "headline_overview"
 msgstr "Contents"
 
 msgid "create"
-msgstr "Create"
+msgstr "New Content"
 
 msgid "headline_add"
 msgstr "Add Content"

@@ -33,7 +33,7 @@ msgid "scope_filter_label"
 msgstr "Scope"
 
 msgid "create"
-msgstr "Create Attribute"
+msgstr "New Attribute"
 
 msgid "headline_add"
 msgstr "Add Attribute"
