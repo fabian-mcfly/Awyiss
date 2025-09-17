@@ -54,8 +54,8 @@ class UrlsNotFoundController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 		 */
 		$lo_pagesQuery = $lo_pagesTable->find('active', skipPageRoleCheck: true)
-		->find('published')
 		->disableAutoFields()
+		->find('published')
 		->select(function ($query) {
 			return ['slug' => $query->func()->concat(['/', 'language_shortcode' => 'identifier', '/', 'slug' => 'identifier'])];
 		});
