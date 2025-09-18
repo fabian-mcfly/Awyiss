@@ -6,7 +6,6 @@ namespace Awyiss\Controller;
 
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
-use Awyiss\Core\LocalConfig;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Table;
@@ -523,9 +522,7 @@ abstract class BackendController extends AppController {
 	 * @return void
 	 */
 	public function beforeRender(EventInterface $event): void {
-		$this->set('config', Configure::read());
 		$this->set('designVariables', $this->getDesignVariables());
-		$this->set('localConfig', LocalConfig::read());
 
 		// Disable the layout for ajax requests
 		if (

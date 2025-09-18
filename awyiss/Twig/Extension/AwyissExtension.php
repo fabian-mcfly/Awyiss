@@ -5,6 +5,7 @@ namespace Awyiss\Twig\Extension;
 
 
 use Awyiss\Core\App;
+use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Module\ModulesProvider;
@@ -138,6 +139,8 @@ class AwyissExtension extends AbstractExtension {
 					return $la_return;
 				}
 			),
+
+			new TwigFunction('localConfig', LocalConfig::read(...)),
 
 			new TwigFunction(
 				'menu',

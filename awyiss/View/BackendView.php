@@ -5,6 +5,7 @@ namespace Awyiss\View;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Routing\Router;
@@ -121,8 +122,10 @@ class BackendView extends AppView {
 		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
 		$lo_twig->addGlobal('currentUrl', $lo_uri->__toString());
+		$lo_twig->addGlobal('config', Configure::read());
 		$lo_twig->addGlobal('folder', $ls_folder);
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
+		$lo_twig->addGlobal('localConfig', LocalConfig::read());
 	}
 
 
