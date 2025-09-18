@@ -135,8 +135,8 @@ class AuditController extends Controller {
 		/** @var array<\Awyiss\Model\Entity\Attribute> $la_attributes */
 		$la_attributes = $lo_table->hasAttributes() ? $lo_table->getAttributes() : [];
 		if ($la_attributes) {
-			/** @var \Awyiss\Attribute\AttributeOptionsCollection $lo_attributeOptionsCollection */
-			$lo_attributeOptionsCollection = AttributeOptionsProvider::getAttributeOptionsFile($ls_scope, true);
+			/** @var \Awyiss\Attribute\AttributeOptionsCollection $lo_attributeOptions */
+			$lo_attributeOptions = AttributeOptionsProvider::getAttributeOptionsFile($ls_scope, true);
 		}
 
 		if (in_array($ls_scope, ['contents', 'widgets'], true)) {
@@ -174,7 +174,7 @@ class AuditController extends Controller {
 			'scope' => $ls_scope,
 			'historyFields' => $la_historyFields,
 			'attributes' => $la_attributes,
-			'attributeOptionsCollection' => $lo_attributeOptionsCollection ?? null,
+			'attributeOptionsCollection' => $lo_attributeOptions ?? null,
 			'attributesSchema' => $lo_table->hasAttributes() ? $lo_table->getAttributesTable()->getSchema() : null,
 			'associations' => array_map(fn (Association $association) => [
 				'name' => $association->getName(),

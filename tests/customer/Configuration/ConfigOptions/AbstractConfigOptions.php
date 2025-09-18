@@ -15,12 +15,6 @@ use Awyiss\Configuration\ConfigOptionType;
  */
 abstract class AbstractConfigOptions extends BaseAbstractConfigOptions {
 	/**
-	 * @var string Scope of these options
-	 */
-	protected static string $scope = 'Abstract';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions(): void {

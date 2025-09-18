@@ -220,7 +220,7 @@ trait ConfigTrait {
 		}
 
 		// Define the path to the ContentsAttributeOptionsCollection.php file
-		$ls_filePath = ROOT . DS . $this->customerName . DS . 'Attribute' . DS . 'AttributeOptionsCollection' . DS . 'ContentsAttributeOptionsCollection.php';
+		$ls_filePath = ROOT . DS . $this->customerName . DS . 'Attribute' . DS . 'AttributeOptions' . DS . 'ContentsAttributeOptions.php';
 
 		// Load the contents of the ContentsAttributeOptionsCollection.php file
 		$ls_fileContents = file_get_contents($ls_filePath);

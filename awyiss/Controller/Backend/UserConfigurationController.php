@@ -114,7 +114,7 @@ class UserConfigurationController extends Controller {
 		else {
 			/**
 			 * @var string $ls_realm
-			 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_configOptions
+			 * @var \Awyiss\Configuration\ConfigOptionsCollection $lo_configOptions
 			 */
 			foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
 				$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_globalConfiguration, $la_configuration);

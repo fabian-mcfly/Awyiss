@@ -112,7 +112,7 @@
 	<rule ref="Squiz.Classes.ClassFileName"/>
 	<rule ref="Squiz.Classes.ClassFileName.NoMatch">
 		<exclude-pattern>*/config/Migrations/*</exclude-pattern>
-		<exclude-pattern>*/tests/customer/Attribute/AttributeOptionsCollection/_IgnoredAttributeOptionsCollection.php</exclude-pattern>
+		<exclude-pattern>*/tests/customer/Attribute/AttributeOptions/_IgnoredAttributeOptions.php</exclude-pattern>
 		<exclude-pattern>*/tests/customer/Authorization/Policy/Backend/_IgnoredTestPolicy.php</exclude-pattern>
 		<exclude-pattern>*/tests/customer/Configuration/ConfigOptions/_IgnoredConfigOptions.php</exclude-pattern>
 	</rule>

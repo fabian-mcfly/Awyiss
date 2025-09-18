@@ -30,7 +30,7 @@ abstract class AbstractGenericConfigOptions extends AbstractConfigOptions {
 		$this->dynamicScope = ConfigOptionsProvider::sanitizeScope($scope);
 
 		foreach (Awyiss::getRealms() as $ls_realm) {
-			$this->realms[ $ls_realm ] = new ConfigOptionCollection();
+			$this->realms[ $ls_realm ] = new ConfigOptionsCollection();
 		}
 
 		$this->initializeConfigOptions();

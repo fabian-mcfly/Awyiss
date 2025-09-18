@@ -11,7 +11,7 @@ use Cake\View\Form\ContextInterface;
 /**
  * Signature of all necessary methods to connect `AttributeOptionsCollection` with `AttributeOptionsProvider`
  *
- * @see \Awyiss\Attribute\AttributeOptions
+ * @see \Awyiss\Attribute\AttributeOption
  * @see \Awyiss\Attribute\AttributeOptionsProvider
  */
 interface AttributeOptionsCollectionInterface {
@@ -27,9 +27,9 @@ interface AttributeOptionsCollectionInterface {
 	 * Returns the options for the given identifier
 	 *
 	 * @param string $identifier
-	 * @return \Awyiss\Attribute\AttributeOptions|null
+	 * @return \Awyiss\Attribute\AttributeOption|null
 	 */
-	public function getAttributeOption(string $identifier): ?AttributeOptions;
+	public function getAttributeOption(string $identifier): ?AttributeOption;
 
 
 	/**
@@ -39,7 +39,7 @@ interface AttributeOptionsCollectionInterface {
 	 * @param array $currentOptions
 	 * @param ContextInterface|null $context
 	 * @return array
-	 * @see AttributeOptions
+	 * @see AttributeOption
 	 * @see \Cake\Utility\Hash::get()
 	 */
 	public function getAttributeOptionsAttributes(string $identifier, array $currentOptions = [], ?ContextInterface $context = null): array;

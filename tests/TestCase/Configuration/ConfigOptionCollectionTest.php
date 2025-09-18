@@ -5,7 +5,7 @@ namespace Awyiss\Test\TestCase\Configuration;
 
 
 use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptionCollection;
+use Awyiss\Configuration\ConfigOptionsCollection;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Test\TestSuite\TestCase;
 use RuntimeException;
@@ -21,7 +21,7 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorAndScope(): void {
-		$dummyOptionsCollection = new ConfigOptionCollection('dummy identifier');
+		$dummyOptionsCollection = new ConfigOptionsCollection('dummy identifier');
 
 		$this->assertEquals('dummyIdentifier', $dummyOptionsCollection->getIdentifier());
 	}
@@ -41,7 +41,7 @@ class ConfigOptionCollectionTest extends TestCase {
 			type: ConfigOptionType::Bool,
 		);
 
-		$collection = new ConfigOptionCollection('root');
+		$collection = new ConfigOptionsCollection('root');
 		$collection->add($configOption);
 
 		$this->assertTrue($collection->offsetExists('enabled'));
@@ -57,7 +57,7 @@ class ConfigOptionCollectionTest extends TestCase {
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('The identifier `option1` is already in use.');
 
-		$collection = new ConfigOptionCollection('root');
+		$collection = new ConfigOptionsCollection('root');
 
 		$collection->add(new ConfigOption(
 			defaultValue: true,
@@ -88,11 +88,11 @@ class ConfigOptionCollectionTest extends TestCase {
 		$configOption = $this->createMock(ConfigOption::class);
 		$configOption->method('getIdentifier')->willReturn('option1');
 
-		$collection = new ConfigOptionCollection('root');
+		$collection = new ConfigOptionsCollection('root');
 		$collection->add(['sub' => [$configOption]]);
 
 		$this->assertTrue($collection->offsetExists('sub'));
-		$this->assertInstanceOf(ConfigOptionCollection::class, $collection->offsetGet('sub'));
+		$this->assertInstanceOf(ConfigOptionsCollection::class, $collection->offsetGet('sub'));
 		$this->assertTrue($collection->offsetGet('sub')->offsetExists('option1'));
 	}
 
@@ -106,7 +106,7 @@ class ConfigOptionCollectionTest extends TestCase {
 		$configOption = $this->createMock(ConfigOption::class);
 		$configOption->method('getIdentifier')->willReturn('option1');
 
-		$collection = new ConfigOptionCollection('root');
+		$collection = new ConfigOptionsCollection('root');
 		$collection->add([$configOption]);
 
 		$this->assertTrue($collection->offsetExists('option1'));
@@ -120,7 +120,7 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddArrayWithNestedArrayCreatesConfigOption() {
-		$collection = new ConfigOptionCollection('root');
+		$collection = new ConfigOptionsCollection('root');
 
 		$configOptionData = ['identifier' => 'option1', 'defaultValue' => 'test'];
 
@@ -141,8 +141,8 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCollectionAddsNewCollectionSuccessfully() {
-		$collection = new ConfigOptionCollection('root');
-		$subCollection = new ConfigOptionCollection('sub');
+		$collection = new ConfigOptionsCollection('root');
+		$subCollection = new ConfigOptionsCollection('sub');
 		$collection->addCollection($subCollection);
 
 		$this->assertTrue($collection->offsetExists('sub'));
@@ -156,13 +156,13 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCollectionMergesNestedCollectionsSuccessfully() {
-		$collection = new ConfigOptionCollection('root');
-		$subCollection1 = new ConfigOptionCollection('sub');
+		$collection = new ConfigOptionsCollection('root');
+		$subCollection1 = new ConfigOptionsCollection('sub');
 
 		$configOption = $this->createMock(ConfigOption::class);
 		$configOption->method('getIdentifier')->willReturn('option1');
 
-		$subCollection2 = new ConfigOptionCollection('sub');
+		$subCollection2 = new ConfigOptionsCollection('sub');
 		$subCollection2->add($configOption);
 
 		$collection->addCollection($subCollection1);
@@ -178,9 +178,9 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCollectionThrowsNoExceptionWhenCollectionIdentifierIsDuplicate() {
-		$collection = new ConfigOptionCollection('root');
+		$collection = new ConfigOptionsCollection('root');
 
-		$subCollection1 = new ConfigOptionCollection('sub');
+		$subCollection1 = new ConfigOptionsCollection('sub');
 		$configOption1 = new ConfigOption(
 			defaultValue: true,
 			identifier: 'option1',
@@ -191,7 +191,7 @@ class ConfigOptionCollectionTest extends TestCase {
 		);
 		$subCollection1->add($configOption1);
 
-		$subCollection2 = new ConfigOptionCollection('sub');
+		$subCollection2 = new ConfigOptionsCollection('sub');
 		$configOption2 = new ConfigOption(
 			defaultValue: true,
 			identifier: 'option2',
@@ -218,7 +218,7 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCollectionThrowsExceptionWhenIdentifierIsOption() {
-		$collection = new ConfigOptionCollection('root');
+		$collection = new ConfigOptionsCollection('root');
 
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('The identifier `sub` is already in use.');
@@ -232,7 +232,7 @@ class ConfigOptionCollectionTest extends TestCase {
 			type: ConfigOptionType::Bool,
 		);
 
-		$subCollection1 = new ConfigOptionCollection('sub');
+		$subCollection1 = new ConfigOptionsCollection('sub');
 		$configOption2 = new ConfigOption(
 			defaultValue: true,
 			identifier: 'option1',
@@ -253,7 +253,7 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsPrependsPathPartsToIdentifier(): void {
-		$collection = new ConfigOptionCollection('root');
+		$collection = new ConfigOptionsCollection('root');
 		$collection->add(new ConfigOption(
 			defaultValue: true,
 			identifier: 'option1',
@@ -263,7 +263,7 @@ class ConfigOptionCollectionTest extends TestCase {
 			type: ConfigOptionType::Bool,
 		));
 
-		$subCollection = new ConfigOptionCollection('sub');
+		$subCollection = new ConfigOptionsCollection('sub');
 		$subCollection->add(new ConfigOption(
 			defaultValue: true,
 			identifier: 'option2',
@@ -289,7 +289,7 @@ class ConfigOptionCollectionTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeepArrayCopy(): void {
-		$collection = new ConfigOptionCollection('root');
+		$collection = new ConfigOptionsCollection('root');
 		$option1 = new ConfigOption(
 			defaultValue: true,
 			identifier: 'option1',
@@ -300,7 +300,7 @@ class ConfigOptionCollectionTest extends TestCase {
 		);
 		$collection->add($option1);
 
-		$subCollection = new ConfigOptionCollection('sub');
+		$subCollection = new ConfigOptionsCollection('sub');
 		$option2 = new ConfigOption(
 			defaultValue: true,
 			identifier: 'option2',

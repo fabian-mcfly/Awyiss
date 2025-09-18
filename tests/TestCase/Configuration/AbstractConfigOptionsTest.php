@@ -5,7 +5,7 @@ namespace Awyiss\Test\TestCase\Configuration;
 
 
 use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptionCollection;
+use Awyiss\Configuration\ConfigOptionsCollection;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Test\TestSuite\TestCase;
 use Customer\Configuration\ConfigOptions\PagesConfigOptions;
@@ -87,7 +87,7 @@ class AbstractConfigOptionsTest extends TestCase {
 
 		$options = $this->configOptions->getConfigOptions($realm);
 
-		$this->assertInstanceOf(ConfigOptionCollection::class, $options);
+		$this->assertInstanceOf(ConfigOptionsCollection::class, $options);
 	}
 
 
@@ -149,7 +149,7 @@ class AbstractConfigOptionsTest extends TestCase {
 	public function testGetConfigOptionForCollectionPath(): void {
 		$this->expectException(InvalidArgumentException::class);
 
-		$this->expectExceptionMessage('Expected a path to a config option. Found `Awyiss\Configuration\ConfigOptionCollection` instead.`');
+		$this->expectExceptionMessage('Expected a path to a config option. Found `Awyiss\Configuration\ConfigOptionsCollection` instead.`');
 
 		$this->configOptions->getConfigOption('Backend', 'contents');
 	}

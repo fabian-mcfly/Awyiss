@@ -29,15 +29,15 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	 * Adds a AttributeOptionsCollection or a set of elements, containing nested AttributeOptionsCollection or
 	 * AttributeOptionsCollection to this collection
 	 *
-	 * @param AttributeOptions|array<int|string, AttributeOptions> $attributeOption
+	 * @param \Awyiss\Attribute\AttributeOption|array<int|string, \Awyiss\Attribute\AttributeOption> $attributeOption
 	 * @return $this
 	 */
-	public function add(array|AttributeOptions $attributeOption): static {
+	public function add(array|AttributeOption $attributeOption): static {
 		/*
 		 * If the provided value for `$attributeOption` is an instance of `AttributeOptionsCollection`,
 		 * add it to the current collection
 		 */
-		if ($attributeOption instanceof AttributeOptions) {
+		if ($attributeOption instanceof AttributeOption) {
 			$ls_identifier = $attributeOption->getIdentifier();
 
 			//We cannot have the same identifier more than once inside this collection
@@ -54,7 +54,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 		//Traverse the provided array
 		foreach ($attributeOption as $lx_key => $lx_attributeOption) {
 			//If the current value is an instance of AttributeOptionsCollection, add it as is
-			if ($lx_attributeOption instanceof AttributeOptions) {
+			if ($lx_attributeOption instanceof AttributeOption) {
 				$this->add($lx_attributeOption);
 			}
 			/*
@@ -67,7 +67,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 					$lx_attributeOption += ['identifier' => $lx_key];
 				}
 
-				$this->add(new AttributeOptions(...$lx_attributeOption));
+				$this->add(new AttributeOption(...$lx_attributeOption));
 			}
 		}
 
@@ -79,10 +79,10 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	/**
 	 * @inheritDoc
 	 */
-	public function getAttributeOption(string $identifier): ?AttributeOptions {
+	public function getAttributeOption(string $identifier): ?AttributeOption {
 		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
-		/** @var AttributeOptions $lo_attributeOptions */
+		/** @var AttributeOption $lo_attributeOptions */
 		return Hash::get($this, $ls_identifier);
 	}
 
@@ -93,7 +93,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	public function getAttributeOptionsAttributes(string $identifier, array $currentOptions = [], ?ContextInterface $context = null): array {
 		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
-		/** @var AttributeOptions $lo_attributeOptions */
+		/** @var AttributeOption $lo_attributeOptions */
 		$lo_attributeOptions = Hash::get($this, $ls_identifier);
 
 		if (!$lo_attributeOptions) {
@@ -111,7 +111,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	public function validateValue(string $identifier, mixed $value, ?Entity $entity = null): bool|string {
 		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
-		/** @var AttributeOptions $lo_attributeOptions */
+		/** @var AttributeOption $lo_attributeOptions */
 		$lo_attributeOptions = Hash::get($this, $ls_identifier);
 		if (!$lo_attributeOptions) {
 			return true;

@@ -20,7 +20,7 @@ use RuntimeException;
  *
  * @see \Awyiss\Attribute\AttributeOptionsCollectionInterface::initializeAttributeOptions
  */
-class AttributeOptions {
+class AttributeOption {
 	/**
 	 * @var callable|array|bool
 	 */
@@ -220,7 +220,7 @@ class AttributeOptions {
 
 	/**
 	 * @param callable|bool $readonly
-	 * @return AttributeOptions
+	 * @return AttributeOption
 	 * @noinspection PhpUnused
 	 */
 	public function setReadonly(bool|callable $readonly): static {
@@ -288,7 +288,7 @@ class AttributeOptions {
 
 	/**
 	 * @param mixed $value
-	 * @return AttributeOptions
+	 * @return AttributeOption
 	 */
 	public function setValue(mixed $value): static {
 		$this->value = $value;
@@ -364,7 +364,7 @@ class AttributeOptions {
 
 	/**
 	 * @param mixed $validate
-	 * @return AttributeOptions
+	 * @return AttributeOption
 	 * @noinspection PhpUnused
 	 */
 	public function setValidate(mixed $validate = null): static {

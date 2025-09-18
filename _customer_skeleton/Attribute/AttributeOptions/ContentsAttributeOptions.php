@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Customer\Attribute\AttributeOptionsCollection;
+namespace Customer\Attribute\AttributeOptions;
 
 
 use Awyiss\Attribute\AttributeOptionsCollection;
@@ -11,7 +11,7 @@ use Cake\Datasource\EntityInterface;
 /**
  * Provides attribute options for the Contents scope.
  */
-class ContentsAttributeOptionsCollection extends AttributeOptionsCollection {
+class ContentsAttributeOptions extends AttributeOptionsCollection {
 	protected static string $scope = 'Contents';
 
 

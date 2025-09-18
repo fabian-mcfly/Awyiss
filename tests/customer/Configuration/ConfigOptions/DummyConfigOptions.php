@@ -15,12 +15,6 @@ use Awyiss\Configuration\ConfigOptionType;
  */
 class DummyConfigOptions extends AbstractConfigOptions {
 	/**
-	 * @var string Scope of these options
-	 */
-	protected static string $scope = 'Dummy';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions(): void {

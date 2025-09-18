@@ -25,10 +25,10 @@ class AttributeOptionsProviderTest extends TestCase {
 		$files = AttributeOptionsProvider::getAttributeOptionsFiles();
 
 		$this->assertEquals([
-			'Contents' => '\Customer\Attribute\AttributeOptionsCollection\ContentsAttributeOptionsCollection',
-			'Empties' => '\Customer\Attribute\AttributeOptionsCollection\EmptyAttributeOptionsCollection',
-			'Widgets' => '\Customer\Attribute\AttributeOptionsCollection\WidgetsAttributeOptionsCollection',
-			'Cars' => '\Customer\Attribute\AttributeOptionsCollection\CarsAttributeOptionsCollection',
+			'Contents' => '\Customer\Attribute\AttributeOptions\ContentsAttributeOptions',
+			'Empties' => '\Customer\Attribute\AttributeOptions\EmptyAttributeOptions',
+			'Widgets' => '\Customer\Attribute\AttributeOptions\WidgetsAttributeOptions',
+			'Cars' => '\Customer\Attribute\AttributeOptions\CarsAttributeOptions',
 		], $files);
 	}
 
@@ -81,7 +81,7 @@ class AttributeOptionsProviderTest extends TestCase {
 	public function testGetAttributeOptionsFile(): void {
 		$file = AttributeOptionsProvider::getAttributeOptionsFile('Empty');
 
-		$this->assertEquals('\Customer\Attribute\AttributeOptionsCollection\EmptyAttributeOptionsCollection', $file);
+		$this->assertEquals('\Customer\Attribute\AttributeOptions\EmptyAttributeOptions', $file);
 
 		$file = AttributeOptionsProvider::getAttributeOptionsFile('Abstract');
 

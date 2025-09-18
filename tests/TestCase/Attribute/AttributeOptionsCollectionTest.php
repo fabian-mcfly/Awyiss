@@ -4,9 +4,9 @@
 namespace Awyiss\Test\TestCase\Attribute;
 
 
-use Awyiss\Attribute\AttributeOptions;
+use Awyiss\Attribute\AttributeOption;
 use Awyiss\Test\TestSuite\TestCase;
-use Customer\Attribute\AttributeOptionsCollection\EmptyAttributeOptionsCollection;
+use Customer\Attribute\AttributeOptions\EmptyAttributeOptions;
 use RuntimeException;
 
 
@@ -19,14 +19,14 @@ class AttributeOptionsCollectionTest extends TestCase {
 	 * Either by passing an array or an instance
 	 *
 	 * @return void
-	 * @see AttributeOptionsCollection::add()
+	 * @see \Awyiss\Attribute\AttributeOptionsCollection::add()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAttributeOptions(): void {
-		$attributeOptionsCollection = new EmptyAttributeOptionsCollection();
+		$attributeOptions = new EmptyAttributeOptions();
 
 		// Adding a new AttributeOptions instance by passing an array
-		$attributeOptionsCollection->add([
+		$attributeOptions->add([
 			'backgroundColor' => [
 				'disabled' => function () {
 					return ['dark', 'light'];
@@ -46,18 +46,18 @@ class AttributeOptionsCollectionTest extends TestCase {
 				},
 			],
 		]);
-		$this->assertNotNull($attributeOptionsCollection['backgroundColor']);
-		$this->assertInstanceOf(AttributeOptions::class, $attributeOptionsCollection['backgroundColor']);
+		$this->assertNotNull($attributeOptions['backgroundColor']);
+		$this->assertInstanceOf(AttributeOption::class, $attributeOptions['backgroundColor']);
 
 		// Adding will sanitize the identifier
 		// Adding a new AttributeOptions instance by passing an instance is also possible
-		$attributeOptionsCollection->add(new AttributeOptions('text_color', true, ['dark', 'light'], true, null, null, 'dark'));
-		$this->assertNotNull($attributeOptionsCollection['textColor']);
-		$this->assertInstanceOf(AttributeOptions::class, $attributeOptionsCollection['textColor']);
+		$attributeOptions->add(new AttributeOption('text_color', true, ['dark', 'light'], true, null, null, 'dark'));
+		$this->assertNotNull($attributeOptions['textColor']);
+		$this->assertInstanceOf(AttributeOption::class, $attributeOptions['textColor']);
 
 		// Adding the same identifier again should throw an exception
 		$this->expectException(RuntimeException::class);
-		$attributeOptionsCollection->add(new AttributeOptions('text__color'));
+		$attributeOptions->add(new AttributeOption('text__color'));
 	}
 
 
@@ -65,13 +65,13 @@ class AttributeOptionsCollectionTest extends TestCase {
 	 * Test getAttributeOption
 	 *
 	 * @return void
-	 * @see AttributeOptionsCollection::getAttributeOption()
+	 * @see \Awyiss\Attribute\AttributeOptionsCollection::getAttributeOption()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributeOption(): void {
-		$attributeOptionsCollection = new EmptyAttributeOptionsCollection();
+		$attributeOptions = new EmptyAttributeOptions();
 
-		$attributeOptionsCollection->add([
+		$attributeOptions->add([
 			'background__color' => [
 				'options' => [
 					'text' => 'Text',
@@ -84,10 +84,10 @@ class AttributeOptionsCollectionTest extends TestCase {
 			],
 		]);
 
-		$this->assertNotNull($attributeOptionsCollection->getAttributeOption('backgroundColor'));
-		$this->assertInstanceOf(AttributeOptions::class, $attributeOptionsCollection->getAttributeOption('backgroundColor'));
+		$this->assertNotNull($attributeOptions->getAttributeOption('backgroundColor'));
+		$this->assertInstanceOf(AttributeOption::class, $attributeOptions->getAttributeOption('backgroundColor'));
 
-		$this->assertNull($attributeOptionsCollection->getAttributeOption('textColor'));
+		$this->assertNull($attributeOptions->getAttributeOption('textColor'));
 	}
 
 
@@ -95,13 +95,13 @@ class AttributeOptionsCollectionTest extends TestCase {
 	 * Test getAttributeOptionsAttributes
 	 *
 	 * @return void
-	 * @see AttributeOptionsCollection::getAttributeOptionsAttributes()
+	 * @see \Awyiss\Attribute\AttributeOptionsCollection::getAttributeOptionsAttributes()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributeOptionsAttributes(): void {
-		$attributeOptionsCollection = new EmptyAttributeOptionsCollection();
+		$attributeOptions = new EmptyAttributeOptions();
 
-		$attributeOptionsCollection->add([
+		$attributeOptions->add([
 			'background__color' => [
 				'options' => [
 					'text' => 'Text',
@@ -125,6 +125,6 @@ class AttributeOptionsCollectionTest extends TestCase {
 				'contrast' => 'Kontrastfarbe',
 			],
 			'val' => 'main',
-		], $attributeOptionsCollection->getAttributeOptionsAttributes('backgroundColor'));
+		], $attributeOptions->getAttributeOptionsAttributes('backgroundColor'));
 	}
 }

@@ -4,7 +4,7 @@
 namespace Awyiss\Test\TestCase\Attribute;
 
 
-use Awyiss\Attribute\AttributeOptions;
+use Awyiss\Attribute\AttributeOption;
 use Awyiss\Model\Entity;
 use Awyiss\Test\TestSuite\TestCase;
 use Cake\Datasource\EntityInterface;
@@ -22,7 +22,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorAndGetters(): void {
-		$attributeOptions = new AttributeOptions(
+		$attributeOptions = new AttributeOption(
 			'testIdentifier',
 			true,
 			['option1', 'option2'],
@@ -49,7 +49,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithNamedArguments(): void {
-		$attributeOptions = new AttributeOptions(
+		$attributeOptions = new AttributeOption(
 			disabled: [1],
 			identifier: 'testIdentifier',
 			options: ['option1', 'option2'],
@@ -71,7 +71,7 @@ class AttributeOptionsTest extends TestCase {
 	 */
 	public function testSetters(): void {
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$attributeOptions = new AttributeOptions('testIdentifier');
+		$attributeOptions = new AttributeOption('testIdentifier');
 
 		$attributeOptions->setIdentifier('new identifier?');
 		$this->assertEquals('newIdentifier', $attributeOptions->getIdentifier());
@@ -113,7 +113,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEvaluateDisabled(): void {
-		$attributeOptions = new AttributeOptions('testIdentifier');
+		$attributeOptions = new AttributeOption('testIdentifier');
 
 		$attributeOptions->setDisabled(function (EntityInterface $entity) {
 			return $entity->id === 1;
@@ -134,7 +134,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEvaluateOptions(): void {
-		$attributeOptions = new AttributeOptions('testIdentifier');
+		$attributeOptions = new AttributeOption('testIdentifier');
 
 		$attributeOptions->setOptions(function (EntityInterface $entity) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -164,7 +164,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEvaluateReadonly(): void {
-		$attributeOptions = new AttributeOptions('testIdentifier');
+		$attributeOptions = new AttributeOption('testIdentifier');
 
 		$attributeOptions->setReadonly(function (EntityInterface $entity) {
 			return $entity->id === 1;
@@ -185,7 +185,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToScalar(): void {
-		$attributeOptions = new AttributeOptions('testIdentifier');
+		$attributeOptions = new AttributeOption('testIdentifier');
 
 		$attributeOptions->setToScalar(function ($value) {
 			return $value . ' + 1';
@@ -201,7 +201,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidate(): void {
-		$attributeOptions = new AttributeOptions('testIdentifier');
+		$attributeOptions = new AttributeOption('testIdentifier');
 
 		// If validate is set to false, all values are valid
 		$attributeOptions->setValidate(false);
@@ -257,7 +257,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValue(): void {
-		$attributeOptions = new AttributeOptions('testIdentifier');
+		$attributeOptions = new AttributeOption('testIdentifier');
 
 		$time = time();
 		$attributeOptions->setValue(function () use ($time) {
@@ -276,7 +276,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValueWithScalarValue(): void {
-		$attributeOptions = new AttributeOptions('testIdentifier');
+		$attributeOptions = new AttributeOption('testIdentifier');
 
 		$attributeOptions->setValue('testValue');
 
@@ -291,7 +291,7 @@ class AttributeOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildOptions(): void {
-		$attributeOptions = new AttributeOptions('testIdentifier');
+		$attributeOptions = new AttributeOption('testIdentifier');
 
 		$attributeOptions->setOptions(['option1', 'option2', 'option3', 'option4', 'option5']);
 		$attributeOptions->setDisabled(['option2', 'option4']);

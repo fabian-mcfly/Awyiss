@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Customer\Attribute\AttributeOptionsCollection;
+namespace Customer\Attribute\AttributeOptions;
 
 
 use Awyiss\Attribute\AttributeOptionsCollection;
@@ -11,10 +11,7 @@ use Cake\Datasource\EntityInterface;
 /**
  * Provides attribute options for the Widgets scope.
  */
-class WidgetsAttributeOptionsCollection extends AttributeOptionsCollection {
-	protected static string $scope = 'Widgets';
-
-
+class CarsAttributeOptions extends AttributeOptionsCollection {
 	/**
 	 * Initializes the attribute options for the Contents scope.
 	 *
@@ -22,7 +19,7 @@ class WidgetsAttributeOptionsCollection extends AttributeOptionsCollection {
 	 */
 	public function initializeAttributeOptions(): void {
 		$this->add([
-			'backgroundColor' => [
+			'dropdown_select' => [
 				/**
 				 * Disables the options 'dark' and 'light' for the background color attribute.
 				 */
@@ -46,7 +43,7 @@ class WidgetsAttributeOptionsCollection extends AttributeOptionsCollection {
 				 * Allows only the values 'main' and null for the background color attribute.
 				 */
 				'validate' => function (mixed $value) {
-					return $value === null || $value === 'main';
+					return $value === null || $value === 'main' || $value === 'dark';
 				},
 			],
 		]);

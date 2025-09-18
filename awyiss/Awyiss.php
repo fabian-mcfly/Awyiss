@@ -522,7 +522,7 @@ class Awyiss extends BaseApplication {
 
 			/**
 			 * @var string $ls_realm
-			 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_realmConfigOptionCollection
+			 * @var \Awyiss\Configuration\ConfigOptionsCollection $lo_realmConfigOptionCollection
 			 */
 			foreach ($lo_configOptionsFile->getConfigOptions() as $ls_realm => $lo_realmConfigOptionCollection) {
 				/** @var \Awyiss\Configuration\ConfigOption $lo_configOption */

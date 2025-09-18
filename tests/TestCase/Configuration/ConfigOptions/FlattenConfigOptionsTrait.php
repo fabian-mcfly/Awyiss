@@ -5,7 +5,7 @@ namespace Awyiss\Test\TestCase\Configuration\ConfigOptions;
 
 
 use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptionCollection;
+use Awyiss\Configuration\ConfigOptionsCollection;
 use Awyiss\Configuration\ConfigOptionsInterface;
 
 
@@ -35,7 +35,7 @@ trait FlattenConfigOptionsTrait {
 					$this->flattenConfigOptions($value, $newKeys)
 				);
 			}
-			elseif ($value instanceof ConfigOptionCollection) {
+			elseif ($value instanceof ConfigOptionsCollection) {
 				$result = array_merge(
 					$result,
 					$this->flattenConfigOptions($value->toArray(), $newKeys)

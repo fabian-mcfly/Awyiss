@@ -12,7 +12,7 @@ use RuntimeException;
 /**
  * A class to collect multiple ConfigOptions instances or nested ConfigOptionsCollection instances
  */
-class ConfigOptionCollection extends ArrayIterator {
+class ConfigOptionsCollection extends ArrayIterator {
 	/**
 	 * @var string
 	 */
@@ -35,7 +35,7 @@ class ConfigOptionCollection extends ArrayIterator {
 	/**
 	 * Adds a ConfigOption or a set of elements, containing nested ConfigOptions or ConfigOptionsCollection to this collection
 	 *
-	 * @param ConfigOption|array<int|string, ConfigOptionCollection|ConfigOption|array> $configOption
+	 * @param ConfigOption|array<int|string, ConfigOptionsCollection|ConfigOption|array> $configOption
 	 * @return $this
 	 */
 	public function add(array|ConfigOption $configOption): static {
@@ -61,7 +61,7 @@ class ConfigOptionCollection extends ArrayIterator {
 		foreach ($configOption as $lx_key => $lx_configOption) {
 			//If the key is a string, add a new sub-collection with that given identifier, containing everything in $lx_configOption
 			if (is_string($lx_key)) {
-				$lo_collection = new ConfigOptionCollection($lx_key);
+				$lo_collection = new ConfigOptionsCollection($lx_key);
 				$lo_collection->add($lx_configOption);
 
 				$this->addCollection($lo_collection);
@@ -70,7 +70,7 @@ class ConfigOptionCollection extends ArrayIterator {
 			}
 
 			//If the current value is an instance of ConfigOptionsCollection, add it as a new sub-collection
-			if ($lx_configOption instanceof ConfigOptionCollection) {
+			if ($lx_configOption instanceof ConfigOptionsCollection) {
 				$this->addCollection($lx_configOption);
 			}
 			//If the current value is an instance of ConfigOption, add it as is
@@ -95,18 +95,18 @@ class ConfigOptionCollection extends ArrayIterator {
 	 * Adds the given ConfigOptionsCollection as a sub-collection to the current one.
 	 * If the identifier of the ConfigOptionsCollection already exists in the current one, a `RuntimeException` is thrown.
 	 *
-	 * @param ConfigOptionCollection $configOptionsCollection
+	 * @param ConfigOptionsCollection $configOptionsCollection
 	 * @return $this
 	 * @throws RuntimeException
 	 */
-	public function addCollection(ConfigOptionCollection $configOptionsCollection): static {
+	public function addCollection(ConfigOptionsCollection $configOptionsCollection): static {
 		$ls_identifier = $configOptionsCollection->getIdentifier();
 
 		if ($this->offsetExists($ls_identifier)) {
 			$lx_offset = $this->offsetGet($ls_identifier);
-			if ($lx_offset instanceof ConfigOptionCollection) {
+			if ($lx_offset instanceof ConfigOptionsCollection) {
 				foreach ($configOptionsCollection->getArrayCopy() as $lx_configOptions) {
-					if ($lx_configOptions instanceof ConfigOptionCollection) {
+					if ($lx_configOptions instanceof ConfigOptionsCollection) {
 						$lx_offset->addCollection($lx_configOptions);
 					}
 					else {
@@ -148,7 +148,7 @@ class ConfigOptionCollection extends ArrayIterator {
 		$la_configOptions = [];
 
 		foreach ($this as $lo_configOption) {
-			if ($lo_configOption instanceof ConfigOptionCollection) {
+			if ($lo_configOption instanceof ConfigOptionsCollection) {
 				$la_pathParts = $pathParts;
 				$la_pathParts[] = Inflector::variable($lo_configOption->getIdentifier());
 				$la_configOptions += $lo_configOption->getConfigOptions(...$la_pathParts);

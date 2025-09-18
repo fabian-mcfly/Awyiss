@@ -37,7 +37,7 @@ class AttributeOptionsProvider {
 
 
 	/**
-	 * Returns all found AttributeOptionsCollection classes in both the Awyiss and the custom namespace
+	 * Returns all found AttributeOptions classes in both the Awyiss and the custom namespace
 	 *
 	 * @return array<string, class-string<AttributeOptionsCollectionInterface>>
 	 * @throws \ReflectionException
@@ -69,7 +69,7 @@ class AttributeOptionsProvider {
 	 * Returns an instance of a AttributeOptionsCollection class with the provided scope or null
 	 *
 	 * @param class-string<\Awyiss\Attribute\AttributeOptionsCollectionInterface>|string $scope
-	 * @return AttributeOptionsCollectionInterface|null
+	 * @return \Awyiss\Attribute\AttributeOptionsCollectionInterface|null
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
@@ -170,7 +170,7 @@ class AttributeOptionsProvider {
 	 * @throws \ReflectionException
 	 */
 	protected static function findAttributeOptionsFiles(string $scope, bool $load = false): array {
-		$la_classes = App::classes($scope, 'Attribute/AttributeOptionsCollection', 'AttributeOptionsCollection', AttributeOptionsCollectionInterface::class);
+		$la_classes = App::classes($scope, 'Attribute/AttributeOptions', 'AttributeOptions', AttributeOptionsCollectionInterface::class);
 
 		$la_attributeOptionFiles = [];
 		/** @var class-string<\Awyiss\Attribute\AttributeOptionsCollection> $ls_className */
@@ -193,7 +193,7 @@ class AttributeOptionsProvider {
 	 * @param int $suffixLength
 	 * @return string
 	 */
-	public static function extractScopeFromClassName(string $scope, int $suffixLength = 26): string {
+	public static function extractScopeFromClassName(string $scope, int $suffixLength = 16): string {
 		$la_parts = explode('\\', trim($scope, '\\'));
 		$ls_scope = array_pop($la_parts);
 		$ls_scope = substr($ls_scope, 0, -$suffixLength);

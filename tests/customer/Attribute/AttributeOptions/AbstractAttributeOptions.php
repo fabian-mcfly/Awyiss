@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Customer\Attribute\AttributeOptionsCollection;
+namespace Customer\Attribute\AttributeOptions;
 
 
 use Awyiss\Attribute\AttributeOptionsCollection;
@@ -10,10 +10,7 @@ use Awyiss\Attribute\AttributeOptionsCollection;
 /**
  * This file will be ignored because the class is abstract
  */
-abstract class AbstractAttributeOptionsCollection extends AttributeOptionsCollection {
-	protected static string $scope = 'Abstract';
-
-
+abstract class AbstractAttributeOptions extends AttributeOptionsCollection {
 	/**
 	 * Initializes the attribute options for the Contents scope.
 	 *

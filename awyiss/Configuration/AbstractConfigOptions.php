@@ -16,7 +16,7 @@ use InvalidArgumentException;
  */
 abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	/**
-	 * @var array<string, ConfigOptionCollection>
+	 * @var array<string, ConfigOptionsCollection>
 	 */
 	protected array $realms = [];
 
@@ -26,7 +26,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 */
 	public function __construct() {
 		foreach (Awyiss::getRealms() as $ls_realm) {
-			$this->realms[ $ls_realm ] = new ConfigOptionCollection();
+			$this->realms[ $ls_realm ] = new ConfigOptionsCollection();
 		}
 
 		$this->initializeConfigOptions();
@@ -58,7 +58,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getConfigOptions(?string $realm = null): ConfigOptionCollection|array {
+	public function getConfigOptions(?string $realm = null): ConfigOptionsCollection|array {
 		if ($realm === null) {
 			return $this->realms;
 		}
@@ -86,8 +86,8 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 
 		$lo_configOption = Hash::get($la_configOptions, $la_path);
 
-		if ($lo_configOption instanceof ConfigOptionCollection) {
-			throw new InvalidArgumentException(sprintf('Expected a path to a config option. Found `%s` instead.`', ConfigOptionCollection::class));
+		if ($lo_configOption instanceof ConfigOptionsCollection) {
+			throw new InvalidArgumentException(sprintf('Expected a path to a config option. Found `%s` instead.`', ConfigOptionsCollection::class));
 		}
 
 

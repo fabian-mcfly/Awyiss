@@ -361,7 +361,7 @@ class AttributesBehavior extends Behavior {
 	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return void
 	 * @throws \ReflectionException
-	 * @see \Awyiss\Attribute\AttributeOptions::validateValue
+	 * @see \Awyiss\Attribute\AttributeOption::validateValue
 	 */
 	public function buildRules(Event $event, RulesChecker|BaseRulesChecker $rules): void {
 		if (!$this->getConfig('isAttributesTable')) {

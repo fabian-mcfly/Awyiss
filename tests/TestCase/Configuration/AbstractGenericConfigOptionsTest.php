@@ -5,8 +5,8 @@ namespace Awyiss\Test\TestCase\Configuration;
 
 
 use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptionCollection;
 use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
+use Awyiss\Configuration\ConfigOptionsCollection;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Test\TestSuite\TestCase;
@@ -151,7 +151,7 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 	public function testGetConfigOptions(): void {
 		$options = $this->configOptions->getConfigOptions('Backend');
 
-		$this->assertInstanceOf(ConfigOptionCollection::class, $options);
+		$this->assertInstanceOf(ConfigOptionsCollection::class, $options);
 	}
 
 

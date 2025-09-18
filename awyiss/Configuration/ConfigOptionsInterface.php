@@ -23,10 +23,10 @@ interface ConfigOptionsInterface {
 	 * Return all config options as flattened array
 	 *
 	 * @param string|null $realm
-	 * @return ConfigOptionCollection|array
+	 * @return ConfigOptionsCollection|array
 	 * @see ConfigOption
 	 */
-	public function getConfigOptions(?string $realm = null): ConfigOptionCollection|array;
+	public function getConfigOptions(?string $realm = null): ConfigOptionsCollection|array;
 
 
 	/**
