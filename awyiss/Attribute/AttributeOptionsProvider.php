@@ -198,6 +198,6 @@ class AttributeOptionsProvider {
 		$ls_scope = array_pop($la_parts);
 		$ls_scope = substr($ls_scope, 0, -$suffixLength);
 
-		return AttributeOptionsProvider::sanitizeScope($ls_scope);
+		return static::sanitizeScope($ls_scope);
 	}
 }
