@@ -19,7 +19,11 @@
 #}
 
 {% block formControlTypeBool %}
-	{{ FormHelper.control('value', {label: __('input_type_bool_label'), type: 'checkbox'}) }}
+	{{ FormHelper.control('value', {
+		label: __('input_type_bool_label'),
+		type: 'checkbox',
+		val: configuration.value,
+	}) }}
 {% endblock %}
 
 {% block formControlTypeColor %}
