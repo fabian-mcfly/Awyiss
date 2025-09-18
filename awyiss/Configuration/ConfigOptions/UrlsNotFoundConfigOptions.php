@@ -19,12 +19,6 @@ class UrlsNotFoundConfigOptions extends AbstractConfigOptions {
 
 
 	/**
-	 * @var string Scope of these options
-	 */
-	protected static string $scope = 'UrlsNotFound';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions(): void {

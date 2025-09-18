@@ -19,12 +19,6 @@ class WidgetTemplatesConfigOptions extends AbstractConfigOptions {
 
 
 	/**
-	 * @var string Scope of these options
-	 */
-	protected static string $scope = 'WidgetTemplates';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions(): void {

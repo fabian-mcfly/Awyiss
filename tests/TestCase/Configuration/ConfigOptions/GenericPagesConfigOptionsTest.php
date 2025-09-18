@@ -242,14 +242,14 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.systemOrder.direction']->isNullable());
 		$this->assertFalse($configOptions['Backend.systemOrder.direction']->isPersonalizable());
 		$this->assertSame(SORT_ASC, $configOptions['Backend.systemOrder.direction']->getDefaultValue());
-		$this->assertSame('generic_pages::sort_asc', $configOptions['Backend.systemOrder.direction']->getPrintableValue());
+		$this->assertSame('news::sort_asc', $configOptions['Backend.systemOrder.direction']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.systemOrder.direction']->getType());
 		$this->assertIsCallable($configOptions['Backend.systemOrder.direction']->getTypecast());
 		$this->assertNull($configOptions['Backend.systemOrder.direction']->getValidate());
 		$this->assertIsArray($configOptions['Backend.systemOrder.direction']->getValues());
 		$this->assertSame([
-			4 => 'generic_pages::sort_asc',
-			3 => 'generic_pages::sort_desc',
+			4 => 'news::sort_asc',
+			3 => 'news::sort_desc',
 		], $configOptions['Backend.systemOrder.direction']->getValues());
 
 		$this->assertArrayHasKey('Backend.systemOrder.field', $configOptions);

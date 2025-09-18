@@ -35,10 +35,11 @@ trait TableFieldsTrait {
 			$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		}
 
-		$ls_scope = $this->getScope();
-
 		if (method_exists($this, 'getDynamicScope')) {
 			$ls_scope = $this->getDynamicScope();
+		}
+		else {
+			$ls_scope = static::getScope();
 		}
 
 		/** @var \Awyiss\Model\Table $lo_table */

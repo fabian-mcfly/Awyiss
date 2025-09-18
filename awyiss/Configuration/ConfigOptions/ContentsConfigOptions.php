@@ -21,12 +21,6 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 
 
 	/**
-	 * @var string Scope of these options
-	 */
-	protected static string $scope = 'Contents';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions(): void {

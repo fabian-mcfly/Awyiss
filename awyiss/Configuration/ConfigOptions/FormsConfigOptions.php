@@ -21,12 +21,6 @@ class FormsConfigOptions extends AbstractConfigOptions {
 
 
 	/**
-	 * @var string Scope of these options
-	 */
-	protected static string $scope = 'Forms';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions(): void {

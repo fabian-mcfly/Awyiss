@@ -19,12 +19,6 @@ class WidgetsConfigOptions extends AbstractConfigOptions {
 
 
 	/**
-	 * @var string Scope of these options
-	 */
-	protected static string $scope = 'Widgets';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions(): void {

@@ -277,14 +277,14 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.systemOrder.direction']->isNullable());
 		$this->assertFalse($configOptions['Backend.systemOrder.direction']->isPersonalizable());
 		$this->assertSame(SORT_ASC, $configOptions['Backend.systemOrder.direction']->getDefaultValue());
-		$this->assertSame('generic_datatables::sort_asc', $configOptions['Backend.systemOrder.direction']->getPrintableValue());
+		$this->assertSame('cars::sort_asc', $configOptions['Backend.systemOrder.direction']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.systemOrder.direction']->getType());
 		$this->assertIsCallable($configOptions['Backend.systemOrder.direction']->getTypecast());
 		$this->assertNull($configOptions['Backend.systemOrder.direction']->getValidate());
 		$this->assertIsArray($configOptions['Backend.systemOrder.direction']->getValues());
 		$this->assertSame([
-			4 => 'generic_datatables::sort_asc',
-			3 => 'generic_datatables::sort_desc',
+			4 => 'cars::sort_asc',
+			3 => 'cars::sort_desc',
 		], $configOptions['Backend.systemOrder.direction']->getValues());
 
 		$this->assertArrayHasKey('Backend.systemOrder.field', $configOptions);

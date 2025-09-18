@@ -113,7 +113,7 @@ class ConfigOptionsProvider {
 	public static function loadConfigOptions(string $configOptionScope): ?ConfigOptionsInterface {
 		if (str_contains($configOptionScope, '\\')) {
 			if (class_exists($configOptionScope)) {
-				$ls_scope = $configOptionScope::getScope();
+				$ls_scope = static::extractScopeFromClassName($configOptionScope);
 				$lx_configurationClass = $configOptionScope;
 
 				if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
@@ -268,7 +268,7 @@ class ConfigOptionsProvider {
 
 		/** @var class-string<\Awyiss\Configuration\ConfigOptionsInterface> $ls_className */
 		foreach ($la_classes as $ls_className) {
-			$ls_configScope = static::sanitizeScope($ls_className::getScope());
+			$ls_configScope = static::extractScopeFromClassName($ls_className);
 
 			static::$configOptions[ $ls_configScope ] ??= $ls_className;
 		}
@@ -329,5 +329,19 @@ class ConfigOptionsProvider {
 		else {
 			static::$configOptions += static::$datatables;
 		}
+	}
+
+
+	/**
+	 * @param string $scope
+	 * @param int $suffixLength
+	 * @return string
+	 */
+	public static function extractScopeFromClassName(string $scope, int $suffixLength = 13): string {
+		$la_parts = explode('\\', trim($scope, '\\'));
+		$ls_scope = array_pop($la_parts);
+		$ls_scope = substr($ls_scope, 0, -$suffixLength);
+
+		return static::sanitizeScope($ls_scope);
 	}
 }

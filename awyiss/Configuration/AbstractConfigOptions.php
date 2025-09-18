@@ -25,13 +25,6 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 * Set the scope and initialize the config options
 	 */
 	public function __construct() {
-		$ls_scope = static::getScope();
-		$ls_testScope = ConfigOptionsProvider::sanitizeScope($ls_scope);
-
-		if ($ls_testScope !== $ls_scope) {
-			static::$scope = $ls_testScope;
-		}
-
 		foreach (Awyiss::getRealms() as $ls_realm) {
 			$this->realms[ $ls_realm ] = new ConfigOptionCollection();
 		}
@@ -180,14 +173,10 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 * @inheritDoc
 	 */
 	public static function getScope(): string {
-		if (!isset(static::$scope)) {
-			$la_parts = explode('\\', static::class);
-			static::$scope = array_pop($la_parts);
-			static::$scope = substr(static::$scope, 0, -13);
-			static::$scope = ConfigOptionsProvider::sanitizeScope(static::$scope);
-		}
+		$la_parts = explode('\\', trim(static::class, '\\'));
+		$ls_scope = array_pop($la_parts);
+		$ls_scope = substr($ls_scope, 0, -13);
 
-
-		return static::$scope;
+		return ConfigOptionsProvider::sanitizeScope($ls_scope);
 	}
 }

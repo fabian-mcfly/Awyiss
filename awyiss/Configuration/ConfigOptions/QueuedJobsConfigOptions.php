@@ -15,12 +15,6 @@ use Awyiss\Configuration\ConfigOptionType;
  */
 class QueuedJobsConfigOptions extends AbstractConfigOptions {
 	/**
-	 * @var string Scope of these options
-	 */
-	protected static string $scope = 'QueuedJobs';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions(): void {
