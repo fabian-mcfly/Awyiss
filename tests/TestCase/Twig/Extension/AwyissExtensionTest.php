@@ -123,7 +123,7 @@ class AwyissExtensionTest extends TestCase {
 		$functions = $this->extension->getFunctions();
 
 		$this->assertIsArray($functions);
-		$this->assertCount(22, $functions);
+		$this->assertCount(23, $functions);
 
 		$functionNames = array_map(fn (TwigFunction $function) => $function->getName(), $functions);
 		$expectedNames = [
@@ -143,6 +143,7 @@ class AwyissExtensionTest extends TestCase {
 			'__df',
 			'__dfx',
 			'hashPrinter',
+			'localConfig',
 			'menu',
 			'module',
 			'naturalSort',
@@ -529,7 +530,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testMenuFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$menuFunction = $functions[16];
+		$menuFunction = $functions[17];
 		$callable = $menuFunction->getCallable();
 
 		$output = $callable(
@@ -553,7 +554,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testMenuFunctionWithoutLanguageShortcode(): void {
 		$functions = $this->extension->getFunctions();
-		$menuFunction = $functions[16];
+		$menuFunction = $functions[17];
 		$callable = $menuFunction->getCallable();
 
 		$this->expectException(InvalidArgumentException::class);
@@ -569,7 +570,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testModuleFunctionCallsModuleFunctionMethod(): void {
 		$functions = $this->extension->getFunctions();
-		$moduleFunction = $functions[17];
+		$moduleFunction = $functions[18];
 		$callable = $moduleFunction->getCallable();
 
 		$result = $callable(['_view' => $this->view], 'testModule', ['key' => 'some_value']);
@@ -584,7 +585,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testNaturalSortFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$naturalSortFunction = $functions[18];
+		$naturalSortFunction = $functions[19];
 		$callable = $naturalSortFunction->getCallable();
 
 		$data = ['item10', 'item2', 'item1'];
@@ -616,7 +617,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testStaticCallFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$staticCallFunction = $functions[19];
+		$staticCallFunction = $functions[20];
 		$callable = $staticCallFunction->getCallable();
 
 		$result = $callable('DateTime', 'createFromFormat', 'Y-m-d', '2020-02-02');
@@ -646,7 +647,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testSurveyFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$surveyFunction = $functions[20];
+		$surveyFunction = $functions[21];
 		$callable = $surveyFunction->getCallable();
 
 		$output = $callable(
@@ -677,7 +678,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testSurveyFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
-		$surveyFunction = $functions[20];
+		$surveyFunction = $functions[21];
 		$callable = $surveyFunction->getCallable();
 
 		$surveyQuestionsTable = $this->getTableLocator()->get('SurveyQuestions');
@@ -727,7 +728,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testSurveyFunctionWithoutPage(): void {
 		$functions = $this->extension->getFunctions();
-		$surveyFunction = $functions[20];
+		$surveyFunction = $functions[21];
 		$callable = $surveyFunction->getCallable();
 
 		$this->expectException(InvalidArgumentException::class);
@@ -743,7 +744,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testWidgetFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$widgetFunction = $functions[21];
+		$widgetFunction = $functions[22];
 		$callable = $widgetFunction->getCallable();
 
 		$output = $callable(['_view' => $this->view], 'dummy_row_overflow', [
@@ -764,7 +765,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testWidgetFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
-		$widgetFunction = $functions[21];
+		$widgetFunction = $functions[22];
 		$callable = $widgetFunction->getCallable();
 
 		$output = $callable(

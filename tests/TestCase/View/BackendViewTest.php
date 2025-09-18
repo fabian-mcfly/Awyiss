@@ -122,7 +122,7 @@ class BackendViewTest extends TestCase {
 
 		$view->expects($this->once())->method('getTwig')->willReturn($twig);
 
-		$twig->expects($this->exactly(11))->method('addGlobal');
+		$twig->expects($this->exactly(13))->method('addGlobal');
 
 		$this->callProtectedMethod($view, 'addTwigGlobals');
 	}
