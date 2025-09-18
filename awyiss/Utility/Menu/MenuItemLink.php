@@ -162,11 +162,17 @@ class MenuItemLink {
 			}
 		}
 
+		if (isset($link->attributes?->target)) {
+			$this->target = $link->attributes->target;
+		}
 		if (isset($link->target)) {
 			$this->target = $link->target;
 		}
 
-		if (isset($link->rel)) {
+		if (isset($link->attributes?->rel)) {
+			$this->rel = $link->attributes->rel;
+		}
+		elseif (isset($link->rel)) {
 			$this->rel = $link->rel;
 		}
 	}
