@@ -21,18 +21,25 @@ class BackendMenu extends Menu {
 	 */
 	public function appendEntries(array $entries, string $identifier, bool $determineVisibility = true): void {
 		// Try to find the item with the given identifier
-		// If it does not exist, use 'system' as the identifier
-		if (!$this->hasItem($identifier)) {
-			if (!$this->hasItem('system')) {
-				// If an item to append to is still not found, throw an exception
-				throw new MenuValidationException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $identifier));
-			}
-
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$identifier = 'system';
+		if ($this->hasItem($identifier)) {
+			parent::appendEntries($entries, $identifier, $determineVisibility);
+			return;
 		}
 
-		parent::appendEntries($entries, $identifier, $determineVisibility);
+		$la_children = $this->toArray();
+		if (isset($la_children[ $identifier ])) {
+			$this->appendInNestedChildren($la_children[ $identifier ], $entries, $determineVisibility);
+			return;
+		}
+
+		// If there's no 'system' item to fall back to, throw an exception
+		if ($this->hasItem('system')) {
+			parent::appendEntries($entries, 'system', $determineVisibility);
+			return;
+		}
+
+		// If an item to append to is still not found, throw an exception
+		throw new MenuValidationException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $identifier));
 	}
 
 
@@ -56,5 +63,28 @@ class BackendMenu extends Menu {
 		}
 
 		parent::insertEntriesAfter($entries, $identifier, $determineVisibility);
+	}
+
+
+	/**
+	 * @param \Awyiss\Utility\Menu\MenuItem $item
+	 * @param array $entries
+	 * @param bool $determineVisibility
+	 * @return void
+	 * @throws \ReflectionException
+	 */
+	protected function appendInNestedChildren(MenuItem $item, array $entries, bool $determineVisibility): void {
+		$lo_subMenu = $item->getChildren();
+		if (!$lo_subMenu) {
+			$item->setChildren($entries);
+		}
+		else {
+			$lo_subMenu->insertEntriesAfter($entries, null, false);
+		}
+
+		if ($determineVisibility && $this->identity) {
+			//Only after all elements are updated, the visibility can be calculated
+			$this->determineVisibility();
+		}
 	}
 }
