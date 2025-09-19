@@ -5,7 +5,7 @@ namespace Awyiss\Configuration;
 
 
 /**
- * Signature of all neccessary methods to connect `ConfigOption` with `ConfigOptionsProvider`
+ * Signature of all necessary methods to connect `ConfigOption` with `ConfigOptionsProvider`
  *
  * @see ConfigOption
  * @see ConfigOptionsProvider
@@ -42,7 +42,7 @@ interface ConfigOptionsInterface {
 
 
 	/**
-	 * Retreives a configuration class and validates the provided value for the given configOptionIdentifier
+	 * Retrieves a configuration class and validates the provided value for the given configOptionIdentifier
 	 * Returns a string with an error message if the value is not valid.
 	 *
 	 * @param string $realm
@@ -62,7 +62,7 @@ interface ConfigOptionsInterface {
 
 
 	/**
-	 * Retreives a configuration class and cast the provided value to it's correct type for the given configOptionIdentifier
+	 * Retrieves a configuration class and cast the provided value to it's correct type for the given configOptionIdentifier
 	 *
 	 * @param string $realm
 	 * @param array|string $path

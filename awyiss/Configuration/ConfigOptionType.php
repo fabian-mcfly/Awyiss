@@ -18,8 +18,7 @@ enum ConfigOptionType {
 	case Enum;
 	case Float;
 	case Integer;
-	case JsonArray;
-	case JsonObject;
+	case Json;
 	case List;
 	case ListKey;
 	case String;
@@ -42,7 +41,7 @@ enum ConfigOptionType {
 		switch ($this) {
 			case self::Bool:
 				/**
-				 * Type bool consideres everything boolish to be a valid value
+				 * Type bool considers everything bool-ish to be a valid value
 				 * since the \Model\Entity\Configuration saves everything as a string
 				 * and does not differentiate between the type here.
 				 */
@@ -58,8 +57,7 @@ enum ConfigOptionType {
 				return is_int($value) || ($value === (int)$value);
 
 			case self::List:
-			case self::JsonArray:
-			case self::JsonObject:
+			case self::Json:
 				try {
 					$la_value = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
 				}
@@ -102,8 +100,7 @@ enum ConfigOptionType {
 			self::Color => !empty($value) ? preg_replace('/[^#0-9A-F]/i', '', $value) : null,
 			self::Float => floatval($value),
 			self::Integer => intval($value),
-			self::List, self::JsonArray, self::ValueCollection => json_decode($value ?? '', true),
-			self::JsonObject => json_decode($value ?? ''),
+			self::List, self::Json, self::ValueCollection => json_decode($value ?? '', true),
 			self::String => strval($value),
 		};
 	}

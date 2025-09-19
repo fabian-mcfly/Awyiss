@@ -99,7 +99,7 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertFalse($configOptions['Backend.categories.categories']->isPersonalizable());
 		$this->assertNull($configOptions['Backend.categories.categories']->getDefaultValue());
 		$this->assertSame(null, $configOptions['Backend.categories.categories']->getPrintableValue());
-		$this->assertSame(ConfigOptionType::JsonArray, $configOptions['Backend.categories.categories']->getType());
+		$this->assertSame(ConfigOptionType::Json, $configOptions['Backend.categories.categories']->getType());
 		$this->assertNull($configOptions['Backend.categories.categories']->getTypecast());
 		$this->assertNull($configOptions['Backend.categories.categories']->getValidate());
 		$this->assertNull($configOptions['Backend.categories.categories']->getValues());

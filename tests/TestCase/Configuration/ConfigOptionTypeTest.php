@@ -52,20 +52,10 @@ class ConfigOptionTypeTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testValidateJsonArray(): void {
-		$this->assertTrue(ConfigOptionType::JsonArray->validate('["a", "b", "c"]'));
-		$this->assertTrue(ConfigOptionType::JsonArray->validate('{"a": "b"}'));
-		$this->assertFalse(ConfigOptionType::JsonArray->validate('abc'));
-	}
-
-
-	/**
-	 * @return void
-	 */
-	public function testValidateJsonObject(): void {
-		$this->assertTrue(ConfigOptionType::JsonObject->validate('{"a": "b"}'));
-		$this->assertTrue(ConfigOptionType::JsonObject->validate('["a", "b", "c"]'));
-		$this->assertFalse(ConfigOptionType::JsonObject->validate('abc'));
+	public function testValidateJson(): void {
+		$this->assertTrue(ConfigOptionType::Json->validate('["a", "b", "c"]'));
+		$this->assertTrue(ConfigOptionType::Json->validate('{"a": "b"}'));
+		$this->assertFalse(ConfigOptionType::Json->validate('abc'));
 	}
 
 
@@ -107,16 +97,8 @@ class ConfigOptionTypeTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testCastJsonArray(): void {
-		$this->assertEquals(['a', 'b', 'c'], ConfigOptionType::JsonArray->cast('["a", "b", "c"]'));
-	}
-
-
-	/**
-	 * @return void
-	 */
-	public function testCastJsonObject(): void {
-		$this->assertEquals((object)['a' => 'b'], ConfigOptionType::JsonObject->cast('{"a": "b"}'));
+	public function testCastJson(): void {
+		$this->assertEquals(['a', 'b', 'c'], ConfigOptionType::Json->cast('["a", "b", "c"]'));
 	}
 
 

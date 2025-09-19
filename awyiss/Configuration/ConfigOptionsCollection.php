@@ -35,7 +35,7 @@ class ConfigOptionsCollection extends ArrayIterator {
 	/**
 	 * Adds a ConfigOption or a set of elements, containing nested ConfigOptions or ConfigOptionsCollection to this collection
 	 *
-	 * @param ConfigOption|array<int|string, ConfigOptionsCollection|ConfigOption|array> $configOption
+	 * @param \Awyiss\Configuration\ConfigOption|array<int|string, \Awyiss\Configuration\ConfigOptionsCollection|\Awyiss\Configuration\ConfigOption|array> $configOption
 	 * @return $this
 	 */
 	public function add(array|ConfigOption $configOption): static {

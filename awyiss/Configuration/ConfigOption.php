@@ -86,7 +86,7 @@ class ConfigOption {
 	 */
 	public function __construct(
 		string $identifier,
-		?ConfigOptionType $type = null,
+		ConfigOptionType $type = ConfigOptionType::String,
 		mixed $defaultValue = null,
 		string $description = '',
 		bool $localizable = true,
@@ -123,7 +123,7 @@ class ConfigOption {
 
 		$this->setPersonalizable($personalizable);
 
-		$this->setType($type ?? ConfigOptionType::String);
+		$this->setType($type);
 
 		$this->setTitle($title);
 
@@ -238,8 +238,7 @@ class ConfigOption {
 
 
 	/**
-	 * @param bool $nullable
-	 * @param bool $localized
+	 * @param bool $personalizable
 	 */
 	public function setPersonalizable(bool $personalizable): void {
 		$this->personalizable = $personalizable;
@@ -283,8 +282,7 @@ class ConfigOption {
 
 		return match ($this->type) {
 			ConfigOptionType::Bool => $lx_value ? 'true' : 'false',
-			ConfigOptionType::JsonArray, ConfigOptionType::List, ConfigOptionType::ValueCollection => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),
-			ConfigOptionType::JsonObject => print_r($lx_value, true),
+			ConfigOptionType::Json, ConfigOptionType::List, ConfigOptionType::ValueCollection => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),
 			default => $lx_value,
 		};
 	}
@@ -358,7 +356,7 @@ class ConfigOption {
 
 
 	/**
-	 * @param callable|null $type
+	 * @param callable|null $validate
 	 * @return self
 	 */
 	public function setValidate(?callable $validate): static {
@@ -420,7 +418,7 @@ class ConfigOption {
 		) {
 			$lx_values = $this->getValues(true, $languageShortcode);
 			if (!$lx_values) {
-				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, $this->name));
+				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, $this->type->name));
 			}
 		}
 

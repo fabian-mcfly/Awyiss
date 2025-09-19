@@ -80,11 +80,7 @@
 	}) }}
 {% endblock %}
 
-{% block formControlTypeJsonArray %}
-	{{ FormHelper.control('value', {placeholder: configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
-{% endblock %}
-
-{% block formControlTypeJsonObject %}
+{% block formControlTypeJson %}
 	{{ FormHelper.control('value', {placeholder: configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
 {% endblock %}
 
