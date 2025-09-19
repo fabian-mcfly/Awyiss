@@ -92,6 +92,27 @@ export default class ContentsController {
 			return contentAreaId;
 		});
 
+		nestedListHandler.onStartDefault = nestedListHandler.onStart;
+		nestedListHandler.onStart = event => {
+			nestedListHandler.onStartDefault(event);
+
+			// Find the list items, including the dragged item
+			// noinspection JSUnresolvedReference
+			const items = [event.item, ...event.item.querySelectorAll('.ListItem')];
+
+			const contentAreas = document.querySelectorAll('.Overview-Fieldset');
+			contentAreas.forEach(contentArea => {
+				const contentAreaId = parseInt(contentArea.dataset.contentAreaId);
+
+				for (const item of items) {
+					if (!JSON.parse(item.dataset.contentAreaIds).includes(contentAreaId)) {
+						contentArea.classList.add('UnassignedContentArea');
+						return;
+					}
+				}
+			});
+		}
+
 		nestedListHandler.onMoveDefault = nestedListHandler.onMove;
 		nestedListHandler.onMove = event => {
 			// noinspection JSUnresolvedReference
@@ -172,6 +193,16 @@ export default class ContentsController {
 			// Append the context menu to the body
 			listItem.appendChild(contextMenu);
 		});
+
+		nestedListHandler.onEndDefault = nestedListHandler.onEnd;
+		nestedListHandler.onEnd = event => {
+			nestedListHandler.onEndDefault(event);
+
+			const contentAreas = document.querySelectorAll('.Overview-Fieldset.UnassignedContentArea');
+			contentAreas.forEach(contentArea => {
+				contentArea.classList.remove('UnassignedContentArea');
+			});
+		}
 	}
 }
 
