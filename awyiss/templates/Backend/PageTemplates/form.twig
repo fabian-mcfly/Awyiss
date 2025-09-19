@@ -44,13 +44,13 @@
 {% endset %}
 
 {% set assignedContentAreas = pageTemplate.contentAreas ? pageTemplate.contentAreas|column('id') : [] %}
-{% set assignedContentAreasListItems = '' %}
+{% set assignedContentAreasListItems = [] %}
 {% set availableContentAreasListItems = '' %}
 
 {% for key, contentArea in contentAreas %}
 	{% set content %}
 		{% block contentAreasListItem %}
-			<li class="ListItem ContentAreas-ListItem{% if contentArea.active == false %} Inactive{% endif %}">
+			<li class="ListItem ContentAreas-ListItem{% if contentArea.active ==  false %} Inactive{% endif %}">
 				{% block contentAreasListItemLabel %}
 				<label class="Title">{{ contentArea.label }} (<em>{{ contentArea.identifier }}</em>)</label>
 				{% endblock %}
@@ -108,7 +108,7 @@
 	{% endset %}
 
 	{% if contentArea.id in assignedContentAreas %}
-		{% set assignedContentAreasListItems = assignedContentAreasListItems ~ content %}
+		{% set assignedContentAreasListItems = assignedContentAreasListItems|merge({(contentArea.identifier): content}) %}
 	{% else %}
 		{% set availableContentAreasListItems = availableContentAreasListItems ~ content %}
 	{% endif %}
@@ -136,7 +136,11 @@
 
 						{% block formControlContentAreasAssignedInner %}
 							<ul class="NoList ContentAreas-List ContentAreas-List-Assigned">
-								{{ assignedContentAreasListItems|raw }}
+								{% for contentArea in pageTemplate.contentAreas %}
+									{% if assignedContentAreasListItems[ contentArea.identifier ] %}
+										{{ assignedContentAreasListItems[ contentArea.identifier ]|raw }}
+									{% endif %}
+								{% endfor %}
 							</ul>
 						{% endblock %}
 
