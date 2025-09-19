@@ -239,6 +239,12 @@ class ContentsCell extends Cell {
 			'ContentAreas.identifier' => $contentArea,
 		]);
 
+		if (!$isPreview) {
+			$lo_query->where([
+				'ContentAreas.active' => true,
+			]);
+		}
+
 		$lo_contents = $lo_query->all();
 
 		/*

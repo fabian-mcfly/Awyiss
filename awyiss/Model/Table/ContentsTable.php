@@ -697,7 +697,7 @@ class ContentsTable extends Table {
 					],
 					'ContentAreas' => [
 						'finder' => [
-							'all' => [
+							'active' => [
 								'attributes' => ['skip' => true],
 							],
 						],

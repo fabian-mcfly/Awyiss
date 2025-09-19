@@ -127,7 +127,6 @@ class ContentsController extends Controller {
 				}
 			}
 
-
 			return $result;
 		})->find('threaded')->all();
 

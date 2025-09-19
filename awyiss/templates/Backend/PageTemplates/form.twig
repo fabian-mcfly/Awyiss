@@ -50,7 +50,7 @@
 {% for key, contentArea in contentAreas %}
 	{% set content %}
 		{% block contentAreasListItem %}
-			<li class="ListItem ContentAreas-ListItem">
+			<li class="ListItem ContentAreas-ListItem{% if contentArea.active == false %} Inactive{% endif %}">
 				{% block contentAreasListItemLabel %}
 				<label class="Title">{{ contentArea.label }} (<em>{{ contentArea.identifier }}</em>)</label>
 				{% endblock %}

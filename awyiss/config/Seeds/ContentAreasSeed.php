@@ -16,7 +16,7 @@ class ContentAreasSeed extends AbstractSeed {
 			[
 				'id' => 1,
 				'identifier' => 'ContentArea',
-				'title' => 'ContentArea',
+				'title' => 'Content Area',
 				'active' => 1,
 				'deleted' => 0,
 				'created_by' => 1,
