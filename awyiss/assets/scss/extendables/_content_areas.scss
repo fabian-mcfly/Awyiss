@@ -31,6 +31,11 @@
 
 					&.UnassignedContentArea {
 						background-color:color-mix(in srgb, var(--colorError) 20%, #FFFFFF);
+
+						ul {
+							box-shadow:none;
+							outline:0 none;
+						}
 					}
 
 					html.🌚 & {
