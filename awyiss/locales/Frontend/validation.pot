@@ -67,10 +67,10 @@ msgid "error_valid_content_template_id"
 msgstr "Invalid content template"
 
 msgid "error_valid_content_area_id"
-msgstr "Invalid content area"
+msgstr "Invalid Content Area"
 
 msgid "error_valid_content_area_id_for_children"
-msgstr "Invalid content area for children"
+msgstr "Invalid Content Area for children"
 
 msgid "error_valid_width_indent_combination"
 msgstr "Invalid combination of column width and indentation"
@@ -85,13 +85,13 @@ msgid "error_content_template_exists"
 msgstr "This content template does not exist"
 
 msgid "error_content_area_exists"
-msgstr "This content area does not exist"
+msgstr "This Content Area does not exist"
 
 msgid "error_page_template_exists"
 msgstr "This page template does not exist"
 
 msgid "error_page_template_content_area_exists"
-msgstr "This content area does not exist"
+msgstr "This Content Area does not exist"
 
 msgid "error_file_name_unique"
 msgstr "This filename is already in use"
@@ -142,7 +142,7 @@ msgid "error_no_nested_children_with_different_page_role"
 msgstr "This page cannot be deleted because there are subordinate pages with a different page role"
 
 msgid "error_valid_content_areas"
-msgstr "Invalid content areas"
+msgstr "Invalid Content Areas"
 
 msgid "error_no_linked_pages"
 msgstr "There are still pages that use this template"

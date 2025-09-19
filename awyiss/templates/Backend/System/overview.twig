@@ -100,10 +100,18 @@
 
 						{% block fieldsetTemplatesInner %}
 							<ul class="NoList">
-								{% block listItemTemplatesOverview %}
+								{% block listItemPageTemplatesOverview %}
 									{% if AuthorizationHelper.scopeIsAccessible('page_templates', [], 'read') %}
 										<li class="ListItem-PageTemplates">
 											{{ HtmlHelper.link(__d('page_templates', 'headline_overview'), {controller: 'PageTemplates', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemContentAreasOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('page_templates', [], 'read') %}
+										<li class="ListItem-ContentAreas">
+											{{ HtmlHelper.link(__d('content_areas', 'headline_overview'), {controller: 'ContentAreas', action: 'overview'}) }}
 										</li>
 									{% endif %}
 								{% endblock %}

@@ -185,11 +185,6 @@ class PageTemplatesController extends Controller {
 		$la_requestData = $this->request->getData();
 
 		if (!empty($la_requestData['content_areas'])) {
-			$la_newContentAreas = null;
-			if (isset($la_requestData['content_areas']['new'])) {
-				$la_newContentAreas = $this->createContentArea($la_requestData['content_areas']['new']);
-			}
-
 			$la_requestData['content_areas'] = array_values(array_filter($la_requestData['content_areas'], function (array $element) {
 				return !empty($element['id']);
 			}));
@@ -200,15 +195,6 @@ class PageTemplatesController extends Controller {
 				$contentArea['_joinData']['system_order'] = $li_systemOrder;
 				$li_systemOrder++;
 			});
-
-			foreach ($la_newContentAreas as $lo_newContentArea) {
-				$la_requestData['content_areas'][] = [
-					'id' => $lo_newContentArea->id,
-					'_joinData' => [
-						'system_order' => count($la_requestData['content_areas']) + 1,
-					],
-				];
-			}
 		}
 
 		if (!empty($la_requestData['content_template_content_areas'])) {
@@ -283,43 +269,6 @@ class PageTemplatesController extends Controller {
 
 
 	/**
-	 * @param array $data
-	 * @return array<\Awyiss\Model\Entity>
-	 */
-	protected function createContentArea(array $data): array {
-		$la_newContentAreas = [];
-
-		foreach ($data['title'] as $li_key => $ls_title) {
-			$ls_identifier = $data['identifier'][ $li_key ] ?? null;
-
-			if (!$ls_title && !$ls_identifier) {
-				continue;
-			}
-
-			if (!$ls_title) {
-				$ls_title = $ls_identifier;
-			}
-			elseif (!$ls_identifier) {
-				$ls_identifier = $ls_title;
-			}
-
-			$lo_contentArea = $this->PageTemplates->ContentAreas->newDefaultEntity([
-				'title' => $ls_title,
-				'identifier' => $ls_identifier,
-			]);
-
-			$this->PageTemplates->ContentAreas->save($lo_contentArea);
-
-			if (!$lo_contentArea->hasErrors()) {
-				$la_newContentAreas[] = $lo_contentArea;
-			}
-		}
-
-		return $la_newContentAreas;
-	}
-
-
-	/**
 	 * @param \Awyiss\Model\Entity\PageTemplate $pageTemplate
 	 * @return void
 	 */
@@ -327,11 +276,14 @@ class PageTemplatesController extends Controller {
 		$lo_query = $this->PageTemplates->ContentAreas->find();
 
 		if ($pageTemplate->contentAreas && !$pageTemplate->isNew()) {
-			/** @noinspection PhpUndefinedMethodInspection */
-			$lo_query->orderByDesc($lo_query->newExpr($lo_query->func()->FIELD([
-				'id' => 'identifier',
-				...array_reverse(collection($pageTemplate->contentAreas)->extract('id')->toArray()),
-			])), true);
+			$lo_query->orderByAsc(
+				$lo_query->func()->coalesce([
+					'ContentAreas_title_translation.content' => 'literal',
+					'ContentAreas.title' => 'literal',
+				])
+			);
+			$lo_query->orderByAsc('ContentAreas_title_translation.content');
+			$lo_query->orderByAsc('ContentAreas.title');
 
 			$lo_query->contain([
 				'ContentTemplates' => function (SelectQuery $query) use ($pageTemplate) {

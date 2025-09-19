@@ -32,6 +32,14 @@ class ContentAreasTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $translate = [
+		'fields' => ['title'],
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
 		$this->belongsToMany('ContentTemplates', [
 			'through' => 'ContentTemplateContentAreas',

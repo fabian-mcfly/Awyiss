@@ -9,6 +9,7 @@ use Awyiss\Model\Table\ContentAreasTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
+use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
@@ -61,7 +62,7 @@ class ContentAreasTableTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(6, $this->contentAreasTable->associations()->keys());
+		$this->assertCount(8, $this->contentAreasTable->associations()->keys());
 
 		// Test ContentTemplates association (BelongsToMany)
 		$this->assertTrue($this->contentAreasTable->hasAssociation('ContentTemplates'));
@@ -102,6 +103,21 @@ class ContentAreasTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $deletedByUserAssociation);
 		$this->assertFalse($deletedByUserAssociation->getCascadeCallbacks());
 		$this->assertFalse($deletedByUserAssociation->getDependent());
+
+		// 'ContentAreas_title_translation' must also exist
+		$this->assertTrue($this->contentAreasTable->hasAssociation('ContentAreas_title_translation'));
+		$titleTranslationAssociation = $this->contentAreasTable->getAssociation('ContentAreas_title_translation');
+		$this->assertInstanceOf(HasOne::class, $titleTranslationAssociation);
+		$this->assertFalse($titleTranslationAssociation->getCascadeCallbacks());
+		$this->assertFalse($titleTranslationAssociation->getDependent());
+
+		// 'I18n' must also exist
+		$this->assertTrue($this->contentAreasTable->hasAssociation('I18n'));
+		$i18nAssociation = $this->contentAreasTable->getAssociation('I18n');
+		$this->assertInstanceOf(HasMany::class, $i18nAssociation);
+		$this->assertFalse($i18nAssociation->getCascadeCallbacks());
+		$this->assertTrue($i18nAssociation->getDependent());
+		$this->assertEquals('append', $i18nAssociation->getSaveStrategy());
 	}
 
 

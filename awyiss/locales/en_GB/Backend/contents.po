@@ -84,7 +84,7 @@ msgid "overview_list_with_columns"
 msgstr "Column View"
 
 msgid "unknown_content_area"
-msgstr "Unknown content area"
+msgstr "Unknown Content Area"
 
 msgid "page_id"
 msgstr "Page"

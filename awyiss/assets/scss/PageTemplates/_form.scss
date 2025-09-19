@@ -179,30 +179,42 @@
 
 	}
 
-	.FormInputName-ContentAreasNew {
-		grid-column:1 / -1;
+	#NewContentArea {
+		display:grid;
+		gap:5px;
+		grid-template-columns:repeat(2, 1fr);
 
-		.FormInputType-ListItem {
-			grid-template-columns:repeat(2, 1fr);
+		> .FormInput {
+			grid-column:auto / span 1;
+		}
 
-			&:nth-child(n+2) {
-				.Label {
-					display:none;
+		> .Button {
+			--backgroundColor:var(--colorMedium);
+
+			width:100%;
+			padding-block:5px;
+			font-size:0;
+			line-height:0;
+			grid-column:1 / -1;
+
+			@media screen and (width <= 768px) {
+				width:100%;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					width:100%;
 				}
 			}
-		}
 
-		.FormInput {
-			width:100%;
-			min-width:0;
-			margin-bottom:0;
-			grid-column-end:auto;
-		}
-
-		.Label {
-			white-space:nowrap;
-			overflow:hidden;
-			text-overflow:ellipsis;
+			&::after {
+				width:24px;
+				height:24px;
+				margin-left:0;
+				font-size:18px;
+				line-height:20px;
+				text-indent:1px;
+			}
 		}
 	}
 }
