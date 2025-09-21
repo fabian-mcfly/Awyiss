@@ -47,7 +47,7 @@ class BootstrapColumnSystem extends AbstractColumnSystem {
 
 		foreach ($la_indents as $ls_key => $lo_column) {
 			$lo_column = clone $lo_column;
-			$lo_column->setCssClassPrefix('offset');
+			$lo_column->setCssClassPrefix('offset-md');
 
 			$la_indents[ $ls_key ] = $lo_column;
 		}
