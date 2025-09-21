@@ -254,10 +254,7 @@
 					}
 
 					@if $width < .5 {
-						:is(
-						.Title,
-						.ListItem-Inner .Title
-					) {
+						:is(.Title, .ListItem-Inner .Title) {
 							font-size:.6rem;
 						}
 					} @else if $width < 1 {

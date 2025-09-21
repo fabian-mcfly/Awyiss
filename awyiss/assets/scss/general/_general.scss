@@ -21,6 +21,12 @@
 	--fontSizeHeading:#{$fontSizeHeading};
 	--lineHeightHeading:#{$lineHeightHeading};
 
+	--backgroundColor:var(--colorLight);
+	--backgroundColorContent:var(--colorBright);
+	--rowGap:calc(var(--lineHeightMain) * 2);
+	--negativeRowGap:calc(var(--rowGap) * -1);
+	--scrollbarColor:var(--colorMedium) var(--colorBright);
+
 	@media screen and (width <= 1024px) {
 		--fontSizeMain:#{$fontSizeMainMedium};
 	}
@@ -28,12 +34,6 @@
 	@media screen and (width <= 768px) {
 		--fontSizeMain:#{$fontSizeMainSmall};
 	}
-
-	--backgroundColor:var(--colorLight);
-	--backgroundColorContent:var(--colorBright);
-	--rowGap:calc(var(--lineHeightMain) * 2);
-	--negativeRowGap:calc(var(--rowGap) * -1);
-	--scrollbarColor:var(--colorMedium) var(--colorBright);
 }
 
 html {
