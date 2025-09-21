@@ -24,7 +24,6 @@ class ContentAreasController extends Controller {
 	 */
 	protected array $paginate = [
 		'enabled' => true,
-		'defaultSortableFields' => ['used_for_contents'],
 	];
 
 

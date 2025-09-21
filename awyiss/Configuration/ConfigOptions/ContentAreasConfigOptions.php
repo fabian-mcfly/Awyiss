@@ -41,14 +41,6 @@ class ContentAreasConfigOptions extends AbstractConfigOptions {
 			],
 			'paginate' => [
 				new ConfigOption(
-					defaultValue: false,
-					identifier: 'enabled',
-					localizable: false,
-					nullable: false,
-					personalizable: true,
-					type: ConfigOptionType::Bool,
-				),
-				new ConfigOption(
 					defaultValue: 20,
 					identifier: 'limit',
 					localizable: false,
