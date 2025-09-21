@@ -42,7 +42,10 @@
 	{% set key = widgetTemplateElement ? widgetTemplateElement.fieldset : 'unused' %}
 
 	{% if assignable == false and key == 'unused' %}
-		{% set key = availableFieldsets|keys|first %}
+		{% set key = 'conditions' %}
+		{% if availableElement in ['active', 'widget_template_id'] %}
+			{% set key = 'presentation' %}
+		{% endif %}
 	{% endif %}
 
 	{% set widget %}
@@ -69,10 +72,18 @@
 				</span>
 
 				<label for="WidgetTemplate-WidgetElements-{{ availableElement|camelize }}-Fieldset">
+					{% set value = widgetTemplateElement ? widgetTemplateElement.fieldset : null %}
+					{% if value is empty and assignable == false %}
+						{% set value = 'conditions' %}
+						{% if availableElement in ['active', 'widget_template_id'] %}
+							{% set value = 'presentation' %}
+						{% endif %}
+					{% endif %}
+
 					{{ FormHelper.select('widget_template_elements.' ~ loop.index0 ~ '.fieldset', availableFieldsets, {
 						id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize ~ '-Fieldset',
 						required: false,
-						val: widgetTemplateElement ? widgetTemplateElement.fieldset : (assignable == false ? availableFieldsets|keys|first : null),
+						val: value,
 					}) }}
 
 					{% if (widgetTemplateElement) %}
@@ -245,11 +256,17 @@
 
 								{% block fieldsetWidgetFieldsetInner %}
 									<ul class="List WidgetElements-List SortableList" data-fieldset="{{ key }}">
-										{% if fieldsetElements[key] is defined %}
-											{% for identifier, widgetElement in fieldsetElements[key] %}
-												{{ widgetElement|raw }}
-											{% endfor %}
-										{% endif %}
+										{% for widgetTemplateElement in widgetTemplate.widgetTemplateElements %}
+											{% if fieldsetElements[key][ widgetTemplateElement.identifier ] is defined %}
+												{{ fieldsetElements[key][ widgetTemplateElement.identifier ]|raw }}
+											{% endif %}
+										{% else %}
+											{% if fieldsetElements[key] is defined %}
+												{% for identifier, widgetElement in fieldsetElements[key] %}
+													{{ widgetElement|raw }}
+												{% endfor %}
+											{% endif %}
+										{% endfor %}
 									</ul>
 								{% endblock %}
 							</fieldset>

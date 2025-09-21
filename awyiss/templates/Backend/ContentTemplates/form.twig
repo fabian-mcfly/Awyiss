@@ -47,7 +47,10 @@
 	{% set key = contentTemplateElement ? contentTemplateElement.fieldset : 'unused' %}
 
 	{% if assignable == false and key == 'unused' %}
-		{% set key = availableFieldsets|keys|first %}
+		{% set key = 'conditions' %}
+		{% if availableElement in ['active', 'content_template_id'] %}
+			{% set key = 'presentation' %}
+		{% endif %}
 	{% endif %}
 
 	{% set content %}
@@ -74,10 +77,17 @@
 				</span>
 
 				<label for="ContentTemplate-ContentElements-{{ availableElement|camelize }}-Fieldset">
+					{% set value = contentTemplateElement ? contentTemplateElement.fieldset : null %}
+					{% if value is empty and assignable == false %}
+						{% set value = 'conditions' %}
+						{% if availableElement in ['active', 'content_template_id'] %}
+							{% set value = 'presentation' %}
+						{% endif %}
+					{% endif %}
 					{{ FormHelper.select('content_template_elements.' ~ loop.index0 ~ '.fieldset', availableFieldsets, {
 						id: 'ContentTemplate-ContentElements-' ~ availableElement|camelize ~ '-Fieldset',
 						required: false,
-						val: contentTemplateElement ? contentTemplateElement.fieldset : (assignable == false ? availableFieldsets|keys|first : null),
+						val: value,
 					}) }}
 
 					{% if (contentTemplateElement) %}
@@ -257,11 +267,17 @@
 
 								{% block fieldsetContentFieldsetInner %}
 									<ul class="List ContentElements-List SortableList" data-fieldset="{{ key }}">
-										{% if fieldsetElements[key] is defined %}
-											{% for identifier, contentElement in fieldsetElements[key] %}
-												{{ contentElement|raw }}
-											{% endfor %}
-										{% endif %}
+										{% for contentTemplateElement in contentTemplate.contentTemplateElements %}
+											{% if fieldsetElements[key][ contentTemplateElement.identifier ] is defined %}
+												{{ fieldsetElements[key][ contentTemplateElement.identifier ]|raw }}
+											{% endif %}
+										{% else %}
+											{% if fieldsetElements[key] is defined %}
+												{% for identifier, contentElement in fieldsetElements[key] %}
+													{{ contentElement|raw }}
+												{% endfor %}
+											{% endif %}
+										{% endfor %}
 									</ul>
 								{% endblock %}
 							</fieldset>
