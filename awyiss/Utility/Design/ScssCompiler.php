@@ -374,6 +374,7 @@ class ScssCompiler {
 		 * @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName
 		 */
 		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className', AwyissColumnSystem::class);
+		$ls_columnSystemClassName::setMaxDenominator(Configure::read('Awyiss.Contents.Backend.columnSystem.maxColumns', 5));
 
 		$la_widths = [];
 		$la_indents = [];
