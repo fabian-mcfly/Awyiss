@@ -78,7 +78,9 @@ class ContentTemplatesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_contentTemplate = $this->ContentTemplates->newDefaultEntity();
+		$lo_contentTemplate = $this->ContentTemplates->newDefaultEntity([
+			'mediaElementAssignments' => [],
+		]);
 
 		if ($this->request->is('post')) {
 			$this->save($lo_contentTemplate);

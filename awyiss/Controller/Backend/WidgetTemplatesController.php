@@ -77,7 +77,9 @@ class WidgetTemplatesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_widgetTemplate = $this->WidgetTemplates->newDefaultEntity();
+		$lo_widgetTemplate = $this->WidgetTemplates->newDefaultEntity([
+			'mediaElementAssignments' => [],
+		]);
 
 		if ($this->request->is('post')) {
 			$this->save($lo_widgetTemplate);

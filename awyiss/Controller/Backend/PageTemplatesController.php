@@ -88,6 +88,7 @@ class PageTemplatesController extends Controller {
 		}
 
 		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity([
+			'mediaElementAssignments' => [],
 			'pageRoleId' => $li_pageRoleId,
 		]);
 
