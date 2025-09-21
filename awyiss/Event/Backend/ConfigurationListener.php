@@ -10,6 +10,7 @@ use Awyiss\Core\LocalConfig;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Configuration;
+use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
@@ -72,12 +73,17 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
-	 * @throws \Exception
+	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
 	 */
 	public function afterSaveCommit(Event $event, Configuration $entity): void {
+		$this->recompileScss($entity);
+
 		$this->unnestEntries($event, $entity);
+
 		$this->rebuildSystemOrder($event, $entity);
+
 		$this->createCustomConfiguration();
+
 		$this->clearMediaCache($entity);
 	}
 
@@ -86,12 +92,16 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @return void
-	 * @throws \Exception
+	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterDelete(Event $event, Configuration $entity): void {
+		$this->recompileScss($entity, true);
+
 		$this->unnestEntries($event, $entity, true);
+
 		$this->createCustomConfiguration();
+
 		$this->clearMediaCache($entity, true);
 	}
 
@@ -334,5 +344,52 @@ class ConfigurationListener implements EventListenerInterface {
 				'reference' => 'media::clear_cache',
 			]);
 		}
+	}
+
+
+	/**
+	 * If the class name or the max columns of the column system is changed,
+	 * we need to recompile the SCSS files to apply the changes.
+	 *
+	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param bool $deleted
+	 * @return void
+	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 */
+	protected function recompileScss(Configuration $entity, bool $deleted = false): void {
+		if (
+			$entity->scope !== 'contents' ||
+			(
+				$entity->identifier !== 'column_system.class_name' &&
+				$entity->identifier !== 'column_system.max_columns'
+			)
+		) {
+			return;
+		}
+
+		if ($entity->identifier === 'column_system.class_name') {
+			if ($deleted) {
+				Configure::delete('Awyiss.Contents.Backend.columnSystem.className');
+			}
+			else {
+				Configure::write('Awyiss.Contents.Backend.columnSystem.className', $entity->value);
+			}
+		}
+		elseif ($entity->identifier === 'column_system.max_columns') {
+			if ($deleted) {
+				Configure::delete('Awyiss.Contents.Backend.columnSystem.maxColumns');
+			}
+			else {
+				Configure::write('Awyiss.Contents.Backend.columnSystem.maxColumns', (int)$entity->value);
+			}
+		}
+
+		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
+		$lo_designMiddleware = Router::getRequest()->getAttribute('design');
+		$lo_designMiddleware->resetDesignVariables();
+		$lo_designMiddleware->compileScss(true, Awyiss::REALM_FRONTEND);
+
+		$lo_designMiddleware->resetDesignVariables();
+		$lo_designMiddleware->compileScss(true, Awyiss::REALM_BACKEND);
 	}
 }
