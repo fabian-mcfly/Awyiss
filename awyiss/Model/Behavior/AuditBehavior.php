@@ -53,6 +53,7 @@ class AuditBehavior extends Behavior {
 			'beforeSave',
 			'beforeDelete',
 			'afterSave',
+			'afterDelete',
 		],
 		'implementedMethods' => [
 			'countAuditData' => 'countAuditData',
@@ -306,6 +307,14 @@ class AuditBehavior extends Behavior {
 	public function beforeDelete(EventInterface $event, Entity $entity, ArrayObject $options): void {
 		/** @noinspection PhpVariableNamingConventionInspection */
 		$options['transactionId'] ??= vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
+
+		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'audit'));
+
+		if ($la_options['skip'] === true || !$entity->allowsAudit()) {
+			return;
+		}
+
+		$this->auditData[ $entity->get('id') ] = $this->buildEntityData($entity, true);
 	}
 
 
@@ -374,7 +383,7 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * Before saving set information when creating, updating or deleting.
+	 * Create the actual audit entry after the entity has been saved.
 	 *
 	 * @param \Cake\Event\EventInterface $event
 	 * @param \Awyiss\Model\Entity $entity
@@ -407,6 +416,57 @@ class AuditBehavior extends Behavior {
 		$la_auditData = [
 			'transactionId' => $options['transactionId'],
 			'type' => !empty($entity->get('deleted')) ? 'd' : 'u',
+			'scope' => $event->getSubject()->getTable(),
+			'foreignKey' => $entity->get('id'),
+			'dataOld' => base64_encode(gzcompress(json_encode($la_entityData['old']), 9)),
+			'dataNew' => base64_encode(gzcompress(json_encode($la_entityData['new']), 9)),
+			'diff' => $la_entityData['changes'],
+			'createdOn' => new DateTime(),
+			'createdBy' => $li_identityId,
+		];
+
+		$lo_auditModel = $this->getTableLocator()->get('Audit');
+		$lo_audit = $lo_auditModel->newEntity($la_auditData);
+
+		//Save the audit entity and skip the access check
+		if (!$lo_auditModel->save($lo_audit)) {
+			Log::error(sprintf('Could not save audit. Entity errors: `%s`', print_r($lo_audit->getErrors(), true)));
+			throw new RuntimeException('Could not save audit.');
+		}
+
+		unset($this->auditData[ $entity->get('id') ]);
+	}
+
+	/**
+	 * Create the actual audit entry after the entity has been deleted.
+	 *
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \ArrayObject $options
+	 */
+	public function afterDelete(EventInterface $event, Entity $entity, ArrayObject $options): void {
+		if (!$this->getConfig('enabled')) {
+			return;
+		}
+
+		if (!$entity->allowsAudit()) {
+			return;
+		}
+
+		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'audit'));
+
+		if ($la_options['skip'] === true) {
+			return;
+		}
+
+		$la_entityData = $this->auditData[ $entity->get('id') ] ?? [];
+
+		$li_identityId = $this->getIdentityId();
+
+		//Set the data to be used in `newEntity`
+		$la_auditData = [
+			'transactionId' => $options['transactionId'],
+			'type' => 'd',
 			'scope' => $event->getSubject()->getTable(),
 			'foreignKey' => $entity->get('id'),
 			'dataOld' => base64_encode(gzcompress(json_encode($la_entityData['old']), 9)),
@@ -1156,9 +1216,10 @@ class AuditBehavior extends Behavior {
 
 	/**
 	 * @param \Awyiss\Model\Entity $entity
+	 * @param bool $deleted
 	 * @return array
 	 */
-	protected function buildEntityData(Entity $entity): array {
+	protected function buildEntityData(Entity $entity, bool $deleted = false): array {
 		$la_entityData = [
 			'old' => $entity->getOriginalValues(),
 			'new' => $entity->extract(null, false, false),
@@ -1212,7 +1273,7 @@ class AuditBehavior extends Behavior {
 		}
 
 		//No difference? Do nothing.
-		if (empty($la_entityData['changes']['old']) && empty($la_entityData['changes']['new'])) {
+		if (empty($la_entityData['changes']['old']) && empty($la_entityData['changes']['new']) && !$deleted) {
 			return [];
 		}
 

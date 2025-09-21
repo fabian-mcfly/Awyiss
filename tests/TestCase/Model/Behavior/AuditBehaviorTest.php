@@ -90,6 +90,7 @@ class AuditBehaviorTest extends TestCase {
 			'beforeSave',
 			'beforeDelete',
 			'afterSave',
+			'afterDelete',
 		], $config['implementedEvents']);
 
 		$this->assertSame([
@@ -208,6 +209,10 @@ class AuditBehaviorTest extends TestCase {
 			],
 			'Model.afterSave' => [
 				'callable' => 'afterSave',
+				'priority' => 999999,
+			],
+			'Model.afterDelete' => [
+				'callable' => 'afterDelete',
 				'priority' => 999999,
 			],
 		], $implementedEvents);
