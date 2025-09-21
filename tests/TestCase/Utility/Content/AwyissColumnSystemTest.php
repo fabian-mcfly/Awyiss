@@ -183,19 +183,6 @@ class AwyissColumnSystemTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getScssColumnList()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testGetScssColumnList(): void {
-		$scssColumnList = AwyissColumnSystem::getScssColumnList();
-
-		$this->assertIsArray($scssColumnList);
-		$this->assertSame(['1/1', '1/5', '1/4', '1/3', '2/5', '1/2', '3/5', '2/3', '3/4', '4/5'], $scssColumnList);
-	}
-
-
-	/**
-	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getScssFilePaths()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -251,19 +238,5 @@ class AwyissColumnSystemTest extends TestCase {
 		$this->assertCount(3, $columnIndents); // 4 total - 1 full width = 2
 		$expectedFractions = ['1/3', '1/2', '2/3'];
 		$this->assertSame($expectedFractions, array_keys($columnIndents));
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::setMaxDenominator()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testSetMaxDenominatorAffectsScssColumnList(): void {
-		AwyissColumnSystem::setMaxDenominator(4);
-		$scssColumnList = AwyissColumnSystem::getScssColumnList();
-
-		$expectedList = ['1/1', '1/4', '1/3', '1/2', '2/3', '3/4'];
-		$this->assertSame($expectedList, $scssColumnList);
 	}
 }
