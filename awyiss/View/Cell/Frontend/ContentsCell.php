@@ -39,6 +39,14 @@ class ContentsCell extends Cell {
 	public function display(string $contentArea, Page $page, array $options = []): void {
 		$la_options = $this->initCellOptions($options);
 
+		if ($options['pageId'] ?? null) {
+			/**
+			 * @var \Awyiss\Model\Entity\Page $page
+			 * @noinspection PhpVariableNamingConventionInspection
+			 */
+			$page = $this->fetchTable('Pages')->find($this->isPreview() ? 'all' : 'active')->where(['id' => $options['pageId']])->firstOrFail();
+		}
+
 		$lo_contents = $this->getThreadedContents($page, $contentArea, $this->isPreview());
 
 		$this->cacheAssignedMediaItems($lo_contents, 'contents');
