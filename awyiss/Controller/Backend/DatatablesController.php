@@ -66,7 +66,9 @@ class DatatablesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_datatable = $this->Datatables->newDefaultEntity();
+		$lo_datatable = $this->Datatables->newDefaultEntity([
+			'mediaElementAssignments' => [],
+		]);
 
 		if ($this->request->is('post')) {
 			$this->save($lo_datatable);
