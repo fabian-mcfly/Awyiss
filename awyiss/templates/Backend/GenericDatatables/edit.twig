@@ -30,7 +30,7 @@
 			{% endif %}
 
 			{% block headlineEdit %}
-				<h1>{{ __d('generic_datatables', 'headline_edit') }}</h1>
+				<h1>{{ __df(datatable.identifier|pluralize, 'generic_datatables', 'headline_edit') }}</h1>
 			{% endblock %}
 		</div>
 	{% endblock %}
