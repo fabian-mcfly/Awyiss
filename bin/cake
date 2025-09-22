@@ -35,7 +35,7 @@ canonicalize() {
 
 # Find a CLI version of PHP
 findCliPhp() {
-    for TESTEXEC in php php-cli /usr/local/bin/php php8.2-cli
+    for TESTEXEC in php8.4-cli php php-cli /usr/local/bin/php
     do
         SAPI=$(echo "<?= PHP_SAPI ?>" | $TESTEXEC 2>/dev/null)
         if [ "$SAPI" = "cli" ]
