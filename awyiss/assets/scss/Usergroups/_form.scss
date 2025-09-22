@@ -238,6 +238,7 @@
 				&:checked {
 					~ .Labels {
 						&::after {
+							content:'✓';
 							background-color:var(--colorSuccess);
 							transform:translate(33px, 0);
 
@@ -259,7 +260,9 @@
 				&:checked {
 					~ .Labels {
 						&::after {
+							content:'×';
 							background-color:var(--colorError);
+							line-height:22px;
 							transform:translate(-33px, 0);
 
 							@media screen and (width <= 768px) {
@@ -331,6 +334,10 @@
 				outline:1px solid var(--colorBright);
 				border-radius:5px;
 				background-color:var(--colorMedium);
+				color:var(--colorBright);
+				font-size:20px;
+				line-height:26px;
+				text-align:center;
 				position:absolute;
 				top:0;
 				right:0;
