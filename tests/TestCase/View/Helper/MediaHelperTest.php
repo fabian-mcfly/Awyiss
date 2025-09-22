@@ -542,7 +542,7 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString('class="Lazyload"', $result);
 		$this->assertStringContainsString('<noscript', $result);
 		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/logo-awyiss.svg" id="FoobarId-NoScript"', $result);
-		$this->assertStringContainsString('<style>#FoobarId { --imageAspectRatio: 2; }</style>', $result);
+		$this->assertStringContainsString('<style>#FoobarId, #FoobarId-NoScript { --imageAspectRatio: 2; }</style>', $result);
 
 		// Make sure that nothing changes when responsive is set
 		$mediaRenderOptions = $mediaRenderOptions->withResponsive();

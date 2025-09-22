@@ -1016,7 +1016,7 @@ class MediaHelper extends Helper {
 		}
 
 		/** @noinspection CssUnresolvedCustomProperty */
-		return '<style>#' . $id . ' { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $ls_backgroundColorStyle . ' }</style>';
+		return '<style>#' . $id . ', #' . $id . '-NoScript { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $ls_backgroundColorStyle . ' }</style>';
 	}
 
 
