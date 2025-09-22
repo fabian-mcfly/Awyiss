@@ -115,6 +115,7 @@ class AwyissExtension extends AbstractExtension {
 			}),
 
 			new TwigFunction('__', '__'),
+			new TwigFunction('__f', '__f'),
 			new TwigFunction('__n', '__n'),
 			new TwigFunction('__d', '__d'),
 			new TwigFunction('__dn', '__dn'),

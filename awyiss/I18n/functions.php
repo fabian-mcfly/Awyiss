@@ -49,6 +49,24 @@ if (!function_exists('__')) {
 }
 
 
+if (!function_exists('__f')) {
+	/**
+	 * Returns a translated string if one is found; Otherwise, the provided fallback
+	 *
+	 * @param string $string
+	 * @param mixed ...$args
+	 * @return string The translated text.
+	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
+	 * @noinspection PhpFunctionNamingConventionInspection
+	 */
+	function __f(string $string, string $fallback, mixed ...$args): string {
+		$ls_string = __($string, ...$args);
+
+		return $ls_string === $string || str_contains($ls_string, '::') ? $fallback : $ls_string;
+	}
+}
+
+
 if (!function_exists('__d')) {
 	/**
 	 * Allows you to override the current domain for a single message lookup.
