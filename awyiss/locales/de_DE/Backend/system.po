@@ -516,3 +516,9 @@ msgstr "Dateien für Seitenrollen-Model erstellen"
 
 msgid "drop_datatables_table"
 msgstr "Eigene Datentabelle löschen"
+
+msgid "all"
+msgstr "Alle"
+
+msgid "unassigned"
+msgstr "Nicht zugeordnet"

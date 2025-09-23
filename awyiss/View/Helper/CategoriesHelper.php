@@ -259,7 +259,7 @@ class CategoriesHelper extends Helper {
 
 		$la_attributes = $attributes + $la_config;
 		$la_attributes += [
-			'aggregationLabel' => __($ls_identifier . '_filter_all'),
+			'aggregationLabel' => __f($ls_identifier . '_filter_all', __d('system', 'all')),
 			'aggregationKey' => 'all',
 			'allowAggregation' => false,
 			'allowUnassigned' => false,
@@ -269,7 +269,7 @@ class CategoriesHelper extends Helper {
 			'identifier' => $ls_identifier,
 			'label' => __($ls_identifier . '_filter_label'),
 			'levelPrefix' => '- ',
-			'unassignedLabel' => __($ls_identifier . '_filter_unassigned'),
+			'unassignedLabel' => __f($ls_identifier . '_filter_unassigned', __('unassigned')),
 			'unassignedKey' => 'unassigned',
 			'uriParam' => $ls_identifier,
 			'val' => $this->getSelectedCategory($ls_identifier),

@@ -516,3 +516,9 @@ msgstr "Create Page Role model files"
 
 msgid "drop_datatables_table"
 msgstr "Delete Datatables"
+
+msgid "all"
+msgstr "All"
+
+msgid "unassigned"
+msgstr "Unassigned"

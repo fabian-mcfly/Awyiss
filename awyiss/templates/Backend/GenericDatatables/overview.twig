@@ -38,7 +38,14 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block categoriesFilterOverview %}
-				{{ CategoriesHelper.filter('category') }}
+				{% set identifier = localConfig('categories.identifier', 'category') %}
+				{% set label = __(identifier ~ '_filter_label') %}
+				{% if '::' in label and attributes[ identifier ] is not empty %}
+					{% set label = attributes[ identifier ].title %}
+				{% endif %}
+				{{ CategoriesHelper.filter(identifier, null, {
+					label: label
+				}) }}
 			{% endblock %}
 
 			{% block overviewButtons %}
