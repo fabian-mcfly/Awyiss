@@ -221,7 +221,7 @@ export default class Loader {
 		});
 
 		editor.once('focus', () => {
-			editor.execCommand('mceVisualChars');
+			//editor.execCommand('mceVisualChars');
 		});
 
 		editor.options.set('file_picker_callback', (callback) => this.filePickerCallback(editor, callback));
