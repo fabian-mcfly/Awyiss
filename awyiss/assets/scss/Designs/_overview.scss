@@ -23,6 +23,14 @@
 		grid-column:1 / -1;
 	}
 
+	h2 {
+		margin-top:calc(var(--lineHeightMain) * -2 - 52px);
+
+		@media screen and (width <= 1280px) {
+			margin-top:calc(var(--lineHeightMain) * -1);
+		}
+	}
+
 	:is(
 		.Fieldsets,
 		#Preview
@@ -77,7 +85,7 @@
 		@container container (width <= 1200px) {
 			grid-template-columns:repeat(8, 1fr);
 		}
-		
+
 		@container container (width <= 860px) {
 			grid-template-columns:repeat(4, 1fr);
 		}
@@ -233,11 +241,16 @@
 	#SaveDialog {
 		.FormInput {
 			flex:0 0 100%;
+			grid-column:1 / -1;
 		}
 	}
 
 	.Overview-Table {
-		margin-top:var(--rowGap);
+		margin-top:calc(var(--lineHeightMain) * -2);
+
+		@media screen and (width <= 1280px) {
+			margin-top:calc(var(--lineHeightMain) * -1);
+		}
 	}
 
 	.TableHeader-InUse {
