@@ -158,6 +158,8 @@ class MediaTest extends TestCase {
 			'originalWebpPath',
 			'webpPathAbsolute',
 			'originalWebpPathAbsolute',
+			'filemtime',
+			'previewFilemtime',
 		], $entity->getVirtual());
 	}
 

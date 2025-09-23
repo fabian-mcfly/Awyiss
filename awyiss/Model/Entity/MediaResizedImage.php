@@ -23,6 +23,7 @@ use Awyiss\Model\Entity;
  * @property \Awyiss\Model\Entity\Media|null $media
  * @property string|null $extension
  * @property string|null $pathAbsolute
+ * @property int|null $filemtime
  */
 class MediaResizedImage extends Entity {
 	/**
@@ -54,6 +55,7 @@ class MediaResizedImage extends Entity {
 	 */
 	protected array $_virtual = [
 		'extension',
+		'filemtime',
 		'pathAbsolute',
 		'realWidth',
 		'realHeight',
@@ -76,6 +78,20 @@ class MediaResizedImage extends Entity {
 
 
 		return substr($this->name, $li_dotPos + 1);
+	}
+
+
+	/**
+	 * @return int|null
+	 */
+	public function _getFilemtime(): ?int {
+		$ls_path = $this->pathAbsolute;
+
+		if (!$ls_path || !file_exists($ls_path)) {
+			return null;
+		}
+
+		return filemtime($ls_path);
 	}
 
 

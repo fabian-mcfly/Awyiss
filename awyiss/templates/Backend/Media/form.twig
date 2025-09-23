@@ -58,7 +58,7 @@
 
 {% set fieldsetCrop %}
 	{% block fieldsetCrop %}
-		{% if (media.previewPath and media.preview == enum(ProcessStatus).Success) or media.preview == enum(ProcessStatus).NotRequired %}
+		{% if ((media.previewPath and media.preview == enum(ProcessStatus).Success)) or media.preview == enum(ProcessStatus).NotRequired %}
 			{% set resizedMediaItem = MediaHelper.resize(media, null, 2560, 2560, null, enum(ResizeStrategy).Contain) %}
 
 			{% set imagePath = resizedMediaItem and resizedMediaItem.status == enum(ProcessStatus).Success ? resizedMediaItem.path : (media.previewPath ?? media.path) %}
@@ -72,7 +72,7 @@
 					{% else %}
 						<div
 								class="CropArea"
-								data-image-src="{{ imagePath }}?t={{ (media.changedOn ?? media.createdOn).timestamp }}"
+								data-image-src="{{ imagePath }}?t={{ media.preview == enum(ProcessStatus).NotRequired ? media.filemtime : media.previewFilemtime }}"
 								data-image-width="{{ media.width }}"
 								data-image-height="{{ media.height }}">
 							{% block formControlCropMeasurements %}

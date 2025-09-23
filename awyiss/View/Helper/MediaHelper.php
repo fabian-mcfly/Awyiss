@@ -117,7 +117,7 @@ class MediaHelper extends Helper {
 			throw new InvalidArgumentException('No selector provided.');
 		}
 
-		$ls_backgroundColorStyle = $this->getBackgroundColorStyle($lo_mediaRenderOptions, $media->averageColor);
+		$ls_backgroundColorStyle = $this->getBackgroundColorStyle($lo_mediaRenderOptions, $media->averageColor, $media->focusPoint);
 
 		// If the media item is not an image and the preview is not yet created,
 		// return a background color style if the background color is set
@@ -920,7 +920,7 @@ class MediaHelper extends Helper {
 	 * @param string|null $averageColor
 	 * @return string
 	 */
-	protected function getBackgroundColorStyle(MediaRenderOptions $mediaRenderOptions, ?string $averageColor): string {
+	protected function getBackgroundColorStyle(MediaRenderOptions $mediaRenderOptions, ?string $averageColor, string|array|null $focusPoint = null): string {
 		$ls_backgroundColor = null;
 		if ($mediaRenderOptions->getBackgroundColor() !== false) {
 			$ls_backgroundColor = $mediaRenderOptions->getBackgroundColor();
@@ -933,6 +933,10 @@ class MediaHelper extends Helper {
 		$ls_backgroundColorStyle = '';
 		if ($ls_backgroundColor) {
 			$ls_backgroundColorStyle = ' background-color:' . $ls_backgroundColor . ';';
+		}
+
+		if ($focusPoint) {
+			$ls_backgroundColorStyle .= ' --preferredPosition:' . $this->getFocusPointCssValue($focusPoint) . ';';
 		}
 
 		return trim($ls_backgroundColorStyle);
@@ -1000,7 +1004,14 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return string
 	 */
-	protected function getPlaceholderStyleTag(string $id, float $width, float $height, ?string $averageColor, MediaRenderOptions $mediaRenderOptions): string {
+	protected function getPlaceholderStyleTag(
+		string $id,
+		float $width,
+		float $height,
+		?string $averageColor,
+		MediaRenderOptions $mediaRenderOptions,
+		string|array|null $focusPoint = null
+	): string {
 		$ls_backgroundColor = null;
 		if ($mediaRenderOptions->getBackgroundColor() !== false) {
 			$ls_backgroundColor = $mediaRenderOptions->getBackgroundColor();
@@ -1013,6 +1024,9 @@ class MediaHelper extends Helper {
 		$ls_backgroundColorStyle = '';
 		if ($ls_backgroundColor) {
 			$ls_backgroundColorStyle = '--imageBackgroundColor:' . $ls_backgroundColor . ';';
+		}
+		if ($focusPoint) {
+			$ls_backgroundColorStyle .= ' --preferredPosition:' . $this->getFocusPointCssValue($focusPoint) . ';';
 		}
 
 		/** @noinspection CssUnresolvedCustomProperty */
@@ -1054,6 +1068,7 @@ class MediaHelper extends Helper {
 			$lf_height,
 			$media->averageColor,
 			$mediaRenderOptions,
+			$media->focusPoint
 		);
 
 		$ls_srcSet = $ls_noScriptSrcSet = '';
@@ -1295,5 +1310,35 @@ class MediaHelper extends Helper {
 		}
 
 		return $this->getMediaResizedImage($media, $lo_mediaRenderOptions);
+	}
+
+
+	/**
+	 * @param array|string|null $focusPoint
+	 * @return string
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	protected function getFocusPointCssValue(array|string|null $focusPoint = null): string {
+		if (!$focusPoint) {
+			return 'center';
+		}
+
+		if (is_string($focusPoint)) {
+			$focusPoint = explode(',', $focusPoint);
+			$focusPoint = array_map('trim', $focusPoint);
+		}
+
+		if (count($focusPoint) !== 2) {
+			return 'center';
+		}
+
+		$ls_focusPoint = '';
+		$la_focusPoints = ['x' => ['left', 'center', 'right'], 'y' => ['top', 'center', 'bottom']];
+
+		$ls_focusPoint .= $la_focusPoints['x'][ max(0, min(2, (int)$focusPoint[1])) ];
+		$ls_focusPoint .= ' ';
+		$ls_focusPoint .= $la_focusPoints['y'][ max(0, min(2, (int)$focusPoint[0])) ];
+
+		return trim($ls_focusPoint);
 	}
 }

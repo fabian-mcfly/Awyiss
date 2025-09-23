@@ -66,6 +66,8 @@ use Cake\Utility\Text;
  * @property bool $isAudio
  * @property bool $isImage
  * @property bool $isVideo
+ * @property int|null $filemtime
+ * @property int|null $previewFilemtime
  */
 class Media extends Entity {
 	/**
@@ -137,6 +139,8 @@ class Media extends Entity {
 		'originalWebpPath',
 		'webpPathAbsolute',
 		'originalWebpPathAbsolute',
+		'filemtime',
+		'previewFilemtime',
 	];
 
 
@@ -798,6 +802,34 @@ class Media extends Entity {
 		}
 
 		return WWW_ROOT . str_replace('/', DS, $ls_originalWebpPath);
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	protected function _getFilemtime(): ?int {
+		$ls_path = $this->pathAbsolute;
+
+		if (!$ls_path || !file_exists($ls_path)) {
+			return null;
+		}
+
+		return filemtime($ls_path);
+	}
+
+
+	/**
+	 * @return int|null
+	 */
+	protected function _getPreviewFilemtime(): ?int {
+		$ls_path = $this->previewPathAbsolute;
+
+		if (!$ls_path || !file_exists($ls_path)) {
+			return null;
+		}
+
+		return filemtime($ls_path);
 	}
 
 

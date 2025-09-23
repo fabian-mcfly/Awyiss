@@ -25,16 +25,17 @@
 				{% set resizedMediaItem = MediaHelper.resize(mediaItem, null, resize.width, resize.height, null, resize.strategy) %}
 			{% endif %}
 
+			{# @var resizedMediaItem \Awyiss\Model\Entity\MediaResizedImage #}
 			{% if resizedMediaItem %}
 				{% if resizedMediaItem.status == enum(ProcessStatus).Success %}
-					<img src="{{ baseUrl }}{{ resizedMediaItem.path }}?t={{ (mediaItem.changedOn ?? mediaItem.createdOn).timestamp }}" alt="{{ resizedMediaItem.media.name }}">
+					<img src="{{ baseUrl }}{{ resizedMediaItem.path }}?t={{ resizedMediaItem.filemtime }}" alt="{{ resizedMediaItem.media.name }}">
 				{% else %}
 					<span
 						class="FileType-Icon FileType-Icon-{{ resizedMediaItem.media.extension|camelize('/') }}
 						{%- if resizedMediaItem.status != enum(ProcessStatus).Fail %} AwaitingResize{% endif %}" data-extension="{{ resizedMediaItem.media.extension }}">
 						{% block mediaPreviewNoImageAwaitingResize %}
 							{%- if resizedMediaItem.status != enum(ProcessStatus).Fail %}
-								<img data-src="{{ baseUrl }}{{ resizedMediaItem.path }}?t={{ (mediaItem.changedOn ?? mediaItem.createdOn).timestamp }}" alt="{{ resizedMediaItem.media.name }}" id="AwaitingResize{{ resizedMediaItem.id }}">
+								<img data-src="{{ baseUrl }}{{ resizedMediaItem.path }}?t={{ resizedMediaItem.filemtime }}" alt="{{ resizedMediaItem.media.name }}" id="AwaitingResize{{ resizedMediaItem.id }}">
 							{% endif %}
 						{% endblock %}
 					</span>
@@ -42,11 +43,11 @@
 			{% else %}
 				{% if mediaItem.isImage() %}
 					{% block mediaPreviewNativeImage %}
-						<img src="{{ baseUrl }}{{ mediaItem.path }}?t={{ (mediaItem.changedOn ?? mediaItem.createdOn).timestamp }}" alt="{{ mediaItem.name }}">
+						<img src="{{ baseUrl }}{{ mediaItem.path }}?t={{ mediaItem.filemtime }}" alt="{{ mediaItem.name }}">
 					{% endblock %}
 				{% elseif mediaItem.preview == enum(ProcessStatus).Success %}
 					{% block mediaPreviewPreviewImage %}
-						<img src="{{ baseUrl }}{{ mediaItem.previewPath }}?t={{ (mediaItem.changedOn ?? mediaItem.createdOn).timestamp }}" alt="{{ mediaItem.name }}">
+						<img src="{{ baseUrl }}{{ mediaItem.previewPath }}?t={{ mediaItem.previewFilemtime }}" alt="{{ mediaItem.name }}">
 					{% endblock %}
 				{% else %}
 					{% block mediaPreviewNoImage %}
@@ -54,7 +55,7 @@
 							{%- if mediaItem.preview != enum(ProcessStatus).Fail %} AwaitingPreview{% endif %}" data-extension="{{ mediaItem.extension }}">
 							{% block mediaPreviewNoImageAwaitingPreview %}
 								{%- if mediaItem.preview != enum(ProcessStatus).Fail %}
-									<img data-src="{{ baseUrl }}{{ mediaItem.previewPath }}?t={{ (mediaItem.changedOn ?? mediaItem.createdOn).timestamp }}" alt="{{ mediaItem.name }}" id="AwaitingPreview{{ mediaItem.id }}">
+									<img data-src="{{ baseUrl }}{{ mediaItem.previewPath }}?t={{ mediaItem.previewFilemtime }}" alt="{{ mediaItem.name }}" id="AwaitingPreview{{ mediaItem.id }}">
 								{% endif %}
 							{% endblock %}
 						</span>

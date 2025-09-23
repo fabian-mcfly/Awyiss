@@ -66,7 +66,7 @@ class MediaResizedImageTest extends TestCase {
 	public function testVirtualFields(): void {
 		$entity = new MediaResizedImage();
 
-		$this->assertSame(['extension', 'pathAbsolute', 'realWidth', 'realHeight'], $entity->getVirtual());
+		$this->assertSame(['extension', 'filemtime', 'pathAbsolute', 'realWidth', 'realHeight'], $entity->getVirtual());
 	}
 
 
