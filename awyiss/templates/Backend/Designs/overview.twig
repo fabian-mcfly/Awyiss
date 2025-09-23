@@ -137,15 +137,15 @@
 		<dialog id="SaveDialog" data-title="{{ __('save_settings_title') }}">
 			{% block formSaveDialogInner %}
 				{% block formControlTitle %}
-					{{ FormHelper.control('title', {required: false}) }}
+					{{ FormHelper.control('title', {form: 'DesignForm', required: false}) }}
 				{% endblock %}
 
 				{% block formControlDescription %}
-					{{ FormHelper.control('description') }}
+					{{ FormHelper.control('description', {form: 'DesignForm'}) }}
 				{% endblock %}
 
 				{% block formSaveDialogConfirm %}
-					<button id="SaveDialog-Button-Yes" class="Button Button-Success Button-Save" type="submit" name="save" value="{{ design.identifier }}">{{ __('save_settings_yes') }}</button>
+					<button id="SaveDialog-Button-Yes" class="Button Button-Success Button-Save" type="submit" name="save" value="{{ design.identifier }}" form="DesignForm">{{ __('save_settings_yes') }}</button>
 				{% endblock %}
 
 				{% block formSaveDialogCancel %}
