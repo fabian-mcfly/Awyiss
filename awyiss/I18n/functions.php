@@ -62,7 +62,15 @@ if (!function_exists('__f')) {
 	function __f(string $string, string $fallback, mixed ...$args): string {
 		$ls_string = __($string, ...$args);
 
-		return $ls_string === $string || str_contains($ls_string, '::') ? $fallback : $ls_string;
+		if ($ls_string === $string || str_contains($ls_string, '::')) {
+			$ls_string = $fallback;
+		}
+
+		if (str_contains($ls_string, '::')) {
+			$ls_string = $string;
+		}
+
+		return $ls_string;
 	}
 }
 
