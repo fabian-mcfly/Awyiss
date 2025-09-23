@@ -122,17 +122,14 @@ return [
 					'fontSizeClamp$1',
 				],
 				'category' => 'fonts',
-				'group' => '$1',
 				'type' => ScssVariableType::FontName,
 			],
 			'fontStackFallback([A-Z]\w+)' => [
 				'category' => 'fonts',
-				'group' => '$1',
 				'type' => ScssVariableType::FontStack,
 			],
 			'fontSize(?!Clamp)([A-Z]\w+)' => [
 				'category' => 'fonts',
-				'group' => '$1',
 				'inputType' => 'range',
 				'type' => ScssVariableType::Number,
 				'units' => [
@@ -152,7 +149,6 @@ return [
 			],
 			'fontStyle([A-Z]\w+)' => [
 				'category' => 'fonts',
-				'group' => '$1',
 				'options' => [
 					'normal',
 					'italic',
@@ -161,12 +157,10 @@ return [
 			],
 			'fontWeight([A-Z]\w+)' => [
 				'category' => 'fonts',
-				'group' => '$1',
 				'type' => ScssVariableType::FontWeight,
 			],
 			'lineHeight([A-Z]\w+)' => [
 				'category' => 'fonts',
-				'group' => '$1',
 				'inputType' => 'range',
 				'type' => ScssVariableType::Number,
 				'units' => [

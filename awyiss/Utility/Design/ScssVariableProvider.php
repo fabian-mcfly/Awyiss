@@ -10,7 +10,6 @@ declare(strict_types=1); // phpcs:ignore
 namespace Awyiss\Utility\Design;
 
 
-use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
@@ -287,12 +286,6 @@ class ScssVariableProvider {
 
 			if ($la_patternOptions) {
 				$la_options = Hash::merge($la_patternOptions, $options);
-			}
-
-			if (isset($la_options['group']) && !empty($la_matches)) {
-				$la_options['group'] = preg_replace_callback('/\$(\d+)/', function (array $matches) use ($la_matches) {
-					return Inflector::underscore($la_matches[ $matches[1] ]);
-				}, $la_options['group']);
 			}
 
 			if (isset($la_options['associatedVariables']) && !empty($la_matches)) {

@@ -228,7 +228,6 @@ class ScssVariableProviderTest extends TestCase {
 				'fontSizeClampMain',
 			],
 			'category' => 'fonts',
-			'group' => 'main',
 			'type' => ScssVariableType::FontName,
 			'unit' => null,
 			'quotes' => '\'',
@@ -447,7 +446,6 @@ class ScssVariableProviderTest extends TestCase {
 				'fontSizeClampMain',
 			],
 			'category' => 'fonts',
-			'group' => 'main',
 			'type' => ScssVariableType::FontName,
 			'unit' => null,
 			'quotes' => '\'',
@@ -474,7 +472,6 @@ class ScssVariableProviderTest extends TestCase {
 
 		$this->assertSame([
 			'category' => 'fonts',
-			'group' => 'main',
 			'type' => ScssVariableType::FontStack,
 			'unit' => null,
 			'quotes' => null,
@@ -501,7 +498,6 @@ class ScssVariableProviderTest extends TestCase {
 
 		$this->assertSame([
 			'category' => 'fonts',
-			'group' => 'main',
 			'inputType' => 'range',
 			'type' => ScssVariableType::Number,
 			'units' => [
@@ -565,7 +561,6 @@ class ScssVariableProviderTest extends TestCase {
 
 		$this->assertSame([
 			'category' => 'fonts',
-			'group' => 'main',
 			'options' => [
 				'normal',
 				'italic',
@@ -596,7 +591,6 @@ class ScssVariableProviderTest extends TestCase {
 
 		$this->assertSame([
 			'category' => 'fonts',
-			'group' => 'main',
 			'type' => ScssVariableType::FontWeight,
 			'unit' => null,
 			'quotes' => null,
@@ -623,7 +617,6 @@ class ScssVariableProviderTest extends TestCase {
 
 		$this->assertSame([
 			'category' => 'fonts',
-			'group' => 'main',
 			'inputType' => 'range',
 			'type' => ScssVariableType::Number,
 			'units' => [
