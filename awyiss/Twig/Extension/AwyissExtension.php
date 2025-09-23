@@ -125,6 +125,8 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('__dxn', '__dxn'),
 			new TwigFunction('__df', '__df'),
 			new TwigFunction('__dfx', '__dfx'),
+			new TwigFunction('__l', '__l'),
+			new TwigFunction('__ld', '__ld'),
 
 			new TwigFunction(
 				'hashPrinter',

@@ -3,6 +3,7 @@
 @var designPreview \Awyiss\Model\Entity\Design
 @var page \Awyiss\Model\Entity\Page
 @var baseUrl string
+@var currentBackendLanguage \Awyiss\Model\Entity\Language
 @var currentLanguage \Awyiss\Model\Entity\Language
 @var currentPath string
 @var currentUrl string
@@ -22,13 +23,13 @@
 {% if designPreview %}
 	{% block designPreviewLabel %}
 		<div id="AwyissDesignPreview">
-			<span class="AwyissDesignPreview-Title">{{ __d('system', 'design_preview_mode_label') }}</span>
+			<span class="AwyissDesignPreview-Title">{{ currentBackendLanguage ? __ld(currentBackendLanguage.locale, 'system', 'design_preview_mode_label'): __d('system', 'design_preview_mode_label') }}</span>
 			{% if designPreview.isPreview == false %}
 				<span class="AwyissDesignPreview-Subtitle">{{ designPreview.title }}</span>
 			{% endif %}
 
 			<form method="post" action="">
-				<button class="AwyissDesignPreview-CloseButton" name="awyiss_design_preview" value="cancel">{{ __d('system', 'design_preview_mode_cancel') }}</button>
+				<button class="AwyissDesignPreview-CloseButton" name="awyiss_design_preview" value="cancel">{{ currentBackendLanguage ? __ld(currentBackendLanguage.locale, 'system', 'design_preview_mode_cancel'): __d('system', 'design_preview_mode_cancel') }}</button>
 			</form>
 		</div>
 	{% endblock %}

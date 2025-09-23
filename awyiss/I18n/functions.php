@@ -273,6 +273,103 @@ if (!function_exists('__x')) {
 	}
 }
 
+
+if (!function_exists('__l')) {
+	/**
+	 * Returns a translated string if one is found; Otherwise, the submitted message.
+	 *
+	 * @param string $locale Locale.
+	 * @param string $string
+	 * @param mixed ...$args
+	 * @return string The translated text.
+	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
+	 * @noinspection PhpFunctionNamingConventionInspection
+	 */
+	function __l(string $locale, string $string, mixed ...$args): string {
+		if (!$string) {
+			return '';
+		}
+
+		$la_args = $args;
+		if (isset($args[0]) && is_array($args[0])) {
+			$la_args = $args[0];
+		}
+
+		$ls_controller = Router::getRequest()?->getParam('controller');
+		if ($ls_controller) {
+			$ls_controller = Inflector::underscore(Router::getRequest()->getParam('controller'));
+
+			return __d($ls_controller, $string, $la_args);
+		}
+
+		if (
+			!in_array($string, [
+				'meta_title_overview',
+				'menu_title',
+				'headline_overview',
+			])
+		) {
+			return I18n::getTranslator(Awyiss::getRealm() . '/system', $locale)->translate($string, $la_args);
+		}
+
+		return $string;
+	}
+}
+
+
+if (!function_exists('__ld')) {
+	/**
+	 * Allows you to override the current domain for a single message lookup.
+	 *
+	 * @param string $locale Locale.
+	 * @param string $domain Domain.
+	 * @param string $string String to translate.
+	 * @param mixed ...$args
+	 * @return string Translated string.
+	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__d
+	 * @noinspection DuplicatedCode, PhpFunctionNamingConventionInspection
+	 */
+	function __ld(string $locale, string $domain, string $string, mixed ...$args): string {
+		if (!$string) {
+			return '';
+		}
+
+		$la_args = $args;
+		if (isset($args[0]) && is_array($args[0])) {
+			$la_args = $args[0];
+		}
+
+		$ls_domain = __buildDomain($domain);
+		$ls_return = I18n::getTranslator($ls_domain, $locale)->translate($string, $la_args);
+
+		if (
+			(!empty($ls_return) && $ls_return !== $string) || $domain === 'cake'
+		) {
+			return $ls_return;
+		}
+
+		$ls_return = Inflector::underscore($domain) . '::' . $string;
+
+		// Fallback to system domain
+		if (
+			$domain !== 'system' && !in_array($string, [
+				'meta_title_overview',
+				'menu_title',
+				'headline_overview',
+			])
+		) {
+			$ls_fallback = I18n::getTranslator(Awyiss::getRealm() . '/system', $locale)->translate($string, $la_args);
+
+			if ($ls_fallback !== $string && !empty($ls_fallback)) {
+				$ls_return = $ls_fallback;
+			}
+		}
+
+		return $ls_return;
+	}
+}
+
+
 /**
  * @param string $domain
  * @return string

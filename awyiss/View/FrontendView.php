@@ -121,6 +121,18 @@ class FrontendView extends AppView {
 			}
 		}
 
+		$lo_backendLanguage = null;
+		if ($this->getRequest()->getSession()->read('Backend.languageShortcode')) {
+			$lo_backendLanguage = LocaleMiddleware::getLanguageByShortcode($this->getRequest()->getSession()->read('Backend.languageShortcode'), Awyiss::REALM_BACKEND);
+			if ($lo_backendLanguage) {
+				$lo_backendLanguage = clone $lo_backendLanguage;
+
+				foreach ($lo_blocklistedProperties as $ls_property) {
+					unset($lo_backendLanguage->{$ls_property});
+				}
+			}
+		}
+
 		$ls_folder = '/' . (ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
 		if (!str_ends_with($ls_folder, '/')) {
 			$ls_folder .= '/';
@@ -133,6 +145,7 @@ class FrontendView extends AppView {
 
 		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
 		$lo_twig->addGlobal('config', Configure::read());
+		$lo_twig->addGlobal('currentBackendLanguage', $lo_backendLanguage);
 		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
 		$lo_twig->addGlobal('currentUrl', $lo_uri->__toString());
