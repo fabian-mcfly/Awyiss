@@ -34,6 +34,13 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
+					defaultValue: false,
+					identifier: 'allowUnassigned',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
 					defaultValue: null,
 					identifier: 'associationName',
 					localizable: false,

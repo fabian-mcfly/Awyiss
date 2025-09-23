@@ -58,7 +58,7 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(16, $configOptions);
+		$this->assertCount(17, $configOptions);
 
 		$this->assertArrayHasKey('Backend.categories.allowAggregation', $configOptions);
 		$this->assertFalse($configOptions['Backend.categories.allowAggregation']->isLocalizable());
@@ -70,6 +70,17 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.categories.allowAggregation']->getTypecast());
 		$this->assertNull($configOptions['Backend.categories.allowAggregation']->getValidate());
 		$this->assertNull($configOptions['Backend.categories.allowAggregation']->getValues());
+
+		$this->assertArrayHasKey('Backend.categories.allowUnassigned', $configOptions);
+		$this->assertFalse($configOptions['Backend.categories.allowUnassigned']->isLocalizable());
+		$this->assertFalse($configOptions['Backend.categories.allowUnassigned']->isNullable());
+		$this->assertFalse($configOptions['Backend.categories.allowUnassigned']->isPersonalizable());
+		$this->assertSame(false, $configOptions['Backend.categories.allowUnassigned']->getDefaultValue());
+		$this->assertSame('false', $configOptions['Backend.categories.allowUnassigned']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Backend.categories.allowUnassigned']->getType());
+		$this->assertNull($configOptions['Backend.categories.allowUnassigned']->getTypecast());
+		$this->assertNull($configOptions['Backend.categories.allowUnassigned']->getValidate());
+		$this->assertNull($configOptions['Backend.categories.allowUnassigned']->getValues());
 
 		$this->assertArrayHasKey('Backend.categories.associationName', $configOptions);
 		$this->assertFalse($configOptions['Backend.categories.associationName']->isLocalizable());
