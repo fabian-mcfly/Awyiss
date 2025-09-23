@@ -364,7 +364,7 @@ export default class Lightbox {
 			return 'ajax';
 		}
 
-		if (url.pathname.match(/\.(gif|jpe?g|png|svg|webp)$/i)) {
+		if (url.pathname.match(/\.(avif|gif|jpe?g|png|svg|webp)$/i)) {
 			return 'image';
 		}
 
