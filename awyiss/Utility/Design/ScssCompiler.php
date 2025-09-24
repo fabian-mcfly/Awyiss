@@ -5,6 +5,7 @@ namespace Awyiss\Utility\Design;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Utility\Content\AwyissColumnSystem;
 use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
@@ -134,7 +135,9 @@ class ScssCompiler {
 			return null;
 		}
 
-		$lo_scssVariableProvider = new ScssVariableProvider(Configure::read('Design'));
+		/** @var class-string<\Awyiss\Utility\Design\ScssVariableProvider> $ls_className */
+		$ls_scssVariableProviderClass = App::className('ScssVariableProvider', 'Utility/Design');
+		$lo_scssVariableProvider = new $ls_scssVariableProviderClass(Configure::read('Design'));
 
 		// Compile all main files from the ScssFilesCollection object
 		$la_compiledCss = [];
@@ -448,7 +451,7 @@ class ScssCompiler {
 		$la_variables = [];
 
 		foreach ($variables as $ls_key => $lx_value) {
-			if (str_ends_with($ls_key, 'Unit')) {
+			if (str_ends_with($ls_key, 'Unit') || str_ends_with($ls_key, '_unit')) {
 				continue;
 			}
 
@@ -457,6 +460,10 @@ class ScssCompiler {
 
 				if (!empty($lx_value) && isset($variables[ $ls_key . 'Unit' ])) {
 					$la_variables[ $ls_key ] .= $variables[ $ls_key . 'Unit' ];
+				}
+
+				if (!empty($lx_value) && isset($variables[ $ls_key . '_unit' ])) {
+					$la_variables[ $ls_key ] .= $variables[ $ls_key . '_unit' ];
 				}
 
 				continue;
