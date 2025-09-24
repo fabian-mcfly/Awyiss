@@ -13,6 +13,7 @@ use Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
+use Cake\Http\Exception\RedirectException;
 use Cake\I18n\I18n;
 use Cake\Utility\Hash;
 use Collator;
@@ -86,7 +87,14 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Contents', [$name, $context['page'], $la_options])->render() ?: null;
+					try {
+						return $context['_view']->cell('Frontend/Contents', [$name, $context['page'], $la_options])->render() ?: null;
+					}
+					catch (RedirectException $ex) {
+						// Redirects are handled by the middleware
+						header('Location: ' . $ex->getMessage(), true, $ex->getCode());
+						exit;
+					}
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
@@ -105,7 +113,14 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = ['viewVars' => $context, 'includeWrapper' => true];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Form', [$identifier, $context['page'], $la_options])->render() ?: null;
+					try {
+						return $context['_view']->cell('Frontend/Form', [$identifier, $context['page'], $la_options])->render() ?: null;
+					}
+					catch (RedirectException $ex) {
+						// Redirects are handled by the middleware
+						header('Location: ' . $ex->getMessage(), true, $ex->getCode());
+						exit;
+					}
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
@@ -155,7 +170,14 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Menu', [$name, $context['languageShortcode'], $la_options])->render() ?: null;
+					try {
+						return $context['_view']->cell('Frontend/Menu', [$name, $context['languageShortcode'], $la_options])->render() ?: null;
+					}
+					catch (RedirectException $ex) {
+						// Redirects are handled by the middleware
+						header('Location: ' . $ex->getMessage(), true, $ex->getCode());
+						exit;
+					}
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
@@ -211,7 +233,14 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Survey', [$identifier, $context['page'], $la_options])->render() ?: null;
+					try {
+						return $context['_view']->cell('Frontend/Survey', [$identifier, $context['page'], $la_options])->render() ?: null;
+					}
+					catch (RedirectException $ex) {
+						// Redirects are handled by the middleware
+						header('Location: ' . $ex->getMessage(), true, $ex->getCode());
+						exit;
+					}
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
@@ -222,7 +251,14 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Widgets', [$name, $la_options])->render() ?: null;
+					try {
+						return $context['_view']->cell('Frontend/Widgets', [$name, $la_options])->render() ?: null;
+					}
+					catch (RedirectException $ex) {
+						// Redirects are handled by the middleware
+						header('Location: ' . $ex->getMessage(), true, $ex->getCode());
+						exit;
+					}
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
