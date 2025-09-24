@@ -312,56 +312,56 @@ msgid "analyze_media_writable"
 msgstr "Medien-Verzeichnis schreibbar"
 
 msgid "analyze_media_writable_error_message"
-msgstr "Stellen Sie sicher, dass das Medien-Verzeichnis (<pre>{0}webroot/media</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+msgstr "Stellen Sie sicher, dass das Medien-Verzeichnis (<code>{0}webroot/media</code>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
 "<code>chmod -R 775 {0}webroot/media</code>"
 
 msgid "analyze_awyiss_css_writable"
 msgstr "CSS-Verzeichnis schreibbar"
 
 msgid "analyze_awyiss_css_writable_error_message"
-msgstr "Stellen Sie sicher, dass das CSS-Verzeichnis (<pre>{0}awyiss/assets/css</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+msgstr "Stellen Sie sicher, dass das CSS-Verzeichnis (<code>{0}awyiss/assets/css</code>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
 "<code>chmod -R 750 {0}awyiss/assets/css</code>"
 
 msgid "analyze_awyiss_js_writable"
 msgstr "Javascript-Verzeichnis schreibbar"
 
 msgid "analyze_awyiss_js_writable_error_message"
-msgstr "Stellen Sie sicher, dass das Javascript-Verzeichnis (<pre>{0}awyiss/assets/js</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+msgstr "Stellen Sie sicher, dass das Javascript-Verzeichnis (<code>{0}awyiss/assets/js</code>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
 "<code>chmod -R 750 {0}awyiss/assets/js</code>"
 
 msgid "analyze_assets_css_writable"
 msgstr "CSS-Verzeichnis schreibbar"
 
 msgid "analyze_assets_css_writable_error_message"
-msgstr "Stellen Sie sicher, dass das CSS-Verzeichnis (<pre>{0}assets/css</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+msgstr "Stellen Sie sicher, dass das CSS-Verzeichnis (<code>{0}assets/css</code>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
 "<code>chmod -R 750 {0}assets/css</code>"
 
 msgid "analyze_assets_font_writable"
 msgstr "Webfont-Verzeichnis schreibbar"
 
 msgid "analyze_assets_font_writable_error_message"
-msgstr "Stellen Sie sicher, dass das Webfont-Verzeichnis (<pre>{0}assets/font</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+msgstr "Stellen Sie sicher, dass das Webfont-Verzeichnis (<code>{0}assets/font</code>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
 "<code>chmod -R 750 {0}assets/font</code>"
 
 msgid "analyze_assets_js_writable"
 msgstr "Javascript-Verzeichnis schreibbar"
 
 msgid "analyze_assets_js_writable_error_message"
-msgstr "Stellen Sie sicher, dass das Javascript-Verzeichnis (<pre>{0}assets/js</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+msgstr "Stellen Sie sicher, dass das Javascript-Verzeichnis (<code>{0}assets/js</code>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
 "<code>chmod -R 750 {0}assets/js</code>"
 
 msgid "analyze_log_writable"
 msgstr "Protokoll-Verzeichnis schreibbar"
 
 msgid "analyze_log_writable_error_message"
-msgstr "Stellen Sie sicher, dass das Verzeichnis für Protokolle (<pre>{0}</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+msgstr "Stellen Sie sicher, dass das Verzeichnis für Protokolle (<code>{0}</code>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
 "<code>chmod -R 750 {0}</code>"
 
 msgid "analyze_tmp_writable"
 msgstr "Temp-Verzeichnis schreibbar"
 
 msgid "analyze_tmp_writable_error_message"
-msgstr "Stellen Sie sicher, dass das Verzeichnis für temporäre Daten (<pre>{0}</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+msgstr "Stellen Sie sicher, dass das Verzeichnis für temporäre Daten (<code>{0}</code>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
 "<code>chmod -R 775 {0}</code>"
 
 msgid "analyze_webroot_not_in_url"

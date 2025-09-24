@@ -312,56 +312,56 @@ msgid "analyze_media_writable"
 msgstr "Media directory writable"
 
 msgid "analyze_media_writable_error_message"
-msgstr "Make sure the media directory (<pre>{0}webroot/media</pre>) is writable for the user &ldquo;{1}&ldquo;."
+msgstr "Make sure the media directory (<code>{0}webroot/media</code>) is writable for the user &ldquo;{1}&ldquo;."
 "<code>chmod -R 775 {0}webroot/media</code>"
 
 msgid "analyze_awyiss_css_writable"
 msgstr "CSS directory writable"
 
 msgid "analyze_awyiss_css_writable_error_message"
-msgstr "Make sure the CSS directory (<pre>{0}awyiss/assets/css</pre>) is writable for the user &ldquo;{1}&ldquo;."
+msgstr "Make sure the CSS directory (<code>{0}awyiss/assets/css</code>) is writable for the user &ldquo;{1}&ldquo;."
 "<code>chmod -R 750 {0}awyiss/assets/css</code>"
 
 msgid "analyze_awyiss_js_writable"
 msgstr "Javascript directory writable"
 
 msgid "analyze_awyiss_js_writable_error_message"
-msgstr "Make sure the Javascript directory (<pre>{0}awyiss/assets/js</pre>) is writable for the user &ldquo;{1}&ldquo;."
+msgstr "Make sure the Javascript directory (<code>{0}awyiss/assets/js</code>) is writable for the user &ldquo;{1}&ldquo;."
 "<code>chmod -R 750 {0}awyiss/assets/js</code>"
 
 msgid "analyze_assets_css_writable"
 msgstr "CSS directory writable"
 
 msgid "analyze_assets_css_writable_error_message"
-msgstr "Make sure the CSS directory (<pre>{0}assets/css</pre>) is writable for the user &ldquo;{1}&ldquo;."
+msgstr "Make sure the CSS directory (<code>{0}assets/css</code>) is writable for the user &ldquo;{1}&ldquo;."
 "<code>chmod -R 750 {0}assets/css</code>"
 
 msgid "analyze_assets_font_writable"
 msgstr "Webfont directory writable"
 
 msgid "analyze_assets_font_writable_error_message"
-msgstr "Make sure the webfont directory (<pre>{0}assets/font</pre>) is writable for the user &ldquo;{1}&ldquo;."
+msgstr "Make sure the webfont directory (<code>{0}assets/font</code>) is writable for the user &ldquo;{1}&ldquo;."
 "<code>chmod -R 750 {0}assets/font</code>"
 
 msgid "analyze_assets_js_writable"
 msgstr "Javascript directory writable"
 
 msgid "analyze_assets_js_writable_error_message"
-msgstr "Make sure the Javascript directory (<pre>{0}assets/js</pre>) is writable for the user &ldquo;{1}&ldquo;."
+msgstr "Make sure the Javascript directory (<code>{0}assets/js</code>) is writable for the user &ldquo;{1}&ldquo;."
 "<code>chmod -R 750 {0}assets/js</code>"
 
 msgid "analyze_log_writable"
 msgstr "Log directory writable"
 
 msgid "analyze_log_writable_error_message"
-msgstr "Make sure the log directory (<pre>{0}</pre>) is writable for the user &ldquo;{1}&ldquo;."
+msgstr "Make sure the log directory (<code>{0}</code>) is writable for the user &ldquo;{1}&ldquo;."
 "<code>chmod -R 750 {0}</code>"
 
 msgid "analyze_tmp_writable"
 msgstr "Temp directory writable"
 
 msgid "analyze_tmp_writable_error_message"
-msgstr "Make sure the temporary data directory (<pre>{0}</pre>) is writable for the user &ldquo;{1}&ldquo;."
+msgstr "Make sure the temporary data directory (<code>{0}</code>) is writable for the user &ldquo;{1}&ldquo;."
 "<code>chmod -R 775 {0}</code>"
 
 msgid "analyze_webroot_not_in_url"
