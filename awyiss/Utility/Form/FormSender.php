@@ -678,6 +678,9 @@ class FormSender {
 			'textHtml' => $bodyHtml,
 			'textPlain' => $bodyPlain,
 			'layout' => 'email/' . $lo_template->layout,
+			'form' => $this->form,
+			'page' => $this->page,
+			'formData' => $this->getFormData(),
 		])
 		->setTemplate('Frontend/email/' . $lo_template->fileName)
 		->setLayout('email/' . str_replace('.twig', '', $lo_template->layout));
