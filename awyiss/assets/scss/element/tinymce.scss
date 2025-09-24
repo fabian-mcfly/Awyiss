@@ -42,6 +42,14 @@ body {
 		}
 	}
 
+	.FormInputType-TranslatableText {
+		.tox:not(.tox-tinymce-inline) {
+			.tox-toolbar {
+				padding-right:60px;
+			}
+		}
+	}
+
 	fieldset {
 		&:has(.tox-fullscreen) {
 			z-index:3000;
