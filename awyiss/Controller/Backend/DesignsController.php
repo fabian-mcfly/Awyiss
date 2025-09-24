@@ -86,13 +86,13 @@ class DesignsController extends Controller {
 				$this->cancelPreview();
 			}
 			elseif ($this->request->getData('preview') !== null) {
-				$lo_preview = $this->savePreviewData($la_internalVariables, $la_webfonts, isset($lo_scssVariableProvider->getInternalVariables()['includeColumnSystem']));
+				$lo_preview = $this->savePreviewData($la_internalVariables, $la_webfonts);
 			}
 			elseif ($this->request->getData('reset') !== null) {
 				$this->reset();
 			}
 			else {
-				$this->save($lo_design, $la_internalVariables, $la_webfonts, isset($lo_scssVariableProvider->getInternalVariables()['includeColumnSystem']));
+				$this->save($lo_design, $la_internalVariables, $la_webfonts);
 			}
 		}
 
@@ -165,7 +165,7 @@ class DesignsController extends Controller {
 	 * @throws \Exception
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
-	protected function save(Design $design, array $internalVariables, array $webfonts, bool $includeColumnSystem = false): void {
+	protected function save(Design $design, array $internalVariables, array $webfonts): void {
 		$la_requestData = $this->request->getData();
 		$lb_use = !empty($la_requestData['use']);
 
@@ -209,7 +209,7 @@ class DesignsController extends Controller {
 			}
 		}
 
-		$design->css = $this->generateCss($la_requestData, $includeColumnSystem);
+		$design->css = $this->generateCss($la_requestData);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
@@ -454,11 +454,10 @@ class DesignsController extends Controller {
 	/**
 	 * @param array $internalVariables
 	 * @param array $webfonts
-	 * @param bool $includeColumnSystem
 	 * @return \Awyiss\Model\Entity\Design|null
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
-	protected function savePreviewData(array $internalVariables, array $webfonts, bool $includeColumnSystem = false): ?Design {
+	protected function savePreviewData(array $internalVariables, array $webfonts): ?Design {
 		$la_previewData = $this->request->getData();
 		$la_previewData = $this->normalizeRequestData($la_previewData, $internalVariables, $webfonts);
 
@@ -485,7 +484,7 @@ class DesignsController extends Controller {
 		$lo_now = new DateTime('now');
 		$lo_preview->title = sprintf('Preview (%s, %s)', $lo_identity->username, $lo_now->format('Y-m-d H:i'));
 
-		$lo_preview->css = $this->generateCss($la_previewData, $includeColumnSystem);
+		$lo_preview->css = $this->generateCss($la_previewData);
 
 		if ($this->Designs->save($lo_preview)) {
 			throw new RedirectException(Router::url(['action' => 'overview', 'preview' => $lo_preview->identifier, '#' => 'Preview'], true), 302);
@@ -567,16 +566,19 @@ class DesignsController extends Controller {
 
 	/**
 	 * @param array $data
-	 * @param bool $includeColumnSystem
 	 * @return string
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
-	protected function generateCss(array $data, bool $includeColumnSystem): string {
+	protected function generateCss(array $data): string {
 		$ls_css = '';
 		$la_realmFolders = Configure::read('App.paths.assets.Frontend');
 
 		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_className */
 		$ls_className = App::className('ScssCompiler', 'Utility/Design');
+
+		/** @var class-string<\Awyiss\Utility\Design\ScssVariableProvider> $ls_className */
+		$ls_scssVariableProviderClass = App::className('ScssVariableProvider', 'Utility/Design');
+		$lo_scssVariableProvider = new $ls_scssVariableProviderClass(Configure::read('Design'));
 
 		foreach (Configure::read('Design.previewScssFiles', []) as $ls_scssFile) {
 			foreach ($la_realmFolders as $ls_basePath) {
@@ -584,10 +586,15 @@ class DesignsController extends Controller {
 					continue;
 				}
 
+				$lo_scssVariableProvider->setScssFiles([$ls_scssFile]);
+
+				$la_internalVariables = $lo_scssVariableProvider->getInternalVariables();
+				$lb_includeColumnSystem = isset($la_internalVariables['includeColumnSystem']) && $la_internalVariables['includeColumnSystem']->getValue() === true;
+
 				// compileScss expects SplFileInfo, not a string, so convert it
 				$ls_scssFile = new SplFileInfo($ls_scssFile);
 
-				$ls_css .= $ls_className::compileScss($ls_scssFile, $ls_basePath, $data['settings'], true, $includeColumnSystem) . PHP_EOL;
+				$ls_css .= $ls_className::compileScss($ls_scssFile, $ls_basePath, $data['settings'], true, $lb_includeColumnSystem) . PHP_EOL;
 			}
 		}
 
