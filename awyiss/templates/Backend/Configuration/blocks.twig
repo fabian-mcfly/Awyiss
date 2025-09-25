@@ -22,7 +22,7 @@
 	{{ FormHelper.control('value', {
 		label: __('input_type_bool_label'),
 		type: 'checkbox',
-		val: configuration.value,
+		val: configuration.get('value'),
 	}) }}
 {% endblock %}
 

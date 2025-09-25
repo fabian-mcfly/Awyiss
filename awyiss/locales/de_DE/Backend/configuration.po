@@ -155,6 +155,12 @@ msgstr "Inhalte"
 msgid "configuration_identifier_backend_contents_enabled"
 msgstr "Aktiviert"
 
+msgid "configuration_category_backend_forms"
+msgstr "Formulare"
+
+msgid "configuration_identifier_backend_forms_enabled"
+msgstr "Aktiviert"
+
 msgid "configuration_category_backend_media_folders"
 msgstr "Medienordner"
 

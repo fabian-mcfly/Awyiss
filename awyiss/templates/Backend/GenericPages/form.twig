@@ -72,6 +72,15 @@
 					}) }}
 				{% endblock %}
 
+				{% block formControlFormId %}
+					{% if localConfig('forms.enabled') %}
+						{{ FormHelper.control('form_id', {
+							label: __df(pageRoleName, 'generic_pages', 'form_id'),
+							options: hashPrinter(forms, 'label', 'id', '- '),
+						}) }}
+					{% endif %}
+				{% endblock %}
+
 				{% block fieldsetGeneralAttributes %}
 					{{ AttributesHelper.allControls('general') }}
 				{% endblock %}

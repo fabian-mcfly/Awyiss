@@ -98,6 +98,9 @@ msgstr "Weiterleitungslink"
 msgid "duplicate_of"
 msgstr "Duplikat von"
 
+msgid "form_id"
+msgstr "Formular"
+
 msgid "fieldset_menus"
 msgstr "Menüeintrag automatisch erstellen"
 

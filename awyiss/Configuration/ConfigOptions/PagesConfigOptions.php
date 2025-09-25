@@ -32,6 +32,15 @@ class PagesConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 			],
+			'forms' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+			],
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [

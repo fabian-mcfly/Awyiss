@@ -101,6 +101,15 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 			],
+			'forms' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+			],
 			'mediaFolders' => [
 				new ConfigOption(
 					defaultValue: false,
