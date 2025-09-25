@@ -255,7 +255,7 @@ class Form extends Entity {
 				);
 			}
 
-			$this->getFormOptions()->modifyFormElement($lo_formElement, $this, $this->sourcePage);
+			$this->getFormOptions()->modifyFormElement($lo_formElement);
 		}
 
 		$this->formElementsChecksum = md5(serialize($la_formElements));
@@ -305,7 +305,7 @@ class Form extends Entity {
 				$ls_className = App::className('FormOptions', 'Form');
 			}
 
-			$this->formOptions = new $ls_className();
+			$this->formOptions = new $ls_className($this, $this->sourcePage);
 		}
 
 		return $this;
@@ -351,7 +351,7 @@ class Form extends Entity {
 	 * @return \Awyiss\Model\Entity\Form
 	 */
 	public function validate(?array $formData = null, ?Validator $validator = null, ?bool $validateProtection = null): static {
-		$lo_validator = $validator ?? $this->getFormOptions()->setValidationRules($this->getValidator(), $this);
+		$lo_validator = $validator ?? $this->getFormOptions()->setValidationRules($this->getValidator());
 
 		$this->setErrors($lo_validator->validate($formData ?? $this->getFormData()));
 

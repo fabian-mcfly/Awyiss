@@ -939,7 +939,7 @@ class FormTest extends TestCase {
 		$view = new View();
 		$entity->initialize($view);
 
-		$entity->getFormOptions()->modifyForm($entity);
+		$entity->getFormOptions()->modifyForm();
 
 		// Check if Contact4FormOptions modified the form identifier
 		$this->assertEquals('new_contact4', $entity->identifier);
@@ -963,7 +963,7 @@ class FormTest extends TestCase {
 
 		// Test conditional recipient modification
 		$entity->setFormData(['email' => 'importantclient@example.com']);
-		$entity->getFormOptions()->setConditionalRecipient($entity);
+		$entity->getFormOptions()->setConditionalRecipient();
 
 		$this->assertEquals('importantclient@cms.de', $entity->ownerEmail);
 	}

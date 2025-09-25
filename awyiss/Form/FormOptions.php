@@ -17,6 +17,14 @@ use Cake\Datasource\FactoryLocator;
  */
 class FormOptions implements FormOptionsInterface {
 	/**
+	 * @var \Awyiss\Model\Entity\Form
+	 */
+	protected Form $form;
+	/**
+	 * @var \Awyiss\Model\Entity\Page|null
+	 */
+	protected ?Page $page = null;
+	/**
 	 * Indicates whether the real sender should be used as the sender (= empty value),
 	 * or if the site owner's email should be used as the sender (= safe email address).
 	 * This should ensure that no mail server denies the email
@@ -28,26 +36,28 @@ class FormOptions implements FormOptionsInterface {
 
 
 	/**
-	 * Constructor
+	 * @inheritDoc
 	 */
-	public function __construct() {
+	public function __construct(Form $form, ?Page $page = null) {
 		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
 		$ls_className = App::className('Mailer', 'Mailer');
 		$lo_mailer = new $ls_className('default');
 
+		$this->form = $form;
 		$this->safeRealSender = 'noreply@' . $lo_mailer->getMessage()->getDomain();
+		$this->page = $page;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function setValidationRules(Validator $validator, Form $form): Validator {
-		if (!$form->formElements?->count()) {
+	public function setValidationRules(Validator $validator): Validator {
+		if (!$this->form->formElements?->count()) {
 			return $validator;
 		}
 
-		$lo_formElements = $form->formElements->listNested()->toList();
+		$lo_formElements = $this->form->formElements->listNested()->toList();
 
 		/** @var \Awyiss\Model\Entity\FormElement $lo_formElement */
 		foreach ($lo_formElements as $lo_formElement) {
@@ -104,7 +114,7 @@ class FormOptions implements FormOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyForm(Form $form, ?Page $page = null): static {
+	public function modifyForm(): static {
 		// Do nothing
 		return $this;
 	}
@@ -113,7 +123,7 @@ class FormOptions implements FormOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyFormElement(FormElement $formElement, Form $form, ?Page $page = null): static {
+	public function modifyFormElement(FormElement $formElement): static {
 		// Do nothing
 		return $this;
 	}
@@ -122,24 +132,24 @@ class FormOptions implements FormOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function setConditionalRecipient(Form $form, ?Page $page = null): static {
+	public function setConditionalRecipient(): static {
 		/** @var \Awyiss\Model\Table\FormsTable $lo_formsTable */
 		$lo_formsTable = FactoryLocator::get('Table')->get('Forms');
-		$lo_formsTable->loadInto($form, ['FormConditionalRecipients']);
+		$lo_formsTable->loadInto($this->form, ['FormConditionalRecipients']);
 
-		if (!$form->formConditionalRecipients) {
+		if (!$this->form->formConditionalRecipients) {
 			return $this;
 		}
 
 		/** @var \Awyiss\Form\FormConditionalRecipients $ls_conditionalRecipientsClass */
 		$ls_conditionalRecipientsClass = App::className('FormConditionalRecipients', 'Form');
-		$lo_conditionalRecipients = new $ls_conditionalRecipientsClass($form, $page);
+		$lo_conditionalRecipients = new $ls_conditionalRecipientsClass($this->form, $this->page);
 
-		$lo_conditionalRecipients->setProcessStrategy($form->conditionalRecipientsStrategy);
+		$lo_conditionalRecipients->setProcessStrategy($this->form->conditionalRecipientsStrategy);
 
-		$ls_recipient = $lo_conditionalRecipients->getMatchingRecipient($form->formConditionalRecipients, $form->getFormData());
+		$ls_recipient = $lo_conditionalRecipients->getMatchingRecipient($this->form->formConditionalRecipients, $this->form->getFormData());
 		if ($ls_recipient) {
-			$form->ownerEmail = $ls_recipient;
+			$this->form->ownerEmail = $ls_recipient;
 		}
 
 		return $this;

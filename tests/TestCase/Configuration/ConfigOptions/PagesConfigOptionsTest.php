@@ -41,7 +41,7 @@ class PagesConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(5, $configOptions);
+		$this->assertCount(6, $configOptions);
 
 		$this->assertArrayHasKey('Backend.contents.enabled', $configOptions);
 		$this->assertFalse($configOptions['Backend.contents.enabled']->isLocalizable());
@@ -53,6 +53,17 @@ class PagesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.contents.enabled']->getTypecast());
 		$this->assertNull($configOptions['Backend.contents.enabled']->getValidate());
 		$this->assertNull($configOptions['Backend.contents.enabled']->getValues());
+
+		$this->assertArrayHasKey('Backend.forms.enabled', $configOptions);
+		$this->assertFalse($configOptions['Backend.forms.enabled']->isLocalizable());
+		$this->assertFalse($configOptions['Backend.forms.enabled']->isNullable());
+		$this->assertFalse($configOptions['Backend.forms.enabled']->isPersonalizable());
+		$this->assertSame(false, $configOptions['Backend.forms.enabled']->getDefaultValue());
+		$this->assertSame('false', $configOptions['Backend.forms.enabled']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Backend.forms.enabled']->getType());
+		$this->assertNull($configOptions['Backend.forms.enabled']->getTypecast());
+		$this->assertNull($configOptions['Backend.forms.enabled']->getValidate());
+		$this->assertNull($configOptions['Backend.forms.enabled']->getValues());
 
 		$this->assertArrayHasKey('Backend.overview.displayedFields', $configOptions);
 		$this->assertFalse($configOptions['Backend.overview.displayedFields']->isLocalizable());

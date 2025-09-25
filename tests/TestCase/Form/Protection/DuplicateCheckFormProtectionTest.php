@@ -58,7 +58,7 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 			new FormElement(['id' => 1, 'type' => 'text', 'identifier' => 'name']),
 			new FormElement(['id' => 2, 'type' => 'email', 'identifier' => 'email']),
 		];
-		$this->formOptions = new FormOptions();
+		$this->formOptions = new FormOptions($this->form);
 		$this->view = new FrontendView();
 
 		$this->duplicateCheckFormProtection = new DuplicateCheckFormProtection();

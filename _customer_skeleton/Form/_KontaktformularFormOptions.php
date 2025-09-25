@@ -5,9 +5,7 @@ namespace FoobarCustomer\Form;
 
 
 use Awyiss\Form\FormOptions;
-use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormElement;
-use Awyiss\Model\Entity\Page;
 use Awyiss\Validation\Validator;
 
 
@@ -21,9 +19,9 @@ class KontaktformularFormOptions extends FormOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function setValidationRules(Validator $validator, Form $form): Validator {
+	public function setValidationRules(Validator $validator): Validator {
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$validator = parent::setValidationRules($validator, $form);
+		$validator = parent::setValidationRules($validator);
 
 		// Add custom validation rules
 		//$validator->email('email');
@@ -35,16 +33,16 @@ class KontaktformularFormOptions extends FormOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyForm(Form $form, ?Page $page = null): static {
-		return parent::modifyForm($form, $page);
+	public function modifyForm(): static {
+		return parent::modifyForm();
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyFormElement(FormElement $formElement, Form $form, ?Page $page = null): static {
-		//if (!$form->isSubmitted() && $formElement->identifier === 'email') {
+	public function modifyFormElement(FormElement $formElement): static {
+		//if (!$this->form->isSubmitted() && $formElement->identifier === 'email') {
 		//	$formElement->value = 'foo@bar.com';
 		//}
 

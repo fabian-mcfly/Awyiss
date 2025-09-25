@@ -6,7 +6,6 @@ namespace Awyiss\Test\TestCase\Form;
 
 use Awyiss\Form\FormConditionalRecipients;
 use Awyiss\Form\FormOptions;
-use Awyiss\Model\Entity\Form;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Awyiss\View\FrontendView;
@@ -26,11 +25,14 @@ class FormOptionsTest extends TestCase {
 
 	/**
 	 * @inheritDoc
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->formOptions = new FormOptions();
+		/** @var \Awyiss\Model\Entity\Form $form */
+		$form = $this->fetchTable('Forms')->get(1);
+		$this->formOptions = new FormOptions($form);
 	}
 
 
@@ -40,7 +42,10 @@ class FormOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorSetsSafeRealSender(): void {
-		$formOptions = new FormOptions();
+		/** @var \Awyiss\Model\Entity\Form $form */
+		$form = $this->fetchTable('Forms')->get(1);
+
+		$formOptions = new FormOptions($form);
 		$safeRealSender = $formOptions->getSafeRealSender();
 
 		$this->assertSame('noreply@localhost', $safeRealSender);
@@ -68,21 +73,6 @@ class FormOptionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testSetValidationRulesWithEmptyForm(): void {
-		$validator = new Validator();
-		$form = new Form();
-
-		$result = $this->formOptions->setValidationRules($validator, $form);
-
-		$this->assertSame($validator, $result);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
@@ -92,7 +82,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$result = $this->formOptions->setValidationRules($validator, $form);
+		$result = $form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertSame($validator, $result);
 		$this->assertTrue($validator->hasField('anrede'));
@@ -117,7 +107,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$this->formOptions->setValidationRules($validator, $form);
+		$form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertTrue($validator->hasField('email'));
 		$this->assertFalse($validator->field('email')->isEmptyAllowed());
@@ -139,7 +129,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$this->formOptions->setValidationRules($validator, $form);
+		$form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertTrue($validator->hasField('datum'));
 		$this->assertTrue($validator->field('datum')->isEmptyAllowed());
@@ -161,7 +151,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$this->formOptions->setValidationRules($validator, $form);
+		$form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertTrue($validator->hasField('uhrzeit'));
 		$this->assertTrue($validator->field('uhrzeit')->isEmptyAllowed());
@@ -183,7 +173,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$this->formOptions->setValidationRules($validator, $form);
+		$form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertTrue($validator->hasField('datum_und_uhrzeit'));
 		$this->assertTrue($validator->field('datum_und_uhrzeit')->isEmptyAllowed());
@@ -205,7 +195,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$this->formOptions->setValidationRules($validator, $form);
+		$form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertTrue($validator->hasField('multi_radio'));
 		$this->assertTrue($validator->field('multi_radio')->isEmptyAllowed());
@@ -227,7 +217,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$this->formOptions->setValidationRules($validator, $form);
+		$form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertTrue($validator->hasField('select'));
 		$this->assertTrue($validator->field('select')->isEmptyAllowed());
@@ -249,7 +239,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$this->formOptions->setValidationRules($validator, $form);
+		$form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertTrue($validator->hasField('multi_select'));
 		$this->assertTrue($validator->field('multi_select')->isEmptyAllowed());
@@ -271,7 +261,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$this->formOptions->setValidationRules($validator, $form);
+		$form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertTrue($validator->hasField('datenschutz_akzeptiert'));
 		$this->assertTrue($validator->field('datenschutz_akzeptiert')->isPresenceRequired());
@@ -294,7 +284,7 @@ class FormOptionsTest extends TestCase {
 		$form = $this->fetchTable('Forms')->get(1);
 		$form->initialize(new FrontendView());
 
-		$this->formOptions->setValidationRules($validator, $form);
+		$form->getFormOptions()->setValidationRules($validator);
 
 		$this->assertTrue($validator->hasField('multi_checkbox'));
 		$this->assertTrue($validator->field('multi_checkbox')->isEmptyAllowed());
@@ -310,11 +300,7 @@ class FormOptionsTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyForm(): void {
-		/** @var \Awyiss\Model\Entity\Form $form */
-		$form = $this->fetchTable('Forms')->get(1);
-		$form->initialize(new FrontendView());
-
-		$result = $this->formOptions->modifyForm($form);
+		$result = $this->formOptions->modifyForm();
 
 		$this->assertSame($this->formOptions, $result);
 	}
@@ -333,9 +319,9 @@ class FormOptionsTest extends TestCase {
 
 		$formElement = $form->formElements->first();
 
-		$result = $this->formOptions->modifyFormElement($formElement, $form);
+		$result = $form->getFormOptions()->modifyFormElement($formElement);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 	}
 
 
@@ -358,11 +344,11 @@ class FormOptionsTest extends TestCase {
 
 		$form->conditionalRecipientsStrategy = FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST;
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy1@domain.com', $form->ownerEmail);
 
 		$form->setFormData([
@@ -371,11 +357,11 @@ class FormOptionsTest extends TestCase {
 			'email' => 'dummy@domain.com',
 		]);
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy2@domain.com', $form->ownerEmail);
 
 		$form->setFormData([
@@ -384,11 +370,11 @@ class FormOptionsTest extends TestCase {
 			'email' => 'dummy@domain.com',
 		]);
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy3@domain.com', $form->ownerEmail);
 	}
 
@@ -412,11 +398,11 @@ class FormOptionsTest extends TestCase {
 
 		$form->conditionalRecipientsStrategy = FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST;
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy3@domain.com', $form->ownerEmail);
 
 		$form->setFormData([
@@ -425,11 +411,11 @@ class FormOptionsTest extends TestCase {
 			'email' => 'other@domain.com',
 		]);
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy2@domain.com', $form->ownerEmail);
 
 		$form->setFormData([
@@ -438,11 +424,11 @@ class FormOptionsTest extends TestCase {
 			'email' => 'dummy@domain.com',
 		]);
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy3@domain.com', $form->ownerEmail);
 	}
 
@@ -466,11 +452,11 @@ class FormOptionsTest extends TestCase {
 
 		$form->conditionalRecipientsStrategy = FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL;
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('johnsdummy3@domain.com', $form->ownerEmail);
 	}
 
@@ -492,11 +478,11 @@ class FormOptionsTest extends TestCase {
 			'email' => 'other@domain.com',
 		]);
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);
 	}
 
@@ -520,11 +506,11 @@ class FormOptionsTest extends TestCase {
 
 		$form->conditionalRecipientsStrategy = FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL;
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);
 
 		$form->setFormData([
@@ -533,11 +519,11 @@ class FormOptionsTest extends TestCase {
 			'email' => 'dummy@domain.com',
 		]);
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);
 
 		$form->setFormData([
@@ -546,11 +532,11 @@ class FormOptionsTest extends TestCase {
 			'email' => 'dummy@domain.com',
 		]);
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertNotEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);
 	}
 
@@ -572,11 +558,11 @@ class FormOptionsTest extends TestCase {
 			'email' => 'dummy@domain.com',
 		]);
 
-		$result = $this->formOptions->setConditionalRecipient($form);
+		$result = $form->getFormOptions()->setConditionalRecipient();
 
 		$this->assertEmpty($form->formConditionalRecipients);
 
-		$this->assertSame($this->formOptions, $result);
+		$this->assertSame($form->getFormOptions(), $result);
 		$this->assertSame('awyiss@cms.de', $form->ownerEmail);
 	}
 

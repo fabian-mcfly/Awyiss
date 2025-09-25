@@ -15,14 +15,20 @@ use Awyiss\Validation\Validator;
  */
 interface FormOptionsInterface {
 	/**
+	 * @param \Awyiss\Model\Entity\Form $form
+	 * @param \Awyiss\Model\Entity\Page|null $page
+	 */
+	public function __construct(Form $form, ?Page $page = null);
+
+
+	/**
 	 * Returns the form validation object
 	 * with the rules for the form.
 	 *
 	 * @param \Awyiss\Validation\Validator $validator
-	 * @param \Awyiss\Model\Entity\Form $form
 	 * @return \Awyiss\Validation\Validator
 	 */
-	public function setValidationRules(Validator $validator, Form $form): Validator;
+	public function setValidationRules(Validator $validator): Validator;
 
 
 	/**
@@ -30,11 +36,9 @@ interface FormOptionsInterface {
 	 * either to change the options or to add additional data,
 	 * before or after the form has been submitted (but not yet sent).
 	 *
-	 * @param \Awyiss\Model\Entity\Form $form
-	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @return static
 	 */
-	public function modifyForm(Form $form, ?Page $page = null): static;
+	public function modifyForm(): static;
 
 
 	/**
@@ -60,22 +64,18 @@ interface FormOptionsInterface {
 	 * set the `showValueInEmail`-property to `true`.
 	 *
 	 * @param \Awyiss\Model\Entity\FormElement $formElement
-	 * @param \Awyiss\Model\Entity\Form $form
-	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @return static
 	 */
-	public function modifyFormElement(FormElement $formElement, Form $form, ?Page $page = null): static;
+	public function modifyFormElement(FormElement $formElement): static;
 
 
 	/**
 	 * Sets the conditional recipient based on the request data.
 	 * This method should modify the form's `ownerEmail`-property.
 	 *
-	 * @param \Awyiss\Model\Entity\Form $form
-	 * @param \Awyiss\Model\Entity\Page|null $page
-	 * @return string|null
+	 * @return static
 	 */
-	public function setConditionalRecipient(Form $form, ?Page $page = null): static;
+	public function setConditionalRecipient(): static;
 
 
 	/**
@@ -108,7 +108,7 @@ interface FormOptionsInterface {
 	 * Sets the safe real sender.
 	 *
 	 * @param string|null $safeRealSender
-	 * @return $this
+	 * @return static
 	 */
 	public function setSafeRealSender(?string $safeRealSender): static;
 }

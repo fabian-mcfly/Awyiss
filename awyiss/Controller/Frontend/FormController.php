@@ -142,6 +142,7 @@ class FormController extends AppController {
 	 * @param string $identifier
 	 * @return void
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	protected function handleFormSubmission(string $identifier): void {
 		$la_options = $this->getOptions();

@@ -57,7 +57,7 @@ class GenericPagesConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(20, $configOptions);
+		$this->assertCount(21, $configOptions);
 
 		$this->assertArrayHasKey('Backend.categories.allowAggregation', $configOptions);
 		$this->assertFalse($configOptions['Backend.categories.allowAggregation']->isLocalizable());
@@ -169,6 +169,17 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.contents.enabled']->getTypecast());
 		$this->assertNull($configOptions['Backend.contents.enabled']->getValidate());
 		$this->assertNull($configOptions['Backend.contents.enabled']->getValues());
+
+		$this->assertArrayHasKey('Backend.forms.enabled', $configOptions);
+		$this->assertFalse($configOptions['Backend.forms.enabled']->isLocalizable());
+		$this->assertFalse($configOptions['Backend.forms.enabled']->isNullable());
+		$this->assertFalse($configOptions['Backend.forms.enabled']->isPersonalizable());
+		$this->assertSame(false, $configOptions['Backend.forms.enabled']->getDefaultValue());
+		$this->assertSame('false', $configOptions['Backend.forms.enabled']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Backend.forms.enabled']->getType());
+		$this->assertNull($configOptions['Backend.forms.enabled']->getTypecast());
+		$this->assertNull($configOptions['Backend.forms.enabled']->getValidate());
+		$this->assertNull($configOptions['Backend.forms.enabled']->getValues());
 
 		$this->assertArrayHasKey('Backend.mediaFolders.autoCreate', $configOptions);
 		$this->assertFalse($configOptions['Backend.mediaFolders.autoCreate']->isLocalizable());

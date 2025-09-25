@@ -96,6 +96,7 @@ class FormRenderer {
 	 * @param array $requestData
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @return $this
+	 * @throws \Exception
 	 */
 	public function initForm(Form|string|int $form, array $requestData, ?Page $page = null): static {
 		$this->form = $form instanceof Form ? $form : $this->getFormByIdentifier($form);
@@ -117,10 +118,10 @@ class FormRenderer {
 			$this->form->setFormData($requestData);
 		}
 
-		$this->form->getFormOptions()->modifyForm($this->form, $this->page);
+		$this->form->getFormOptions()->modifyForm();
 
 		if ($this->form->isSubmitted()) {
-			$this->form->getFormOptions()->setConditionalRecipient($this->form, $this->page);
+			$this->form->getFormOptions()->setConditionalRecipient();
 		}
 
 		return $this;
@@ -215,7 +216,8 @@ class FormRenderer {
 	 *
 	 * @param string|null $entryHash
 	 * @param array $options
-	 * @return bool|null
+	 * @return void
+	 * @throws \Exception
 	 */
 	public function process(?string $entryHash = null, array $options = []): void {
 		if (!$this->form) {
@@ -224,7 +226,7 @@ class FormRenderer {
 
 		// If the form is not submitted, but there's an entry hash, try to load the entry
 		if (!$this->form->isSubmitted()) {
-			if ($entryHash && !$this->form->isSubmitted() && !$this->isSent()) {
+			if ($entryHash && !$this->isSent()) {
 				$this->processFormEntryFromHash($entryHash, $options);
 			}
 
@@ -244,6 +246,7 @@ class FormRenderer {
 	 * @param \Awyiss\Model\Entity\FormEntry $entry
 	 * @param array $options
 	 * @return $this
+	 * @throws \Exception
 	 */
 	public function processFormEntry(FormEntry $entry, array $options = []): static {
 		$la_formData = json_decode(gzuncompress(base64_decode($entry->data)), true);
@@ -272,6 +275,7 @@ class FormRenderer {
 	 * @param string $entryHash
 	 * @param array $options
 	 * @return $this
+	 * @throws \Exception
 	 */
 	public function processFormEntryFromHash(string $entryHash, array $options = []): static {
 		$lo_entry = $this->loadFormEntryFromHash($entryHash);

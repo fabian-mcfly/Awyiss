@@ -5,9 +5,7 @@ namespace Customer\Form;
 
 
 use Awyiss\Form\FormOptions;
-use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormElement;
-use Awyiss\Model\Entity\Page;
 use Awyiss\Validation\Validator;
 
 
@@ -19,9 +17,9 @@ class Contact4FormOptions extends FormOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function setValidationRules(Validator $validator, Form $form): Validator {
+	public function setValidationRules(Validator $validator): Validator {
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$validator = parent::setValidationRules($validator, $form);
+		$validator = parent::setValidationRules($validator);
 
 		return $validator;
 	}
@@ -30,18 +28,18 @@ class Contact4FormOptions extends FormOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyForm(Form $form, ?Page $page = null): static {
-		$form->identifier = 'new_contact4';
+	public function modifyForm(): static {
+		$this->form->identifier = 'new_contact4';
 
-		return parent::modifyForm($form, $page);
+		return parent::modifyForm();
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyFormElement(FormElement $formElement, Form $form, ?Page $page = null): static {
-		if (!$form->isSubmitted() && $formElement->identifier === 'email') {
+	public function modifyFormElement(FormElement $formElement): static {
+		if (!$this->form->isSubmitted() && $formElement->identifier === 'email') {
 			$formElement->value = 'foo@bar.com';
 		}
 
@@ -52,9 +50,9 @@ class Contact4FormOptions extends FormOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function setConditionalRecipient(Form $form, ?Page $page = null): static {
-		if ($form->getFormData('email') === 'importantclient@example.com') {
-			$form->ownerEmail = 'importantclient@cms.de';
+	public function setConditionalRecipient(): static {
+		if ($this->form->getFormData('email') === 'importantclient@example.com') {
+			$this->form->ownerEmail = 'importantclient@cms.de';
 		}
 
 		return $this;
