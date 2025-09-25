@@ -348,9 +348,9 @@ class Form extends Entity {
 	 * @param array|null $formData
 	 * @param \Awyiss\Validation\Validator|null $validator
 	 * @param bool|null $validateProtection
-	 * @return \Awyiss\Model\Entity\Form
+	 * @return bool
 	 */
-	public function validate(?array $formData = null, ?Validator $validator = null, ?bool $validateProtection = null): static {
+	public function validate(?array $formData = null, ?Validator $validator = null, ?bool $validateProtection = null): bool {
 		$lo_validator = $validator ?? $this->getFormOptions()->setValidationRules($this->getValidator());
 
 		$this->setErrors($lo_validator->validate($formData ?? $this->getFormData()));
@@ -372,7 +372,7 @@ class Form extends Entity {
 			$lo_protectionMethod->modifyForm($this);
 		}
 
-		return $this;
+		return !$this->getErrors();
 	}
 
 
