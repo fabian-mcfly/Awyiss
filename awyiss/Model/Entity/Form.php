@@ -267,6 +267,18 @@ class Form extends Entity {
 
 
 	/**
+	 * Get all form elements in a linear array, indexed by their identifier
+	 *
+	 * @return array
+	 */
+	public function getLinearFormElements(): array {
+		return $this->getFormElements()->listNested()->filter(function (FormElement $element): bool {
+			return !empty($element->identifier);
+		})->indexBy('identifier')->toArray();
+	}
+
+
+	/**
 	 * @return string|null
 	 */
 	public function getFormElementsChecksum(): ?string {

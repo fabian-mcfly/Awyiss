@@ -6,12 +6,10 @@ namespace Awyiss\View\Cell\Frontend;
 
 use Awyiss\Core\App;
 use Awyiss\Model\Entity;
-use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
 use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
-use Cake\Core\Configure;
 use Cake\View\Cell;
 
 
@@ -63,41 +61,16 @@ class FormCell extends Cell {
 			return;
 		}
 
-		$lo_formRenderer->process();
-
-		if (!$lo_form->isSubmitted() && !$lo_formRenderer->isSent() && $this->request->getParam('formEntry')) {
-			$lo_formRenderer->processFormEntryFromHash($this->request->getParam('formEntry'));
-		}
-
-		$la_formElements = $lo_formRenderer->getForm()->getFormElements()->listNested()->filter(function (FormElement $element): bool {
-			return !empty($element->identifier);
-		})->indexBy('identifier')->toArray();
-
-		if ($lo_formRenderer->isSent()) {
-			/**
-			 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
-			 * @noinspection PhpPossiblePolymorphicInvocationInspection
-			 */
-			$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
-				baseWidth: $la_options['fullWidth'],
-				breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
-				columnWidth: $la_options['columnWidth'],
-				selector: '#Form' . $lo_form->id,
-				singleColumnBreakpoint: $la_options['singleColumnBreakpoint'],
-			);
-
-			// Parse the custom image tags
-			$this->parseAwyissImageTags($lo_form, $lo_mediaRenderOptions);
-
-			// Parse the module
-			$this->parseModule($lo_form, $lo_mediaRenderOptions);
-		}
+		$lo_formRenderer->process(
+			$this->request->getParam('formEntry'),
+			$la_options
+		);
 
 		// Set the view variables
 		$this->set([
 			'contents' => $lo_formRenderer->getFormBody($la_options),
 			'form' => $lo_form,
-			'formElements' => $la_formElements,
+			'formElements' => $lo_form->getLinearFormElements(),
 			'formElementsChecksum' => $lo_form->getFormElementsChecksum(),
 			'page' => $this->page,
 			'sent' => $lo_formRenderer->isSent(),

@@ -16,7 +16,7 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-<div class="Form-ErrorMessage">
+<div class="Form-ErrorMessage" id="Form-{{ form.identifier|ucparts(false) }}">
 	{% if form.errors['_general'] %}
 		{% for message in form.errors['_general'] %}
 			{{ message|raw }}<br>

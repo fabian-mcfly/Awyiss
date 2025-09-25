@@ -158,4 +158,4 @@
 </form>
 </div>
 <script nonce="">
-setTimeout(function () { const formElementsChecksum = '{{now}}c2d6e75a465a7f70caf9119baf7a0c87'; const form = document.getElementById('Form-Contact'); if (form) { const action = form.getAttribute('data-' + formElementsChecksum); form.removeAttribute('data-' + formElementsChecksum); if (action) { form.setAttribute('action', action); } } }, 9000); </script>
+setTimeout(function () { const formElementsChecksum = '{{now}}c2d6e75a465a7f70caf9119baf7a0c87'; let form = document.getElementById('Form-Contact'); if (form) { const action = form.getAttribute('data-' + formElementsChecksum); form.removeAttribute('data-' + formElementsChecksum); if (action) { form.setAttribute('action', action); } } }, 8500); </script>

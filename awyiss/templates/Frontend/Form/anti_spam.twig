@@ -44,7 +44,7 @@
 									<div class="Form Form-{{ form.identifier|ucparts(false) }}">
 										{% block formErrorMessage %}
 											{% if formErrors %}
-												<div class="Form-ErrorMessage">
+												<div class="Form-ErrorMessage" id="Form-{{ form.identifier|ucparts(false) }}">
 													{% if formErrors._general %}
 														{% for message in formErrors._general %}
 															{{ message|raw }}
@@ -67,7 +67,7 @@
 										<form
 											{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
 											method="post"
-											id="Form-{{ form.identifier|ucparts(false) }}"
+											{% if form.errors is empty %}id="Form-{{ form.identifier|ucparts(false) }}"{% endif %}
 										>
 
 											{% block formProtectionBefore %}

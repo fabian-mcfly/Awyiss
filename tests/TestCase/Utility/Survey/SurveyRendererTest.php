@@ -765,7 +765,7 @@ class SurveyRendererTest extends TestCase {
 		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][7d654446]" value="custom">', $result);
 		$this->assertStringContainsString('<input type="hidden" name="survey[dummy_survey][72054f17]" value="11', $result);
 
-		$this->assertStringContainsString('<div class="Form-ErrorMessage">', $result);
+		$this->assertStringContainsString('<div class="Form-ErrorMessage" id="Form-Contact">', $result);
 
 		$this->assertSame($entries, $table->find('all')->count());
 	}

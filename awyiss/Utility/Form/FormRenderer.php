@@ -128,33 +128,6 @@ class FormRenderer {
 
 
 	/**
-	 * Returns whether the form was sent
-	 * or null if the form was not processed yet (no request data).
-	 *
-	 * @return bool|null
-	 */
-	public function process(): ?bool {
-		if (!$this->form) {
-			throw new RuntimeException('No form was initialized.');
-		}
-
-		// Validate the form
-		if (!$this->form->isSubmitted()) {
-			return null;
-		}
-
-		// Validate the form using the form's and form options' validator
-		$this->form->validate();
-
-		if ($this->form->isValid()) {
-			$this->sendAndRedirect();
-		}
-
-		return $this->formSent;
-	}
-
-
-	/**
 	 * @return \Awyiss\Model\Entity\Form|null
 	 */
 	public function getForm(): ?Form {
@@ -237,10 +210,42 @@ class FormRenderer {
 
 
 	/**
+	 * Returns whether the form was sent
+	 * or null if the form was not processed yet (no request data).
+	 *
+	 * @param string|null $entryHash
+	 * @param array $options
+	 * @return bool|null
+	 */
+	public function process(?string $entryHash = null, array $options = []): void {
+		if (!$this->form) {
+			throw new RuntimeException('No form was initialized.');
+		}
+
+		// If the form is not submitted, but there's an entry hash, try to load the entry
+		if (!$this->form->isSubmitted()) {
+			if ($entryHash && !$this->form->isSubmitted() && !$this->isSent()) {
+				$this->processFormEntryFromHash($entryHash, $options);
+			}
+
+			return;
+		}
+
+		// Validate the form using the form's and form options' validator
+		$this->form->validate();
+
+		if ($this->form->isValid()) {
+			$this->sendAndRedirect();
+		}
+	}
+
+
+	/**
 	 * @param \Awyiss\Model\Entity\FormEntry $entry
+	 * @param array $options
 	 * @return $this
 	 */
-	public function processFormEntry(FormEntry $entry): static {
+	public function processFormEntry(FormEntry $entry, array $options = []): static {
 		$la_formData = json_decode(gzuncompress(base64_decode($entry->data)), true);
 
 		if (empty($la_formData)) {
@@ -257,22 +262,25 @@ class FormRenderer {
 
 		$this->formSent = true;
 
+		$this->parseTagsInForm($options);
+
 		return $this;
 	}
 
 
 	/**
 	 * @param string $entryHash
+	 * @param array $options
 	 * @return $this
 	 */
-	public function processFormEntryFromHash(string $entryHash): static {
+	public function processFormEntryFromHash(string $entryHash, array $options = []): static {
 		$lo_entry = $this->loadFormEntryFromHash($entryHash);
 
 		if (!$lo_entry || $lo_entry->formId !== $this->form?->id) {
 			return $this;
 		}
 
-		return $this->processFormEntry($lo_entry);
+		return $this->processFormEntry($lo_entry, $options);
 	}
 
 
@@ -398,5 +406,51 @@ class FormRenderer {
 
 			throw new RedirectException(Router::url($la_url, true), 302);
 		}
+	}
+
+
+	/**
+	 * @param array $options
+	 * @return $this
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function parseTagsInForm(array $options = []): static {
+		$options['mediaRenderOptions'] ??= [];
+
+		// Determine the full width
+		$options['mediaRenderOptions']['fullWidth'] ??= $options['fullWidth'] ?? $this->View->get('fullWidth', 1920);
+
+		// Set the breakpoints to the default if not set
+		$options['mediaRenderOptions']['breakpoints'] ??= Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []);
+
+		// Determine the column width
+		$options['mediaRenderOptions']['columnWidth'] ??= $options['columnWidth'] ?? $this->View->get('columnWidth', 100.0);
+
+		// Set the selector to the form if not set
+		$options['mediaRenderOptions']['selector'] ??= '#Form' . $this->form->id;
+
+		// Determine the single column breakpoint
+		$options['mediaRenderOptions']['singleColumnBreakpoint'] ??= $options['singleColumnBreakpoint'] ?? $this->View->get('singleColumnBreakpoint');
+
+		/**
+		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
+			baseWidth: $options['mediaRenderOptions']['fullWidth'],
+			breakpoints: $options['mediaRenderOptions']['breakpoints'],
+			columnWidth: $options['mediaRenderOptions']['columnWidth'],
+			selector: $options['mediaRenderOptions']['selector'],
+			singleColumnBreakpoint: $options['mediaRenderOptions']['singleColumnBreakpoint']
+		);
+
+		// Parse the custom image tags
+		$this->parseAwyissImageTags($this->form, $lo_mediaRenderOptions);
+
+		// Parse the module
+		$this->parseModule($this->form, $lo_mediaRenderOptions);
+
+		return $this;
 	}
 }

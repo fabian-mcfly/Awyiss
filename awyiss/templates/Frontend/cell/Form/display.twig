@@ -46,11 +46,11 @@ after a short delay to prevent spam bots from submitting the form directly.
 		{% block form %}
 			{% set renderedForm %}
 				<form
-						action="{{ UrlHelper.build({lang: languageShortcode, _name: 'FrontendFormAntiSpamPost'}) }}"
-						data-{{ now }}{{ formElementsChecksum }}="{{ form.action ?? currentUrl }}#Form-{{ form.identifier|ucparts(false) }}"
-						{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
-						method="post"
-						id="Form-{{ form.identifier|ucparts(false) }}"
+					action="{{ UrlHelper.build({lang: languageShortcode, _name: 'FrontendFormAntiSpamPost'}) }}"
+					data-{{ now }}{{ formElementsChecksum }}="{{ form.action ?? currentUrl }}#Form-{{ form.identifier|ucparts(false) }}"
+					{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
+					method="post"
+					{% if form.errors is empty %}id="Form-{{ form.identifier|ucparts(false) }}"{% endif %}
 				>
 					{% block formProtectionBefore %}
 						{{ FormHelper.renderFormProtection(form, 'before') }}
@@ -87,7 +87,10 @@ after a short delay to prevent spam bots from submitting the form directly.
 				<script nonce="{{ AssetHelper.getScriptNonce() }}">
 					setTimeout(function () {
 						const formElementsChecksum = '{{ now }}{{ formElementsChecksum }}';
-						const form = document.getElementById('Form-{{ form.identifier|ucparts(false) }}');
+						let form = document.getElementById('Form-{{ form.identifier|ucparts(false) }}');
+						{% if form.errors is not empty %}
+							form = form.parentElement.querySelector('form');
+						{% endif %}
 
 						if (form) {
 							const action = form.getAttribute('data-' + formElementsChecksum);
@@ -97,7 +100,7 @@ after a short delay to prevent spam bots from submitting the form directly.
 								form.setAttribute('action', action);
 							}
 						}
-					}, {{ form.formElements.listNested().count() * 500 }});
+					}, {{ formElements|length * 500 }});
 				</script>
 			{% endblock %}
 		{% endblock %}
