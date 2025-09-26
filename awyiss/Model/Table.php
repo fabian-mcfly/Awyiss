@@ -305,12 +305,33 @@ class Table extends BaseTable {
 
 
 	/**
-	 * @param SelectQuery $query
-	 * @return SelectQuery
+	 * Custom finder method used to retrieve all translations for the found records.
+	 * Fetched translations can be filtered by locale by passing the `locales` key
+	 * in the options array.
+	 *
+	 * Translated values will be found for each entity under the property `_translations`,
+	 * containing an array indexed by locale name.
+	 *
+	 * ### Example:
+	 * ```
+	 * $article = $articles->find('translations', locales: ['eng', 'deu'])->first();
+	 * $englishTranslatedFields = $article->get('_translations')['eng'];
+	 * ```
+	 *
+	 * If the `locales` array is not passed, it will bring all translations found
+	 * for each record.
+	 *
+	 * If no translate behavior is attached to the table, this finder will do nothing
+	 * to prevent errors.
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param array $locales
+	 * @return \Cake\ORM\Query\SelectQuery
+	 * @see \Cake\ORM\Behavior\TranslateBehavior::findTranslations()
 	 */
-	public function findTranslations(SelectQuery $query): SelectQuery {
+	public function findTranslations(SelectQuery $query, array $locales = []): SelectQuery {
 		if ($this->hasBehavior('Translate')) {
-			return $this->getBehavior('Translate')->findTranslations($query);
+			return $this->getBehavior('Translate')->findTranslations($query, $locales);
 		}
 
 
