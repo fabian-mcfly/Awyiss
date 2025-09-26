@@ -110,6 +110,7 @@ class FormsConfigOptionsTest extends TestCase {
 		$this->assertTrue($configOptions['Frontend.protection.methods']->isNullable());
 		$this->assertFalse($configOptions['Frontend.protection.methods']->isPersonalizable());
 		$this->assertSame([
+			'altcha',
 			'duplicate_check',
 			'ip_check',
 			'hidden_input',
