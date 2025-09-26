@@ -49,6 +49,7 @@ Mobile-friendly backend interface and a solid foundation for building responsive
 - MySQL 5.7+ or MariaDB 10.3+
 - Composer
 - Web server (Apache or Nginx) with URL rewriting enabled and rights to create symlinks
+- Shell access with PHP CLI
 - Cronjob support (often & long-running)
 - Imagick or GD PHP extension (for image manipulation)
 - FileInfo PHP extension
