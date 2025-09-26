@@ -6,6 +6,7 @@ namespace Awyiss\View;
 
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
+use Awyiss\Model\Entity\Language;
 use Awyiss\Twig\Extension\AwyissExtension;
 use Awyiss\Twig\Extension\EnumExtension;
 use Awyiss\Twig\FileLoader;
@@ -264,5 +265,29 @@ class AppView extends TwigView {
 		}
 
 		return null;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Language $language
+	 * @return \Awyiss\Model\Entity\Language
+	 */
+	protected function cleanLanguage(Language $language): Language {
+		$la_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn'];
+
+		$lo_language = clone $language;
+
+		foreach ($la_blocklistedProperties as $ls_property) {
+			unset($lo_language->{$ls_property});
+		}
+
+		$la_virtualFields = $lo_language->getVirtual();
+		$la_virtualFields = array_filter($la_virtualFields, function (string $key): bool {
+			return $key !== 'label';
+		});
+
+		$lo_language->setVirtual($la_virtualFields, true);
+
+		return $lo_language;
 	}
 }

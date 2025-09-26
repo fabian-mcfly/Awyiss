@@ -7,7 +7,6 @@ namespace Awyiss\View;
 use Awyiss\Awyiss;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Model\Entity\Language;
 use Awyiss\Routing\Router;
 use Cake\Core\Configure;
 use Twig\Environment;
@@ -126,30 +125,6 @@ class BackendView extends AppView {
 		$lo_twig->addGlobal('folder', $ls_folder);
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
 		$lo_twig->addGlobal('localConfig', LocalConfig::read());
-	}
-
-
-	/**
-	 * @param \Awyiss\Model\Entity\Language $language
-	 * @return \Awyiss\Model\Entity\Language
-	 */
-	protected function cleanLanguage(Language $language): Language {
-		$la_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn'];
-
-		$lo_language = clone $language;
-
-		foreach ($la_blocklistedProperties as $ls_property) {
-			unset($lo_language->{$ls_property});
-		}
-
-		$la_virtualFields = $lo_language->getVirtual();
-		$la_virtualFields = array_filter($la_virtualFields, function (string $key): bool {
-			return $key !== 'label';
-		});
-
-		$lo_language->setVirtual($la_virtualFields, true);
-
-		return $lo_language;
 	}
 
 

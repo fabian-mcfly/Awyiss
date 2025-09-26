@@ -24,13 +24,13 @@ class FrontendView extends AppView {
 	 *
 	 * @var string
 	 */
-	final public const TYPE_CONTENT = 'content';
+	final public const string TYPE_CONTENT = 'content';
 	/**
 	 * Constant for view file type 'content'
 	 *
 	 * @var string
 	 */
-	final public const TYPE_WIDGET = 'widget';
+	final public const string TYPE_WIDGET = 'widget';
 
 
 
@@ -96,7 +96,6 @@ class FrontendView extends AppView {
 			$lo_twig->addGlobal('loginLogoPath', $ls_logoPath);
 		}
 
-		$lo_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn', 'label'];
 		// Unset language properties
 		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
 		if ($lo_frontendLanguage) {
@@ -107,29 +106,21 @@ class FrontendView extends AppView {
 
 			$this->addHelper('Time', ['outputTimezone' => $ls_timezone]);
 
-			$lo_frontendLanguage = clone $lo_frontendLanguage;
-
-			foreach ($lo_blocklistedProperties as $ls_property) {
-				unset($lo_frontendLanguage->{$ls_property});
-			}
-
 			if ($lo_frontendLanguage->dateFormat) {
 				$lo_twig->addGlobal('dateFormat', $lo_frontendLanguage->dateFormat);
 			}
 			if ($lo_frontendLanguage->timeFormat) {
 				$lo_twig->addGlobal('timeFormat', $lo_frontendLanguage->timeFormat);
 			}
+
+			$lo_frontendLanguage = $this->cleanLanguage($lo_frontendLanguage);
 		}
 
 		$lo_backendLanguage = null;
 		if ($this->getRequest()->getSession()->read('Backend.languageShortcode')) {
 			$lo_backendLanguage = LocaleMiddleware::getLanguageByShortcode($this->getRequest()->getSession()->read('Backend.languageShortcode'), Awyiss::REALM_BACKEND);
 			if ($lo_backendLanguage) {
-				$lo_backendLanguage = clone $lo_backendLanguage;
-
-				foreach ($lo_blocklistedProperties as $ls_property) {
-					unset($lo_backendLanguage->{$ls_property});
-				}
+				$lo_backendLanguage = $this->cleanLanguage($lo_backendLanguage);
 			}
 		}
 
