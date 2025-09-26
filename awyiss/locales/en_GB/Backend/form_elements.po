@@ -78,7 +78,7 @@ msgid "fieldset_options"
 msgstr "Selection Options"
 
 msgid "type"
-msgstr "Input Field Type"
+msgstr "Input Type"
 
 msgid "type_text"
 msgstr "Standard"
@@ -168,7 +168,7 @@ msgid "column_indent"
 msgstr "Column Indentation"
 
 msgid "column_last"
-msgstr "Last Content in the Row"
+msgstr "Last Element in the Row"
 
 msgid "column_rtl"
 msgstr "Right-to-left"

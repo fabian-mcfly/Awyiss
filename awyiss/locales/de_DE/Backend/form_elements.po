@@ -78,7 +78,7 @@ msgid "fieldset_options"
 msgstr "Auswahloptionen"
 
 msgid "type"
-msgstr "Eingabefeld-Typ"
+msgstr "Eingabetyp"
 
 msgid "type_text"
 msgstr "Standard"
