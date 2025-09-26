@@ -106,17 +106,17 @@ class FormRenderer {
 			return $this;
 		}
 
-		$this->form->initialize(
-			$this->View,
-			$this->page,
-			$this->isPreview(),
-		);
-
 		if ($this->form->identifier === ($requestData['_form_identifier'] ?? null)) {
 			$this->form->submitted();
 
 			$this->form->setFormData($requestData);
 		}
+
+		$this->form->initialize(
+			$this->View,
+			$this->page,
+			$this->isPreview(),
+		);
 
 		$this->form->getFormOptions()->modifyForm();
 
