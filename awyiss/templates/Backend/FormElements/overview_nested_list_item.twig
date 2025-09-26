@@ -42,7 +42,7 @@
 	<li
 		{{ block('nestedListItemId') }}
 		{{ block('nestedListItemClass') }}
-		{%- if entity.type == 'hidden' %}
+		{%- if entity.type in ['fieldset', 'hidden'] %}
 			data-resizable="false"
 		{%- endif %}
 		data-column-width-class="{{ entity.column.width.cssClass }}"
