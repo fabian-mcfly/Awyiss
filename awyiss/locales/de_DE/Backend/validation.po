@@ -128,9 +128,6 @@ msgstr "Ungültige Zeitzone"
 msgid "error_valid_locale"
 msgstr "Ungültige Sprachregion"
 
-msgid "error_not_last_language_in_realm"
-msgstr "Diese Sprache kann nicht gelöscht werden, da sie die letzte in dieser Domäne ist"
-
 msgid "error_media_has_file_extension"
 msgstr "Die Datei hat keine Endung"
 

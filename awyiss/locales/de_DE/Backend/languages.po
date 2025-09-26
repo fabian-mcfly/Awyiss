@@ -101,3 +101,12 @@ msgstr "<summary>Datums- &amp; Zeitformat</summary>"
 "<li><code>HH:mm 'Uhr</code> ergibt &bdquo;13:37 Uhr&ldquo;</li>"
 "<li><code>hh 'o''clock' a, zzzz</code> ergibt &bdquo;12 o’clock PM, Pacific Daylight Time&ldquo; mit der englischen Lokalisierung</li>"
 "</ul>"
+
+msgid "error_not_last_language_in_realm"
+msgstr "Diese Sprache kann nicht gelöscht werden, da sie die letzte in dieser Domäne ist"
+
+msgid "error_not_last_active_language_in_realm_on_deactivate"
+msgstr "Diese Sprache kann nicht deaktiviert werden, da sie die letzte aktive in dieser Domäne ist"
+
+msgid "error_not_last_active_language_in_realm_on_realm_change"
+msgstr "Diese Sprache kann nicht verschoben werden, da sie die letzte aktive in dieser Domäne ist"

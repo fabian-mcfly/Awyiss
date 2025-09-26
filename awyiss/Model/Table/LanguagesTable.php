@@ -207,6 +207,50 @@ class LanguagesTable extends Table {
 		);
 
 
+		$rules->add(function (Language $entity): string|bool {
+			if ($entity->isNew()) {
+				return true;
+			}
+
+			// If the language is active and the realm was not changed or is still the same as before, it's ok
+			// (we don't want to prevent deactivating a language or changing the realm if there are other active languages in the original realm)
+			if (
+				$entity->active &&
+				(
+					!$entity->hasOriginal('realm') ||
+					(
+						$entity->hasOriginal('realm') &&
+						$entity->getOriginal('realm') === $entity->realm
+					)
+				)
+			) {
+				return true;
+			}
+
+			$li_count = $this->find()->where([
+				'realm' => $entity->hasOriginal('realm') ? $entity->getOriginal('realm') : $entity->realm,
+				'active' => true,
+				'id !=' => $entity->id,
+			])->count();
+
+			if ($li_count > 1) {
+				return true;
+			}
+
+			if (
+				$entity->hasOriginal('realm') &&
+				$entity->getOriginal('realm') !== $entity->realm
+			) {
+				return __df($this->getI18nDomain(), 'validation', 'error_not_last_active_language_in_realm_on_realm_change');
+			}
+
+			return false;
+		}, 'notLastActiveLanguageInRealm', [
+			'errorField' => '_general',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_not_last_active_language_in_realm_on_deactivate'),
+		]);
+
+
 		$rules->add(function (Language $entity): bool {
 			return in_array($entity->realm, Awyiss::getRealms());
 		}, 'validRealm', [

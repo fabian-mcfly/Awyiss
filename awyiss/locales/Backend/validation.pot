@@ -128,9 +128,6 @@ msgstr "Invalid timezone"
 msgid "error_valid_locale"
 msgstr "Invalid locale"
 
-msgid "error_not_last_language_in_realm"
-msgstr "This language cannot be deleted as it is the last one in this domain"
-
 msgid "error_media_has_file_extension"
 msgstr "The file has no extension"
 
