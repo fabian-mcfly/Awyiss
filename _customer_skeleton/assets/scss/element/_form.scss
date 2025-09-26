@@ -3,6 +3,10 @@
 	margin-left:0;
 	flex-basis:100%;
 
+	&.FormElementType-Fieldset {
+		padding:1rem 2rem 2rem;
+	}
+
 	&:first-child {
 		margin-top:0;
 	}
