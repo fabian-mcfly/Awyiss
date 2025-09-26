@@ -115,7 +115,7 @@ class FormsConfigOptionsTest extends TestCase {
 			'ip_check',
 			'hidden_input',
 		], $configOptions['Frontend.protection.methods']->getDefaultValue());
-		$this->assertSame('forms::protection_method_duplicate_check, forms::protection_method_ip_check, forms::protection_method_hidden_input', $configOptions['Frontend.protection.methods']->getPrintableValue());
+		$this->assertSame('forms::protection_method_altcha, forms::protection_method_duplicate_check, forms::protection_method_ip_check, forms::protection_method_hidden_input', $configOptions['Frontend.protection.methods']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::ValueCollection, $configOptions['Frontend.protection.methods']->getType());
 		$this->assertNull($configOptions['Frontend.protection.methods']->getTypecast());
 		$this->assertNull($configOptions['Frontend.protection.methods']->getValidate());
