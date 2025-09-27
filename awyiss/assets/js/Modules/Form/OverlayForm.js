@@ -129,6 +129,7 @@ export default class OverlayForm {
 	 */
 	handleFormSubmit(event) {
 		event.preventDefault();
+		event.stopPropagation();
 
 		const form = this.dialog.querySelector('form');
 
