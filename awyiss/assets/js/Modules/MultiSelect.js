@@ -74,6 +74,11 @@ export default class MultiSelect {
 		this.filterItemSelector = filterItemSelector;
 		this.parent = this.element;
 
+		const rectangle = this.parent.querySelector('.SelectionRectangle');
+		if (rectangle) {
+			this.selectionRectangle = rectangle;
+		}
+
 		// Handle ctrl+click selection
 		this.eventHandler.add('click', this.handleClick.bind(this), this.element);
 
@@ -183,7 +188,7 @@ export default class MultiSelect {
 			y: event.clientY/* + window.scrollY*/,
 		};
 
-		this.selectionRectangle = document.createElement('div');
+		this.selectionRectangle ??= document.createElement('div');
 
 		this.selectionRectangle.classList.add('SelectionRectangle');
 		this.parent.appendChild(this.selectionRectangle)
