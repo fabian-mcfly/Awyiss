@@ -272,6 +272,13 @@ export default class Overlay {
 
 		this.bindFolderSaveEvent();
 
+		this.sortable = new Sortable(this.mediaList, {
+			deleteButtons: this.element.querySelectorAll('.ButtonArea .Button-Delete'),
+			saveSystemOrderButtons: this.element.querySelectorAll('.Button-SaveSystemOrder'),
+			useFilesButtons: this.element.querySelectorAll('.Button-UseFiles'),
+		});
+		this.sortable.overlay = this;
+
 		this.initSortableReceiver();
 
 		this.initUpload();
@@ -853,13 +860,6 @@ export default class Overlay {
 	 * @return {void}
 	 */
 	initSortableReceiver() {
-		this.sortable = new Sortable(this.mediaList, {
-			deleteButtons: this.element.querySelectorAll('.ButtonArea .Button-Delete'),
-			saveSystemOrderButtons: this.element.querySelectorAll('.Button-SaveSystemOrder'),
-			useFilesButtons: this.element.querySelectorAll('.Button-UseFiles'),
-		});
-		this.sortable.overlay = this;
-
 		// For all folders, add a faux sortable list
 		const folders = this.folderList.querySelectorAll('.MediaFolders-ListItem');
 		folders.forEach(folder => {
