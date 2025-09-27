@@ -148,6 +148,9 @@ class LockComponent extends Component {
 			return false;
 		}
 
+		// Delete locks that timed out
+		$this->deleteTimedOutLocks();
+
 		$lo_lock = $this->findLock($id);
 
 		if (!$lo_lock) {
