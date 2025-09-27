@@ -112,7 +112,7 @@
 					{% endblock %}
 
 					{% block languageSwitcher %}
-						{% set languages = LocaleHelper.languagesForRealm('Frontend', true) %}
+						{% set languages = LocaleHelper.languagesForRealm('Frontend', true)|filter(language => language.active) %}
 						{% if languages|length > 1 %}
 							{{ element('language_switcher', {languages: languages}) }}
 						{% endif %}
