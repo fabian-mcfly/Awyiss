@@ -128,7 +128,8 @@ export default class FormLock {
 
 		if (form.action) {
 			form.dataset.action = form.action;
-			delete form.action;
+			// Unset the action attribute
+			form.action = '#';
 		}
 	}
 
