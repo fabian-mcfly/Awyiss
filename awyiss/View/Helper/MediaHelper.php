@@ -829,12 +829,23 @@ class MediaHelper extends Helper {
 			'width' => MediaRenderOptions::PRESERVE_VALUE,
 		];
 
+		$la_paths = [
+			'1x' => [$ls_lastPath],
+			'2x' => [$ls_last2xPath],
+		];
+
 		foreach ($breakpoints as $la_breakpoint) {
 			if ($la_breakpoint['breakpoint'] >= $mediaRenderOptions->getBaseWidth()) {
+				// Even if the breakpoint is too large to be considered, we need to remember the override options for the next iteration
+				$la_overrideOptions = $this->getOverrideOptions($la_overrideOptions, $la_breakpoint);
+
 				continue;
 			}
 
 			$lo_mediaRenderOptions = $this->getBreakpointRenderOptions($la_breakpoint, $mediaRenderOptions, $la_overrideOptions);
+
+			// Remember the new override options for the next iteration
+			$la_overrideOptions = $this->getOverrideOptions($la_overrideOptions, $la_breakpoint);
 
 			$lb_is2x = ($la_breakpoint['is2x'] ?? false) === true;
 			$la_with = [];
@@ -867,45 +878,21 @@ class MediaHelper extends Helper {
 				!$lb_is2x &&
 				(
 					!$removeDuplicates ||
-					$ls_lastPath !== $ls_path
+					!in_array($ls_path, $la_paths['1x'], true)
 				)
 			) {
 				$la_breakpointFiles[ $la_breakpoint['breakpoint'] ] = $lo_resizedImage ?? $media;
+				$la_paths['1x'][] = $ls_path;
 			}
 			elseif (
 				$lb_is2x &&
 				(
 					!$remove2xDuplicates ||
-					$ls_last2xPath !== $ls_path
+					!in_array($ls_path, $la_paths['2x'], true)
 				)
 			) {
 				$la_breakpointFiles[ $la_breakpoint['breakpoint'] . 'x2' ] = $lo_resizedImage ?? $media;
-			}
-
-			// Use the value from the breakpoint if the value is not set to preserve
-			foreach ($la_overrideOptions as $lx_key => $lx_value) {
-				/**
-				 * If the value is not set to preserve, and the value is not equal to the current value
-				 * use the value from the breakpoint.
-				 *
-				 * This forces breakpoints to use the value of its predecessor if no own value is set.
-				 *
-				 * For example:
-				 * - If a `columnWidth` is set for a breakpoint, all following breakpoints will use this value instead of the
-				 *   `columnWidth` of the media item.
-				 * - If a `width` is set for a breakpoint, all following breakpoints will use this value instead of the
-				 *  `width` of the media item.
-				 */
-				if (!in_array($la_breakpoint[ $lx_key ], [$lx_value, MediaRenderOptions::PRESERVE_VALUE], true)) {
-					$la_overrideOptions[ $lx_key ] = $la_breakpoint[ $lx_key ];
-				}
-			}
-
-			if ($lb_is2x) {
-				$ls_last2xPath = $ls_path;
-			}
-			else {
-				$ls_lastPath = $ls_path;
+				$la_paths['2x'][] = $ls_path;
 			}
 		}
 
@@ -918,6 +905,7 @@ class MediaHelper extends Helper {
 	 *
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param string|null $averageColor
+	 * @param array|string|null $focusPoint
 	 * @return string
 	 */
 	protected function getBackgroundColorStyle(MediaRenderOptions $mediaRenderOptions, ?string $averageColor, string|array|null $focusPoint = null): string {
@@ -1002,6 +990,7 @@ class MediaHelper extends Helper {
 	 * @param float $height
 	 * @param string|null $averageColor
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param array|string|null $focusPoint
 	 * @return string
 	 */
 	protected function getPlaceholderStyleTag(
@@ -1029,7 +1018,7 @@ class MediaHelper extends Helper {
 			$ls_backgroundColorStyle .= ' --preferredPosition:' . $this->getFocusPointCssValue($focusPoint) . ';';
 		}
 
-		/** @noinspection CssUnresolvedCustomProperty */
+		/** @noinspection CssInvalidHtmlTagReference, CssUnresolvedCustomProperty */
 		return '<style>#' . $id . ', #' . $id . '-NoScript { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $ls_backgroundColorStyle . ' }</style>';
 	}
 
@@ -1340,5 +1329,32 @@ class MediaHelper extends Helper {
 		$ls_focusPoint .= $la_focusPoints['y'][ max(0, min(2, (int)$focusPoint[0])) ];
 
 		return trim($ls_focusPoint);
+	}
+
+
+	/**
+	 * @param array $la_overrideOptions
+	 * @param mixed $la_breakpoint
+	 * @return array
+	 */
+	protected function getOverrideOptions(array $la_overrideOptions, mixed $la_breakpoint): array {
+		// Use the value from the breakpoint if the value is not set to preserve
+		foreach ($la_overrideOptions as $lx_key => $lx_value) {
+			/**
+			 * If the value is not set to preserve, and the value is not equal to the current value
+			 * use the value from the breakpoint.
+			 * This forces breakpoints to use the value of its predecessor if no own value is set.
+			 * For example:
+			 * - If a `columnWidth` is set for a breakpoint, all following breakpoints will use this value instead of the
+			 *   `columnWidth` of the media item.
+			 * - If a `width` is set for a breakpoint, all following breakpoints will use this value instead of the
+			 *  `width` of the media item.
+			 */
+			if (!in_array($la_breakpoint[ $lx_key ], [$lx_value, MediaRenderOptions::PRESERVE_VALUE], true)) {
+				$la_overrideOptions[ $lx_key ] = $la_breakpoint[ $lx_key ];
+			}
+		}
+
+		return $la_overrideOptions;
 	}
 }

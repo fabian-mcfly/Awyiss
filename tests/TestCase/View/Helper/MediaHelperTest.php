@@ -2054,4 +2054,29 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
 		$this->assertStringContainsString('</picture>', $widget->text);
 	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::getResponsiveImages()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testGetResponsiveImagesNotIgnoresBreakPointsOptionsOfTooLargeBreakpoints(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1000.00,
+			'responsive' => true,
+			'singleColumnBreakpoint' => 1024,
+			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
+		]);
+
+		$result = $this->mediaHelper->getResponsiveImages($media, $mediaRenderOptions);
+
+		$this->assertCount(8, $result);
+
+		$this->assertSame(768, $result[768]->width);
+		$this->assertSame(1536, $result['768x2']->width);
+	}
 }
