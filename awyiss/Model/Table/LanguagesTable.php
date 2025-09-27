@@ -233,7 +233,7 @@ class LanguagesTable extends Table {
 				'id !=' => $entity->id,
 			])->count();
 
-			if ($li_count > 1) {
+			if ($li_count > 0) {
 				return true;
 			}
 
