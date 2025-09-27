@@ -38,7 +38,7 @@ export default class ImageCropper {
 	dragging = false;
 	/**
 	 * The focus point of the crop frame.
-	 * @type {string}
+	 * @type {array}
 	 */
 	focusPoint = [1, 1];
 	/**
@@ -805,7 +805,7 @@ export default class ImageCropper {
 		let newY = this.cropFrame.y;
 
 		const aspectRatio = this.cropFrame.width / this.cropFrame.height;
-		const ctrlPressed = event.ctrlKey;
+		const shiftPressed = event.shiftKey;
 		const minimumSize = 40;
 
 		switch (this.draggedEdge) {
@@ -832,7 +832,7 @@ export default class ImageCropper {
 				}
 				break;
 			case 'top-left':
-				if (ctrlPressed) {
+				if (shiftPressed) {
 					// Calculate new size based on aspect ratio and mouse movement
 					const movementY = Math.min(event.movementY, (newHeight - minimumSize));
 
@@ -869,7 +869,7 @@ export default class ImageCropper {
 				}
 				break;
 			case 'top-right':
-				if (ctrlPressed) {
+				if (shiftPressed) {
 					// Calculate the changes maintaining the aspect ratio
 					let deltaX = Math.min(event.movementX, (imgX + imgWidth - newX - newWidth)); // Change in width
 					let deltaY = deltaX / aspectRatio; // Change in height calculated from width change
@@ -895,7 +895,7 @@ export default class ImageCropper {
 				}
 				break;
 			case 'bottom-left':
-				if (ctrlPressed) {
+				if (shiftPressed) {
 					// Calculate how much the width can potentially decrease to the left
 					let maxChangeX = newX - imgX;  // Maximum leftward movement
 
@@ -903,7 +903,7 @@ export default class ImageCropper {
 					let widthChange = Math.max(event.movementX, -maxChangeX);
 
 					// Calculate the corresponding height change to maintain the aspect ratio
-					let heightChange = -widthChange * aspectRatio;
+					let heightChange = -widthChange / aspectRatio;
 
 					// Compute the new dimensions
 					let potentialNewWidth = newWidth - widthChange;
@@ -929,7 +929,7 @@ export default class ImageCropper {
 				}
 				break;
 			case 'bottom-right':
-				if (ctrlPressed) {
+				if (shiftPressed) {
 					const size = Math.max(newWidth + event.movementX, minimumSize);
 					if (newX + size <= imgX + imgWidth && newY + size / aspectRatio <= imgY + imgHeight) {
 						newWidth = size;
