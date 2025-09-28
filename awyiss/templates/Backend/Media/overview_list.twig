@@ -25,7 +25,24 @@
 					{% set imageSizeInfo = ' / ' ~ mediaItem.width ~ 'x' ~ mediaItem.height ~ 'px' %}
 				{% endif %}
 
-				<li id="Media-ListItem{{ mediaItem.id }}" class="Media-ListItem" title="{{ mediaItem.name }} (ID: {{ mediaItem.id }}{{ imageSizeInfo }})">
+				<li
+					id="Media-ListItem{{ mediaItem.id }}"
+					class="Media-ListItem"
+					title="{{ mediaItem.name }} (ID: {{ mediaItem.id }}{{ imageSizeInfo }})"
+					data-media-data="{{ {
+						id: mediaItem.id,
+						mediaFolderId: mediaItem.mediaFolderId,
+						mimeType: mediaItem.mimeType,
+						name: mediaItem.name,
+						path: mediaItem.path,
+						width: mediaItem.width,
+						height: mediaItem.height,
+						averageColor: mediaItem.averageColor,
+						preview: mediaItem.preview,
+						avif: mediaItem.avif,
+						webp: mediaItem.webp
+					}|json_encode }}"
+				>
 					{{ MediaHelper.preview(mediaItem, {
 						class: 'Preview',
 						resize: {
