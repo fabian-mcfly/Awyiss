@@ -42,6 +42,7 @@ class MediaElementAssignmentTest extends TestCase {
 
 		$this->assertSame([
 			'mediaElementId' => true,
+			'mediaElement' => true,
 			'scope' => true,
 			'foreignKey' => true,
 			'_translations' => true,

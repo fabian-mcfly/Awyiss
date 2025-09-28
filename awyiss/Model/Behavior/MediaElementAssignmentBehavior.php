@@ -153,7 +153,13 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 		}
 
 		return $query->contain([
-			'MediaElementAssignments',
+			'MediaElementAssignments' => [
+				'MediaElements' => [
+					'MediaElementSelectors' => [
+						'MediaSelectors',
+					],
+				],
+			],
 		]);
 	}
 

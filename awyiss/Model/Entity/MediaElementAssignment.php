@@ -22,6 +22,7 @@ class MediaElementAssignment extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'media_element_id' => 'mediaElementId',
+		'media_element' => 'mediaElement',
 		'foreign_key' => 'foreignKey',
 	];
 
@@ -31,6 +32,7 @@ class MediaElementAssignment extends Entity {
 	 */
 	protected array $_accessible = [
 		'mediaElementId' => true,
+		'mediaElement' => true,
 		'scope' => true,
 		'foreignKey' => true,
 	];
