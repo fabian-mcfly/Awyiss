@@ -389,7 +389,7 @@ class InstallCommand extends Command {
 	 * @return void
 	 */
 	protected function validateCustomerName(): void {
-		$la_reservedNames = ['_customer_skeleton', 'awyiss', 'backup', 'bin', 'logs', 'tests', 'tmp', 'vendor', 'webroot'];
+		$la_reservedNames = ['_customer_skeleton', 'awyiss', 'docs', 'backup', 'bin', 'logs', 'tests', 'tmp', 'vendor', 'webroot'];
 
 		if (empty($this->customerName)) {
 			$this->io->abort('Invalid customer name.');

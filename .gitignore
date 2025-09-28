@@ -2,6 +2,7 @@
 /awyiss/assets/js/*.min.js
 /awyiss/assets/js/**/*.min.js
 /awyiss/assets/js/TinyMCE/tinymce/
+/docs/*
 /logs/*
 /tmp/*
 /vendor/*
@@ -9,6 +10,7 @@
 /foobar-customer
 /webroot/assets/
 /webroot/awyiss/
+/webroot/docs/
 /webroot/media/*
 
 # OS generated files #

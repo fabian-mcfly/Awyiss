@@ -21,6 +21,7 @@
 	<exclude-pattern>./awyiss/assets/js/TinyMCE/tinymce/*</exclude-pattern>
 	<exclude-pattern>./awyiss/config/*</exclude-pattern>
 	<exclude-pattern>./awyiss/templates/*</exclude-pattern>
+	<exclude-pattern>./docs/*</exclude-pattern>
 	<exclude-pattern>./tmp/*</exclude-pattern>
 	<exclude-pattern>./tests/bootstrap.php</exclude-pattern>
 	<exclude-pattern>./tests/comparisons/output/test.css</exclude-pattern>
