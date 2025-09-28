@@ -219,7 +219,7 @@ msgid "focus_point"
 msgstr "Focus point"
 
 msgid "media_folders_toggle"
-msgstr "Toggle Media folders"
+msgstr "Toggle Media Folders"
 
 msgid "confirm_in_use"
 msgstr "The file is in use. Are you sure you want to delete the file?"
@@ -237,7 +237,7 @@ msgid "media_usages_inaccessible"
 msgstr "The file is also used <strong>{0}</strong> times in areas without access permissions."
 
 msgid "media_element"
-msgstr "Media element"
+msgstr "Media Element"
 
 msgid "media_element_inline_img_tag"
 msgstr "Per text editor"

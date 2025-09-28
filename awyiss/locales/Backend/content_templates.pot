@@ -36,31 +36,31 @@ msgid "headline_add"
 msgstr "Add Content Template"
 
 msgid "add_succeeded"
-msgstr "The content template was successfully added"
+msgstr "The Content Template was successfully added"
 
 msgid "add_failed"
-msgstr "The content template could not be added"
+msgstr "The Content Template could not be added"
 
 msgid "headline_edit"
 msgstr "Edit Content Template"
 
 msgid "edit_succeeded"
-msgstr "The content template was successfully updated"
+msgstr "The Content Template was successfully updated"
 
 msgid "edit_failed"
-msgstr "The content template could not be updated"
+msgstr "The Content Template could not be updated"
 
 msgid "record_not_found"
-msgstr "The content template was not found"
+msgstr "The Content Template was not found"
 
 msgid "confirm_delete"
-msgstr "Are you sure you want to delete this content template (ID: {0})?"
+msgstr "Are you sure you want to delete this Content Template (ID: {0})?"
 
 msgid "delete_succeeded"
-msgstr "The content template was successfully deleted"
+msgstr "The Content Template was successfully deleted"
 
 msgid "delete_failed"
-msgstr "The content template could not be deleted"
+msgstr "The Content Template could not be deleted"
 
 msgid "file_changes_in_progress"
 msgstr "A file change is currently in progress. Please wait until it is completed."

@@ -30,7 +30,7 @@ msgid "type_current_page"
 msgstr "Current page"
 
 msgid "type_element_identifier"
-msgstr "Form element"
+msgstr "Form Element"
 
 msgid "operator_equal"
 msgstr "equal"

@@ -102,7 +102,7 @@ msgid "form_id"
 msgstr "Form"
 
 msgid "fieldset_menus"
-msgstr "Automatically create menu entry"
+msgstr "Automatically create Menu Entry"
 
 msgid "copy_descendants_with_different_page_role"
 msgstr "<strong>Subpages with a different page role were found</strong>.<br>\n"
@@ -118,7 +118,7 @@ msgid "configuration_category_frontend_categories"
 msgstr "Categories"
 
 msgid "configuration_category_frontend_media_folders"
-msgstr "Media folders"
+msgstr "Media Folders"
 
 msgid "configuration_identifier_frontend_media_folders_parent_folder_id"
 msgstr "Subfolder of"

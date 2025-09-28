@@ -78,4 +78,4 @@ msgid "create_page_role_model"
 msgstr "Create Page Role ({0}) model class"
 
 msgid "configuration_identifier_backend_auto_create_menu_entries"
-msgstr "Automatically create backend menu entries"
+msgstr "Automatically create backend Menu Entries"

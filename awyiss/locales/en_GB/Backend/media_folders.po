@@ -15,16 +15,16 @@ msgid "meta_title_overview"
 msgstr "Media Folders"
 
 msgid "meta_title_add"
-msgstr "Add media Folder"
+msgstr "Add Media Folder"
 
 msgid "meta_title_edit"
-msgstr "Edit media Folder"
+msgstr "Edit Media Folder"
 
 msgid "menu_title"
 msgstr "Media Folders"
 
 msgid "menu_add"
-msgstr "New media Folder"
+msgstr "New Media Folder"
 
 msgid "headline_overview"
 msgstr "Media Folders"
@@ -33,7 +33,7 @@ msgid "menu_configure"
 msgstr "Configuration"
 
 msgid "create"
-msgstr "New media Folder"
+msgstr "New Media Folder"
 
 msgid "language_filter_label"
 msgstr "Language"
@@ -45,34 +45,34 @@ msgid "global"
 msgstr "Global"
 
 msgid "headline_add"
-msgstr "Add media Folder"
+msgstr "Add Media Folder"
 
 msgid "add_succeeded"
-msgstr "The media Folder was successfully added"
+msgstr "The Media Folder was successfully added"
 
 msgid "add_failed"
-msgstr "The media Folder could not be added"
+msgstr "The Media Folder could not be added"
 
 msgid "headline_edit"
-msgstr "Edit media Folder"
+msgstr "Edit Media Folder"
 
 msgid "edit_succeeded"
-msgstr "The media Folder was successfully updated"
+msgstr "The Media Folder was successfully updated"
 
 msgid "edit_failed"
-msgstr "The media Folder could not be updated"
+msgstr "The Media Folder could not be updated"
 
 msgid "record_not_found"
-msgstr "The media Folder was not found"
+msgstr "The Media Folder was not found"
 
 msgid "confirm_delete"
-msgstr "Are you sure you want to delete this media Folder (ID: {0})?"
+msgstr "Are you sure you want to delete this Media Folder (ID: {0})?"
 
 msgid "delete_succeeded"
-msgstr "The media Folder was successfully deleted"
+msgstr "The Media Folder was successfully deleted"
 
 msgid "delete_failed"
-msgstr "The media Folder could not be deleted"
+msgstr "The Media Folder could not be deleted"
 
 msgid "view_files"
 msgstr "View files"
@@ -84,10 +84,10 @@ msgid "path"
 msgstr "Path"
 
 msgid "error_in_use"
-msgstr "The media Folder and/or at least one subfolder is in use. Are you sure you want to delete the media Folder including all files?"
+msgstr "The Media Folder and/or at least one subfolder is in use. Are you sure you want to delete the Media Folder including all files?"
 
 msgid "error_files_in_use"
-msgstr "At least one file is in use. Are you sure you want to delete the media Folder including all files?"
+msgstr "At least one file is in use. Are you sure you want to delete the Media Folder including all files?"
 
 msgid "error_subfolders_hidden"
 msgstr "At least one subfolder is a hidden folder and is used by the system. Deletion is not possible."

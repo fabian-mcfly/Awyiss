@@ -15,16 +15,16 @@ msgid "meta_title_overview"
 msgstr "Page Templates"
 
 msgid "meta_title_add"
-msgstr "Add page template"
+msgstr "Add Page Template"
 
 msgid "meta_title_edit"
-msgstr "Edit page template"
+msgstr "Edit Page Template"
 
 msgid "menu_title"
 msgstr "Page Templates"
 
 msgid "menu_add"
-msgstr "New page template"
+msgstr "New Page Template"
 
 msgid "headline_overview"
 msgstr "Page Templates"
@@ -39,37 +39,37 @@ msgid "page_role_filter_all"
 msgstr "All"
 
 msgid "create"
-msgstr "New page template"
+msgstr "New Page Template"
 
 msgid "headline_add"
-msgstr "Add page template"
+msgstr "Add Page Template"
 
 msgid "add_succeeded"
-msgstr "The page template was successfully added"
+msgstr "The Page Template was successfully added"
 
 msgid "add_failed"
-msgstr "The page template could not be added"
+msgstr "The Page Template could not be added"
 
 msgid "headline_edit"
-msgstr "Edit page template"
+msgstr "Edit Page Template"
 
 msgid "edit_succeeded"
-msgstr "The page template was successfully updated"
+msgstr "The Page Template was successfully updated"
 
 msgid "edit_failed"
-msgstr "The page template could not be updated"
+msgstr "The Page Template could not be updated"
 
 msgid "record_not_found"
-msgstr "The page template was not found"
+msgstr "The Page Template was not found"
 
 msgid "confirm_delete"
-msgstr "Are you sure you want to delete this page template (ID: {0})?"
+msgstr "Are you sure you want to delete this Page Template (ID: {0})?"
 
 msgid "delete_succeeded"
-msgstr "The page template was successfully deleted"
+msgstr "The Page Template was successfully deleted"
 
 msgid "delete_failed"
-msgstr "The page template could not be deleted"
+msgstr "The Page Template could not be deleted"
 
 msgid "page_role_id"
 msgstr "Page Role"

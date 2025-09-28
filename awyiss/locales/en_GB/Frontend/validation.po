@@ -64,7 +64,7 @@ msgid "error_valid_page_id"
 msgstr "Invalid page"
 
 msgid "error_valid_content_template_id"
-msgstr "Invalid content template"
+msgstr "Invalid Content Template"
 
 msgid "error_valid_content_area_id"
 msgstr "Invalid Content Area"
@@ -82,13 +82,13 @@ msgid "error_no_duplicating_contents"
 msgstr "This content is duplicated by another content"
 
 msgid "error_content_template_exists"
-msgstr "This content template does not exist"
+msgstr "This Content Template does not exist"
 
 msgid "error_content_area_exists"
 msgstr "This Content Area does not exist"
 
 msgid "error_page_template_exists"
-msgstr "This page template does not exist"
+msgstr "This Page Template does not exist"
 
 msgid "error_page_template_content_area_exists"
 msgstr "This Content Area does not exist"
@@ -127,13 +127,13 @@ msgid "error_not_page_role_page_deletion"
 msgstr "The page role \"Page\" cannot be deleted"
 
 msgid "error_no_linked_page_templates"
-msgstr "There are still page templates that use these page roles"
+msgstr "There are still Page Templates that use these page roles"
 
 msgid "error_valid_page_role"
 msgstr "Invalid page role"
 
 msgid "error_valid_page_template"
-msgstr "Invalid page template"
+msgstr "Invalid Page Template"
 
 msgid "error_no_duplicating_pages"
 msgstr "This page is duplicated by another page"
@@ -145,7 +145,7 @@ msgid "error_valid_content_areas"
 msgstr "Invalid Content Areas"
 
 msgid "error_no_linked_pages"
-msgstr "There are still pages that use this template"
+msgstr "There are still pages that use this Template"
 
 msgid "error_user_id_unchanged"
 msgstr "The user cannot be changed"

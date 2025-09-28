@@ -72,4 +72,4 @@ msgid "drop_table"
 msgstr "Remove Table"
 
 msgid "configuration_identifier_backend_auto_create_menu_entries"
-msgstr "Automatically create backend menu entries"
+msgstr "Automatically create backend Menu Entries"
