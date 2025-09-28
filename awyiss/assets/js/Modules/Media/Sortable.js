@@ -399,27 +399,30 @@ export default class Sortable {
 	};
 
 	/**
-	 * Toggle the delete buttons based on the number of selected items
+	 * Toggle the "Use file(s)" button based on the number of selected items
 	 * @param {int} selectedItemsLength
 	 */
 	toggleButtonState(selectedItemsLength) {
 		this.useFilesButtons.forEach(button => {
-			let noOpener = !this.overlay.opener;
+			const noOpener = !this.overlay.opener;
+			let mediaLimit = false;
+
 			if (
-				selectedItemsLength > 1 &&
 				this.overlay.opener &&
-				(
-					typeof this.overlay.opener === 'function' ||
-					(
-						typeof(this.overlay.opener) === 'object' &&
-						this.overlay.opener.matches('.MediaSelector-SingleFile')
-					)
-				)
+				typeof this.overlay.opener === 'function'
 			) {
-				noOpener = !noOpener;
+				mediaLimit = 1;
 			}
 
-			button.disabled = selectedItemsLength === 0 || noOpener;
+			if (
+				this.overlay.opener &&
+				typeof this.overlay.opener === 'object' &&
+				this.overlay.opener.hasOwnProperty('mediaLimit')
+			) {
+				mediaLimit = parseInt(this.overlay.opener.mediaLimit) || false;
+			}
+
+			button.disabled = noOpener || selectedItemsLength === 0 || (mediaLimit !== false && selectedItemsLength > mediaLimit);
 		});
 
 		this.deleteButtons.forEach(button => {

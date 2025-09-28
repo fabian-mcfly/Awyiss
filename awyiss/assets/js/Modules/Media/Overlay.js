@@ -83,8 +83,7 @@ export default class Overlay {
 		});
 
 		// Initialize the selectors
-		this.selectors = new Selectors();
-		this.selectors.overlay = this;
+		this.selectors = new Selectors(this);
 
 		const observer = window.observer;
 		observer.addObserver(this.observeMutations.bind(this));

@@ -25,7 +25,9 @@ export default class Selectors {
 	 */
 	overlay = null;
 
-	constructor() {
+	constructor(overlay) {
+		this.overlay = overlay;
+
 		// Initialize the selectors
 		document.querySelectorAll(this.singleFileSelector).forEach(this.initSelector.bind(this));
 		document.querySelectorAll(this.multiFileSelector).forEach(this.initSelector.bind(this));
@@ -45,7 +47,7 @@ export default class Selectors {
 		element.preview = preview;
 
 		if (element.matches(this.singleFileSelector)) {
-			this.eventHandler.add('click', event => this.openOverlay(event, preview.dataset.mediaFolderId), preview);
+			this.eventHandler.add('click', event => this.openOverlay(event, element, preview.dataset.mediaFolderId), preview);
 
 			// Bind the remove handler
 			const removeButton = element.querySelector('.MediaSelector-Remove');
@@ -53,6 +55,7 @@ export default class Selectors {
 				this.eventHandler.add('click', this.removeMedia.bind(this, element), removeButton);
 			}
 			element.useMedia = this.useMedia.bind(this, element);
+			element.mediaLimit = 1;
 
 			if (element.dataset.mediaIdInputSelector) {
 				element.mediaIdInput = element.querySelector(element.dataset.mediaIdInputSelector);
@@ -69,7 +72,7 @@ export default class Selectors {
 		}
 
 		const selector = element.querySelector('.MediaSelector-MediaSelect');
-		this.eventHandler.add('click', this.openOverlay.bind(this), selector);
+		this.eventHandler.add('click', event => this.openOverlay(event, element), selector);
 		this.eventHandler.add('click', this.removeMedia.bind(this, element), preview);
 
 		element.sortable = Sortable.create(preview, {
@@ -90,21 +93,23 @@ export default class Selectors {
 		});
 
 		element.useMedia = this.addMedia.bind(this, element);
+		element.mediaLimit = false;
 		element.selector = element.querySelector('.MediaSelector-MediaSelect');
 	}
 
 	/**
 	 * @param {MouseEvent} event - The event that triggered the overlay.
+	 * @param {HTMLElement} element - The media selector element.
 	 * @param {string|null} mediaFolderId - The ID of the media folder.
 	 */
-	openOverlay(event, mediaFolderId = null) {
+	openOverlay(event, element, mediaFolderId = null) {
 		if (event.target.closest('.MediaSelector-Remove')) {
 			return;
 		}
 
 		const openEvent = new CustomEvent('overlay.open', {
 			detail: {
-				opener: event.target.closest('.MediaSelector'),
+				opener: element,
 			},
 		});
 
@@ -185,7 +190,8 @@ export default class Selectors {
 			}
 		});
 
-		const id = parseInt(media.getAttribute('id').replace(/\D/g, ''));
+		const data = media.dataset.mediaData ? JSON.parse(media.dataset.mediaData) : {};
+		const id = data.id ?? parseInt(media.getAttribute('id').replace(/\D/g, ''));
 
 		// Add the media item to the selector
 		// noinspection JSUnresolvedReference
