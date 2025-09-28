@@ -682,14 +682,18 @@ class NestBehavior extends Behavior {
 			$la_relatedColumns = array_diff($la_relatedColumns, $la_blocklistedColumns);
 		}
 
-		// Extract all values of related columns in the entity
-		$la_data = $entity->extract(array_filter($la_relatedColumns, fn ($field) => !str_starts_with($field, 'attributes.')));
-		$la_data = $entity::unmapFields($la_data, true);
-
 		$lo_table = $this->table();
 
 		$la_ids = $lo_children->extract('id')->toList();
-		$lo_table->updateAll($la_data, ['id IN' => $la_ids]);
+
+		// Extract all values of related columns in the entity
+		$la_relatedBaseColumns = array_filter($la_relatedColumns, fn ($field) => !str_starts_with($field, 'attributes.'));
+		if ($la_relatedBaseColumns) {
+			$la_data = $entity->extract($la_relatedBaseColumns);
+			$la_data = $entity::unmapFields($la_data, true);
+
+			$lo_table->updateAll($la_data, ['id IN' => $la_ids]);
+		}
 
 		// Get all related columns that are attributes
 		$la_attributeFields = $lo_table->extractAttributeFields($la_relatedColumns);
