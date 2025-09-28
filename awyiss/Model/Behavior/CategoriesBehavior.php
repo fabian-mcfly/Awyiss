@@ -510,6 +510,9 @@ class CategoriesBehavior extends Behavior {
 		$lo_order = $query->clause('order');
 
 		$ls_prefixedColumn = $query->getRepository()->getAlias() . '.' . $ls_column;
+		if ($query->getRepository()->fieldIsAttribute($ls_column)) {
+			$ls_prefixedColumn = $query->getRepository()->getAttributesTableName(true) . '.' . $ls_column;
+		}
 
 		// If the table has a SystemOrder behavior, use the sort field to sort the records
 		if ($query->getRepository()->hasBehavior('SystemOrder')) {
