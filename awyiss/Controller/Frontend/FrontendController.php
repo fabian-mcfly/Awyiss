@@ -214,7 +214,24 @@ class FrontendController extends AppController {
 
 		$lo_query->limit(1);
 
-		return $lo_query->first();
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		$lo_page = $lo_query->first();
+
+		if (!$lo_page) {
+			return null;
+		}
+
+		if (!$lo_page->language || !$lo_page->language->deleted) {
+			return $lo_page;
+		}
+
+		// If the language is deleted, try to find an active language with the same shortcode
+		$la_languages = LocaleMiddleware::getLanguagesByShortcode($lo_page->languageShortcode);
+		if (isset($la_languages[ Awyiss::REALM_FRONTEND ])) {
+			$lo_page->language = $la_languages[ Awyiss::REALM_FRONTEND ];
+		}
+
+		return $lo_page;
 	}
 
 
