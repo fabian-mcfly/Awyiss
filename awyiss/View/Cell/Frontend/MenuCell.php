@@ -113,7 +113,7 @@ class MenuCell extends Cell {
 		/** @see \Awyiss\Utility\Menu\FrontendMenu::__construct() */
 		$lo_menu = new $ls_menuClass($lo_menuEntries->toArray(), [
 			'active' => $lb_active,
-			'identifier' => $lo_menuRecord->identifier ? Inflector::ucparts($lo_menuRecord->identifier) : null,
+			'identifier' => $lo_menuRecord?->identifier ? Inflector::ucparts($lo_menuRecord->identifier) : null,
 			'menuClass' => $ls_menuClass,
 			'menuItemClass' => $ls_menuItemClass,
 		]);
