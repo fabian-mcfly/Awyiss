@@ -144,16 +144,6 @@ class PageRolesListener implements EventListenerInterface {
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
 
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
-		if (file_exists($ls_filePath)) {
-			unlink($ls_filePath);
-		}
-
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($entity->identifier)) . 'Table.php']);
-		if (file_exists($ls_filePath)) {
-			unlink($ls_filePath);
-		}
-
 		$ls_attributesTable = 'attributes_' . Inflector::tableize($entity->identifier);
 		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		if (in_array($ls_attributesTable, $la_tables)) {
@@ -174,6 +164,16 @@ class PageRolesListener implements EventListenerInterface {
 		}
 
 		$la_commands = [];
+
+		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
+		if (file_exists($ls_filePath)) {
+			$la_commands[] = 'unlink ' . $ls_filePath;
+		}
+
+		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($entity->identifier)) . 'Table.php']);
+		if (file_exists($ls_filePath)) {
+			$la_commands[] = 'unlink ' . $ls_filePath;
+		}
 
 		$la_commands[] = 'bin' . DS . 'cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
