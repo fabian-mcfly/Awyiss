@@ -75,13 +75,16 @@ class FrontendController extends AppController {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_newsTable */
 		$lo_newsTable = $this->fetchTable('News');
 
-		$lo_query = $lo_newsTable->find($this->previewMode ? 'all' : 'active')->find(!$this->previewMode ? 'published' : 'all', skipPageRoleCheck: true);
-		$lo_query->where(['id' => $page->parentId]);
-		$lo_newsCategory = $lo_query->first();
+		$lo_newsCategory = null;
+		if ($page->parentId) {
+			$lo_query = $lo_newsTable->find($this->previewMode ? 'all' : 'active')->find(!$this->previewMode ? 'published' : 'all', skipPageRoleCheck: true);
+			$lo_query->where(['id' => $page->parentId]);
+			$lo_newsCategory = $lo_query->first();
+		}
 
 		$lo_newer = $lo_newsTable->find($this->previewMode ? 'all' : 'active')->find(!$this->previewMode ? 'published' : 'all')->find('mediaAssignments', useMediaEntity: true)
 		->where([
-			'parent_id' => $page->parentId,
+			'parent_id' . (!$page->parentId ? ' IS' : '') => $page->parentId,
 			'system_order <' => $page->systemOrder,
 		])
 		->orderBy(['system_order' => 'DESC'])
@@ -89,7 +92,7 @@ class FrontendController extends AppController {
 
 		$lo_older = $lo_newsTable->find($this->previewMode ? 'all' : 'active')->find(!$this->previewMode ? 'published' : 'all')->find('mediaAssignments', useMediaEntity: true)
 		->where([
-			'parent_id' => $page->parentId,
+			'parent_id' . (!$page->parentId ? ' IS' : '') => $page->parentId,
 			'system_order >' => $page->systemOrder,
 		])
 		->orderBy(['system_order' => 'ASC'])
