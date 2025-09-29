@@ -18,8 +18,8 @@
 
 {% if menuEntries.count() %}
 	{% if includeWrapper %}
-		{{ renderer.render(identifier|ucparts(false))|raw }}
+		{{ renderer.render()|raw }}
 	{% else %}
-		{{ renderer.renderList(menu)|raw}}
+		{{ renderer.renderList()|raw}}
 	{% endif %}
 {% endif %}

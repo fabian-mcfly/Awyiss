@@ -113,6 +113,7 @@ class MenuCell extends Cell {
 		/** @see \Awyiss\Utility\Menu\FrontendMenu::__construct() */
 		$lo_menu = new $ls_menuClass($lo_menuEntries->toArray(), [
 			'active' => $lb_active,
+			'identifier' => Inflector::ucparts($lo_menuRecord->identifier),
 			'menuClass' => $ls_menuClass,
 			'menuItemClass' => $ls_menuItemClass,
 		]);
@@ -198,8 +199,8 @@ class MenuCell extends Cell {
 			'language_shortcode' => $languageShortcode,
 		])->all();
 
-		return $lo_menuEntries->filter(function (MenuEntry $content) {
-			return $content->parentId === null;
+		return $lo_menuEntries->filter(function (MenuEntry $menuEntry) {
+			return $menuEntry->parentId === null;
 		})->compile();
 	}
 
@@ -236,12 +237,8 @@ class MenuCell extends Cell {
 		}
 
 		$la_data['isPreview'] = '';
-		if ($this->isPreview()) {
-			$lb_active = $data['item']->active;
-
-			if (!$lb_active) {
-				$la_data['isPreview'] = ' ' . FrontendView::getPreviewModeElementClass();
-			}
+		if ($this->isPreview() && !$data['item']->active) {
+			$la_data['isPreview'] = ' ' . FrontendView::getPreviewModeElementClass();
 		}
 
 		return $template->format('item', $la_data);
