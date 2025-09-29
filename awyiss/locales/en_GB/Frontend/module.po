@@ -18,7 +18,7 @@ msgid "paginate"
 msgstr "Paginate"
 
 msgid "items_per_page"
-msgstr "Items per page"
+msgstr "Items per Page"
 
 msgid "number_of_items"
 msgstr "Number of items"
@@ -39,7 +39,7 @@ msgid "include_homepage"
 msgstr "Include homepage"
 
 msgid "include_current_page"
-msgstr "Include current page"
+msgstr "Include current Page"
 
 msgid "show_on_homepage"
 msgstr "Show on homepage"

@@ -15,13 +15,13 @@ msgid "counter"
 msgstr "Page {{page}} of {{pages}}<hr>{{count}} records"
 
 msgid "limit_per_page"
-msgstr "Records per page"
+msgstr "Records per Page"
 
 msgid "page"
 msgstr "Page"
 
 msgid "first"
-msgstr "First page"
+msgstr "First Page"
 
 msgid "previous"
 msgstr "Prev"
@@ -30,4 +30,4 @@ msgid "next"
 msgstr "Next"
 
 msgid "last"
-msgstr "Last page"
+msgstr "Last Page"

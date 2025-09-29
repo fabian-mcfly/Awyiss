@@ -75,7 +75,7 @@ msgid "delete_failed"
 msgstr "The {0} could not be deleted"
 
 msgid "view_contents"
-msgstr "View contents"
+msgstr "View Contents"
 
 msgid "page_role_id"
 msgstr "Page Role"
@@ -105,14 +105,14 @@ msgid "fieldset_menus"
 msgstr "Automatically create Menu Entry"
 
 msgid "copy_descendants_with_different_page_role"
-msgstr "<strong>Subpages with a different page role were found</strong>.<br>\n"
-"Do you also want to copy pages with other roles?"
+msgstr "<strong>Subpages with a different Page Role were found</strong>.<br>\n"
+"Do you also want to copy Pages with other Page Roles?"
 
 msgid "copy_descendants_with_different_page_role_no"
-msgstr "Only copy pages with the same page role"
+msgstr "Only copy Pages with the same Page Role"
 
 msgid "copy_descendants_with_different_page_role_yes"
-msgstr "Also copy pages with other roles"
+msgstr "Also copy Pages with other Page Roles"
 
 msgid "configuration_category_frontend_categories"
 msgstr "Categories"
@@ -124,4 +124,4 @@ msgid "configuration_identifier_frontend_media_folders_parent_folder_id"
 msgstr "Subfolder of"
 
 msgid "configuration_identifier_frontend_categories_forced_root_page_id"
-msgstr "Forced parent page ID"
+msgstr "Forced parent Page ID"

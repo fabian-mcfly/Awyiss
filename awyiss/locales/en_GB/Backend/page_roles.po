@@ -72,7 +72,7 @@ msgid "create_enum"
 msgstr "Create Page Role Enum"
 
 msgid "bake_seed"
-msgstr "Create database dump of page roles"
+msgstr "Create database dump of Page Roles"
 
 msgid "create_page_role_model"
 msgstr "Create Page Role ({0}) model class"

@@ -249,7 +249,7 @@ msgid "form_leave_confirmation_dialog_title"
 msgstr "Leave confirmation"
 
 msgid "form_leave_confirmation_dialog_message"
-msgstr "You have unsaved changes. Do you really want to leave this page?"
+msgstr "You have unsaved changes. Do you really want to leave this Page?"
 
 msgid "form_leave_confirmation_dialog_confirm_leave"
 msgstr "Leave"
@@ -273,7 +273,7 @@ msgid "headline_error_400"
 msgstr "Spooky!"
 
 msgid "subtitle_error_400"
-msgstr "Whoa! Where have we landed? The page could not be found."
+msgstr "Whoa! Where have we landed? The Page could not be found."
 
 msgid "headline_error_500"
 msgstr "It's haunted here!"
@@ -509,7 +509,7 @@ msgid "system_overview_category_configuration"
 msgstr "Configuration"
 
 msgid "bake_page_roles_seed"
-msgstr "Create database seed for page roles"
+msgstr "Create database seed for Page Roles"
 
 msgid "create_page_role_model"
 msgstr "Create Page Role model files"

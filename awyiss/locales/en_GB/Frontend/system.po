@@ -15,7 +15,7 @@ msgid "headline_error_400"
 msgstr "Spooky!"
 
 msgid "subtitle_error_400"
-msgstr "Whoa! Where have we landed? The page could not be found."
+msgstr "Whoa! Where have we landed? The Page could not be found."
 
 msgid "headline_error_500"
 msgstr "It's haunted here!"

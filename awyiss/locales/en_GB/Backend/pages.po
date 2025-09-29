@@ -81,7 +81,7 @@ msgid "delete_failed"
 msgstr "The Page could not be deleted"
 
 msgid "view_contents"
-msgstr "View contents"
+msgstr "View Contents"
 
 msgid "edit"
 msgstr "Settings"
@@ -112,10 +112,10 @@ msgstr "Automatically create Menu Entry"
 
 msgid "copy_descendants_with_different_page_role"
 msgstr "<strong>Subpages with a different Page Role were found</strong>.<br>\n"
-"Do you also want to copy Pages with other roles?"
+"Do you also want to copy Pages with other Page Roles?"
 
 msgid "copy_descendants_with_different_page_role_no"
 msgstr "Only copy Pages with the same Page Role"
 
 msgid "copy_descendants_with_different_page_role_yes"
-msgstr "Also copy Pages with other roles"
+msgstr "Also copy Pages with other Page Roles"

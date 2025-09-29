@@ -189,7 +189,7 @@ msgid "configuration_identifier_backend_paginate_enabled"
 msgstr "Enabled"
 
 msgid "configuration_identifier_backend_paginate_limit"
-msgstr "Items per page"
+msgstr "Items per Page"
 
 msgid "configuration_identifier_backend_split_into_languages"
 msgstr "Split into languages"

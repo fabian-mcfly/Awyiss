@@ -30,7 +30,7 @@ msgid "fieldset_quick_actions"
 msgstr "Quick Access"
 
 msgid "quick_action_add_page"
-msgstr "Add page"
+msgstr "Add Page"
 
 msgid "quick_action_user_configuration"
 msgstr "User settings"

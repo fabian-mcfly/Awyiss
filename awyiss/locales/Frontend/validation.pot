@@ -61,7 +61,7 @@ msgid "error_language_exists"
 msgstr "This language already exists"
 
 msgid "error_valid_page_id"
-msgstr "Invalid page"
+msgstr "Invalid Page"
 
 msgid "error_valid_content_template_id"
 msgstr "Invalid Content Template"
@@ -79,7 +79,7 @@ msgid "error_valid_duplicate_of"
 msgstr "Invalid duplication of"
 
 msgid "error_no_duplicating_contents"
-msgstr "This content is duplicated by another content"
+msgstr "This Content is duplicated by another Content"
 
 msgid "error_content_template_exists"
 msgstr "This Content Template does not exist"
@@ -97,13 +97,13 @@ msgid "error_file_name_unique"
 msgstr "This filename is already in use"
 
 msgid "error_valid_content_elements"
-msgstr "Invalid content elements"
+msgstr "Invalid Content Elements"
 
 msgid "error_linked_contents"
-msgstr "There are still contents that use this element"
+msgstr "There are still Contents that use this element"
 
 msgid "error_linked_widgets"
-msgstr "There are still widgets that use this element"
+msgstr "There are still Widgets that use this element"
 
 msgid "error_identifier_unchanged"
 msgstr "The identifier cannot be changed"
@@ -124,28 +124,28 @@ msgid "error_media_mime_type_matches_extension"
 msgstr "The file extension does not match the MIME type"
 
 msgid "error_not_page_role_page_deletion"
-msgstr "The page role \"Page\" cannot be deleted"
+msgstr "The Page Role \"Page\" cannot be deleted"
 
 msgid "error_no_linked_page_templates"
-msgstr "There are still Page Templates that use these page roles"
+msgstr "There are still Page Templates that use these Page Roles"
 
 msgid "error_valid_page_role"
-msgstr "Invalid page role"
+msgstr "Invalid Page Role"
 
 msgid "error_valid_page_template"
 msgstr "Invalid Page Template"
 
 msgid "error_no_duplicating_pages"
-msgstr "This page is duplicated by another page"
+msgstr "This Page is duplicated by another Page"
 
 msgid "error_no_nested_children_with_different_page_role"
-msgstr "This page cannot be deleted because there are subordinate pages with a different page role"
+msgstr "This Page cannot be deleted because there are subordinate Pages with a different Page Role"
 
 msgid "error_valid_content_areas"
 msgstr "Invalid Content Areas"
 
 msgid "error_no_linked_pages"
-msgstr "There are still pages that use this Template"
+msgstr "There are still Pages that use this Template"
 
 msgid "error_user_id_unchanged"
 msgstr "The user cannot be changed"
@@ -193,19 +193,19 @@ msgid "error_not_duplicating_duplicating"
 msgstr "An element cannot duplicate an element that duplicates another element"
 
 msgid "error_duplicate_not_on_same_page"
-msgstr "The element cannot duplicate an element on the same page"
+msgstr "The element cannot duplicate an element on the same Page"
 
 msgid "error_circular_duplicating"
 msgstr "An element cannot duplicate an element that duplicates the original element"
 
 msgid "error_children_not_duplicating_contents_on_same_page"
-msgstr "Children duplicate contents on the selected page"
+msgstr "Children duplicate Contents on the selected Page"
 
 msgid "error_no_duplicated_children"
 msgstr "Children of this element are used as duplicates"
 
 msgid "error_no_duplicated_contents"
-msgstr "Contents of this page are used as duplicates"
+msgstr "Contents of this Page are used as duplicates"
 
 msgid "error_exact_length"
 msgstr "The length of this value must be exactly {0}"

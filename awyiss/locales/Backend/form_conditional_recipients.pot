@@ -27,7 +27,7 @@ msgid "recipient"
 msgstr "Recipient"
 
 msgid "type_current_page"
-msgstr "Current page"
+msgstr "Current Page"
 
 msgid "type_element_identifier"
 msgstr "Form Element"

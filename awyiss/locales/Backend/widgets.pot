@@ -36,31 +36,31 @@ msgid "headline_add"
 msgstr "Add Widget"
 
 msgid "add_succeeded"
-msgstr "The widget was successfully added"
+msgstr "The Widget was successfully added"
 
 msgid "add_failed"
-msgstr "The widget could not be added"
+msgstr "The Widget could not be added"
 
 msgid "headline_edit"
 msgstr "Edit Widget"
 
 msgid "edit_succeeded"
-msgstr "The widget was successfully updated"
+msgstr "The Widget was successfully updated"
 
 msgid "edit_failed"
-msgstr "The widget could not be updated"
+msgstr "The Widget could not be updated"
 
 msgid "record_not_found"
-msgstr "The widget was not found"
+msgstr "The Widget was not found"
 
 msgid "confirm_delete"
-msgstr "Are you sure you want to delete this widget (ID: {0})?"
+msgstr "Are you sure you want to delete this Widget (ID: {0})?"
 
 msgid "delete_succeeded"
-msgstr "The widget was successfully deleted"
+msgstr "The Widget was successfully deleted"
 
 msgid "delete_failed"
-msgstr "The widget could not be deleted"
+msgstr "The Widget could not be deleted"
 
 msgid "overview_list_linear"
 msgstr "List View"

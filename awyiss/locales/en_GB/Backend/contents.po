@@ -45,37 +45,37 @@ msgid "headline_add"
 msgstr "Add Content"
 
 msgid "add_succeeded"
-msgstr "The content was successfully added"
+msgstr "The Content was successfully added"
 
 msgid "add_failed"
-msgstr "The content could not be added"
+msgstr "The Content could not be added"
 
 msgid "headline_edit"
 msgstr "Edit Content"
 
 msgid "edit_succeeded"
-msgstr "The content was successfully updated"
+msgstr "The Content was successfully updated"
 
 msgid "edit_failed"
-msgstr "The content could not be updated"
+msgstr "The Content could not be updated"
 
 msgid "headline_duplicate_configuration"
-msgstr "Duplicate content"
+msgstr "Duplicate Content"
 
 msgid "headline_module_configuration"
 msgstr "Module Configuration"
 
 msgid "record_not_found"
-msgstr "The content was not found"
+msgstr "The Content was not found"
 
 msgid "confirm_delete"
-msgstr "Are you sure you want to delete this content (ID: {0})?"
+msgstr "Are you sure you want to delete this Content (ID: {0})?"
 
 msgid "delete_succeeded"
-msgstr "The content was successfully deleted"
+msgstr "The Content was successfully deleted"
 
 msgid "delete_failed"
-msgstr "The content could not be deleted"
+msgstr "The Content could not be deleted"
 
 msgid "overview_list_linear"
 msgstr "List View"
@@ -132,7 +132,7 @@ msgid "data"
 msgstr "Data Attributes"
 
 msgid "duplicate_of_page_id"
-msgstr "Source page"
+msgstr "Source Page"
 
 msgid "module_identifier"
 msgstr "Module"

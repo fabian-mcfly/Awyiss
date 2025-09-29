@@ -81,7 +81,7 @@ msgid "file_name"
 msgstr "File name"
 
 msgid "used_for_pages"
-msgstr "Used for pages"
+msgstr "Used for Pages"
 
 msgid "content_areas_available"
 msgstr "Available Content Areas"
