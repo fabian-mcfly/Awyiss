@@ -155,7 +155,24 @@ class FormHelper extends BaseFormHelper {
 			$ls_text = array_pop($ls_fieldElements);
 		}
 
-		return __($ls_text);
+		$ls_translation = __($ls_text);
+
+		if (!str_contains($ls_translation, '::')) {
+			return $ls_translation;
+		}
+
+		$lo_context = $this->_getContext();
+		if (!$lo_context instanceof EntityContext || !$lo_context->entity()->has('attributes')) {
+			return $ls_translation;
+		}
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $lo_context->fetchTable($lo_context->entity()->getSource());
+		if (!$lo_table->fieldIsAttribute($ls_text)) {
+			return $ls_translation;
+		}
+
+		return $lo_table->getAttributes()[ $ls_text ]?->title ?? $ls_translation;
 	}
 
 
