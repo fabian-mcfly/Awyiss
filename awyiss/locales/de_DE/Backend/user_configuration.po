@@ -15,6 +15,15 @@ msgid "meta_title_overview"
 msgstr "Benutzerkonfiguration"
 
 msgid "meta_title_add"
+msgstr "Benutzerkonfigurationseintrag hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Benutzerkonfigurationseintrag bearbeiten"
+
+msgid "meta_title_overview"
+msgstr "Benutzerkonfiguration"
+
+msgid "meta_title_add"
 msgstr "Konfigurationseintrag hinzufügen"
 
 msgid "meta_title_edit"
