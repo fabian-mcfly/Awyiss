@@ -27,6 +27,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				identifier: 'editor',
 				localizable: false,
 				nullable: false,
+				personalizable: true,
 				type: ConfigOptionType::Bool,
 			),
 			'meta' => [
