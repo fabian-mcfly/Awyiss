@@ -868,7 +868,7 @@ class FrontendController extends AppController {
 			return true;
 		}
 
-		$lb_checkAncestorPagesPublicationStatus = Configure::read('Awyiss.System.Frontend.publication.checkAncestorPagesPublicationStatus', true);
+		$lb_checkAncestorPagesPublicationStatus = Configure::read('Awyiss.System.Frontend.publicationData.checkAncestorPagesPublicationStatus', true);
 		if (!$lb_checkAncestorPagesPublicationStatus) {
 			return true;
 		}

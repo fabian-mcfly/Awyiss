@@ -46,7 +46,7 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertArrayHasKey('Frontend.editor', $configOptions);
 		$this->assertFalse($configOptions['Frontend.editor']->isLocalizable());
 		$this->assertFalse($configOptions['Frontend.editor']->isNullable());
-		$this->assertFalse($configOptions['Frontend.editor']->isPersonalizable());
+		$this->assertTrue($configOptions['Frontend.editor']->isPersonalizable());
 		$this->assertSame(true, $configOptions['Frontend.editor']->getDefaultValue());
 		$this->assertSame('true', $configOptions['Frontend.editor']->getPrintableValue());
 		$this->assertSame(ConfigOptionType::Bool, $configOptions['Frontend.editor']->getType());
@@ -76,16 +76,16 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Frontend.meta.titleSeparator']->getValidate());
 		$this->assertNull($configOptions['Frontend.meta.titleSeparator']->getValues());
 
-		$this->assertArrayHasKey('Frontend.publication.checkAncestorPagesPublicationStatus', $configOptions);
-		$this->assertFalse($configOptions['Frontend.publication.checkAncestorPagesPublicationStatus']->isLocalizable());
-		$this->assertFalse($configOptions['Frontend.publication.checkAncestorPagesPublicationStatus']->isNullable());
-		$this->assertFalse($configOptions['Frontend.publication.checkAncestorPagesPublicationStatus']->isPersonalizable());
-		$this->assertSame(true, $configOptions['Frontend.publication.checkAncestorPagesPublicationStatus']->getDefaultValue());
-		$this->assertSame('true', $configOptions['Frontend.publication.checkAncestorPagesPublicationStatus']->getPrintableValue());
-		$this->assertSame(ConfigOptionType::Bool, $configOptions['Frontend.publication.checkAncestorPagesPublicationStatus']->getType());
-		$this->assertNull($configOptions['Frontend.publication.checkAncestorPagesPublicationStatus']->getTypecast());
-		$this->assertNull($configOptions['Frontend.publication.checkAncestorPagesPublicationStatus']->getValidate());
-		$this->assertNull($configOptions['Frontend.publication.checkAncestorPagesPublicationStatus']->getValues());
+		$this->assertArrayHasKey('Frontend.publicationData.checkAncestorPagesPublicationStatus', $configOptions);
+		$this->assertFalse($configOptions['Frontend.publicationData.checkAncestorPagesPublicationStatus']->isLocalizable());
+		$this->assertFalse($configOptions['Frontend.publicationData.checkAncestorPagesPublicationStatus']->isNullable());
+		$this->assertFalse($configOptions['Frontend.publicationData.checkAncestorPagesPublicationStatus']->isPersonalizable());
+		$this->assertSame(true, $configOptions['Frontend.publicationData.checkAncestorPagesPublicationStatus']->getDefaultValue());
+		$this->assertSame('true', $configOptions['Frontend.publicationData.checkAncestorPagesPublicationStatus']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Frontend.publicationData.checkAncestorPagesPublicationStatus']->getType());
+		$this->assertNull($configOptions['Frontend.publicationData.checkAncestorPagesPublicationStatus']->getTypecast());
+		$this->assertNull($configOptions['Frontend.publicationData.checkAncestorPagesPublicationStatus']->getValidate());
+		$this->assertNull($configOptions['Frontend.publicationData.checkAncestorPagesPublicationStatus']->getValues());
 
 		$this->assertArrayHasKey('Frontend.route.orsApiKey', $configOptions);
 		$this->assertFalse($configOptions['Frontend.route.orsApiKey']->isLocalizable());

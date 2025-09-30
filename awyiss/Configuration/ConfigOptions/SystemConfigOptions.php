@@ -39,7 +39,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					identifier: 'titleSeparator',
 				),
 			],
-			'publication' => [
+			'publicationData' => [
 				new ConfigOption(
 					defaultValue: true,
 					identifier: 'checkAncestorPagesPublicationStatus',
@@ -113,14 +113,6 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
-					defaultValue: null,
-					identifier: 'highlightColor',
-					localizable: false,
-					nullable: null,
-					personalizable: true,
-					type: ConfigOptionType::Color,
-				),
-				new ConfigOption(
 					defaultValue: 'plain',
 					identifier: 'editor',
 					localizable: false,
@@ -132,6 +124,14 @@ class SystemConfigOptions extends AbstractConfigOptions {
 						'jodit' => __d('system', 'interface_editor_jodit'),
 						'tinymce' => __d('system', 'interface_editor_tinymce'),
 					],
+				),
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'highlightColor',
+					localizable: false,
+					nullable: null,
+					personalizable: true,
+					type: ConfigOptionType::Color,
 				),
 				new ConfigOption(
 					defaultValue: 'regular',
