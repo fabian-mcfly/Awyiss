@@ -511,7 +511,7 @@ class Table extends BaseTable {
 		$la_options = array_merge($la_options, $options);
 		unset($la_options['finder']);
 
-		$lo_results = $this->find($lx_finder)
+		$lo_results = $this->find($lx_finder, ...$la_options)
 			->applyOptions($la_options)
 			->select(['existing' => 1])
 			->where($conditions)
