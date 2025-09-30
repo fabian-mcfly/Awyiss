@@ -40,7 +40,7 @@ of a regular page with contents.
 			<div class="Text">
 				<h4>{{ newsItem.title }}</h4>
 
-				<p class="Date">{{ newsItem.date.i18nFormat(0) }}</p>
+				<p class="Date">{{ newsItem.date.i18nFormat(dateFormat) }}</p>
 
 				{% if newsItem.teaser %}
 					{% if '<' in newsItem.teaser %}
