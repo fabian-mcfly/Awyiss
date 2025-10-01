@@ -49,7 +49,7 @@
 		{% set counter = 0 %}
 		{% set value = configuration.hasValue('value') ? configuration.get('value') : configuration.configOption.defaultValue %}
 
-		{% if value is not array %}
+		{% if value is not empty and value is not array %}
 			{% set decodedValue = value|json_decode %}
 			{% if decodedValue is not null %}
 				{% set value = decodedValue %}
