@@ -12,58 +12,58 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "meta_title_overview"
-msgstr "User groups"
+msgstr "Usergroups"
 
 msgid "meta_title_add"
-msgstr "Add user group"
+msgstr "Add Usergroup"
 
 msgid "meta_title_edit"
-msgstr "Edit user group"
+msgstr "Edit Usergroup"
 
 msgid "menu_title"
-msgstr "User groups"
+msgstr "Usergroups"
 
 msgid "menu_add"
-msgstr "New user group"
+msgstr "New Usergroup"
 
 msgid "headline_overview"
-msgstr "User groups"
+msgstr "Usergroups"
 
 msgid "menu_configure"
 msgstr "Configuration"
 
 msgid "create"
-msgstr "New user group"
+msgstr "New Usergroup"
 
 msgid "headline_add"
-msgstr "Add user group"
+msgstr "Add Usergroup"
 
 msgid "add_succeeded"
-msgstr "The user group was successfully added"
+msgstr "The Usergroup was successfully added"
 
 msgid "add_failed"
-msgstr "The user group could not be added"
+msgstr "The Usergroup could not be added"
 
 msgid "headline_edit"
-msgstr "Edit user group"
+msgstr "Edit Usergroup"
 
 msgid "edit_succeeded"
-msgstr "The user group was successfully updated"
+msgstr "The Usergroup was successfully updated"
 
 msgid "edit_failed"
-msgstr "The user group could not be updated"
+msgstr "The Usergroup could not be updated"
 
 msgid "record_not_found"
-msgstr "The user group was not found"
+msgstr "The Usergroup was not found"
 
 msgid "confirm_delete"
-msgstr "Are you sure you want to delete this user group (ID: {0})?"
+msgstr "Are you sure you want to delete this Usergroup (ID: {0})?"
 
 msgid "delete_succeeded"
-msgstr "The user group was successfully deleted"
+msgstr "The Usergroup was successfully deleted"
 
 msgid "delete_failed"
-msgstr "The user group could not be deleted"
+msgstr "The Usergroup could not be deleted"
 
 msgid "fieldset_users"
 msgstr "Users"

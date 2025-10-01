@@ -168,7 +168,7 @@ msgid "error_config_owned_by_user"
 msgstr "This option belongs to a user and cannot be changed"
 
 msgid "error_usergroup_exists"
-msgstr "This user group does not exist"
+msgstr "This Usergroup does not exist"
 
 msgid "error_title_unique"
 msgstr "This title is already in use"

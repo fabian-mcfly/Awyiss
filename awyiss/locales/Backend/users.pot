@@ -36,7 +36,7 @@ msgid "menu_configure"
 msgstr "Configuration"
 
 msgid "usergroup_filter_label"
-msgstr "User group"
+msgstr "Usergroup"
 
 msgid "usergroup_filter_all"
 msgstr "All"
@@ -114,7 +114,7 @@ msgid "last_login"
 msgstr "Last login"
 
 msgid "fieldset_usergroups"
-msgstr "User groups"
+msgstr "Usergroups"
 
 msgid "failed_attempts"
 msgstr "Login attempts"
