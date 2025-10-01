@@ -34,5 +34,14 @@ class UrlsNotFoundConfigOptions extends AbstractConfigOptions {
 				),
 			],
 		]);
+
+		$this->add(Awyiss::REALM_FRONTEND, [
+			new ConfigOption(
+				defaultValue: null,
+				identifier: 'blocklistedUrls',
+				localizable: false,
+				type: ConfigOptionType::List,
+			),
+		]);
 	}
 }

@@ -41,7 +41,7 @@ class UrlsNotFoundConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(1, $configOptions);
+		$this->assertCount(2, $configOptions);
 
 		$this->assertArrayHasKey('Backend.paginate.limit', $configOptions);
 		$this->assertFalse($configOptions['Backend.paginate.limit']->isLocalizable());
@@ -53,5 +53,16 @@ class UrlsNotFoundConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.paginate.limit']->getTypecast());
 		$this->assertNull($configOptions['Backend.paginate.limit']->getValidate());
 		$this->assertNull($configOptions['Backend.paginate.limit']->getValues());
+
+		$this->assertArrayHasKey('Frontend.blocklistedUrls', $configOptions);
+		$this->assertFalse($configOptions['Frontend.blocklistedUrls']->isLocalizable());
+		$this->assertTrue($configOptions['Frontend.blocklistedUrls']->isNullable());
+		$this->assertFalse($configOptions['Frontend.blocklistedUrls']->isPersonalizable());
+		$this->assertSame(null, $configOptions['Frontend.blocklistedUrls']->getDefaultValue());
+		$this->assertSame(null, $configOptions['Frontend.blocklistedUrls']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::List, $configOptions['Frontend.blocklistedUrls']->getType());
+		$this->assertNull($configOptions['Frontend.blocklistedUrls']->getTypecast());
+		$this->assertNull($configOptions['Frontend.blocklistedUrls']->getValidate());
+		$this->assertNull($configOptions['Frontend.blocklistedUrls']->getValues());
 	}
 }

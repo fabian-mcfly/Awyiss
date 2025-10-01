@@ -605,6 +605,8 @@ class FrontendController extends AppController {
 			implode(',', $la_urls),
 		])), true);
 
+		$lo_query->orderByDesc('UrlHistory.created_on');
+
 		/** @var \Awyiss\Model\Entity\UrlHistory $lo_record */
 		$lo_record = $lo_query->first();
 
@@ -821,6 +823,22 @@ class FrontendController extends AppController {
 			str_starts_with($ls_slug, '/wp-admin')
 		) {
 			return;
+		}
+
+		$la_blocklistedUrls = Configure::read('Awyiss.UrlsNotFound.Frontend.blocklistedUrls', []);
+		foreach ($la_blocklistedUrls as $ls_blocklistedUrl) {
+			$ls_pattern = preg_quote(trim($ls_blocklistedUrl, '*/'), '/');
+
+			if (str_starts_with($ls_blocklistedUrl, '*')) {
+				$ls_pattern = '.*' . $ls_pattern;
+			}
+			if (str_ends_with($ls_blocklistedUrl, '*')) {
+				$ls_pattern .= '.*';
+			}
+
+			if (preg_match('/' . $ls_pattern . '/', trim($ls_slug, '/'))) {
+				return;
+			}
 		}
 
 		/**
