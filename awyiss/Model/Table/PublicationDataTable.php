@@ -106,16 +106,6 @@ class PublicationDataTable extends Table {
 			]
 		);
 
-
-		$rules->addDelete(
-			$rules->isNotLinkedTo('SurveySurveyQuestions', 'surveys'),
-			'noLinkedSurveys',
-			[
-				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_surveys'),
-			]
-		);
-
 		return $rules;
 	}
 
