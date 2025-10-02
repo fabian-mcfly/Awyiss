@@ -124,7 +124,7 @@ class AuditController extends Controller {
 		// Get the audit history of the record
 		$lo_audits = $this->Audit->find()->where([
 			'foreign_key' => $li_id,
-			'scope' => $ls_scope,
+			'scope' => $ls_realScope,
 		])->contain(['Users'])->orderBy(['Audit.created_on' => 'desc'])
 		->formatResults(function (ResultSetInterface $results): CollectionInterface {
 			return $results->map(function (Audit $audit) {
