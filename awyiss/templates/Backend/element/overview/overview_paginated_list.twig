@@ -191,6 +191,16 @@
 												<li><strong>ID:</strong> {{ entity.id }}</li>
 											</ul>
 										</div>
+
+										{{ HtmlHelper.link(__d('audit', 'show_history'), {
+											controller: 'audit',
+											action: 'history',
+											scope: entity.source|underscore,
+											id: entity.id
+										}, {
+											escape: false,
+											title: __d('audit', 'show_history'),
+										}) }}
 									</td>
 								{% endblock %}
 

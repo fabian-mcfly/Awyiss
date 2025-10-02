@@ -1,3 +1,32 @@
+.AuditHistory-Tables {
+	&:not(:has(.AuditHistory-Table)) {
+		margin-top:var(--rowGap);
+		padding:40px;
+		border-radius:5px;
+		background-color:var(--backgroundColorContent);
+		position:relative;
+
+		h3 {
+			font-size:1.5rem;
+			text-align:center;
+		}
+
+		&::after {
+			@extend %EmptyList;
+
+			display:block;
+			margin-top:20px;
+			height:72px;
+			position:relative;
+
+			html.🌚 & {
+				@extend %EmptyListDarkMode;
+			}
+		}
+	}
+}
+
+
 .AuditHistory-Slider {
 	--slideOffset:0;
 

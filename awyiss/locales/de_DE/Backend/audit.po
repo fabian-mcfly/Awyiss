@@ -55,3 +55,9 @@ msgstr "Unbekannte Datei"
 
 msgid "revert_value"
 msgstr "Wert zurücksetzen"
+
+msgid "error_record_not_found"
+msgstr "Der Eintrag wurde nicht gefunden"
+
+msgid "no_audit_entries"
+msgstr "Es sind keine Audit-Einträge vorhanden."

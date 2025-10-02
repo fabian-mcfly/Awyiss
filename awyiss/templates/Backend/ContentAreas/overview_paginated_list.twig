@@ -33,8 +33,7 @@
 
 {% block tableOverviewCellActionsDelete %}
 	{% if AuthorizationHelper.isAccessible('delete') %}
-		<!--suppress HtmlUnknownAttribute -->
-		<a class="Button Button-Small Button-Delete" disabled>{{ __('delete') }}</a>
+		<a class="Button Button-Small Button-Delete" >{{ __('delete') }}</a>
 	{% endif %}
 {% endblock %}
 

@@ -122,6 +122,16 @@
 											</li>
 										{% endif %}
 									</ul>
+
+									{{ HtmlHelper.link(__d('audit', 'show_history'), {
+										controller: 'audit',
+										action: 'history',
+										scope: configuration.source|underscore,
+										id: configuration.id
+									}, {
+										escape: false,
+										title: __d('audit', 'show_history'),
+									}) }}
 								</div>
 							{% endif %}
 

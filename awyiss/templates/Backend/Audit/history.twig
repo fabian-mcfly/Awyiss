@@ -321,7 +321,6 @@
 	{% block tablesHistory %}
 		<div class="AuditHistory-Tables">
 			{% for audit in audits %}
-
 				{% set tableBodyRows = 0 %}
 				{% set tableBody %}
 					{% block tableHistoryBodyRow %}
@@ -460,6 +459,8 @@
 						{% endblock %}
 					</table>
 				{% endblock %}
+			{% else %}
+				<h3>{{ __('no_audit_entries') }}</h3>
 			{% endfor %}
 		</div>
 	{% endblock %}
