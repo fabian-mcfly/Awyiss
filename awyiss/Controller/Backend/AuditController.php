@@ -99,6 +99,11 @@ class AuditController extends Controller {
 			// Ensure that the user has access to the `content`-permission of the page-role of the content's page.
 			$this->ensurePageRoleAccess($lo_entity);
 		}
+		elseif ($ls_scope === 'configuration') {
+			$this->Authorization->scopeIsAccessible($ls_scope, [
+				'scope' => $lo_entity->scope,
+			], 'update');
+		}
 		else {
 			$this->Authorization->scopeIsAccessible($ls_scope, [], 'update');
 		}
