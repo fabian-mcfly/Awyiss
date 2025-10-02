@@ -8,6 +8,7 @@ use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Attribute\AttributeOptionsProvider;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Core\App;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
@@ -58,6 +59,7 @@ class AuditController extends Controller {
 	public function history(): void {
 		$li_id = $this->request->getParam('id');
 		$ls_scope = $this->request->getParam('scope');
+		$ls_realScope = $ls_scope;
 
 		if ($li_id === null || $ls_scope === null) {
 			if ($this->request->is('ajax')) {
@@ -74,6 +76,7 @@ class AuditController extends Controller {
 
 		/**
 		 * @uses \Awyiss\Model\Table::findTranslations()
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
 		$lo_entity = $lo_table->findById($li_id)->find('translations')->find('mediaAssignments')->first();
@@ -108,6 +111,14 @@ class AuditController extends Controller {
 
 		if ($la_associations) {
 			$lo_table->loadInto($lo_entity, array_values(array_map(fn($lo_association) => $lo_association->getName(), $la_associations)));
+		}
+
+		$lb_isPageRole = false;
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		if ($ls_pageRoleEnum::tryFromName($ls_scope)) {
+			$lb_isPageRole = true;
+			$ls_realScope = 'pages';
 		}
 
 		// Get the audit history of the record
@@ -183,6 +194,7 @@ class AuditController extends Controller {
 			'media' => $lo_media->toArray(),
 			'mediaElements' => $lo_mediaElements,
 			'isAjax' => $this->request->is('ajax'),
+			'isPageRole' => $lb_isPageRole,
 			'publicationDataEnabled' => LocalConfig::read('publicationData.enabled', null, Inflector::camelize($ls_scope)),
 			'languages' => $la_languages,
 			'translatableFields' => $la_translatableFields,

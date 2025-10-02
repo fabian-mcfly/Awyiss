@@ -11,6 +11,7 @@
 @var media Awyiss\Model\Entity\Media[]
 @var mediaElements Awyiss\Model\Entity\MediaElement[]
 @var isAjax bool
+@var isPageRole bool
 @var publicationDataEnabled bool
 @var languages Awyiss\Model\Entity\Language[]
 @var translatableFields array
@@ -254,10 +255,18 @@
 
 	<tr class="{% if changed %} ValueChanged{% endif %}{% if isHtml %} ValueIsHtml{% endif %}" data-field="{{ inputName }}">
 		<td class="TableCell-Field">
-			{% if isLanguage %}
+			{% if field|underscore in ['meta_title', 'meta_description', 'robots_index', 'robots_follow'] %}
+				{{ __d('seo', field|underscore) }}
+			{% elseif isLanguage %}
 				{{ language.label }}
 			{% elseif isAttribute %}
 				{{ attribute.label }}
+			{% elseif settings.isPageRole %}
+				{% set label = __df(scope, 'pages', field|underscore) %}
+				{% if '::' in label %}
+					{% set label = __d('pages', field|underscore) %}
+				{% endif %}
+				{{ label }}
 			{% else %}
 				{{ __d(scope, field|underscore) }}
 			{% endif %}
@@ -286,6 +295,10 @@
 <div class="Contents History">
 	{% block headlinesHistory %}
 		<div class="Headlines">
+			{% if isAjax == false %}
+				{{ HtmlHelper.link(__('back_to_overview'), {controller: scope, action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
+
 			{% block headlineHistory %}
 				<h1>{{ __('headline_history') }}</h1>
 			{% endblock %}
@@ -316,7 +329,11 @@
 							{% if field in translatableFields %}
 								<tr>
 									<td colspan="3" class="TableCell-Translation-Label">
-										{{ __d(scope, field|underscore) }}
+										{% if isPageRole %}
+											{{ __d(scope, 'pages', field|underscore) }}
+										{% else %}
+											{{ __d(scope, field|underscore) }}
+										{% endif %}
 									</td>
 								</tr>
 								{% for language in languages %}
