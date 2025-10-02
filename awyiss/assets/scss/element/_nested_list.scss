@@ -82,11 +82,15 @@
 
 	&#{&}-Compact {
 		--emptyListHeight:20px;
-		//display:flex;
 		margin-inline:25px -5px;
 		padding-top:.25rem;
-		overflow:hidden;
-		//flex-wrap:wrap;
+
+		&::after {
+			content:'';
+			display:block;
+			clear:both;
+			height:1px;
+		}
 
 		&.Level1 {
 			padding-block:.5rem .25rem;
