@@ -170,6 +170,12 @@
 	{% set changed = oldData[ field ] != entity.get(field) %}
 	{% if entity.get(field) is enum %}
 		{% set changed = oldData[ field ] != entity.get(field).value %}
+	{%- elseif columnType == 'date' %}
+		{% set changed = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], dateFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), dateFormat) : '') %}
+	{%- elseif columnType == 'datetime' %}
+		{% set changed = (oldData[ field ] ? TimeHelper.nice(oldData[ field ]) : '') != (entity.get(field) ? TimeHelper.nice(entity.get(field)) : '') %}
+	{%- elseif columnType == 'time' %}
+		{% set changed = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], timeFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), timeFormat) : '') %}
 	{% elseif isAttribute and oldData[ field ] is empty and entity.get(field) is empty %}
 		{% set changed = false %}
 	{% endif %}
@@ -186,14 +192,18 @@
 				{%- if oldData[ associationField ] is defined %}
 					{{- oldData[ associationField ].label ?? __('unknown_entity') }}
 					{%- if oldData[ associationField ] %} (ID: {{ oldData[ associationField ].id }}){% endif %}
-				{% else %}
+				{%- else %}
 					{{- __('unknown_entity') }} (ID: {{ oldData[ field ] }})
 				{%- endif %}
 			{%- endif %}
 		{%- elseif columnType == 'boolean' %}
 			{{- oldData[ field ] ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
+		{%- elseif columnType == 'date' %}
+			{{- oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], dateFormat) : '' }}
 		{%- elseif columnType == 'datetime' %}
-			{{- oldData[ field ] ? TimeHelper.nice(oldData[ field ]) ?: '' }}
+			{{- oldData[ field ] ? TimeHelper.nice(oldData[ field ]) : '' }}
+		{%- elseif columnType == 'time' %}
+			{{- oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], timeFormat) : '' }}
 		{%- elseif columnType == 'json' %}
 			{{- oldData[ field ] is not empty ? oldData[ field ]|json_encode : '' }}
 		{%- elseif columnType == 'string' and field == 'language_shortcode' %}
@@ -202,10 +212,10 @@
 			{{- oldData['column'].width.label }}
 		{%- elseif field == 'columnIndent' %}
 			{{- oldData['column'].indent.label }}
-		{% elseif (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') %}
+		{%- elseif (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') -%}
 			<code>{{- MediaHelper.rebuildSimpleImageTagsInText(oldData[ field ], settings.media)|escape }}</code>
-			{% set isHtml = true %}
-		{% elseif isAttribute and settings.attributeOptionsCollection %}
+			{%- set isHtml = true -%}
+		{%- elseif isAttribute and settings.attributeOptionsCollection %}
 			{{- options[ oldData[ field ] ] ?? '' }}
 		{%- else %}
 			{{- oldData[ field ] ?? '' }}
@@ -215,24 +225,27 @@
 	{% set realOldValue = oldData[ field ] %}
 
 	{%- set currentValue %}
-
 		{%- if associations[ field ] is defined %}
 			{%- set associationField = associations[ field ]['property'] %}
 			{{- entity.get(associationField).label }}
 			{%- if entity.get(associationField) %} (ID: {{ entity.get(associationField).id }}){% endif %}
 		{%- elseif columnType == 'boolean' %}
 			{{- entity.get(field) ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
+		{%- elseif columnType == 'date' %}
+			{{- entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), dateFormat) : '' }}
 		{%- elseif columnType == 'datetime' %}
-			{{- entity.has(field) ? TimeHelper.nice(entity.get(field)) ?: '' }}
+			{{- entity.get(field) ? TimeHelper.nice(entity.get(field)) : '' }}
+		{%- elseif columnType == 'time' %}
+			{{- entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), timeFormat) : '' }}
 		{%- elseif columnType == 'json' %}
 			{{- entity.get(field) is not empty ? entity.get(field)|json_encode : '' }}
 		{%- elseif field == 'columnWidth' %}
 			{{- entity.column.width.label }}
 		{%- elseif field == 'columnIndent' %}
 			{{- entity.column.indent.label }}
-		{% elseif (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') %}
+		{%- elseif (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') -%}
 			<code>{{- MediaHelper.rebuildSimpleImageTagsInText(entity.get(field), settings.media)|escape }}</code>
-		{% elseif isAttribute and settings.attributeOptionsCollection %}
+		{%- elseif isAttribute and settings.attributeOptionsCollection %}
 			{{- options[ entity.get(field) ] ?? '' }}
 		{%- else %}
 			{{- entity.get(field) }}
