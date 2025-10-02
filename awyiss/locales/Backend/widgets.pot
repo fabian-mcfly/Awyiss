@@ -90,7 +90,7 @@ msgid "column_indent"
 msgstr "Column Indentation"
 
 msgid "column_last"
-msgstr "Last Widget in the Row"
+msgstr "Last Element in the Row"
 
 msgid "column_rtl"
 msgstr "Right-to-left"
