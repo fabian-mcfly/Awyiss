@@ -57,7 +57,7 @@ class GenericPagesConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(21, $configOptions);
+		$this->assertCount(22, $configOptions);
 
 		$this->assertArrayHasKey('Backend.categories.allowAggregation', $configOptions);
 		$this->assertFalse($configOptions['Backend.categories.allowAggregation']->isLocalizable());
@@ -247,6 +247,17 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.publicationData.enabled']->getTypecast());
 		$this->assertNull($configOptions['Backend.publicationData.enabled']->getValidate());
 		$this->assertNull($configOptions['Backend.publicationData.enabled']->getValues());
+
+		$this->assertArrayHasKey('Backend.surveys.enabled', $configOptions);
+		$this->assertFalse($configOptions['Backend.surveys.enabled']->isLocalizable());
+		$this->assertFalse($configOptions['Backend.surveys.enabled']->isNullable());
+		$this->assertFalse($configOptions['Backend.surveys.enabled']->isPersonalizable());
+		$this->assertSame(false, $configOptions['Backend.surveys.enabled']->getDefaultValue());
+		$this->assertSame('false', $configOptions['Backend.surveys.enabled']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Backend.surveys.enabled']->getType());
+		$this->assertNull($configOptions['Backend.surveys.enabled']->getTypecast());
+		$this->assertNull($configOptions['Backend.surveys.enabled']->getValidate());
+		$this->assertNull($configOptions['Backend.surveys.enabled']->getValues());
 
 		$this->assertArrayHasKey('Backend.systemOrder.direction', $configOptions);
 		$this->assertFalse($configOptions['Backend.systemOrder.direction']->isLocalizable());

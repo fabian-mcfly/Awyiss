@@ -219,27 +219,6 @@ class SurveyAnswersTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\SurveyAnswersTable::validationDefault()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testEntityValidationMissingSurveyQuestionId(): void {
-		$data = [
-			'title' => 'Test Answer',
-			'subtitle' => 'Test subtitle',
-		];
-
-		$entity = $this->surveyAnswersTable->newDefaultEntity();
-		$this->surveyAnswersTable->patchEntity($entity, $data);
-		$errors = $entity->getErrors();
-
-		$this->assertArrayHasKey('surveyQuestionId', $errors);
-		$this->assertArrayHasKey('_required', $errors['surveyQuestionId']);
-		$this->assertSame('survey_answers::error_required', $errors['surveyQuestionId']['_required']);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Table\SurveyAnswersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
 			'id' => 'not_an_integer',

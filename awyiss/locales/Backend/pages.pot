@@ -107,6 +107,12 @@ msgstr "Redirect link"
 msgid "duplicate_of"
 msgstr "Duplicate of"
 
+msgid "form_id"
+msgstr "Form"
+
+msgid "survey_id"
+msgstr "Survey"
+
 msgid "fieldset_menus"
 msgstr "Automatically create Menu Entry"
 

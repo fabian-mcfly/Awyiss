@@ -41,7 +41,7 @@ class PagesConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(6, $configOptions);
+		$this->assertCount(7, $configOptions);
 
 		$this->assertArrayHasKey('Backend.contents.enabled', $configOptions);
 		$this->assertFalse($configOptions['Backend.contents.enabled']->isLocalizable());
@@ -131,5 +131,16 @@ class PagesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.publicationData.enabled']->getTypecast());
 		$this->assertNull($configOptions['Backend.publicationData.enabled']->getValidate());
 		$this->assertNull($configOptions['Backend.publicationData.enabled']->getValues());
+
+		$this->assertArrayHasKey('Backend.surveys.enabled', $configOptions);
+		$this->assertFalse($configOptions['Backend.surveys.enabled']->isLocalizable());
+		$this->assertFalse($configOptions['Backend.surveys.enabled']->isNullable());
+		$this->assertFalse($configOptions['Backend.surveys.enabled']->isPersonalizable());
+		$this->assertSame(false, $configOptions['Backend.surveys.enabled']->getDefaultValue());
+		$this->assertSame('false', $configOptions['Backend.surveys.enabled']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Backend.surveys.enabled']->getType());
+		$this->assertNull($configOptions['Backend.surveys.enabled']->getTypecast());
+		$this->assertNull($configOptions['Backend.surveys.enabled']->getValidate());
+		$this->assertNull($configOptions['Backend.surveys.enabled']->getValues());
 	}
 }

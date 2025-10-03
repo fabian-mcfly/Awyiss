@@ -81,6 +81,15 @@
 					{% endif %}
 				{% endblock %}
 
+				{% block formControlSurveyId %}
+					{% if localConfig('surveys.enabled') %}
+						{{ FormHelper.control('survey_id', {
+							label: __df(pageRoleName, 'generic_pages', 'survey_id'),
+							options: hashPrinter(surveys, 'label', 'id', '- '),
+						}) }}
+					{% endif %}
+				{% endblock %}
+
 				{% block fieldsetGeneralAttributes %}
 					{{ AttributesHelper.allControls('general') }}
 				{% endblock %}

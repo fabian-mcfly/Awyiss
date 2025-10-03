@@ -173,6 +173,15 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 			],
+			'surveys' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+			],
 			'systemOrder' => [
 				new ConfigOption(
 					defaultValue: SORT_ASC,

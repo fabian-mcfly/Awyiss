@@ -101,6 +101,9 @@ msgstr "Duplikat von"
 msgid "form_id"
 msgstr "Formular"
 
+msgid "survey_id"
+msgstr "Umfrage"
+
 msgid "fieldset_menus"
 msgstr "Menüeintrag automatisch erstellen"
 
