@@ -63,7 +63,7 @@ msgid "delete_failed"
 msgstr "The answer could not be deleted"
 
 msgid "survey_questions_overview"
-msgstr "Back to the questions overview"
+msgstr "Back to the Questions overview"
 
 msgid "question_filter_label"
 msgstr "Question"

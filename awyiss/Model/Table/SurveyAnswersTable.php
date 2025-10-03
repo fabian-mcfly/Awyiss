@@ -94,7 +94,6 @@ class SurveyAnswersTable extends Table {
 		parent::validationDefault($validator);
 
 		$validator->requirePresence([
-			'surveyQuestionId',
 			'title',
 		], 'create');
 

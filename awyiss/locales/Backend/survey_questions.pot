@@ -63,7 +63,7 @@ msgid "delete_failed"
 msgstr "The question could not be deleted"
 
 msgid "view_answers"
-msgstr "View Elements"
+msgstr "View Answers"
 
 msgid "subtitle"
 msgstr "Subtitle"

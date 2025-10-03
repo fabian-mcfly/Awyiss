@@ -221,6 +221,33 @@ export default class SurveysController {
 				//groupName: `Answers-List[${nextIndex}]`,
 				handle: '.SortableHandle',
 			});
+
+
+			const sortable = answersList.sortable;
+
+			const onMoveDefault = sortable.option('onMove');
+			sortable.option('onMove', event => {
+				// noinspection JSUnresolvedReference
+				const defaultReturn = onMoveDefault(event);
+
+				// If the default return is false, then we don't want to do anything
+				if (defaultReturn === false) {
+					return false;
+				}
+
+				const customAnswer = answersList.querySelector('.Answers-ListItem-CustomAnswer');
+
+				if (!customAnswer) {
+					return defaultReturn;
+				}
+
+				// Prevent moving the custom answer item
+				if (event.related === customAnswer && event.willInsertAfter === true) {
+					return false;
+				}
+
+				return defaultReturn;
+			});
 		});
 	}
 

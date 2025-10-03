@@ -378,6 +378,10 @@ html.PickQuestionMode {
 			}
 		}
 
+		.Button-Add {
+			display:none;
+		}
+
 		.SortableHandle {
 			transform:translateX(-2px);
 		}
@@ -483,6 +487,12 @@ html.PickQuestionMode {
 						.Answers-ListItem-Inner {
 							opacity:.25;
 						}
+					}
+				}
+
+				&.Answers-ListItem-CustomAnswer {
+					.SortableHandle {
+						display:none;
 					}
 				}
 
