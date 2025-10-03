@@ -4,15 +4,17 @@
 namespace FoobarCustomer\Survey;
 
 
-use Awyiss\Survey\AbstractSurveyResults;
+use Awyiss\Model\Entity\Survey;
+use Awyiss\Survey\SurveyResultsInterface;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Cake\Datasource\FactoryLocator;
+use Cake\View\View;
 
 
 /**
  * WeinkonfiguratorSurveyResults class
  */
-class WeinkonfiguratorSurveyResults extends AbstractSurveyResults {
+class WeinkonfiguratorSurveyResults implements SurveyResultsInterface {
 	/**
 	 * All possible paths for the Weinkonfigurator survey.
 	 *
@@ -21,6 +23,21 @@ class WeinkonfiguratorSurveyResults extends AbstractSurveyResults {
 	protected array $paths = [
 
 	];
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Survey $survey
+	 * @param \Cake\View\View $view
+	 * @param array $progress
+	 * @param array $customAnswers
+	 */
+	public function __construct(
+		protected Survey $survey,
+		protected readonly View $view,
+		protected array $progress = [],
+		protected array $customAnswers = []
+	) {
+	}
 
 
 	/**

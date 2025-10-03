@@ -4,14 +4,16 @@
 namespace Customer\Survey;
 
 
-use Awyiss\Survey\AbstractSurveyResults;
+use Awyiss\Model\Entity\Survey;
+use Awyiss\Survey\SurveyResultsInterface;
 use Awyiss\Utility\Media\MediaRenderOptions;
+use Cake\View\View;
 
 
 /**
  * WeinkonfiguratorSurveyResults class
  */
-class DummySurvey4SurveyResults extends AbstractSurveyResults {
+class DummySurvey4SurveyResults implements SurveyResultsInterface {
 	/**
 	 * All possible paths for the Weinkonfigurator survey.
 	 *
@@ -20,6 +22,21 @@ class DummySurvey4SurveyResults extends AbstractSurveyResults {
 	protected array $paths = [
 
 	];
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Survey $survey
+	 * @param \Cake\View\View $view
+	 * @param array $progress
+	 * @param array $customAnswers
+	 */
+	public function __construct(
+		protected Survey $survey,
+		protected readonly View $view,
+		protected array $progress = [],
+		protected array $customAnswers = []
+	) {
+	}
 
 
 	/**

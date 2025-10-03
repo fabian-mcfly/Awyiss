@@ -13,7 +13,7 @@ use Awyiss\Model\Entity\SurveyEntry;
 use Awyiss\Model\Entity\SurveySurveyQuestion;
 use Awyiss\Model\Table\SurveyEntriesTable;
 use Awyiss\Routing\Router;
-use Awyiss\Survey\AbstractSurveyResults;
+use Awyiss\Survey\SurveyResultsInterface;
 use Awyiss\Utility\Form\FormRenderer;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
@@ -70,9 +70,9 @@ class SurveyRenderer {
 	 */
 	protected array $requestData = [];
 	/**
-	 * @var \Awyiss\Survey\AbstractSurveyResults|null
+	 * @var \Awyiss\Survey\SurveyResultsInterface|null
 	 */
-	protected ?AbstractSurveyResults $results = null;
+	protected ?SurveyResultsInterface $results = null;
 	/**
 	 * Whether the survey entry was saved successfully.
 	 * Null if the survey was not processed yet.
@@ -175,6 +175,7 @@ class SurveyRenderer {
 	 * @param string|null $surveyEntryHash
 	 * @param string|null $formEntryHash
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function process(?string $surveyEntryHash = null, ?string $formEntryHash = null): void {
 		if (!$this->survey) {
@@ -282,6 +283,7 @@ class SurveyRenderer {
 	/**
 	 * @param string $formEntryHash
 	 * @return $this
+	 * @throws \Exception
 	 */
 	protected function processFormEntryFromHash(string $formEntryHash): static {
 		if (!$this->survey) {
@@ -442,6 +444,7 @@ class SurveyRenderer {
 	 * Process the form if the current action is a form.
 	 *
 	 * @return bool
+	 * @throws \Exception
 	 */
 	protected function processForm(): bool {
 		$lo_form = null;
@@ -658,18 +661,24 @@ class SurveyRenderer {
 	 * @return $this
 	 */
 	protected function loadResultsClass(): static {
-		/** @var class-string<\Awyiss\Survey\AbstractSurveyResults> $ls_className */
+		/** @var class-string<\Awyiss\Survey\SurveyResultsInterface> $ls_className */
 		$ls_className = App::className(Inflector::camelize($this->survey->identifier), 'Survey', 'SurveyResults');
 
-		if ($ls_className) {
-			/** @var \Awyiss\Survey\AbstractSurveyResults $lo_results */
-			$this->results = new $ls_className(
-				$this->survey,
-				$this->View,
-				$this->survey->getProgress(),
-				$this->survey->getCustomAnswers()
-			);
+		if (!$ls_className) {
+			return $this;
 		}
+
+		if (!is_subclass_of($ls_className, SurveyResultsInterface::class)) {
+			throw new RuntimeException(sprintf('The survey results class "%s" must extend "%s".', $ls_className, SurveyResultsInterface::class));
+		}
+
+		/** @var \Awyiss\Survey\SurveyResultsInterface $lo_results */
+		$this->results = new $ls_className(
+			$this->survey,
+			$this->View,
+			$this->survey->getProgress(),
+			$this->survey->getCustomAnswers()
+		);
 
 		return $this;
 	}

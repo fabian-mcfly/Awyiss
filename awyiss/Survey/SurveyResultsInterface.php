@@ -13,58 +13,14 @@ use Cake\View\View;
  * AbstractSurveyResults class
  * This class is a placeholder for survey results.
  */
-abstract class AbstractSurveyResults {
+interface SurveyResultsInterface {
 	/**
 	 * @param \Awyiss\Model\Entity\Survey $survey
 	 * @param \Cake\View\View $view
 	 * @param array $progress
 	 * @param array $customAnswers
 	 */
-	public function __construct(
-		protected Survey $survey,
-		protected readonly View $view,
-		protected array $progress = [],
-		protected array $customAnswers = []
-	) {
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getProgress(): array {
-		return $this->progress;
-	}
-
-
-	/**
-	 * @param array $progress
-	 * @return $this
-	 */
-	public function setProgress(array $progress): static {
-		$this->progress = $progress;
-
-		return $this;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getCustomAnswers(): array {
-		return $this->customAnswers;
-	}
-
-
-	/**
-	 * @param array $customAnswers
-	 * @return $this
-	 */
-	public function setCustomAnswers(array $customAnswers): static {
-		$this->customAnswers = $customAnswers;
-
-		return $this;
-	}
+	public function __construct(Survey $survey, View $view, array $progress = [], array $customAnswers = []);
 
 
 	/**
@@ -80,7 +36,7 @@ abstract class AbstractSurveyResults {
 	 * @see \Awyiss\Model\Enum\Survey\NextAction::SaveAndEnd
 	 * @see \Awyiss\Model\Enum\Survey\NextAction::SaveAndShowForm
 	 */
-	abstract public function getFinalResult(?string $successMessage, MediaRenderOptions $mediaRenderOptions): string;
+	public function getFinalResult(?string $successMessage, MediaRenderOptions $mediaRenderOptions): string;
 
 
 	/**
@@ -92,5 +48,5 @@ abstract class AbstractSurveyResults {
 	 * @return string|null The result of the step. Either the `text`-property of the question or a custom result
 	 * @see \Awyiss\Model\Enum\Survey\QuestionType::InfoText
 	 */
-	abstract public function getStepResult(string $identifier, MediaRenderOptions $mediaRenderOptions): ?string;
+	public function getStepResult(string $identifier, MediaRenderOptions $mediaRenderOptions): ?string;
 }
