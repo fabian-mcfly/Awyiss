@@ -5,7 +5,6 @@ namespace Awyiss\Event\Backend;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Design;
 use Awyiss\Routing\Router;
 use Cake\Event\Event;
@@ -17,14 +16,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  * Event listeners for the Datatables scope of the backend
  */
 class DesignsListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

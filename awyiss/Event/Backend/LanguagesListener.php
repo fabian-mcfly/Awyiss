@@ -5,7 +5,6 @@ namespace Awyiss\Event\Backend;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Event\EventManager;
 use Awyiss\Model\Entity\Language;
 use Cake\Event\Event;
@@ -16,15 +15,6 @@ use Cake\Event\EventListenerInterface;
  * Event listeners for the Languages scope of the backend
  */
 class LanguagesListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

@@ -7,7 +7,6 @@ namespace Awyiss\Event\Backend;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\UserConfiguration;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -17,14 +16,7 @@ use Cake\Event\EventListenerInterface;
  * Event listeners for the Configuration scope of the backend
  */
 class UserConfigurationListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use IdentityAwareTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

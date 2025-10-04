@@ -5,7 +5,6 @@ namespace Awyiss\Event\Backend;
 
 
 use ArrayObject;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\FormElement;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -16,15 +15,6 @@ use Cake\Utility\Security;
  * Event listeners for the FormElements scope of the backend
  */
 class FormElementsListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

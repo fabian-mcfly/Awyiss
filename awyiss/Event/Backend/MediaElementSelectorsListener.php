@@ -4,7 +4,6 @@
 namespace Awyiss\Event\Backend;
 
 
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\MediaElementSelector;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -15,14 +14,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  * Event listeners for the MediaElementSelectors scope of the backend
  */
 class MediaElementSelectorsListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

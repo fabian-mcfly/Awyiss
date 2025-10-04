@@ -14,7 +14,6 @@ namespace Awyiss\Event\Global;
 use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Core\App;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\SqliteSchemaDialect;
@@ -28,15 +27,8 @@ use Cake\ORM\Query\SelectQuery;
  * Event listeners for the Pages (and dynamically created page roles) scope
  */
 class PagesListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use IdentityAwareTrait;
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

@@ -4,7 +4,6 @@
 namespace Awyiss\Event\Backend;
 
 
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Event\EventManager;
 use Awyiss\Model\Entity\Datatable;
 use Awyiss\Utility\Inflector;
@@ -20,14 +19,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  * Event listeners for the Datatables scope of the backend
  */
 class DatatablesListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

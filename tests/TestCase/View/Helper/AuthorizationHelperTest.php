@@ -338,7 +338,7 @@ class AuthorizationHelperTest extends TestCase {
 
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
 		$identity->expects($this->once())->method('scopeIsAccessible')
-		->with('scope', [], 'identifier')
+		->with('scope', ['foo' => 'bar'], 'identifier')
 		->willReturn(true);
 
 		$this->helper->setConfig('identity', $identity);

@@ -5,7 +5,6 @@ namespace Awyiss\Event\Backend;
 
 
 use ArrayObject;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\WidgetTemplate;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
@@ -20,15 +19,6 @@ use Cake\Utility\Text;
  * Event listeners for the WidgetTemplates scope of the backend
  */
 class WidgetTemplatesListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

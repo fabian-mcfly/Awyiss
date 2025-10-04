@@ -360,7 +360,7 @@ class UsergroupsController extends Controller {
 	protected function formatPermissions(Usergroup $usergroup): void {
 		$la_currentPermissions = [];
 
-		foreach ($usergroup->usergroup_permissions ?? [] as $lo_usergroupPermission) {
+		foreach ($usergroup->usergroupPermissions ?? [] as $lo_usergroupPermission) {
 			if (!isset($la_currentPermissions[ $lo_usergroupPermission->scope ])) {
 				$la_currentPermissions[ $lo_usergroupPermission->scope ] = [];
 			}
@@ -371,7 +371,7 @@ class UsergroupsController extends Controller {
 			];
 		}
 
-		$usergroup->usergroup_permissions = $la_currentPermissions;
+		$usergroup->usergroupPermissions = $la_currentPermissions;
 	}
 
 

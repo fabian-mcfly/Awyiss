@@ -120,7 +120,7 @@ class AuthorizationComponent extends Component {
 	/**
 	 * Returns the identity set in the config
 	 *
-	 * @return IdentityPermissionsInterface
+	 * @return \Awyiss\Authorization\IdentityPermissionsInterface
 	 */
 	public function getIdentity(): IdentityPermissionsInterface {
 		$lo_identity = $this->getConfig('identity');
@@ -138,7 +138,7 @@ class AuthorizationComponent extends Component {
 	/**
 	 * Save the given identity to the config
 	 *
-	 * @param IdentityPermissionsInterface $identity
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
@@ -156,7 +156,7 @@ class AuthorizationComponent extends Component {
 	 * With this clone it's possible to check access for a different identity than the default one provided by _getIdentity(),
 	 * without the need to reset the identity after checking the access for a different one.
 	 *
-	 * @param IdentityPermissionsInterface $identity
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */

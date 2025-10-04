@@ -5,7 +5,6 @@ namespace Awyiss\Event\Backend;
 
 
 use ArrayObject;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\PageTemplate;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
@@ -19,15 +18,6 @@ use Cake\Utility\Text;
  * Event listeners for the PageTemplates scope of the backend
  */
 class PageTemplatesListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

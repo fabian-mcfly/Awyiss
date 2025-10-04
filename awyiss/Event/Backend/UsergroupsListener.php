@@ -5,7 +5,6 @@ namespace Awyiss\Event\Backend;
 
 
 use Awyiss\Authentication\IdentityAwareTrait;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\Usergroup;
 use Cake\Event\Event;
@@ -20,15 +19,8 @@ use Cake\ORM\Query\SelectQuery;
  * Event listeners for the Usergroups scope of the backend
  */
 class UsergroupsListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use LocatorAwareTrait;
 	use IdentityAwareTrait;
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
 
 	/**
 	 * @inheritDoc

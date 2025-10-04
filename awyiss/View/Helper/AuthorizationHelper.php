@@ -62,7 +62,7 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * Returns the identity set in the config
 	 *
-	 * @return IdentityPermissionsInterface
+	 * @return \Awyiss\Authorization\IdentityPermissionsInterface
 	 */
 	public function getIdentity(): IdentityPermissionsInterface {
 		$lo_identity = $this->getConfig('identity');
@@ -80,7 +80,7 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * Save the given identity to the config
 	 *
-	 * @param IdentityPermissionsInterface $identity
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity
 	 * @return $this
 	 */
 	public function setIdentity(IdentityPermissionsInterface $identity): static {
@@ -182,7 +182,9 @@ class AuthorizationHelper extends Helper {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
 
-		return $lo_identity->scopeIsAccessible($scope, $additionalData, ...$identifier);
+		$la_additionalData = $additionalData ?: $this->getConfig('additionalData');
+
+		return $lo_identity->scopeIsAccessible($scope, $la_additionalData, ...$identifier);
 	}
 
 

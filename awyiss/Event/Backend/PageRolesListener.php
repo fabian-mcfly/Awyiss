@@ -4,7 +4,6 @@
 namespace Awyiss\Event\Backend;
 
 
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\PageRole;
 use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
@@ -19,14 +18,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  * Event listeners for the PageRoles scope of the backend
  */
 class PageRolesListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

@@ -140,11 +140,25 @@ class EventListenersProvider {
 
 		/** @var class-string<\Cake\Event\EventListenerInterface> $ls_className */
 		foreach ($la_classes as $ls_className) {
-			$ls_scope = static::sanitizeScope($ls_className::getScope());
+			$ls_scope = static::extractScopeFromClassName($ls_className);
 
 			$la_listeners[ $ls_scope ] ??= $ls_className;
 		}
 
 		return $la_listeners;
+	}
+
+
+	/**
+	 * @param string $scope
+	 * @param int $suffixLength
+	 * @return string
+	 */
+	public static function extractScopeFromClassName(string $scope, int $suffixLength = 8): string {
+		$la_parts = explode('\\', trim($scope, '\\'));
+		$ls_scope = array_pop($la_parts);
+		$ls_scope = substr($ls_scope, 0, -$suffixLength);
+
+		return static::sanitizeScope($ls_scope);
 	}
 }

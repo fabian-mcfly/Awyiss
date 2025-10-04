@@ -4,7 +4,6 @@
 namespace Awyiss\Event\Backend;
 
 
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Widget;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -14,15 +13,6 @@ use Cake\Event\EventListenerInterface;
  * Event listeners for the Widgets scope of the backend
  */
 class WidgetsListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

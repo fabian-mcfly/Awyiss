@@ -7,7 +7,6 @@ namespace Awyiss\Event\Backend;
 use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Core\App;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\PagesTable;
 use Awyiss\Utility\Inflector;
@@ -22,15 +21,8 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  * Event listeners for the Pages (and dynamically created page roles) scope of the backend
  */
 class PagesListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use IdentityAwareTrait;
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

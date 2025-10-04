@@ -15,7 +15,6 @@ use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Configuration\ConfigOptions\MediaConfigOptions;
 use Awyiss\Core\LocalConfig;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Table\MediaTable;
@@ -31,7 +30,6 @@ use Imagick;
  * Event listeners for the Media scope of the backend
  */
 class MediaListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use IdentityAwareTrait;
 	use LocatorAwareTrait;
 
@@ -44,10 +42,6 @@ class MediaListener implements EventListenerInterface {
 	 * @var array<int, \Awyiss\Model\Entity\MediaFolder>|null
 	 */
 	protected static ?array $mediaFolders = null;
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

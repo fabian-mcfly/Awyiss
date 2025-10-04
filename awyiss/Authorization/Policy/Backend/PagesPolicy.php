@@ -14,7 +14,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
  */
 class PagesPolicy extends AbstractPolicy {
 	/**
-	 * @var PermissionOptionCollection
+	 * @var \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
 	 */
 	protected static PermissionOptionCollection $permissionOptionCollection;
 	/**

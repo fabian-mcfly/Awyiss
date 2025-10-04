@@ -5,7 +5,6 @@ namespace Awyiss\Event\Backend;
 
 
 use ArrayObject;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Attribute;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
@@ -17,15 +16,6 @@ use Cake\Utility\Hash;
  * Event listeners for the Attributes scope of the backend
  */
 class AttributesListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

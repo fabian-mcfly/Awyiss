@@ -4,7 +4,6 @@
 namespace Awyiss\Event\Backend;
 
 
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\ContentsTable;
@@ -18,13 +17,6 @@ use Dom\HTMLDocument;
  * Event listeners for the Contents scope of the backend
  */
 class ContentsListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 	/**
 	 * The default fields to check for anchor links
 	 *

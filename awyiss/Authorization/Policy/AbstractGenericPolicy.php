@@ -17,7 +17,13 @@ use Awyiss\Configuration\ConfigOptionsProvider;
  * - `protected static string $scope;`
  */
 abstract class AbstractGenericPolicy {
+	/**
+	 * @var \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
+	 */
 	protected PermissionOptionCollection $permissionOptionCollection;
+	/**
+	 * @var string
+	 */
 	protected string $scope;
 
 

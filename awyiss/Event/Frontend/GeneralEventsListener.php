@@ -5,7 +5,6 @@ namespace Awyiss\Event\Frontend;
 
 
 use ArrayObject;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Cake\Datasource\EntityInterface;
@@ -17,15 +16,6 @@ use Cake\Event\EventListenerInterface;
  * Event listeners for the general events of the frontend
  */
 class GeneralEventsListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

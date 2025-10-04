@@ -4,7 +4,6 @@
 namespace Customer\Event\Global;
 
 
-use Awyiss\Event\EventListenerTrait;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 
@@ -13,15 +12,6 @@ use Cake\Event\EventListenerInterface;
  * Event listeners for the global general events
  */
 class CarsListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

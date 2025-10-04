@@ -4,7 +4,6 @@
 namespace Awyiss\Event\Backend;
 
 
-use Awyiss\Event\EventListenerTrait;
 use Cake\Event\EventListenerInterface;
 
 
@@ -12,15 +11,6 @@ use Cake\Event\EventListenerInterface;
  * Event listeners for the general events of the backend
  */
 class GeneralEventsListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

@@ -5,7 +5,6 @@ namespace Awyiss\Event\Backend;
 
 
 use Awyiss\Annotation\MediaElementAssignable;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\MediaElementAssignment;
 use Awyiss\Utility\Inflector;
 use Cake\Event\Event;
@@ -18,14 +17,7 @@ use ReflectionClass;
  * Event listeners for the MediaElementAssignments scope of the backend
  */
 class MediaElementAssignmentsListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

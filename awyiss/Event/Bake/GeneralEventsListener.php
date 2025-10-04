@@ -5,7 +5,6 @@ namespace Awyiss\Event\Bake;
 
 
 use Awyiss\Command\Bake\EnumCommand;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Event\EventManager;
 use Cake\Console\Arguments;
 use Cake\Event\Event;
@@ -17,15 +16,6 @@ use Cake\Event\EventListenerInterface;
  * Event listeners for general events in the Bake environment
  */
 class GeneralEventsListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

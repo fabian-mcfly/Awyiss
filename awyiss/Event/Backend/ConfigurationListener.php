@@ -7,7 +7,6 @@ namespace Awyiss\Event\Backend;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Core\LocalConfig;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Configuration;
 use Awyiss\Routing\Router;
@@ -23,14 +22,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  * Event listeners for the Configuration scope of the backend
  */
 class ConfigurationListener implements EventListenerInterface {
-	use EventListenerTrait;
 	use LocatorAwareTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**

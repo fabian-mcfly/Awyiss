@@ -5,7 +5,6 @@ namespace Awyiss\Event\Backend;
 
 
 use ArrayObject;
-use Awyiss\Event\EventListenerTrait;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 
@@ -14,15 +13,6 @@ use Cake\Event\EventListenerInterface;
  * Event listeners for the UrlHistory< scope of the backend
  */
 class UrlHistoryListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
 	/**
 	 * @inheritDoc
 	 */

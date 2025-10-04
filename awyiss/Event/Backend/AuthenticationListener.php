@@ -7,7 +7,6 @@ namespace Awyiss\Event\Backend;
 use Authentication\Authenticator\AuthenticatorInterface;
 use Authentication\IdentityInterface;
 use Awyiss\Awyiss;
-use Awyiss\Event\EventListenerTrait;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
@@ -20,9 +19,6 @@ use Cake\Event\EventListenerInterface;
  * Event listeners for the general events of the backend
  */
 class AuthenticationListener implements EventListenerInterface {
-	use EventListenerTrait;
-
-
 	/**
 	 * @var array<array>
 	 */
@@ -31,10 +27,6 @@ class AuthenticationListener implements EventListenerInterface {
 	 * @var array<array>
 	 */
 	protected static array $initializedModels = [];
-	/**
-	 * @var string
-	 */
-	protected static string $scope;
 
 
 	/**
