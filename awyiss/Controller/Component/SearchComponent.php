@@ -5,7 +5,6 @@ namespace Awyiss\Controller\Component;
 
 
 use Awyiss\Model\Enum\ComparisonOperator;
-use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Controller\Component;
 use Cake\ORM\Query\SelectQuery;
@@ -177,7 +176,7 @@ class SearchComponent extends Component {
 			$lo_request->getSession()->delete($lo_sessionIdentifier);
 
 			// Redirect to the same page to prevent resubmission
-			$this->getController()->redirect(Router::url());
+			$this->getController()->redirect([]);
 
 			return;
 		}
@@ -232,7 +231,7 @@ class SearchComponent extends Component {
 		}
 
 		// Redirect to the same page to prevent resubmission
-		$this->getController()->redirect(Router::url());
+		$this->getController()->redirect([]);
 	}
 
 
