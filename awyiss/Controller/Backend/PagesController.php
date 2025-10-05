@@ -224,7 +224,12 @@ class PagesController extends Controller {
 					$ls_pageRole = Inflector::pluralize($this->getPageRole()->name);
 					$la_entities = $lo_entities->toArray();
 
-					if ($this->Pages->saveMany($la_entities, ['associated' => ['Child' . $ls_pageRole]])) {
+					$la_associated = ['Child' . $ls_pageRole];
+					if ($this->Pages->hasAttributes()) {
+						$la_associated[] = $this->Pages->getAttributesTableName(true);
+					}
+
+					if ($this->Pages->saveMany($la_entities, ['associated' => $la_associated])) {
 						$lb_success = true;
 					}
 					else {
@@ -877,8 +882,8 @@ class PagesController extends Controller {
 		$la_sortCounter = []; // Array to keep track of the sort order at each level
 		$lo_entities = collection([]);
 
-		$li_rootParentId = $requestData['parent_id'] ?: null;
-		$li_firstSystemOrder = $requestData['system_order'];
+		$li_rootParentId = $requestData['parent_id'] ?? null;
+		$li_firstSystemOrder = $requestData['system_order'] ?? null;
 
 		/** @noinspection PhpVariableNamingConventionInspection */
 		unset($requestData['parent_id'], $requestData['system_order']);

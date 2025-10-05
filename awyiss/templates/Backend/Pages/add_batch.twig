@@ -41,7 +41,7 @@
 			{% endif %}
 
 			{% block headlineAddBatch %}
-				<h1>{{ __('headline_add_batch') }}</h1>
+				<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_add_batch', pageRole.title) }}</h1>
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -53,54 +53,63 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formAddButtons %}
+				{% block formAddButtonSave %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'GenericPageForm'}) }}
+				{% endblock %}
+
 				{% block formAddButtonSaveClose %}
 					{% if AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'PageForm', name: 'submit_type', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'GenericPageForm', name: 'submit_type', value: 'submit_close'}) }}
 					{% endif %}
 				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
 
-	{{ block('formOpen') }}
+	{{ FormHelper.create(page, {method: 'post', id: 'GenericPageForm', idPrefix: pageRoleName}) }}
+	<input type="hidden" name="attributes" value="">
 
-	{{ block('sidebarToggle') }}
+	{% set fieldsetGeneral %}
+		{% block fieldsetGeneral %}
+			<fieldset class="Fieldset-General">
+				<legend>{{ __('fieldset_general') }}</legend>
+
+				{% block fieldsetGeneralInner %}
+					{% block formControlPages %}
+						{{ FormHelper.control('pages', {type: 'textarea'}) }}
+					{% endblock %}
+
+					{{ parent() }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+	{% endset %}
 
 	{% block fieldsets %}
 		<div class="Fieldsets">
-			{% block mainFieldsets %}
-				<div class="Main-Fieldsets">
-					{% block fieldsetGeneral %}
-						<fieldset class="Fieldset-General">
-							<legend>{{ __('fieldset_general') }}</legend>
+			{% block formAddBatch %}
+				{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+					{{ block("fieldsetPresentation") }}
 
-							{% block fieldsetGeneralInner %}
-								{% block formControlPages %}
-									{{ FormHelper.control('pages', {type: 'textarea'}) }}
-								{% endblock %}
+					{{ block("fieldsetConditions") }}
 
-								{% block fieldsetGeneralAttributes %}
-									{{ AttributesHelper.allControls('general') }}
-								{% endblock %}
-							{% endblock %}
-						</fieldset>
-					{% endblock %}
+					{{ block("fieldsetGeneral") }}
 
-					{{ block('fieldsetContent') }}
+					{{ block("fieldsetContent") }}
 
-					{{ block('fieldsetMedia') }}
+					{{ block("fieldsetAttributes") }}
+				{% endif %}
 
-					{{ block('fieldsetMediaElementAssignments') }}
-				</div>
+				{{ block('mainFieldsets') }}
+
+				{{ block('sidebarFieldsets') }}
+
+				{{ block("formInputReloadForm") }}
 			{% endblock %}
-
-			{{ block('sidebarFieldsets') }}
-
-			{{ block('formInputReloadForm') }}
 		</div>
 	{% endblock %}
 
-	{{ block('formClose') }}
+	{{ FormHelper.end() }}
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">

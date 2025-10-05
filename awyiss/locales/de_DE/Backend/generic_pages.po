@@ -17,6 +17,9 @@ msgstr "{0}"
 msgid "meta_title_add"
 msgstr "{0} hinzufügen"
 
+msgid "meta_title_add_batch"
+msgstr "Mehrere {0} hinzufügen"
+
 msgid "meta_title_edit"
 msgstr "{0} bearbeiten"
 
@@ -128,3 +131,6 @@ msgstr "Unterordner von"
 
 msgid "configuration_identifier_frontend_categories_forced_root_page_id"
 msgstr "ID der forcierten Eltern-Seite"
+
+msgid "pages"
+msgstr "Seiten"

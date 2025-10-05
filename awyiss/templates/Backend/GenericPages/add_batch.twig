@@ -42,7 +42,7 @@
 			{% endif %}
 
 			{% block headlineAddBatch %}
-				<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_add_batch'pageRole.title) }}</h1>
+				<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_add_batch', pageRole.title) }}</h1>
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -70,30 +70,43 @@
 	{{ FormHelper.create(page, {method: 'post', id: 'GenericPageForm', idPrefix: pageRoleName}) }}
 	<input type="hidden" name="attributes" value="">
 
+	{% set fieldsetGeneral %}
+		{% block fieldsetGeneral %}
+			<fieldset class="Fieldset-General">
+				<legend>{{ __('fieldset_general') }}</legend>
+
+				{% block fieldsetGeneralInner %}
+					{% block formControlPages %}
+						{{ FormHelper.control('pages', {
+							label: __df(pageRoleName, 'generic_pages', 'pages'),
+							type: 'textarea',
+						}) }}
+					{% endblock %}
+
+					{{ parent() }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+	{% endset %}
+
 	{% block fieldsets %}
 		<div class="Fieldsets">
 			{% block formAddBatch %}
-				{{ block("fieldsetPresentation") }}
+				{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+					{{ block("fieldsetPresentation") }}
 
-				{{ block("fieldsetConditions") }}
+					{{ block("fieldsetConditions") }}
 
-				{% block fieldsetGeneral %}
-					<fieldset class="Fieldset-General">
-						<legend>{{ __('fieldset_general') }}</legend>
+					{{ block("fieldsetGeneral") }}
 
-						{% block fieldsetGeneralInner %}
-							{% block formControlPages %}
-								{{ FormHelper.control('pages', {type: 'textarea'}) }}
-							{% endblock %}
+					{{ block("fieldsetContent") }}
 
-							{{ parent() }}
-						{% endblock %}
-					</fieldset>
-				{% endblock %}
+					{{ block("fieldsetAttributes") }}
+				{% endif %}
 
-				{{ block("fieldsetContent") }}
+				{{ block('mainFieldsets') }}
 
-				{{ block("fieldsetAttributes") }}
+				{{ block('sidebarFieldsets') }}
 
 				{{ block("formInputReloadForm") }}
 			{% endblock %}

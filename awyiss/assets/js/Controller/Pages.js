@@ -29,7 +29,7 @@ export default class PagesController {
 		// Initialize the SEO snippet
 		this.seoSnippet = new SeoSnippet('.SeoSnippet');
 
-		const batchTextArea = document.getElementById('Page-Pages')
+		const batchTextArea = document.querySelector('.FormInputName-Pages > textarea')
 		if (batchTextArea) {
 			new BatchTextArea(batchTextArea);
 
