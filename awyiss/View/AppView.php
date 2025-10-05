@@ -253,7 +253,7 @@ class AppView extends TwigView {
 	 * @return string|null
 	 */
 	protected function getLoginLogoPath(): ?string {
-		$ls_extensions = ['png', 'jpg', 'svg'];
+		$ls_extensions = ['svg', 'png', 'jpg'];
 		$ls_basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
 
 		// For each extension, check if the file exists
