@@ -5,6 +5,7 @@ namespace Awyiss\Test\TestCase\View\Helper;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
 use Awyiss\View\Helper\FormHelper;
@@ -47,6 +48,8 @@ class LocaleHelperTest extends TestCase {
 		$this->locale = new LocaleHelper($view, [
 			'templates' => 'paginator_templates',
 		]);
+
+		LocaleMiddleware::resetLanguages();
 	}
 
 

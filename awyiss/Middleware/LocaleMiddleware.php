@@ -96,6 +96,9 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 		if ($lo_frontendLanguage || $lo_backendLanguage) {
 			static::useLanguage($lo_frontendLanguage, $lo_backendLanguage);
+
+			// After detecting the frontend and backend language, reset the languages to fetch them again with the customer language
+			static::resetLanguages();
 		}
 
 		$lo_request = $request->withAttribute('locale', $this);
