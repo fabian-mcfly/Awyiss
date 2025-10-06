@@ -20,6 +20,12 @@ use ReflectionException;
  */
 class IntegrityCheckCommand extends Command {
 	/**
+	 * @var bool
+	 */
+	protected bool $forCustomer = false;
+
+
+	/**
 	 * @param \Cake\Console\Arguments $args
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
@@ -36,7 +42,13 @@ class IntegrityCheckCommand extends Command {
 			return static::CODE_ERROR;
 		}
 
-		Configure::load('file_hashes');
+		$this->forCustomer = (bool)$args->getOption('customer');
+		if ($this->forCustomer) {
+			Configure::load('custom_file_hashes');
+		}
+		else {
+			Configure::load('file_hashes');
+		}
 
 		switch ($ls_command) {
 			case 'add':
@@ -84,6 +96,12 @@ class IntegrityCheckCommand extends Command {
 			'short' => 'i',
 		]);
 
+		$parser->addOption('customer', [
+			'boolean' => true,
+			'help' => 'Whether to run the command in Awyiss or Customer context',
+			'default' => false,
+		]);
+
 
 		return $parser;
 	}
@@ -104,7 +122,6 @@ class IntegrityCheckCommand extends Command {
 
 			return;
 		}
-
 
 		if (str_contains($path, '::')) {
 			[$ls_className, $ls_method] = explode('::', $path, 2);
@@ -133,8 +150,8 @@ class IntegrityCheckCommand extends Command {
 		ksort($la_config);
 
 		Configure::write('FileHashes', $la_config);
-
-		Configure::dump('Awyiss.file_hashes', 'default', ['FileHashes']);
+		$ls_fileName = $this->forCustomer ? CUSTOM_NAMESPACE . '.custom_file_hashes' : 'Awyiss.file_hashes';
+		Configure::dump($ls_fileName, 'default', ['FileHashes']);
 
 		$io->success(sprintf('Added: %s with hash `%s`', $ls_key, $ls_hash));
 	}
@@ -178,7 +195,8 @@ class IntegrityCheckCommand extends Command {
 		ksort($la_config);
 
 		Configure::write('FileHashes', $la_config);
-		Configure::dump('Awyiss.file_hashes', 'default', ['FileHashes']);
+		$ls_fileName = $this->forCustomer ? CUSTOM_NAMESPACE . '.custom_file_hashes' : 'Awyiss.file_hashes';
+		Configure::dump($ls_fileName, 'default', ['FileHashes']);
 
 		$io->success(sprintf('Removed `%s`', $path));
 	}
@@ -294,8 +312,8 @@ class IntegrityCheckCommand extends Command {
 			ksort($la_config);
 
 			Configure::write('FileHashes', $la_config);
-
-			Configure::dump('Awyiss.file_hashes', 'default', ['FileHashes']);
+			$ls_fileName = $this->forCustomer ? CUSTOM_NAMESPACE . '.custom_file_hashes' : 'Awyiss.file_hashes';
+			Configure::dump($ls_fileName, 'default', ['FileHashes']);
 		}
 
 		if (!$reportOnlyModified || $la_results['changed']) {
