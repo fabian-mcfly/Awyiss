@@ -503,11 +503,10 @@ class BackendMenuEntriesController extends Controller {
 				$la_permissions[] = $ls_identifier;
 			}
 
-			$la_policies[ $ls_scope ] = $la_permissions;
+			$la_policies[ Inflector::camelize($ls_scope) ] = $la_permissions;
 		}
 
 		ksort($la_policies);
-
 
 		return $la_policies;
 	}
