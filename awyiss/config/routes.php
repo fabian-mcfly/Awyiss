@@ -123,6 +123,25 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 
 	$routeBuilder->applyMiddleware('requestLocale');
 
+
+	/**
+	 * Load the general routes
+	 * - for the environment in the custom_dir
+	 * - for the custom_dir
+	 */
+	if (defined('CUSTOM_CONFIG')) {
+		$ls_file = ENV_CUSTOM_CONFIG . 'routes.php';
+		if (is_file($ls_file)) {
+			include $ls_file;
+		}
+
+		$ls_file = CUSTOM_CONFIG . 'routes.php';
+		if (is_file($ls_file)) {
+			include $ls_file;
+		}
+	}
+
+
 	$routeBuilder->connect(
 		'/robots',
 		['prefix' => 'Frontend', 'controller' => 'Sitemap', 'action' => 'robots'],

@@ -44,6 +44,25 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 
 	$routeBuilder->applyMiddleware('requestLocale');
 
+
+	/**
+	 * Load the backend-related routes
+	 * - for the environment in the custom_dir
+	 * - for the custom_dir
+	 */
+	if (defined('CUSTOM_CONFIG')) {
+		$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
+		if (is_file($ls_file)) {
+			include $ls_file;
+		}
+
+		$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
+		if (is_file($ls_file)) {
+			include $ls_file;
+		}
+	}
+
+
 	$routeBuilder->connect('/{lang}/{controller}/{action}/id:{id}/*')
 	->setPatterns([
 		'lang' => '[a-zA-Z]{2}',

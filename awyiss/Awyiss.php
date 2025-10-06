@@ -235,43 +235,7 @@ class Awyiss extends BaseApplication {
 			return;
 		}
 
-		/**
-		 * Load the general routes
-		 * - for the environment
-		 * - for the custom_dir
-		 * - for Awyiss
-		 */
-		if (defined('CUSTOM_CONFIG')) {
-			$ls_file = ENV_CUSTOM_CONFIG . 'routes.php';
-			if (is_file($ls_file)) {
-				include $ls_file;
-			}
-
-			$ls_file = CUSTOM_CONFIG . 'routes.php';
-			if (is_file($ls_file)) {
-				include $ls_file;
-			}
-		}
-
 		require $this->configDir . 'routes.php';
-
-		/**
-		 * Load the backend-related routes
-		 * - for the environment
-		 * - for the custom_dir
-		 * - for Awyiss
-		 */
-		if (defined('CUSTOM_CONFIG')) {
-			$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
-			if (is_file($ls_file)) {
-				include $ls_file;
-			}
-
-			$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
-			if (is_file($ls_file)) {
-				include $ls_file;
-			}
-		}
 
 		require $this->configDir . 'routes_backend.php';
 	}
