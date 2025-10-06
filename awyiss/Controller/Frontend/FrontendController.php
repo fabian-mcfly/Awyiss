@@ -50,7 +50,7 @@ class FrontendController extends AppController {
 	public function initialize(): void {
 		AppController::initialize();
 
-		//Load event listeners for the current controller in the "backend"-folder
+		// Load event listeners for the current controller in the "Frontend"-folder
 		EventListenersProvider::loadListener($this->getName(), Awyiss::REALM_FRONTEND);
 
 		$this->viewBuilder()->setClassName('Frontend');
@@ -167,6 +167,7 @@ class FrontendController extends AppController {
 			'Languages' => [
 				'finder' => $languageShortcode ? 'withDeleted' : 'all',
 			],
+			'PageRoles',
 			'PageTemplates',
 		]);
 
@@ -185,6 +186,11 @@ class FrontendController extends AppController {
 			]);
 		}
 
+		$lo_query->orderBy([
+			'PageRoles.active' => 'DESC',
+			'PageRoles.system_order' => 'ASC',
+		]);
+
 		if ($slug) {
 			$lo_query->where(['slug' => $slug]);
 
@@ -193,6 +199,7 @@ class FrontendController extends AppController {
 			}
 			else {
 				$lo_query->orderBy([
+					'Languages.system_order' => 'ASC',
 					'Languages.deleted' => 'ASC',
 				]);
 
@@ -257,13 +264,20 @@ class FrontendController extends AppController {
 		}
 
 		/*
-		 * If the page or the language of the page is deleted,
+		 * If the page or the page role or the language of the page is deleted,
 		 * check if there's a history entry for the current slug.
 		 *
 		 * If there is, redirect to the correct page.
 		 * If there isn't, find the 410 page for the current language.
 		 */
-		if ($lo_page && ($lo_page->deleted || $lo_page->language->deleted)) {
+		if (
+			$lo_page &&
+			(
+				$lo_page->deleted ||
+				$lo_page->pageRole->deleted ||
+				$lo_page->language->deleted
+			)
+		) {
 			// Try to find an entry in the slug history
 			$this->historyRedirect($lo_page->languageShortcode . '/' . $lo_page->slug);
 
@@ -290,6 +304,7 @@ class FrontendController extends AppController {
 
 		/*
 		 * If no page was found or the page is not active or the parents are not active,
+		 * or the page role is not active or the language is not active,
 		 * find the 404 page for the current language.
 		 */
 		if (
@@ -298,6 +313,7 @@ class FrontendController extends AppController {
 				(
 					!$lo_page->active ||
 					!$lo_page->parentsActive ||
+					!$lo_page->pageRole->active ||
 					!$lo_page->language->active ||
 					!$this->parentsArePublished($lo_page)
 				) &&
