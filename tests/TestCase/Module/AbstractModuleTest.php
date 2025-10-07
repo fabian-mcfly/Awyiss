@@ -7,13 +7,13 @@ namespace Awyiss\Test\TestCase\Module;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Module\AbstractModule;
+use Awyiss\Module\BreadcrumbsModule;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\View\BackendView;
 use Awyiss\View\FrontendView;
 use Awyiss\View\Helper\FormHelper;
 use Awyiss\View\HelperRegistry;
-use Customer\Module\EmptyModule;
 use Customer\Module\NewsListingModule;
 
 
@@ -211,7 +211,7 @@ class AbstractModuleTest extends TestCase {
 		$frontendLanguage = $this->mockLanguage;
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->testModule = new \Awyiss\Module\BreadcrumbsModule();
+		$this->testModule = new BreadcrumbsModule();
 
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
 			'module/breadcrumbs',
