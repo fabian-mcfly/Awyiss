@@ -214,14 +214,23 @@ export default class RoutePlanner {
 	 * @param {number} lng - The longitude of the target.
 	 */
 	initMap(routePlanner, container, lat, lng) {
+		let style = routePlanner.dataset.tileStyle || 'graybeard';
+		if (!['graybeard', 'colorful'].includes(style)) {
+			style = 'graybeard';
+		}
+
+		let zoom = parseInt(routePlanner.dataset.zoom) || 13;
+		if (zoom < 0 || zoom > 20) {
+			zoom = 13;
+		}
+
 		const mapLibreSettings = {
 			center: [lng, lat],
 			container: container,
 			cooperativeGestures: true,
 			locale: mapLibreLocale,
-			style: 'https://tiles.versatiles.org/assets/styles/graybeard/style.json',
-			//style: 'https://tiles.versatiles.org/assets/styles/colorful/style.json',
-			zoom: 13,
+			style: `https://tiles.versatiles.org/assets/styles/${style}/style.json`,
+			zoom: zoom,
 		};
 
 		// Add the mapLibre settings from the class settings
