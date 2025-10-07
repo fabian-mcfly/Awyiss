@@ -455,7 +455,7 @@ class NestBehavior extends Behavior {
 				$lo_association->setFinder([
 					'withMatchingAttributes' => [
 						'entity' => $entity,
-						'keys' => $la_attributeKeys,
+						'fields' => $la_attributeKeys,
 					],
 				]);
 			}

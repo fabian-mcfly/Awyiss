@@ -123,11 +123,11 @@ class ExistsIn extends BaseExistsIn {
 
 		/** @var \Awyiss\Model\Entity|null $lo_attributesEntity */
 		$lo_attributesEntity = $lx_finder['withMatchingAttributes']['entity']?->get('attributes') ?? null;
-		$la_keys = $lx_finder['withMatchingAttributes']['keys'] ?? [];
+		$la_fields = $lx_finder['withMatchingAttributes']['fields'] ?? [];
 
 		$lo_realTarget = $target instanceof Association ? $target->getTarget() : $target;
 
-		return !!$lo_attributesEntity?->extract($lo_realTarget->extractAttributeFields($la_keys, true), true);
+		return !!$lo_attributesEntity?->extract($lo_realTarget->extractAttributeFields($la_fields, true), true);
 	}
 
 

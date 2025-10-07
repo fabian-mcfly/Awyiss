@@ -313,7 +313,7 @@ class ExistsInTest extends TestCase {
 		$finder = [
 			'withMatchingAttributes' => [
 				'entity' => $mainEntity,
-				'keys' => ['key1', 'key2'],
+				'fields' => ['key1', 'key2'],
 			],
 		];
 
@@ -363,7 +363,7 @@ class ExistsInTest extends TestCase {
 		$finder = [
 			'withMatchingAttributes' => [
 				'entity' => $mainEntity,
-				'keys' => ['key1', 'key2'],
+				'fields' => ['key1', 'key2'],
 			],
 		];
 
