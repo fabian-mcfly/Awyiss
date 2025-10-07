@@ -13,6 +13,8 @@ use Awyiss\View\BackendView;
 use Awyiss\View\FrontendView;
 use Awyiss\View\Helper\FormHelper;
 use Awyiss\View\HelperRegistry;
+use Customer\Module\EmptyModule;
+use Customer\Module\NewsListingModule;
 
 
 /**
@@ -58,14 +60,6 @@ class AbstractModuleTest extends TestCase {
 
 		// Create a concrete implementation of AbstractModule for testing
 		$this->testModule = new class extends AbstractModule {
-			/**
-			 * The identifier of the module
-			 *
-			 * @var string
-			 */
-			protected static string $identifier = 'test_module';
-
-
 			/**
 			 * @inheritDoc
 			 */
@@ -113,20 +107,6 @@ class AbstractModuleTest extends TestCase {
 
 
 	/**
-	 * Test getIdentifier method returns the static identifier
-	 *
-	 * @return void
-	 * @see \Awyiss\Module\AbstractModule::getIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testGetIdentifier(): void {
-		$result = $this->testModule::getIdentifier();
-
-		$this->assertSame('test_module', $result);
-	}
-
-
-	/**
 	 * Test isAvailable method returns true by default
 	 *
 	 * @return void
@@ -149,14 +129,6 @@ class AbstractModuleTest extends TestCase {
 	 */
 	public function testIsAvailableCanBeOverridden(): void {
 		$customModule = new class extends AbstractModule {
-			/**
-			 * The identifier of the module
-			 *
-			 * @var string
-			 */
-			protected static string $identifier = 'custom_module';
-
-
 			/**
 			 * @inheritDoc
 			 */
@@ -239,15 +211,17 @@ class AbstractModuleTest extends TestCase {
 		$frontendLanguage = $this->mockLanguage;
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
+		$this->testModule = new \Awyiss\Module\BreadcrumbsModule();
+
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
-			'module/test_module',
-			[
-				'entity' => $entity,
-				'frontendLanguage' => $frontendLanguage,
-				'mediaRenderOptions' => $mediaRenderOptions,
-				'settings' => $settings,
-			]
-		)->willReturn('<div class="test-module">Rendered module content</div>');
+			'module/breadcrumbs',
+			$this->callback(function (array $data) use ($entity, $frontendLanguage, $mediaRenderOptions, $settings) {
+				return $data['entity'] === $entity &&
+					   $data['frontendLanguage'] === $frontendLanguage &&
+					   $data['mediaRenderOptions'] === $mediaRenderOptions &&
+					   $data['settings'] === $settings;
+			})
+		)->willReturn('');
 
 		$result = $this->testModule::render(
 			$settings,
@@ -257,7 +231,7 @@ class AbstractModuleTest extends TestCase {
 			$frontendLanguage
 		);
 
-		$this->assertSame('<div class="test-module">Rendered module content</div>', $result);
+		$this->assertSame('', $result);
 	}
 
 
@@ -270,33 +244,10 @@ class AbstractModuleTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderConvertsIdentifierToUnderscore(): void {
-		$camelCaseModule = new class extends AbstractModule {
-			/**
-			 * The identifier of the module
-			 *
-			 * @var string
-			 */
-			protected static string $identifier = 'CamelCaseModuleName';
-
-
-			/**
-			 * @inheritDoc
-			 */
-			public static function getTitle(): string {
-				return 'CamelCase Module';
-			}
-
-
-			/**
-			 * @inheritDoc
-			 */
-			protected static function getFormFields(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): array {
-				return [];
-			}
-		};
+		$camelCaseModule = new NewsListingModule();
 
 		$this->mockFrontendView->expects($this->once())->method('element')->with(
-			'module/camel_case_module_name', // Should be converted to underscore
+			'module/news_listing', // Should be converted to underscore
 			$this->anything()
 		)->willReturn('<div>Camel case module</div>');
 
@@ -317,14 +268,6 @@ class AbstractModuleTest extends TestCase {
 	 */
 	public function testRenderFormWithEmptyFields(): void {
 		$emptyModule = new class extends AbstractModule {
-			/**
-			 * The identifier of the module
-			 *
-			 * @var string
-			 */
-			protected static string $identifier = 'empty_module';
-
-
 			/**
 			 * @inheritDoc
 			 */

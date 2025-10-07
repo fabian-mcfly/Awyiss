@@ -576,7 +576,7 @@ class AwyissExtensionTest extends TestCase {
 		$moduleFunction = $functions[21];
 		$callable = $moduleFunction->getCallable();
 
-		$result = $callable(['_view' => $this->view], 'testModule', ['key' => 'some_value']);
+		$result = $callable(['_view' => $this->view], 'test', ['key' => 'some_value']);
 
 		$this->assertSame('Rendered Output (and key is `some_value`)', $result);
 	}

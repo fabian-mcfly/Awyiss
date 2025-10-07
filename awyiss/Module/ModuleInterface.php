@@ -16,14 +16,6 @@ use Awyiss\View\FrontendView;
  */
 interface ModuleInterface {
 	/**
-	 * Returns the identifier of the module
-	 *
-	 * @return string
-	 */
-	public static function getIdentifier(): string;
-
-
-	/**
 	 * Returns the human-readable, translated title of the module
 	 *
 	 * @return string

@@ -15,14 +15,6 @@ use Awyiss\View\BackendView;
  */
 class RoutePlannerModule extends AbstractModule {
 	/**
-	 * The identifier of the module
-	 *
-	 * @var string
-	 */
-	protected static string $identifier = 'routePlanner';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public static function getTitle(): string {

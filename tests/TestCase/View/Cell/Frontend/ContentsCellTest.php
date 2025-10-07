@@ -1062,7 +1062,7 @@ class ContentsCellTest extends TestCase {
 	 */
 	public function testParseModuleReplacesModuleTagsWithRenderedOutput(): void {
 		$entity = new Content();
-		$entity->text = '<div>Some content</div><module data-identifier="testModule">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><module data-identifier="test">{"key":"value"}</module><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
@@ -1119,7 +1119,7 @@ class ContentsCellTest extends TestCase {
 	 */
 	public function testParseModuleRemovesModuleTagsWithEmptyOutput(): void {
 		$entity = new Content();
-		$entity->text = '<div>Some content</div><module data-identifier="emptyModule">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><module data-identifier="empty">{"key":"value"}</module><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
@@ -1138,7 +1138,7 @@ class ContentsCellTest extends TestCase {
 	 */
 	public function testParseModuleHandlesMalformedHtmlGracefully(): void {
 		$entity = new Content();
-		$entity->text = '<div>Some content</div><p><module data-identifier="testModule">{"key":"other_value"}</module>e other content</p>';
+		$entity->text = '<div>Some content</div><p><module data-identifier="test">{"key":"other_value"}</module>e other content</p>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
@@ -1242,7 +1242,7 @@ class ContentsCellTest extends TestCase {
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
 		$entity = $contents->firstMatch(['id' => 9]);
-		$entity->text = '<div>Some content</div><module data-identifier="testModule">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><module data-identifier="test">{"key":"value"}</module><div>Some other content</div>';
 
 		$output = $this->callProtectedMethod($this->cell, 'renderElement', $entity, '');
 

@@ -97,7 +97,7 @@ class ModulesProviderTest extends TestCase {
 		$this->assertArrayHasKey('newsListing', $result);
 		$this->assertArrayHasKey('instagramFeed', $result);
 		$this->assertArrayHasKey('routePlanner', $result);
-		$this->assertArrayHasKey('testModule', $result);
+		$this->assertArrayHasKey('test', $result);
 
 		// Verify that each value is a class string that implements ModuleInterface
 		foreach ($result as $moduleClass) {

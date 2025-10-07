@@ -19,14 +19,6 @@ use Cake\Datasource\FactoryLocator;
  */
 class BreadcrumbsModule extends AbstractModule {
 	/**
-	 * The identifier of the module
-	 *
-	 * @var string
-	 */
-	protected static string $identifier = 'breadcrumbs';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public static function getTitle(): string {

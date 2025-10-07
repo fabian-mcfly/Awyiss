@@ -45,20 +45,6 @@ class RoutePlannerModuleTest extends TestCase {
 
 
 	/**
-	 * Test getIdentifier method returns 'routePlanner'
-	 *
-	 * @return void
-	 * @see \Awyiss\Module\RoutePlannerModule::getIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testGetIdentifier(): void {
-		$result = RoutePlannerModule::getIdentifier();
-
-		$this->assertSame('routePlanner', $result);
-	}
-
-
-	/**
 	 * Test getTitle method returns 'Route Planner'
 	 *
 	 * @return void

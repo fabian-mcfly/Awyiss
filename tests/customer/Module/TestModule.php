@@ -17,22 +17,6 @@ use Awyiss\View\FrontendView;
  */
 class TestModule implements ModuleInterface {
 	/**
-	 * The identifier of the module
-	 *
-	 * @var string
-	 */
-	protected static string $identifier = 'testModule';
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public static function getIdentifier(): string {
-		return static::$identifier;
-	}
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public static function getTitle(): string {

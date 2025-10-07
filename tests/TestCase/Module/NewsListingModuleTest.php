@@ -97,20 +97,6 @@ class NewsListingModuleTest extends TestCase {
 
 
 	/**
-	 * Test getIdentifier method returns 'newsListing'
-	 *
-	 * @return void
-	 * @see \Awyiss\Module\NewsListingModule::getIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testGetIdentifier(): void {
-		$result = NewsListingModule::getIdentifier();
-
-		$this->assertSame('newsListing', $result);
-	}
-
-
-	/**
 	 * Test getTitle method returns 'News-Listing'
 	 *
 	 * @return void

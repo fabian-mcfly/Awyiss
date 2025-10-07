@@ -1026,7 +1026,7 @@ class SurveyRendererTest extends TestCase {
 		]);
 
 		$survey = $renderer->getSurvey();
-		$survey->successMessage = '<p><module data-identifier="testModule" data-label="Testmodul">{"key":"value"}</module></p>';
+		$survey->successMessage = '<p><module data-identifier="test" data-label="Testmodul">{"key":"value"}</module></p>';
 
 		$this->assertEquals([
 			'9f8b2c3d' => 13,
@@ -1068,7 +1068,7 @@ class SurveyRendererTest extends TestCase {
 		]);
 
 		$survey = $renderer->getSurvey();
-		$survey->failureMessage = '<p><module data-identifier="testModule" data-label="Testmodul">{"key":"value"}</module></p>';
+		$survey->failureMessage = '<p><module data-identifier="test" data-label="Testmodul">{"key":"value"}</module></p>';
 
 		$this->assertEquals([
 			'9f8b2c3d' => 14,
@@ -1109,7 +1109,7 @@ class SurveyRendererTest extends TestCase {
 		]);
 
 		$question = $survey->getCurrentAction();
-		$question->surveyQuestion->text = '<p><module data-identifier="testModule" data-label="Testmodul">{"key":"value"}</module></p>';
+		$question->surveyQuestion->text = '<p><module data-identifier="test" data-label="Testmodul">{"key":"value"}</module></p>';
 
 		$renderer->process();
 

@@ -17,22 +17,6 @@ use Awyiss\View\FrontendView;
  */
 class EmptyModule implements ModuleInterface {
 	/**
-	 * The identifier of the module
-	 *
-	 * @var string
-	 */
-	protected static string $identifier = 'emptyModule';
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public static function getIdentifier(): string {
-		return static::$identifier;
-	}
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public static function getTitle(): string {

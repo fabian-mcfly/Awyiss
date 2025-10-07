@@ -53,7 +53,7 @@ class ContentsCustomSeed extends AbstractSeed {
 				'title_tag' => null,
 				'subtitle' => null,
 				'subtitle_tag' => null,
-				'text' => '<module class="mceNonEditable" data-identifier="testModule" data-label="Testmodul">{"key":"value"}</module>',
+				'text' => '<module class="mceNonEditable" data-identifier="test" data-label="Testmodul">{"key":"value"}</module>',
 				'link' => null,
 				'column_width' => '1/1',
 				'column_indent' => null,

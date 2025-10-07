@@ -1402,7 +1402,7 @@ class ContentsTableTest extends TestCase {
 			51 => '- Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et e...',
 			57 => '- - logo-awyiss2.jpg',
 			2 => 'contents::inactive logo-awyiss.jpg',
-			8 => '- Module: testModule',
+			8 => '- Module: test',
 			30 => 'Template: Inhaltsblock',
 			31 => '- contents::duplicate_of: (h1) Titel H1 (ID: 32)',
 			37 => 'Template: Inhaltsblock',

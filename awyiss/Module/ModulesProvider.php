@@ -97,7 +97,7 @@ class ModulesProvider {
 				continue;
 			}
 
-			$ls_identifier = static::sanitizeIdentifier($ls_moduleClass::getIdentifier());
+			$ls_identifier = static::extractIdentifierFromClassName($ls_moduleClass);
 
 			if (isset(static::$modules[ $ls_identifier ])) {
 				continue;
@@ -105,5 +105,19 @@ class ModulesProvider {
 
 			static::$modules[ $ls_identifier ] = $ls_moduleClass;
 		}
+	}
+
+
+	/**
+	 * @param string $identifier
+	 * @param int $suffixLength
+	 * @return string
+	 */
+	public static function extractIdentifierFromClassName(string $identifier, int $suffixLength = 6): string {
+		$la_parts = explode('\\', trim($identifier, '\\'));
+		$ls_identifier = array_pop($la_parts);
+		$ls_identifier = substr($ls_identifier, 0, -$suffixLength);
+
+		return static::sanitizeIdentifier($ls_identifier);
 	}
 }

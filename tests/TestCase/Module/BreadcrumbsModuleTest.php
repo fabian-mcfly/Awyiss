@@ -106,20 +106,6 @@ class BreadcrumbsModuleTest extends TestCase {
 
 
 	/**
-	 * Test getIdentifier method returns 'breadcrumbs'
-	 *
-	 * @return void
-	 * @see \Awyiss\Module\BreadcrumbsModule::getIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
-	public function testGetIdentifier(): void {
-		$result = BreadcrumbsModule::getIdentifier();
-
-		$this->assertSame('breadcrumbs', $result);
-	}
-
-
-	/**
 	 * Test getTitle method returns 'Breadcrumbs'
 	 *
 	 * @return void

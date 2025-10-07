@@ -27,14 +27,6 @@ use Cake\ORM\Query\SelectQuery;
  */
 class NewsListingModule extends AbstractModule {
 	/**
-	 * The identifier of the module
-	 *
-	 * @var string
-	 */
-	protected static string $identifier = 'newsListing';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public static function getTitle(): string {

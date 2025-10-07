@@ -21,14 +21,6 @@ abstract class AbstractModule implements ModuleInterface {
 
 
 	/**
-	 * @inheritDoc
-	 */
-	public static function getIdentifier(): string {
-		return static::$identifier;
-	}
-
-
-	/**
 	 * Get the form fields for the module.
 	 *
 	 * @return array<string, string|array<string, mixed>>
@@ -91,7 +83,7 @@ abstract class AbstractModule implements ModuleInterface {
 		?Entity $entity = null,
 		?Language $frontendLanguage = null
 	): string {
-		$ls_elementName = Inflector::underscore(static::getIdentifier());
+		$ls_elementName = Inflector::underscore(ModulesProvider::extractIdentifierFromClassName(static::class));
 
 		return $view->element('module/' . $ls_elementName, [
 			'entity' => $entity,

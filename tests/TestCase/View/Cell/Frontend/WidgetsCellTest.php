@@ -892,7 +892,7 @@ class WidgetsCellTest extends TestCase {
 	 */
 	public function testParseModuleReplacesModuleTagsWithRenderedOutput() {
 		$entity = new Widget();
-		$entity->text = '<div>Some content</div><module data-identifier="testModule">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><module data-identifier="test">{"key":"value"}</module><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
@@ -949,7 +949,7 @@ class WidgetsCellTest extends TestCase {
 	 */
 	public function testParseModuleRemovesModuleTagsWithEmptyOutput() {
 		$entity = new Widget();
-		$entity->text = '<div>Some content</div><module data-identifier="emptyModule">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><module data-identifier="empty">{"key":"value"}</module><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
@@ -968,7 +968,7 @@ class WidgetsCellTest extends TestCase {
 	 */
 	public function testParseModuleHandlesMalformedHtmlGracefully() {
 		$entity = new Widget();
-		$entity->text = '<div>Some content</div><p><module data-identifier="testModule">{"key":"other_value"}</module>e other content</p>';
+		$entity->text = '<div>Some content</div><p><module data-identifier="test">{"key":"other_value"}</module>e other content</p>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
@@ -1058,7 +1058,7 @@ class WidgetsCellTest extends TestCase {
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $widgets);
 
 		$entity = $widgets->firstMatch(['id' => 13]);
-		$entity->text = '<div>Some content</div><module data-identifier="testModule">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><module data-identifier="test">{"key":"value"}</module><div>Some other content</div>';
 
 		$output = $this->callProtectedMethod($this->cell, 'renderElement', $entity, '');
 

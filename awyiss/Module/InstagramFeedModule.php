@@ -28,14 +28,6 @@ use Throwable;
  */
 class InstagramFeedModule extends AbstractModule {
 	/**
-	 * The identifier of the module
-	 *
-	 * @var string
-	 */
-	protected static string $identifier = 'instagramFeed';
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public static function getTitle(): string {

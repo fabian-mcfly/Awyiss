@@ -699,7 +699,7 @@ class FormRendererTest extends TestCase {
 		$form = $renderer->getForm();
 		$formElements = $form->getFormElements();
 		$freeText = $formElements->first();
-		$freeText->text = '<p>Content with module:</p><module class="mceNonEditable" data-identifier="testModule" data-label="Testmodul">{"key":"value"}</module>';
+		$freeText->text = '<p>Content with module:</p><module class="mceNonEditable" data-identifier="test" data-label="Testmodul">{"key":"value"}</module>';
 
 		$renderer->process();
 
