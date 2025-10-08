@@ -173,11 +173,11 @@ class AttributesBehavior extends Behavior {
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param \Awyiss\Model\Entity $entity
-	 * @param array $keys
+	 * @param array $fields
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpUnused
 	 */
-	public function findWithMatchingAttributes(SelectQuery $query, Entity $entity, array $keys): SelectQuery {
+	public function findWithMatchingAttributes(SelectQuery $query, Entity $entity, array $fields): SelectQuery {
 		$ls_attributesTable = $this->table()->getAttributesTableName(true);
 		$la_conditions = [];
 
@@ -187,13 +187,13 @@ class AttributesBehavior extends Behavior {
 		}
 
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$keys = $entity::unmapFields($keys);
+		$fields = $entity::unmapFields($fields);
 
 		$ls_attributesEntityClass = $this->getAttributesTable()->getEntityClass();
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$keys = $ls_attributesEntityClass::unmapFields($keys);
+		$fields = $ls_attributesEntityClass::unmapFields($fields);
 
-		foreach ($this->extractAttributeFields($keys, true) as $ls_field) {
+		foreach ($this->extractAttributeFields($fields, true) as $ls_field) {
 			if (!$lo_attributes->has($ls_field)) {
 				continue;
 			}
