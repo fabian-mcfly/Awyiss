@@ -141,8 +141,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 				/** @var \Awyiss\Model\Entity\PublicationData $lo_publicationData */
 				$lo_publicationData = $lx_row[ '_' . $ls_name ];
-
-				$ls_matchingAlias = Inflector::camelize($ls_alias . '_' . $ls_name);
+				$ls_matchingAlias = Inflector::camelize($ls_alias . '_' . 'publication_data_' . $ls_identifier);
 				if (isset($lx_row['_matchingData'][ $ls_matchingAlias ])) {
 					$lo_publicationData = $lx_row['_matchingData'][ $ls_matchingAlias ];
 					unset($lx_row['_matchingData'][ $ls_matchingAlias ]);
