@@ -102,7 +102,7 @@ class CategoriesBehavior extends Behavior {
 			$ls_associationName = $this->getConfig('associationName');
 			if (!$lo_table->hasAssociation($ls_associationName)) {
 				$lo_table->belongsTo($ls_associationName, [
-					'bindingKey' => $this->getConfig('bindingKey'),
+					'bindingKey' => $this->getConfig('bindingKey', 'id'),
 					'joinType' => 'INNER',
 					'foreignKey' => $this->getConfig('foreignKey'),
 				]);
