@@ -202,7 +202,7 @@ class PageRolesController extends Controller {
 			}
 		}
 		else {
-			if ($this->PageRoles->hasDirtyRelatedSystemOrderColumns($pageRole)) {
+			if ($this->PageRoles->hasDirtySystemOrderRelatedColumns($pageRole)) {
 				$pageRole->systemOrder = null;
 			}
 			else {

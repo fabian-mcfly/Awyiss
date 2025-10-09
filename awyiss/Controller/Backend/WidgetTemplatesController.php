@@ -238,7 +238,7 @@ class WidgetTemplatesController extends Controller {
 			}
 		}
 		else {
-			if ($this->WidgetTemplates->hasDirtyRelatedSystemOrderColumns($widgetTemplate)) {
+			if ($this->WidgetTemplates->hasDirtySystemOrderRelatedColumns($widgetTemplate)) {
 				$widgetTemplate->systemOrder = null;
 			}
 			else {

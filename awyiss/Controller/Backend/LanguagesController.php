@@ -200,7 +200,7 @@ class LanguagesController extends Controller {
 			}
 		}
 		else {
-			if ($this->Languages->hasDirtyRelatedSystemOrderColumns($language)) {
+			if ($this->Languages->hasDirtySystemOrderRelatedColumns($language)) {
 				$language->systemOrder = null;
 			}
 			else {

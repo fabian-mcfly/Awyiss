@@ -64,8 +64,8 @@ class SystemOrderBehavior extends Behavior {
 		'implementedMethods' => [
 			'addSystemOrderQueryConditions' => 'addQueryConditions',
 			'getHighestSystemOrder' => 'getHighestSystemOrder',
-			'getSystemOrderRelatedColumns' => 'getDirtyRelatedColumns',
-			'hasDirtyRelatedSystemOrderColumns' => 'hasDirtyRelatedColumns',
+			'getSystemOrderRelatedColumns' => 'getRelatedColumns',
+			'hasDirtySystemOrderRelatedColumns' => 'hasDirtyRelatedColumns',
 		],
 		'relatedColumns' => [],
 		'skip' => false,
@@ -606,19 +606,26 @@ class SystemOrderBehavior extends Behavior {
 	 * Return the columns, related to the system order.
 	 * Columns with the same value form a scope.
 	 *
-	 * @param \Awyiss\Model\Entity|null $entity
 	 * @return array
 	 */
-	public function getDirtyRelatedColumns(?EntityInterface $entity = null): array {
+	public function getRelatedColumns(): array {
+		return $this->getConfig('relatedColumns');
+	}
+
+
+	/**
+	 * Return the columns, related to the system order.
+	 * Columns with the same value form a scope.
+	 *
+	 * @param \Awyiss\Model\Entity $entity
+	 * @return array
+	 */
+	public function getDirtyRelatedColumns(EntityInterface $entity): array {
 		if (!$this->getConfig('enabled')) {
 			return [];
 		}
 
 		$la_relatedColumns = $this->getConfig('relatedColumns');
-
-		if (!$entity) {
-			return $la_relatedColumns;
-		}
 
 		$la_dirty = $entity->getDirty();
 		$lo_attributes = $entity->get('attributes');

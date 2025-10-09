@@ -346,7 +346,7 @@ class BackendMenuEntriesController extends Controller {
 			}
 		}
 		else {
-			if ($this->BackendMenuEntries->hasDirtyRelatedSystemOrderColumns($menuEntry)) {
+			if ($this->BackendMenuEntries->hasDirtySystemOrderRelatedColumns($menuEntry)) {
 				$menuEntry->systemOrder = null;
 			}
 			else {

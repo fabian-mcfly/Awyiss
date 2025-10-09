@@ -289,7 +289,7 @@ abstract class GenericDatatablesController extends Controller {
 			}
 		}
 		elseif ($this->Datatable->hasBehavior('SystemOrder')) {
-			if ($this->Datatable->hasDirtyRelatedSystemOrderColumns($entity)) {
+			if ($this->Datatable->hasDirtySystemOrderRelatedColumns($entity)) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$entity->systemOrder = null;
 			}

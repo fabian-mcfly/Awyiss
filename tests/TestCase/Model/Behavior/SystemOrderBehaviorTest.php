@@ -96,8 +96,8 @@ class SystemOrderBehaviorTest extends TestCase {
 		$this->assertSame([
 			'addSystemOrderQueryConditions' => 'addQueryConditions',
 			'getHighestSystemOrder' => 'getHighestSystemOrder',
-			'getSystemOrderRelatedColumns' => 'getDirtyRelatedColumns',
-			'hasDirtyRelatedSystemOrderColumns' => 'hasDirtyRelatedColumns',
+			'getSystemOrderRelatedColumns' => 'getRelatedColumns',
+			'hasDirtySystemOrderRelatedColumns' => 'hasDirtyRelatedColumns',
 		], $config['implementedMethods']);
 
 		$this->assertSame(['languageShortcode'], $config['relatedColumns']);

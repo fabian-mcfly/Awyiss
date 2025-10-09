@@ -257,7 +257,7 @@ class ContentTemplatesController extends Controller {
 			}
 		}
 		else {
-			if ($this->ContentTemplates->hasDirtyRelatedSystemOrderColumns($contentTemplate)) {
+			if ($this->ContentTemplates->hasDirtySystemOrderRelatedColumns($contentTemplate)) {
 				$contentTemplate->systemOrder = null;
 			}
 			else {

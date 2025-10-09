@@ -197,7 +197,7 @@ class SurveyAnswersController extends Controller {
 			}
 		}
 		elseif ($this->SurveyAnswers->hasBehavior('SystemOrder')) {
-			if ($this->SurveyAnswers->hasDirtyRelatedSystemOrderColumns($surveyAnswer)) {
+			if ($this->SurveyAnswers->hasDirtySystemOrderRelatedColumns($surveyAnswer)) {
 				$surveyAnswer->systemOrder = null;
 			}
 			else {

@@ -253,7 +253,7 @@ class PageTemplatesController extends Controller {
 			}
 		}
 		else {
-			if ($this->PageTemplates->hasDirtyRelatedSystemOrderColumns($pageTemplate)) {
+			if ($this->PageTemplates->hasDirtySystemOrderRelatedColumns($pageTemplate)) {
 				$pageTemplate->systemOrder = null;
 			}
 			else {

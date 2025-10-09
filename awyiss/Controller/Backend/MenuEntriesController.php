@@ -290,7 +290,7 @@ class MenuEntriesController extends Controller {
 			}
 		}
 		else {
-			if ($this->MenuEntries->hasDirtyRelatedSystemOrderColumns($menuEntry)) {
+			if ($this->MenuEntries->hasDirtySystemOrderRelatedColumns($menuEntry)) {
 				$menuEntry->systemOrder = null;
 			}
 			else {
