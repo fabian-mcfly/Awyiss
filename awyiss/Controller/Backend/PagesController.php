@@ -260,18 +260,6 @@ class PagesController extends Controller {
 					}
 				}
 			}
-			else {
-				if ($this->Pages->hasDirtySystemOrderRelatedColumns($lo_page)) {
-					$lo_page->systemOrder = null;
-				}
-				else {
-					$lo_page->systemOrder = $lo_page->hasOriginal('systemOrder') ? $lo_page->getOriginal('systemOrder') : $lo_page->get('systemOrder');
-				}
-
-				// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
-				$lo_request = $this->request->withData('system_order', $lo_page->systemOrder);
-				$this->setRequest($lo_request);
-			}
 		}
 
 		$this->setViewVars($lo_page);
@@ -575,18 +563,6 @@ class PagesController extends Controller {
 					$this->Flash->error($ls_error);
 				}
 			}
-		}
-		elseif ($this->request->getData('reload_form')) {
-			if ($this->Pages->hasDirtySystemOrderRelatedColumns($page)) {
-				$page->systemOrder = null;
-			}
-			else {
-				$page->systemOrder = $page->hasOriginal('systemOrder') ? $page->getOriginal('systemOrder') : $page->get('systemOrder');
-			}
-
-			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
-			$lo_request = $this->request->withData('system_order', $page->systemOrder);
-			$this->setRequest($lo_request);
 		}
 
 		$this->set([

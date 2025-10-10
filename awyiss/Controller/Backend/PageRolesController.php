@@ -201,17 +201,5 @@ class PageRolesController extends Controller {
 				}
 			}
 		}
-		else {
-			if ($this->PageRoles->hasDirtySystemOrderRelatedColumns($pageRole)) {
-				$pageRole->systemOrder = null;
-			}
-			else {
-				$pageRole->systemOrder = $pageRole->hasOriginal('systemOrder') ? $pageRole->getOriginal('systemOrder') : $pageRole->get('systemOrder');
-			}
-
-			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
-			$lo_request = $this->request->withData('system_order', $pageRole->systemOrder);
-			$this->setRequest($lo_request);
-		}
 	}
 }

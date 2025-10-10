@@ -206,20 +206,6 @@ class SurveyQuestionsController extends Controller {
 				}
 			}
 		}
-		elseif ($this->SurveyQuestions->hasBehavior('SystemOrder')) {
-			if ($this->SurveyQuestions->hasDirtySystemOrderRelatedColumns($surveyQuestion)) {
-				/** @noinspection PhpUndefinedFieldInspection */
-				$surveyQuestion->systemOrder = null;
-			}
-			else {
-				/** @noinspection PhpUndefinedFieldInspection */
-				$surveyQuestion->systemOrder = $surveyQuestion->hasOriginal('systemOrder') ? $surveyQuestion->getOriginal('systemOrder') : $surveyQuestion->get('systemOrder');
-			}
-
-			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
-			$lo_request = $this->request->withData('system_order', $surveyQuestion->systemOrder);
-			$this->setRequest($lo_request);
-		}
 	}
 
 

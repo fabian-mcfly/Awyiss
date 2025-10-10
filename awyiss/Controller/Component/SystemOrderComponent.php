@@ -202,12 +202,25 @@ class SystemOrderComponent extends Component {
 			return;
 		}
 
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->getController()->{$this->getConfig('tableName')};
 		$lo_records = $records ?? $this->getConfig('records') ?? $this->getRecords($entity);
 
 		$li_highestSystemOrder = $lo_records->max('systemOrder')?->systemOrder ?? 0;
 
 		$la_requestData = $this->getController()->getRequest()->getData();
 		$li_systemOrder = $entity->get('systemOrder');
+
+		if ($la_requestData['reload_form'] ?? false) {
+			if ($lo_table->hasDirtySystemOrderRelatedColumns($entity)) {
+				unset($la_requestData['system_order']);
+				$entity->set('systemOrder');
+			}
+			else {
+				$la_requestData['system_order'] = $entity->hasOriginal('systemOrder') ? $entity->getOriginal('systemOrder') : $entity->get('systemOrder');
+			}
+		}
+
 		if (isset($la_requestData['system_order'])) {
 			$li_systemOrder = $la_requestData['system_order'];
 		}

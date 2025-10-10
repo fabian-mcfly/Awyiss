@@ -288,20 +288,6 @@ abstract class GenericDatatablesController extends Controller {
 				}
 			}
 		}
-		elseif ($this->Datatable->hasBehavior('SystemOrder')) {
-			if ($this->Datatable->hasDirtySystemOrderRelatedColumns($entity)) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$entity->systemOrder = null;
-			}
-			else {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$entity->systemOrder = $entity->hasOriginal('systemOrder') ? $entity->getOriginal('systemOrder') : $entity->get('systemOrder');
-			}
-
-			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
-			$lo_request = $this->request->withData('system_order', $entity->systemOrder);
-			$this->setRequest($lo_request);
-		}
 	}
 
 

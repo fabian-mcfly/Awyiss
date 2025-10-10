@@ -252,18 +252,6 @@ class PageTemplatesController extends Controller {
 				}
 			}
 		}
-		else {
-			if ($this->PageTemplates->hasDirtySystemOrderRelatedColumns($pageTemplate)) {
-				$pageTemplate->systemOrder = null;
-			}
-			else {
-				$pageTemplate->systemOrder = $pageTemplate->hasOriginal('systemOrder') ? $pageTemplate->getOriginal('systemOrder') : $pageTemplate->get('systemOrder');
-			}
-
-			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
-			$lo_request = $this->request->withData('system_order', $pageTemplate->systemOrder);
-			$this->setRequest($lo_request);
-		}
 
 		$this->Categories->ensurePossibleCategory($pageTemplate);
 	}

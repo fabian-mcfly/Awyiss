@@ -366,18 +366,6 @@ class FormElementsController extends Controller {
 				}
 			}
 		}
-		else {
-			if ($this->FormElements->hasDirtySystemOrderRelatedColumns($formElement)) {
-				$formElement->systemOrder = null;
-			}
-			else {
-				$formElement->systemOrder = $formElement->hasOriginal('systemOrder') ? $formElement->getOriginal('systemOrder') : $formElement->get('systemOrder');
-			}
-
-			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
-			$lo_request = $this->request->withData('system_order', $formElement->systemOrder);
-			$this->setRequest($lo_request);
-		}
 
 		$this->Categories->ensurePossibleCategory($formElement);
 	}

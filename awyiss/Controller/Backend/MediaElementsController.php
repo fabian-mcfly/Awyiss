@@ -255,18 +255,6 @@ class MediaElementsController extends Controller {
 				}
 			}
 		}
-		else {
-			if ($this->MediaElements->hasDirtySystemOrderRelatedColumns($mediaElement)) {
-				$mediaElement->systemOrder = null;
-			}
-			else {
-				$mediaElement->systemOrder = $mediaElement->hasOriginal('systemOrder') ? $mediaElement->getOriginal('systemOrder') : $mediaElement->get('systemOrder');
-			}
-
-			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
-			$lo_request = $this->request->withData('system_order', $mediaElement->systemOrder);
-			$this->setRequest($lo_request);
-		}
 	}
 
 

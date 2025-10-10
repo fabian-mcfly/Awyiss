@@ -42,16 +42,4 @@
 				}
 			}
 		}
-		elseif ($this->{{ currentModelName }}->hasBehavior('SystemOrder')) {
-			if ($this->{{ currentModelName }}->hasDirtySystemOrderRelatedColumns(${{ singularName }})) {
-				${{ singularName }}->systemOrder = null;
-			}
-			else {
-				${{ singularName }}->systemOrder = ${{ singularName }}->hasOriginal('systemOrder') ? ${{ singularName }}->getOriginal('systemOrder') : ${{ singularName }}->get('systemOrder');
-			}
-
-			// Update the request data. Otherwise, the SystemOrderHelper would use the outdated request data
-			$lo_request = $this->request->withData('system_order', ${{ singularName }}->systemOrder);
-			$this->setRequest($lo_request);
-		}
 	}
