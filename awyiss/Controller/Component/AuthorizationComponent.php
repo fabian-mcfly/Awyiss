@@ -13,7 +13,7 @@ use RuntimeException;
 
 /**
  * This component provides and handles Authorization-specific logic.
- * It provides methods to set and retreive an identity nad the scope that will be used to check for access.
+ * It provides methods to set and retrieve an identity nad the scope that will be used to check for access.
  *
  * - `ensureOne(string ...$identifier)`
  *   Called to ensure one of the provided identifiers is accessible
@@ -369,7 +369,7 @@ class AuthorizationComponent extends Component {
 
 
 	/**
-	 * Retreive the IdentityInterface from the request.
+	 * Retrieve the IdentityInterface from the request.
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface $lo_identity */

@@ -75,7 +75,7 @@ class PaginateComponent extends Component {
 	/**
 	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object
 	 * @param array $settings
-	 * @return
+	 * @return \Cake\Datasource\Paging\PaginatedInterface
 	 */
 	public function paginate(
 		RepositoryInterface|QueryInterface|string|null $object = null,
@@ -297,7 +297,6 @@ class PaginateComponent extends Component {
 		// If the table has a behavior for translating, modify the params and/or settings to match the translated field names
 		if ($table->hasBehavior('Translate')) {
 			/**
-			 * @noinspection PhpParamsInspection
 			 * @noinspection PhpVariableNamingConventionInspection
 			 */
 			$this->modifyTranslatedPaginateParams($params, $settings, $table->getBehavior('Translate'), $ls_tableAlias);
@@ -310,7 +309,6 @@ class PaginateComponent extends Component {
 			$table->getAttributesTable()->hasBehavior('Translate')
 		) {
 			/**
-			 * @noinspection PhpParamsInspection
 			 * @noinspection PhpArgumentWithoutNamedIdentifierInspection
 			 * @noinspection PhpVariableNamingConventionInspection
 			 */

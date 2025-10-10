@@ -24,7 +24,7 @@ use Cake\Utility\Hash;
  * This component provides and handles category-specific logic.
  *
  * Categories are "parent" associations, like pages for contents, usergroups for users or
- * even pages for other pages like newscategories for news.
+ * even pages for other pages like "Newscategories" for News.
  *
  * @method \Awyiss\Controller\AppController getController()
  * @noinspection PhpFullyQualifiedNameUsageInspection
@@ -207,7 +207,7 @@ class CategoriesComponent extends Component {
 					if ($lx_categoryId === null) {
 						/*
 						 * If the default value is empty, set the category identifier to either
-						 * 	- the aggretationKey, if aggregation is allowed
+						 * 	- the aggregationKey, if aggregation is allowed
 						 * OR
 						 * 	- the unassignedKey, if filtering unassigned is allowed
 						 * OR
@@ -354,7 +354,7 @@ class CategoriesComponent extends Component {
 	 *
 	 * @param SelectQuery $query
 	 * @param mixed $selectedCategory
-	 * @param string|null $column
+	 * @param bool $sortAggregation
 	 * @return SelectQuery
 	 */
 	public function filterQuery(SelectQuery $query, mixed $selectedCategory = null, bool $sortAggregation = true): SelectQuery {

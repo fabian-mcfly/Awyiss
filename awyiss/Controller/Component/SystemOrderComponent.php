@@ -17,7 +17,7 @@ use Cake\View\ViewBuilder;
  * This component provides and handles system order-specific logic.
  *
  * It sets view vars if they don't already exist,
- * offers a convenient `getRecords` method to retreive all categories for a given entity,
+ * offers a convenient `getRecords` method to retrieve all categories for a given entity,
  * and `ensurePossibleSystemOrder()` to make sure the set `system_order` is valid.
  *
  * @method \Awyiss\Controller\AppController getController()
@@ -29,7 +29,7 @@ class SystemOrderComponent extends Component {
 	 */
 	protected array $_defaultConfig = [
 		'autoload' => ['add', 'edit'], //can be a boolean value or an array containing all action names for which the records should get autoloaded
-		'entityName' => null, //singlularized variable name of the entity that's used to autoload records
+		'entityName' => null, //singularized variable name of the entity that's used to autoload records
 		'field' => 'systemOrder',
 		'records' => null,
 		'tableName' => null,

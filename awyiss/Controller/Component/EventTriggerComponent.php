@@ -30,7 +30,7 @@ class EventTriggerComponent extends Component {
 
 
 	/**
-	 * When calling this method, the whole componend will be enabled.
+	 * When calling this method, the whole component will be enabled.
 	 *
 	 * @return void
 	 */
@@ -40,7 +40,7 @@ class EventTriggerComponent extends Component {
 
 
 	/**
-	 * When calling this method, the whole componend will be disabled.
+	 * When calling this method, the whole component will be disabled.
 	 *
 	 * @return void
 	 */

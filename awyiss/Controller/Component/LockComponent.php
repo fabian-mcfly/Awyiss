@@ -38,7 +38,7 @@ class LockComponent extends Component {
 		'enabled' => true,
 		'urlParam' => 'id', //the url parameter that contains the id of the entity
 		'tableName' => null,
-		'timeout' => 120, //timeout in seconds
+		'timeout' => 1200, //timeout in seconds
 	];
 	/**
 	 * @var \Awyiss\Model\Table\LocksTable
@@ -67,7 +67,6 @@ class LockComponent extends Component {
 			$this->setConfig('tableName', $this->getController()->getName());
 		}
 
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->locksTable = $this->fetchTable('Locks');
 
 		$lo_session = $this->getController()->getRequest()->getSession();
@@ -258,7 +257,7 @@ class LockComponent extends Component {
 	 */
 	protected function deleteTimedOutLocks(): void {
 		$this->locksTable->deleteAll([
-			'created_on <' => (new DateTime())->modify('-' . $this->getConfig('timeout') . ' seconds'),
+			'created_on <' => new DateTime()->modify('-' . $this->getConfig('timeout') . ' seconds'),
 		]);
 	}
 }
