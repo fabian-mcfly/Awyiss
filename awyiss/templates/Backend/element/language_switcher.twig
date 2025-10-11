@@ -18,7 +18,6 @@
 #}
 
 {% set currentAction = _view.getRequest().getParam('action') %}
-{% set languages = languages|filter(language => language.active) %}
 
 <div class="LanguageSwitcher">
 	<button class="Button LanguageSwitcherLabel">
