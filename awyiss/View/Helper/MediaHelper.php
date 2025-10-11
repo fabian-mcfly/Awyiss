@@ -882,7 +882,7 @@ class MediaHelper extends Helper {
 				)
 			) {
 				$la_breakpointFiles[ $la_breakpoint['breakpoint'] ] = $lo_resizedImage ?? $media;
-				$la_paths['1x'][] = $ls_path;
+				$la_paths['1x'] = [$ls_path];
 			}
 			elseif (
 				$lb_is2x &&
@@ -892,7 +892,7 @@ class MediaHelper extends Helper {
 				)
 			) {
 				$la_breakpointFiles[ $la_breakpoint['breakpoint'] . 'x2' ] = $lo_resizedImage ?? $media;
-				$la_paths['2x'][] = $ls_path;
+				$la_paths['2x'] = [$ls_path];
 			}
 		}
 

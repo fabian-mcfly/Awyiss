@@ -327,7 +327,7 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testBackgroundForNonImageWithoutPreviewButAverageColor() {
+	public function testBackgroundForNonImageWithoutPreviewButAverageColor(): void {
 		$media = new Media([
 			'name' => 'audio.mp3',
 			'path' => '/path/to/audio.mp3',
@@ -2078,5 +2078,84 @@ class MediaHelperTest extends TestCase {
 
 		$this->assertSame(768, $result[768]->width);
 		$this->assertSame(1536, $result['768x2']->width);
+	}
+
+
+	/**
+	 * Test that consecutive breakpoints generating identical file paths are filtered out
+	 *
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::getResponsiveImages()
+	 * @see \Awyiss\View\Helper\MediaHelper::getBreakpointFiles()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testGetResponsiveImagesFiltersConsecutiveDuplicateFilePaths(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1024.00,
+			'columnWidth' => 75.00,
+			'responsive' => true,
+			'singleColumnBreakpoint' => false,
+			'breakpoints' => [
+				['breakpoint' => 768, 'columnWidth' => 100],
+				480,
+			],
+		]);
+
+		$result = $this->mediaHelper->getResponsiveImages($media, $mediaRenderOptions, true);
+
+		$this->assertArrayNotHasKey(768, $result);
+		$this->assertArrayHasKey(480, $result);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1024.00,
+			'columnWidth' => 75.00,
+			'responsive' => true,
+			'singleColumnBreakpoint' => 768,
+			'breakpoints' => [
+				480,
+			],
+		]);
+
+		$result = $this->mediaHelper->getResponsiveImages($media, $mediaRenderOptions, true);
+
+		$this->assertArrayNotHasKey(768, $result);
+		$this->assertArrayHasKey(480, $result);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1024.00,
+			'columnWidth' => 75.00,
+			'responsive' => true,
+			'singleColumnBreakpoint' => false,
+			'breakpoints' => [
+				768,
+				480,
+			],
+		]);
+
+		$result = $this->mediaHelper->getResponsiveImages($media, $mediaRenderOptions, true);
+
+		$this->assertArrayHasKey(768, $result);
+		$this->assertArrayHasKey(480, $result);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1024.00,
+			'columnWidth' => 75.00,
+			'responsive' => true,
+			'singleColumnBreakpoint' => false,
+			'breakpoints' => [
+				['breakpoint' => 960, 'columnWidth' => 100],
+				['breakpoint' => 768, 'columnWidth' => 100],
+				480,
+			],
+		]);
+
+		$result = $this->mediaHelper->getResponsiveImages($media, $mediaRenderOptions, true);
+
+		$this->assertArrayHasKey(960, $result);
+		$this->assertArrayHasKey(768, $result);
+		$this->assertArrayHasKey(480, $result);
 	}
 }
