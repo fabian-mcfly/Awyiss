@@ -196,10 +196,9 @@ class AppView extends TwigView {
 
 				$lx_result = call_user_func([$this->helper, $ls_method], ...$args);
 
-				if (is_string($lx_result) && str_contains($lx_result, '<') && str_contains($lx_result, '>')) {
+				if (is_string($lx_result)) {
 					return new Markup($lx_result, 'UTF-8');
 				}
-
 
 				return $lx_result;
 			}

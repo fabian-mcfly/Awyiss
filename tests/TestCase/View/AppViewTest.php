@@ -104,7 +104,7 @@ class AppViewTest extends TestCase {
 		$this->assertArrayHasKey('DummyHelper', $calls);
 
 		$dummyResult = $calls['DummyHelper']->dummyMethod();
-		$this->assertSame('dummy', $dummyResult);
+		$this->assertInstanceOf(Markup::class, $dummyResult);
 
 		$dummyHtmlResult = $calls['DummyHelper']->dummyHtmlMethod();
 		$this->assertInstanceOf(Markup::class, $dummyHtmlResult);
