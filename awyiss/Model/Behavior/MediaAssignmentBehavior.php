@@ -62,6 +62,8 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		'implementedEvents' => [
 			'beforeSave',
 			'afterSave',
+			'afterSoftDelete',
+			'afterDelete',
 		],
 		'implementedFinders' => [
 			'mediaAssignments' => 'findMediaAssignments',
@@ -565,6 +567,60 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 		$lo_mediaAssignmentsTable->save($lo_assignment);
+	}
+
+
+	/**
+	 * @param EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSoftDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
+		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_existingAssignment */
+		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
+			'media_element_id' => 1,
+			'media_element_selector_identifier' => 'hidden_folder',
+			'foreign_key' => $entity->id,
+			'scope' => $this->getConfig('referenceName'),
+		])->contain(['MediaFolders'])->first();
+
+		if ($lo_existingAssignment) {
+			// Delete the folder as well
+			$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+			$lo_mediaFoldersTable->delete($lo_existingAssignment->mediaFolder);
+		}
+	}
+
+
+	/**
+	 * @param EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
+		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_existingAssignment */
+		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
+			'media_element_id' => 1,
+			'media_element_selector_identifier' => 'hidden_folder',
+			'foreign_key' => $entity->id,
+			'scope' => $this->getConfig('referenceName'),
+		])->contain(['MediaFolders'])->first();
+
+		if ($lo_existingAssignment) {
+			// Delete the folder as well
+			$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+			$lo_mediaFoldersTable->delete($lo_existingAssignment->mediaFolder);
+		}
 	}
 
 

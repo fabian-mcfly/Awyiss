@@ -961,6 +961,110 @@ class MediaAssignmentBehaviorTest extends TestCase {
 
 
 	/**
+	 * @return void
+	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::afterDelete()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterDeleteDeletesHiddenFolder(): void {
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		$this->login(1);
+
+		/** @var \Awyiss\Model\Entity\Widget $entity */
+		$entity = $this->table->get(23);
+		$entity->title = 'Testfolder1';
+
+		$this->mediaAssignmentsTable->deleteAll([
+			'media_element_id' => 1,
+			'media_element_selector_identifier' => 'hidden_folder',
+			'foreign_key' => 23,
+			'scope' => 'widgets',
+		]);
+
+		$mediaFoldersTable = $this->fetchTable('MediaFolders');
+		$mediaFolder = $mediaFoldersTable->newDefaultEntity([
+			'title' => 'Testfolder1',
+			'path' => 'media/testfolder1',
+			'hidden' => true,
+		]);
+		$result = $mediaFoldersTable->save($mediaFolder);
+		$this->assertNotFalse($result);
+		$mediaFolderId = $result->id;
+
+		$assignment = $this->mediaAssignmentsTable->newDefaultEntity([
+			'mediaElementId' => 1,
+			'mediaElementSelectorIdentifier' => 'hidden_folder',
+			'foreignKey' => 23,
+			'scope' => 'widgets',
+			'mediaFolderId' => $mediaFolderId,
+		]);
+		$result = $this->mediaAssignmentsTable->save($assignment);
+
+		$this->assertNotFalse($result);
+
+		$event = new Event('Model.afterDelete');
+		$options = new ArrayObject();
+
+		$this->behavior->afterDelete($event, $entity, $options);
+
+		$mediaFolder = $mediaFoldersTable->find()->where(['id' => $mediaFolderId])->first();
+		$this->assertNull($mediaFolder);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::afterSoftDelete()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSoftDeleteDeletesHiddenFolder(): void {
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		$this->login(1);
+
+		/** @var \Awyiss\Model\Entity\Widget $entity */
+		$entity = $this->table->get(23);
+		$entity->title = 'Testfolder1';
+
+		$this->mediaAssignmentsTable->deleteAll([
+			'media_element_id' => 1,
+			'media_element_selector_identifier' => 'hidden_folder',
+			'foreign_key' => 23,
+			'scope' => 'widgets',
+		]);
+
+		$mediaFoldersTable = $this->fetchTable('MediaFolders');
+		$mediaFolder = $mediaFoldersTable->newDefaultEntity([
+			'title' => 'Testfolder1',
+			'path' => 'media/testfolder1',
+			'hidden' => true,
+		]);
+		$result = $mediaFoldersTable->save($mediaFolder);
+		$this->assertNotFalse($result);
+		$mediaFolderId = $result->id;
+
+		$assignment = $this->mediaAssignmentsTable->newDefaultEntity([
+			'mediaElementId' => 1,
+			'mediaElementSelectorIdentifier' => 'hidden_folder',
+			'foreignKey' => 23,
+			'scope' => 'widgets',
+			'mediaFolderId' => $mediaFolderId,
+		]);
+		$result = $this->mediaAssignmentsTable->save($assignment);
+
+		$this->assertNotFalse($result);
+
+		$event = new Event('Model.afterSoftDelete');
+		$options = new ArrayObject();
+
+		$this->behavior->afterSoftDelete($event, $entity, $options);
+
+		$mediaFolder = $mediaFoldersTable->find()->where(['id' => $mediaFolderId])->first();
+		$this->assertNull($mediaFolder);
+	}
+
+
+	/**
 	 * @param int $userId The user ID to log in as.
 	 * @return \Awyiss\Model\Entity\User
 	 * @noinspection PhpVariableNamingConventionInspection
