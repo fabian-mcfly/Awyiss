@@ -2,6 +2,7 @@
 /awyiss/assets/js/*.min.js
 /awyiss/assets/js/**/*.min.js
 /awyiss/assets/js/TinyMCE/tinymce/
+/docs/
 /docs/*
 /logs/*
 /tmp/*
