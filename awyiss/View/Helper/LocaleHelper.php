@@ -51,7 +51,7 @@ class LocaleHelper extends Helper {
 	 *
 	 * ### Options
 	 *
-	 * - `languageRealm` If the realm is set and found as a valid language realm (e.g. 'frontend' or 'backend'),
+	 * - `languageRealm` If the realm is set and found as a valid language realm (e.g. 'Frontend' or 'Backend'),
 	 * the options consist only of languages of this realm. Otherwise, it will use all realms.
 	 *
 	 * @param string|null $fieldName
