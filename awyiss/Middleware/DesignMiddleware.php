@@ -29,7 +29,7 @@ class DesignMiddleware implements MiddlewareInterface {
 	/**
 	 * @var array
 	 */
-	protected array $designVariables;
+	protected array $designVariables = [];
 
 
 	/**
@@ -139,8 +139,8 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @return array
 	 */
 	public function getDesignVariables(string $realm = Awyiss::REALM_FRONTEND): array {
-		if (isset($this->designVariables)) {
-			return $this->designVariables;
+		if (isset($this->designVariables[ $realm ])) {
+			return $this->designVariables[ $realm ];
 		}
 
 		// Do not load design variables for the backend
@@ -153,13 +153,13 @@ class DesignMiddleware implements MiddlewareInterface {
 		$lo_design = $lo_designTable->find()->where(['in_use' => true])->first();
 
 		if (!$lo_design) {
-			$this->designVariables = [];
+			$this->designVariables[ $realm ] = [];
 			return [];
 		}
 
-		$this->designVariables = $lo_design->settings ?? [];
+		$this->designVariables[ $realm ] = $lo_design->settings ?? [];
 
-		return $this->designVariables;
+		return $this->designVariables[ $realm ];
 	}
 
 
@@ -170,7 +170,7 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @return void
 	 */
 	public function resetDesignVariables(): void {
-		unset($this->designVariables);
+		$this->designVariables = [];
 	}
 
 
