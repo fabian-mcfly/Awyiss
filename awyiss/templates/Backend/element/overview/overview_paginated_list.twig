@@ -122,6 +122,8 @@
 															{% else %}
 																{{ TimeHelper.i18nFormat(entity.attributes.get(field), attributes[field].inputType == 'date' ? dateFormat : timeFormat) }}
 															{% endif %}
+														{% elseif _categoriesIdentifier is defined and _categoriesIdentifier|underscore == field %}
+															{{ entity.attributes.has(field) ? (categories.simple[ entity.get(field) ] ?? '-') : '-' }}
 														{% else %}
 															{{ entity.attributes.get(field) ?: '-' }}
 														{% endif %}
@@ -165,7 +167,7 @@
 															{% endif %}
 														{% elseif field in ['created_on', 'changed_on'] %}
 															{{ entity.has(field) ? TimeHelper.nice(entity.get(field)) ?: '-' }}
-														{% elseif categories.config.field and field == categories.config.field|underscore %}
+														{% elseif _categoriesIdentifier is defined and _categoriesIdentifier|underscore == field %}
 															{{ entity.has(field) ? (categories.simple[ entity.get(field) ] ?? '-') : '-' }}
 														{% else %}
 															{% set value = entity.has(field) ? entity.get(field) : '-' %}
@@ -262,7 +264,7 @@
 								{% block listControlPagination %}
 									<li class="ListControl-Item ListControl-Item-Pagination">
 										{% block listControlPaginationInner %}
-											{{ PaginatorHelper.render()|raw }}
+											{{ PaginatorHelper.render() }}
 										{% endblock %}
 									</li>
 								{% endblock %}
