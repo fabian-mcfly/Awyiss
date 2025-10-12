@@ -144,9 +144,9 @@
 	@var language \Awyiss\Model\Entity\Language|null
 	@var settings array
 	#}
-	{% set columnType = schema.columnType(staticCall(entity, 'unmapField', field)) %}
 
 	{% set isAttribute = attribute is not empty %}
+	{% set columnType = schema.columnType(isAttribute ? field|underscore : staticCall(entity, 'unmapField', field)) %}
 	{% set isLanguage = language is not empty %}
 
 	{% set inputName = field|underscore %}
