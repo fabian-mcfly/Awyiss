@@ -139,6 +139,13 @@ class InstallCommand extends Command {
 		}
 		$this->io->success('Skeleton folder removed successfully.');
 
+		if ($this->connectionValid) {
+			// Ask for the environment of installation.
+			$this->rtEditor = $this->io->askChoice('Rich text editor to use?', ['TinyMCE', 'Jodit', 'none'], 'TinyMCE');
+
+			$this->setRichTextEditor();
+		}
+
 		// Done
 		$this->io->success('Installation completed.');
 

@@ -4,6 +4,7 @@
 namespace Awyiss\Command\Awyiss\Trait;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Utility\Inflector;
 use Brick\VarExporter\VarExporter;
 use Cake\Database\Connection;
@@ -34,6 +35,10 @@ trait ConfigTrait {
 	 * @var string The database host
 	 */
 	protected string $dbHost;
+	/**
+	 * @var string
+	 */
+	protected string $rtEditor;
 
 
 	/**
@@ -332,5 +337,43 @@ trait ConfigTrait {
 		rename($ls_filePath, $ls_newFilePath);
 
 		$this->io->success('\Twig\Extension\CustomerExtension file updated and renamed.');
+	}
+
+
+	/**
+	 * Sets the rich text editor according to the user's choice.
+	 *
+	 * @return void
+	 */
+	protected function setRichTextEditor(): void {
+		if ($this->rtEditor === 'none') {
+			return;
+		}
+
+		if ($this->dryRun) {
+			$this->io->success('Rich text editor set.');
+
+			return;
+		}
+
+		$lo_configTable = $this->fetchTable('Configuration');
+		$lo_configTable->getBehavior('Categories')->setConfig('buildRules', false);
+		$lo_config = $lo_configTable->newDefaultEntity();
+
+		$lo_configTable->patchEntity($lo_config, [
+			'realm' => Awyiss::REALM_BACKEND,
+			'scope' => 'system',
+			'identifier' => 'interface.editor',
+			'value' => strtolower($this->rtEditor),
+		]);
+
+		if ($lo_configTable->save($lo_config)) {
+			$this->io->success('Rich text editor set.');
+		}
+		else {
+			$this->io->error('Could not set rich text editor. Please check the database connection and try again.');
+		}
+
+		dump($lo_config);
 	}
 }

@@ -39,6 +39,7 @@ class InstallCommandTest extends TestCase {
 			'awyiss',
 			'',
 			'',
+			'',
 		]);
 
 		$this->assertExitSuccess();
@@ -90,6 +91,9 @@ class InstallCommandTest extends TestCase {
 
 		//<success>Skeleton folder removed successfully.</success>
 		$this->assertOutputContains('Skeleton folder removed successfully.');
+
+		//<success>Rich text editor set.</success>
+		$this->assertOutputContains('Rich text editor set.');
 
 		//<success>Installation completed.</success
 		$this->assertOutputContains('Installation completed.');
