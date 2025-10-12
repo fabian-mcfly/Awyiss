@@ -87,11 +87,12 @@ trait ContentElementTrait {
 	 * in the correct order and with the correct column widths, using the provided template.
 	 *
 	 * @param array $entities
-	 * @param bool $noContentRow
+	 * @param bool $noContentRow Whether to render all elements without a content row
+	 * @param bool $autoSection Whether to automatically wrap first level content rows in a section
 	 * @return string
 	 * @throws \ReflectionException
 	 */
-	protected function buildContents(array $entities, bool $noContentRow = false): string {
+	protected function buildContents(array $entities, bool $noContentRow = false, bool $autoSection = false): string {
 		if (!$entities) {
 			return '';
 		}
@@ -100,6 +101,15 @@ trait ContentElementTrait {
 		$lf_currentWidth = 0;
 		$ls_rowContent = '';
 		$la_contentRowClasses = [];
+		$ls_type = 'content';
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$entities = array_values($entities);
+		if ($entities[0] instanceof FormElement) {
+			$ls_type = 'form_element';
+		}
+		elseif ($entities[0] instanceof Widget) {
+			$ls_type = 'widget';
+		}
 
 		/**
 		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_entity
@@ -107,9 +117,7 @@ trait ContentElementTrait {
 		foreach ($entities as $lo_entity) {
 			$ls_children = '';
 
-			/** @noinspection PhpUndefinedFieldInspection */
 			if ($lo_entity->children) {
-				/** @noinspection PhpUndefinedFieldInspection */
 				$ls_children = $this->buildContents($lo_entity->children, $noContentRow);
 			}
 
@@ -123,7 +131,6 @@ trait ContentElementTrait {
 
 				$lb_noContentRow = !$lo_entity->$ls_template->inContentRow;
 				if ($lo_entity->has('inContentRow')) {
-					/** @noinspection PhpUndefinedFieldInspection */
 					$lb_noContentRow = !$lo_entity->inContentRow;
 				}
 			}
@@ -137,7 +144,7 @@ trait ContentElementTrait {
 			 */
 			if ($lb_noContentRow) {
 				if ($ls_rowContent) {
-					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement, $la_contentRowClasses);
+					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $ls_type, $la_contentRowClasses, $autoSection);
 
 					// Reset the row contents
 					$lf_currentWidth = 0;
@@ -169,7 +176,7 @@ trait ContentElementTrait {
 			 */
 			if ($lf_currentWidth > 100 || $lf_currentWidth + $lf_columnWidth > 100) {
 				if ($ls_rowContent) {
-					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement, $la_contentRowClasses);
+					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $ls_type, $la_contentRowClasses, $autoSection);
 					// Unset the row class. Follow-up contents will start a new row and with a blank row class.
 					$la_contentRowClasses = [];
 				}
@@ -190,7 +197,7 @@ trait ContentElementTrait {
 
 			// If the content is a finisher, render the row and reset the row contents
 			if ($lo_entity->columnLast) {
-				$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement, $la_contentRowClasses);
+				$ls_contentElements .= $this->renderContentRow($ls_rowContent, $ls_type, $la_contentRowClasses, $autoSection);
 				// Unset the row class. Follow-up contents will start a new row and with a blank row class.
 				$la_contentRowClasses = [];
 
@@ -209,7 +216,7 @@ trait ContentElementTrait {
 
 		// Render the last row
 		if ($ls_rowContent) {
-			$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement, $la_contentRowClasses);
+			$ls_contentElements .= $this->renderContentRow($ls_rowContent, $ls_type, $la_contentRowClasses, $autoSection);
 		}
 
 		// Unset the row class.
@@ -232,15 +239,17 @@ trait ContentElementTrait {
 
 	/**
 	 * @param string $contents
-	 * @param bool $isFormRow
+	 * @param string $type
 	 * @param array $rowClasses
 	 * @return string
 	 */
-	protected function renderContentRow(string $contents, bool $isFormRow = false, array $rowClasses = []): string {
+	protected function renderContentRow(string $contents, string $type = 'content', array $rowClasses = [], bool $autoSection = false): string {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $this->getView()->element($isFormRow ? 'form_row' : 'content_row', [
+		return $this->getView()->element($type === 'form_element' ? 'form_row' : 'content_row', [
 			'contents' => $contents,
 			'class' => implode(' ', array_unique($rowClasses)),
+			'autoSection' => $autoSection,
+			'type' => $type,
 		]);
 	}
 

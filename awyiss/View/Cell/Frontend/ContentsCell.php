@@ -57,7 +57,7 @@ class ContentsCell extends Cell {
 
 		$this->setViewVars($la_options);
 
-		$ls_contents = $this->buildContents($lo_contents->toArray());
+		$ls_contents = $this->buildContents($lo_contents->toArray(), false, $options['autoSection'] ?? true);
 
 		// Set the view variables
 		$this->set([

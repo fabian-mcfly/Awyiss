@@ -23,76 +23,41 @@
 {%- do _view.setRowClass('FlexRow') -%}
 #}
 
-{% if content.parentId is empty %}
-	{% set cssClass = content.cssClass %}
-
-	{% set sectionCssClass = 'ContentElement Template-Section' %}
-	{% if content.backgroundColor %}
-		{% set sectionCssClass = sectionCssClass ~ ' BackgroundColor BackgroundColor-' ~ content.backgroundColor|ucparts(false) %}
-	{% endif %}
-
-	{% set backgroundImage = MediaHelper.element('backgroundImage', content.mediaAssignments, mediaRenderOptions) %}
-	{% if backgroundImage %}
-		{% set sectionCssClass = sectionCssClass ~ ' BackgroundImage Lazyload' %}
-	{% endif %}
-
-	{% do content.set('inContentRow', false) %}
-	{% do content.set('data', null) %}
-{% else %}
-	{% set cssClass = content.cssClass %}
-	{% if content.backgroundColor %}
-		{% set cssClass = cssClass ~ ' BackgroundColor BackgroundColor-' ~ content.backgroundColor|ucparts(false) %}
-	{% endif %}
+{% set cssClass = content.cssClass %}
+{% if content.backgroundColor %}
+	{% set cssClass = cssClass ~ ' BackgroundColor BackgroundColor-' ~ content.backgroundColor|ucparts(false) %}
 {% endif %}
 
-{% set contentHtml %}
-	{% block contentHtml %}
-		<div class="{{ cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
-			{{ MediaHelper.element('standard', content.mediaAssignments, mediaRenderOptions, {link: content.link}) }}
+<div class="{{ cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
+	{{ MediaHelper.element('standard', content.mediaAssignments, mediaRenderOptions, {link: content.link}) }}
 
-			{% if content.title %}
-				{% set tag = content.titleTag ?? 'div' %}
-				<{{ tag }} class="Title" id="{{ content.title|ucparts(false) }}">{{ content.title|raw }}</{{ tag }}>
-			{% endif %}
+	{% if content.title %}
+		{% set tag = content.titleTag ?? 'div' %}
+		<{{ tag }} class="Title" id="{{ content.title|ucparts(false) }}">{{ content.title|raw }}</{{ tag }}>
+	{% endif %}
 
-			{% if content.subtitle %}
-				{% set tag = content.subtitleTag ?? 'div' %}
-				<{{ tag }} class="Subtitle" id="{{ content.subtitle|ucparts(false) }}">{{ content.subtitle|raw }}</{{ tag }}>
-			{% endif %}
+	{% if content.subtitle %}
+		{% set tag = content.subtitleTag ?? 'div' %}
+		<{{ tag }} class="Subtitle" id="{{ content.subtitle|ucparts(false) }}">{{ content.subtitle|raw }}</{{ tag }}>
+	{% endif %}
 
-			{% if content.text %}
-				<div class="Text">
-					{{ content.text|raw }}
-				</div>
-			{% endif %}
-
-			{% if content.formId %}
-				{{ form(content.formId, {columnWidth: content.realColumnWidth}) }}
-			{% endif %}
-
-			{% if content.surveyId %}
-				{{ survey(content.surveyId, {columnWidth: content.realColumnWidth}) }}
-			{% endif %}
-
-			{% if children %}
-				<div class="Children">
-					{{ children|raw }}
-				</div>
-			{% endif %}
+	{% if content.text %}
+		<div class="Text">
+			{{ content.text|raw }}
 		</div>
-	{% endblock %}
-{% endset %}
+	{% endif %}
 
-{% if content.parentId is empty %}
-	{% block firstLevelContentInSection %}
-		<section class="{{ sectionCssClass }}" {{ content.data|data_attr|raw }}>
-			<div class="ContentRow">
-				{{ contentHtml|raw }}
-			</div>
-		</section>
-	{% endblock %}
-{% else %}
-	{% block content %}
-		{{ contentHtml|raw }}
-	{% endblock %}
-{% endif %}
+	{% if content.formId %}
+		{{ form(content.formId) }}
+	{% endif %}
+
+	{% if content.surveyId %}
+		{{ survey(content.surveyId) }}
+	{% endif %}
+
+	{% if children %}
+		<div class="Children">
+			{{ children|raw }}
+		</div>
+	{% endif %}
+</div>

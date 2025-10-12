@@ -1,5 +1,6 @@
 {#
 @var contents string
+@var type string
 @var class string
 @var page \Awyiss\Model\Entity\Page
 @var baseUrl string
@@ -21,6 +22,14 @@
 
 {% set class = 'ContentRow ' ~ class %}
 
-<div class="{{ class|trim }}">
-	{{ contents|raw }}
-</div>
+{% if autoSection and type == 'content' %}
+	<div class="ContentElement Template-Section">
+		<div class="{{ class|trim }}">
+			{{ contents|raw }}
+		</div>
+	</div>
+{% else %}
+	<div class="{{ class|trim }}">
+		{{ contents|raw }}
+	</div>
+{% endif %}
