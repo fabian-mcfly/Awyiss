@@ -224,6 +224,7 @@ class AppTest extends TestCase {
 			'Media\ClearCacheCommand' => '\Awyiss\Command\Media\ClearCacheCommand',
 			'Media\ConvertFilesCommand' => '\Awyiss\Command\Media\ConvertFilesCommand',
 			'Media\DetectAvailableCommandsCommand' => '\Awyiss\Command\Media\DetectAvailableCommandsCommand',
+			'Scss\CompileCommand' => '\Awyiss\Command\Scss\CompileCommand',
 			'Twig\ClearCacheCommand' => '\Awyiss\Command\Twig\ClearCacheCommand',
 		], $result);
 	}
