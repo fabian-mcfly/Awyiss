@@ -238,7 +238,7 @@
 				&:checked {
 					~ .Labels {
 						&::after {
-							content:'✓';
+							content:'\f00c';
 							background-color:var(--colorSuccess);
 							transform:translate(33px, 0);
 
@@ -260,19 +260,16 @@
 				&:checked {
 					~ .Labels {
 						&::after {
-							content:'×';
+							content:'\f00d';
 							background-color:var(--colorError);
-							line-height:22px;
 							transform:translate(-33px, 0);
 
 							@media screen and (width <= 768px) {
-								line-height:18px;
 								transform:translate(-26px, 0);
 							}
 
 							html.Scale-Small & {
 								@media screen and (width > 768px) {
-									line-height:18px;
 									transform:translate(-26px, 0);
 								}
 							}
@@ -329,7 +326,8 @@
 			}
 
 			&::after {
-				content:'';
+				@extend %LineAwesomeIcon;
+
 				width:26px;
 				height:26px;
 				margin:auto;
