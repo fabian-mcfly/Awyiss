@@ -266,11 +266,13 @@
 							transform:translate(-33px, 0);
 
 							@media screen and (width <= 768px) {
+								line-height:18px;
 								transform:translate(-26px, 0);
 							}
 
 							html.Scale-Small & {
 								@media screen and (width > 768px) {
+									line-height:18px;
 									transform:translate(-26px, 0);
 								}
 							}
@@ -333,7 +335,7 @@
 				margin:auto;
 				outline:1px solid var(--colorBright);
 				border-radius:5px;
-				background-color:var(--colorMedium);
+				background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 				color:var(--colorBright);
 				font-size:20px;
 				line-height:26px;
@@ -349,17 +351,26 @@
 				@media screen and (width <= 768px) {
 					width:20px;
 					height:20px;
+					font-size:18px;
+					line-height:18px;
 				}
 
 				html.Scale-Small & {
 					@media screen and (width > 768px) {
 						width:20px;
 						height:20px;
+						font-size:18px;
+						line-height:18px;
 					}
 				}
 
 				@keyframes blop {
+					0% {
+						content:'';
+					}
+
 					50% {
+						content:'';
 						border-radius:50%;
 						scale:1.5 .5;
 					}
@@ -367,7 +378,7 @@
 
 				html.🌚 & {
 					outline-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0847) calc(c + 0.009) calc(h + 1.53));
-					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
+					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 				}
 			}
 
