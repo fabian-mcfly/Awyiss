@@ -305,7 +305,6 @@ class MediaTableTest extends TestCase {
 			'name' => '   ', // only whitespace
 			'path' => '   ', // only whitespace
 			'systemOrder' => 1,
-			'focusPoint' => '',
 		];
 
 		$entity = $this->mediaTable->newEntity($data);
@@ -314,7 +313,6 @@ class MediaTableTest extends TestCase {
 		$this->assertArrayHasKey('mimeType', $errors);
 		$this->assertArrayHasKey('name', $errors);
 		$this->assertArrayHasKey('path', $errors);
-		$this->assertArrayHasKey('focusPoint', $errors);
 	}
 
 

@@ -221,7 +221,7 @@ class MediaTable extends Table {
 		]);
 
 
-		$validator->notEmptyString('focusPoint');
+		$validator->allowEmptyString('focusPoint');
 		$validator->add('focusPoint', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
