@@ -149,9 +149,10 @@
 	{% set columnType = schema.columnType(isAttribute ? field|underscore : staticCall(entity, 'unmapField', field)) %}
 	{% set isLanguage = language is not empty %}
 
+	{% set field = field|variable %}
 	{% set inputName = field|underscore %}
 	{% if isAttribute %}
-		{% set inputName = 'attributes[' ~ field|underscore ~ ']' %}
+		{% set inputName = 'attributes[' ~ inputName ~ ']' %}
 	{% endif %}
 
 	{% set oldData = isAttribute ? (audit.dataOld['attributes'] ?? []) : audit.dataOld %}
@@ -160,10 +161,10 @@
 		{% set oldData = oldData['_translations'][ language.shortcode ] %}
 		{% set entity = isAttribute ? (entity.get('attributes').get('_translations')[ language.shortcode ] ?? null) : (entity.get('_translations')[ language.shortcode ] ?? null) %}
 
-		{% set inputName = '_translations[' ~ language.shortcode ~ '][' ~ field|underscore ~']' %}
+		{% set inputName = '_translations[' ~ language.shortcode ~ '][' ~ inputName ~']' %}
 
 		{% if isAttribute %}
-			{% set inputName = 'attributes[_translations][' ~ language.shortcode ~ '][' ~ field|underscore ~']' %}
+			{% set inputName = 'attributes[_translations][' ~ language.shortcode ~ '][' ~ inputName ~']' %}
 			{% endif %}
 	{% endif %}
 
@@ -207,7 +208,7 @@
 			{{- oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], timeFormat) : '' }}
 		{%- elseif columnType == 'json' %}
 			{{- oldData[ field ] is not empty ? oldData[ field ]|json_encode : '' }}
-		{%- elseif columnType == 'string' and field == 'language_shortcode' %}
+		{%- elseif columnType == 'string' and field == 'languageShortcode' %}
 			{{- oldData[ field ] ? languages.Frontend[ oldData[ field ] ].title : '' }}
 		{%- elseif field == 'columnWidth' %}
 			{{- oldData['column'].width.label }}
@@ -325,7 +326,7 @@
 				{% set tableBody %}
 					{% block tableHistoryBodyRow %}
 						{% for field in historyFields %}
-							{% if field in translatableFields %}
+							{% if field in translatableFields and languages|length > 1 %}
 								<tr>
 									<td colspan="3" class="TableCell-Translation-Label">
 										{% if isPageRole %}
@@ -344,7 +345,7 @@
 						{% endfor %}
 
 						{% for field, attribute in attributes %}
-							{% if field in translatableAttributes %}
+							{% if field in translatableAttributes and languages|length > 1 %}
 								<tr>
 									<td colspan="3" class="TableCell-Translation-Label">
 										{{ attribute.label }}
