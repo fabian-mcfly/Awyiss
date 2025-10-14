@@ -310,7 +310,12 @@ class MediaController extends Controller {
 		 * If the request is an AJAX request, the type is a form submit (type patch, post or put and not a reload)
 		 * set the view class to JSON, disable the auto layout and render the response
 		 */
-		if ($this->request->is(['patch', 'post', 'put']) && $this->request->is('ajax') && !$this->request->getData('reload_form')) {
+		if (
+			$this->request->is(['patch', 'post', 'put']) &&
+			$this->request->is('ajax') &&
+			!$this->request->getData('reload_form') &&
+			!$this->request->getParam('ajaxForm')
+		) {
 			$ls_errorMessage = $this->getErrorMessage($lo_media);
 
 			// Consume the flash messages to prevent them from being displayed the next time the page is loaded
