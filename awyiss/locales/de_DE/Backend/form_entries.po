@@ -55,3 +55,6 @@ msgstr "E-mail anzeigen"
 
 msgid "view_confirmation_email"
 msgstr "Bestätigung anzeigen"
+
+msgid "headline_status_cell"
+msgstr "Neue Formulareinträge"

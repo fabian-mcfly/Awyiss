@@ -1,0 +1,68 @@
+{#
+@var formEntries \Cake\Collection\Collection
+@var lastLogin \Cake\I18n\DateTime
+@var accessible bool
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block fieldsetOverview %}
+	{% if accessible %}
+		<fieldset class="Overview-Fieldset Fieldset-FormEntriesStatus StatusCell Collapsible">
+			<legend>{{ __d('form_entries', 'headline_status_cell') }}</legend>
+
+			{% block fieldsetOverviewInner %}
+				<div class="Table-Overflow">
+					{% block tableOverview %}
+						<table class="Overview-Table">
+							{% block tableOverviewHead %}
+								<thead>
+									<tr>
+										<th class="TableHeader-Form">
+											{{ __d('form_entries', 'form_id') }}
+										</th>
+										<th class="TableHeader-Subject">
+											{{ __d('form_entries', 'subject') }}
+										</th>
+										<th class="TableHeader-CreatedOn">
+											{{ __d('form_entries', 'created_on') }}
+										</th>
+										<th class="TableHeader-Actions"></th>
+									</tr>
+								</thead>
+							{% endblock %}
+							{% block tableOverviewBody %}
+								<tbody>
+									{% for formEntry in formEntries %}
+										<tr>
+											<td class="TableCell-Form" title="{{ formEntry.form.title }}">{{ formEntry.form.title }}</td>
+											<td class="TableCell-Subject" title="{{ formEntry.subject }}">{{ formEntry.subject }}</td>
+											<td class="TableCell-CreatedOn">{{ TimeHelper.nice(formEntry.createdOn) }}</td>
+											<td class="TableCell-Actions">
+												<div class="Actions">
+													{{ HtmlHelper.link(__d('form_entries', 'view_email'), {controller: 'FormEntries', action: 'view', id: formEntry.id}, {class: 'Button Button-Small Button-Preview'}) }}
+												</div>
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							{% endblock %}
+						</table>
+					{% endblock %}
+				</div>
+			{% endblock %}
+		</fieldset>
+	{% endif %}
+{% endblock %}

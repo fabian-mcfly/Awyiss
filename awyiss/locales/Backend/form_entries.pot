@@ -55,3 +55,6 @@ msgstr "View email"
 
 msgid "view_confirmation_email"
 msgstr "View confirmation"
+
+msgid "headline_status_cell"
+msgstr "New Form Entries"

@@ -47,7 +47,7 @@
 			}
 		}
 
-		&.Fieldset-UrlsNotFoundStatus {
+		&:has(> .Table-Overflow) {
 			padding:0;
 
 			.Table-Overflow {
