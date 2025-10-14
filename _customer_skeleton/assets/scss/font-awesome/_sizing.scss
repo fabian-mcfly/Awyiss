@@ -1,8 +1,6 @@
 // sizing icons
 // -------------------------
 
-@import 'mixins';
-
 // literal magnification scale
 @for $i from 1 through 10 {
   .#{$css-prefix}-#{$i}x {
