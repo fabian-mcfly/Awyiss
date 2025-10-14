@@ -160,6 +160,7 @@ class MediaTest extends TestCase {
 			'originalWebpPathAbsolute',
 			'filemtime',
 			'previewFilemtime',
+			'usageCount',
 		], $entity->getVirtual());
 	}
 

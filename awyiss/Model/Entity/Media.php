@@ -141,6 +141,7 @@ class Media extends Entity {
 		'originalWebpPathAbsolute',
 		'filemtime',
 		'previewFilemtime',
+		'usageCount',
 	];
 
 
