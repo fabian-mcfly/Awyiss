@@ -31,6 +31,7 @@ export default class PlaceholderHelper {
 		this.eventHandler.add('focus', this.handleElement.bind(this), element);
 		this.eventHandler.add('blur', this.handleElement.bind(this), element);
 		this.eventHandler.add('keyup', this.handleElement.bind(this), element);
+		this.eventHandler.add('input', this.handleElement.bind(this), element);
 	}
 
 	/**
@@ -101,7 +102,7 @@ export default class PlaceholderHelper {
 
 		const value = input.value;
 
-		if (event.type === 'keyup') {
+		if (event.type === 'keyup' || event.type === 'input') {
 			if (value.length > 0) {
 				// Set a timeout to hide the button
 				applyButton.hideTimeout = setTimeout(() => {
