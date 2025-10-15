@@ -373,7 +373,5 @@ trait ConfigTrait {
 		else {
 			$this->io->error('Could not set rich text editor. Please check the database connection and try again.');
 		}
-
-		dump($lo_config);
 	}
 }
