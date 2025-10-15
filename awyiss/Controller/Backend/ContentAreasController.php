@@ -203,4 +203,28 @@ class ContentAreasController extends Controller {
 			'contentArea' => $contentArea,
 		]);
 	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	#[NoDirectAccess]
+	public function requestLock(string $method = 'update'): void {
+		$this->Authorization->setScope('PageTemplates');
+
+		parent::requestLock($method);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	#[NoDirectAccess]
+	public function releaseLock(string $method = 'update'): void {
+		$this->Authorization->setScope('PageTemplates');
+
+		parent::releaseLock($method);
+	}
 }
