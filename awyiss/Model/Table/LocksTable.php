@@ -22,4 +22,12 @@ class LocksTable extends Table {
 	 * @inheritDoc
 	 */
 	public const string TABLE = 'locks';
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected array $audit = [
+		'enabled' => false,
+	];
 }

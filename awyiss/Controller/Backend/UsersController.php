@@ -10,6 +10,7 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\User;
 use Awyiss\Routing\Router;
+use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -286,10 +287,15 @@ class UsersController extends Controller {
 		if ($lo_identity && $ls_lockIdentifier) {
 			// Remove all locks
 			$lo_lockTable = $this->fetchTable('Locks');
-			$lo_lockTable->deleteAll([
-				'unique_id' => $ls_lockIdentifier,
-				'created_by' => $lo_identity->getIdentifier(),
-			]);
+
+			$la_where = ['created_by' => $lo_identity->getIdentifier()];
+
+			$lb_sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
+			if ($lb_sessionBased) {
+				$la_where['unique_id'] = $ls_lockIdentifier;
+			}
+
+			$lo_lockTable->deleteAll($la_where);
 		}
 
 		return $this->redirect(Router::url([

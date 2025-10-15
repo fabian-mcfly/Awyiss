@@ -165,6 +165,13 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
+					defaultValue: true,
+					identifier: 'sessionBased',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
 					defaultValue: 1200,
 					identifier: 'timeout',
 					localizable: false,

@@ -7,6 +7,7 @@ namespace Awyiss\Model\Entity;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Model\Entity;
 use Awyiss\Routing\Router;
+use Cake\Core\Configure;
 use Cake\Utility\Text;
 
 
@@ -54,8 +55,14 @@ class Lock extends Entity {
 			return false;
 		}
 
-		return $this->createdBy === $lo_identity->getIdentifier() &&
-			$this->uniqueId === $lo_session->read('Backend.lockIdentifier');
+		$lb_sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
+
+		if ($lb_sessionBased) {
+			return $this->createdBy === $lo_identity->getIdentifier() &&
+			   $this->uniqueId === $lo_session->read('Backend.lockIdentifier');
+		}
+
+		return $this->createdBy === $lo_identity->getIdentifier();
 	}
 
 

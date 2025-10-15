@@ -454,6 +454,9 @@ msgstr "Bearbeitungs-Sperrzeit"
 msgid "configuration_identifier_backend_lock_enabled"
 msgstr "Aktiviert"
 
+msgid "configuration_identifier_backend_lock_session_based"
+msgstr "Sitzungsbasiert"
+
 msgid "configuration_identifier_backend_timezone"
 msgstr "Zeitzone"
 

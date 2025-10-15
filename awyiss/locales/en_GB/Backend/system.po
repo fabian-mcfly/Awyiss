@@ -454,6 +454,9 @@ msgstr "Edit Timeout"
 msgid "configuration_identifier_backend_lock_enabled"
 msgstr "Enabled"
 
+msgid "configuration_identifier_backend_lock_session_based"
+msgstr "Session-based"
+
 msgid "configuration_identifier_backend_timezone"
 msgstr "Timezone"
 

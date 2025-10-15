@@ -157,9 +157,11 @@ class LockComponent extends Component {
 
 			$this->locksTable->patchEntity($lo_lock, [
 				'scope' => $this->getConfig('tableName'),
-				'foreign_key' => $id,
-				'unique_id' => $this->getController()->getRequest()->getSession()->read('Backend.lockIdentifier'),
-			]);
+				'foreignKey' => $id,
+				'uniqueId' => $this->getController()->getRequest()->getSession()->read('Backend.lockIdentifier'),
+				'createdOn' => new DateTime(),
+				'createdBy' => $this->getIdentityId(),
+			], ['accessibleFields' => ['createdOn', 'createdBy']]);
 
 			if ($this->locksTable->save($lo_lock)) {
 				return $lo_lock;
@@ -239,14 +241,17 @@ class LockComponent extends Component {
 		];
 
 		if ($ownLock !== null) {
-			$la_where['unique_id' . ($ownLock ? '' : ' !=') ] = $lo_session->read('Backend.lockIdentifier');
 			$la_where['created_by' . ($ownLock ? '' : ' !=') ] = $this->getIdentityId();
+
+			$lb_sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
+			if ($lb_sessionBased) {
+				$la_where[ 'unique_id' . ($ownLock ? '' : ' !=') ] = $lo_session->read('Backend.lockIdentifier');
+			}
 		}
 
 		if ($createdOn) {
 			$la_where['created_on <='] = $createdOn;
 		}
-
 
 		return $this->locksTable->find()->where($la_where)->contain(['CreatedByUser'])->first();
 	}

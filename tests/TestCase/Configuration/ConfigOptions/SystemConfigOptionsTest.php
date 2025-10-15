@@ -41,7 +41,7 @@ class SystemConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(19, $configOptions);
+		$this->assertCount(20, $configOptions);
 
 		$this->assertArrayHasKey('Frontend.editor', $configOptions);
 		$this->assertFalse($configOptions['Frontend.editor']->isLocalizable());
@@ -226,6 +226,17 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.lock.enabled']->getTypecast());
 		$this->assertNull($configOptions['Backend.lock.enabled']->getValidate());
 		$this->assertNull($configOptions['Backend.lock.enabled']->getValues());
+
+		$this->assertArrayHasKey('Backend.lock.sessionBased', $configOptions);
+		$this->assertFalse($configOptions['Backend.lock.sessionBased']->isLocalizable());
+		$this->assertFalse($configOptions['Backend.lock.sessionBased']->isNullable());
+		$this->assertFalse($configOptions['Backend.lock.sessionBased']->isPersonalizable());
+		$this->assertSame(true, $configOptions['Backend.lock.sessionBased']->getDefaultValue());
+		$this->assertSame('true', $configOptions['Backend.lock.sessionBased']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Backend.lock.sessionBased']->getType());
+		$this->assertNull($configOptions['Backend.lock.sessionBased']->getTypecast());
+		$this->assertNull($configOptions['Backend.lock.sessionBased']->getValidate());
+		$this->assertNull($configOptions['Backend.lock.sessionBased']->getValues());
 
 		$this->assertArrayHasKey('Backend.lock.timeout', $configOptions);
 		$this->assertFalse($configOptions['Backend.lock.timeout']->isLocalizable());
