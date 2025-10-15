@@ -5,10 +5,15 @@
 
 	margin-top:2px;
 	margin-left:40px;
+	margin-right:-20px;
 	border-radius:5px;
 
 	@media screen and (width <= 768px) {
 		margin-left:20px;
+	}
+
+	@media screen and (width <= 540px) {
+		margin-right:-10px;
 	}
 
 	html.🌚 & {
@@ -41,11 +46,11 @@
 	}
 
 	&.Level1 {
-		margin:0 -20px;
+		margin:0;
 		grid-column:1 / span 12;
 		container:listItem / inline-size;
 
-		@media screen and (width <= 1280px) {
+		/*@media screen and (width <= 1280px) {
 			margin-inline:0;
 		}
 
@@ -53,7 +58,7 @@
 			@media screen and (width > 1280px) {
 				margin-inline:0;
 			}
-		}
+		}*/
 
 		&.SortableDragging {
 			&:has(.SortableChosen[data-nestable="false"]) {
@@ -587,14 +592,14 @@
 	}
 
 	.ListItem {
-		margin:2px -20px 0 -52px;
+		margin:2px 0 0 -32px;
 		padding-inline:52px 20px;
 		list-style-type:none;
 		position:relative;
 
 		@media screen and (width <= 540px) {
-			margin-inline:-10px;
-			padding-inline:10px;
+			//margin-inline:-10px;
+			padding-inline:42px 10px;
 		}
 
 		@media screen and (width <= 500px) {
@@ -603,8 +608,8 @@
 
 		html.Scale-Small & {
 			@media screen and (width > 768px) {
-				margin-left:-32px;
-				padding-left:32px;
+				//margin-left:-32px;
+				//padding-left:32px;
 			}
 		}
 
@@ -727,7 +732,7 @@
 
 			html.Scale-Small & {
 				@media screen and (width > 768px) {
-					background-position:52px 16px;
+					background-position:62px 16px;
 				}
 			}
 		}
