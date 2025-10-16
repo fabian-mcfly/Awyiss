@@ -99,10 +99,10 @@
 
 		&.Level1 {
 			padding-block:.5rem .25rem;
-			margin:-.5rem -25px calc(-.5rem - 2px);
+			margin:-.5rem 15px calc(-.5rem - 2px);
 
 			@media screen and (width <= 1280px) {
-				margin-inline:-5px;
+				margin-inline:5px;
 			}
 
 			&.SortableDragging {
@@ -156,7 +156,7 @@
 
 			html.Scale-Small & {
 				@media screen and (width > 768px) {
-					margin-inline:-5px;
+					margin-inline:5px;
 				}
 			}
 		}
