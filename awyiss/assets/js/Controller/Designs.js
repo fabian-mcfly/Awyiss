@@ -216,7 +216,7 @@ export default class DesignsController {
 				if (unitSelect) {
 					const unit = input.value.replace(/[^a-zA-Z]/g, '').toLowerCase();
 					const option = unitSelect.querySelector(`option[value="${unit}"]`);
-					if (option) {
+					if (unit && option) {
 						unitSelect.value = option.value;
 
 						// Update the range input's attributes
