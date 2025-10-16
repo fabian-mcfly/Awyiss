@@ -831,6 +831,7 @@ class FrontendController extends AppController {
 			$ls_slug === '/temp' ||
 			str_contains($ls_slug, '/_resized') ||
 			str_contains($ls_slug, '_preview/') ||
+			str_starts_with($ls_slug, '/.git/') ||
 			str_starts_with($ls_slug, '/assets/') ||
 			str_starts_with($ls_slug, '/awyiss/assets/') ||
 			str_starts_with($ls_slug, '/config/') ||
