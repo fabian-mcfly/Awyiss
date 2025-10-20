@@ -201,6 +201,10 @@ class SoftDeleteBehavior extends Behavior {
 
 		//Call softDelete. If it fails, throw an exception
 		if (!$this->softDelete($entity, $lo_options, $event)) {
+			if ($event->getResult() === false) {
+				return;
+			}
+
 			throw new RuntimeException(sprintf('Could not soft-delete entity of type `%s`', $entity::class));
 		}
 
