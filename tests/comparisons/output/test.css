@@ -70,30 +70,40 @@
   .WidgetElement):not([class*=ColumnIndent-]):first-child {
     margin-left: 0;
   }
-  :is(.ContentElement,
-  .FormElement,
-  .WidgetElement).Column-Rtl:nth-child(1) {
-    order: 5;
+  @media screen and (width > 860px) {
+    :is(.ContentElement,
+    .FormElement,
+    .WidgetElement).Column-Rtl:nth-child(1) {
+      order: 5;
+    }
   }
-  :is(.ContentElement,
-  .FormElement,
-  .WidgetElement).Column-Rtl:nth-child(2) {
-    order: 4;
+  @media screen and (width > 860px) {
+    :is(.ContentElement,
+    .FormElement,
+    .WidgetElement).Column-Rtl:nth-child(2) {
+      order: 4;
+    }
   }
-  :is(.ContentElement,
-  .FormElement,
-  .WidgetElement).Column-Rtl:nth-child(3) {
-    order: 3;
+  @media screen and (width > 860px) {
+    :is(.ContentElement,
+    .FormElement,
+    .WidgetElement).Column-Rtl:nth-child(3) {
+      order: 3;
+    }
   }
-  :is(.ContentElement,
-  .FormElement,
-  .WidgetElement).Column-Rtl:nth-child(4) {
-    order: 2;
+  @media screen and (width > 860px) {
+    :is(.ContentElement,
+    .FormElement,
+    .WidgetElement).Column-Rtl:nth-child(4) {
+      order: 2;
+    }
   }
-  :is(.ContentElement,
-  .FormElement,
-  .WidgetElement).Column-Rtl:nth-child(5) {
-    order: 1;
+  @media screen and (width > 860px) {
+    :is(.ContentElement,
+    .FormElement,
+    .WidgetElement).Column-Rtl:nth-child(5) {
+      order: 1;
+    }
   }
   :is(.ContentElement,
   .FormElement,

@@ -58,7 +58,9 @@
 			//noinspection SassScssUnresolvedVariable
 			@for $i from 1 through $maxColumns {
 				&:nth-child(#{$i}) {
-					order:$maxColumns - $i + 1;
+					@media screen and (width > $singleColumnBreakpoint) {
+						order:$maxColumns - $i + 1;
+					}
 				}
 			}
 
