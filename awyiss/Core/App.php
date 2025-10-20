@@ -164,7 +164,7 @@ class App extends BaseApp {
 
 				if (
 					$interface &&
-					!in_array($interface, class_implements($ls_fqClassName))
+					!in_array($interface, class_implements($ls_fqClassName) ?: [])
 				) {
 					if ($ls_name === '*') {
 						continue;
