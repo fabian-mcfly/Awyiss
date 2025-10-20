@@ -213,31 +213,30 @@ trait ConfigTrait {
 
 
 	/**
-	 * Sets up a demo attribute collection by updating the namespace in the ContentsAttributeOptionsCollection.php file.
+	 * Sets up a demo attribute collection by updating the namespace in the ContentsAttributeOptions.php file.
 	 *
 	 * @return void
 	 */
 	protected function setupDemoAttributeCollection(): void {
 		if ($this->dryRun) {
-			$this->io->success('\Customer\Attribute\AttributeOptionsCollection file updated.');
+			$this->io->success('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.');
 
 			return;
 		}
 
-		// Define the path to the ContentsAttributeOptionsCollection.php file
+		// Define the path to the ContentsAttributeOptions.php file
 		$ls_filePath = ROOT . DS . $this->customerName . DS . 'Attribute' . DS . 'AttributeOptions' . DS . 'ContentsAttributeOptions.php';
 
-		// Load the contents of the ContentsAttributeOptionsCollection.php file
+		// Load the contents of the ContentsAttributeOptions.php file
 		$ls_fileContents = file_get_contents($ls_filePath);
 
-		// Replace the namespace with the camelized version of the given customer name
-		$ls_newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Attribute\\AttributeOptionsCollection;';
-		$ls_fileContents = str_replace('namespace Customer\\Attribute\\AttributeOptionsCollection;', $ls_newNamespace, $ls_fileContents);
+		$ls_newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Attribute\\AttributeOptions;';
+		$ls_fileContents = str_replace('namespace Customer\\Attribute\\AttributeOptions;', $ls_newNamespace, $ls_fileContents);
 
-		// Write the updated contents back to the ContentsAttributeOptionsCollection.php file
+		// Write the updated contents back to the ContentsAttributeOptions.php file
 		file_put_contents($ls_filePath, $ls_fileContents);
 
-		$this->io->success('\Customer\Attribute\AttributeOptionsCollection file updated.');
+		$this->io->success('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.');
 	}
 
 

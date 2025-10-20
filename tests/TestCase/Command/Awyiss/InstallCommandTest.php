@@ -74,8 +74,8 @@ class InstallCommandTest extends TestCase {
 		//<info> The password for the admin user is: ...</info>
 		$this->assertOutputContains('The password for the admin user is:');
 
-		//<success>\Customer\Attribute\AttributeOptionsCollection file updated.</success>
-		$this->assertOutputContains('\Customer\Attribute\AttributeOptionsCollection file updated.');
+		//<success>\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.</success>
+		$this->assertOutputContains('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.');
 
 		//<success>\Customer\View\Cell\Frontend\MenuCell file updated.</success>
 		$this->assertOutputContains('\Customer\View\Cell\Frontend\MenuCell file updated.');
