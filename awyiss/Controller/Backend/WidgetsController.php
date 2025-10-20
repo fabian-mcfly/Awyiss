@@ -497,6 +497,8 @@ class WidgetsController extends Controller {
 		// Build an array of assigned widget elements, indexed by their identifier
 		$la_assignedWidgetElements = $selectedWidgetTemplate ? collection($selectedWidgetTemplate->widgetTemplateElements)->indexBy('identifier')->toArray() : [];
 
+		$widget->setDirty('parentId', false);
+
 		// If the parent_id is not in the list of possible parent ids or the parent_id is not assigned to the selected widget template
 		if (
 			$widget->parentId && (!in_array($widget->parentId, $la_possibleParentIds) || !isset($la_assignedWidgetElements['parent_id']))

@@ -899,6 +899,8 @@ class ContentsController extends Controller {
 		// Build an array of assigned content elements, indexed by their identifier
 		$la_assignedContentElements = $selectedContentTemplate ? collection($selectedContentTemplate->contentTemplateElements)->indexBy('identifier')->toArray() : [];
 
+		$content->setDirty('parentId', false);
+
 		// If the parent_id is not in the list of possible parent ids or the parent_id is not assigned to the selected content template
 		if (
 			$content->parentId &&
