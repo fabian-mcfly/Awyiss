@@ -44,25 +44,11 @@
 	}
 
 	&:not(.Collapsed) {
-		@media screen and (width <= 768px) {
-			padding-bottom:20px;
-		}
 
-		@media screen and (width <= 540px) {
-			padding-bottom:10px;
-		}
 	}
 
 	html.👀 & {
 		top:40px;
-	}
-
-	&:not(.Collapsed) {
-		html.Scale-Small & {
-			@media screen and (width > 768px) {
-				padding-bottom:20px;
-			}
-		}
 	}
 
 	&:not(:has(.Item)) {
@@ -118,7 +104,7 @@
 %AvailableTemplateElementsListItem {
 	display:grid;
 	min-height:50px;
-	margin:5px 0 0 0;
+	margin:5px 20px 0;
 	padding:10px 20px;
 	border-radius:5px;
 	background-color:var(--colorNeutralLight);
@@ -129,6 +115,7 @@
 	position:relative;
 
 	@media screen and (width <= 540px) {
+		margin-inline:10px;
 		padding-inline:10px;
 	}
 
@@ -138,8 +125,8 @@
 
 	html.Scale-Small & {
 		@media screen and (width > 768px) {
-			min-height:0;
-			padding-inline:10px;
+			margin-inline:10px;
+			padding:5px 10px;
 		}
 	}
 
@@ -370,6 +357,11 @@
 		html.🌚 & {
 			background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 		}
+
+		.Button-AddRemove {
+			opacity:inherit;
+			pointer-events:auto;
+		}
 	}
 
 	.Title {
@@ -403,13 +395,13 @@
 		margin:auto;
 		font-size:0;
 		line-height:0;
+		opacity:0;
+		pointer-events:none;
+		transition:opacity .3s ease-in-out;
 
-		@media screen and (width > 1024px) {
-			display:none;
-		}
-
-		&:is(.Button-Delete) {
+		&:is(.Button-Delete):is(.Button-Delete) {
 			background-color:var(--colorError);
+			opacity:0;
 
 			&::after {
 				border:0 none;
@@ -418,7 +410,7 @@
 		}
 
 		&:is(.Button-Add) {
-			background-color:var(--colorSuccess);
+			//background-color:var(--colorSuccess);
 		}
 
 		&:is(.Button) {

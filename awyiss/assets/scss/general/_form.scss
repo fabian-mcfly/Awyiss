@@ -1527,22 +1527,14 @@ textarea {
 	.Fieldset-MediaElements-Assigned
 ) {
 	display:block;
-	padding-inline:20px;
+	padding-inline:0;
+	padding-bottom:0;
 	position:sticky;
 	top:160px;
-
-	@media screen and (width <= 768px) {
-		padding-bottom:20px;
-	}
 
 	@media screen and (width <= 640px) {
 		position:relative;
 		top:0;
-	}
-
-	@media screen and (width <= 540px) {
-		padding-inline:10px;
-		padding-bottom:10px;
 	}
 
 	html.👀 & {
@@ -1555,13 +1547,12 @@ textarea {
 
 	html.Scale-Small & {
 		@media screen and (width > 768px) {
-			padding-bottom:20px;
+			padding-inline:0;
+			padding-bottom:0;
 		}
 	}
 
 	&:not(:has(.Item)) {
-		padding-bottom:40px;
-
 		&:has(.SortableDragging) {
 			background-color:color-mix(in srgb, var(--colorSuccess) 20%, #FFFFFF);
 
@@ -1581,7 +1572,35 @@ textarea {
 		}
 
 		.List {
-			height:40px;
+			height:70px;
+		}
+	}
+
+	> .List {
+		padding-bottom:20px;
+
+		@media screen and (width <= 540px) {
+			padding-bottom:10px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding-bottom:10px;
+			}
+		}
+
+		> .Item {
+			margin-inline:20px;
+
+			@media screen and (width <= 540px) {
+				margin-inline:10px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-inline:10px;
+				}
+			}
 		}
 	}
 }

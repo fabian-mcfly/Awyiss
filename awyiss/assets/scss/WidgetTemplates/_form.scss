@@ -75,22 +75,28 @@
 		.Fieldset-Fieldset
 	) {
 		display:block;
-		padding-inline:20px;
+		padding-inline:0;
+		padding-bottom:0;
 
 		@media screen and (width <= 768px) {
 			padding-top:40px;
-			padding-bottom:20px;
 		}
 
 		@media screen and (width <= 540px) {
 			padding-top:30px;
-			padding-inline:10px;
-			padding-bottom:10px;
 		}
 
-		html.Scale-Small & {
-			@media screen and (width > 768px) {
-				padding-bottom:20px;
+		> ul {
+			padding-bottom:20px;
+
+			@media screen and (width <= 540px) {
+				padding-bottom:10px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-bottom:10px;
+				}
 			}
 		}
 	}

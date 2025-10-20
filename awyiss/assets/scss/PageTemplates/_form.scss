@@ -42,31 +42,36 @@
 		.Fieldset-ContentAreasAvailable,
 		.Fieldset-ContentAreasAssigned
 	) {
-		padding-inline:20px;
+		padding-inline:0;
+		padding-bottom:0;
 		position:sticky;
 		top:160px;
 		grid-template-columns:auto;
-
-		@media screen and (width <= 768px) {
-			padding-bottom:20px;
-		}
 
 		@media screen and (width <= 640px) {
 			position:relative;
 			top:0;
 		}
 
-		@media screen and (width <= 540px) {
-			padding-inline:10px;
-			padding-bottom:10px;
-		}
-
-
 		html.👀 & {
 			top:60px;
 
 			@media screen and (width <= 640px) {
 				top:0;
+			}
+		}
+
+		> ul {
+			padding-bottom:20px;
+
+			@media screen and (width <= 540px) {
+				padding-bottom:10px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-bottom:10px;
+				}
 			}
 		}
 	}
@@ -91,7 +96,7 @@
 	.ContentAreas-ListItem {
 		display:grid;
 		min-height:50px;
-		margin:5px 0 0 0;
+		margin:5px 20px 0;
 		border-radius:5px;
 		background-color:var(--colorNeutralLight);
 		list-style-type:none;
@@ -99,11 +104,18 @@
 		align-items:center;
 
 		@media screen and (width <= 540px) {
+			margin-inline:10px;
 			line-height:1.2;
 		}
 
 		html.🌚 & {
 			background-color:var(--colorSemiDark);
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				margin-inline:10px;
+			}
 		}
 
 		&.Inactive {
