@@ -117,7 +117,8 @@ class SystemOrderBehavior extends Behavior {
 			/** @noinspection PhpVariableNamingConventionInspection */
 			unset($data['systemOrder']);
 		}
-		elseif (isset($data['system_order']) && $data['system_order'] === static::CURRENT_VALUE_PLACEHOLDER) {
+
+		if (isset($data['system_order']) && $data['system_order'] === static::CURRENT_VALUE_PLACEHOLDER) {
 			/** @noinspection PhpVariableNamingConventionInspection */
 			unset($data['system_order']);
 		}
@@ -129,7 +130,7 @@ class SystemOrderBehavior extends Behavior {
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param \ArrayObject $options
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection PhpUnusedParameterInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function beforeCopy(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		// If the system order behavior is not enabled or the entity is related, not the main context, there's no need to continue
@@ -147,12 +148,11 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
-		/**
-		 * @noinspection PhpPossiblePolymorphicInvocationInspection
-		 */
 		if ($entity->systemOrder >= ($entity->originalEntity?->systemOrder ?? $entity->systemOrder)) {
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$entity->systemOrder++;
+		}
+		elseif ($entity->systemOrder === 0) {
+			$entity->systemOrder = 1;
 		}
 	}
 

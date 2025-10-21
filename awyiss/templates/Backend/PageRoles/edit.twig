@@ -29,7 +29,7 @@
 		</div>
 	{% endblock %}
 
-	{{ FormHelper.checkbox('save_as_copy', {form: 'PageRoleForm', id: 'SaveAsCopy', value: true}) }}
+	{{ FormHelper.checkbox('save_as_copy', {form: 'PageRoleForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
 
 	{% block buttonAreaToggle %}
 		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}

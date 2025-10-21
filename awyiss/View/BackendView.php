@@ -79,7 +79,7 @@ class BackendView extends AppView {
 					return __('system_order_after') . ' ' . $option->label;
 				},
 				'titleOptionCurrent' => function (mixed $option): string {
-					return $option->label;
+					return __('system_order_after') . ' ' . $option->label;
 				},
 				'titleOptionSelected' => function (mixed $option): string {
 					return '-> ' . __('system_order_after') . ' ' . $option->label;

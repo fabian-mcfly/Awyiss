@@ -122,7 +122,7 @@ class SystemOrderHelper extends Helper {
 		return $this->Form->control(
 			$fieldName ?? 'system_order',
 			$la_attributes + [
-				'disabled' => [SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER],
+				'disabled' => $this->_View->getRequest()->getData('save_as_copy') ? false : [SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER],
 				'val' => $lo_entity->systemOrder,
 			]
 		);
@@ -144,11 +144,12 @@ class SystemOrderHelper extends Helper {
 
 		//If the option `first`-option should be part of the options, add it
 		if ($attributes['includeFirst']) {
+			$li_firstOrder = $this->_View->getRequest()->getData('save_as_copy') ? 0 : 1;
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$la_options[1] = $this->formatFirstTitle(
+			$la_options[ $li_firstOrder ] = $this->formatFirstTitle(
 				$attributes + [
 					'isOriginalSystemOrder' => !$lb_isNew && $entity->hasOriginal('systemOrder') && $entity->getOriginal('systemOrder') === 1,
-					'isSelectedSystemOrder' => $entity->systemOrder === 1,
+					'isSelectedSystemOrder' => $entity->systemOrder === $li_firstOrder,
 				]
 			);
 		}
@@ -208,7 +209,7 @@ class SystemOrderHelper extends Helper {
 			 *
 			 * @see SystemOrderBehavior::beforeMarshal
 			 */
-			if ($lb_isOriginalSystemOrder) {
+			if ($lb_isOriginalSystemOrder && !$this->_View->getRequest()->getData('save_as_copy')) {
 				$li_systemOrder = SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER;
 			}
 

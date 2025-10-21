@@ -42,6 +42,8 @@ export default class FormUpdater {
 		// Attach a single event listener to the document
 		this.eventHandler.add('input', this.handleInputEvent.bind(this));
 
+		this.eventHandler.add('change', this.handleChangeEvent.bind(this));
+
 		const forms = document.querySelectorAll('form');
 		forms.forEach((form) => {
 			form.noValidate = true;
@@ -54,12 +56,28 @@ export default class FormUpdater {
 
 
 	/**
+	 * Handles the change event and checks if the target is a checkbox or radio button.
+	 *
+	 * @param {Event} event - The event object.
+	 */
+	handleChangeEvent(event) {
+		const target = event.target;
+		if (
+			!target.closest('form') &&
+			(target.type === 'checkbox' || target.type === 'radio')
+		) {
+			this.handleInputEvent(event);
+		}
+	}
+
+
+	/**
 	 * Handles the input event by sending a request if the event target is within a form.
 	 *
 	 * @param {Event} event - The event object.
 	 */
 	handleInputEvent(event) {
-		const form = this.getForm(event.target);
+		const form = event.target.form || event.target.closest('form');
 
 		this.hideFlashMessages(form);
 
@@ -255,21 +273,6 @@ export default class FormUpdater {
 
 		// Set the new scroll position
 		window.scrollTo(0, scrollPosition - messageHeight);
-
-	}
-
-	/**
-	 * Finds the closest form element to the given element.
-	 *
-	 * @param {HTMLElement} element - The element to start the search from.
-	 * @returns {HTMLFormElement|null} The closest form element, or null if none is found.
-	 */
-	getForm(element) {
-		while (element && element.nodeName.toLowerCase() !== 'form') {
-			element = element.parentNode instanceof HTMLElement ? element.parentNode : null;
-		}
-
-		return element;
 	}
 
 	/**
