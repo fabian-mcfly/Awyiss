@@ -1,5 +1,7 @@
 .LinkSelect {
 	display:inline-block;
+	min-width:250px;
+	text-align:left;
 	position:relative;
 	z-index:900;
 	vertical-align:top;
@@ -217,7 +219,6 @@
 		border:10px solid transparent;
 		box-shadow:0 0 10px 0 rgba(0, 0, 0, .2);
 		background-color:var(--colorBright);
-		text-align:left;
 		position:absolute;
 		top:100%;
 		right:-200px;

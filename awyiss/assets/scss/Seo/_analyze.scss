@@ -50,7 +50,9 @@
 	}
 
 	.NestedList {
-
+		.NestedList {
+			margin-left:10px;
+		}
 
 		.ListItem {
 			--seoButtonWidth:28px;
@@ -63,7 +65,7 @@
 				grid-template-columns:auto repeat(3, calc(var(--seoButtonWidth) + var(--seoTextWidth))) repeat(2, var(--seoButtonWidth)) var(--seoButtonWidth);
 				row-gap:10px;
 
-				@container listItem (width <= 1024px) {
+				@container listItem (width <= 860px) {
 					--seoTextWidth:130px;
 				}
 
@@ -92,6 +94,7 @@
 		}
 
 		.Data {
+			grid-column:1 / -1;
 			align-content:start;
 			gap:0;
 
@@ -135,8 +138,14 @@
 			}
 
 			&:nth-child(1 of .SeoInfo) {
+				grid-column-start:2;
+
 				@container listItem (680px < width <= 1024px) {
 					grid-column-start:2;
+				}
+
+				@container listItem (width <= 680px) {
+					grid-column-start:auto;
 				}
 
 				@media screen and (width <= 420px) {
