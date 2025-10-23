@@ -8,22 +8,33 @@ export default class BackendMenuEntriesController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('BackendMenuEntriesController')) {
+			return
+		}
+
 		if (document.body.classList.contains('OverviewAction')) {
 			this.initOverview();
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
 			this.initForm();
-
-			this.accessHelper = new AccessHelper();
-			this.linkHelper = new LinkHelper();
 		}
+	}
+
+	/**
+	 * Initialize the overview related functionality.
+	 */
+	initOverview() {
+		window.nestedListHandler.getOrder = this.getNestedListOrder;
 	}
 
 	/**
 	 * Initialize the form related functionality.
 	 */
 	initForm() {
+		this.accessHelper = new AccessHelper();
+		this.linkHelper = new LinkHelper();
+
 		window.eventHandler.add('input', function (event) {
 			// Check if the event target is the insert_after_id select element
 			if (event.target.name === 'insert_after_id') {
@@ -34,13 +45,6 @@ export default class BackendMenuEntriesController {
 				parentIdSelect.selectedIndex = 0;
 			}
 		}, window, {}, 9);
-	}
-
-	/**
-	 * Initialize the overview related functionality.
-	 */
-	initOverview() {
-		window.nestedListHandler.getOrder = this.getNestedListOrder;
 	}
 
 	/**

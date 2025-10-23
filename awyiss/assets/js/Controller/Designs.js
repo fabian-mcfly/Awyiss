@@ -8,6 +8,10 @@ export default class DesignsController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('DesignsController')) {
+			return;
+		}
+
 		const form = document.querySelector('#DesignForm');
 		this.eventHandler.add('input', (event) => {
 			clearTimeout(form.inputTimeout);

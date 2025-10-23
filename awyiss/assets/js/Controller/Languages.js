@@ -8,6 +8,19 @@ export default class LanguagesController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('LanguagesController')) {
+			return;
+		}
+
+		if (document.body.classList.contains('OverviewAction')) {
+			this.initOverview();
+		}
+	}
+
+	/**
+	 * Initialize the overview
+	 */
+	initOverview() {
 		window.nestedListHandler.setParentIdentifierAttribute('data-realm');
 
 		window.nestedListHandler.getOrder = function () {

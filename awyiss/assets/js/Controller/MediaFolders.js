@@ -8,6 +8,19 @@ export default class MediaFoldersController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('MediaFoldersController')) {
+			return;
+		}
+
+		if (document.body.classList.contains('OverviewAction')) {
+			this.initOverview();
+		}
+	}
+
+	/**
+	 * Initialize the overview
+	 */
+	initOverview() {
 		// In the overview, initialize the nested list handler
 		if (document.querySelector('.MediaFolders.Overview')) {
 			// noinspection JSUnresolvedReference

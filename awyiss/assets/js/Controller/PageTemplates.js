@@ -11,11 +11,16 @@ export default class PageTemplatesController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('PageTemplatesController')) {
+			return;
+		}
+
 		// In the overview, initialize the nested list handler
-		if (document.querySelector('.PageTemplates.Overview')) {
+		if (document.body.classList.contains('OverviewAction')) {
 			this.initializeNestedListHandler();
 		}
-		else if (document.querySelector('.PageTemplates.Form')) {
+
+		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
 			this.initializeForm();
 
 			const observer = window.observer;

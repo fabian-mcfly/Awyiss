@@ -15,6 +15,10 @@ export default class FormElementsController {
 	form = null;
 
 	constructor() {
+		if (!document.body.classList.contains('FormElementsController')) {
+			return;
+		}
+
 		if (document.body.classList.contains('OverviewAction')) {
 			this.initOverview();
 		}

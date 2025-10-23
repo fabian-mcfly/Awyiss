@@ -13,7 +13,11 @@ export default class UsersController {
 	passwordFieldSelector = '.FormInputName-Password';
 
 	constructor() {
-		if (document.querySelector('.AddAction') || document.querySelector('.EditAction')) {
+		if (!document.body.classList.contains('UsersController')) {
+			return;
+		}
+
+		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
 			this.initForm();
 		}
 	}

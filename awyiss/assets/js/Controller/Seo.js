@@ -8,6 +8,10 @@ export default class SeoController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('SeoController')) {
+			return;
+		}
+
 		if (document.body.classList.contains('AnalyzeAction')) {
 			this.initAnalyze();
 		}

@@ -6,6 +6,10 @@ export default class FormsController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('FormsController')) {
+			return;
+		}
+
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
 			this.initForm();
 		}

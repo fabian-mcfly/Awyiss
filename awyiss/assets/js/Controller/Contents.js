@@ -26,6 +26,10 @@ export default class ContentsController {
 	resizeableContent;
 
 	constructor() {
+		if (!document.body.classList.contains('ContentsController')) {
+			return;
+		}
+
 		if (document.body.classList.contains('OverviewAction')) {
 			this.initOverview();
 		}
@@ -55,15 +59,6 @@ export default class ContentsController {
 			// Empty the dom so the user can't interact with the page
 			document.body.innerHTML = '';
 		}
-	}
-
-	/**
-	 * Initialize the logic for the form.
-	 *
-	 * @returns {void}
-	 */
-	initForm() {
-		const duplicateOfConfiguration = new DuplicateOfConfiguration();
 	}
 
 	/**
@@ -203,6 +198,15 @@ export default class ContentsController {
 				contentArea.classList.remove('UnassignedContentArea');
 			});
 		}
+	}
+
+	/**
+	 * Initialize the logic for the form.
+	 *
+	 * @returns {void}
+	 */
+	initForm() {
+		new DuplicateOfConfiguration();
 	}
 }
 

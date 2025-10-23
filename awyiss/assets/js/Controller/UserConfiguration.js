@@ -8,10 +8,12 @@ export default class UserConfigurationController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('UserConfigurationController')) {
+			return;
+		}
+
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm(
-				document.querySelector('input[name="value"]')
-			);
+			this.initForm(document.querySelector('input[name="value"]'));
 
 			const observer = window.observer;
 			observer.addObserver(this.observeMutations.bind(this));

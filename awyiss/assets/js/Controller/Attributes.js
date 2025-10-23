@@ -8,6 +8,19 @@ export default class AttributesController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('AttributesController')) {
+			return;
+		}
+
+		if (document.body.classList.contains('OverviewAction')) {
+			this.initOverview();
+		}
+	}
+
+	/**
+	 * Initialize the overview
+	 */
+	initOverview() {
 		window.nestedListHandler.setParentIdentifierAttribute('data-fieldset');
 
 		window.nestedListHandler.getOrder = function () {

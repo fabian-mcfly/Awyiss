@@ -28,6 +28,10 @@ export default class MediaController {
 	sortable;
 
 	constructor() {
+		if (!document.body.classList.contains('MediaController')) {
+			return;
+		}
+
 		if (document.body.classList.contains('OverviewAction')) {
 			this.initOverview();
 		}

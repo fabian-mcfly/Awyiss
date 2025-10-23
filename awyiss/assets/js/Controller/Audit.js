@@ -10,6 +10,10 @@ export default class AuditController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
+		if (!document.body.classList.contains('AuditController')) {
+			return;
+		}
+
 		if (document.body.classList.contains('HistoryAction')) {
 			const historyTables = new HistoryTables();
 			// Enable the url-change feature

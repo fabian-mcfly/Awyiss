@@ -4,6 +4,10 @@ import AssignableTemplateElements from 'AssignableTemplateElements';
 
 export default class WidgetTemplatesController {
 	constructor() {
+		if (!document.body.classList.contains('WidgetTemplatesController')) {
+			return;
+		}
+
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
 			this.initForm();
 		}

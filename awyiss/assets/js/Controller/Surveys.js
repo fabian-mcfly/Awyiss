@@ -49,20 +49,19 @@ export default class SurveysController {
 
 
 	constructor() {
-		if (
-			document.body.classList.contains('AddAction') ||
-			document.body.classList.contains('EditAction')
-		) {
-			this.initForm();
+		if (!document.body.classList.contains('SurveysController')) {
+			return;
 		}
 
-		if (
-			document.body.classList.contains('OverviewAction')
-		) {
+		if (document.body.classList.contains('OverviewAction')) {
 			const diagramButtons = document.querySelectorAll('.Button-ShowDiagram');
 			diagramButtons.forEach(button => {
 				this.eventHandler.add('click', this.handleOverviewDiagramButton.bind(this), button);
 			});
+		}
+
+		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
+			this.initForm();
 		}
 
 		if (document.body.classList.contains('DiagramAction')) {

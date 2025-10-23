@@ -9,6 +9,10 @@ export default class MediaElementsController {
 
 
 	constructor() {
+		if (!document.body.classList.contains('MediaElementsController')) {
+			return;
+		}
+
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
 			this.initForm();
 		}
