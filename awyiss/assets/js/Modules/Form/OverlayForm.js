@@ -26,6 +26,11 @@ export default class OverlayForm {
 	 */
 	observer = window.observer;
 	/**
+	 * The element that opened the overlay.
+	 * @type {HTMLElement}
+	 */
+	opener;
+	/**
 	 * The remembered state of the form changed flag.
 	 * @type {boolean}
 	 */
@@ -68,7 +73,7 @@ export default class OverlayForm {
 	 * @param {HTMLElement} element
 	 */
 	bindOpenOverlayButton(element) {
-		this.eventHandler.add('click', this.openOverlay.bind(this), element);
+		this.eventHandler.add('click', this.openOverlay.bind(this, element), element);
 	}
 
 	/**
@@ -164,6 +169,12 @@ export default class OverlayForm {
 				});
 				document.dispatchEvent(event);
 
+				const form = this.opener?.closest('form');
+				if (form.length) {
+					// If the opener is inside a form, reload the form
+					window.formUpdater.sendRequest(form);
+				}
+
 				// A redirect was attempted, which means the form was successfully submitted
 				this.closeOverlay();
 			}
@@ -197,11 +208,13 @@ export default class OverlayForm {
 	 * Place the fetched content in the overlay, then show the overlay.
 	 * For consistency, the overlay will not show the h1 and only the "save and close" button.
 	 *
+	 * @param {HTMLElement} opener
 	 * @param {Event} event
 	 */
-	openOverlay(event) {
+	openOverlay(opener, event) {
 		event.preventDefault();
 
+		this.opener = opener;
 		const element = event.target;
 
 		this.savedIsFormChanged = window.formLeaveConfirmation.isFormChanged;
