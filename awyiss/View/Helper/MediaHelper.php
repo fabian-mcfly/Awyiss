@@ -126,7 +126,12 @@ class MediaHelper extends Helper {
 				return '';
 			}
 
-			return '<style>' . $lo_mediaRenderOptions->getSelector() . ' { ' . $ls_backgroundColorStyle . ' }</style>';
+			$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce') ?: '';
+			if ($ls_nonce) {
+				$ls_nonce = ' nonce="' . $ls_nonce . '"';
+			}
+
+			return '<style' . $ls_nonce . '>' . $lo_mediaRenderOptions->getSelector() . ' { ' . $ls_backgroundColorStyle . ' }</style>';
 		}
 
 		$lo_file = $this->getMediaResizedImage($media, $lo_mediaRenderOptions);
@@ -1018,8 +1023,13 @@ class MediaHelper extends Helper {
 			$ls_backgroundColorStyle .= ' --preferredPosition:' . $this->getFocusPointCssValue($focusPoint) . ';';
 		}
 
+		$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce') ?: '';
+		if ($ls_nonce) {
+			$ls_nonce = ' nonce="' . $ls_nonce . '"';
+		}
+
 		/** @noinspection CssInvalidHtmlTagReference, CssUnresolvedCustomProperty */
-		return '<style>#' . $id . ', #' . $id . '-NoScript { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $ls_backgroundColorStyle . ' }</style>';
+		return '<style' . $ls_nonce . '>#' . $id . ', #' . $id . '-NoScript { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $ls_backgroundColorStyle . ' }</style>';
 	}
 
 
@@ -1121,8 +1131,13 @@ class MediaHelper extends Helper {
 		float|int $aspectRatio,
 		string $backgroundColorStyle
 	): string {
+		$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce') ?: '';
+		if ($ls_nonce) {
+			$ls_nonce = ' nonce="' . $ls_nonce . '"';
+		}
+
 		/** @noinspection CssUnknownTarget */
-		$ls_output = '<style>';
+		$ls_output = '<style' . $ls_nonce . '>';
 		$ls_output .= $mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $aspectRatio . ';';
 		$ls_output .= ' --backgroundImageHeight:' . ($resizedFile?->realHeight ?? $resizedFile?->height ?? $media->height) . 'px;';
 		$ls_output .= ' background-image:url(\'' . $filePath . '\');';
