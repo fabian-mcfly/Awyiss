@@ -36,14 +36,6 @@ export default class FormElementsController {
 			document.getElementById('Content').dataset.title = frontendEditor.dataset.title;
 			frontendEditor.focus();
 		}
-
-		// If the document contains a flash message, send an event to the parent window
-		if (document.querySelector('.FlashMessage.Success') && window.parent !== window) {
-			window.parent.postMessage('closeFrontendEditorAndFetch', '*');
-
-			// Empty the dom so the user can't interact with the page
-			document.body.innerHTML = '';
-		}
 	}
 
 	/**
