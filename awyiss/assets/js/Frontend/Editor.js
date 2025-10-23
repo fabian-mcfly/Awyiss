@@ -176,8 +176,8 @@ class Editor {
 			}
 
 			if (event.data === 'closeFrontendEditorAndFetch') {
+				this.updateEditedElement(this.activeElementId);
 				this.hideOverlay();
-				this.updateEditedElement();
 			}
 		});
 
@@ -331,16 +331,16 @@ class Editor {
 	 *
 	 * @returns {void}
 	 */
-	updateEditedElement() {
+	updateEditedElement(id) {
 		fetch(window.location.href)
 		.then(response => response.text())
 		.then(html => {
 			const parser = new DOMParser();
 			const doc = parser.parseFromString(html, 'text/html');
-			const newElement = doc.querySelector(`#${this.activeElementId}`);
+			const newElement = doc.querySelector(`#${id}`);
 
 			if (newElement) {
-				const oldElement = document.querySelector(`#${this.activeElementId}`);
+				const oldElement = document.querySelector(`#${id}`);
 				if (oldElement) {
 					oldElement.replaceWith(newElement);
 				}
