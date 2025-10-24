@@ -82,6 +82,12 @@
 		@media screen and (width > 1024px) {
 			grid-template-columns:1fr auto;
 		}
+
+		&:has(form[data-locked="true"]) {
+			.ButtonArea {
+				display:none;
+			}
+		}
 	}
 
 	.Fieldsets {

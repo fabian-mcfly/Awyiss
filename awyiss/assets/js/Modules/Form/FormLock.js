@@ -48,6 +48,8 @@ export default class FormLock {
 			form.lockDialog = form.querySelector('.LockDialog');
 		}
 
+		window.eventHandler.add('submit', this.handleFormSubmit.bind(this, form), form, true, -99);
+
 		// If the form is not locked, start a timer to show a message
 		// to inform the user that the form will be unlocked in a few minutes
 		if (form.dataset.locked === 'false') {
@@ -116,6 +118,20 @@ export default class FormLock {
 	}
 
 	/**
+	 * Handles the form submission event to unlock the form before submission.
+	 * @param {HTMLFormElement} form - The form element being submitted.
+	 * @param {Event} event - The event object associated with the form submission.
+	 */
+	handleFormSubmit(form, event) {
+		if (form.dataset.locked === 'true') {
+			event.preventDefault();
+			event.stopPropagation();
+
+			return false;
+		}
+	}
+
+	/**
 	 * Locks a form to prevent further submissions or modifications by setting
 	 * a "locked" state and clearing the form's `action` attribute.
 	 *
@@ -125,12 +141,6 @@ export default class FormLock {
 	lockForm(form) {
 		// The form should now be unlocked for others.
 		form.dataset.locked = 'true';
-
-		if (form.action) {
-			form.dataset.action = form.action;
-			// Unset the action attribute
-			form.action = '#';
-		}
 	}
 
 	/**
@@ -142,11 +152,6 @@ export default class FormLock {
 	unlockForm(form) {
 		// The form should now be locked for others.
 		form.dataset.locked = 'false';
-
-		if (form.dataset.action) {
-			form.action = form.dataset.action;
-			delete form.dataset.action;
-		}
 	}
 
 	/**
