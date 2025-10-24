@@ -414,7 +414,7 @@ class MediaHelperTest extends TestCase {
 		$this->assertStringNotContainsString('<picture', $result);
 		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="logo-awyiss.png"', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
-		$this->assertStringContainsString('aria-hidden="true" role="presentation"', $result);
+		$this->assertStringContainsString('aria-hidden="true"', $result);
 		$this->assertStringContainsString('<noscript', $result);
 		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="logo-awyiss.png"', $result);
 	}

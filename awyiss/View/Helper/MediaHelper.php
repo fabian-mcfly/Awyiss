@@ -292,7 +292,6 @@ class MediaHelper extends Helper {
 		if (!$la_attributes['alt']) {
 			$la_attributes['alt'] = $media->name;
 			$la_attributes['aria-hidden'] = 'true';
-			$la_attributes['role'] = 'presentation';
 		}
 
 		if ($media->mimeType === 'image/svg+xml') {

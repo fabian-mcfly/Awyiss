@@ -14,8 +14,8 @@
 <section class="WidgetElement Template-Standard Column-40 Widget-DummyNested" id="Widget7">
 <div class="Image">
 <picture>
-<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg" id="Image-e317da1bbeff8df" aria-hidden="true" role="presentation" width="1080" height="1920" class="Lazyload">
-<noscript><img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg" id="Image-e317da1bbeff8df-NoScript" aria-hidden="true" role="presentation" width="1080" height="1920"></noscript>
+<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg" id="Image-e317da1bbeff8df" aria-hidden="true" width="1080" height="1920" class="Lazyload">
+<noscript><img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg" id="Image-e317da1bbeff8df-NoScript" aria-hidden="true" width="1080" height="1920"></noscript>
 <style>#Image-e317da1bbeff8df, #Image-e317da1bbeff8df-NoScript { --imageAspectRatio: 0.56; }</style>
 </picture>
 </div>
