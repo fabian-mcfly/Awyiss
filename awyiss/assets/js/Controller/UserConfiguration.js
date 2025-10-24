@@ -13,34 +13,38 @@ export default class UserConfigurationController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm(document.querySelector('input[name="value"]'));
-
-			const observer = window.observer;
-			observer.addObserver(this.observeMutations.bind(this));
+			this.initForm(document.querySelector('.Configuration.Form'));
 		}
 	}
 
 	/**
 	 * Initialize the form related functionality.
+	 *
+	 * @param {HTMLElement} form The form element
 	 */
-	initForm(input) {
-		if (!input || !input.closest('.clr-field')) {
-			return;
+	initForm(form) {
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
+
+		const valueInput = form.querySelector('#Configuration-Value');
+		valueInput?.addEventListener('input', this.handleColorChange.bind(this));
+	}
+
+	/**
+	 * Handle color change events.
+	 * @param {InputEvent} event
+	 */
+	handleColorChange(event) {
+		const value = event.target.value;
+
+		if (value) {
+			// Add the value as a custom property to the html
+			document.documentElement.style.setProperty('--colorSuccess', value);
 		}
-
-		// Add an input event listener to the input field
-		input.addEventListener('input', event => {
-			const value = event.target.value;
-
-			if (value) {
-				// Add the value as a custom property to the html
-				document.documentElement.style.setProperty('--colorSuccess', value);
-			}
-			else {
-				// Remove the custom property from the html
-				document.documentElement.style.removeProperty('--colorSuccess');
-			}
-		});
+		else {
+			// Remove the custom property from the html
+			document.documentElement.style.removeProperty('--colorSuccess');
+		}
 	}
 
 	/**
@@ -53,7 +57,8 @@ export default class UserConfigurationController {
 				return;
 			}
 
-			this.initForm(node.querySelector('input[name="value"]'));
+			const valueInput = node.querySelector('#Configuration-Value');
+			valueInput?.addEventListener('input', this.handleColorChange.bind(this));
 		});
 	}
 }

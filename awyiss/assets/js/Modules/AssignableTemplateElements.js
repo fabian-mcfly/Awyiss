@@ -14,10 +14,10 @@ export default class AssignableTemplateElements {
 	 */
 	sortableListSelector;
 
-	constructor(selector) {
+	constructor(selector, parentElement = document) {
 		this.sortableListSelector = selector;
 
-		this.lists = Array.from(document.querySelectorAll(this.sortableListSelector));
+		this.lists = Array.from(parentElement.querySelectorAll(this.sortableListSelector));
 
 		this.lists.forEach((element) => {
 			element.sortable = Sortable.create(element, {
@@ -43,7 +43,7 @@ export default class AssignableTemplateElements {
 		});
 
 		// Add an add/remove button to each list item
-		const items = document.querySelectorAll(`${this.sortableListSelector} > .Item`);
+		const items = parentElement.querySelectorAll(`${this.sortableListSelector} > .Item`);
 		items.forEach((item) => {
 			// Items that are not assignable don't need the button
 			if (item.dataset.assignable === 'false') {

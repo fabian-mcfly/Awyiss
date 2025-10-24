@@ -1,4 +1,15 @@
 {#
+@var content \Awyiss\Model\Entity\Content
+@var contentTemplates \Cake\Collection\CollectionInterface
+@var possibleParentContents \Cake\Collection\CollectionInterface
+@var page \Awyiss\Model\Entity\Page
+@var assignedAttributes array
+@var contentAreas array
+@var contentElementsByFieldset ContentTemplateElement[]
+@var allowedKeys array
+@var currentPageRole string
+@var languageRealm string
+@var languageShortcode string
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -24,11 +35,26 @@
 
 
 {% block formControlContentTemplateId %}
+	{% set contentTemplateAddButton %}
+		{% if AuthorizationHelper.scopeIsAccessible('ContentTemplates', [], 'create') %}
+			{{ HtmlHelper.link(__d('content_templates', 'create'), {controller: 'ContentTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
+		{% endif %}
+	{% endset %}
+
+	{% set contentTemplateEditButton %}
+		{% if AuthorizationHelper.scopeIsAccessible('ContentTemplates', [], 'update') %}
+			{{ HtmlHelper.link(__('edit'), {controller: 'ContentTemplates', action: 'edit', id: settings.content.contentTemplateId}, {class: 'Button Button-Edit InFieldButton OverlayForm'}) }}
+		{% endif %}
+	{% endset %}
+
 	{{ FormHelper.control('content_template_id', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		empty: false,
 		label: contentTemplateElement.title,
 		options: settings.contentTemplates.combine('id', 'title'),
+		templateVars: {
+			additionalContent: contentTemplateAddButton ~ contentTemplateEditButton
+		},
 		'data-form-updater': true,
 	}) }}
 {% endblock %}

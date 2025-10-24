@@ -540,6 +540,30 @@ abstract class BackendController extends AppController {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function afterFilter(EventInterface $event): void {
+		// Disable the layout for ajax requests
+		if (
+			$this->request->is('ajax') &&
+			($this->request->getData('reload_form') || $this->request->getParam('ajaxForm'))
+		) {
+			$lo_viewBuilder = $this->viewBuilder();
+			/** @var \Awyiss\View\Helper\AssetHelper $lo_assetHelper */
+			$lo_assetHelper = $lo_viewBuilder->build()->helpers()->get('Asset');
+			$ls_jsControllerClass = $lo_assetHelper->getAssetPath('Controller/' . $this->getName() . '.js');
+			if ($ls_jsControllerClass) {
+				$this->setResponse(
+					$this->getResponse()
+						->withHeader('X-OverlayForm-Controller', $this->getName())
+						->withHeader('X-OverlayForm-ControllerClass', $ls_jsControllerClass)
+				);
+			}
+		}
+	}
+
+
+	/**
 	 * @param \Cake\Event\EventInterface $event
 	 * @param \Psr\Http\Message\UriInterface|array|string $url
 	 * @param \Cake\Http\Response $response

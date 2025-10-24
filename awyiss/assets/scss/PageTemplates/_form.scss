@@ -163,11 +163,14 @@
 			display:block;
 			padding:10px 20px;
 			line-height:1;
-			cursor:move;
 
 			@media screen and (width <= 540px) {
 				padding:10px;
 			}
+		}
+
+		> .Title {
+			cursor:move;
 		}
 
 		> .FormInputType-Checkbox {

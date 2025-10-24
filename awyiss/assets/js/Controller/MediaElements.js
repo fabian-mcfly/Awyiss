@@ -14,17 +14,18 @@ export default class MediaElementsController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm();
+			this.initForm(document.querySelector('.MediaElements.Form'));
 		}
 	}
 
 
 	/**
 	 * Initialize the form
+	 * @param {HTMLElement} form The form element
 	 * @returns {void}
 	 */
-	initForm() {
-		const assignableModelsFieldset = document.querySelector('.Fieldset-AssignableModels');
+	initForm(form) {
+		const assignableModelsFieldset = form.querySelector('.Fieldset-AssignableModels');
 
 		window.eventHandler.add('input', function (event) {
 			if (!event.target.matches('[name$="[scope]"]')) {

@@ -21,24 +21,22 @@ export default class PageTemplatesController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initializeForm();
-
-			const observer = window.observer;
-			observer.addObserver(this.observeMutations.bind(this));
+			this.initForm(document.querySelector('.PageTemplates.Form'));
 		}
 	}
 
 	/**
 	 * Initialize the nested list handler
+	 * @param {HTMLElement} form The form element
 	 */
-	initializeNestedListHandler() {
+	initializeNestedListHandler(form) {
 		window.nestedListHandler.setParentIdentifierAttribute('data-page-role-id');
 
 		window.nestedListHandler.getOrder = function () {
 			let order = {};
 
 			// Select all lists
-			const lists = document.querySelectorAll(this.selector);
+			const lists = form.querySelectorAll(this.selector);
 
 			// Loop through each list
 			lists.forEach(list => {
@@ -71,9 +69,20 @@ export default class PageTemplatesController {
 	/**
 	 * Initialize the form
 	 */
-	initializeForm() {
+	initForm() {
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
+
+		this.initSortable(form);
+	}
+
+	/**
+	 * Initialize SortableJS on the content areas list
+	 * @param {HTMLElement} form The form element
+	 */
+	initSortable(form) {
 		// Select the ContentAreaNew list and the Row element
-		const contentAreas = document.querySelectorAll('.ContentAreas-List');
+		const contentAreas = form.querySelectorAll('.ContentAreas-List');
 		contentAreas.forEach(contentArea => {
 			if (contentArea.dataset.sortableInitialized === 'true') {
 				return;
@@ -113,14 +122,13 @@ export default class PageTemplatesController {
 		}
 
 		mutation.addedNodes.forEach((node) => {
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				return;
+			}
+
 			const selector = '.ContentAreas-List';
-
-			if (node.nodeType === Node.ELEMENT_NODE) {
-				const elements = node.querySelectorAll(selector)
-
-				if (node.matches(selector) || elements.length) {
-					this.initializeForm();
-				}
+			if (node.matches(selector) || node.querySelectorAll(selector).length) {
+				this.initSortable();
 			}
 		});
 	}

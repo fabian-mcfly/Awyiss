@@ -35,7 +35,7 @@ export default class ContentsController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm();
+			this.initForm(document.querySelector('.Contents.Form'));
 		}
 
 		const frontendEditor = document.querySelector('.Form.EditFrontendEditor');
@@ -197,8 +197,8 @@ export default class ContentsController {
 	 *
 	 * @returns {void}
 	 */
-	initForm() {
-		new DuplicateOfConfiguration();
+	initForm(form) {
+		new DuplicateOfConfiguration(form);
 	}
 }
 
@@ -225,8 +225,8 @@ export class DuplicateOfConfiguration {
 	 */
 	isFormChanged = false;
 
-	constructor() {
-		this.duplicateOfInput = document.getElementById('Content-DuplicateOf');
+	constructor(form = document) {
+		this.duplicateOfInput = form.querySelector('#Content-DuplicateOf');
 
 		if (this.duplicateOfInput) {
 			this.duplicateOfInput.instantUpdate = true;

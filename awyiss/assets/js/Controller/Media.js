@@ -37,20 +37,21 @@ export default class MediaController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm();
+			this.initForm(document.querySelector('.Media.Form'));
 		}
 	}
 
 	/**
 	 * Initialize the form
+	 * @param {HTMLElement} form The form element
 	 * @returns {void}
 	 */
-	initForm() {
-		const cropArea = document.querySelector('.CropArea');
+	initForm(form) {
+		const cropArea = form.querySelector('.CropArea');
 		if (cropArea) {
 			new Crop(cropArea);
 
-			const fileInput = document.querySelector('input[type="file"]');
+			const fileInput = form.querySelector('input[type="file"]');
 			fileInput.addEventListener('change', () => {
 				const fieldset = cropArea.closest('fieldset');
 				// Remove the crop area if it exists

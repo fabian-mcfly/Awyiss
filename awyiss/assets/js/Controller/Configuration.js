@@ -13,18 +13,19 @@ export default class ConfigurationController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm();
+			this.initForm(document.querySelector('.Configuration.Form'));
 		}
 	}
 
 	/**
 	 * Initialize the form related functionality.
+	 * @param {HTMLElement} form The form element
 	 */
-	initForm() {
+	initForm(form) {
 		const observer = window.observer;
 		observer.addObserver(this.observeMutations.bind(this));
 
-		const valueInput = document.getElementById('Configuration-Value');
+		const valueInput = form.querySelector('#Configuration-Value');
 		valueInput?.addEventListener('input', this.handleColorChange.bind(this));
 	}
 

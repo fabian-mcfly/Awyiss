@@ -1407,6 +1407,31 @@ textarea {
 		}
 	}
 
+	.InFieldButton {
+		@extend %InFieldButton;
+
+		&::after {
+			width:100%;
+			height:auto;
+			aspect-ratio:1;
+			margin-left:0;
+			border:0 none;
+			font-size:30px;
+			line-height:50px;
+		}
+
+		&:has(+ .InFieldButton) {
+			border-top-right-radius:0;
+			border-bottom-right-radius:0;
+			right:51px;
+		}
+
+		+ .InFieldButton {
+			border-top-left-radius:0;
+			border-bottom-left-radius:0;
+		}
+	}
+
 	.Button-Geocode {
 		@extend %InFieldButton;
 	}

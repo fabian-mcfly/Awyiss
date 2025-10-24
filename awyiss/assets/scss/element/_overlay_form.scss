@@ -172,6 +172,10 @@
 				}
 			}
 
+			&.Button-SaveAsCopy {
+				display:none;
+			}
+
 			&::after {
 				@media screen and (width <= 480px) {
 					margin-left:0;

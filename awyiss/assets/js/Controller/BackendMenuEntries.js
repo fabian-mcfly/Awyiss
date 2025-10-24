@@ -17,7 +17,7 @@ export default class BackendMenuEntriesController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm();
+			this.initForm(document.querySelector('.BackendMenuEntries.Form'));
 		}
 	}
 
@@ -30,8 +30,9 @@ export default class BackendMenuEntriesController {
 
 	/**
 	 * Initialize the form related functionality.
+	 * @param {HTMLElement} form The form element
 	 */
-	initForm() {
+	initForm(form) {
 		this.accessHelper = new AccessHelper();
 		this.linkHelper = new LinkHelper();
 
@@ -39,7 +40,7 @@ export default class BackendMenuEntriesController {
 			// Check if the event target is the insert_after_id select element
 			if (event.target.name === 'insert_after_id') {
 				// Get the parent_id select element
-				const parentIdSelect = document.querySelector('select[name="parent_id"]');
+				const parentIdSelect = form.querySelector('select[name="parent_id"]');
 
 				// Reset the parent_id select element to its first option
 				parentIdSelect.selectedIndex = 0;

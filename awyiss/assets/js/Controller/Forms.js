@@ -11,29 +11,30 @@ export default class FormsController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm();
+			this.initForm(document.querySelector('.Forms.Form'));
 		}
 	}
 
 	/**
 	 * Initialize the logic for the form.
-	 *
+	 * @param {HTMLElement} form The form element
 	 * @returns {void}
 	 */
-	initForm() {
-		const conditionalRecipients = document.querySelector('.FormInputName-FormConditionalRecipients');
+	initForm(form) {
+		const conditionalRecipients = form.querySelector('.FormInputName-FormConditionalRecipients');
 		if (conditionalRecipients) {
-			window.eventHandler.add('change', this.handleConditionalRecipientTypeChange, conditionalRecipients);
+			window.eventHandler.add('change', this.handleConditionalRecipientTypeChange.bind(this, form), conditionalRecipients);
 		}
 	}
 
 	/**
 	 * Handle the change event of the conditional recipient type select.
 	 *
+	 * @param {HTMLElement} form - The form element.
 	 * @param {Event} event - The event object.
 	 * @returns {void}
 	 */
-	handleConditionalRecipientTypeChange(event) {
+	handleConditionalRecipientTypeChange(form, event) {
 		if (!event.target.matches('select[name^="form_conditional_recipients"][name$="[type]"]')) {
 			return;
 		}
@@ -45,14 +46,14 @@ export default class FormsController {
 		fieldSelect.innerHTML = '';
 
 		if (event.target.value === 'element_identifier') {
-			const template = document.getElementById('FormElementOptions');
+			const template = form.querySelector('#FormElementOptions');
 			const options = template.content.querySelectorAll('select > *');
 			options.forEach(option => {
 				fieldSelect.appendChild(option.cloneNode(true));
 			});
 		}
 		else if (event.target.value === 'current_page') {
-			const template = document.getElementById('CurrentPageOptions');
+			const template = form.querySelector('#CurrentPageOptions');
 			const options = template.content.querySelectorAll('select > *');
 			options.forEach(option => {
 				fieldSelect.appendChild(option.cloneNode(true));

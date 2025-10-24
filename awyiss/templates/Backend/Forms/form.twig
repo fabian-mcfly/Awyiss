@@ -85,7 +85,26 @@
 				{% endblock %}
 
 				{% block formControlEmailTemplateId %}
-					{{ FormHelper.control('email_template_id', {columnSpan: 6, options: hashPrinter(emailTemplates.toArray(), 'label', 'id')}) }}
+					{% set emailTemplateAddButton %}
+						{% if AuthorizationHelper.scopeIsAccessible('EmailTemplates', [], 'create') %}
+							{{ HtmlHelper.link(__d('email_templates', 'create'), {controller: 'EmailTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
+						{% endif %}
+					{% endset %}
+
+					{% set emailTemplateEditButton %}
+						{% if form.emailTemplateId and AuthorizationHelper.scopeIsAccessible('EmailTemplates', [], 'update') %}
+							{{ HtmlHelper.link(__('edit'), {controller: 'EmailTemplates', action: 'edit', id: form.emailTemplateId}, {class: 'Button Button-Edit InFieldButton OverlayForm'}) }}
+						{% endif %}
+					{% endset %}
+
+					{{ FormHelper.control('email_template_id', {
+						columnSpan: 6,
+						options: hashPrinter(emailTemplates.toArray(), 'label', 'id'),
+						templateVars: {
+							additionalContent: emailTemplateAddButton ~ emailTemplateEditButton
+						},
+						'data-form-updater': true,
+					}) }}
 				{% endblock %}
 
 				{% block formAdditionalEmailSettings %}
@@ -341,7 +360,26 @@
 				{% endblock %}
 
 				{% block formControlConfirmationEmailTemplateId %}
-					{{ FormHelper.control('confirmation_email_template_id', {columnSpan: 6, options: hashPrinter(emailTemplates.toArray(), 'label', 'id')}) }}
+					{% set confirmationEmailTemplateAddButton %}
+						{% if AuthorizationHelper.scopeIsAccessible('EmailTemplates', [], 'create') %}
+							{{ HtmlHelper.link(__d('confirmationEmail_templates', 'create'), {controller: 'EmailTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
+						{% endif %}
+					{% endset %}
+
+					{% set confirmationEmailTemplateEditButton %}
+						{% if form.confirmationEmailTemplateId and AuthorizationHelper.scopeIsAccessible('EmailTemplates', [], 'update') %}
+							{{ HtmlHelper.link(__('edit'), {controller: 'EmailTemplates', action: 'edit', id: form.confirmationEmailTemplateId}, {class: 'Button Button-Edit InFieldButton OverlayForm'}) }}
+						{% endif %}
+					{% endset %}
+
+					{{ FormHelper.control('confirmation_email_template_id', {
+						columnSpan: 6,
+						options: hashPrinter(emailTemplates.toArray(), 'label', 'id'),
+						templateVars: {
+							additionalContent: confirmationEmailTemplateAddButton ~ confirmationEmailTemplateEditButton
+						},
+						'data-form-updater': true,
+					}) }}
 				{% endblock %}
 
 				{% block formControlSalutationConfirmation %}

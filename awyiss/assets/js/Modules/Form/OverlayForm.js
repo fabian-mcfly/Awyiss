@@ -138,6 +138,10 @@ export default class OverlayForm {
 
 		const form = this.dialog.querySelector('form');
 
+		if (form.dataset.locked === 'true') {
+			return;
+		}
+
 		const formData = new FormData(form);
 		formData.append('submit_type', 'submit_close');
 
@@ -169,10 +173,10 @@ export default class OverlayForm {
 				});
 				document.dispatchEvent(event);
 
-				const form = this.opener?.closest('form');
-				if (form.length) {
+				const parentForm = this.opener?.closest('form');
+				if (parentForm.length) {
 					// If the opener is inside a form, reload the form
-					window.formUpdater.sendRequest(form);
+					window.formUpdater.sendRequest(parentForm);
 				}
 
 				// A redirect was attempted, which means the form was successfully submitted
@@ -257,6 +261,8 @@ export default class OverlayForm {
 		this.dialog.classList.add('FetchInProgress');
 		this.dialog.showModal();
 
+		let controllerData = {};
+
 		// Fetch the target URL
 		fetch(target, {
 			method: 'GET',
@@ -264,7 +270,15 @@ export default class OverlayForm {
 				'X-Requested-With': 'XMLHttpRequest'
 			},
 		})
-		.then(response => response.text())
+		.then(response => {
+			const overlayFormController = response.headers.get('X-OverlayForm-Controller');
+			const overlayFormControllerClass = response.headers.get('X-OverlayForm-ControllerClass');
+
+			controllerData['controller'] = overlayFormController || null;
+			controllerData['controllerClass'] = overlayFormControllerClass || null;
+
+			return response.text();
+		})
 		.then(html => {
 			// Parse the response text to HTML
 			const parser = new DOMParser();
@@ -345,7 +359,37 @@ export default class OverlayForm {
 			document.dispatchEvent(event);
 
 			this.dialog.focus();
-		});
+
+			this.loadControllerClass(controllerData);
+		})
+	}
+
+	/**
+	 * Load the controller class for the overlay form, if specified.
+	 *
+	 * @param {Object} controllerData
+	 */
+	async loadControllerClass(controllerData) {
+		if (!controllerData.controllerClass) {
+			return;
+		}
+
+		const controllerClassName = `${controllerData.controller}Controller`;
+
+		if (window[controllerClassName]) {
+			return;
+		}
+
+		// Dynamically import the controller class
+		const module = await import(`../../Controller/${controllerData.controller}.js`);
+		if (module && module.default) {
+			const controllerInstance = new module.default();
+
+			// If there's an `initForm` method, call it
+			if (typeof controllerInstance.initForm === 'function') {
+				controllerInstance.initForm(this.dialog.querySelector('.Form'));
+			}
+		}
 	}
 
 	/**

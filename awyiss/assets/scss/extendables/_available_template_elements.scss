@@ -51,6 +51,10 @@
 		top:40px;
 	}
 
+	#OverlayForm & {
+		top:0;
+	}
+
 	&:not(:has(.Item)) {
 		padding-bottom:40px;
 

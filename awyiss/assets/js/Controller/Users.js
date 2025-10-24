@@ -18,16 +18,18 @@ export default class UsersController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm();
+			this.initForm(document.querySelector('.Users.Form'));
 		}
 	}
 
 	/**
 	 * Set up the password field to contain
 	 * a password generator field.
+	 *
+	 * @param {HTMLElement} form The form element
 	 */
-	initForm() {
-		const elements = document.querySelectorAll(this.passwordFieldSelector);
+	initForm(form) {
+		const elements = form.querySelectorAll(this.passwordFieldSelector);
 		elements.forEach((element) => {
 			this.setupPasswordGenerator(element);
 		});

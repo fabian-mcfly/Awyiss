@@ -61,7 +61,7 @@ export default class SurveysController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm();
+			this.initForm(document.querySelector('.Surveys.Form'));
 		}
 
 		if (document.body.classList.contains('DiagramAction')) {
@@ -77,10 +77,11 @@ export default class SurveysController {
 
 	/**
 	 * Initialize the form logic
+	 * @param {HTMLFormElement} form The form element
 	 * @returns {void}
 	 */
-	initForm() {
-		this.form = document.getElementById('SurveyForm');
+	initForm(form) {
+		this.form = form.querySelector('#SurveyForm');
 
 		this.eventHandler.add('beforeUpdate', () => {
 			this.form.scrollPosition = window.scrollY;
@@ -95,13 +96,13 @@ export default class SurveysController {
 		// Load all config statuses from localStorage
 		this.configStatuses = JSON.parse(localStorage.getItem('questionConfigStatuses')) || {};
 
-		const availableQuestionsList = document.querySelector('ul.AvailableQuestions-List');
+		const availableQuestionsList = form.querySelector('ul.AvailableQuestions-List');
 		this.initAvailableQuestionsList(availableQuestionsList);
 
-		const assignedQuestionsList = document.querySelector('ul.AssignedQuestions-List');
+		const assignedQuestionsList = form.querySelector('ul.AssignedQuestions-List');
 		this.initAssignedQuestionsList(assignedQuestionsList);
 
-		const diagramButtons = document.querySelectorAll('.Button-ShowDiagram');
+		const diagramButtons = form.querySelectorAll('.Button-ShowDiagram');
 		diagramButtons.forEach(button => {
 			this.eventHandler.add('click', this.handleDiagramButton.bind(this), button);
 		});

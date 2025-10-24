@@ -13,15 +13,17 @@ export default class UsergroupsController {
 		}
 
 		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
-			this.initForm();
+			this.initForm(document.querySelector('.Usergroups.Form'));
 		}
 	}
 
 	/**
 	 * Initialize the form related functionality.
+	 *
+	 * @param {HTMLElement} form The form element
 	 */
-	initForm() {
-		const permissions = document.querySelector('.Fieldset-Permissions');
+	initForm(form) {
+		const permissions = form.querySelector('.Fieldset-Permissions');
 		window.eventHandler.add('click', event => {
 			if (!event.target.matches('label')) {
 				return;

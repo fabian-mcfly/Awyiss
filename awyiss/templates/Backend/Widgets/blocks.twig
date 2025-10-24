@@ -32,11 +32,26 @@
 
 
 {% block formControlWidgetTemplateId %}
+	{% set widgetTemplateAddButton %}
+		{% if AuthorizationHelper.scopeIsAccessible('WidgetTemplates', [], 'create') %}
+			{{ HtmlHelper.link(__d('widget_templates', 'create'), {controller: 'WidgetTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
+		{% endif %}
+	{% endset %}
+
+	{% set widgetTemplateEditButton %}
+		{% if AuthorizationHelper.scopeIsAccessible('WidgetTemplates', [], 'update') %}
+			{{ HtmlHelper.link(__('edit'), {controller: 'WidgetTemplates', action: 'edit', id: settings.widget.widgetTemplateId}, {class: 'Button Button-Edit InFieldButton OverlayForm'}) }}
+		{% endif %}
+	{% endset %}
+
 	{{ FormHelper.control('widget_template_id', {
 		columnSpan: widgetTemplateElement.column.span.numerator,
 		empty: false,
 		label: widgetTemplateElement.title,
 		options: settings.widgetTemplates.combine('id', 'title'),
+		templateVars: {
+			additionalContent: widgetTemplateAddButton ~ widgetTemplateEditButton
+		},
 		'data-form-updater': true,
 	}) }}
 {% endblock %}
