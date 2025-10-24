@@ -150,7 +150,7 @@
 
 					{%- block headStylesheetsWebfont -%}
 						{% if webfont is not empty %}
-							{% do AssetHelper.addNoScriptAsset('webfonts.css') %}
+							{% do AssetHelper.add('webfonts.css', critical: true) %}
 						{% endif %}
 					{%- endblock -%}
 				{%- endblock -%}

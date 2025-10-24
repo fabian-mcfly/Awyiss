@@ -16,7 +16,7 @@ html {
 	background-image:url('../img/background-pattern.png');
 	color:var(--colorText);
 	//noinspection CssNoGenericFontName
-	font-family:var(--fontStackFallbackMain);
+	font-family:var(--fontStackMain);
 	font-size:var(--fontSizeMain);
 	font-style:var(--fontStyleMain);
 	font-weight:var(--fontWeightMain);
@@ -26,16 +26,6 @@ html {
 
 	@media screen and (prefers-reduced-motion:reduce) {
 		scroll-behavior:auto;
-	}
-
-	@media (scripting:none) {
-		//noinspection CssNoGenericFontName
-		font-family:var(--fontStackMain);
-	}
-
-	&.wf-active {
-		//noinspection CssNoGenericFontName
-		font-family:var(--fontStackMain);
 	}
 
 	&:has(dialog[open]) {

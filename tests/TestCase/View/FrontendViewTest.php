@@ -204,9 +204,6 @@ class FrontendViewTest extends TestCase {
 				'variants' => ['400', '700'],
 			],
 		], $globals['webfont']);
-
-		$this->assertArrayHasKey('webfontTimestamp', $globals);
-		$this->assertSame(filemtime(ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'css' . DS . 'webfonts.css'), $globals['webfontTimestamp']);
 	}
 
 

@@ -34,10 +34,6 @@
 		]) %}
 	{%- endblock -%}
 
-	{%- block scriptsAddWebfontLoader -%}
-		{% do AssetHelper.add('WebfontLoader/webfontloader.js') %}
-	{%- endblock -%}
-
 	{%- block scriptsAddMainScript %}
 		{% do AssetHelper.add('main.js', {type: 'module'}, critical: true, priority: 0) %}
 	{%- endblock -%}
@@ -75,27 +71,5 @@
 
 		document.documentElement.classList.remove('NoJS');
 		document.documentElement.classList.add('JS');
-
-		{% block webFontConfig %}
-			{% if webfont is not empty %}
-				{% set webfontFamilies = [] %}
-				{% for webfont in webfont %}
-					{% set family = webfont.name %}
-					{% if webfont.variants is not empty %}
-						{% set family = family ~ ':' ~ webfont.variants|join(',') %}
-					{% endif %}
-
-					{% set webfontFamilies = webfontFamilies|merge([family]) %}
-				{% endfor %}
-
-				const webfonts = {{ webfont|json_encode|raw }};
-				window.WebFontConfig = {
-					custom: {
-						families: {{ webfontFamilies|json_encode|raw }},
-						urls: [baseUrl + 'assets/css/webfonts{{ webfontTimestamp ? '.' ~ webfontTimestamp : '' }}.css']
-					},
-				};
-			{% endif %}
-		{% endblock %}
 	</script>
 {% endblock %}

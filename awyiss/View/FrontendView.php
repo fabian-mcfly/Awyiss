@@ -147,10 +147,6 @@ class FrontendView extends AppView {
 		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
 		$lo_twig->addGlobal('previewMode', $this->getRequest()->getSession()->read('previewMode', []));
 		$lo_twig->addGlobal('webfont', $this->getWebfontData());
-
-		// Add the webfont timestamp to the global variables
-		$ls_webfontFilePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'css' . DS . 'webfonts.css';
-		$lo_twig->addGlobal('webfontTimestamp', file_exists($ls_webfontFilePath) ? filemtime($ls_webfontFilePath) : null);
 	}
 
 
