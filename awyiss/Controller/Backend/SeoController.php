@@ -490,7 +490,7 @@ class SeoController extends BackendController {
 				return null;
 			}
 
-			return $word;
+			return $word ?: null;
 		}, $la_words);
 		$la_uniqueWords = array_filter($la_uniqueWords, function (?string $word) {
 			return $word !== null && !in_array(mb_strtolower($word), $this->stopWords, true);
