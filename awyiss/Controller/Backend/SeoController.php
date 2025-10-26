@@ -311,7 +311,7 @@ class SeoController extends BackendController {
 			}
 
 			$la_status['headlines'] = $this->analyzePageHeadlines($ls_body);
-			$la_status['contents'] = $this->analyzePageContents($ls_body);
+			$la_status['contents'] = $lo_page->robotsIndex ? $this->analyzePageContents($ls_body) : null;
 		}
 
 		$this->set('status', $la_status);
@@ -365,7 +365,7 @@ class SeoController extends BackendController {
 
 			$la_pages[ $lo_page->id ] = [
 				'headlines' => $this->analyzePageHeadlines($ls_body),
-				'contents' => $this->analyzePageContents($ls_body),
+				'contents' => $lo_page->robotsIndex ? $this->analyzePageContents($ls_body) : null,
 			];
 
 			$la_contents[ $lo_page->id ] = $la_pages[ $lo_page->id ]['contents'];
@@ -448,7 +448,8 @@ class SeoController extends BackendController {
 	 * @return array{errors: array<string>, warnings: array<string>}
 	 */
 	protected function analyzePageContents(string $contents): array {
-		$ls_cleanText = strip_tags($contents);
+		$ls_cleanText = str_replace(['<br>', '<br/>', '<br />'], ' ', $contents);
+		$ls_cleanText = strip_tags($ls_cleanText);
 		$ls_cleanText = str_replace('&nbsp;', ' ', $ls_cleanText);
 		$ls_cleanText = preg_replace('/([\s\n\r\t]|\xC2\xA0|\xE2\x80\xAF)/', ' ', $ls_cleanText);
 		// Reduce consecutive spaces to one
@@ -482,7 +483,7 @@ class SeoController extends BackendController {
 			}
 
 			/** @noinspection PhpVariableNamingConventionInspection */
-			$word = preg_replace('/[^\p{L}\p{N}]/u', '', $word);
+			$word = preg_replace('/[^\p{L}\p{N}@\-]/u', '', $word);
 
 			// Only numbers? Skip
 			if (preg_match('/^\p{N}+$/u', $word)) {

@@ -178,6 +178,11 @@ export default class SeoController {
 		const textLengthTitle = textLengthInfo.querySelector('.Title');
 
 		textLengthIcon.classList.remove('Loading');
+
+		if (!status.contents) {
+			return;
+		}
+
 		textLengthTitle.innerHTML += status.contents.status;
 
 		if (status.contents.errors.length) {

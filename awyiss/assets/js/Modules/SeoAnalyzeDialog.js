@@ -182,6 +182,11 @@ export default class SeoAnalyzeDialog {
 		const title = infoElement.querySelector('.Title');
 
 		icon.classList.remove('Loading');
+
+		if (!data) {
+			return;
+		}
+
 		title.innerHTML += ' ' + data.status;
 
 		if (type === 'TextLength' || type === 'HeadlineStructure') {
