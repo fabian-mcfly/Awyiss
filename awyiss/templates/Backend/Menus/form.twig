@@ -30,7 +30,23 @@
 				{% endblock %}
 
 				{% block formControlIdentifier %}
-					{{ FormHelper.control('identifier', {'data-autofill-from': 'title'}) }}
+					{% set knownIdentifiers = localConfig('knownIdentifiers') %}
+					{%
+						set helperFormControl = knownIdentifiers is not empty ? FormHelper.select(
+							'identifier_helper_options',
+							combine(knownIdentifiers|values, knownIdentifiers|values),
+							{
+								'data-options-for': 'Menu-Identifier',
+							}
+						) : ''
+					%}
+
+					{{ FormHelper.control('identifier', {
+						templateVars: {
+							additionalContent: helperFormControl
+						},
+						'data-autofill-from': 'title'
+					}) }}
 				{% endblock %}
 
 				{% block fieldsetGeneralAttributes %}

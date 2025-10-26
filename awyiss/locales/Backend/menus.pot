@@ -67,3 +67,6 @@ msgstr "The menu could not be deleted"
 
 msgid "view_entries"
 msgstr "View entries"
+
+msgid "configuration_identifier_backend_known_identifiers"
+msgstr "Known Identifiers"

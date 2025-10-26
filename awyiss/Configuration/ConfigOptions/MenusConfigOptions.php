@@ -23,6 +23,13 @@ class MenusConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
+			new ConfigOption(
+				defaultValue: [],
+				identifier: 'knownIdentifiers',
+				localizable: false,
+				nullable: true,
+				type: ConfigOptionType::List,
+			),
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [

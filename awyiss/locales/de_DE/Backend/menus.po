@@ -67,3 +67,6 @@ msgstr "Das Menü konnte nicht gelöscht werden"
 
 msgid "view_entries"
 msgstr "Einträge anzeigen"
+
+msgid "configuration_identifier_backend_known_identifiers"
+msgstr "Bekannte Identifikatoren"

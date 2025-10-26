@@ -27,7 +27,7 @@
 	{%
 		set helperFormControl = knownIdentifiers is not empty ? FormHelper.select(
 			'identifier_helper_options',
-				combine(knownIdentifiers|values, knownIdentifiers|values),
+			combine(knownIdentifiers|values, knownIdentifiers|values),
 			{
 				'data-options-for': 'Widget-Identifier',
 			}
@@ -36,7 +36,8 @@
 
 	{{ FormHelper.control('identifier', {
 		columnSpan: widgetTemplateElement.column.span.numerator,
-		label: widgetTemplateElement.title,templateVars: {
+		label: widgetTemplateElement.title,
+		templateVars: {
 			additionalContent: helperFormControl
 		},
 		'data-form-updater': true,
