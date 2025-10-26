@@ -32,13 +32,15 @@
 
 			{% block subheadlineOverview %}
 				<h2>
-					{{ surveyQuestion.title }}
-
 					{% block buttonEdit %}
 						{% if AuthorizationHelper.scopeIsAccessible('SurveyQuestions', [], 'update') %}
-							{{ HtmlHelper.link(__('edit'), {controller: 'SurveyQuestions', action: 'edit', id: surveyQuestion.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+							<div class="Buttons">
+								{{ HtmlHelper.link(__('edit'), {controller: 'SurveyQuestions', action: 'edit', id: surveyQuestion.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+							</div>
 						{% endif %}
 					{% endblock %}
+
+					{{ surveyQuestion.title }}
 				</h2>
 			{% endblock %}
 		</div>

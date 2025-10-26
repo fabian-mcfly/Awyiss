@@ -34,17 +34,19 @@
 
 			{% block headlineEdit %}
 				<h1>
+					<div class="Buttons">
+						{% block buttonPreview %}
+							{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Small Button-Subtle Button-Preview'}) }}
+						{% endblock %}
+
+						{% block buttonViewContents %}
+							{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
+								{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
+							{% endif %}
+						{% endblock %}
+					</div>
+
 					{{ __('headline_edit') }}
-
-					{% block buttonPreview %}
-						{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Small Button-Subtle Button-Preview'}) }}
-					{% endblock %}
-
-					{% block buttonViewContents %}
-						{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
-							{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
-						{% endif %}
-					{% endblock %}
 				</h1>
 			{% endblock %}
 		</div>

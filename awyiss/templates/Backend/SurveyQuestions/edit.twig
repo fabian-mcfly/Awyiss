@@ -24,15 +24,19 @@
 			{% endif %}
 
 			{% block headlineEdit %}
-				<h1>{{ __('headline_edit') }}
+				<h1>
 					{% block buttonOverview %}
 						{% if
 							surveyQuestion.type.value in ['single_choice', 'multiple_choice'] and
 							AuthorizationHelper.scopeIsAccessible('SurveyAnswers', [], 'read')
 						%}
-							{{ HtmlHelper.link(__('view_answers'), {controller: 'SurveyAnswers', action: 'overview', questionId: surveyQuestion.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewElements'}) }}
+							<div class="Buttons">
+								{{ HtmlHelper.link(__('view_answers'), {controller: 'SurveyAnswers', action: 'overview', questionId: surveyQuestion.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewElements'}) }}
+							</div>
 						{% endif %}
 					{% endblock %}
+
+					{{ __('headline_edit') }}
 				</h1>
 			{% endblock %}
 		</div>

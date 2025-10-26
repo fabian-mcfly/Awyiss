@@ -38,15 +38,16 @@
 			padding-right:60px;
 		}
 
-		&:has(.Button-Subtle) {
-			padding-right:40px;
-			position:relative;
+		.Buttons {
+			margin-left:10px;
+			float:right;
 		}
+	}
 
-		&:has(.Button-Subtle:nth-last-child(2)) {
-			padding-right:75px;
-		}
-
+	:where(
+		h1,
+		h2
+	) {
 		.Button-Subtle {
 			height:30px;
 			margin:auto 0;
@@ -59,20 +60,9 @@
 			font-size:0;
 			line-height:0;
 			vertical-align:middle;
-			position:absolute;
-			top:calc((var(--fontSizeHeading) - 30px) / 2 - 2px);
-			right:0;
-
-			@media screen and (width <= 540px) {
-				top:0;
-			}
 
 			&:hover {
 				color:var(--colorBright);
-			}
-
-			&:nth-last-child(2) {
-				right:35px;
 			}
 
 			&::after {

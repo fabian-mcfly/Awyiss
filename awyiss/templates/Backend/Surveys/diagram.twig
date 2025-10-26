@@ -34,13 +34,15 @@
 
 			{% block subheadlineDiagram %}
 				<h2>
-					{{ survey.title }}
-
 					{% block buttonEdit %}
 						{% if AuthorizationHelper.isAccessible('update') %}
-							{{ HtmlHelper.link(__('edit'), {controller: 'surveys', action: 'edit', id: survey.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+							<div class="Buttons">
+								{{ HtmlHelper.link(__('edit'), {controller: 'surveys', action: 'edit', id: survey.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+							</div>
 						{% endif %}
 					{% endblock %}
+
+					{{ survey.title }}
 				</h2>
 			{% endblock %}
 		</div>

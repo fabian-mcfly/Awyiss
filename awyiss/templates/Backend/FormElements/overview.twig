@@ -33,13 +33,15 @@
 
 			{% block subheadlineOverview %}
 				<h2>
-					{{ form.title }}
-
 					{% block buttonEdit %}
 						{% if AuthorizationHelper.isAccessible('update') %}
-							{{ HtmlHelper.link(__('edit'), {controller: 'forms', action: 'edit', id: form.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+							<div class="Buttons">
+								{{ HtmlHelper.link(__('edit'), {controller: 'forms', action: 'edit', id: form.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+							</div>
 						{% endif %}
 					{% endblock %}
+
+					{{ form.title }}
 				</h2>
 			{% endblock %}
 		</div>

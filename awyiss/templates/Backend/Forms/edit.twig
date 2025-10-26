@@ -26,13 +26,15 @@
 
 			{% block headlineEdit %}
 				<h1>
-					{{ __('headline_edit') }}
-
 					{% block buttonOverview %}
 						{% if AuthorizationHelper.isAccessible('read') %}
-							{{ HtmlHelper.link(__('view_elements'), {controller: 'formElements', action: 'overview', formId: form.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewElements'}) }}
+							<div class="Buttons">
+								{{ HtmlHelper.link(__('view_elements'), {controller: 'formElements', action: 'overview', formId: form.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewElements'}) }}
+							</div>
 						{% endif %}
 					{% endblock %}
+
+					{{ __('headline_edit') }}
 				</h1>
 			{% endblock %}
 		</div>

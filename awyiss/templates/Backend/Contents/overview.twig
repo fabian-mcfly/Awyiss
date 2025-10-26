@@ -34,16 +34,20 @@
 			{% block subheadlineOverview %}
 				<h2>
 					{{ page.title }}
+					<div class="Buttons">
 
-					{% block buttonPreview %}
-						{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Preview Button-Small Button-Subtle'}) }}
-					{% endblock %}
+						{% block buttonPreview %}
+							{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Preview Button-Small Button-Subtle'}) }}
+						{% endblock %}
 
-					{% block buttonEdit %}
-						{% if AuthorizationHelper.isAccessible('update') %}
-							{{ HtmlHelper.link(__('edit'), {controller: page.pageRoleId.name|pluralize, action: 'edit', id: page.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
-						{% endif %}
-					{% endblock %}
+						{% block buttonEdit %}
+							{% if AuthorizationHelper.isAccessible('update') %}
+								{{ HtmlHelper.link(__('edit'), {controller: page.pageRoleId.name|pluralize, action: 'edit', id: page.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+							{% endif %}
+						{% endblock %}
+					</div>
+
+					{{ page.title }}
 				</h2>
 			{% endblock %}
 		</div>
@@ -144,6 +148,90 @@
 		{{ element('search/filter', {scope: 'contents'}) }}
 	{% endblock %}
 </div>
+
+{% block seoAnalyzeDialog %}
+	{% if AuthorizationHelper.scopeIsAccessible('seo', [], 'analyze') %}
+		<dialog id="SeoAnalyzeDialog" data-title="{{ __d('pages', 'seo_analyze') }}" data-page-id="{{ page.id }}">
+			{% block seoAnalyzeDialogButtonArea %}
+				<div class="ButtonArea">
+					{% block seoAnalyzeDialogCancel %}
+						<button id="SeoAnalyzeDialog-Button-Close" class="Button Button-Close" style="">{{ __('close') }}</button>
+					{% endblock %}
+				</div>
+			{% endblock %}
+
+			{% block seoAnalyzeDialogInner %}
+				<div class="Inner">
+					{% block nestedListTextLengthInfo %}
+						<span class="SeoInfo SeoInfo-TextLength">
+							<span class="Icon Loading"></span>
+
+							<span class="Title"><strong>{{ __d('seo', 'text_length') }}</strong></span>
+						</span>
+					{% endblock %}
+
+					{% block nestedListHeadlineStructureInfo %}
+						<span class="SeoInfo SeoInfo-HeadlineStructure">
+							<span class="Icon Loading"></span>
+
+							<span class="Title"><strong>{{ __d('seo', 'headline_structure') }}</strong></span>
+						</span>
+					{% endblock %}
+
+					{% block nestedListMetaTitleInfo %}
+						<span class="SeoInfo SeoInfo-MetaTitle">
+							<span class="Icon Loading"></span>
+
+							<span class="Title"><strong>{{ __d('seo', 'meta_title') }}</strong></span>
+						</span>
+					{% endblock %}
+
+					{% block nestedListMetaDescriptionInfo %}
+						<span class="SeoInfo SeoInfo-MetaDescription">
+							<span class="Icon Loading"></span>
+
+							<span class="Title"><strong>{{ __d('seo', 'meta_description') }}</strong></span>
+						</span>
+					{% endblock %}
+
+					{% block nestedListRobotsFollowInfo %}
+						<span class="SeoInfo SeoInfo-RobotsFollow SeoInfoStatus-{{ page.robotsFollow ? 'Ok' : 'Error' }}">
+							<span class="Icon">
+								{% if page.robotsFollow %}
+									<i class="las la-check"></i>
+								{% else %}
+									<i class="las la-times"></i>
+								{% endif %}
+							</span>
+
+							<span class="Title">{{ __d('seo', page.robotsFollow ? 'robots_follow' : 'robots_no_follow') }}</span>
+						</span>
+					{% endblock %}
+
+					{% block nestedListRobotsIndexInfo %}
+						<span class="SeoInfo SeoInfo-RobotsIndex SeoInfoStatus-{{ page.robotsIndex ? 'Ok' : 'Error' }}">
+							<span class="Icon">
+								{% if page.robotsIndex %}
+									<i class="las la-check"></i>
+								{% else %}
+									<i class="las la-times"></i>
+								{% endif %}
+							</span>
+
+							<span class="Title">{{ __d('seo', page.robotsIndex ? 'robots_index' : 'robots_no_index') }}</span>
+						</span>
+					{% endblock %}
+
+					{% block seoAnalyzeDialogButtonAreaBottom %}
+						<div class="ButtonArea ButtonArea-Bottom">
+							{{ block('seoAnalyzeDialogCancel') }}
+						</div>
+					{% endblock %}
+				</div>
+			{% endblock %}
+		</dialog>
+	{% endif %}
+{% endblock %}
 
 {% block scriptColumnSystemVars %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
