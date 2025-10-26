@@ -853,6 +853,12 @@ export default class NestedListHandler {
 
 			// Remove the class from the body to show that the save operation is complete
 			document.body.classList.remove('FetchInProgress');
+
+			// Send an event that the save operation is complete
+			const saveEvent = new CustomEvent('afterSaveSystemOrder', {
+				bubbles: true,
+			});
+			document.dispatchEvent(saveEvent);
 		});
 	}
 

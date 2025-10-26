@@ -59,110 +59,151 @@
 					</ul>
 				{% endblock %}
 
-				{% block nestedListHeadlineStructureInfo %}
-					<span class="SeoInfo SeoInfo-HeadlineStructure" title="{{ __('headline_structure') }}">
-						<span class="Icon Loading"></span>
+				{% block nestedListSeoInfo %}
+					<div class="SeoInfoList">
+						{% block nestedListTextLengthInfo %}
+							<span class="SeoInfo SeoInfo-TextLength" title="{{ __('text_length') }}">
+								<span class="Icon Loading"></span>
 
-						<span class="Title">
-							<strong>{{ __('headline_structure') }}</strong><br>
-						</span>
-					</span>
-				{% endblock %}
+								<span class="Title">
+									<strong>{{ __('text_length') }}</strong><br>
+								</span>
+							</span>
+						{% endblock %}
 
-				{% block nestedListMetaTitleInfo %}
-					<span class="SeoInfo SeoInfo-MetaTitle SeoInfoStatus-{{ entity.metaStatus.title.length|camelize }}" title="{{ __('meta_title') }}
-						{{- entity.metaStatus.title.set == 'auto' ? ' (' ~ __('meta_title_auto') ~ ')' : '' }}
-						{{~ entity.metaTitle ?: '-' ~}}
-						{{~ __('length') }}: {{ entity.metaTitle|length }} {{ __('characters') -}}
-					">
-						<span class="Icon">
-							{% if entity.metaStatus.title.length == 'ok' %}
-								<i class="las la-check"></i>
-							{% elseif entity.metaStatus.title.length == 'warning' %}
-								<i class="las la-exclamation"></i>
-							{% else %}
-								<i class="las la-times"></i>
+						{% block nestedListHeadlineStructureInfo %}
+							<span class="SeoInfo SeoInfo-HeadlineStructure" title="{{ __('headline_structure') }}">
+								<span class="Icon Loading"></span>
+
+								<span class="Title">
+									<strong>{{ __('headline_structure') }}</strong><br>
+								</span>
+							</span>
+						{% endblock %}
+
+						{% block nestedListMetaTitleInfo %}
+							{% set titleStatus = entity.metaStatus.title.length %}
+							{% if entity.metaStatus.title.length == 'ok' and entity.metaStatus.title.unique != 'ok' %}
+								{% set titleStatus = entity.metaStatus.title.unique %}
 							{% endif %}
-						</span>
+							<span class="SeoInfo SeoInfo-MetaTitle SeoInfoStatus-{{ titleStatus|camelize }}" title="{{ __('meta_title') }}
+								{{- entity.metaStatus.title.set == 'auto' ? ' (' ~ __('meta_title_auto') ~ ')' : '' }}
+								{{~ entity.metaTitle ?: '-' ~}}
+								{{~ __('length') }}: {{ entity.metaTitle|length }} {{ __('characters') -}}
+							">
+								<span class="Icon">
+									{% if entity.metaStatus.title.length == 'ok' %}
+										{% if entity.metaStatus.title.unique == 'ok' %}
+											<i class="las la-check"></i>
+										{% else %}
+											<i class="las la-exclamation"></i>
+										{% endif %}
+									{% elseif entity.metaStatus.title.length == 'warning' %}
+										<i class="las la-exclamation"></i>
+									{% else %}
+										<i class="las la-times"></i>
+									{% endif %}
+								</span>
 
-						<span class="Title">
-							<strong>{{ __('meta_title') }}</strong><br>
-							{% if entity.metaStatus.title.length == 'ok' %}
-								{{ __('meta_title_length_ok', entity.metaTitle|length) }}
-							{% elseif entity.metaStatus.title.length == 'warning' %}
-								{{ __('meta_title_length_warning', entity.metaTitle|length) }}
-							{% elseif entity.metaStatus.title.length == 'empty' %}
-								{{ __('meta_title_length_empty') }}
-							{% else %}
-								{{ __('meta_title_length_error', entity.metaTitle|length) }}
-							{% endif %}
-						</span>
-					</span>
-				{% endblock %}
+								<span class="Title">
+									<strong>{{ __('meta_title') }}</strong><br>
+									{% if entity.metaStatus.title.length == 'ok' %}
+										{% if entity.metaStatus.title.unique == 'ok' %}
+											{{ __('meta_title_length_ok', entity.metaTitle|length) }}
+										{% endif %}
+									{% elseif entity.metaStatus.title.length == 'warning' %}
+										{{ __('meta_title_length_warning', entity.metaTitle|length) }}
+									{% elseif entity.metaStatus.title.length == 'empty' %}
+										{{ __('meta_title_length_empty') }}
+									{% else %}
+										{{ __('meta_title_length_error', entity.metaTitle|length) }}
+									{% endif %}
 
-				{% block nestedListMetaDescriptionInfo %}
-					<span class="SeoInfo SeoInfo-MetaDescription SeoInfoStatus-{{ entity.metaStatus.description.length|camelize }}" title="{{ __('meta_description') }}
-						{{~ entity.metaDescription ?: '-' ~}}
-						{{~ __('length') }}: {{ entity.metaDescription|length }} {{ __('characters') -}}
-					">
-						<span class="Icon">
-							{% if entity.metaStatus.description.length == 'ok' %}
-								<i class="las la-check"></i>
-							{% elseif entity.metaStatus.description.length in ['empty', 'warning'] %}
-								<i class="las la-exclamation"></i>
-							{% else %}
-								<i class="las la-times"></i>
-							{% endif %}
-						</span>
+									{% if entity.metaStatus.title.unique != 'ok' %}
+										{% if entity.metaStatus.title.length != 'ok' %}<br>{% endif %}
 
-						<span class="Title">
-							<strong>{{ __('meta_description') }}</strong><br>
-							{% if entity.metaStatus.description.length == 'ok' %}
-								{{ __('meta_description_length_ok', entity.metaDescription|length) }}
-							{% elseif entity.metaStatus.description.length == 'warning' %}
-								{{ __('meta_description_length_warning', entity.metaDescription|length) }}
-							{% elseif entity.metaStatus.description.length == 'empty' %}
-								{{ __('meta_description_length_empty') }}
-							{% else %}
-								{{ __('meta_description_length_error', entity.metaDescription|length) }}
-							{% endif %}
-						</span>
-					</span>
-				{% endblock %}
+										{{ __('meta_title_unique_warning', entity.metaTitle|length) }}
+									{% endif %}
+								</span>
+							</span>
+						{% endblock %}
 
-				{% block nestedListRobotsFollowInfo %}
-					<span class="SeoInfo SeoInfo-RobotsFollow SeoInfoStatus-{{ entity.robotsFollow ? 'Ok' : 'Error' }}" title="{{ __(entity.robotsFollow ? 'robots_follow' : 'robots_no_follow') }}">
-						<span class="Icon">
-							{% if entity.robotsFollow %}
-								<i class="las la-check"></i>
-							{% else %}
-								<i class="las la-times"></i>
-							{% endif %}
-						</span>
-					</span>
-				{% endblock %}
+						{% block nestedListMetaDescriptionInfo %}
+							<span class="SeoInfo SeoInfo-MetaDescription SeoInfoStatus-{{ entity.metaStatus.description.length|camelize }}" title="{{ __('meta_description') }}
+								{{~ entity.metaDescription ?: '-' ~}}
+								{{~ __('length') }}: {{ entity.metaDescription|length }} {{ __('characters') -}}
+							">
+								<span class="Icon">
+									{% if entity.metaStatus.description.length == 'ok' %}
+										<i class="las la-check"></i>
+									{% elseif entity.metaStatus.description.length in ['empty', 'warning'] %}
+										<i class="las la-exclamation"></i>
+									{% else %}
+										<i class="las la-times"></i>
+									{% endif %}
+								</span>
 
-				{% block nestedListRobotsIndexInfo %}
-					<span class="SeoInfo SeoInfo-RobotsIndex SeoInfoStatus-{{ entity.robotsIndex ? 'Ok' : 'Error' }}" title="{{ __(entity.robotsIndex ? 'robots_index' : 'robots_no_index') }}">
-						<span class="Icon">
-							{% if entity.robotsIndex %}
-								<i class="las la-check"></i>
-							{% else %}
-								<i class="las la-times"></i>
-							{% endif %}
-						</span>
-					</span>
+								<span class="Title">
+									<strong>{{ __('meta_description') }}</strong><br>
+									{% if entity.metaStatus.description.length == 'ok' %}
+										{{ __('meta_description_length_ok', entity.metaDescription|length) }}
+									{% elseif entity.metaStatus.description.length == 'warning' %}
+										{{ __('meta_description_length_warning', entity.metaDescription|length) }}
+									{% elseif entity.metaStatus.description.length == 'empty' %}
+										{{ __('meta_description_length_empty') }}
+									{% else %}
+										{{ __('meta_description_length_error', entity.metaDescription|length) }}
+									{% endif %}
+								</span>
+							</span>
+						{% endblock %}
+
+						{% block nestedListRobotsFollowInfo %}
+							<span class="SeoInfo SeoInfo-RobotsFollow SeoInfoStatus-{{ entity.robotsFollow ? 'Ok' : 'Error' }}" title="{{ __(entity.robotsFollow ? 'robots_follow' : 'robots_no_follow') }}">
+								<span class="Icon">
+									{% if entity.robotsFollow %}
+										<i class="las la-check"></i>
+									{% else %}
+										<i class="las la-times"></i>
+									{% endif %}
+								</span>
+
+								<span class="Title">
+									{{ __(entity.robotsFollow ? 'robots_follow' : 'robots_no_follow') }}
+								</span>
+							</span>
+						{% endblock %}
+
+						{% block nestedListRobotsIndexInfo %}
+							<span class="SeoInfo SeoInfo-RobotsIndex SeoInfoStatus-{{ entity.robotsIndex ? 'Ok' : 'Error' }}" title="{{ __(entity.robotsIndex ? 'robots_index' : 'robots_no_index') }}">
+								<span class="Icon">
+									{% if entity.robotsIndex %}
+										<i class="las la-check"></i>
+									{% else %}
+										<i class="las la-times"></i>
+									{% endif %}
+								</span>
+
+								<span class="Title">
+									{{ __(entity.robotsIndex ? 'robots_index' : 'robots_no_index') }}
+								</span>
+							</span>
+						{% endblock %}
+					</div>
 				{% endblock %}
 
 				{% block nestedListActions %}
 					<span class="Actions">
 						{% block nestedListActionsEdit %}
-							{% do AuthorizationHelper.setScope(entity.pageRole.identifier) %}
-							{% if AuthorizationHelper.isAccessible('update') %}
+							{% if AuthorizationHelper.scopeIsAccessible(entity.pageRole.identifier, [], 'update') %}
 								{{ HtmlHelper.link(__('edit'), {controller: entity.pageRole.identifier|pluralize, action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
 							{% endif %}
-							{% do AuthorizationHelper.resetScope() %}
 						{% endblock %}
+					</span>
+				{% endblock %}
+
+				{% block nestedListMostlyUsedWordsInfo %}
+					<span class="SeoInfo SeoInfo-MostlyUsedWords"><strong>{{ __('mostly_used_words') }}</strong><br>
 					</span>
 				{% endblock %}
 			</div>

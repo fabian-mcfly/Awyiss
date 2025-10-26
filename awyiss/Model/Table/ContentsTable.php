@@ -715,6 +715,8 @@ class ContentsTable extends Table {
 				'language_shortcode',
 				'page_role_id',
 				'page_template_id',
+				'robots_follow',
+				'robots_index',
 			],
 			skipPageRoleCheck: true,
 			translate: ['skip' => true],

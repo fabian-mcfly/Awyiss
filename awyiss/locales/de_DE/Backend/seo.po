@@ -142,3 +142,39 @@ msgstr "Mehrere H1-Überschriften gefunden"
 
 msgid "headline_structure_warning_too_many_h2"
 msgstr "Zu viele H2-Überschriften gefunden"
+
+msgid "meta_title_unique_warning"
+msgstr "Meta-Titel existiert mehrfach"
+
+msgid "text_length"
+msgstr "Textlänge"
+
+msgid "text_length_status_ok"
+msgstr "ist optimal"
+
+msgid "text_length_status_warning"
+msgstr "ist problematisch"
+
+msgid "text_length_status_error"
+msgstr "ist kritisch"
+
+msgid "text_length_error_too_few_words"
+msgstr "Inhalt hat zu wenige Wörter ({0} Wörter, mindestens {1} Wörter empfohlen)"
+
+msgid "text_length_warning_too_few_words"
+msgstr "Inhalt hat möglicherweise zu wenige Wörter ({0} Wörter, mindestens {1} Wörter empfohlen)"
+
+msgid "text_length_error_too_many_words"
+msgstr "Inhalt hat zu viele Wörter ({0} Wörter, maximal {1} Wörter empfohlen)"
+
+msgid "text_length_warning_too_many_words"
+msgstr "Inhalt hat möglicherweise zu viele Wörter ({0} Wörter, maximal {1} Wörter empfohlen)"
+
+msgid "text_length_summary_warning"
+msgstr "<strong>{0}</strong> Einträge mit problematischer Textlänge"
+
+msgid "text_length_summary_error"
+msgstr "<strong>{0}</strong> Einträge mit kritischer Textlänge"
+
+msgid "mostly_used_words"
+msgstr "Häufigste Wörter"

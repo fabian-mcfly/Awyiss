@@ -51,35 +51,36 @@
 
 	.NestedList {
 		.NestedList {
-			margin-left:10px;
+			margin-left:0;
 		}
 
 		.ListItem {
 			--seoButtonWidth:28px;
-			--seoTextWidth:180px;
+			--seoTextWidth:20vw;
 
 			container:listItem / inline-size;
 
+			&:has(.ListItem) {
+				background-position:62px 16px;
+			}
+
 			&-Inner {
 				container-name:none;
-				grid-template-columns:auto repeat(3, calc(var(--seoButtonWidth) + var(--seoTextWidth))) repeat(2, var(--seoButtonWidth)) var(--seoButtonWidth);
+				grid-template-columns:auto auto repeat(1, var(--seoButtonWidth));
 				row-gap:10px;
 
-				@container listItem (width <= 860px) {
+				@media screen and (width <= 1080px) {
 					--seoTextWidth:130px;
-				}
-
-				@container listItem (width <= 680px) {
-					grid-template-columns:auto var(--seoButtonWidth);
 					grid-auto-flow:dense;
-				}
-
-				@media screen and (width <= 420px) {
-					grid-template-columns:repeat(3, 1fr);
+					grid-template-columns:auto var(--seoButtonWidth);
 				}
 
 				&:has(> .NestedListToggle:not(.Hidden)) {
 					padding-left:50px;
+
+					@container listItem (width <= 1024px) {
+						padding-left:40px;
+					}
 				}
 
 				&:hover {
@@ -94,13 +95,11 @@
 		}
 
 		.Data {
-			grid-column:1 / -1;
 			align-content:start;
 			gap:0;
 
 			@container listItem (width <= 1024px) {
 				font-size:.8rem;
-				grid-column:1 / -1;
 			}
 
 			.Title {
@@ -121,6 +120,26 @@
 			}
 		}
 
+		.SeoInfoList {
+			display:grid;
+			width:fit-content;
+			margin-left:auto;
+			gap:10px;
+			grid-row:span 2;
+			grid-template-columns:repeat(2, var(--seoTextWidth));
+
+			@media screen and (width <= 1080px) {
+				--seoTextWidth:1fr;
+				width:100%;
+				grid-column:1 / -1;
+				grid-row:auto;
+			}
+
+			@media screen and (width <= 580px) {
+				grid-template-columns:100%;
+			}
+		}
+
 		.SeoInfo {
 			display:grid;
 			gap:0 10px;
@@ -129,41 +148,8 @@
 			opacity:.1;
 			align-self:start;
 
-			@container listItem (width <= 680px) {
-				grid-column-start:1;
-			}
-
 			@media screen and (width <= 420px) {
 				grid-column:1 / -1;
-			}
-
-			&:nth-child(1 of .SeoInfo) {
-				grid-column-start:2;
-
-				@container listItem (680px < width <= 1024px) {
-					grid-column-start:2;
-				}
-
-				@container listItem (width <= 680px) {
-					grid-column-start:auto;
-				}
-
-				@media screen and (width <= 420px) {
-					grid-column:1 / -1;
-				}
-			}
-
-			&:is(
-				:nth-child(4 of .SeoInfo),
-				:nth-child(5 of .SeoInfo)
-			) {
-				@container listItem (width <= 680px) {
-					grid-column-start:2;
-				}
-
-				@media screen and (width <= 420px) {
-					grid-column:auto / span 1;
-				}
 			}
 
 			.Title {
@@ -204,12 +190,6 @@
 						position:absolute;
 						inset:0;
 						animation:spin 1s linear infinite;
-
-						@keyframes spin {
-							to {
-								transform:rotate(360deg);
-							}
-						}
 					}
 				}
 			}
@@ -235,62 +215,61 @@
 			}
 		}
 
-		.SeoInfoStatus-Warning {
+		:is(
+			.SeoInfoStatus-Warning,
+			.SeoInfoStatus-Empty
+		) {
+			opacity:1;
+
 			.Icon {
 				background-color:var(--colorWarning);
-			}
-
-			&:is(
-				.SeoInfo-HeadlineStructure,
-				.SeoInfo-MetaTitle,
-				.SeoInfo-MetaDescription
-			) {
-				opacity:1;
-			}
-		}
-
-		.SeoInfoStatus-Empty {
-			&.SeoInfo-MetaTitle {
-				opacity:1;
-
-				.Icon {
-					background-color:var(--colorError);
-				}
-			}
-
-			&.SeoInfo-MetaDescription {
-				opacity:1;
-
-				.Icon {
-					background-color:var(--colorWarning);
-				}
 			}
 		}
 
 		.SeoInfoStatus-Error {
+			opacity:1;
+
 			.Icon {
 				background-color:var(--colorError);
 			}
+		}
 
-			&:is(
-				.SeoInfo-HeadlineStructure,
-				.SeoInfo-MetaTitle,
-				.SeoInfo-MetaDescription
-			) {
-				opacity:1;
+		.SeoInfo-MostlyUsedWords {
+			display:block;
+			width:100%;
+			font-size:14px;
+			line-height:1.2;
+
+			@media screen and (width <= 1080px) {
+				grid-column:1 / -1;
+			}
+
+			@container listItem (width <= 1024px) {
+				font-size:.8rem;
+			}
+
+			&:not(:has(ul)) {
+				display:none;
+			}
+
+			ul {
+				display:flex;
+				margin-inline:-5px;
+				flex-wrap:wrap;
+			}
+
+			li {
+				margin:0 5px;
+				list-style-type:none;
 			}
 		}
 
 		.Actions {
+			display:grid;
 			width:auto;
 			margin-top:0;
 			align-self:start;
-
-			@container listItem (width <= 680px) {
-				width:auto;
-				grid-template-columns:auto;
-				grid-column-start:2;
-			}
+			gap:10px;
 
 			@media screen and (width <= 420px) {
 				width:100%;

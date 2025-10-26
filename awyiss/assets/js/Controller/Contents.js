@@ -1,6 +1,7 @@
 // noinspection JSUnusedGlobalSymbols,NpmUsedModulesInstalled
 
 import ResizableContents from 'ResizableContents';
+import SeoAnalyzeDialog from 'SeoAnalyzeDialog';
 
 /**
  * Class to handle the contents overview and form.
@@ -24,6 +25,12 @@ export default class ContentsController {
 	 * @type {ResizableContents}
 	 */
 	resizeableContent;
+	/**
+	 * The SEO analyze dialog instance.
+	 *
+	 * @type {SeoAnalyzeDialog}
+	 */
+	seoAnalyzeDialog;
 
 	constructor() {
 		if (!document.body.classList.contains('ContentsController')) {
@@ -63,6 +70,12 @@ export default class ContentsController {
 	 * @returns {void}
 	 */
 	initOverview() {
+		this.seoAnalyzeDialog = new SeoAnalyzeDialog();
+
+		this.eventHandler.add('afterSaveSystemOrder', function () {
+			this.seoAnalyzeDialog.reset();
+		}.bind(this));
+
 		const nestedListHandler = window.nestedListHandler;
 
 		nestedListHandler.setGroupIdentifierAttribute((list, items) => {

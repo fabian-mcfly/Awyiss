@@ -208,6 +208,7 @@
 		&-Geocode,
 		&-History,
 		&-Leave,
+		&-Loading,
 		&-Menu,
 		&-Preview,
 		&-Reload,
@@ -412,6 +413,23 @@
 		}
 	}
 
+	&-Loading {
+		&::after {
+			content:'';
+			display:block;
+			width:20px;
+			height:20px;
+			margin:auto;
+			border-radius:50%;
+			border:2px solid;
+			border-top-color:transparent;
+			position:relative;
+			top:-1px;
+			transform:none;
+			animation:spin 1s linear infinite;
+		}
+	}
+
 	&-Menu {
 		&::after {
 			content:'\f142';
@@ -550,5 +568,11 @@
 		&::after {
 			content:'\f010';
 		}
+	}
+}
+
+@keyframes spin {
+	to {
+		transform:rotate(360deg);
 	}
 }

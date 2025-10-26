@@ -1,0 +1,221 @@
+#SeoAnalyzeDialogButton {
+	&.SeoInfoStatus-Ok {
+		background-color:var(--colorSuccess);
+
+		&.SeoInfoStatus-Warning:not(.SeoInfoStatus-Error) {
+			border-image:linear-gradient(-45deg, var(--colorWarning) 50%, var(--colorSuccess) 50%);
+		}
+	}
+
+	&.SeoInfoStatus-Warning {
+		background-color:var(--colorWarning);
+
+		&.SeoInfoStatus-Warning {
+			border-image:linear-gradient(-45deg, var(--colorError) 50%, var(--colorWarning) 50%);
+		}
+	}
+
+	&.SeoInfoStatus-Error {
+		background-color:var(--colorError);
+	}
+
+	.las {
+		color:var(--colorBright);
+	}
+}
+
+#SeoAnalyzeDialog {
+	max-width:640px;
+	padding:52px 0 0;
+	grid-template-columns:auto;
+
+	@media screen and (width <= 768px) {
+		padding-top:42px;
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			padding-top:42px;
+		}
+	}
+
+	&::after {
+		content:attr(data-title, 'Seo Analyze');
+		padding-right:180px;
+
+		@media screen and (width <= 540px) {
+			padding-right:140px;
+		}
+
+		@media screen and (width <= 480px) {
+			padding-right:80px;
+		}
+	}
+
+	> .ButtonArea {
+		width:max-content;
+		margin:0;
+		padding:2px;
+		position:absolute;
+		top:0;
+		right:0;
+
+		@media screen and (width <= 640px) {
+			display:flex;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				margin-top:0;
+			}
+		}
+
+		.Button {
+			width:auto;
+			height:48px;
+			background-color:transparent;
+			line-height:26px;
+
+			@media screen and (width <= 768px) {
+				height:38px;
+			}
+
+			@media screen and (width <= 540px) {
+				padding-inline:10px;
+			}
+
+			@media screen and (width <= 480px) {
+				font-size:0;
+				line-height:0;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					height:38px;
+				}
+			}
+
+			&::after {
+				@media screen and (width <= 480px) {
+					margin-left:0;
+				}
+			}
+		}
+	}
+
+	.Inner {
+		display:grid;
+		height:100%;
+		max-height:calc(80vh - 52px);
+		padding:30px;
+		border-radius:5px;
+		border:10px solid transparent;
+		overflow:auto;
+		gap:20px;
+		grid-auto-rows:min-content;
+		grid-template-columns:auto;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+
+		@media screen and (width <= 768px) {
+			padding:10px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding:5px;
+			border-width:5px;
+			gap:10px;
+		}
+
+		@media screen and (width <= 480px) {
+			grid-template-columns:auto;
+		}
+
+		&:focus {
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-3px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding:10px;
+			}
+		}
+	}
+
+	.SeoInfo {
+		--seoButtonWidth:28px;
+
+		display:grid;
+		gap:0 10px;
+		grid-template-columns:var(--seoButtonWidth) auto;
+		transition:opacity .3s ease-in-out;
+	}
+
+	.Icon {
+		display:inline-block;
+		width:var(--seoButtonWidth);
+		aspect-ratio:1;
+		border-radius:4px;
+		background-color:var(--colorMedium);
+		color:var(--colorBright);
+		line-height:0;
+		text-align:center;
+		cursor:help;
+		position:relative;
+
+		&.Loading {
+			&::after {
+				content:'';
+				width:20px;
+				height:20px;
+				margin:auto;
+				border-radius:50%;
+				border:2px solid var(--colorBright);
+				border-top-color:transparent;
+				position:absolute;
+				inset:0;
+				animation:spin 1s linear infinite;
+			}
+		}
+	}
+
+	:is(
+		.la-check,
+		.la-exclamation,
+		.la-times
+	) {
+		color:inherit;
+		font-size:0;
+		line-height:0;
+
+		&::before {
+			line-height:var(--seoButtonWidth);
+		}
+	}
+
+	.SeoInfoStatus-Ok {
+		.Icon {
+			background-color:var(--colorSuccess);
+		}
+	}
+
+	:is(
+			.SeoInfoStatus-Warning,
+			.SeoInfoStatus-Empty
+		) {
+		opacity:1;
+
+		.Icon {
+			background-color:var(--colorWarning);
+		}
+	}
+
+	.SeoInfoStatus-Error {
+		opacity:1;
+
+		.Icon {
+			background-color:var(--colorError);
+		}
+	}
+}

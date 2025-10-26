@@ -347,6 +347,76 @@ return [
 	],
 
 
+	'Seo' => [
+		'stopWords' => [
+			'de' => [
+				'aber','alle','allem','allen','aller','alles','als','also','am','an','ander','andere','anderem','anderen',
+				'anderer','anderes','anderm','andern','anderr','anders','auch','auf','aus','bei','bin','bis','bist',
+				'da','dadurch','daher','darum','das','daß','dass','dein','deine','deinem','deinen','deiner','deines',
+				'dem','den','der','des','dessen','deshalb','die','dies','diese','diesem','diesen','dieser','dieses',
+				'doch','dort','du','durch','ein','eine','einem','einen','einer','eines','er','es','euer','eure','eurem',
+				'euren','eurer','eures','für','hat','hatte','hatten','hattest','hattet','hier','hinter','ich','ihm',
+				'ihn','ihnen','ihr','ihre','ihrem','ihren','ihrer','ihres','im','in','ist','ja','jede','jedem','jeden',
+				'jeder','jedes','jener','jenes','jetzt','kann','kannst','können','könnt','machen','mein','meine',
+				'meinem','meinen','meiner','meines','mit','muß','müssen','musst','müsst','nach','nachdem','nein','nicht',
+				'nun','oder','seid','sein','seine','seinem','seinen','seiner','seines','selbst','sich','sie','sind',
+				'so','solche','solchem','solchen','solcher','solches','soll','sollen','sollst','sollt','sonst','um',
+				'und','uns','unse','unsem','unsen','unser','unses','unter','vom','von','vor','wann','warum','was','weiter',
+				'weitere','wenn','wer','werde','werden','werdet','weshalb','wie','wieder','wir','wird','wirst','wo','wollen',
+				'wollt','während','würde','würden','zu','zum','zur','über'
+			],
+			'en' => [
+				'a','about','above','after','again','against','all','am','an','and','any','are','aren\'t','as','at',
+				'be','because','been','before','being','below','between','both','but','by','can','can\'t','could',
+				'couldn\'t','did','didn\'t','do','does','doesn\'t','doing','don\'t','down','during','each','few','for',
+				'from','further','had','hadn\'t','has','hasn\'t','have','haven\'t','having','he','he\'d','he\'ll','he\'s',
+				'her','here','here\'s','hers','herself','him','himself','his','how','how\'s','i','i\'d','i\'ll','i\'m',
+				'i\'ve','if','in','into','is','isn\'t','it','it\'s','its','itself','let\'s','me','more','most','mustn\'t',
+				'my','myself','no','nor','not','of','off','on','once','only','or','other','ought','our','ours','ourselves',
+				'out','over','own','same','shan\'t','she','she\'d','she\'ll','she\'s','should','shouldn\'t','so','some',
+				'such','than','that','that\'s','the','their','theirs','them','themselves','then','there','there\'s',
+				'these','they','they\'d','they\'ll','they\'re','they\'ve','this','those','through','to','too','under',
+				'until','up','very','was','wasn\'t','we','we\'d','we\'ll','we\'re','we\'ve','were','weren\'t','what',
+				'what\'s','when','when\'s','where','where\'s','which','while','who','who\'s','whom','why','why\'s','with',
+				'won\'t','would','wouldn\'t','you','you\'d','you\'ll','you\'re','you\'ve','your','yours','yourself','yourselves'
+			],
+			'it' => [
+				'a','ad','al','allo','ai','agli','all','alla','alle','con','col','coi','da','dal','dallo','dai','dagli',
+				'dall','dalla','dalle','di','del','dello','dei','degli','dell','della','delle','in','nel','nello','nei',
+				'negli','nell','nella','nelle','su','sul','sullo','sui','sugli','sull','sulla','sulle','per','tra','fra',
+				'il','lo','la','i','gli','le','un','uno','una','ma','ed','se','perché','anche','come','dov','dove','che',
+				'chi','cui','non','più','quale','quanto','quanti','quanta','quante','quello','quelli','quella','quelle',
+				'questo','questi','questa','queste','si','tutto','tutti','a','c','e','i','l','o','ho','hai','ha','abbiamo',
+				'avete','hanno','abbia','abbiate','abbiano','avrò','avrai','avrà','avremo','avrete','avranno','sarei',
+				'saresti','sarebbe','saremmo','sareste','sarebbero','sono','sei','è','siamo','siete','sarò','sarai','sarà',
+				'saremo','sarete','saranno'
+			],
+			'es' => [
+				'un','una','unas','unos','uno','sobre','todo','también','tras','otro','algún','alguno','alguna','algunos',
+				'algunas','ser','es','soy','eres','somos','sois','estoy','esta','estamos','estan','como','en','para','atras',
+				'porque','por','qué','estado','estaba','ante','antes','siendo','ambos','pero','por','poder','puede','puedo',
+				'podemos','pueden','fui','fue','fuimos','fueron','hacer','hago','hace','hacemos','hacen','cada','fin','incluso',
+				'primero','desde','conseguir','consigo','consigue','consigues','conseguimos','consiguen','ir','voy','va','vamos',
+				'van','vaya','gueno','ha','tener','tengo','tiene','tenemos','tienen','el','la','lo','las','los','su','aqui',
+				'mio','tuyo','ellos','ellas','nos','nosotros','vosotros','vosotras','si','dentro','solo','solamente','saber',
+				'sabes','sabe','sabemos','saben','ultimo','largo','bastante','haces','muchos','aquellos','aquellas','sus',
+				'entonces','tiempo','verdad','verdadero','verdadera','cierto','ciertos','cierta','ciertas','intentar','intento',
+				'intenta','intentas','intentamos','intentan','dos','bajo','arriba','encima','usar','uso','usas','usa','usamos',
+				'usan','emplear','empleo','empleas','emplea','empleamos','emplean','largo','ni','siquiera','tan','tal','tales'
+			],
+			'fr' => [
+				'au','aux','avec','ce','ces','dans','de','des','du','elle','en','et','eux','il','je','la','le','leur','lui',
+				'ma','mais','me','même','mes','moi','mon','ne','nos','notre','nous','on','ou','par','pas','pour','qu','que',
+				'qui','sa','se','ses','son','sur','ta','te','tes','toi','ton','tu','un','une','vos','votre','vous','c','d',
+				'j','l','à','m','n','s','t','y','été','étée','étées','étés','étant','suis','es','est','sommes','êtes','sont',
+				'serai','seras','sera','serons','serez','seront','serais','serait','serions','seriez','seraient','étais',
+				'était','étions','étiez','étaient','fus','fut','fûmes','fûtes','furent','sois','soit','soyons','soyez',
+				'soient','fusse','fusses','fût','fussions','fussiez','fussent'
+			]
+		],
+	],
+
+
 	'Session' => [
 		'cookie' => 'awyiss',
 		//'cookiePath' => '',

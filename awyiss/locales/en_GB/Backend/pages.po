@@ -125,3 +125,6 @@ msgstr "Only copy Pages with the same Page Role"
 
 msgid "copy_descendants_with_different_page_role_yes"
 msgstr "Also copy Pages with other Page Roles"
+
+msgid "seo_analyze"
+msgstr "SEO Analysis"

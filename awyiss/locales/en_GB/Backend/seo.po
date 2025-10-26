@@ -127,3 +127,39 @@ msgstr "Multiple H1 headlines found"
 
 msgid "headline_structure_warning_too_many_h2"
 msgstr "Too many H2 headlines found"
+
+msgid "meta_title_unique_warning"
+msgstr "Meta title is not unique"
+
+msgid "text_length"
+msgstr "Content length"
+
+msgid "text_length_status_ok"
+msgstr "is optimal"
+
+msgid "text_length_status_warning"
+msgstr "is problematic"
+
+msgid "text_length_status_error"
+msgstr "is erroneous"
+
+msgid "text_length_error_too_few_words"
+msgstr "The content has too few words ({0} words, at least {1} words recommended)"
+
+msgid "text_length_warning_too_few_words"
+msgstr "Content may have too few words ({0} words, at least {1} words recommended)"
+
+msgid "text_length_error_too_many_words"
+msgstr "Content has too many words ({0} words, maximum {1} words recommended)"
+
+msgid "text_length_warning_too_many_words"
+msgstr "Content may have too many words ({0} words, maximum {1} words recommended)"
+
+msgid "text_length_summary_warning"
+msgstr "<strong>{0}</strong> entries with problematic text length"
+
+msgid "text_length_summary_error"
+msgstr "<strong>{0}</strong> entries with critical text length"
+
+msgid "mostly_used_words"
+msgstr "Most frequently used words"

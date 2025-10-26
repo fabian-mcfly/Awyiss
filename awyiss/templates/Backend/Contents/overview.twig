@@ -33,8 +33,12 @@
 
 			{% block subheadlineOverview %}
 				<h2>
-					{{ page.title }}
 					<div class="Buttons">
+						{% block buttonSeoAnalysis %}
+							{% if AuthorizationHelper.scopeIsAccessible('seo', [], 'analyze') %}
+								{{ FormHelper.button(__d('pages', 'seo_analyze'), {class: 'Button Button-Subtle Button-Loading', id: 'SeoAnalyzeDialogButton', name: 'button', type: 'button', inert: true}) }}
+							{% endif %}
+						{% endblock %}
 
 						{% block buttonPreview %}
 							{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Preview Button-Small Button-Subtle'}) }}

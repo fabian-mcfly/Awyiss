@@ -125,3 +125,6 @@ msgstr "Nur Seiten mit derselben Seitenrolle kopieren"
 
 msgid "copy_descendants_with_different_page_role_yes"
 msgstr "Seiten mit anderen Rollen ebenfalls kopieren"
+
+msgid "seo_analyze"
+msgstr "SEO Analyse"
