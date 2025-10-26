@@ -125,19 +125,19 @@ export default class SeoAnalyzeDialog {
 			this.setStatus('MetaDescription', data.status.description, status);
 
 			const mostlyUsedWordsTitle = this.dialog.querySelector('.SeoInfo-MostlyUsedWords')
-	 		if (data.status.contents?.mostlyUsedWords) {
-	 			const mostlyUsedWordsList = document.createElement('ul');
-	 			mostlyUsedWordsList.classList.add('MostlyUsedWords-List');
+			if (data.status.contents?.mostlyUsedWords) {
+				const mostlyUsedWordsList = document.createElement('ul');
+				mostlyUsedWordsList.classList.add('MostlyUsedWords-List');
 
-	 			// Traverse mostly used words object
-	 			for (const [word, count] of Object.entries(data.status.contents.mostlyUsedWords)) {
-	 				const listItem = document.createElement('li');
-	 				listItem.innerHTML = `${word} (${count}x)`;
-	 				mostlyUsedWordsList.appendChild(listItem);
-	 			}
+				// Traverse mostly used words object
+				for (const [word, count] of Object.entries(data.status.contents.mostlyUsedWords)) {
+					const listItem = document.createElement('li');
+					listItem.innerHTML = `${word} (${count}x)`;
+					mostlyUsedWordsList.appendChild(listItem);
+				}
 
-	 			mostlyUsedWordsTitle.appendChild(mostlyUsedWordsList);
-	 		}
+				mostlyUsedWordsTitle.appendChild(mostlyUsedWordsList);
+			}
 
 			const statusClass = [];
 			let iconClass = '';
