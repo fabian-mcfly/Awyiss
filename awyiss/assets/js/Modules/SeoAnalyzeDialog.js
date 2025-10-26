@@ -124,22 +124,20 @@ export default class SeoAnalyzeDialog {
 			this.setStatus('MetaTitle', data.status.title, status);
 			this.setStatus('MetaDescription', data.status.description, status);
 
-			/**
-			 * const mostlyUsedWordsTitle = element.querySelector('.SeoInfo-MostlyUsedWords')
-			 * 		if (data.mostlyUsedWords) {
-			 * 			const mostlyUsedWordsList = document.createElement('ul');
-			 * 			mostlyUsedWordsList.classList.add('MostlyUsedWords-List');
-			 *
-			 * 			// Traverse mostly used words object
-			 * 			for (const [word, count] of Object.entries(data.mostlyUsedWords)) {
-			 * 				const listItem = document.createElement('li');
-			 * 				listItem.innerHTML = `${word} (${count}x)`;
-			 * 				mostlyUsedWordsList.appendChild(listItem);
-			 * 			}
-			 *
-			 * 			mostlyUsedWordsTitle.appendChild(mostlyUsedWordsList);
-			 * 		}
-			 */
+			const mostlyUsedWordsTitle = this.dialog.querySelector('.SeoInfo-MostlyUsedWords')
+	 		if (data.status.contents?.mostlyUsedWords) {
+	 			const mostlyUsedWordsList = document.createElement('ul');
+	 			mostlyUsedWordsList.classList.add('MostlyUsedWords-List');
+
+	 			// Traverse mostly used words object
+	 			for (const [word, count] of Object.entries(data.status.contents.mostlyUsedWords)) {
+	 				const listItem = document.createElement('li');
+	 				listItem.innerHTML = `${word} (${count}x)`;
+	 				mostlyUsedWordsList.appendChild(listItem);
+	 			}
+
+	 			mostlyUsedWordsTitle.appendChild(mostlyUsedWordsList);
+	 		}
 
 			const statusClass = [];
 			let iconClass = '';

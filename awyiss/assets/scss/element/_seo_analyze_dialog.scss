@@ -152,6 +152,25 @@
 		transition:opacity .3s ease-in-out;
 	}
 
+	.SeoInfo-MostlyUsedWords {
+		grid-template-columns:100%;
+
+		&:not(:has(ul)) {
+			display:none;
+		}
+
+		ul {
+			display:flex;
+			margin-inline:-5px;
+			flex-wrap:wrap;
+		}
+
+		li {
+			margin:0 5px;
+			list-style-type:none;
+		}
+	}
+
 	.Icon {
 		display:inline-block;
 		width:var(--seoButtonWidth);

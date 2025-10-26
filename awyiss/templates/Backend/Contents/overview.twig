@@ -166,7 +166,7 @@
 
 			{% block seoAnalyzeDialogInner %}
 				<div class="Inner">
-					{% block nestedListTextLengthInfo %}
+					{% block seoAnalyzeDialogTextLengthInfo %}
 						<span class="SeoInfo SeoInfo-TextLength">
 							<span class="Icon Loading"></span>
 
@@ -174,7 +174,7 @@
 						</span>
 					{% endblock %}
 
-					{% block nestedListHeadlineStructureInfo %}
+					{% block seoAnalyzeDialogHeadlineStructureInfo %}
 						<span class="SeoInfo SeoInfo-HeadlineStructure">
 							<span class="Icon Loading"></span>
 
@@ -182,7 +182,7 @@
 						</span>
 					{% endblock %}
 
-					{% block nestedListMetaTitleInfo %}
+					{% block seoAnalyzeDialogMetaTitleInfo %}
 						<span class="SeoInfo SeoInfo-MetaTitle">
 							<span class="Icon Loading"></span>
 
@@ -190,7 +190,7 @@
 						</span>
 					{% endblock %}
 
-					{% block nestedListMetaDescriptionInfo %}
+					{% block seoAnalyzeDialogMetaDescriptionInfo %}
 						<span class="SeoInfo SeoInfo-MetaDescription">
 							<span class="Icon Loading"></span>
 
@@ -198,7 +198,7 @@
 						</span>
 					{% endblock %}
 
-					{% block nestedListRobotsFollowInfo %}
+					{% block seoAnalyzeDialogRobotsFollowInfo %}
 						<span class="SeoInfo SeoInfo-RobotsFollow SeoInfoStatus-{{ page.robotsFollow ? 'Ok' : 'Error' }}">
 							<span class="Icon">
 								{% if page.robotsFollow %}
@@ -212,7 +212,7 @@
 						</span>
 					{% endblock %}
 
-					{% block nestedListRobotsIndexInfo %}
+					{% block seoAnalyzeDialogRobotsIndexInfo %}
 						<span class="SeoInfo SeoInfo-RobotsIndex SeoInfoStatus-{{ page.robotsIndex ? 'Ok' : 'Error' }}">
 							<span class="Icon">
 								{% if page.robotsIndex %}
@@ -223,6 +223,12 @@
 							</span>
 
 							<span class="Title">{{ __d('seo', page.robotsIndex ? 'robots_index' : 'robots_no_index') }}</span>
+						</span>
+					{% endblock %}
+
+					{% block seoAnalyzeDialogMostlyUsedWordsInfo %}
+						<span class="SeoInfo SeoInfo-MostlyUsedWords">
+							<span class="Title"><strong>{{ __d('seo', 'mostly_used_words') }}</strong></span>
 						</span>
 					{% endblock %}
 
