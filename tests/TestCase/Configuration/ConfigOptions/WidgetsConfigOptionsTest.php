@@ -41,7 +41,18 @@ class WidgetsConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(3, $configOptions);
+		$this->assertCount(4, $configOptions);
+
+		$this->assertArrayHasKey('Backend.knownIdentifiers', $configOptions);
+		$this->assertFalse($configOptions['Backend.knownIdentifiers']->isLocalizable());
+		$this->assertTrue($configOptions['Backend.knownIdentifiers']->isNullable());
+		$this->assertFalse($configOptions['Backend.knownIdentifiers']->isPersonalizable());
+		$this->assertSame([], $configOptions['Backend.knownIdentifiers']->getDefaultValue());
+		$this->assertSame('', $configOptions['Backend.knownIdentifiers']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::List, $configOptions['Backend.knownIdentifiers']->getType());
+		$this->assertNull($configOptions['Backend.knownIdentifiers']->getTypecast());
+		$this->assertNull($configOptions['Backend.knownIdentifiers']->getValidate());
+		$this->assertNull($configOptions['Backend.knownIdentifiers']->getValues());
 
 		$this->assertArrayHasKey('Backend.overview.columnView.enabled', $configOptions);
 		$this->assertFalse($configOptions['Backend.overview.columnView.enabled']->isLocalizable());

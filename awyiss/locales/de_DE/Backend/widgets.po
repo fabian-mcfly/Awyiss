@@ -113,6 +113,9 @@ msgstr "Titel-Tag"
 msgid "subtitle_tag"
 msgstr "Untertitel-Tag"
 
+msgid "configuration_identifier_backend_known_identifiers"
+msgstr "Bekannte Identifikatoren"
+
 msgid "configuration_category_backend_overview_column_view"
 msgstr "Spaltenansicht"
 

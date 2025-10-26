@@ -110,6 +110,9 @@ msgstr "Title-Tag"
 msgid "subtitle_tag"
 msgstr "Subtitle-Tag"
 
+msgid "configuration_identifier_backend_known_identifiers"
+msgstr "Known Identifiers"
+
 msgid "configuration_category_backend_overview_column_view"
 msgstr "Column View"
 

@@ -23,6 +23,13 @@ class WidgetsConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
+			new ConfigOption(
+				defaultValue: [],
+				identifier: 'knownIdentifiers',
+				localizable: false,
+				nullable: true,
+				type: ConfigOptionType::List,
+			),
 			'overview' => [
 				'columnView' => [
 					new ConfigOption(
