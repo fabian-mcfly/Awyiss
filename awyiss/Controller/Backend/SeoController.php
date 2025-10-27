@@ -471,7 +471,7 @@ class SeoController extends BackendController {
 			$la_result['warnings'][] = __('text_length_warning_too_few_words', $la_wordCount, 300);
 		}
 		elseif ($la_wordCount > 4000) {
-			$la_result['warnings'][] = __('text_length_error_too_many_words', $la_wordCount, 2000);
+			$la_result['errors'][] = __('text_length_error_too_many_words', $la_wordCount, 2000);
 		}
 		elseif ($la_wordCount > 2000) {
 			$la_result['warnings'][] = __('text_length_warning_too_many_words', $la_wordCount, 2000);
