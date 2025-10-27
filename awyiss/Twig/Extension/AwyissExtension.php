@@ -17,6 +17,7 @@ use Cake\Http\Exception\RedirectException;
 use Cake\I18n\I18n;
 use Cake\Utility\Hash;
 use Collator;
+use Dom\HTMLDocument;
 use InvalidArgumentException;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 use Twig\Extension\AbstractExtension;
@@ -259,6 +260,44 @@ class AwyissExtension extends AbstractExtension {
 						header('Location: ' . $ex->getMessage(), true, $ex->getCode());
 						exit;
 					}
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
+
+			new TwigFunction(
+				'wordCount',
+				function (array $context, string $contents): int {
+					$lo_dom = HTMLDocument::createFromString($contents, LIBXML_NOERROR, 'UTF-8');
+
+					$ls_html = '';
+
+					$lo_body = $lo_dom->querySelector('body');
+
+					// Remove unwanted nodes
+					$la_unwantedNodes = [
+						'.Module-Breadcrumbs', 'footer', 'header', 'nav', 'template', 'style', 'script', 'nav', 'form', 'noscript',
+						'link', 'meta', 'picture', 'video', 'audio', 'img', 'input', 'select', 'textarea', 'button', 'canvas', 'iframe', 'svg',
+					];
+					foreach ($la_unwantedNodes as $ls_unwantedNode) {
+						$lo_unwantedNodes = $lo_body->querySelectorAll($ls_unwantedNode);
+						foreach ($lo_unwantedNodes as $lo_unwantedNode) {
+							$lo_unwantedNode->parentNode->removeChild($lo_unwantedNode);
+						}
+					}
+
+					while ($lo_body->firstChild) {
+						$ls_html .= $lo_dom->saveHTML($lo_body->firstChild);
+						$lo_body->removeChild($lo_body->firstChild);
+					}
+
+					$ls_cleanText = str_replace(['<br>', '<br/>', '<br />'], ' ', $ls_html);
+					$ls_cleanText = strip_tags($ls_cleanText);
+					$ls_cleanText = str_replace('&nbsp;', ' ', $ls_cleanText);
+					$ls_cleanText = preg_replace('/([\s\n\r\t]|\xC2\xA0|\xE2\x80\xAF)/', ' ', $ls_cleanText);
+					$ls_cleanText = preg_replace('/[ ]+/', ' ', $ls_cleanText);
+
+					$la_words = array_filter(explode(' ', $ls_cleanText));
+					return count($la_words);
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),

@@ -123,7 +123,7 @@ class AwyissExtensionTest extends TestCase {
 		$functions = $this->extension->getFunctions();
 
 		$this->assertIsArray($functions);
-		$this->assertCount(26, $functions);
+		$this->assertCount(27, $functions);
 
 		$functionNames = array_map(fn (TwigFunction $function) => $function->getName(), $functions);
 		$expectedNames = [
@@ -153,6 +153,7 @@ class AwyissExtensionTest extends TestCase {
 			'staticCall',
 			'survey',
 			'widget',
+			'wordCount',
 		];
 
 		foreach ($expectedNames as $name) {
