@@ -4,7 +4,6 @@
 namespace Awyiss\Controller;
 
 
-use Awyiss\Awyiss;
 use Awyiss\Routing\Router;
 use Cake\Controller\Controller;
 use Cake\Http\Response;
@@ -16,15 +15,6 @@ use Psr\Http\Message\UriInterface;
  * AppController
  */
 abstract class AppController extends Controller {
-	/**
-	 * @throws \Exception
-	 */
-	public function initialize(): void {
-		// Load the user configuration
-		Awyiss::loadUserConfiguration();
-	}
-
-
 	/**
 	 * 1:1 implementation to use \Awyiss\Routing\Router
 	 *

@@ -102,6 +102,9 @@ abstract class BackendController extends AppController {
 	public function initialize(): void {
 		parent::initialize();
 
+		// Load the user configuration
+		Awyiss::loadUserConfiguration();
+
 		//Load event listeners for the current controller in the "backend"-folder
 		EventListenersProvider::loadListener($this->getName(), Awyiss::REALM_BACKEND);
 
