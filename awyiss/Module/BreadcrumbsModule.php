@@ -4,8 +4,11 @@
 namespace Awyiss\Module;
 
 
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Language;
+use Awyiss\Model\Entity\Page;
+use Awyiss\Model\Table\PagesTable;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\View\BackendView;
@@ -78,36 +81,20 @@ class BreadcrumbsModule extends AbstractModule {
 		$lb_showOnHomepage = $settings['showOnHomepage'] ?? false;
 		$li_homepageId = $settings['homepageId'] ?? null;
 
-		/** @var \Awyiss\Model\Table\PagesTable $lo_pageTable */
+		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
 		$lo_pagesTable = FactoryLocator::get('Table')->get('Pages');
 
 		if ($li_homepageId) {
 			$lo_homepage = $lo_pagesTable->get($li_homepageId);
 		}
 		else {
-			// Get the homepage entity (first page for the current language)
-			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-			$lo_query = $lo_pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true)->orderBy([
-				'Pages.parent_id' => 'ASC',
-			]);
-
-			if (!static::isPreview()) {
-				/**
-				 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
-				 */
-				$lo_query->find('published')->where([
-					'Pages.active' => true,
-					'Pages.parents_active' => true,
-				]);
-			}
-
-			$lo_homepage = $lo_query->first();
+			$lo_homepage = static::findHomepage($lo_pagesTable, $frontendLanguage?->shortcode);
 		}
 
 		$li_homepageId = $lo_homepage->id;
 
 		// Get the current path
-		$ls_path = trim(Router::getRequest()?->getPath() ?? '', '/');
+		$ls_path = trim($settings['path'] ?? Router::getRequest()?->getPath() ?? '', '/');
 		$la_pathParts = explode('/', $ls_path);
 		array_shift($la_pathParts);
 
@@ -182,5 +169,55 @@ class BreadcrumbsModule extends AbstractModule {
 		}
 
 		return $la_options;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Table\PagesTable $pagesTable
+	 * @param string|null $languageShortcode
+	 * @return \Awyiss\Model\Entity\Page|null
+	 * @throws \Exception
+	 */
+	protected static function findHomepage(PagesTable $pagesTable, ?string $languageShortcode = null): ?Page {
+		$lo_query = $pagesTable->find(!static::isPreview() ? 'published' : 'all', skipPageRoleCheck: true);
+
+		// Include the languages in the query, including deleted languages
+		$lo_query->contain([
+			'DuplicateOfPage',
+			'Languages' => [
+				'finder' => $languageShortcode ? 'withDeleted' : 'all',
+			],
+			'PageRoles',
+			'PageTemplates',
+		]);
+
+		if (static::$isPreview) {
+			// Order all by deleted, system_order
+			$lo_query->orderBy([
+				'Pages.deleted' => 'ASC',
+			]);
+		}
+		else {
+			// Order all by deleted, parents_active, active, system_order
+			$lo_query->orderBy([
+				'Pages.deleted' => 'ASC',
+				'Pages.parents_active' => 'DESC',
+				'Pages.active' => 'DESC',
+			]);
+		}
+
+		$lo_query->orderBy([
+			'PageRoles.active' => 'DESC',
+			'PageRoles.system_order' => 'ASC',
+		]);
+
+		$lo_query->where(['language_shortcode' => $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode]);
+
+		// Order by parent_id first
+		$lo_query->orderBy(['Pages.parent_id' => 'ASC']);
+
+		$lo_query->limit(1);
+
+		return $lo_query->first();
 	}
 }
