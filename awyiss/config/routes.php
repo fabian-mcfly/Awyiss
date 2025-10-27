@@ -203,6 +203,24 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 		'lang' => '[a-z]{2}',
 	])->setPersist(['lang']);
 
+	$routeBuilder->connect(
+		'/_open-graph-image/id:{id}/',
+		['prefix' => 'Frontend', 'controller' => 'OpenGraph', 'action' => 'image'],
+	)->setMethods([
+		'GET',
+	])->setPatterns([
+		'id' => '[0-9]+',
+	])->setPass(['id']);
+
+	$routeBuilder->connect(
+		'/_open-graph-template/id:{id}/',
+		['prefix' => 'Frontend', 'controller' => 'OpenGraph', 'action' => 'template'],
+	)->setMethods([
+		'GET',
+	])->setPatterns([
+		'id' => '[0-9]+',
+	])->setPass(['id']);
+
 	if (Configure::read('Route.includeLanguageShortcode')) {
 		$routeBuilder->connect(
 			'/{lang}/{slug}/*',

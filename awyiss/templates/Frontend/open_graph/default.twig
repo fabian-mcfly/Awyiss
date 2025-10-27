@@ -1,0 +1,44 @@
+{#
+@var isErrorPage bool
+@var page \Awyiss\Model\Entity\Page
+@var pageRoleEnum \Awyiss\Model\Enum\PageRoleEnumInterface
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% macro readingTime(contents) %}
+	{% set wordCount = wordCount(contents) %}
+	{% set readingTime = ((wordCount ?: 1) / 150)|round(0, 'ceil') %}
+	{{ readingTime <= 1 ? '1 Minute' : readingTime ~ ' Minuten' }}
+{% endmacro %}
+
+{% block logo %}
+	{% if loginLogoPath %}
+		<div class="Logo">
+			<img src="{{ baseUrl }}{{ (loginLogoPath)|trim('/') }}" alt="{{ config.Awyiss.System.Frontend.meta.titleAppendix }}">
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block title %}
+	<h1>{{ page.title }}</h1>
+
+	{{ module('breadcrumbs', {showOnHomepage: false, path: page.languageShortcode ~ '/' ~ page.slug}) }}
+
+	{% set contents = content('ContentArea') %}
+
+	<p class="ReadingTime">Lesezeit: ca. {{ _self.readingTime(contents) }}</p>
+{% endblock %}

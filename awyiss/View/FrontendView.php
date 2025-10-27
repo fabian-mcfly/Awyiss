@@ -6,6 +6,7 @@ namespace Awyiss\View;
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Exception\MissingContentException;
@@ -580,6 +581,11 @@ class FrontendView extends AppView {
 	 */
 	protected function setOgImage(): void {
 		if ($this->fetch('ogImage') || $this->get('ogImage')) {
+			return;
+		}
+
+		if ($this->get('page') && $this->get('page') instanceof Page) {
+			$this->set('ogImage', Router::url('/_open-graph-image/id:' . $this->get('page')->id . '/', true));
 			return;
 		}
 

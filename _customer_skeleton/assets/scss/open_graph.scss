@@ -1,0 +1,124 @@
+@import 'helper/reset';
+@import 'helper/variables';
+
+@import 'font-awesome/mixins';
+@import 'font-awesome/webfont';
+
+@import 'element/extendables';
+@import 'element/general';
+
+html, body {
+	padding:0;
+	background-color:var(--colorBright);
+}
+
+#Wrapper {
+	display:flex;
+	width:1200px;
+	height:680px;
+	padding:var(--pagePadding);
+	background-color:var(--colorMain);
+	background-image:linear-gradient(60deg, rgba(0, 0, 0, .25), transparent);
+	flex-direction:column;
+	position:relative;
+}
+
+.AwyissLogo {
+	color:#FFFFFF;
+	font-size:12px;
+	line-height:1;
+	text-align:center;
+	position:absolute;
+	right:var(--pagePadding);
+	bottom:var(--pagePadding);
+
+	.Awyiss {
+		display:block;
+		margin-top:5px;
+		padding:0 20px;
+		box-shadow:0 0 10px rgba(0, 0, 0, .25);
+		border-radius:5px;
+		border-right-width:0;
+		background-color:#131a21;
+		//noinspection CssNoGenericFontName
+		font-family:"2f media", Impact, Charcoal, sans-serif;
+		font-size:40px;
+		line-height:52px;
+		text-decoration:none;
+	}
+
+	.Yiss {
+		color:#63d1a5;
+	}
+}
+
+.Logo {
+	width:400px;
+	height:auto;
+
+	svg {
+		width:100%;
+		height:100%;
+	}
+}
+
+h1 {
+	display:-webkit-box;
+	margin-block:auto 0;
+	padding-right:150px;
+	font-size:4rem;
+	line-height:1.2;
+	overflow:hidden;
+	-webkit-box-orient:vertical;
+	-webkit-line-clamp:3;
+
+	+ .ReadingTime {
+		margin-top:20px;
+	}
+}
+
+.Module-Breadcrumbs {
+	padding-right:150px;
+}
+
+ol.Breadcrumbs {
+	display:flex;
+	margin-bottom:var(--lineHeightMain);
+	margin-left:-20px;
+	padding-right:150px;
+}
+
+li.Breadcrumb {
+	margin:0 20px;
+	list-style-type:none;
+	position:relative;
+
+	&:first-child {
+		&::before {
+			display:none;
+		}
+	}
+
+	&::before {
+		@include fa('\f054', 12px, 1);
+
+		position:absolute;
+		bottom:7px;
+		left:-25px;
+	}
+
+	a {
+		color:inherit;
+	}
+}
+
+.ReadingTime {
+	margin-bottom:0;
+	padding-right:150px;
+
+	&::before {
+		@include fa('\f017', 14px, 1);
+		margin-right:8px;
+		vertical-align:2px;
+	}
+}
