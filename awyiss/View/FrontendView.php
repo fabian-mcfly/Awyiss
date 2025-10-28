@@ -586,6 +586,8 @@ class FrontendView extends AppView {
 
 		if ($this->get('page') && $this->get('page') instanceof Page) {
 			$this->set('ogImage', Router::url('/_open-graph-image/id:' . $this->get('page')->id . '/', true));
+			$this->set('ogImageWidth', 1200);
+			$this->set('ogImageHeight', 680);
 			return;
 		}
 
