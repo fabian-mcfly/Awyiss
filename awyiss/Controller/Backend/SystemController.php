@@ -131,6 +131,21 @@ class SystemController extends Controller {
 			}
 		}
 
+		$ls_type = $this->request->getParam('type');
+		$la_commands = [];
+
+		if (!$ls_type || $ls_type === 'all') {
+			$la_commands[] = 'bin' . DS . 'cake cache clear_all';
+		}
+
+		if (in_array($ls_type, ['media', 'all'], true)) {
+			$la_commands[] = 'bin' . DS . 'cake media clear_cache';
+		}
+
+		if (in_array($ls_type, ['twig', 'all'], true)) {
+			$la_commands[] = 'bin' . DS . 'cake twig clear_cache';
+		}
+
 		if (!$lo_runningJob) {
 			$ls_reference = 'system::clear_cache';
 
@@ -141,7 +156,7 @@ class SystemController extends Controller {
 
 			if (!$lo_runningJob) {
 				$lo_runningJob = $lo_queue->createJob('Queue.Execute', [
-					'command' => 'bin' . DS . 'cake cache clear_all && bin' . DS . 'cake media clear_cache && bin' . DS . 'cake twig clear_cache',
+					'command' => implode(' && ', $la_commands),
 					'escape' => false,
 					'log' => true,
 				], [

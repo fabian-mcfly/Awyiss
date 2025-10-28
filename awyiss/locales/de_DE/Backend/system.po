@@ -379,6 +379,18 @@ msgstr "Frontend"
 msgid "meta_title_clear_cache"
 msgstr "Cache leeren"
 
+msgid "clear_awyiss_cache"
+msgstr "Awyiss Cache leeren"
+
+msgid "clear_media_cache"
+msgstr "Medien-Cache leeren"
+
+msgid "clear_twig_cache"
+msgstr "Twig-Cache leeren"
+
+msgid "clear_full_cache"
+msgstr "Kompletten Cache leeren"
+
 msgid "headline_clear_cache"
 msgstr "Cache leeren"
 

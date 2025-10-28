@@ -385,6 +385,18 @@ msgstr "Clear Cache"
 msgid "clear_cache"
 msgstr "Clear Cache"
 
+msgid "clear_awyiss_cache"
+msgstr "Clear Awyiss Cache"
+
+msgid "clear_media_cache"
+msgstr "Clear Media Cache"
+
+msgid "clear_twig_cache"
+msgstr "Clear Twig Cache"
+
+msgid "clear_full_cache"
+msgstr "Clear Full Cache"
+
 msgid "clear_cache_running"
 msgstr "Clearing cache..."
 

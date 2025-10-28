@@ -32,7 +32,13 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block overviewButtons %}
-				{{ HtmlHelper.link(__('clear_cache'), {action: 'clear-cache'}, {class: 'Button Button-Delete Button-ClearCache'}) }}
+
+				{{ FormHelper.linkSelect(__('clear_cache'), [
+					HtmlHelper.link(__('clear_awyiss_cache'), {action: 'clear-cache'}, {class: 'Button Button-Delete Button-ClearCache'}),
+					HtmlHelper.link(__('clear_media_cache'), {action: 'clear-cache', type: 'media'}, {class: 'Button Button-Delete Button-ClearCache'}),
+					HtmlHelper.link(__('clear_twig_cache'), {action: 'clear-cache', type: 'twig'}, {class: 'Button Button-Delete Button-ClearCache'}),
+					HtmlHelper.link(__('clear_full_cache'), {action: 'clear-cache', type: 'full'}, {class: 'Button Button-Delete Button-ClearCache'}),
+				]) }}
 			{% endblock %}
 		</div>
 	{% endblock %}

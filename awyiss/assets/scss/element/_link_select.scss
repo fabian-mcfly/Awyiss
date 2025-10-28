@@ -359,5 +359,15 @@
 				outline-offset:-2px;
 			}
 		}
+
+		.Button {
+			margin:5px 0;
+			color:var(--colorBright);
+
+			&:hover,
+			&:focus-visible {
+				color:var(--colorBright);
+			}
+		}
 	}
 }
