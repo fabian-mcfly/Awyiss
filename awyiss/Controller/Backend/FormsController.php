@@ -41,6 +41,7 @@ class FormsController extends Controller {
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->Forms->find()->where($this->getOverviewWhere());
 		$this->Search->filterQuery($lo_query);
+		$lo_query->contain(['EmailTemplates']);
 
 		return $lo_query;
 	}
