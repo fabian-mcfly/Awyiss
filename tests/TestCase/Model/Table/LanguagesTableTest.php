@@ -63,7 +63,7 @@ class LanguagesTableTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(7, $this->languagesTable->associations()->keys());
+		$this->assertCount(8, $this->languagesTable->associations()->keys());
 
 		// Test Configuration association (HasMany)
 		$this->assertTrue($this->languagesTable->hasAssociation('Configuration'));
@@ -73,6 +73,15 @@ class LanguagesTableTest extends TestCase {
 		$this->assertTrue($configurationAssociation->getDependent());
 		$this->assertSame(['realm', 'shortcode'], $configurationAssociation->getBindingKey());
 		$this->assertSame(['realm', 'language_shortcode'], $configurationAssociation->getForeignKey());
+
+		// Test FormEntries association (HasMany)
+		$this->assertTrue($this->languagesTable->hasAssociation('FormEntries'));
+		$formEntriesAssociation = $this->languagesTable->getAssociation('FormEntries');
+		$this->assertInstanceOf(HasMany::class, $formEntriesAssociation);
+		$this->assertTrue($formEntriesAssociation->getCascadeCallbacks());
+		$this->assertFalse($formEntriesAssociation->getDependent());
+		$this->assertSame('shortcode', $formEntriesAssociation->getBindingKey());
+		$this->assertSame('language_shortcode', $formEntriesAssociation->getForeignKey());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->languagesTable->hasAssociation('MediaAssignments'));

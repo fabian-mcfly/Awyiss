@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -14,6 +15,8 @@ use Cake\Validation\Validator;
  * FormEntries Model
  *
  * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\BelongsTo $Form
+ * @property \Awyiss\Model\Table\LanguagesTable&\Awyiss\ORM\Association\BelongsTo $Languages
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
  * @method \Awyiss\Model\Entity\FormEntry newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
@@ -50,6 +53,13 @@ class FormEntriesTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Forms');
+
+		$this->belongsTo('Languages', [
+			'bindingKey' => 'shortcode',
+			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
+			'foreignKey' => 'language_shortcode',
+		]);
+
 		$this->belongsTo('Pages', [
 			'finder' => [
 				'all' => [

@@ -346,8 +346,9 @@ class FormSender {
 		$lo_formEntry = $this->formEntriesTable->newDefaultEntity();
 
 		$la_data = [
-			'form_id' => $this->form->id,
-			'page_id' => $this->page?->id ?? null,
+			'formId' => $this->form->id,
+			'pageId' => $this->page?->id ?? null,
+			'languageShortcode' => $this->page?->languageShortcode ?? Router::getRequest()->getParam('languageShortcode') ?? null,
 			'subject' => html_entity_decode($this->form->subject ?? ''),
 			'subjectConfirmation' => html_entity_decode($this->form->subjectConfirmation ?? ''),
 			'body' => $this->emailBody['email'] ? base64_encode(gzcompress($this->emailBody['email'])) : null,

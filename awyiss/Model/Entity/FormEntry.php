@@ -12,7 +12,8 @@ use Awyiss\Model\Entity;
  *
  * @property int $id
  * @property int $formId
- * @property int $pageId
+ * @property ?int $pageId
+ * @property ?string $languageShortcode
  * @property string|null $subject
  * @property string|null $subjectConfirmation
  * @property string|null $body
@@ -38,6 +39,7 @@ class FormEntry extends Entity {
 		'body_confirmation' => 'bodyConfirmation',
 		'ip_hash' => 'ipHash',
 		'post_hash' => 'postHash',
+		'language_shortcode' => 'languageShortcode',
 	];
 
 
@@ -47,6 +49,7 @@ class FormEntry extends Entity {
 	protected array $_accessible = [
 		'formId' => true,
 		'pageId' => true,
+		'languageShortcode' => true,
 		'subject' => true,
 		'subjectConfirmation' => true,
 		'body' => true,

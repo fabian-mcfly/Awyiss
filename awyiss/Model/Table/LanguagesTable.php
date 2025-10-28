@@ -18,6 +18,7 @@ use ResourceBundle;
  * Languages Model
  *
  * @property \Awyiss\Model\Table\ConfigurationTable&\Awyiss\ORM\Association\HasMany $Configuration
+ * @property \Awyiss\Model\Table\FormEntriesTable&\Awyiss\ORM\Association\HasMany $FormEntries
  * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $MenuEntries
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
  * @method \Awyiss\Model\Entity\Language newDefaultEntity(array $additionalData = [], array $options = [])
@@ -59,6 +60,12 @@ class LanguagesTable extends Table {
 				'realm',
 				'language_shortcode',
 			],
+		]);
+
+		$this->hasMany('FormEntries', [
+			'bindingKey' => 'shortcode',
+			'cascadeCallbacks' => true,
+			'foreignKey' => 'language_shortcode',
 		]);
 
 		$this->hasMany('MenuEntries', [

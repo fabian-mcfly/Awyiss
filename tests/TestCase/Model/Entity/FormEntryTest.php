@@ -43,6 +43,7 @@ class FormEntryTest extends TestCase {
 		$this->assertSame([
 			'formId' => true,
 			'pageId' => true,
+			'languageShortcode' => true,
 			'subject' => true,
 			'subjectConfirmation' => true,
 			'body' => true,
@@ -69,6 +70,7 @@ class FormEntryTest extends TestCase {
 			'id' => 1,
 			'form_id' => 123,
 			'page_id' => 456,
+			'language_shortcode' => 'de',
 			'subject' => 'Contact Form Submission',
 			'subject_confirmation' => 'Thank you for your message',
 			'body' => 'This is the form submission content',
@@ -86,6 +88,7 @@ class FormEntryTest extends TestCase {
 		$this->assertEquals(1, $entity->id);
 		$this->assertEquals(123, $entity->formId);
 		$this->assertEquals(456, $entity->pageId);
+		$this->assertEquals('de', $entity->languageShortcode);
 		$this->assertEquals('Contact Form Submission', $entity->subject);
 		$this->assertEquals('Thank you for your message', $entity->subjectConfirmation);
 		$this->assertEquals('This is the form submission content', $entity->body);
@@ -108,6 +111,7 @@ class FormEntryTest extends TestCase {
 		$properties = [
 			'form_id' => 789,
 			'page_id' => 101,
+			'language_shortcode' => 'en',
 			'subject_confirmation' => 'Confirmation subject',
 			'body_confirmation' => 'Confirmation body',
 			'ip_hash' => '123abc',

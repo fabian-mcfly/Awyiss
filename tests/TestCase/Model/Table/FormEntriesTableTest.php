@@ -60,7 +60,7 @@ class FormEntriesTableTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(4, $this->formEntriesTable->associations()->keys());
+		$this->assertCount(5, $this->formEntriesTable->associations()->keys());
 
 		// Test Forms association (BelongsTo)
 		$this->assertTrue($this->formEntriesTable->hasAssociation('Forms'));
@@ -75,6 +75,16 @@ class FormEntriesTableTest extends TestCase {
 		// Test Pages association has skipPageRoleCheck finder option
 		$this->assertSame('page_id', $pagesAssociation->getForeignKey());
 		$this->assertSame(['all' => ['skipPageRoleCheck' => true]], $pagesAssociation->getFinder());
+
+
+		// Test Languages association (BelongsTo)
+		$this->assertTrue($this->formEntriesTable->hasAssociation('Languages'));
+		$languagesAssociation = $this->formEntriesTable->getAssociation('Languages');
+		$this->assertInstanceOf(BelongsTo::class, $languagesAssociation);
+		$this->assertFalse($languagesAssociation->getCascadeCallbacks());
+		$this->assertFalse($languagesAssociation->getDependent());
+		$this->assertEquals('shortcode', $languagesAssociation->getBindingKey());
+		$this->assertEquals('language_shortcode', $languagesAssociation->getForeignKey());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->formEntriesTable->hasAssociation('MediaAssignments'));
