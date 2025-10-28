@@ -61,6 +61,7 @@ class FormHelper extends BaseFormHelper {
 				'widgets' => [
 					'input_list' => ['InputList'],
 					'input_key_value_list' => ['InputKeyValueList'],
+					'linkSelect' => ['LinkSelect'],
 					'translatableText' => ['TranslatableText'],
 				],
 			]
@@ -227,7 +228,7 @@ class FormHelper extends BaseFormHelper {
 
 
 	/**
-	 * Use "empty => true" as default value for selects (if not multiple).
+	/**
 	 * This negates CakePHP's decision to remove the empty option
 	 * if a select is required.
 	 * Usability-wise it's not good to show any fields prepopulated as they
@@ -237,6 +238,52 @@ class FormHelper extends BaseFormHelper {
 	 */
 	public function select(string $fieldName, iterable $options = [], array $attributes = []): string {
 		return parent::select($fieldName, $options, $attributes + ['empty' => !($attributes['multiple'] ?? false)]);
+	}
+
+
+	/**
+	 * Creates a link select element using the `linkSelect`-template
+	 * with the provided array of links as options.
+	 *
+	 * ### Options:
+	 * - `escape` Boolean value whether to escape html entities.
+	 * - `id` The id attribute for the link select element.
+	 * - `label` The label to display in the filter.
+	 * - `options` An array of links.
+	 * - `templateVars` Additional template variables.
+	 *
+	 * @param string $label
+	 * @param array $options An array of links (key = title, value = URL)
+	 * @param array $attributes Additional attributes
+	 * @return string
+	 */
+	public function linkSelect(string $label, array $options = [], array $attributes = []): string {
+		$la_attributes = $attributes;
+		$la_attributes += [
+			'disabled' => false,
+			'escape' => false,
+			'id' => true,
+			'identifier' => $label,
+			'label' => $label,
+			'templateVars' => [],
+			'val' => null,
+		];
+
+		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
+			$la_attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($label), '-');
+		}
+
+		$la_formattedOptions = [];
+		foreach ($options as $ls_title => $ls_link) {
+			$la_formattedOptions[ (string)$ls_title ] = [
+				'title'	=> (string)$ls_title,
+				'link' => (string)$ls_link,
+			];
+		}
+
+		$la_attributes['options'] = $la_formattedOptions;
+
+		return $this->widget('linkSelect', $la_attributes);
 	}
 
 

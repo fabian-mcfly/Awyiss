@@ -1118,4 +1118,60 @@ class FormHelperTest extends TestCase {
 		$result = $this->formHelper->renderFormProtection($form, FormProtectionInterface::POSITION_AFTER);
 		$this->assertSame('<div class="hidden-input-protection">This is a test for the after position.</div>' . PHP_EOL, $result);
 	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::linkSelect()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testLinkSelectWithSimpleOptions(): void {
+		$options = [
+			'<a href="/items?filter=option1">Option 1</a>',
+			'<a href="/items?filter=option2">Option 2</a>',
+			'<a href="/items?filter=option3">Option 3</a>',
+		];
+
+		$result = $this->formHelper->linkSelect('test_filter', $options);
+
+		$this->assertStringContainsString('class="LinkSelect LinkSelect-TestFilter"', $result);
+		$this->assertStringContainsString('id="LinkSelect-TestFilter"', $result);
+		$this->assertStringContainsString('<a href="/items?filter=option1">Option 1</a>', $result);
+		$this->assertStringContainsString('<a href="/items?filter=option2">Option 2</a>', $result);
+		$this->assertStringContainsString('<a href="/items?filter=option3">Option 3</a>', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::linkSelect()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testLinkSelectWithCustomAttributes(): void {
+		$options = [
+			'<a href="/items?filter=option1">Option 1</a>',
+			'<a href="/items?filter=option2">Option 2</a>',
+			'<a href="/items?filter=option3">Option 3</a>',
+		];
+
+		$result = $this->formHelper->linkSelect('filter', $options, [
+			'id' => 'CustomId',
+		]);
+
+		$this->assertStringContainsString('<div class="LinkSelect LinkSelect-Filter" id="CustomId">', $result);
+		$this->assertStringNotContainsString('<label class="Label" tabindex="0"><strong>Custom Label</strong></label>', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\FormHelper::linkSelect()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testLinkSelectWithEmptyOptions(): void {
+		$result = $this->formHelper->linkSelect('empty_filter', []);
+
+		$this->assertStringContainsString('class="LinkSelect LinkSelect-EmptyFilter"', $result);
+		$this->assertStringContainsString('id="LinkSelect-EmptyFilter"', $result);
+	}
 }

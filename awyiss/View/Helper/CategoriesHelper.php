@@ -39,6 +39,17 @@ class CategoriesHelper extends Helper {
 		'templates' => [],
 	];
 	/**
+	 * Default templates
+	 *
+	 * @var array<string, string>
+	 */
+	protected array $defaultTemplates = [
+		// Link select element, used for selecting from a list of links.
+		'linkSelect' => '<div{{attrs}}><label class="Label" tabindex="0"><strong>{{label}}:</strong> {{selectedOption}}</label><ul class="List">{{options}}</ul></div>',
+		// Link select option element
+		'linkSelectOption' => '<li{{attrs}}><a href="{{link}}" title="{{title}}">{{levelPrefix}}{{title}}</a></li>',
+	];
+	/**
 	 * Default widgets
 	 *
 	 * @var array<string, array<string>>
@@ -76,6 +87,8 @@ class CategoriesHelper extends Helper {
 		}
 
 		parent::__construct($view, $la_config);
+
+		$this->templater()->add($this->defaultTemplates);
 
 		$lo_widgetLocator = new WidgetLocator($this->templater(), $this->_View, $la_widgets);
 		$this->setWidgetLocator($lo_widgetLocator);

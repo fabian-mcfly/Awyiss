@@ -32,9 +32,9 @@ return [
 	// Legends created by allControls()
 	'legend' => '<legend class="Legend">{{text}}</legend>',
 	// Link select element, used for selecting from a list of links.
-	'linkSelect' => '<div{{attrs}}><label class="Label" tabindex="0"><strong>{{label}}:</strong> {{selectedOption}}</label><ul class="List">{{options}}</ul></div>',
+	'linkSelect' => '<div{{attrs}}><label class="Label" tabindex="0"><strong>{{label}}</strong></label><ul class="List">{{options}}</ul></div>',
 	// Link select option element
-	'linkSelectOption' => '<li{{attrs}}><a href="{{link}}" title="{{title}}">{{levelPrefix}}{{title}}</a></li>',
+	'linkSelectOption' => '<li{{attrs}}>{{link}}</li>',
 	// Link select option element when the option is disabled.
 	'linkSelectOptionDisabled' => '<li{{attrs}} title="{{title}}">{{levelPrefix}}{{title}}</li>',
 	// Link select group label element.
