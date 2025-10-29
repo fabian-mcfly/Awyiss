@@ -40,6 +40,10 @@
 		{{ PaginatorHelper.sort('subjectConfirmation', i18nDomain ? __df(i18nDomain, 'system', 'subject_confirmation') : __('subject_confirmation')) }}
 	</th>
 
+	<th class="TableHeader-Language{% if PaginatorHelper.isCurrentSortKey('language') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('language.title', i18nDomain ? __df(i18nDomain, 'system', 'language_shortcode') : __('language_shortcode')) }}
+	</th>
+
 	<th class="TableHeader-CreatedOn{% if PaginatorHelper.isCurrentSortKey('createdOn') %} Active{% endif %}">
 		{{ PaginatorHelper.sort('createdOn', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('created_on')) }}
 	</th>
@@ -55,6 +59,8 @@
 	<td class="TableCell-Subject">{{ entity.subject ?: '&ndash;' }}</td>
 
 	<td class="TableCell-SubjectConfirmation">{{ entity.subjectConfirmation ?: '&ndash;' }}</td>
+
+	<td class="TableCell-Language">{{ entity.language.title }}</td>
 
 	<td class="TableCell-CreatedOn">{{ TimeHelper.nice(entity.createdOn) }}</td>
 {% endblock %}
@@ -85,4 +91,4 @@
 	</td>
 {% endblock %}
 
-{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + (CategoriesHelper.selectedCategory('form') == 'all' ? 6 : 5) }}{% endblock %}
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + (CategoriesHelper.selectedCategory('form') == 'all' ? 7 : 6) }}{% endblock %}

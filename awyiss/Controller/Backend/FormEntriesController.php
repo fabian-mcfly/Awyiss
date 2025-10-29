@@ -41,6 +41,7 @@ class FormEntriesController extends Controller {
 		$lo_query = $this->FormEntries->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
 		$this->Search->filterQuery($lo_query);
+		$lo_query->contain(['Languages']);
 
 		return $lo_query;
 	}
