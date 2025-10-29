@@ -7,6 +7,7 @@ return [
 	'Bake' => [
 		'onlyCli' => true,
 	],
+	'CsvView' => [],
 	'Migrations' => [
 		'onlyCli' => true,
 	],

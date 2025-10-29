@@ -36,7 +36,7 @@
 			transition-delay:0s;
 		}
 
-		.Label {
+		> .Label {
 			box-shadow:0 0 10px rgba(0, 0, 0, .25);
 			border-color:transparent;
 			background-color:var(--colorSemiDark);
@@ -78,7 +78,7 @@
 				transition-delay:0s;
 			}
 
-			.Label {
+			> .Label {
 				box-shadow:0 0 10px rgba(0, 0, 0, .25);
 				border-color:transparent;
 				background-color:var(--colorSemiDark);
@@ -128,7 +128,7 @@
 		}
 	}
 
-	.Label {
+	> .Label {
 		display:block;
 		max-width:300px;
 		padding:10px 60px 12px 20px;
@@ -368,6 +368,29 @@
 			&:focus-visible {
 				color:var(--colorBright);
 			}
+		}
+	}
+
+	> form.List {
+		> .Button {
+			width:100%;
+			margin-top:20px;
+
+			@media screen and (width <= 540px) {
+				margin-top:10px;
+			}
+		}
+	}
+
+	.FormInput {
+		margin-top:20px;
+
+		@media screen and (width <= 540px) {
+			margin-top:10px;
+		}
+
+		&:first-child {
+			margin-top:0;
 		}
 	}
 }

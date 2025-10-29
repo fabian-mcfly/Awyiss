@@ -12,6 +12,7 @@
 		"ext-gd": "*",
 		"ext-intl": "*",
 		"ext-libxml": "*",
+		"ext-openssl": "*",
 		"ext-posix": "*",
 		"ext-zip": "*",
 		"ext-zlib": "*",
@@ -23,6 +24,7 @@
 		"cakephp/plugin-installer": "^2.0",
 		"cakephp/twig-view": "^2.0.1",
 		"dereuromark/cakephp-queue": "^7.0",
+		"friendsofcake/cakephp-csvview": "^5.0",
 		"intervention/image": "^3.10",
 		"jaybizzle/crawler-detect": "^1.2",
 		"josegonzalez/dotenv": "^4.0",
@@ -31,7 +33,7 @@
 		"pgrimaud/instagram-user-feed": "^7.0",
 		"scssphp/scssphp": "^2.0",
 		"tijsverkoyen/css-to-inline-styles": "^2.2",
-		"tinymce/tinymce": "^7.1", "ext-openssl": "*"
+		"tinymce/tinymce": "^7.1"
 	},
 	"require-dev": {
 		"cakephp/cakephp-codesniffer": "^5.0",

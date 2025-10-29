@@ -58,3 +58,15 @@ msgstr "Bestätigung anzeigen"
 
 msgid "headline_status_cell"
 msgstr "Neue Formulareinträge"
+
+msgid "export_entries"
+msgstr "Einträge exportieren"
+
+msgid "export_languages"
+msgstr "Sprachen"
+
+msgid "export_format"
+msgstr "Format"
+
+msgid "export"
+msgstr "Exportieren"

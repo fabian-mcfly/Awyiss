@@ -37,6 +37,58 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
+			{% block overviewExport %}
+				{% if (CategoriesHelper.selectedCategory('form') != 'all') %}
+					<div class="LinkSelect LinkSelect-Export" id="LinkSelect-Export">
+						{% block overviewExportLabel %}
+						<label class="Label" tabindex="0">{{ __('export_entries') }}</label>
+						{% endblock %}
+
+						{% block overviewExportForm %}
+							{% block overviewExportFormOpen %}
+								{{ FormHelper.create(null, {url: {action: 'export'}, class: 'List'}) }}
+							{% endblock %}
+
+							{% block overviewExportFormControlLanguages %}
+								{{ FormHelper.control('export_languages', {
+									type: 'select',
+									multiple: 'checkbox',
+									options: languages.Frontend|reduce((carry, language) => carry|merge({(language.shortcode): language.title}), {}),
+									value: languages.Frontend|map(language => language.shortcode)
+								}) }}
+							{% endblock %}
+
+							{% block overviewExportFormControlFormat %}
+								{{ FormHelper.control('export_format', {
+									empty: false,
+									options: {
+										csv: 'CSV',
+										csv_excel: 'CSV (Excel)',
+										json: 'JSON',
+										xml: 'XML'
+									},
+									required: true,
+									type: 'select',
+									val: 'csv'
+								}) }}
+							{% endblock %}
+
+							{% block overviewExportFormControlFormId %}
+								{{ FormHelper.hidden('export_form_id', {val: CategoriesHelper.selectedCategory('form')}) }}
+							{% endblock %}
+
+							{% block overviewExportFormSubmit %}
+								{{ FormHelper.button(__('export'), {type: 'submit', class: 'Button'}) }}
+							{% endblock %}
+
+							{% block overviewExportFormClose %}
+								{{ FormHelper.end() }}
+							{% endblock %}
+						{% endblock %}
+					</div>
+				{% endif %}
+			{% endblock %}
+
 			{% block categoriesFilterOverview %}
 				{{ CategoriesHelper.filter('form', naturalSort(CategoriesHelper.getCategories('form'))) }}
 			{% endblock %}

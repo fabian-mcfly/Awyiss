@@ -58,3 +58,15 @@ msgstr "View confirmation"
 
 msgid "headline_status_cell"
 msgstr "New Form Entries"
+
+msgid "export_entries"
+msgstr "Export Entries"
+
+msgid "export_languages"
+msgstr "Languages"
+
+msgid "export_format"
+msgstr "Format"
+
+msgid "export"
+msgstr "Export"
