@@ -878,6 +878,8 @@ class FormRendererTest extends TestCase {
 
 		$data = json_decode(gzuncompress(base64_decode($entry->data)), true);
 		$this->assertIsArray($data);
+
+		unset($formData['_form_identifier']);
 		$this->assertSame($formData, $data);
 	}
 

@@ -340,8 +340,22 @@ class FormSender {
 	 * @return bool
 	 */
 	protected function saveFormEntry(): bool {
+		$la_formData = $this->getFormData();
+		$la_formData = array_filter($la_formData, function (mixed $key): bool {
+			return !str_starts_with((string)$key, '_');
+		}, ARRAY_FILTER_USE_KEY);
+
+		// Remove hidden input protection field from form data
+		if (isset($this->form->getProtectionMethods()['hidden_input'])) {
+			/** @var \Awyiss\Form\Protection\HiddenInputFormProtection $lo_hiddenInputProtection */
+			$lo_hiddenInputProtection = $this->form->getProtectionMethods()['hidden_input'];
+			if ($lo_hiddenInputProtection->getFieldName()) {
+				unset($la_formData[ $lo_hiddenInputProtection->getFieldName() ]);
+			}
+		}
+
 		$ls_ipHash = $this->createIpHash();
-		$ls_postHash = Security::hash(serialize($this->getFormData()));
+		$ls_postHash = Security::hash(serialize($la_formData));
 
 		$lo_formEntry = $this->formEntriesTable->newDefaultEntity();
 
@@ -353,7 +367,7 @@ class FormSender {
 			'subjectConfirmation' => html_entity_decode($this->form->subjectConfirmation ?? ''),
 			'body' => $this->emailBody['email'] ? base64_encode(gzcompress($this->emailBody['email'])) : null,
 			'bodyConfirmation' => $this->emailBody['confirmation'] ? base64_encode(gzcompress($this->emailBody['confirmation'])) : null,
-			'data' => base64_encode(gzcompress(json_encode($this->getFormData()))),
+			'data' => base64_encode(gzcompress(json_encode($la_formData))),
 			'ipHash' => $ls_ipHash,
 			'postHash' => $ls_postHash,
 			'identifier' => md5($ls_ipHash . '|' . $ls_postHash),
