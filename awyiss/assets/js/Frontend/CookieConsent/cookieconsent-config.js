@@ -1,6 +1,10 @@
 (function (customConfig) {
-	const languageResolver = async(lang) => {
-		const url = `${baseUrl}awyiss/assets/js/Frontend/CookieConsent/locale/${lang}.json`
+	const languageResolver = async(lang, localeFile) => {
+		let url = `${baseUrl}awyiss/assets/js/Frontend/CookieConsent/locale/${lang}.json`;
+
+		if (localeFile) {
+			url = `${baseUrl}${localeFile}.json`;
+		}
 
 		const res = await fetch(url);
 		const json = await res.json();
@@ -61,11 +65,11 @@
 			autoDetect: 'document',
 			default: 'en',
 			translations: {
-				'de': async() => { return languageResolver('de') },
-				'en': async() => { return languageResolver('en') },
-				'es': async() => { return languageResolver('es') },
-				'fr': async() => { return languageResolver('fr') },
-				'it': async() => { return languageResolver('it') },
+				'de': async() => { return languageResolver('de', customConfig.localeFile ?? null) },
+				'en': async() => { return languageResolver('en', customConfig.localeFile ?? null) },
+				'es': async() => { return languageResolver('es', customConfig.localeFile ?? null) },
+				'fr': async() => { return languageResolver('fr', customConfig.localeFile ?? null) },
+				'it': async() => { return languageResolver('it', customConfig.localeFile ?? null) },
 			}
 		},
 		onFirstConsent: () => {

@@ -47,6 +47,10 @@ You are to set the nonce for each script tag to the value of
 			darkMode: false,
 			disablePageInteraction: false,
 		};
+
+		{% if ('assets/js/CookieConsent/locale/' ~ languageShortcode ~ '.json') is file %}
+			cookieBannerConfig.localeFile = 'assets/js/CookieConsent/locale/{{ languageShortcode }}';
+		{% endif %}
 	</script>
 {% endblock %}
 
