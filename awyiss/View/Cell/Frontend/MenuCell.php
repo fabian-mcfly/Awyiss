@@ -44,6 +44,12 @@ class MenuCell extends Cell {
 			'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}"{{tabindex}}>{{title}}</span>' . PHP_EOL,
 		],
 	];
+	/**
+	 * Options for the display method
+	 *
+	 * @var array $options
+	 */
+	protected array $options = [];
 
 
 	/**
@@ -85,6 +91,8 @@ class MenuCell extends Cell {
 				$la_options['currentRoute'] = '/' . $lo_currentPage->languageShortcode . '/' . $lo_currentPage->slug . '/';
 			}
 		}
+
+		$this->options = $la_options;
 
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Menu');
@@ -254,8 +262,12 @@ class MenuCell extends Cell {
 		$la_data = $data;
 
 		$la_data['tabindex'] = '';
-		if (isset($data['url'])) {
+		if (!empty($la_data['url'])) {
 			$ls_template = 'link';
+
+			if (isset($this->options['currentRoute']) && str_starts_with($la_data['url'], $this->options['currentRoute'] . '#') && Router::getRequest()->getPath() === '/') {
+				$la_data['url'] = substr($la_data['url'], strlen($this->options['currentRoute']));
+			}
 		}
 		else {
 			$ls_template = 'noLink';

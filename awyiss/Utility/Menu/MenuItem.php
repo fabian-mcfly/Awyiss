@@ -159,7 +159,13 @@ abstract class MenuItem implements ArrayAccess {
 		}
 
 		$ls_currentRoute = trim($currentRoute, '/') . '/';
+		if (str_contains($ls_currentRoute, '?') || str_contains($ls_currentRoute, '#')) {
+			$ls_currentRoute = rtrim($ls_currentRoute, '/');
+		}
 		$ls_testUrl = trim($ls_testUrl, '/') . '/';
+		if (str_contains($ls_testUrl, '?') || str_contains($ls_testUrl, '#')) {
+			$ls_testUrl = rtrim($ls_testUrl, '/');
+		}
 
 		if (!isset($ls_fullBaseUrl)) {
 			$ls_fullBaseUrl = Router::url('/', true);
