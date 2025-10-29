@@ -50,7 +50,7 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 	/**
 	 * @return string
 	 */
-	protected function getFieldName(): string {
+	public function getFieldName(): string {
 		$ls_elementName = $this->options['elementName'];
 
 		// 'emailConfirmation' is the last resort since form elements are all underscored
