@@ -20,6 +20,20 @@ use Cake\View\XmlView;
  */
 class FormEntriesController extends Controller {
 	/**
+	 * @var array<string, string>
+	 */
+	protected array $csvEncoding = [
+		'csv' => [
+			'csvEncoding' => 'UTF-8',
+			'dataEncoding' => 'UTF-8',
+		],
+		'csv_excel' => [
+			'csvEncoding' => 'ISO-8859-1',
+			'dataEncoding' => 'UTF-8',
+		],
+	];
+
+	/**
 	 * @inheritDoc
 	 */
 	protected array $categories = [
@@ -170,8 +184,8 @@ class FormEntriesController extends Controller {
 			->setOptions([
 				'serialize' => 'entries',
 				'header' => $la_headlines,
-				'dataEncoding' => 'UTF-8',
-				'csvEncoding' => 'ISO-8859-1',
+				'csvEncoding' => $this->csvEncoding[ $ls_format ]['csvEncoding'],
+				'dataEncoding' => $this->csvEncoding[ $ls_format ]['dataEncoding'],
 				'bom' => $ls_format === 'csv_excel',
 				'setSeparator' => $ls_format === 'csv_excel' ? ',' : false,
 			]);
