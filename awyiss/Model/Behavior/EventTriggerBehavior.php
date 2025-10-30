@@ -6,6 +6,7 @@ namespace Awyiss\Model\Behavior;
 
 use Awyiss\Model\Entity;
 use Awyiss\ORM\Behavior;
+use BadMethodCallException;
 use Cake\Event\Event;
 use RuntimeException;
 
@@ -88,16 +89,20 @@ class EventTriggerBehavior extends Behavior {
 	public function __call(string $name, array $arguments): void {
 		if (!$this->getConfig('enabled') || !in_array($name, $this->getConfig('events'))) {
 			//Trigger the same error the call of undefined methods would normally trigger.
-			trigger_error(sprintf('Call to undefined method %s::%s()', static::class, $name), E_USER_ERROR);
+			throw new BadMethodCallException(sprintf('Call to undefined method %s::%s()', static::class, $name));
 		}
 
 		//Saving an entity should create custom events
 		if (in_array($name, ['beforeSave', 'afterSave', 'afterSaveCommit']) && isset($arguments[1]) && is_a($arguments[1], Entity::class)) {
 			if (($arguments[2]['isCopy'] ?? false) === true && $arguments[1]->isNew()) {
-				$this->dispatchCopyEvents($name, ...$arguments);
+				$lb_return = $this->dispatchCopyEvents($name, ...$arguments);
 			}
 			else {
-				$this->dispatchCreateUpdateEvents($name, ...$arguments);
+				$lb_return = $this->dispatchCreateUpdateEvents($name, ...$arguments);
+			}
+
+			if ($lb_return === false) {
+				return;
 			}
 		}
 
