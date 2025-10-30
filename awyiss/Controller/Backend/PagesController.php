@@ -750,7 +750,7 @@ class PagesController extends Controller {
 		if (!empty($page->parentId) && !in_array($page->parentId, $la_possibleParentIds)) {
 			$la_errors = $page->getError('parentId');
 
-			$page->parentId = reset($la_possibleParentIds);
+			$page->parentId = null;
 
 			if ($la_errors) {
 				$page->setError('parentId', $la_errors, true);
