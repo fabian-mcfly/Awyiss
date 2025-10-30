@@ -168,7 +168,11 @@
 
 				{% block fieldsetConditionsInner %}
 					{% block formControlLanguageShortcode %}
-						{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
+						{{ LocaleHelper.control('language_shortcode', {
+							empty: false,
+							languageRealm: languageRealm,
+							'data-form-updater': true,
+						}) }}
 					{% endblock %}
 
 					{% block formControlParentId %}
