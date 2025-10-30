@@ -9,12 +9,12 @@ use Awyiss\Core\App;
 use Awyiss\Utility\Design\ScssFilesCollection;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
-use Exception;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use ScssPhp\ScssPhp\Exception\SassException;
 
 
 /**
@@ -86,7 +86,6 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @param bool $showExceptions
 	 * @return void
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @throws \Exception
 	 */
 	public function compileScss(bool $mustCompile = false, ?string $realm = null, bool $showExceptions = false): void {
 		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
@@ -119,7 +118,7 @@ class DesignMiddleware implements MiddlewareInterface {
 			// Compile the SCSS files
 			$la_result = $ls_compilerClass::compileFolders($la_files, $this->getDesignVariables($realm ?? Awyiss::getRealm()));
 		}
-		catch (Exception $ex) {
+		catch (SassException $ex) {
 			$this->resetFileTimes($la_files);
 
 			throw $ex;
