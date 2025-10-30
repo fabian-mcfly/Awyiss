@@ -7,6 +7,7 @@ namespace Awyiss\View\Cell\Frontend;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Routing\Router;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
@@ -58,6 +59,12 @@ class ContentsCell extends Cell {
 		$this->setViewVars($la_options);
 
 		$ls_contents = $this->buildContents($lo_contents->toArray(), false, $options['autoSection'] ?? true);
+
+		$ls_currentRoute = Router::url($this->request->getRequestTarget());
+		if ($ls_contents && $ls_currentRoute !== '/') {
+			// Replace all `href="#anchor"` with `href="<currentRoute>#anchor"`
+			$ls_contents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . ltrim($ls_currentRoute, '/') . '$1"', $ls_contents);
+		}
 
 		// Set the view variables
 		$this->set([

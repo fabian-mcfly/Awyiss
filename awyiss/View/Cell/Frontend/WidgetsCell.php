@@ -6,6 +6,7 @@ namespace Awyiss\View\Cell\Frontend;
 
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Widget;
+use Awyiss\Routing\Router;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
@@ -46,6 +47,12 @@ class WidgetsCell extends Cell {
 		$this->setViewVars($la_options);
 
 		$ls_widgets = $this->buildContents($lo_widgets->toArray());
+
+		$ls_currentRoute = Router::url($this->request->getRequestTarget());
+		if ($ls_widgets && $ls_currentRoute !== '/') {
+			// Replace all `href="#anchor"` with `href="<currentRoute>#anchor"`
+			$ls_widgets = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . ltrim($ls_currentRoute, '/') . '$1"', $ls_widgets);
+		}
 
 		// Set the view variables
 		$this->set([
