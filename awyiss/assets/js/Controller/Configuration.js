@@ -36,6 +36,19 @@ export default class ConfigurationController {
 	handleColorChange(event) {
 		const value = event.target.value;
 
+		const realmInput = document.querySelector('#Configuration-Realm');
+		const scopeInput = document.querySelector('#Configuration-Scope');
+		const identifierInput = document.querySelector('#Configuration-Identifier');
+
+		if (
+			!realmInput || realmInput.value !== 'Backend' ||
+			!scopeInput || scopeInput.value !== 'system' ||
+			!identifierInput || identifierInput.value !== 'interface.highlightColor'
+		) {
+			document.documentElement.style.removeProperty('--colorSuccess');
+			return;
+		}
+
 		if (value) {
 			// Add the value as a custom property to the html
 			document.documentElement.style.setProperty('--colorSuccess', value);
