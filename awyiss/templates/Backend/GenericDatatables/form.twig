@@ -107,7 +107,10 @@
 			{% block fieldsetConditionsInner %}
 				{% block formControlLanguagesShortcode %}
 					{% if (splitIntoLanguages) %}
-						{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm}) }}
+						{{ LocaleHelper.control('language_shortcode', {
+							languageRealm: languageRealm,
+							val: record.languageShortcode is empty and localConfig.splitIntoLanguages ? languageShortcode : null,
+						}) }}
 					{% endif %}
 				{% endblock %}
 
