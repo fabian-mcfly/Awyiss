@@ -13,9 +13,12 @@ namespace Awyiss\Model\Behavior;
 
 use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
+use Awyiss\Awyiss;
+use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Core\App;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Entity\MediaAssignment;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Entity\MediaElementSelector;
@@ -28,12 +31,14 @@ use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
+use Exception;
 
 
 /**
@@ -135,6 +140,59 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 		$ls_entityClass::addFieldMapping('media_assignments', 'mediaAssignments');
+
+		$this->setConfig('implementedEvents', [
+			'Configuration.' . $this->table()->getAlias() . '.Backend.splitIntoLanguages.afterSaveCommit' => 'resetHiddenMediaFolderLanguageAfterSave',
+			'Configuration.' . $this->table()->getAlias() . '.Backend.splitIntoLanguages.afterDeleteCommit' => 'resetHiddenMediaFolderLanguageAfterDelete',
+		]);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $configuration
+	 * @return void
+	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function resetHiddenMediaFolderLanguageAfterSave(Event $event, Configuration $configuration): void {
+		if (
+			!$configuration->isNew() &&
+			(
+				!$configuration->hasOriginal('value') ||
+				$configuration->getOriginal('value') === $configuration->value
+			)
+		) {
+			return;
+		}
+
+		/**
+		 * It's already cast to bool in \Awyiss\Event\Backend\ConfigurationListener::beforeSave()
+		 *
+		 * @noinspection PhpStrictTypeCheckingInspection
+		 */
+		$this->updateHiddenFolderSettings($configuration->value);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $configuration
+	 * @return void
+	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function resetHiddenMediaFolderLanguageAfterDelete(Event $event, Configuration $configuration): void {
+		$lo_configuration = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
+		$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $configuration->identifier);
+		$lb_defaultSplit = $lo_configOption?->getDefaultValue() ?? false;
+
+		/**
+		 * It's already cast to bool in \Awyiss\Event\Backend\ConfigurationListener::beforeSave()
+		 *
+		 * @noinspection PhpStrictTypeCheckingInspection
+		 */
+		$this->updateHiddenFolderSettings($lb_defaultSplit);
 	}
 
 
@@ -579,21 +637,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
-		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_existingAssignment */
-		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
-			'media_element_id' => 1,
-			'media_element_selector_identifier' => 'hidden_folder',
-			'foreign_key' => $entity->id,
-			'scope' => $this->getConfig('referenceName'),
-		])->contain(['MediaFolders'])->first();
-
-		if ($lo_existingAssignment) {
-			// Delete the folder as well
-			$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
-			$lo_mediaFoldersTable->delete($lo_existingAssignment->mediaFolder);
-		}
+		$this->deleteHiddenFolders($entity);
 	}
 
 
@@ -607,20 +651,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 */
 	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
-		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_existingAssignment */
-		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
-			'media_element_id' => 1,
-			'media_element_selector_identifier' => 'hidden_folder',
-			'foreign_key' => $entity->id,
-			'scope' => $this->getConfig('referenceName'),
-		])->contain(['MediaFolders'])->first();
-
-		if ($lo_existingAssignment) {
-			// Delete the folder as well
-			$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
-			$lo_mediaFoldersTable->delete($lo_existingAssignment->mediaFolder);
-		}
+		$this->deleteHiddenFolders($entity);
 	}
 
 
@@ -711,5 +742,90 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		}
 
 		return $la_data;
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return void
+	 */
+	protected function deleteHiddenFolders(EntityInterface $entity): void {
+		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
+		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_existingAssignment */
+		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
+			'media_element_id' => 1,
+			'media_element_selector_identifier' => 'hidden_folder',
+			'foreign_key' => $entity->id,
+			'scope' => $this->getConfig('referenceName'),
+		])->contain(['MediaFolders'])->first();
+
+		if ($lo_existingAssignment) {
+			// Delete the folder as well
+			$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+			$lo_mediaFoldersTable->delete($lo_existingAssignment->mediaFolder);
+		}
+	}
+
+
+	/**
+	 * @param bool $splitIntoLanguages
+	 * @return void
+	 */
+	protected function updateHiddenFolderSettings(bool $splitIntoLanguages): void {
+		/** @var array<\Awyiss\Model\Entity\Configuration> $la_records */
+		$la_records = $this->table()->find()->all()->indexBy('id')->toArray();
+		$la_configurationRecords = $this->fetchTable('Configuration')->find()->where([
+			'realm' => Awyiss::REALM_FRONTEND,
+			'scope' => Inflector::underscore($this->table()->getTable()),
+			'identifier' => 'media_folders.parent_folder_id',
+		])->all()->indexBy(function (Configuration $configuration): string {
+			return $configuration->languageShortcode ?? 'global';
+		})->toArray();
+
+		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
+		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		$lo_existingAssignments = $lo_mediaAssignmentsTable->find()->where([
+			'media_element_id' => 1,
+			'media_element_selector_identifier' => 'hidden_folder',
+			'scope' => $this->getConfig('referenceName'),
+		])->contain(['MediaFolders'])->all();
+
+		if (!$lo_existingAssignments->count()) {
+			return;
+		}
+
+
+		$la_mediaFolders = [];
+		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_mediaAssignment */
+		foreach ($lo_existingAssignments as $lo_mediaAssignment) {
+			$lo_folder = $lo_mediaAssignment->mediaFolder;
+			$lo_record = $la_records[ $lo_mediaAssignment->foreignKey ] ?? null;
+
+			if (!$lo_record) {
+				continue;
+			}
+
+			$lo_folder->languageShortcode = $splitIntoLanguages ? $lo_record->languageShortcode : null;
+
+			$li_mediaFolderParentId = null;
+			if (isset($la_configurationRecords[ $lo_folder->languageShortcode ?? 'global' ])) {
+				$li_mediaFolderParentId = (int)$la_configurationRecords[ $lo_folder->languageShortcode ?? 'global' ]->value;
+			}
+
+			$lo_folder->parentId = $li_mediaFolderParentId;
+
+			$la_mediaFolders[] = $lo_folder;
+		}
+
+		if ($la_mediaFolders) {
+			$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+			try {
+				$lo_mediaFoldersTable->saveMany($la_mediaFolders, ['checkRules' => false]);
+			}
+			catch (Exception) {
+				// Ignore errors
+			}
+		}
 	}
 }
