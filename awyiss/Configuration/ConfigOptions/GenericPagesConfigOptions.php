@@ -258,7 +258,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	protected function getMediaFolders(?string $languageShortcode): array {
 		$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_query = $lo_mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode, includeGlobal: false)->where([
+		$lo_query = $lo_mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode ?? false, includeGlobal: false)->where([
 			'id !=' => 1,
 			'hidden' => false,
 		]);

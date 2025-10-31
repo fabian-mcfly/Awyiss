@@ -367,11 +367,12 @@ class GenericPagesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Frontend.mediaFolders.parentFolderId']->getTypecast());
 		$this->assertNull($configOptions['Frontend.mediaFolders.parentFolderId']->getValidate());
 		$this->assertIsCallable($configOptions['Frontend.mediaFolders.parentFolderId']->getValues());
+		$this->assertSame([], $configOptions['Frontend.mediaFolders.parentFolderId']->getValues(true));
 		$this->assertSame([
 			2 => 'Testfolder1',
 			5 => '- Subfolder1',
 			6 => '- - Subfolder2',
-		], $configOptions['Frontend.mediaFolders.parentFolderId']->getValues(true));
+		], $configOptions['Frontend.mediaFolders.parentFolderId']->getValues(true, 'de'));
 	}
 
 
