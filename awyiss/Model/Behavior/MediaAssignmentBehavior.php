@@ -166,12 +166,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			return;
 		}
 
-		/**
-		 * It's already cast to bool in \Awyiss\Event\Backend\ConfigurationListener::beforeSave()
-		 *
-		 * @noinspection PhpStrictTypeCheckingInspection
-		 */
-		$this->updateHiddenFolderSettings($configuration->value);
+		$this->updateHiddenFolderSettings((bool)$configuration->value);
 	}
 
 
@@ -187,11 +182,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $configuration->identifier);
 		$lb_defaultSplit = $lo_configOption?->getDefaultValue() ?? false;
 
-		/**
-		 * It's already cast to bool in \Awyiss\Event\Backend\ConfigurationListener::beforeSave()
-		 *
-		 * @noinspection PhpStrictTypeCheckingInspection
-		 */
 		$this->updateHiddenFolderSettings($lb_defaultSplit);
 	}
 
