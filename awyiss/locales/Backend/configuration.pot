@@ -196,3 +196,9 @@ msgstr "Split into languages"
 
 msgid "configuration_identifier_backend_translatable"
 msgstr "Translatable"
+
+msgid "configuration_category_frontend_media_folders"
+msgstr "Media Folders"
+
+msgid "configuration_identifier_frontend_media_folders_parent_folder_id"
+msgstr "Subfolder of"

@@ -196,3 +196,9 @@ msgstr "In Sprachen unterteilen"
 
 msgid "configuration_identifier_backend_translatable"
 msgstr "Übersetzbar"
+
+msgid "configuration_category_frontend_media_folders"
+msgstr "Medienordner"
+
+msgid "configuration_identifier_frontend_media_folders_parent_folder_id"
+msgstr "Unterordner von"

@@ -11,12 +11,14 @@ use Awyiss\Configuration\ConfigOptions\Trait\TableNamesTrait;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
 
 /**
  * Provides all configuration options for the generic datatables scope
  */
 class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
+	use LocatorAwareTrait;
 	use TableNamesTrait;
 
 
@@ -207,5 +209,40 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 		});
 
 		$this->add('Backend', $lo_translatable);
+
+		$this->add(Awyiss::REALM_FRONTEND, [
+			'mediaFolders' => [
+				/**
+				 * This option should normally be in the backend realm,
+				 * but it is required to be in the frontend realm to
+				 * use the correct languages
+				 */
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'parentFolderId',
+					localizable: true,
+					nullable: true,
+					type: ConfigOptionType::ListKey,
+					values: $this->getMediaFolders(...),
+				),
+			],
+		]);
+	}
+
+
+	/**
+	 * Returns a list of all media folders
+	 */
+	protected function getMediaFolders(?string $languageShortcode): array {
+		$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
+		$lo_query = $lo_mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode ?? false, includeGlobal: false)->where([
+			'id !=' => 1,
+			'hidden' => false,
+		]);
+		/** @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolders */
+		$lo_mediaFolders = $lo_mediaFoldersTable->listNested($lo_query);
+
+		return $lo_mediaFolders->printer('label', 'id', '- ')->toArray();
 	}
 }

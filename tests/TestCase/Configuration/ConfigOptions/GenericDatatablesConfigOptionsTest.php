@@ -58,7 +58,7 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(17, $configOptions);
+		$this->assertCount(18, $configOptions);
 
 		$this->assertArrayHasKey('Backend.categories.allowAggregation', $configOptions);
 		$this->assertFalse($configOptions['Backend.categories.allowAggregation']->isLocalizable());
@@ -347,6 +347,23 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.translatable']->getTypecast());
 		$this->assertIsCallable($configOptions['Backend.translatable']->getValidate());
 		$this->assertNull($configOptions['Backend.translatable']->getValues());
+
+		$this->assertArrayHasKey('Frontend.mediaFolders.parentFolderId', $configOptions);
+		$this->assertTrue($configOptions['Frontend.mediaFolders.parentFolderId']->isLocalizable());
+		$this->assertTrue($configOptions['Frontend.mediaFolders.parentFolderId']->isNullable());
+		$this->assertFalse($configOptions['Frontend.mediaFolders.parentFolderId']->isPersonalizable());
+		$this->assertNull($configOptions['Frontend.mediaFolders.parentFolderId']->getDefaultValue());
+		$this->assertNull($configOptions['Frontend.mediaFolders.parentFolderId']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Frontend.mediaFolders.parentFolderId']->getType());
+		$this->assertNull($configOptions['Frontend.mediaFolders.parentFolderId']->getTypecast());
+		$this->assertNull($configOptions['Frontend.mediaFolders.parentFolderId']->getValidate());
+		$this->assertIsCallable($configOptions['Frontend.mediaFolders.parentFolderId']->getValues());
+		$this->assertSame([], $configOptions['Frontend.mediaFolders.parentFolderId']->getValues(true));
+		$this->assertSame([
+			2 => 'Testfolder1',
+			5 => '- Subfolder1',
+			6 => '- - Subfolder2',
+		], $configOptions['Frontend.mediaFolders.parentFolderId']->getValues(true, 'de'));
 	}
 
 
