@@ -48,18 +48,20 @@ export default class MediaController {
 	 */
 	initForm(form) {
 		const cropArea = form.querySelector('.CropArea');
-		if (cropArea) {
-			new Crop(cropArea);
-
-			const fileInput = form.querySelector('input[type="file"]');
-			fileInput.addEventListener('change', () => {
-				const fieldset = cropArea.closest('fieldset');
-				// Remove the crop area if it exists
-				if (fieldset) {
-					fieldset.remove();
-				}
-			});
+		if (!cropArea) {
+			return;
 		}
+
+		form.crop = new Crop(cropArea);
+
+		const fileInput = form.querySelector('input[type="file"]');
+		fileInput.addEventListener('change', () => {
+			const fieldset = cropArea.closest('fieldset');
+			// Remove the crop area if it exists
+			if (fieldset) {
+				fieldset.remove();
+			}
+		});
 	}
 
 	/**

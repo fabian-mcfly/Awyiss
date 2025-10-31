@@ -573,17 +573,13 @@ export default class Overlay {
 		window.eventHandler.add('overlayFormLoaded', (event) => {
 			const form = event.detail.form.parentElement;
 
-			if (form.classList.contains('Media')) {
-				const cropAreaElement = document.querySelector('.CropArea');
-				if (cropAreaElement) {
-					if (!Overlay.cropArea) {
-						Overlay.cropArea = new Crop(cropAreaElement);
-					}
-					else {
-						// noinspection JSUndefinedPropertyAssignment
-						Overlay.cropArea.cropFrame = null;
-					}
-				}
+			if (!form.classList.contains('Media')) {
+				return;
+			}
+
+			const cropAreaElement = document.querySelector('.CropArea');
+			if (cropAreaElement) {
+				cropAreaElement.dataset.resetCropArea = 'true';
 			}
 		});
 	}
@@ -806,7 +802,7 @@ export default class Overlay {
 
 		event.preventDefault();
 
-		window.overlayForm.openOverlay(event);
+		window.overlayForm.openOverlay(event.target, event);
 	}
 
 	/**

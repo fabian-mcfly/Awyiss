@@ -169,6 +169,13 @@ export default class ImageCropper {
 			this.inputs.height.value = Math.round(realSize.height);
 			this.inputs.resizeWidth.value = Math.round(realSize.width);
 			this.inputs.resizeHeight.value = Math.round(realSize.height);
+
+			if (container.dataset.resetCropArea === 'true') {
+				// Reset the crop frame to the size of the image
+				this.setCropFrame(this.imageOnCanvas.x, this.imageOnCanvas.y, this.imageOnCanvas.width, this.imageOnCanvas.height);
+				// Remove the reset flag
+				delete container.dataset.resetCropArea;
+			}
 		};
 
 		this.image.src = this.imageSrc;
