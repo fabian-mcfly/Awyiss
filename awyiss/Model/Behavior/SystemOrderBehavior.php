@@ -5,12 +5,15 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
+use Awyiss\Core\LocalConfig;
+use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Awyiss\Utility\Inflector;
 use BackedEnum;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\I18n\I18n;
 use Cake\ORM\Exception\PersistenceFailedException;
@@ -74,6 +77,83 @@ class SystemOrderBehavior extends Behavior {
 	 * @var array
 	 */
 	protected array $rememberedData = [];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(array $config): void {
+		parent::initialize($config);
+
+		$this->setConfig('implementedEvents', [
+			'Configuration.' . $this->table()->getAlias() . '.Backend.systemOrder.direction.afterSaveCommit' => 'rebuildSystemOrderAfterDirectionSave',
+			'Configuration.' . $this->table()->getAlias() . '.Backend.systemOrder.field.afterSaveCommit' => 'rebuildSystemOrderAfterFieldSave',
+		]);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $configuration
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpUnused
+	 */
+	public function rebuildSystemOrderAfterDirectionSave(Event $event, Configuration $configuration): void {
+		if (
+			!$configuration->isNew() &&
+			(
+				!$configuration->hasOriginal('value') ||
+				$configuration->getOriginal('value') === $configuration->value
+			)
+		) {
+			return;
+		}
+
+		$ls_field = LocalConfig::read([
+			'systemOrder',
+			'field',
+		], 'systemOrder', $this->table()->getAlias());
+
+		// If the field is set to 'systemOrder', we don't need to rebuild the system order
+		if ($ls_field === 'systemOrder') {
+			return;
+		}
+
+		$this->rebuildSystemOrder($ls_field, (int)$configuration->value, $event);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $configuration
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpUnused
+	 */
+	public function rebuildSystemOrderAfterFieldSave(Event $event, Configuration $configuration): void {
+		if (
+			$configuration->value === 'systemOrder' ||
+			(
+				!$configuration->isNew() &&
+				(
+					!$configuration->hasOriginal('value') ||
+					$configuration->getOriginal('value') === $configuration->value
+				)
+			)
+		) {
+			return;
+		}
+
+		$li_direction = LocalConfig::read([
+			'systemOrder',
+			'direction',
+		], SORT_ASC, $this->table()->getAlias());
+
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$this->rebuildSystemOrder($configuration->value, $li_direction, $event);
+	}
 
 
 	/**

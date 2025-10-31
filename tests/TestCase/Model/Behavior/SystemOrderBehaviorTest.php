@@ -91,6 +91,8 @@ class SystemOrderBehaviorTest extends TestCase {
 			'afterDelete',
 			'afterSoftDelete',
 			'afterDeleteCommit',
+			'Configuration.Employers.Backend.systemOrder.direction.afterSaveCommit' => 'rebuildSystemOrderAfterDirectionSave',
+			'Configuration.Employers.Backend.systemOrder.field.afterSaveCommit' => 'rebuildSystemOrderAfterFieldSave',
 		], $config['implementedEvents']);
 
 		$this->assertSame([
@@ -125,6 +127,8 @@ class SystemOrderBehaviorTest extends TestCase {
 			'Model.afterDelete' => 'afterDelete',
 			'Model.afterSoftDelete' => 'afterSoftDelete',
 			'Model.afterDeleteCommit' => 'afterDeleteCommit',
+			'Configuration.Employers.Backend.systemOrder.direction.afterSaveCommit' => 'rebuildSystemOrderAfterDirectionSave',
+			'Configuration.Employers.Backend.systemOrder.field.afterSaveCommit' => 'rebuildSystemOrderAfterFieldSave',
 		], $events);
 	}
 

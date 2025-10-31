@@ -98,6 +98,10 @@ class MediaListenerTest extends TestCase {
 			'Model.Media.beforeSave' => 'beforeSave',
 			'Model.Media.afterSave' => 'afterSave',
 			'Model.Media.afterDelete' => 'afterDelete',
+			'Configuration.Media.Frontend.resizing.fileType.afterSaveCommit' => 'clearMediaCacheAfterSave',
+			'Configuration.Media.Frontend.resizing.quality.afterSaveCommit' => 'clearMediaCacheAfterSave',
+			'Configuration.Media.Frontend.resizing.fileType.afterDeleteCommit' => 'clearMediaCacheAfterDelete',
+			'Configuration.Media.Frontend.resizing.quality.afterDeleteCommit' => 'clearMediaCacheAfterDelete',
 		], $result);
 	}
 

@@ -85,6 +85,7 @@ class EventManager extends BaseEventManager {
 			'Awyiss',
 			'Bake',
 			'Command',
+			'Configuration',
 			'Console',
 			'Controller',
 			'Error',
@@ -107,7 +108,6 @@ class EventManager extends BaseEventManager {
 		}
 
 		$ls_scope = EventListenersProvider::sanitizeScope($ls_scope);
-
 
 		if (!in_array($ls_scope, static::$lazyLoadAttempts['global'])) {
 			static::$lazyLoadAttempts['global'][] = $ls_scope;

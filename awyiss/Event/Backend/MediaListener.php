@@ -15,6 +15,7 @@ use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Configuration\ConfigOptions\MediaConfigOptions;
 use Awyiss\Core\LocalConfig;
+use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Table\MediaTable;
@@ -52,7 +53,65 @@ class MediaListener implements EventListenerInterface {
 			'Model.Media.beforeSave' => 'beforeSave',
 			'Model.Media.afterSave' => 'afterSave',
 			'Model.Media.afterDelete' => 'afterDelete',
+			'Configuration.Media.Frontend.resizing.fileType.afterSaveCommit' => 'clearMediaCacheAfterSave',
+			'Configuration.Media.Frontend.resizing.quality.afterSaveCommit' => 'clearMediaCacheAfterSave',
+			'Configuration.Media.Frontend.resizing.fileType.afterDeleteCommit' => 'clearMediaCacheAfterDelete',
+			'Configuration.Media.Frontend.resizing.quality.afterDeleteCommit' => 'clearMediaCacheAfterDelete',
 		];
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $configuration
+	 * @return void
+	 * @noinspection PhpUnused,PhpUnusedParameterInspection
+	 */
+	public function clearMediaCacheAfterSave(Event $event, Configuration $configuration): void {
+		if (
+			!$configuration->isNew() &&
+			(
+				!$configuration->hasOriginal('value') ||
+				$configuration->getOriginal('value') === $configuration->value
+			)
+		) {
+			return;
+		}
+
+		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+		$lo_queue = $this->fetchTable('Queue.QueuedJobs');
+
+		$lo_queue->createJob('Queue.Execute', [
+			'command' => 'bin' . DS . 'cake media clear_cache',
+			'escape' => false,
+			'log' => true,
+		], [
+			'group' => 'general',
+			'priority' => 1,
+			'reference' => 'media::clear_cache',
+		]);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $configuration
+	 * @return void
+	 * @noinspection PhpUnused,PhpUnusedParameterInspection
+	 */
+	public function clearMediaCacheAfterDelete(Event $event, Configuration $configuration): void {
+		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+		$lo_queue = $this->fetchTable('Queue.QueuedJobs');
+
+		$lo_queue->createJob('Queue.Execute', [
+			'command' => 'bin' . DS . 'cake media clear_cache',
+			'escape' => false,
+			'log' => true,
+		], [
+			'group' => 'general',
+			'priority' => 1,
+			'reference' => 'media::clear_cache',
+		]);
 	}
 
 

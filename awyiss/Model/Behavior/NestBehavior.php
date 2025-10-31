@@ -5,7 +5,11 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
+use Awyiss\Awyiss;
+use Awyiss\Configuration\ConfigOptionsProvider;
+use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Entity;
+use Awyiss\Model\Entity\Configuration;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Inflector;
@@ -13,6 +17,7 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Exception\PersistenceFailedException;
@@ -36,13 +41,15 @@ class NestBehavior extends Behavior {
 	/**
 	 * Fetches parents or nested children inside a loop, but only fetches
 	 * those records that are required
+	 *
+	 * @noinspection PhpUnused
 	 */
-	final public const STRATEGY_FETCH_GRADUALLY = 'fetch_gradually';
+	final public const string  STRATEGY_FETCH_GRADUALLY = 'fetch_gradually';
 	/**
 	 * Fetches all items inside the element's scope and builds a collection
 	 * by filtering out siblings and records that aren't children or parents
 	 */
-	final public const STRATEGY_FETCH_ALL = 'fetch_all';
+	final public const string  STRATEGY_FETCH_ALL = 'fetch_all';
 
 	/**
 	 * Default configuration
@@ -115,6 +122,11 @@ class NestBehavior extends Behavior {
 
 			$this->setConfig('alias', $ls_alias);
 		}
+
+		$this->setConfig('implementedEvents', [
+			'Configuration.' . $this->getConfig('alias') . '.Backend.nest.enabled.afterSaveCommit' => 'unnestEntriesAfterSave',
+			'Configuration.' . $this->getConfig('alias') . '.Backend.nest.enabled.afterDeleteCommit' => 'unnestEntriesAfterDelete',
+		]);
 
 		$this->buildAssociations();
 	}
@@ -948,6 +960,96 @@ class NestBehavior extends Behavior {
 
 		if (!empty($options['contain'])) {
 			$query->contain($options['contain']);
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpUnused
+	 */
+	public function unnestEntriesAfterSave(Event $event, Configuration $entity): void {
+		$this->unnestEntries($event, $entity);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpUnused
+	 */
+	public function unnestEntriesAfterDelete(Event $event, Configuration $entity): void {
+		$this->unnestEntries($event, $entity, true);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param bool $deleted
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function unnestEntries(Event $event, Configuration $entity, bool $deleted = false): void {
+		$lb_defaultNest = false;
+		if ($deleted) {
+			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($entity->scope);
+			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
+			$lb_defaultNest = $lo_configOption?->getDefaultValue() ?? false;
+		}
+
+		if (
+			(
+				$deleted &&
+				!$lb_defaultNest
+			) ||
+			(
+				!$deleted &&
+				$entity->isDirty('value') &&
+				!$entity->value
+			)
+		) {
+			$lo_table = $this->table();
+			$lo_schema = $lo_table->getSchema();
+			$ls_column = $lo_table->getBehavior('Nest')->getConfig('children.foreignKey');
+
+			if (!$lo_schema->hasColumn($ls_column)) {
+				return;
+			}
+			// If the column is the same as the foreign key of the Categories behavior, we don't need to unnest the entries
+			if ($lo_table->hasBehavior('Categories')) {
+				$ls_foreignKey = $lo_table->getBehavior('Categories')->getConfig('foreignKey');
+				if ($ls_foreignKey && Inflector::underscore($ls_foreignKey) === Inflector::underscore($ls_column)) {
+					return;
+				}
+			}
+
+			$lo_table->updateAll([
+				$ls_column => null,
+			], [
+				$ls_column . ' IS NOT' => null,
+			]);
+
+			$ls_field = LocalConfig::read([
+				'systemOrder',
+				'field',
+			], 'systemOrder', $this->getConfig('alias'));
+
+			$li_direction = LocalConfig::read([
+				'systemOrder',
+				'direction',
+			], SORT_ASC, $this->getConfig('alias'));
+
+			if ($lo_table->hasBehavior('SystemOrder')) {
+				/** @var \Awyiss\Model\Entity $ls_entityClass */
+				$ls_entityClass = $lo_table->getEntityClass();
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_entityClass::unmapField($ls_field), $li_direction, $event);
+			}
 		}
 	}
 }

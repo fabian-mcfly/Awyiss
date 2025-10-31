@@ -4,6 +4,7 @@
 namespace Awyiss\Test\TestCase\Event\Backend;
 
 
+use ArrayObject;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Event\Backend\ConfigurationListener;
@@ -63,8 +64,11 @@ class ConfigurationListenerTest extends TestCase {
 
 		$this->assertSame([
 			'Model.Configuration.beforeSave' => 'beforeSave',
+			'Model.Configuration.afterSave' => 'afterSave',
 			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
+			'Model.Configuration.beforeDelete' => 'beforeDelete',
 			'Model.Configuration.afterDelete' => 'afterDelete',
+			'Model.Configuration.afterDeleteCommit' => 'afterDeleteCommit',
 			'Awyiss.Configuration.createCustomConfiguration' => 'createCustomConfiguration',
 			'Awyiss.Configuration.deleteCustomConfiguration' => 'deleteCustomConfiguration',
 		], $result);
@@ -87,8 +91,9 @@ class ConfigurationListenerTest extends TestCase {
 		]);
 
 		$event = new Event('Model.Configuration.beforeSave');
+		$options = new ArrayObject([]);
 
-		$this->listener->beforeSave($event, $entity);
+		$this->listener->beforeSave($event, $entity, $options);
 
 		$this->assertSame(85, $entity->value);
 
@@ -100,7 +105,7 @@ class ConfigurationListenerTest extends TestCase {
 			'languageShortcode' => 'en',
 		]);
 
-		$this->listener->beforeSave($event, $entity);
+		$this->listener->beforeSave($event, $entity, $options);
 
 		$this->assertIsString($entity->value);
 		$decodedValue = json_decode($entity->value, true);
@@ -114,7 +119,7 @@ class ConfigurationListenerTest extends TestCase {
 			'languageShortcode' => 'en',
 		]);
 
-		$this->listener->beforeSave($event, $entity);
+		$this->listener->beforeSave($event, $entity, $options);
 
 		$this->assertSame('{"key1":"value1","key2":"value2"}', $entity->value);
 	}
@@ -123,15 +128,12 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRecompilesFrontendScssWhenColumnClassNameChanged(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
-			'unnestEntries',
-			'rebuildSystemOrder',
 			'createCustomConfiguration',
-			'clearMediaCache',
 		])->getMock();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -166,7 +168,9 @@ class ConfigurationListenerTest extends TestCase {
 		]);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$this->assertSame('\Awyiss\Utility\Content\BootstrapColumnSystem', Configure::read('Awyiss.Contents.Backend.columnSystem.className'));
 	}
@@ -175,15 +179,12 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRecompilesFrontendScssWhenColumnMaxColumnsChanged(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
-			'unnestEntries',
-			'rebuildSystemOrder',
 			'createCustomConfiguration',
-			'clearMediaCache',
 		])->getMock();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -218,7 +219,9 @@ class ConfigurationListenerTest extends TestCase {
 		]);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$this->assertSame(10, Configure::read('Awyiss.Contents.Backend.columnSystem.maxColumns'));
 	}
@@ -227,15 +230,12 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotRecompilesFrontendScssWhenNotContentsScope(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
-			'unnestEntries',
-			'rebuildSystemOrder',
 			'createCustomConfiguration',
-			'clearMediaCache',
 		])->getMock();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -255,7 +255,9 @@ class ConfigurationListenerTest extends TestCase {
 		]);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$this->assertNull(Configure::read('Awyiss.Contents.Backend.columnSystem.maxColumns'));
 	}
@@ -264,7 +266,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitUnnestsNestedEntriesOfScope(): void {
@@ -281,7 +283,9 @@ class ConfigurationListenerTest extends TestCase {
 		]);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -327,7 +331,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitUnnestingRebuildsSystemOrder(): void {
@@ -347,7 +351,9 @@ class ConfigurationListenerTest extends TestCase {
 		]);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -393,7 +399,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotUnnestsNestedEntriesOfScopeWhenEnabled(): void {
@@ -410,7 +416,9 @@ class ConfigurationListenerTest extends TestCase {
 		]);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -478,7 +486,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRebuildsSystemOrderWhenNewAndIdentifierSystemOrderField(): void {
@@ -500,7 +508,9 @@ class ConfigurationListenerTest extends TestCase {
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -547,7 +557,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRebuildsSystemOrderWhenNotNewAndValueChangedAndIdentifierSystemOrderField(): void {
@@ -573,7 +583,9 @@ class ConfigurationListenerTest extends TestCase {
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -620,7 +632,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotRebuildsSystemOrderWhenNotNewAndValueUnchangedAndIdentifierSystemOrderField(): void {
@@ -650,7 +662,9 @@ class ConfigurationListenerTest extends TestCase {
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -697,7 +711,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRebuildsSystemOrderWhenNewAndIdentifierSystemOrderDirection(): void {
@@ -721,7 +735,9 @@ class ConfigurationListenerTest extends TestCase {
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -768,7 +784,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRebuildsSystemOrderWhenNotNewAndValueChangedAndIdentifierSystemOrderDirection(): void {
@@ -796,7 +812,9 @@ class ConfigurationListenerTest extends TestCase {
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -843,7 +861,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotRebuildsSystemOrderWhenNotNewAndValueUnchangedAndIdentifierSystemOrderDirection(): void {
@@ -871,7 +889,9 @@ class ConfigurationListenerTest extends TestCase {
 		], []);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
-		$this->listener->afterSaveCommit($event, $entity);
+		$options = new ArrayObject([]);
+
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -918,7 +938,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitCreatesCustomConfiguration(): void {
@@ -935,8 +955,9 @@ class ConfigurationListenerTest extends TestCase {
 		$this->assertCount(0, $files);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterSaveCommit($event, $entity);
+		$this->listener->afterSaveCommit($event, $entity, $options);
 
 		$files = glob($pattern);
 		$this->assertCount(6, $files);
@@ -954,7 +975,7 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitClearsMediaCacheForMediaResizingFileType(): void {
@@ -985,15 +1006,16 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterSaveCommit($event, $entity);
+		$this->listener->afterSaveCommit($event, $entity, $options);
 	}
 
 
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitClearsMediaCacheForMediaResizingQuality(): void {
@@ -1024,15 +1046,16 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterSaveCommit($event, $entity);
+		$this->listener->afterSaveCommit($event, $entity, $options);
 	}
 
 
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotClearsMediaCacheForOtherConfig(): void {
@@ -1053,15 +1076,16 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterSaveCommit($event, $entity);
+		$this->listener->afterSaveCommit($event, $entity, $options);
 	}
 
 
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotClearsMediaCacheWhenNotNewAndValueNotChanged(): void {
@@ -1084,15 +1108,16 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterSaveCommit($event, $entity);
+		$this->listener->afterSaveCommit($event, $entity, $options);
 	}
 
 
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitClearsMediaCacheWhenNotNewAndValueChanged(): void {
@@ -1127,23 +1152,21 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
 		$event = new Event('Model.Configuration.afterSaveCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterSaveCommit($event, $entity);
+		$this->listener->afterSaveCommit($event, $entity, $options);
 	}
 
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteRecompilesFrontendScssWhenColumnClassNameChanged(): void {
+	public function testAfterDeleteCommitRecompilesFrontendScssWhenColumnClassNameChanged(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
-			'unnestEntries',
-			'rebuildSystemOrder',
 			'createCustomConfiguration',
-			'clearMediaCache',
 		])->getMock();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -1177,8 +1200,10 @@ class ConfigurationListenerTest extends TestCase {
 			'value' => '\Awyiss\Utility\Content\BootstrapColumnSystem',
 		]);
 
-		$event = new Event('Model.Configuration.afterDelete');
-		$this->listener->afterDelete($event, $entity);
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
+
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 
 		$this->assertNull(Configure::read('Awyiss.Contents.Backend.columnSystem.className'));
 	}
@@ -1186,16 +1211,13 @@ class ConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteRecompilesFrontendScssWhenColumnMaxColumnsChanged(): void {
+	public function testAfterDeleteCommitRecompilesFrontendScssWhenColumnMaxColumnsChanged(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
-			'unnestEntries',
-			'rebuildSystemOrder',
 			'createCustomConfiguration',
-			'clearMediaCache',
 		])->getMock();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -1229,8 +1251,10 @@ class ConfigurationListenerTest extends TestCase {
 			'value' => 10,
 		]);
 
-		$event = new Event('Model.Configuration.afterDelete');
-		$this->listener->afterDelete($event, $entity);
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
+
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 
 		$this->assertNull(Configure::read('Awyiss.Contents.Backend.columnSystem.maxColumns'));
 	}
@@ -1238,16 +1262,13 @@ class ConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteNotRecompilesFrontendScssWhenNotContentsScope(): void {
+	public function testAfterDeleteCommitNotRecompilesFrontendScssWhenNotContentsScope(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
-			'unnestEntries',
-			'rebuildSystemOrder',
 			'createCustomConfiguration',
-			'clearMediaCache',
 		])->getMock();
 
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -1266,8 +1287,10 @@ class ConfigurationListenerTest extends TestCase {
 			'value' => 10,
 		]);
 
-		$event = new Event('Model.Configuration.afterDelete');
-		$this->listener->afterDelete($event, $entity);
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
+
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 
 		$this->assertNull(Configure::read('Awyiss.Contents.Backend.columnSystem.maxColumns'));
 	}
@@ -1275,11 +1298,11 @@ class ConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteUnnestsNestedEntriesOfScope(): void {
+	public function testAfterDeleteCommitUnnestsNestedEntriesOfScope(): void {
 		$this->createTestEmployees();
 
 		$configTable = $this->fetchTable('Configuration');
@@ -1292,8 +1315,10 @@ class ConfigurationListenerTest extends TestCase {
 			'value' => false,
 		]);
 
-		$event = new Event('Model.Configuration.afterDelete');
-		$this->listener->afterDelete($event, $entity);
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
+
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -1338,11 +1363,11 @@ class ConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteNotUnnestsNestedEntriesOfScopeWhenDefaultTrue(): void {
+	public function testAfterDeleteCommitNotUnnestsNestedEntriesOfScopeWhenDefaultTrue(): void {
 		$lo_configuration = ConfigOptionsProvider::loadConfigOptions('employees');
 		$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, 'nest.enabled');
 		$lo_configOption->setDefaultValue(true);
@@ -1359,8 +1384,10 @@ class ConfigurationListenerTest extends TestCase {
 			'value' => false,
 		]);
 
-		$event = new Event('Model.Configuration.afterDelete');
-		$this->listener->afterDelete($event, $entity);
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
+
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 
 		$employees = $employeesTable->find()->all();
 
@@ -1428,11 +1455,11 @@ class ConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteCreatesCustomConfiguration(): void {
+	public function testAfterDeleteCommitCreatesCustomConfiguration(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
 			'scope' => 'media',
 			'realm' => Awyiss::REALM_FRONTEND,
@@ -1445,9 +1472,10 @@ class ConfigurationListenerTest extends TestCase {
 		$files = glob($pattern);
 		$this->assertCount(0, $files);
 
-		$event = new Event('Model.Configuration.afterDelete');
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterDelete($event, $entity);
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 
 		$files = glob($pattern);
 		$this->assertCount(6, $files);
@@ -1464,11 +1492,11 @@ class ConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteClearsMediaCacheForMediaResizingFileType(): void {
+	public function testAfterDeleteCommitClearsMediaCacheForMediaResizingFileType(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
 			'scope' => 'media',
 			'realm' => Awyiss::REALM_FRONTEND,
@@ -1495,19 +1523,20 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->remove('Queue.QueuedJobs');
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
-		$event = new Event('Model.Configuration.afterDelete');
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterDelete($event, $entity);
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 	}
 
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteClearsMediaCacheForMediaResizingQuality(): void {
+	public function testAfterDeleteCommitClearsMediaCacheForMediaResizingQuality(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
 			'scope' => 'media',
 			'realm' => Awyiss::REALM_FRONTEND,
@@ -1534,19 +1563,20 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->remove('Queue.QueuedJobs');
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
-		$event = new Event('Model.Configuration.afterDelete');
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterDelete($event, $entity);
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 	}
 
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteNotClearsMediaCacheForOtherConfig(): void {
+	public function testAfterDeleteCommitNotClearsMediaCacheForOtherConfig(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
 			'scope' => 'media',
 			'realm' => Awyiss::REALM_FRONTEND,
@@ -1563,19 +1593,20 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->remove('Queue.QueuedJobs');
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
-		$event = new Event('Model.Configuration.afterDelete');
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterDelete($event, $entity);
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 	}
 
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteClearsMediaCacheWhenNotNewAndValueUnchanged(): void {
+	public function testAfterDeleteCommitClearsMediaCacheWhenNotNewAndValueUnchanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
 			'scope' => 'media',
 			'realm' => Awyiss::REALM_FRONTEND,
@@ -1604,19 +1635,20 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->remove('Queue.QueuedJobs');
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
-		$event = new Event('Model.Configuration.afterDelete');
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterDelete($event, $entity);
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 	}
 
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDelete()
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
+	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
+	 * @throws \Exception
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testAfterDeleteClearsMediaCacheWhenNotNewAndValueChanged(): void {
+	public function testAfterDeleteCommitClearsMediaCacheWhenNotNewAndValueChanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
 			'scope' => 'media',
 			'realm' => Awyiss::REALM_FRONTEND,
@@ -1647,9 +1679,10 @@ class ConfigurationListenerTest extends TestCase {
 		$tableLocator->remove('Queue.QueuedJobs');
 		$tableLocator->set('Queue.QueuedJobs', $queueTable);
 
-		$event = new Event('Model.Configuration.afterDelete');
+		$event = new Event('Model.Configuration.afterDeleteCommit');
+		$options = new ArrayObject([]);
 
-		$this->listener->afterDelete($event, $entity);
+		$this->listener->afterDeleteCommit($event, $entity, $options);
 	}
 
 

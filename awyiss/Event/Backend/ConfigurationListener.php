@@ -4,17 +4,17 @@
 namespace Awyiss\Event\Backend;
 
 
+use ArrayObject;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
-use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Configuration;
-use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
-use Cake\Datasource\FactoryLocator;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 
 
@@ -31,8 +31,11 @@ class ConfigurationListener implements EventListenerInterface {
 	public function implementedEvents(): array {
 		return [
 			'Model.Configuration.beforeSave' => 'beforeSave',
+			'Model.Configuration.afterSave' => 'afterSave',
 			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
+			'Model.Configuration.beforeDelete' => 'beforeDelete',
 			'Model.Configuration.afterDelete' => 'afterDelete',
+			'Model.Configuration.afterDeleteCommit' => 'afterDeleteCommit',
 			'Awyiss.Configuration.createCustomConfiguration' => 'createCustomConfiguration',
 			'Awyiss.Configuration.deleteCustomConfiguration' => 'deleteCustomConfiguration',
 		];
@@ -42,10 +45,10 @@ class ConfigurationListener implements EventListenerInterface {
 	/**
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param \ArrayObject $options
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(Event $event, Configuration $entity): void {
+	public function beforeSave(Event $event, Configuration $entity, ArrayObject $options): void {
 		$entity->value = ConfigOptionsProvider::typecastConfigValue(
 			$entity->scope,
 			$entity->realm,
@@ -57,44 +60,71 @@ class ConfigurationListener implements EventListenerInterface {
 		if (in_array(getType($entity->value), ['array', 'object'])) {
 			$entity->value = json_encode($entity->value);
 		}
+
+		$this->dispatchEvent('beforeSave', $event, $entity, $options);
 	}
 
 
 	/**
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param \ArrayObject $options
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
 	 */
-	public function afterSaveCommit(Event $event, Configuration $entity): void {
-		$this->recompileScss($entity);
-
-		$this->unnestEntries($event, $entity);
-
-		$this->rebuildSystemOrder($event, $entity);
-
-		$this->createCustomConfiguration();
-
-		$this->clearMediaCache($entity);
+	public function afterSave(Event $event, Configuration $entity, ArrayObject $options): void {
+		$this->dispatchEvent('afterSave', $event, $entity, $options);
 	}
 
 
 	/**
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param \ArrayObject $options
 	 * @return void
-	 * @throws \Exception|\ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \Exception
 	 */
-	public function afterDelete(Event $event, Configuration $entity): void {
-		$this->recompileScss($entity, true);
-
-		$this->unnestEntries($event, $entity, true);
+	public function afterSaveCommit(Event $event, Configuration $entity, ArrayObject $options): void {
+		$this->dispatchEvent('afterSaveCommit', $event, $entity, $options);
 
 		$this->createCustomConfiguration();
+	}
 
-		$this->clearMediaCache($entity, true);
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function beforeDelete(Event $event, Configuration $entity, ArrayObject $options): void {
+		$this->dispatchEvent('beforeDelete', $event, $entity, $options);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function afterDelete(Event $event, Configuration $entity, ArrayObject $options): void {
+		$this->dispatchEvent('afterDelete', $event, $entity, $options);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function afterDeleteCommit(Event $event, Configuration $entity, ArrayObject $options): void {
+		$this->dispatchEvent('afterDeleteCommit', $event, $entity, $options);
+
+		$this->createCustomConfiguration();
 	}
 
 
@@ -144,145 +174,6 @@ class ConfigurationListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $event
-	 * @param \Awyiss\Model\Entity\Configuration $entity
-	 * @param bool $deleted
-	 * @return void
-	 * @throws \Exception
-	 */
-	protected function unnestEntries(Event $event, Configuration $entity, bool $deleted = false): void {
-		if ($entity->identifier !== 'nest.enabled') {
-			return;
-		}
-
-		$lb_defaultNest = false;
-		if ($deleted) {
-			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($entity->scope);
-			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
-			$lb_defaultNest = $lo_configOption?->getDefaultValue() ?? false;
-		}
-
-		if (
-			(
-				$deleted &&
-				!$lb_defaultNest
-			) ||
-			(
-				!$deleted &&
-				$entity->isDirty('value') &&
-				!$entity->value
-			)
-		) {
-			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
-
-			if (!$lo_table->hasBehavior('Nest')) {
-				return;
-			}
-
-			$lo_schema = $lo_table->getSchema();
-			$ls_column = $lo_table->getBehavior('Nest')->getConfig('children.foreignKey');
-
-			if (!$lo_schema->hasColumn($ls_column)) {
-				return;
-			}
-
-			// If the column is the same as the foreign key of the Categories behavior, we don't need to unnest the entries
-			if ($lo_table->hasBehavior('Categories')) {
-				$ls_foreignKey = $lo_table->getBehavior('Categories')->getConfig('foreignKey');
-				if ($ls_foreignKey && Inflector::underscore($ls_foreignKey) === Inflector::underscore($ls_column)) {
-					return;
-				}
-			}
-
-			$lo_table->updateAll([
-				$ls_column => null,
-			], [
-				$ls_column . ' IS NOT' => null,
-			]);
-
-			$ls_field = LocalConfig::read([
-				'systemOrder',
-				'field',
-			], 'systemOrder', Inflector::camelize($entity->scope));
-
-			$li_direction = LocalConfig::read([
-				'systemOrder',
-				'direction',
-			], SORT_ASC, Inflector::camelize($entity->scope));
-
-			if ($lo_table->hasBehavior('SystemOrder')) {
-				/** @var \Awyiss\Model\Entity $ls_entityClass */
-				$ls_entityClass = $lo_table->getEntityClass();
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_entityClass::unmapField($ls_field), $li_direction, $event);
-			}
-		}
-	}
-
-
-	/**
-	 * @param \Cake\Event\Event $event
-	 * @param \Awyiss\Model\Entity\Configuration $entity
-	 * @return void
-	 * @throws \Exception
-	 */
-	protected function rebuildSystemOrder(Event $event, Configuration $entity): void {
-		if (
-			$entity->identifier === 'system_order.field' &&
-			(
-				$entity->isNew() ||
-				(
-					$entity->hasOriginal('value') &&
-					$entity->getOriginal('value') !== $entity->value
-				)
-			) &&
-			Inflector::variable($entity->value) !== 'systemOrder'
-		) {
-			$li_direction = LocalConfig::read([
-				'systemOrder',
-				'direction',
-			], SORT_ASC, Inflector::camelize($entity->scope));
-
-			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
-			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass = $lo_table->getEntityClass();
-			if ($lo_table->hasBehavior('SystemOrder')) {
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_entityClass::unmapField($entity->value), $li_direction, $event);
-			}
-		}
-		elseif (
-			$entity->identifier === 'system_order.direction' &&
-			(
-				$entity->isNew() ||
-				(
-					$entity->hasOriginal('value') &&
-					$entity->getOriginal('value') !== $entity->value
-				)
-			)
-		) {
-			$ls_field = LocalConfig::read([
-				'systemOrder',
-				'field',
-			], 'systemOrder', Inflector::camelize($entity->scope));
-
-			// If the field is set to 'systemOrder', we don't need to rebuild the system order
-			if ($ls_field === 'systemOrder') {
-				return;
-			}
-
-			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
-			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass = $lo_table->getEntityClass();
-			if ($lo_table->hasBehavior('SystemOrder')) {
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_entityClass::unmapField($ls_field), (int)$entity->value, $event);
-			}
-		}
-	}
-
-
-	/**
 	 * Removes all custom config files
 	 *
 	 * @return void
@@ -297,91 +188,42 @@ class ConfigurationListener implements EventListenerInterface {
 
 
 	/**
-	 * If the resizing.fileType config is changed, we need to clear the media cache
-	 * to remove unused files.
-	 *
+	 * @param string $name
+	 * @param \Cake\Event\Event $originalEvent
 	 * @param \Awyiss\Model\Entity\Configuration $entity
-	 * @param bool $deleted
-	 * @return void
+	 * @param \ArrayObject $options
+	 * @return bool
 	 */
-	protected function clearMediaCache(Configuration $entity, bool $deleted = false): void {
-		if (
-			$entity->scope !== 'media' ||
-			(
-				$entity->identifier !== 'resizing.file_type' &&
-				$entity->identifier !== 'resizing.quality'
-			)
-		) {
-			return;
+	protected function dispatchEvent(string $name, Event $originalEvent, Configuration $entity, ArrayObject $options): bool {
+		$ls_scope = Inflector::camelize($entity->scope);
+
+		try {
+			$lo_table = $this->fetchTable($ls_scope);
+		}
+		catch (MissingTableClassException | DatabaseException) {
+			return false;
 		}
 
-		if (
-			$deleted ||
-			$entity->isNew() ||
-			(
-				$entity->hasOriginal('value') &&
-				$entity->getOriginal('value') !== $entity->value
-			)
-		) {
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = $this->fetchTable('Queue.QueuedJobs');
+		$la_eventParts = [
+			'Configuration',
+			$ls_scope,
+			Inflector::camelize($entity->realm),
+			Inflector::variable($entity->identifier),
+			$name,
+		];
 
-			$lo_queue->createJob('Queue.Execute', [
-				'command' => 'bin' . DS . 'cake media clear_cache',
-				'escape' => false,
-				'log' => true,
-			], [
-				'group' => 'general',
-				'priority' => 1,
-				'reference' => 'media::clear_cache',
-			]);
-		}
-	}
+		$lo_event = new Event(implode('.', $la_eventParts), $lo_table, ['entity' => $entity, 'options' => $options]);
+		$lo_table->getEventManager()->dispatch($lo_event);
 
+		//If the new event was stopped, stop the old one as well and set the result.
+		if ($lo_event->isStopped()) {
+			$originalEvent->stopPropagation();
+			$originalEvent->setResult($lo_event->getResult());
 
-	/**
-	 * If the class name or the max columns of the column system is changed,
-	 * we need to recompile the SCSS files to apply the changes.
-	 *
-	 * @param \Awyiss\Model\Entity\Configuration $entity
-	 * @param bool $deleted
-	 * @return void
-	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 */
-	protected function recompileScss(Configuration $entity, bool $deleted = false): void {
-		if (
-			$entity->scope !== 'contents' ||
-			(
-				$entity->identifier !== 'column_system.class_name' &&
-				$entity->identifier !== 'column_system.max_columns'
-			)
-		) {
-			return;
+			return false;
 		}
 
-		if ($entity->identifier === 'column_system.class_name') {
-			if ($deleted) {
-				Configure::delete('Awyiss.Contents.Backend.columnSystem.className');
-			}
-			else {
-				Configure::write('Awyiss.Contents.Backend.columnSystem.className', $entity->value);
-			}
-		}
-		elseif ($entity->identifier === 'column_system.max_columns') {
-			if ($deleted) {
-				Configure::delete('Awyiss.Contents.Backend.columnSystem.maxColumns');
-			}
-			else {
-				Configure::write('Awyiss.Contents.Backend.columnSystem.maxColumns', (int)$entity->value);
-			}
-		}
 
-		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
-		$lo_designMiddleware = Router::getRequest()->getAttribute('design');
-		$lo_designMiddleware->resetDesignVariables();
-		$lo_designMiddleware->compileScss(true, Awyiss::REALM_FRONTEND);
-
-		$lo_designMiddleware->resetDesignVariables();
-		$lo_designMiddleware->compileScss(true, Awyiss::REALM_BACKEND);
+		return true;
 	}
 }
