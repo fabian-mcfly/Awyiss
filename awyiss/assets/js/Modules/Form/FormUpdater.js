@@ -315,7 +315,7 @@ export default class FormUpdater {
 			form.querySelector('.Fieldsets').replaceWith(newForm.querySelector('.Fieldsets'));
 
 			try {
-				const newFocusElement = newForm.querySelector(`#${this.lastFocusedElementId}`) || newForm.querySelector(`[name="${this.lastFocusedElementId}"]`);
+				const newFocusElement = form.querySelector(`#${this.lastFocusedElementId}`) || form.querySelector(`[name="${this.lastFocusedElementId}"]`);
 				if (newFocusElement) {
 					newFocusElement.focus();
 					// Check if the newFocusElement is an input or textarea before calling setSelectionRange
