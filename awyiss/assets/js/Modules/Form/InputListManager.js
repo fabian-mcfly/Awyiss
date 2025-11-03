@@ -269,6 +269,9 @@ export default class InputListManager {
 			inputs.forEach((input) => {
 				// If the input is not hidden, clear the value
 				input.value = '';
+				// Trigger a change event
+				const event = new InputEvent('change', {bubbles: true, target: input});
+				input.dispatchEvent(event);
 			});
 		}
 		else {

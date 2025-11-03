@@ -205,6 +205,7 @@ export class SearchFilter {
 			// Remove the operator
 			const operator = row.querySelector('select[name^="filter["][name$="][operator]"]');
 			operator.value = '';
+			operator.dispatchEvent(new Event('change', {bubbles: true}));
 
 			const valueInput = row.querySelector('input[name^="filter["][name$="][value]"]');
 			if (valueInput.matches('[type="radio"]')) {
