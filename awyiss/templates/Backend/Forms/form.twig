@@ -205,17 +205,6 @@
 
 										<label class="Label">{{ __('form_conditional_recipients') }}</label>
 
-										{% block formControlFormConditionalRecipientsStrategy %}
-											{% set conditionalRecipientsStrategies = combine(
-												conditionalRecipientsStrategies,
-												conditionalRecipientsStrategies|map(conditionalRecipientsStrategy => __('conditional_recipients_strategy_' ~ conditionalRecipientsStrategy))
-											) %}
-											{{ FormHelper.control('conditional_recipients_strategy', {
-												empty: false,
-												options: conditionalRecipientsStrategies,
-											}) }}
-										{% endblock %}
-
 										{% set counter = 0 %}
 										{% set formConditionalRecipientTypes = combine(
 											formConditionalRecipientTypes,
@@ -287,6 +276,7 @@
 											}) }}
 
 											{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.field', {
+												disabled: true,
 												label: __d('form_conditional_recipients', 'field'),
 												options: formElements,
 												required: false,
@@ -317,6 +307,17 @@
 											{{ FormHelper.select('_current_page_options', pageProperties) }}
 										</template>
 									</div>
+								{% endblock %}
+
+								{% block formControlFormConditionalRecipientsStrategy %}
+									{% set conditionalRecipientsStrategies = combine(
+										conditionalRecipientsStrategies,
+										conditionalRecipientsStrategies|map(conditionalRecipientsStrategy => __('conditional_recipients_strategy_' ~ conditionalRecipientsStrategy))
+									) %}
+									{{ FormHelper.control('conditional_recipients_strategy', {
+										empty: false,
+										options: conditionalRecipientsStrategies,
+									}) }}
 								{% endblock %}
 
 								{% block formControlTransportProfile %}
@@ -490,14 +491,14 @@
 {% endset %}
 
 {% block sidebarToggle %}
-	{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+	{% if config.Awyiss.System.Backend.interface.sidebarMode == true and isOverlayForm != true %}
 		{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
 	{% endif %}
 {% endblock %}
 
 {% block fieldsets %}
 	<div class="Fieldsets">
-		{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+		{% if config.Awyiss.System.Backend.interface.sidebarMode != true or isOverlayForm == true %}
 			{{ fieldsetPresentation }}
 			{{ fieldsetConditions }}
 			{{ fieldsetGeneral }}
@@ -515,7 +516,7 @@
 		{% endif %}
 
 		{% block mainFieldsets %}
-			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true and isOverlayForm != true %}
 				<div class="Main-Fieldsets">
 					{{ fieldsetGeneral }}
 					{{ fieldsetEmail }}
@@ -528,7 +529,7 @@
 		{% endblock %}
 
 		{% block sidebarFieldsets %}
-			{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true and isOverlayForm != true %}
 				<div class="Sidebar-Fieldsets">
 					{{ fieldsetPresentation }}
 					{{ fieldsetConditions }}

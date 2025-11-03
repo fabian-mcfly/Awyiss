@@ -15,13 +15,15 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}{% set controller = fetch('controllerName') ?: _view.getRequest().getParam('controller') -%}
 <!DOCTYPE html>
-<html
+{% block htmlOpen %}<html
 	lang="{{ currentLanguage.shortcode }}"
 	class="
+		{%- block htmlClasses -%}
 		{%- if config.Awyiss.System.Backend.interface.darkMode == true %} 🌚{% endif -%}
 		{%- if config.Awyiss.System.Backend.interface.disctractionFreeMode == true %} 👀{% endif -%}
 		{%- if config.Awyiss.System.Backend.interface.scale and config.Awyiss.System.Backend.interface.scale != 'regular' %} Scale-{{ config.Awyiss.System.Backend.interface.scale|camelize }}{% endif -%}
-	">
+		{%- endblock -%}
+	">{% endblock %}
 	<head>
 		{% block head %}
 			{{ HtmlHelper.charset() }}
@@ -83,11 +85,15 @@
 			{% endif %}
 		{% endblock %}
 	</head>
+	{% block bodyOpen %}
 	<body class="
+		{%- block bodyClasses -%}
 		{{- controller }}Controller {{ _view.getRequest().getParam('action')|camelize }}Action
 		{%- if isGenericPage %}	IsGenericPage{%- endif -%}
 		{%- if isGenericDatatable %} IsGenericDatatable{%- endif -%}
+		{%- endblock -%}
 	">
+	{% endblock %}
 		{% block body %}
 			{% block jumpToContent %}
 				<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'overview'}) }}#Content" id="JumpToContent">
@@ -177,12 +183,12 @@
 			{% endblock %}
 		{% endblock %}
 
-		{% block overlayForm %}
-			{{ element('overlay_form') }}
-		{% endblock %}
-
 		{% block leaveConfirmationDialog %}
 			{{ element('form_leave_confirmation_dialog') }}
 		{% endblock %}
+	{% block bodyClose %}
 	</body>
+	{% endblock %}
+{% block htmlClose %}
 </html>
+{% endblock %}

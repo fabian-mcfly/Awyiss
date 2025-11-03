@@ -269,8 +269,6 @@ export default class Overlay {
 
 		this.bindOverlayFormLoadedEvent();
 
-		this.bindFolderSaveEvent();
-
 		this.sortable = new Sortable(this.mediaList, {
 			deleteButtons: this.element.querySelectorAll('.ButtonArea .Button-Delete'),
 			saveSystemOrderButtons: this.element.querySelectorAll('.Button-SaveSystemOrder'),
@@ -570,39 +568,14 @@ export default class Overlay {
 	 * @return {void}
 	 */
 	bindOverlayFormLoadedEvent() {
-		window.eventHandler.add('overlayFormLoaded', (event) => {
-			const form = event.detail.form.parentElement;
+		// Listen for a close request from the iframe
+		window.addEventListener('message', (event) => {
+			if (event.data === 'closeOverlayFormAndReload' && this.element?.open) {
+				// If the dialog is open, refresh the media items of the active folder
+				this.folderList.querySelector('.Active').dispatchEvent(new Event('click'));
 
-			if (!form.classList.contains('Media')) {
-				return;
-			}
-
-			const cropAreaElement = document.querySelector('.CropArea');
-			if (cropAreaElement) {
-				cropAreaElement.dataset.resetCropArea = 'true';
-			}
-		});
-	}
-
-	/**
-	 * Bind the event to the folder save event.
-	 *
-	 * @return {void}
-	 */
-	bindFolderSaveEvent() {
-		window.eventHandler.add('overlayFormSubmitted', (event) => {
-			const form = event.detail.form;
-			const formParent = form.parentElement;
-
-			if (formParent.matches('.MediaFolders.Add')) {
 				// noinspection JSIgnoredPromiseFromCall
 				this.fetchFolderList(this.activeFolderId, languageShortcode);
-			}
-			else if (formParent.matches('.Media.Edit')) {
-				// noinspection JSUndefinedPropertyAssignment
-				Overlay.cropArea.cropFrame = null;
-				// After updating a file, we need to fetch the media items again
-				this.folderList.querySelector('.Active').dispatchEvent(new Event('click'));
 			}
 		});
 	}

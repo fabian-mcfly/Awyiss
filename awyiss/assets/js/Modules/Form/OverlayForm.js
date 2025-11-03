@@ -21,6 +21,11 @@ export default class OverlayForm {
 	 */
 	elementSelector = 'a.OverlayForm';
 	/**
+	 * The iframe element for the overlay
+	 * @type {HTMLIFrameElement}
+	 */
+	iframe
+	/**
 	 * The Observer instance.
 	 * @type {Observer}
 	 */
@@ -44,27 +49,68 @@ export default class OverlayForm {
 	constructor() {
 		this.dialog = document.getElementById('OverlayForm');
 
-		if (this.dialog) {
-			this.eventHandler.add('click', this.handleClick.bind(this), this.dialog);
-			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), this.dialog, true);
-			this.eventHandler.add('close', this.handleClose.bind(this), this.dialog);
-			this.eventHandler.add('cancel', (event) => {
-				if (window.formLeaveConfirmation.isFormChanged) {
-					event.preventDefault();
-
-					window.formLeaveConfirmation.showCustomDialog(() => {
-						this.closeOverlay();
-					});
-				}
-			}, this.dialog);
+		if (!this.dialog) {
+			this.dialog = document.createElement('dialog');
+			this.dialog.id = 'OverlayForm';
+			document.body.appendChild(this.dialog);
 		}
 
-		this.observer.addObserver(this.observeMutations.bind(this));
+		// Check if the form inside the iframe has changed before trying to close the overlay
+		this.eventHandler.add('cancel', this.handleRequestClose.bind(this), this.dialog);
+
+		this.iframe = document.createElement('iframe');
+		this.dialog.appendChild(this.iframe);
 
 		// Bind a click event to all links that should open their target in an overlay.
 		const elements = document.querySelectorAll(this.elementSelector);
 		for (const element of elements) {
 			this.bindOpenOverlayButton(element);
+		}
+
+		this.observer.addObserver(this.observeMutations.bind(this));
+
+		// Listen for a close request from the iframe
+		window.addEventListener('message', (event) => {
+			if (event.data === 'closeOverlayForm') {
+				this.closeOverlay();
+			}
+
+			if (event.data === 'closeOverlayFormAndReload') {
+				this.closeOverlay(true);
+			}
+
+			if (event.data === 'unlockOverlayForm') {
+				this.iframe.classList.add('Visible');
+			}
+		});
+
+		if (
+			window.parent !== window &&
+			document.body.classList.contains('OverlayForm') &&
+			(
+				document.body.classList.contains('AddAction') ||
+				document.body.classList.contains('EditAction')
+			)
+		) {
+			// Find the close buttons and send an event to the parent window
+			const closeButtons = document.getElementById('Content').querySelectorAll(':scope > .Form > .ButtonArea .Button-Close');
+			closeButtons.forEach(closeButton => {
+				this.eventHandler.add('click', () => {
+					if (window.formLeaveConfirmation.isFormChanged) {
+						window.formLeaveConfirmation.showCustomDialog(() => {
+							window.formLeaveConfirmation.unlock();
+							window.parent.postMessage('closeOverlayForm', '*');
+						});
+					}
+					else {
+						window.parent.postMessage('closeOverlayForm', '*');
+					}
+				}, closeButton);
+			});
+
+			window.parent.postMessage('unlockOverlayForm', '*');
+
+			document.querySelector('.ButtonArea').dataset.title = document.querySelector('h1').textContent;
 		}
 	}
 
@@ -78,132 +124,37 @@ export default class OverlayForm {
 
 	/**
 	 * Close the overlay.
-	 * Remove the form from the overlay and move the close button back to the overlay.
-	 * Reset the form changed flag to the saved state.
+	 *
+	 * @param {boolean} reload Whether to reload the parent form.
 	 */
-	closeOverlay() {
+	closeOverlay(reload = false) {
 		this.dialog.close();
-	}
 
-	/**
-	 * Handle the close event of the overlay.
-	 */
-	handleClose() {
-		// Remove the form from the overlay
-		const form = this.dialog.querySelector('.Form');
-		if (form) {
-			const buttonArea = this.dialog.querySelector(':scope > .ButtonArea');
-			const closeButton = buttonArea.querySelector('.Button-Close');
+		this.iframe.classList.remove('Visible');
+		this.iframe.contentWindow.location.replace('about:blank');
 
-			// Reset width and height of the button since the mouse leave event doesn't fire
-			const hoverElement = closeButton.querySelector('.Hover');
-			if (hoverElement) {
-				hoverElement.style.width = '';
-				hoverElement.style.height = '';
+		if (reload) {
+			const parentForm = this.opener?.closest('form');
+			if (parentForm?.length) {
+				// If the opener is inside a form, reload the form
+				window.formUpdater.sendRequest(parentForm);
 			}
-
-			// Move the close button back to the overlay
-			this.dialog.append(closeButton);
-
-			// Unlock the loaded entity
-			this.unlockEntity(form);
-
-			// Remove the form
-			form.remove();
-			// Remove the button area
-			buttonArea.remove();
-		}
-
-		// Reset the form changed flag
-		window.formLeaveConfirmation.isFormChanged = this.savedIsFormChanged;
-	}
-
-	/**
-	 * Handle the click event on the overlay.
-	 * @param {Event} event
-	 */
-	handleClick(event) {
-		if (event.target.classList.contains('Button-Close')) {
-			this.closeOverlay();
 		}
 	}
 
-	/**
-	 * Handle the form submit event.
-	 * @param {Event} event
-	 */
-	handleFormSubmit(event) {
-		event.preventDefault();
-		event.stopPropagation();
+	handleRequestClose(event) {
+		// Get the iframe's window
+		const iframeWindow = this.iframe.contentWindow;
 
-		const form = this.dialog.querySelector('form');
-
-		if (form.dataset.locked === 'true') {
+		if (!iframeWindow?.formLeaveConfirmation.isFormChanged) {
 			return;
 		}
 
-		const formData = new FormData(form);
-		formData.append('submit_type', 'submit_close');
+		event.preventDefault();
 
-		// Add a class to the form to show that a reload operation is in progress
-		form.parentElement.classList.add('FetchInProgress');
-
-		// Add a class to the body to show that a reload operation is in progress
-		document.body.classList.add('FetchInProgress');
-
-		fetch(form.action, {
-			method: form.method,
-			headers: {
-				'X-Requested-With': 'XMLHttpRequest'
-			},
-			body: formData,
-			redirect: 'manual',
-		})
-		.then(response => {
-			if (response.type === 'opaqueredirect') {
-				// Dispatching an event seems to be a good idea here
-				// to let other scripts know that the form was successfully submitted
-				const event = new CustomEvent('overlayFormSubmitted', {
-					bubbles: true,
-					cancelable: true,
-					detail: {
-						form: form,
-						response: response,
-					}
-				});
-				document.dispatchEvent(event);
-
-				const parentForm = this.opener?.closest('form');
-				if (parentForm.length) {
-					// If the opener is inside a form, reload the form
-					window.formUpdater.sendRequest(parentForm);
-				}
-
-				// A redirect was attempted, which means the form was successfully submitted
-				this.closeOverlay();
-			}
-			else {
-				// No redirect was attempted, handle the response normally
-				return response.text();
-			}
-		})
-		.then(html => {
-			if (!html) {
-				return;
-			}
-
-			// noinspection JSCheckFunctionSignatures
-			const newForm = new DOMParser().parseFromString(html, 'text/html').querySelector('form');
-
-			form.querySelector('.Fieldsets').replaceWith(newForm.querySelector('.Fieldsets'));
-		})
-		.catch(error => console.error('Error:', error))
-		.finally(() => {
-			// Remove the class from the form to show that the reload operation is complete
-			form.parentElement.classList.remove('FetchInProgress');
-
-			// Remove the class from the body to show that the reload operation is complete
-			document.body.classList.remove('FetchInProgress');
+		iframeWindow.formLeaveConfirmation.showCustomDialog(() => {
+			iframeWindow.formLeaveConfirmation.unlock();
+			this.closeOverlay();
 		});
 	}
 
@@ -221,191 +172,17 @@ export default class OverlayForm {
 		this.opener = opener;
 		const element = event.target;
 
-		this.savedIsFormChanged = window.formLeaveConfirmation.isFormChanged;
-		window.formLeaveConfirmation.isFormChanged = false;
-
-		// If the overlay element doesn't exist yet, create it.
-		if (!this.dialog) {
-			this.dialog = document.createElement('dialog');
-			this.dialog.id = 'OverlayForm';
-
-			// Add a close button
-			const closeButton = document.createElement('button');
-			closeButton.classList.add('Button', 'Button-Close');
-			closeButton.innerHTML = 'Close';
-			this.dialog.append(closeButton);
-
-			// Add a submit event to the overlay
-			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), this.dialog, true);
-
-			// Append the overlay to the body
-			document.body.append(this.dialog);
-
-			this.eventHandler.add('close', this.handleClose.bind(this), this.dialog);
-		}
-
-		let form = this.dialog.querySelector('.Form');
-		if (!form) {
-			form = document.createElement('div');
-			form.classList.add('Form');
-			this.dialog.append(form);
-		}
-
 		let target = element.getAttribute('href');
 		if (!target.endsWith('/')) {
 			target += '/';
 		}
-		target += 'ajax-form:1/';
+		target += 'overlay-form:1/';
 
 		// Show the overlay and mark it as loading
 		this.dialog.classList.add('FetchInProgress');
 		this.dialog.showModal();
 
-		let controllerData = {};
-
-		// Fetch the target URL
-		fetch(target, {
-			method: 'GET',
-			headers: {
-				'X-Requested-With': 'XMLHttpRequest'
-			},
-		})
-		.then(response => {
-			const overlayFormController = response.headers.get('X-OverlayForm-Controller');
-			const overlayFormControllerClass = response.headers.get('X-OverlayForm-ControllerClass');
-
-			controllerData['controller'] = overlayFormController || null;
-			controllerData['controllerClass'] = overlayFormControllerClass || null;
-
-			return response.text();
-		})
-		.then(html => {
-			// Parse the response text to HTML
-			const parser = new DOMParser();
-			const doc = parser.parseFromString(html, 'text/html');
-
-			form.replaceWith(doc.querySelector('.Form'));
-			form = this.dialog.querySelector('.Form');
-
-			// Remove the default save buttons
-			const saveButtons = form.querySelectorAll('.Button-Success.Button-Save');
-			for (const button of saveButtons) {
-				button.remove();
-			}
-
-			// Remove .BackToOverview links
-			const backToOverview = form.querySelectorAll('.BackToOverview');
-			for (const link of backToOverview) {
-				link.remove();
-			}
-
-			// Give the form the data-title attribute containing the h1 and remove the h1
-			const title = form.querySelector('h1');
-			if (title) {
-				this.dialog.setAttribute('data-title', title.textContent);
-				title.remove();
-			}
-
-			// Get the first button area
-			const buttonArea = form.querySelector('.ButtonArea');
-
-			// Move the button area above of the form
-			form.insertAdjacentElement('beforebegin', buttonArea);
-
-			// Move the close button to the first button area
-			const closeButton = this.dialog.querySelector('.Button-Close');
-			buttonArea.append(closeButton);
-
-			// Get the first save button, append it to the form and give it an offset
-			let saveButton = form.querySelector('.Button-SaveClose');
-			saveButton.classList.add('Button-Success');
-
-			form.querySelector('.Headlines').remove();
-			form.querySelector('#ButtonArea-Toggle').remove();
-
-			// Set the form id and the form attribute of the save button
-			const realForm = form.querySelector('form');
-			let formId = realForm.getAttribute('id');
-			if (!formId) {
-				// Create a unique id for the form
-				formId = `Form-${Date.now()}`;
-				realForm.id = formId;
-			}
-			saveButton.setAttribute('form', formId);
-
-			// Get the second save button
-			saveButton = form.querySelector('.ButtonArea-Bottom .Button-SaveClose');
-			saveButton.classList.add('Button-Success');
-
-			// Add a clone of the close button to the form
-			const closeButtonClone = closeButton.cloneNode(true);
-			closeButtonClone.type = 'button';
-			saveButton.parentElement.append(closeButtonClone);
-
-			// Show the overlay
-			this.dialog.classList.remove('FetchInProgress');
-
-			// Scroll the form to the top
-			form.scrollTo(0, 0);
-
-			// When everything is ready, dispatch an event
-			const event = new CustomEvent('overlayFormLoaded', {
-				bubbles: true,
-				cancelable: true,
-				detail: {
-					form: realForm,
-				}
-			});
-			document.dispatchEvent(event);
-
-			this.dialog.focus();
-
-			this.loadControllerClass(controllerData);
-		})
-	}
-
-	/**
-	 * Load the controller class for the overlay form, if specified.
-	 *
-	 * @param {Object} controllerData
-	 */
-	async loadControllerClass(controllerData) {
-		if (!controllerData.controllerClass) {
-			return;
-		}
-
-		const controllerClassName = `${controllerData.controller}Controller`;
-
-		if (window[controllerClassName]) {
-			return;
-		}
-
-		// Dynamically import the controller class
-		const module = await import(`../../Controller/${controllerData.controller}.js`);
-		if (module && module.default) {
-			const controllerInstance = new module.default();
-
-			// If there's an `initForm` method, call it
-			if (typeof controllerInstance.initForm === 'function') {
-				controllerInstance.initForm(this.dialog.querySelector('.Form'));
-			}
-		}
-	}
-
-	/**
-	 * Sends a request to unlock the entity,
-	 * just like the beacon does when the form is closed regularly.
-	 *
-	 * @param form
-	 */
-	unlockEntity(form) {
-		// Check if there's a lock dialog inside the form
-		const lockDialog = form.querySelector('.LockDialog');
-		if (!lockDialog) {
-			return;
-		}
-
-		window.formLock.handleUnload('#OverlayForm form');
+		this.iframe.contentWindow.location.replace(target);
 	}
 
 	/**

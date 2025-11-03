@@ -48,8 +48,14 @@
 				{% endblock %}
 
 				{% block formEditButtonSaveClose %}
-					{% if AuthorizationHelper.isAccessible('read') %}
+					{% if isOverlayForm != true and AuthorizationHelper.isAccessible('read') %}
 						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'UserForm', name: 'submit_type', value: 'submit_close'}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block overlayFormButtonClose %}
+					{% if isOverlayForm == true %}
+						{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
 					{% endif %}
 				{% endblock %}
 			{% endblock %}

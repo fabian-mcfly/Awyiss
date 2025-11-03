@@ -223,7 +223,7 @@
 		.FormInputName-SystemOrder,
 		.FormInputName-File
 	) {
-		#OverlayForm & {
+		body.OverlayForm & {
 			display:none;
 		}
 	}

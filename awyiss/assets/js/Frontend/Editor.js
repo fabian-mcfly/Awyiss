@@ -121,7 +121,7 @@ class Editor {
 		this.editLink.id = 'AwyissEditLink';
 		this.editLink.innerHTML = 'Edit';
 		this.editLink.addEventListener('click', (event) => {
-			if (!this.selectorConfig[this.activeType].overlayForm) {
+			if (!this.selectorConfig[this.activeType]?.overlayForm) {
 				return;
 			}
 

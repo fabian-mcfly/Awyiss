@@ -1,190 +1,130 @@
 #OverlayForm {
 	max-width:1280px;
-	padding:52px 0 0 0;
-	background-attachment:fixed;
-	background-color:var(--backgroundColor);
-	background-image:url("../img/background-pattern-light.png");
+	height:80vh;
+	padding:0;
+	border-radius:5px;
 	grid-template-columns:auto;
 
-	@media screen and (width <= 768px) {
-		padding:42px 0 0 0;
+	&::before {
+		display:none;
 	}
 
-	&.FetchInProgress {
-		background-color:var(--colorBright);
-		background-image:none;
+	&::after {
+		@extend %LoaderIcon;
 
-		html.🌚 & {
-			background-color:var(--colorDark);
-		}
-
-		&::before {
-			display:none;
-		}
-
-		&::after {
-			@extend %LoaderIcon;
-
-			content:'';
-			background-color:transparent;
-			width:220px;
-			height:20px;
-			margin:auto;
-			position:fixed;
-			inset:0;
-			opacity:1;
-			z-index:1860;
-		}
-
-		.Form {
-			pointer-events:none;
-
-			> * {
-				opacity:.1;
-			}
-		}
+		content:'';
+		background-color:transparent;
+		width:220px;
+		height:20px;
+		margin:auto;
+		position:fixed;
+		inset:0;
+		opacity:1;
+		z-index:1;
 	}
 
-	> .Form {
-		max-height:calc(80dvh - 52px);
-		border:10px solid transparent;
+	> iframe {
+		display:block;
+		width:100%;
+		height:100%;
 		border-radius:5px;
-		padding:30px;
-		overflow:hidden auto;
-		grid-template-columns:auto;
-		scrollbar-color:var(--scrollbarColor);
-		scrollbar-width:thin;
+		border:0 none;
+		background-color:transparent;
+		position:relative;
+		z-index:2;
+		pointer-events:none;
+		opacity:0;
+		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+		visibility:hidden;
+
+		&.Visible {
+			pointer-events:auto;
+			opacity:1;
+			visibility:visible;
+			transition-delay:0s;
+		}
+	}
+}
+
+body.OverlayForm {
+	padding-block:0;
+
+	#Content {
+		padding-top:calc(var(--rowGap) + 52px);
 
 		@media screen and (width <= 768px) {
-			padding-inline:10px;
-			padding-bottom:10px;
+			padding-top:72px;
 		}
 
 		@media screen and (width <= 540px) {
-			padding-inline:5px;
-			padding-bottom:5px;
-			border-width:5px;
+			padding-top:57px;
 		}
 
 		html.Scale-Small & {
 			@media screen and (width > 768px) {
-				padding:10px;
+				padding-top:72px;
 			}
 		}
 
-		&:focus {
-			outline:2px solid var(--colorSuccess);
-			outline-offset:-3px;
-		}
 
-		/*.Fieldsets {
-			grid-template-columns:[main sidebar] auto;
-
-			> .Fieldset-Presentation,
-			> .Fieldset-Conditions {
-				grid-column-end:auto;
-			}
-		}*/
-
-		.Sidebar-Fieldsets {
-			width:100%;
-			height:auto;
-			min-height:0;
-			padding:0;
-			box-shadow:none;
-			background-color:transparent;
-			background-image:none;
-			position:relative;
-			inset:unset;
-			transform:none;
-			overflow:visible;
-			z-index:unset;
+		.Headlines {
+			display:none;
 		}
 
 		.ButtonArea {
-			&.ButtonArea-Bottom {
-				display:flex;
+			&:not(.ButtonArea-Bottom) {
+				@extend %DialogTitle;
+
 				width:100%;
-				margin:0;
+				padding:2px;
+				text-align:left;
+				position:fixed;
+				top:0;
+				left:0;
+				z-index:20;
 
-				@media screen and (width <= 768px) {
-					margin-top:calc(20px - var(--rowGap));
-				}
-
-				html.Scale-Small & {
-					@media screen and (width > 768px) {
-						margin-top:calc(20px - var(--rowGap));
-					}
+				@media screen and (width <= 640px) {
+					display:flex;
 				}
 
 				.Button {
-					margin-right:0;
+					width:auto;
+					height:48px;
 					margin-bottom:0;
+					background-color:transparent;
+					line-height:26px;
+					z-index:20;
 
-					&:first-child {
-						margin-right:auto;
+					@media screen and (width <= 768px) {
+						height:38px;
+					}
+
+					@media screen and (width <= 540px) {
+						padding-inline:10px;
+					}
+
+					@media screen and (width <= 480px) {
+						font-size:0;
+						line-height:0;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							height:38px;
+						}
+					}
+
+					&::after {
+						@media screen and (width <= 480px) {
+							margin-left:0;
+						}
 					}
 				}
 			}
-		}
-	}
 
-	> .ButtonArea {
-		width:max-content;
-		margin:0;
-		padding:2px;
-		position:absolute;
-		top:0;
-		right:0;
-
-		@media screen and (width <= 640px) {
-			display:flex;
-		}
-
-		html.Scale-Small & {
-			@media screen and (width > 768px) {
-				margin-top:0;
-			}
-		}
-
-		.Button {
-			width:auto;
-			height:48px;
-			background-color:transparent;
-			line-height:26px;
-
-			@media screen and (width <= 768px) {
-				height:38px;
-			}
-
-			@media screen and (width <= 540px) {
-				padding-inline:10px;
-			}
-
-			@media screen and (width <= 480px) {
-				font-size:0;
-				line-height:0;
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					height:38px;
-				}
-			}
-
-			&.Button-SaveAsCopy {
+			.Button-SaveClose {
 				display:none;
 			}
-
-			&::after {
-				@media screen and (width <= 480px) {
-					margin-left:0;
-				}
-			}
 		}
-	}
-
-	> .Button-Close {
-		display:none;
 	}
 }

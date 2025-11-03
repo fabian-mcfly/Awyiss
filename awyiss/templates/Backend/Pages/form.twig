@@ -233,7 +233,7 @@
 	{% endset %}
 
 	{% block sidebarToggle %}
-		{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+		{% if config.Awyiss.System.Backend.interface.sidebarMode == true and isOverlayForm != true %}
 			{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
 		{% endif %}
 	{% endblock %}
@@ -255,7 +255,7 @@
 				}) }}
 			{% endif %}
 
-			{% if config.Awyiss.System.Backend.interface.sidebarMode != true %}
+			{% if config.Awyiss.System.Backend.interface.sidebarMode != true or isOverlayForm == true %}
 				{{ fieldsetPresentation }}
 				{{ fieldsetConditions }}
 				{{ fieldsetGeneral }}
@@ -269,7 +269,7 @@
 			{% endif %}
 
 			{% block mainFieldsets %}
-				{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				{% if config.Awyiss.System.Backend.interface.sidebarMode == true and isOverlayForm != true %}
 					<div class="Main-Fieldsets">
 						{{ fieldsetGeneral }}
 						{{ fieldsetContent }}
@@ -281,7 +281,7 @@
 			{% endblock %}
 
 			{% block sidebarFieldsets %}
-				{% if config.Awyiss.System.Backend.interface.sidebarMode == true %}
+				{% if config.Awyiss.System.Backend.interface.sidebarMode == true and isOverlayForm != true %}
 					<div class="Sidebar-Fieldsets">
 						{{ fieldsetPresentation }}
 						{{ fieldsetConditions }}

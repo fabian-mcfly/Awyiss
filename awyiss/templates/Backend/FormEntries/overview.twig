@@ -49,15 +49,6 @@
 								{{ FormHelper.create(null, {url: {action: 'export'}, class: 'List'}) }}
 							{% endblock %}
 
-							{% block overviewExportFormControlLanguages %}
-								{{ FormHelper.control('export_languages', {
-									type: 'select',
-									multiple: 'checkbox',
-									options: languages.Frontend|reduce((carry, language) => carry|merge({(language.shortcode): language.title}), {}),
-									value: languages.Frontend|map(language => language.shortcode)
-								}) }}
-							{% endblock %}
-
 							{% block overviewExportFormControlFormat %}
 								{{ FormHelper.control('export_format', {
 									empty: false,
@@ -70,6 +61,15 @@
 									required: true,
 									type: 'select',
 									val: 'csv'
+								}) }}
+							{% endblock %}
+
+							{% block overviewExportFormControlLanguages %}
+								{{ FormHelper.control('export_languages', {
+									type: 'select',
+									multiple: 'checkbox',
+									options: languages.Frontend|reduce((carry, language) => carry|merge({(language.shortcode): language.title}), {}),
+									value: languages.Frontend|map(language => language.shortcode)
 								}) }}
 							{% endblock %}
 
