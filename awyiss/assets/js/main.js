@@ -29,13 +29,15 @@ import Search from 'Search';
 import TitleSetter from 'TitleSetter';
 import TranslatableTexts from 'Form/TranslatableTexts';
 
-
+window.bodyRemoved = false;
 // If the document contains a flash message, send an event to the parent window
 if (document.querySelector('.FlashMessage.Success') && window.parent !== window) {
+	window.parent.postMessage('closeOverlayFormAndReload', '*');
 	window.parent.postMessage('closeFrontendEditorAndFetch', '*');
 
 	// Empty the dom so the user can't interact with the page
 	document.body.innerHTML = '';
+	window.bodyRemoved = true;
 }
 
 /**
@@ -278,6 +280,12 @@ export async function loadTextEditor(editor) {
  * @returns {Promise<void>}
  */
 export async function initMainOnReady() {
+	document.removeEventListener('DOMContentLoaded', initMainOnReady);
+
+	if (window.bodyRemoved) {
+		return;
+	}
+
 	/**
 	 * Make sure the observer is created before any other classes that use it
 	 * @global
@@ -478,6 +486,12 @@ export async function initMainOnReady() {
  * @returns {void}
  */
 export function initMainOnLoad() {
+	window.removeEventListener('load', initMainOnLoad);
+
+	if (window.bodyRemoved) {
+		return;
+	}
+
 	// Call the OverflowMenu class, only if the menu exists
 	if (document.querySelector('#Menu-System')) {
 		/**
