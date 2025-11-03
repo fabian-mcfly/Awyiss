@@ -25,6 +25,9 @@ export default class FormsController {
 		if (conditionalRecipients) {
 			window.eventHandler.add('change', this.handleConditionalRecipientTypeChange.bind(this, form), conditionalRecipients);
 		}
+
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**
@@ -62,6 +65,27 @@ export default class FormsController {
 
 		fieldSelect.disabled = event.target.value === '';
 		fieldSelect.required = event.target.value !== '';
+	}
+
+	/**
+	 * Observe mutations.
+	 * @param {MutationRecord} mutation
+	 */
+	observeMutations(mutation) {
+		mutation.addedNodes.forEach(node => {
+			if (!(node instanceof HTMLElement)) {
+				return;
+			}
+
+			if (node.matches('.FormInputName-FormConditionalRecipients')) {
+				window.eventHandler.add('change', this.handleConditionalRecipientTypeChange.bind(this, form), conditionalRecipients);
+			}
+
+			const conditionalRecipients = node.querySelector('.FormInputName-FormConditionalRecipients');
+			if (conditionalRecipients) {
+				window.eventHandler.add('change', this.handleConditionalRecipientTypeChange.bind(this, form), conditionalRecipients);
+			}
+		})
 	}
 }
 
