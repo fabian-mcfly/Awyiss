@@ -173,7 +173,7 @@ msgstr "<summary>Platzhalter</summary>"
 "</ul>"
 
 msgid "conditional_recipients_strategy"
-msgstr "Strategie"
+msgstr "Empfänger-Regel Strategie"
 
 msgid "conditional_recipients_strategy_match_first"
 msgstr "Erster Treffer (Standard)"

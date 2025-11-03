@@ -361,7 +361,8 @@ html.PickQuestionMode {
 				grid-template-columns:auto 120px;
 				row-gap:15px;
 				transition:background-color .3s ease-in-out, z-index 0s linear 2s;
-				z-index:1;
+				transition-behavior:allow-discrete;
+				z-index:auto;
 
 				&:has(.Identifier) {
 					padding-block:14px;
@@ -466,7 +467,6 @@ html.PickQuestionMode {
 		.ListItem-AnswersSettings {
 			margin-right:-20px;
 			padding-right:30px;
-			overflow:hidden;
 		}
 
 		.Answers-List {
@@ -478,7 +478,8 @@ html.PickQuestionMode {
 				list-style-type:none;
 				position:relative;
 				transition:z-index 0s linear 2s;
-				z-index:1;
+				transition-behavior:allow-discrete;
+				z-index:auto;
 
 				&:not(:has(
 					input[type="checkbox"][name$="][active]"]:checked,
@@ -586,7 +587,8 @@ html.PickQuestionMode {
 			background-color:var(--backgroundColorOdd);
 			position:relative;
 			transition:z-index 0s linear 2s;
-			z-index:1;
+			transition-behavior:allow-discrete;
+			z-index:auto;
 
 			&:not(.Visible) {
 				display:none;

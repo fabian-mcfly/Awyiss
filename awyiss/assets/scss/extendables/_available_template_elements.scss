@@ -173,21 +173,27 @@
 	}
 
 	.List:not([data-fieldset="unused"]) > & {
+		--translateButtonColumnWidth:52px;
+
 		gap:10px 20px;
-		grid-template-columns:auto fit-content(120px) fit-content(250px) 52px;
+		grid-template-columns:auto fit-content(120px) fit-content(250px) var(--translateButtonColumnWidth);
 
 		@media screen and (1024px < width <= 1280px),
 			screen and (768px < width <= 860px),
 			screen and (width <= 680px) {
-			grid-template-columns:auto fit-content(250px) 52px;
+			grid-template-columns:auto fit-content(250px) var(--translateButtonColumnWidth);
+		}
+
+		@media screen and (width <= 768px) {
+			--translateButtonColumnWidth:42px;
 		}
 
 		@media screen and (680px < width <= 768px) {
-			grid-template-columns:auto fit-content(100px) 175px 52px;
+			grid-template-columns:auto fit-content(100px) 200px var(--translateButtonColumnWidth);
 		}
 
 		@media screen and (width <= 640px) {
-			grid-template-columns:50% 1fr 52px;
+			grid-template-columns:50% 1fr var(--translateButtonColumnWidth);
 		}
 
 		@media screen and (width <= 540px) {
@@ -274,10 +280,36 @@
 
 			.Label {
 				display:inline-block;
-				width:200px;
 				margin-bottom:0;
 				padding-left:0;
 				line-height:1;
+			}
+
+			select,
+			.CustomSelect {
+				width:150px;
+				margin-left:10px;
+
+				@media screen and (680px < width <= 768px) {
+					width:120px;
+				}
+
+				@media screen and (width <= 380px) {
+					width:100px;
+				}
+			}
+
+			.CustomSelect {
+				margin-top:0;
+				margin-left:-150px;
+
+				@media screen and (680px < width <= 768px) {
+					margin-left:-120px;
+				}
+
+				@media screen and (width <= 380px) {
+					margin-left:-100px;
+				}
 			}
 		}
 

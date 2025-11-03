@@ -537,3 +537,9 @@ msgstr "Alle"
 
 msgid "unassigned"
 msgstr "Nicht zugeordnet"
+
+msgid "select_filter_placeholder"
+msgstr "Suchen..."
+
+msgid "select_empty_label"
+msgstr "---"

@@ -237,7 +237,11 @@ class FormHelper extends BaseFormHelper {
 	 * @inheritDoc
 	 */
 	public function select(string $fieldName, iterable $options = [], array $attributes = []): string {
-		return parent::select($fieldName, $options, $attributes + ['empty' => !($attributes['multiple'] ?? false)]);
+		return parent::select($fieldName, $options, $attributes + [
+			'empty' => !($attributes['multiple'] ?? false),
+			'data-filter-placeholder' => __d('system', 'select_filter_placeholder'),
+			'data-empty-label' => __d('system', 'select_empty_label'),
+		]);
 	}
 
 

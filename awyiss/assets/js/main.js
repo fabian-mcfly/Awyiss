@@ -5,6 +5,7 @@ import Audit from 'Audit/Audit';
 import ButtonArea from 'ButtonArea';
 import ButtonHandler from 'ButtonHandler';
 import ColorPicker from 'Form/ColorPicker';
+import CustomSelect from 'Form/CustomSelect';
 import DatePicker from 'Form/DatePicker';
 import DetailsHandler from 'DetailsHandler';
 import EventHandler from 'EventHandler';
@@ -332,6 +333,12 @@ export async function initMainOnReady() {
 	 * @type {ColorPicker}
 	 */
 	window.colorPicker = new ColorPicker();
+
+	/**
+	 * @global
+	 * @type {CustomSelect}
+	 */
+	window.customSelect = new CustomSelect();
 
 	/**
 	 * @global

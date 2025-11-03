@@ -173,7 +173,7 @@ msgstr "<summary>Placeholders</summary>"
 "</ul>"
 
 msgid "conditional_recipients_strategy"
-msgstr "Strategy"
+msgstr "Recipients Rules Strategy"
 
 msgid "conditional_recipients_strategy_match_first"
 msgstr "First match (default)"

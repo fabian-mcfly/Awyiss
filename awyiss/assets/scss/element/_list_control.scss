@@ -90,6 +90,52 @@
 					padding-inline:5px;
 				}
 			}
+
+			&:not([disabled]) {
+				+ .CustomSelect {
+					width:72px;
+					margin-top:0;
+					margin-left:-72px;
+
+					@media screen and (width <= 768px) {
+						width:57px;
+						margin-left:-57px;
+					}
+
+					@media screen and (width <= 480px) {
+						width:52px;
+						height:30px;
+						margin-left:-52px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							width:57px;
+							margin-top:0;
+							margin-left:-57px;
+						}
+					}
+				}
+			}
+		}
+
+		.CustomSelect-Button {
+			padding-right:15px;
+
+			@media screen and (width <= 480px) {
+				height:30px;
+				padding-block:0;
+				line-height:28px;
+			}
+
+			&::after {
+				font-size:13px;
+				right:5px;
+
+				@media screen and (width <= 480px) {
+					line-height:22px;
+				}
+			}
 		}
 	}
 }

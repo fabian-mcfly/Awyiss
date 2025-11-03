@@ -6,11 +6,46 @@
 		container-type:inline-size;
 
 		.FormInputType-ListItem {
-			grid-template-columns:repeat(4, 1fr);
+			grid-template-columns:repeat(4, minmax(0, 1fr));
 
-			@container (width <= 640px) {
+			@container (width <= 860px) {
 				margin-bottom:30px;
-				grid-template-columns:repeat(2, 1fr);
+				grid-template-columns:repeat(2, minmax(0, 1fr));
+			}
+
+			@container (width <= 860px) {
+				grid-template-columns:minmax(0, 1fr);
+			}
+
+			&:nth-child(n+2 of .FormInputType-ListItem) {
+				&::before {
+					@container (width <= 1024px) {
+						content:'';
+						height:2px;
+						border-radius:1px;
+						background-color:color-mix(in srgb, var(--colorMedium), transparent 50%);
+						position:absolute;
+						top:-15px;
+						right:0;
+						left:40px;
+					}
+
+					@media screen and (width <= 768px) {
+						left:30px;
+					}
+
+					@media screen and (width <= 540px) {
+						height:1px;
+						left:20px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							height:1px;
+							left:20px;
+						}
+					}
+				}
 			}
 
 			> .FormInput {
@@ -18,14 +53,14 @@
 				margin-bottom:0;
 
 				> .Label {
-					@container (width <= 640px) {
+					@container (width <= 860px) {
 						display:block;
 					}
 				}
 			}
 
 			.SortableHandle, {
-				@container (width <= 640px) {
+				@container (width <= 860px) {
 					top:calc(1rem + 7px);
 
 					@media screen and (width <= 540px) {
@@ -38,7 +73,7 @@
 				.ShowTranslationDialog,
 				.Button-Remove
 			) {
-				@container (width <= 640px) {
+				@container (width <= 860px) {
 					top:1.05rem;
 				}
 			}

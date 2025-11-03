@@ -380,7 +380,8 @@ input {
 		&:focus-visible {
 			box-shadow:none;
 
-			+ select[data-options-for] {
+			+ select[data-options-for],
+			~ .CustomSelect .CustomSelect-Button {
 				--backgroundColor:var(--colorBright);
 
 				border-color:var(--colorSuccess);
@@ -394,9 +395,10 @@ input {
 		}
 	}
 
-	&:has(+ select[data-options-for]:focus) {
+	&:has(+ select[data-options-for]:focus, ~ .CustomSelect:focus-within) {
 		&,
-		+ select[data-options-for]:focus {
+		+ select[data-options-for]:focus,
+		~ .CustomSelect:focus-within {
 			--backgroundColor:var(--colorBright);
 
 			border-color:var(--colorSuccess);
@@ -451,6 +453,20 @@ select {
 		html.Scale-Small & {
 			@media screen and (width > 768px) {
 				margin-top:-42px;
+			}
+		}
+
+		+ .CustomSelect {
+			margin-top:-52px;
+
+			@media screen and (width <= 768px) {
+				margin-top:-42px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-top:-42px;
+				}
 			}
 		}
 	}
@@ -766,11 +782,16 @@ textarea {
 		&.SortableGhost {
 			:is(
 				input,
-				select
+				select,
+				.CustomSelect-Button
 			) {
-				background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
+				background-color:color-mix(in srgb, var(--colorSuccess), var(--colorBright) 75%);
 				outline:2px solid var(--colorSuccess);
 				outline-offset:-2px;
+
+				html.🌚 & {
+					background-color:color-mix(in srgb, var(--colorSuccess), var(--colorBackgroundContentDarkMode) 75%);
+				}
 			}
 		}
 
@@ -1418,12 +1439,32 @@ textarea {
 			border:0 none;
 			font-size:30px;
 			line-height:50px;
+
+			@media screen and (width <= 768px) {
+				line-height:40px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					line-height:40px;
+				}
+			}
 		}
 
 		&:has(+ .InFieldButton) {
 			border-top-right-radius:0;
 			border-bottom-right-radius:0;
 			right:51px;
+
+			@media screen and (width <= 768px) {
+				right:41px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					right:41px;
+				}
+			}
 		}
 
 		+ .InFieldButton {
@@ -1849,6 +1890,7 @@ textarea {
 				position:absolute;
 				top:0;
 				right:0;
+				z-index:10;
 
 				.Button {
 					width:auto;

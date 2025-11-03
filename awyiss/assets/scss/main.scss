@@ -13,26 +13,7 @@
 @import 'general/form';
 @import 'general/footer';
 
-//Base dialog
-@import 'element/dialog';
-
-@import 'element/button';
-@import 'element/button_area';
-@import 'element/confirm_dialog';
-@import 'element/form_leave_confirm_dialog';
-@import 'element/flash_message';
-@import 'element/geocode_multiple_results_dialog';
-@import 'element/link_select';
-@import 'element/list_control';
-@import 'element/locks';
-@import 'element/media_selector';
-@import 'element/nested_list';
-@import 'element/overlay_form';
-@import 'element/search_filter';
-@import 'element/seo_analyze_dialog';
-@import 'element/seo_snippet';
-@import 'element/table';
-@import 'element/translation_dialog';
+@import 'element';
 
 @import 'Attributes';
 @import 'Audit';

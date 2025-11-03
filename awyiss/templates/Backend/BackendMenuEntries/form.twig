@@ -227,12 +227,18 @@
 	<dialog id="LinkHelperDialog" data-title="{{ __('link_helper_dialog_title') }}">
 		<div class="FormInput FormInputType-Select FormInputName-LinkHelperController">
 			<label class="Label" for="MenuEntry-LinkHelperController">{{ __('link_helper_dialog_label_controller') }}</label>
-			<select name="link_helper[controller]" id="MenuEntry-LinkHelperController"></select>
+			<select name="link_helper[controller]" id="MenuEntry-LinkHelperController"
+				data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
+				data-empty-label="{{ __d('system', 'select_empty_label') }}"
+			></select>
 		</div>
 
 		<div class="FormInput FormInputType-Select FormInputName-LinkHelperMethod">
 			<label class="Label" for="MenuEntry-LinkHelperMethod">{{ __('link_helper_dialog_label_method') }}</label>
-			<select name="link_helper[method]" id="MenuEntry-LinkHelperMethod"></select>
+			<select name="link_helper[method]" id="MenuEntry-LinkHelperMethod"
+				data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
+				data-empty-label="{{ __d('system', 'select_empty_label') }}"
+			></select>
 		</div>
 
 		<div class="FormInput FormInputType-List FormInputName-UrlParams" data-list-item-add="{{ __('link_helper_dialog_label_url_param_add') }}" data-list-item-remove="{{ __('link_helper_dialog_label_url_param_remove') }}">
@@ -258,12 +264,18 @@
 	<dialog id="AccessHelperDialog" data-title="{{ __('access_helper_dialog_title') }}">
 		<div class="FormInput FormInputType-Select FormInputName-AccessHelperScope">
 			<label class="Label" for="MenuEntry-AccessHelperScope">{{ __('access_helper_dialog_label_scope') }}</label>
-			<select name="access_helper[scope]" id="MenuEntry-AccessHelperScope"></select>
+			<select name="access_helper[scope]" id="MenuEntry-AccessHelperScope"
+				data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
+				data-empty-label="{{ __d('system', 'select_empty_label') }}"
+			></select>
 		</div>
 
 		<div class="FormInput FormInputType-Select FormInputName-AccessHelperPermission">
 			<label class="Label" for="MenuEntry-AccessHelperPermission">{{ __('access_helper_dialog_label_permission') }}</label>
-			<select name="access_helper[permission]" id="MenuEntry-AccessHelperPermission"></select>
+			<select name="access_helper[permission]" id="MenuEntry-AccessHelperPermission"
+				data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
+				data-empty-label="{{ __d('system', 'select_empty_label') }}"
+			></select>
 		</div>
 
 		<button id="AccessHelperDialog-Button-Apply" class="Button Button-Success Button-Save Button-Apply">
