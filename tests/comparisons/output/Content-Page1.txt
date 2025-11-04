@@ -113,9 +113,9 @@ Aperiam, atque consectetur eaque eos praesentium quam vero. Atque doloribus enim
 <source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">
 <source media="(width <= 1024px)" data-srcset="_resized/dummypath/logo-awyiss-[w1024].avif 1x, _resized/dummypath/logo-awyiss-[w2048].avif 2x" type="image/avif">
 <source media="(width <= 1280px)" data-srcset="_resized/dummypath/logo-awyiss-[w1280].avif 1x, ../awyiss/Command/Media/TestFiles/logo-awyiss.png 2x" type="image/avif">
-<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png" id="Image-03b73bd2f5ee2f2" aria-hidden="true" width="1440" height="810" class="Lazyload">
-<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png" id="Image-03b73bd2f5ee2f2-NoScript" aria-hidden="true" width="1440" height="810"></noscript>
-<style>#Image-03b73bd2f5ee2f2, #Image-03b73bd2f5ee2f2-NoScript { --imageAspectRatio: 1.78; }</style>
+<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png" id="Image-e09dcd3a6939edd" aria-hidden="true" width="1440" height="810" class="Lazyload">
+<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png" id="Image-e09dcd3a6939edd-NoScript" aria-hidden="true" width="1440" height="810"></noscript>
+<style>#Image-e09dcd3a6939edd, #Image-e09dcd3a6939edd-NoScript { --imageAspectRatio: 1.78; }</style>
 </picture>
 </a>
 </div>

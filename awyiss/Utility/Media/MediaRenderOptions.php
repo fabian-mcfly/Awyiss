@@ -16,7 +16,7 @@ class MediaRenderOptions {
 	 * When any key in the array provided to the `with` method
 	 * uses this value, the value will be preserved.
 	 */
-	final public const PRESERVE_VALUE = 'PRESERVE_VALUE';
+	final public const string PRESERVE_VALUE = 'PRESERVE_VALUE';
 
 
 	/**
@@ -30,6 +30,7 @@ class MediaRenderOptions {
 	 * @param float|int $columnWidth
 	 * @param float|int|null $height
 	 * @param bool $include2x
+	 * @param bool $lazyload
 	 * @param float|null $minBreakpoint
 	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $resizeStrategy
 	 * @param bool $responsive
@@ -48,6 +49,7 @@ class MediaRenderOptions {
 		protected float|int $columnWidth = 100.00,
 		protected float|int|null $height = null,
 		protected bool $include2x = true,
+		protected bool $lazyload = true,
 		protected ?float $minBreakpoint = null,
 		protected ResizeStrategy|string|int $resizeStrategy = ResizeStrategy::Contain,
 		protected bool $responsive = true,
@@ -156,6 +158,14 @@ class MediaRenderOptions {
 	 */
 	public function getInclude2x(): bool {
 		return $this->include2x;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function getLazyload(): bool {
+		return $this->lazyload;
 	}
 
 
@@ -306,6 +316,15 @@ class MediaRenderOptions {
 	 */
 	public function withInclude2x(bool $include2x): static {
 		return $this->with(['include2x' => $include2x]);
+	}
+
+
+	/**
+	 * @param bool $lazyload
+	 * @return $this
+	 */
+	public function withLazyload(bool $lazyload): static {
+		return $this->with(['lazyload' => $lazyload]);
 	}
 
 

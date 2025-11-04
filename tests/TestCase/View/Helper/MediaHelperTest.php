@@ -75,6 +75,17 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @return array<string, bool>
+	 */
+	public static function lazyloadProvider(): array {
+		return [
+			'enabled' => [true],
+			'disabled' => [false],
+		];
+	}
+
+
+	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::getMediaRenderOptions()
 	 */
@@ -620,6 +631,127 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider lazyloadProvider
+	 * @param bool $lazyload
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
+	 */
+	public function testHtmlTagForImageWithLazyload(bool $lazyload): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'responsive' => false,
+			'lazyload' => $lazyload,
+		]);
+
+		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
+
+		$this->assertStringNotContainsString('<picture', $result);
+
+		if ($lazyload) {
+			$this->assertStringContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif"', $result);
+			$this->assertStringContainsString('<noscript', $result);
+			$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif"', $result);
+		}
+		else {
+			$this->assertStringNotContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif"', $result);
+			$this->assertStringNotContainsString('data-src=', $result);
+			$this->assertStringNotContainsString('<noscript', $result);
+		}
+	}
+
+
+	/**
+	 * @dataProvider lazyloadProvider
+	 * @param bool $lazyload
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testHtmlTagForImageResponsiveWithLazyload(bool $lazyload): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1280.00,
+			'columnWidth' => 75.00,
+			'include2x' => true,
+			'responsive' => true,
+			'singleColumnBreakpoint' => 640,
+			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
+			'lazyload' => $lazyload,
+		]);
+
+		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
+
+		$this->assertStringContainsString('<picture', $result);
+
+		if ($lazyload) {
+			$this->assertStringContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif 1x, _resized/dummypath/logo-awyiss-[w640].avif 2x"', $result);
+			$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
+			$this->assertStringContainsString('<noscript', $result);
+			$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
+		}
+		else {
+			$this->assertStringNotContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('<source media="(width <= 320px)" srcset="_resized/dummypath/logo-awyiss-[w320].avif 1x, _resized/dummypath/logo-awyiss-[w640].avif 2x"', $result);
+			$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
+			$this->assertStringNotContainsString('data-srcset=', $result);
+			$this->assertStringNotContainsString('data-src=', $result);
+			$this->assertStringNotContainsString('<noscript', $result);
+		}
+	}
+
+
+	/**
+	 * @dataProvider lazyloadProvider
+	 * @param bool $lazyload
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testHtmlTagForVideoWithLazyload(bool $lazyload): void {
+		$media = new Media([
+			'id' => 0,
+			'name' => 'video.mp4',
+			'path' => '/path/to/video.mp4',
+			'preview_path' => '/path/to/poster.jpg',
+			'mime_type' => 'video/mp4',
+		]);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'responsive' => false,
+			'lazyload' => $lazyload,
+		]);
+
+		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
+
+		$this->assertStringContainsString('<video', $result);
+		/** @noinspection HtmlUnknownTarget */
+		$this->assertStringContainsString('<source src="/path/to/video.mp4" type="video/mp4">', $result);
+
+		if ($lazyload) {
+			$this->assertStringContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('data-poster="/path/to/_mp4_preview/video.jpg"', $result);
+			$this->assertStringNotContainsString(' poster="', $result);
+		}
+		else {
+			$this->assertStringNotContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('poster="/path/to/_mp4_preview/video.jpg"', $result);
+			$this->assertStringNotContainsString('data-poster=', $result);
+		}
+	}
+
+
+	/**
 	 * @dataProvider include2xProvider
 	 * @param bool $include2x
 	 * @return void
@@ -976,6 +1108,76 @@ class MediaHelperTest extends TestCase {
 
 		$this->assertStringNotContainsString('width="1024"', $result);
 		$this->assertStringContainsString('width="2560" height="1440"', $result);
+	}
+
+
+	/**
+	 * @dataProvider lazyloadProvider
+	 * @param bool $lazyload
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testImageTagWithLazyload(bool $lazyload): void {
+		$media = new Media([
+			'name' => 'image.jpg',
+			'path' => '/path/to/image.jpg',
+			'mime_type' => 'image/jpeg',
+		]);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'lazyload' => $lazyload,
+		]);
+
+		$result = $this->mediaHelper->imageTag($media, $mediaRenderOptions);
+
+		if ($lazyload) {
+			$this->assertStringContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('<img data-src="/path/to/_avif/image.jpg.avif"', $result);
+			$this->assertStringContainsString('<noscript', $result);
+			$this->assertStringContainsString('<img src="/path/to/_avif/image.jpg.avif"', $result);
+		}
+		else {
+			$this->assertStringNotContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('<img src="/path/to/_avif/image.jpg.avif"', $result);
+			$this->assertStringNotContainsString('data-src=', $result);
+			$this->assertStringNotContainsString('<noscript', $result);
+		}
+	}
+
+
+	/**
+	 * @dataProvider lazyloadProvider
+	 * @param bool $lazyload
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testImageTagForSvgWithLazyload(bool $lazyload): void {
+		$media = new Media([
+			'name' => 'image.svg',
+			'path' => '/path/to/image.svg',
+			'mime_type' => 'image/svg+xml',
+		]);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'lazyload' => $lazyload,
+		]);
+
+		$result = $this->mediaHelper->imageTag($media, $mediaRenderOptions);
+
+		if ($lazyload) {
+			$this->assertStringContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('<img data-src="/path/to/image.svg"', $result);
+			$this->assertStringContainsString('<noscript', $result);
+			$this->assertStringContainsString('<img src="/path/to/image.svg"', $result);
+		}
+		else {
+			$this->assertStringNotContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('<img src="/path/to/image.svg"', $result);
+			$this->assertStringNotContainsString('data-src=', $result);
+			$this->assertStringNotContainsString('<noscript', $result);
+		}
 	}
 
 
@@ -1343,6 +1545,64 @@ class MediaHelperTest extends TestCase {
 
 
 	/**
+	 * @dataProvider lazyloadProvider
+	 * @param bool $lazyload
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testPictureTagWithLazyload(bool $lazyload): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$media->averageColor = '#00ff00';
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1280.00,
+			'columnWidth' => 75.00,
+			'include2x' => true,
+			'responsive' => true,
+			'singleColumnBreakpoint' => 640,
+			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
+			'lazyload' => $lazyload,
+		]);
+
+		$result = $this->mediaHelper->pictureTag($media, $mediaRenderOptions);
+
+		// Verify picture tag structure
+		$this->assertStringContainsString('<picture>', $result);
+		$this->assertStringContainsString('</picture>', $result);
+
+		if ($lazyload) {
+			// Verify sources use data-srcset for lazy loading
+			$this->assertStringContainsString('<source media="(width <= 320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].avif 1x, _resized/dummypath/logo-awyiss-[w640].avif 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].avif 1x, _resized/dummypath/logo-awyiss-[w1024].avif 2x"', $result);
+			// Verify img tag has lazyload class and data-src
+			$this->assertStringContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
+			// Verify noscript fallback exists
+			$this->assertStringContainsString('<noscript', $result);
+			$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
+		}
+		else {
+			// Verify sources use regular srcset (not lazy loading)
+			$this->assertStringContainsString('<source media="(width <= 320px)" srcset="_resized/dummypath/logo-awyiss-[w320].avif 1x, _resized/dummypath/logo-awyiss-[w640].avif 2x"', $result);
+			$this->assertStringContainsString('<source media="(width <= 480px)" srcset="_resized/dummypath/logo-awyiss-[w480].avif 1x, _resized/dummypath/logo-awyiss-[w1024].avif 2x"', $result);
+			// Verify img tag has regular src and no lazyload class
+			$this->assertStringContainsString('<img src="_resized/dummypath/logo-awyiss-[w1024].avif"', $result);
+			$this->assertStringNotContainsString('class="Lazyload"', $result);
+			// Ensure no lazy loading attributes or noscript
+			$this->assertStringNotContainsString('data-srcset=', $result);
+			$this->assertStringNotContainsString('data-src=', $result);
+			$this->assertStringNotContainsString('<noscript', $result);
+		}
+
+		// Verify background color is present regardless of lazyload setting
+		$this->assertStringContainsString('--imageBackgroundColor:#00ff00;', $result);
+	}
+
+
+	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
@@ -1491,6 +1751,83 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->videoTag($media, $this->mediaHelper->getMediaRenderOptions());
 
 		$this->assertSame('', $result);
+	}
+
+
+	/**
+	 * @dataProvider lazyloadProvider
+	 * @param bool $lazyload
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testVideoTagWithLazyload(bool $lazyload): void {
+		$media = new Media([
+			'id' => 0,
+			'name' => 'video.mp4',
+			'path' => '/path/to/video.mp4',
+			'preview_path' => '/path/to/poster.jpg',
+			'mime_type' => 'video/mp4',
+		]);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'lazyload' => $lazyload,
+		]);
+
+		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
+
+		$this->assertStringContainsString('<video', $result);
+		/** @noinspection HtmlUnknownTarget */
+		$this->assertStringContainsString('<source src="/path/to/video.mp4" type="video/mp4">', $result);
+
+		if ($lazyload) {
+			$this->assertStringContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('data-poster="/path/to/_mp4_preview/video.jpg"', $result);
+			$this->assertStringNotContainsString(' poster="', $result);
+		}
+		else {
+			$this->assertStringNotContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('poster="/path/to/_mp4_preview/video.jpg"', $result);
+			$this->assertStringNotContainsString('data-poster=', $result);
+		}
+	}
+
+
+	/**
+	 * @dataProvider lazyloadProvider
+	 * @param bool $lazyload
+	 * @return void
+	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testVideoTagWithSourcesWithLazyload(bool $lazyload): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(11);
+		$media->previewPath = '/path/to/_mp4_preview/video.jpg';
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'lazyload' => $lazyload,
+		]);
+
+		$result = $this->mediaHelper->videoTag($media, $mediaRenderOptions);
+
+		/** @noinspection HtmlUnknownTarget */
+		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.mp4" type="video/mp4">', $result);
+		/** @noinspection HtmlUnknownTarget */
+		$this->assertStringContainsString('<source src="../awyiss/Command/Media/TestFiles/multimedia-test.webm" type="video/webm">', $result);
+
+		if ($lazyload) {
+			$this->assertStringContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('data-poster="../awyiss/Command/Media/TestFiles/_mp4_preview/multimedia-test.jpg"', $result);
+			$this->assertStringNotContainsString(' poster="', $result);
+		}
+		else {
+			$this->assertStringNotContainsString('class="Lazyload"', $result);
+			$this->assertStringContainsString('poster="../awyiss/Command/Media/TestFiles/_mp4_preview/multimedia-test.jpg"', $result);
+			$this->assertStringNotContainsString('data-poster=', $result);
+		}
 	}
 
 

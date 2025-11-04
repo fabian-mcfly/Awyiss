@@ -287,7 +287,7 @@ class MediaHelper extends Helper {
 			'alt' => $media->alt ?: '',
 		];
 
-		$la_attributes['id'] ??= 'Image-' . substr(sha1($media->name . serialize($lo_mediaRenderOptions)), 0, 15);
+		$la_attributes['id'] ??= 'Image-' . substr(hash('xxh64', $media->name . serialize($lo_mediaRenderOptions)), 0, 15);
 
 		if (!$la_attributes['alt']) {
 			$la_attributes['alt'] = $media->name;
@@ -367,6 +367,7 @@ class MediaHelper extends Helper {
 		$la_breakpointFiles = array_reverse($la_breakpointFiles, true);
 
 		$ls_sources = PHP_EOL;
+		$ls_sourceAttribute = $lo_mediaRenderOptions->getLazyload() ? 'data-srcset' : 'srcset';
 		foreach ($la_breakpointFiles as $lx_breakpoint => $lo_file) {
 			if (is_string($lx_breakpoint)) {
 				continue;
@@ -388,7 +389,7 @@ class MediaHelper extends Helper {
 			}
 
 			$ls_mediaQuery = '(width <= ' . $li_breakpoint . 'px)';
-			$ls_sources .= '<source media="' . $ls_mediaQuery . '" data-srcset="' . $ls_path . '" type="' . $ls_mimeType . '">' . PHP_EOL;
+			$ls_sources .= '<source media="' . $ls_mediaQuery . '" ' . $ls_sourceAttribute . '="' . $ls_path . '" type="' . $ls_mimeType . '">' . PHP_EOL;
 		}
 
 		return '<picture>' . $ls_sources . $ls_imageTag . '</picture>';
@@ -417,11 +418,12 @@ class MediaHelper extends Helper {
 			'preload' => 'metadata',
 			'poster' => $media->previewPath,
 		];
+		$la_attributes['class'] = trim(($lo_mediaRenderOptions->getLazyload() ? $this->lazyLoadClass : '') . ' ' . ($la_attributes['class'] ?? ''));
 
-		$la_attributes['class'] = trim($this->lazyLoadClass . ' ' . ($la_attributes['class'] ?? ''));
-
-		$la_attributes['data-poster'] = $la_attributes['poster'];
-		unset($la_attributes['poster']);
+		if ($lo_mediaRenderOptions->getLazyload()) {
+			$la_attributes['data-poster'] = $la_attributes['poster'];
+			unset($la_attributes['poster']);
+		}
 
 		$ls_attributes = $this->Html->templater()->formatAttributes($la_attributes);
 
@@ -440,7 +442,7 @@ class MediaHelper extends Helper {
 			$ls_subtitles = $this->getSubtitles($lo_alternative, $ls_subtitles);
 		}
 
-		return '<video ' . $ls_attributes . '><source src="' . $ls_path . '" type="' . $media->mimeType . '">' . $ls_sources . $ls_subtitles . '</video>';
+		return '<video' . $ls_attributes . '><source src="' . $ls_path . '" type="' . $media->mimeType . '">' . $ls_sources . $ls_subtitles . '</video>';
 	}
 
 
@@ -497,6 +499,7 @@ class MediaHelper extends Helper {
 	 * @param float|int $baseWidth
 	 * @param array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
 	 * @param float|int $columnWidth
+	 * @param bool $lazyload
 	 * @param float|int|null $height
 	 * @param float|null $minBreakpoint
 	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $resizeStrategy
@@ -516,6 +519,7 @@ class MediaHelper extends Helper {
 		float|int $baseWidth = 3840,
 		array $breakpoints = [],
 		float|int $columnWidth = 100.00,
+		bool $lazyload = true,
 		float|int|null $height = null,
 		?float $minBreakpoint = null,
 		ResizeStrategy|string|int $resizeStrategy = ResizeStrategy::Contain,
@@ -1041,7 +1045,7 @@ class MediaHelper extends Helper {
 	 */
 	protected function simpleImageTag(string $path, array $attributes, Media $media, MediaRenderOptions $mediaRenderOptions): string {
 		$la_attributes = $attributes;
-		$la_attributes['class'] = trim($this->lazyLoadClass . ' ' . ($la_attributes['class'] ?? ''));
+		$la_attributes['class'] = trim(($mediaRenderOptions->getLazyload() ? $this->lazyLoadClass : '') . ' ' . ($la_attributes['class'] ?? ''));
 		$ls_attributes = $this->Html->templater()->formatAttributes($la_attributes);
 
 		$la_noScriptAttributes = $attributes;
@@ -1070,18 +1074,20 @@ class MediaHelper extends Helper {
 		);
 
 		$ls_srcSet = $ls_noScriptSrcSet = '';
+		$ls_sourceAttribute = $mediaRenderOptions->getLazyload() ? 'data-src' : 'src';
 		if ($mediaRenderOptions->getInclude2x()) {
 			/** @noinspection PhpVariableNamingConventionInspection */
 			$lo_2xFile = $this->get2xFile($media, $mediaRenderOptions);
 			if ($lo_2xFile) {
-				$ls_srcSet = ' data-srcset="' . $lo_2xFile->path . ' 2x"';
+				$ls_srcSet = ' ' . $ls_sourceAttribute . 'set="' . $lo_2xFile->path . ' 2x"';
 				$ls_noScriptSrcSet = ' srcset="' . $lo_2xFile->path . ' 2x"';
 			}
 		}
 
 		/** @noinspection HtmlRequiredAltAttribute */
-		return '<img data-src="' . $path . '"' . $ls_srcSet . $ls_attributes . '>' . PHP_EOL .
-			'<noscript><img src="' . $path . '"' . $ls_noScriptSrcSet . $ls_noScriptAttributes . '></noscript>' . PHP_EOL . $ls_placeholderStyleTag . PHP_EOL;
+		return '<img ' . $ls_sourceAttribute . '="' . $path . '"' . $ls_srcSet . $ls_attributes . '>' . PHP_EOL .
+			($mediaRenderOptions->getLazyload() ? '<noscript><img src="' . $path . '"' . $ls_noScriptSrcSet . $ls_noScriptAttributes . '></noscript>' . PHP_EOL : '') .
+			$ls_placeholderStyleTag . PHP_EOL;
 	}
 
 

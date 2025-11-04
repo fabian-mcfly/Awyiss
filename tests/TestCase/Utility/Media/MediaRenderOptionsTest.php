@@ -33,6 +33,7 @@ class MediaRenderOptionsTest extends TestCase {
 		$this->assertEquals(100.0, $options->getColumnWidth());
 		$this->assertNull($options->getHeight());
 		$this->assertTrue($options->getInclude2x());
+		$this->assertTrue($options->getLazyload());
 		$this->assertNull($options->getMinBreakpoint());
 		$this->assertEquals(ResizeStrategy::Contain, $options->getResizeStrategy());
 		$this->assertTrue($options->getResponsive());
@@ -290,6 +291,28 @@ class MediaRenderOptionsTest extends TestCase {
 
 		$newOptions = $options->withInclude2x(true);
 		$this->assertTrue($newOptions->getInclude2x());
+	}
+
+
+	/**
+	 * Test withLazyload method
+	 *
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testWithLazyload(): void {
+		$options = new MediaRenderOptions();
+
+		$newOptions = $options->withLazyload(false);
+		$this->assertFalse($newOptions->getLazyload());
+
+		// Make sure the original was not modified
+		$this->assertTrue($options->getLazyload(), 'Original options should not be modified');
+		$this->assertNotSame($newOptions, $options);
+
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
+		$newOptions = $options->withLazyload(true);
+		$this->assertTrue($newOptions->getLazyload());
 	}
 
 
