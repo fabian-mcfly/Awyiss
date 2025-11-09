@@ -154,7 +154,8 @@ class FrontendController extends AppController {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
 		$lo_pagesTable = $this->fetchTable('Pages');
 
-		$lo_query = $lo_pagesTable->find(!$this->previewMode ? 'published' : 'all', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true);
+		$lo_query = $lo_pagesTable->find(!$this->previewMode ? 'published' : 'all', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true)
+		->find('mediaAssignments', useMediaEntity: true);
 
 		// Add additional where conditions
 		if ($where) {
