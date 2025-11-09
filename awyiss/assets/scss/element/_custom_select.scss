@@ -1,4 +1,6 @@
 .CustomSelect {
+	--transitionDelay:.15s;
+
 	border-radius:5px;
 	position:relative;
 	z-index:1;
@@ -19,7 +21,7 @@
 			pointer-events:none;
 			opacity:0;
 			visibility:hidden;
-			transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+			transition:opacity var(--transitionDelay) ease-in-out, visibility 0s linear var(--transitionDelay);
 
 			html.🌚 & {
 				background-color:rgba(0, 0, 0, .5);
@@ -32,7 +34,7 @@
 	}
 
 	.FormInput:has(> &) {
-		transition:z-index 0s linear .3s;
+		transition:z-index 0s linear var(--transitionDelay);
 		z-index:1;
 
 		> select:not([disabled]) {
@@ -212,7 +214,7 @@
 			position:absolute;
 			top:10px;
 			right:15px;
-			transition:transform .3s ease-in-out, color .3s ease-in-out;
+			transition:transform var(--transitionDelay) ease-in-out, color var(--transitionDelay) ease-in-out;
 
 			@media screen and (width <= 768px) {
 				font-size:16px;
@@ -252,7 +254,7 @@
 		opacity:0;
 		overflow:hidden;
 		visibility:hidden;
-		transition:opacity .3s ease-in-out, visibility 0s linear .3s, grid-template-rows .3s;
+		transition:opacity var(--transitionDelay) ease-in-out, visibility 0s linear var(--transitionDelay), grid-template-rows var(--transitionDelay);
 
 		@media screen and (width <= 768px) {
 			--filterOffset:52px;
@@ -322,6 +324,40 @@
 		}
 	}
 
+	.CustomSelect-Optgroup {
+		margin-top:5px;
+
+		&.Hidden {
+			display:none;
+		}
+
+		.CustomSelect-Option {
+			margin-left:20px;
+		}
+	}
+
+	.CustomSelect-OptgroupLabel {
+		padding:5px 10px;
+		border-radius:5px;
+		background-color:var(--colorMedium);
+		color:var(--colorBright);
+		font-size:1.2rem;
+		//noinspection CssNoGenericFontName
+		font-family:var(--fontStackHeading);
+		line-height:1.2;
+		overflow:hidden;
+		text-overflow:ellipsis;
+		white-space:nowrap;
+		pointer-events:none;
+		position:sticky;
+		top:0;
+		z-index:1;
+
+		html.🌚 & {
+			color:var(--colorMedium);
+		}
+	}
+
 	.CustomSelect-Option {
 		min-height:calc(var(--lineHeightMain) + 10px);
 		margin:3px 0 0 0;
@@ -335,7 +371,8 @@
 		overflow:hidden;
 		text-overflow:ellipsis;
 		white-space:nowrap;
-		transition:background-color .3s ease-in-out, color .3s ease-in-out;
+		scroll-margin-top:2lh;
+		transition:background-color var(--transitionDelay) ease-in-out, color var(--transitionDelay) ease-in-out;
 
 		&.Disabled {
 			pointer-events:none;

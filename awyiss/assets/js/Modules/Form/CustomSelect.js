@@ -56,6 +56,18 @@ export default class CustomSelect {
 	optionClass = 'CustomSelect-Option';
 
 	/**
+	 * The class name for optgroup container.
+	 * @type {string}
+	 */
+	optgroupClass = 'CustomSelect-Optgroup';
+
+	/**
+	 * The class name for optgroup label.
+	 * @type {string}
+	 */
+	optgroupLabelClass = 'CustomSelect-OptgroupLabel';
+
+	/**
 	 * The class name for active/selected option.
 	 * @type {string}
 	 */
@@ -203,27 +215,67 @@ export default class CustomSelect {
 	 */
 	populateOptions(selectElement, optionsList) {
 		optionsList.innerHTML = '';
+		let optionIndex = 0;
 
-		selectElement.querySelectorAll('option').forEach((option, index) => {
-			const optionDiv = document.createElement('div');
-			optionDiv.classList.add(this.optionClass);
-			optionDiv.textContent = option.textContent;
+		const children = Array.from(selectElement.children);
 
-			if (!option.value && index === 0) {
-				optionDiv.innerHTML = '<i>' + (selectElement.dataset.emptyLabel ?? '---') + '</i>';
+		children.forEach((child) => {
+			if (child.tagName === 'OPTGROUP') {
+				// Create optgroup container
+				const optgroupDiv = document.createElement('div');
+				optgroupDiv.classList.add(this.optgroupClass);
+
+				// Create optgroup label
+				const labelDiv = document.createElement('div');
+				labelDiv.classList.add(this.optgroupLabelClass);
+				labelDiv.textContent = child.label || '';
+				labelDiv.title = child.label || '';
+				optgroupDiv.appendChild(labelDiv);
+
+				// Process options within the optgroup
+				child.querySelectorAll('option').forEach((option) => {
+					const optionDiv = this.createOptionDiv(option, optionIndex, selectElement);
+					optgroupDiv.appendChild(optionDiv);
+					optionIndex++;
+				});
+
+				optionsList.appendChild(optgroupDiv);
+			} else if (child.tagName === 'OPTION') {
+				// Direct option (not in an optgroup)
+				const optionDiv = this.createOptionDiv(child, optionIndex, selectElement);
+				optionsList.appendChild(optionDiv);
+				optionIndex++;
 			}
-
-			optionDiv.setAttribute('data-value', option.value);
-			optionDiv.setAttribute('data-index', index + '');
-			optionDiv.setAttribute('role', 'option');
-			optionDiv.title = option.textContent;
-
-			if (option.selected) {
-				optionDiv.classList.add(this.activeClass);
-			}
-
-			optionsList.appendChild(optionDiv);
 		});
+	}
+
+	/**
+	 * Create an option div element.
+	 *
+	 * @param {HTMLOptionElement} option
+	 * @param {number} index
+	 * @param {HTMLSelectElement} selectElement
+	 * @returns {HTMLElement}
+	 */
+	createOptionDiv(option, index, selectElement) {
+		const optionDiv = document.createElement('div');
+		optionDiv.classList.add(this.optionClass);
+		optionDiv.textContent = option.textContent;
+
+		if (!option.value && index === 0) {
+			optionDiv.innerHTML = '<i>' + (selectElement.dataset.emptyLabel ?? '---') + '</i>';
+		}
+
+		optionDiv.setAttribute('data-value', option.value);
+		optionDiv.setAttribute('data-index', index + '');
+		optionDiv.setAttribute('role', 'option');
+		optionDiv.title = option.textContent;
+
+		if (option.selected) {
+			optionDiv.classList.add(this.activeClass);
+		}
+
+		return optionDiv;
 	}
 
 	/**
@@ -552,24 +604,59 @@ export default class CustomSelect {
 	}
 
 	/**
+	 * Get all visible and enabled option elements in order.
+	 *
+	 * @param {HTMLElement} optionsList
+	 * @returns {HTMLElement[]}
+	 */
+	getAvailableOptions(optionsList) {
+		return Array.from(optionsList.querySelectorAll(`.${this.optionClass}:not(.Hidden):not(.Disabled)`));
+	}
+
+	/**
+	 * Get the next visible and enabled option element.
+	 *
+	 * @param {HTMLElement} currentOption
+	 * @param {HTMLElement} optionsList
+	 * @returns {HTMLElement|null}
+	 */
+	getNextOption(currentOption, optionsList) {
+		const availableOptions = this.getAvailableOptions(optionsList);
+		const currentIndex = availableOptions.indexOf(currentOption);
+
+		if (currentIndex === -1 || currentIndex === availableOptions.length - 1) {
+			return null;
+		}
+
+		return availableOptions[currentIndex + 1];
+	}
+
+	/**
+	 * Get the previous visible and enabled option element.
+	 *
+	 * @param {HTMLElement} currentOption
+	 * @param {HTMLElement} optionsList
+	 * @returns {HTMLElement|null}
+	 */
+	getPreviousOption(currentOption, optionsList) {
+		const availableOptions = this.getAvailableOptions(optionsList);
+		const currentIndex = availableOptions.indexOf(currentOption);
+
+		if (currentIndex <= 0) {
+			return null;
+		}
+
+		return availableOptions[currentIndex - 1];
+	}
+
+	/**
 	 * Handle keyboard navigation.
 	 *
 	 * @param {KeyboardEvent} event
 	 */
 	handleKeyDown(event) {
 		const filterInput = event.target.closest(`.${this.filterClass}`);
-		if (!filterInput) {
-			if (event.key === 'Escape') {
-				// Close all open dropdowns
-				document.querySelectorAll(`.${this.wrapperClass}.${this.openClass}`).forEach((openWrapper) => {
-					this.closeWrapper(openWrapper);
-				});
-			}
-
-			return;
-		}
-
-		const wrapper = filterInput.closest(`.${this.wrapperClass}`);
+		const wrapper = event.target.closest(`.${this.wrapperClass}`);
 		const selectElement = wrapper.customSelectData.selectElement;
 
 		if (!selectElement) {
@@ -578,6 +665,11 @@ export default class CustomSelect {
 
 		const optionsList = wrapper.querySelector(`.${this.optionsClass}`);
 		let currentOption = this.highlightedOptionMap.get(selectElement);
+
+		// If no option is highlighted and the key event did not originate from the filter input, highlight option before or after the active one
+		if (!currentOption && !filterInput && event.target.matches(`.${this.buttonClass}`)) {
+			currentOption = optionsList.querySelector(`.${this.activeClass}`);
+		}
 
 		// If no option is highlighted, start with the first visible one
 		if (!currentOption) {
@@ -592,37 +684,39 @@ export default class CustomSelect {
 		switch (event.key) {
 			case 'ArrowDown': {
 				event.preventDefault();
-				let nextOption = currentOption.nextElementSibling;
+				let nextOption = this.getNextOption(currentOption, optionsList);
 
-				// Find the next visible option
-				while (nextOption && (nextOption.classList.contains('Hidden') || nextOption.classList.contains('Disabled'))) {
-					nextOption = nextOption.nextElementSibling;
-				}
-
-				if (nextOption && nextOption.classList.contains(this.optionClass)) {
+				if (nextOption) {
 					currentOption.classList.remove(this.highlightedClass);
 					nextOption.classList.add(this.highlightedClass);
 					this.highlightedOptionMap.set(selectElement, nextOption);
 					nextOption.scrollIntoView({ block: 'nearest' });
+
+					// If the arrow down did not originate from the filter input but the button, use the new highlighted option
+					if (!filterInput && event.target.matches(`.${this.buttonClass}`)) {
+						this.useOption(nextOption);
+					}
 				}
+
 				break;
 			}
 
 			case 'ArrowUp': {
 				event.preventDefault();
-				let prevOption = currentOption.previousElementSibling;
+				let prevOption = this.getPreviousOption(currentOption, optionsList);
 
-				// Find the previous visible option
-				while (prevOption && (prevOption.classList.contains('Hidden') || prevOption.classList.contains('Disabled'))) {
-					prevOption = prevOption.previousElementSibling;
-				}
-
-				if (prevOption && prevOption.classList.contains(this.optionClass)) {
+				if (prevOption) {
 					currentOption.classList.remove(this.highlightedClass);
 					prevOption.classList.add(this.highlightedClass);
 					this.highlightedOptionMap.set(selectElement, prevOption);
 					prevOption.scrollIntoView({ block: 'nearest' });
+
+					// If the arrow down did not originate from the filter input but the button, use the new highlighted option
+					if (!filterInput && event.target.matches(`.${this.buttonClass}`)) {
+						this.useOption(prevOption);
+					}
 				}
+
 				break;
 			}
 
@@ -667,11 +761,18 @@ export default class CustomSelect {
 		const filterValue = filterInput.value.toLowerCase();
 		const selectElement = wrapper.customSelectData.selectElement;
 
+		// Filter options
 		optionsList.querySelectorAll(`.${this.optionClass}`).forEach((option) => {
 			const optionText = option.textContent.toLowerCase();
 			const isMatching = optionText.includes(filterValue);
 
 			option.classList.toggle('Hidden', !isMatching);
+		});
+
+		// Hide optgroups that have no visible options
+		optionsList.querySelectorAll(`.${this.optgroupClass}`).forEach((optgroup) => {
+			const visibleOptions = optgroup.querySelectorAll(`.${this.optionClass}:not(.Hidden)`);
+			optgroup.classList.toggle('Hidden', visibleOptions.length === 0);
 		});
 
 		// Clear highlighted option and remove highlight styling
@@ -749,11 +850,23 @@ export default class CustomSelect {
 			if (mutation.type === 'childList' && mutation.target.matches && mutation.target.matches(this.selector)) {
 				affectedSelects.add(mutation.target);
 			}
+			// Check for changes to optgroups
+			else if (mutation.type === 'childList' && mutation.target.nodeName === 'OPTGROUP' && mutation.target.parentNode.matches && mutation.target.parentNode.matches(this.selector)) {
+				affectedSelects.add(mutation.target.parentNode);
+			}
 			else if (mutation.type === 'attributes' && mutation.target.nodeName === 'OPTION' && mutation.target.parentNode.matches && mutation.target.parentNode.matches(this.selector)) {
 				affectedSelects.add(mutation.target.parentNode);
 			}
+			// Handle options within optgroups
+			else if (mutation.type === 'attributes' && mutation.target.nodeName === 'OPTION' && mutation.target.parentNode.nodeName === 'OPTGROUP' && mutation.target.parentNode.parentNode.matches && mutation.target.parentNode.parentNode.matches(this.selector)) {
+				affectedSelects.add(mutation.target.parentNode.parentNode);
+			}
 			else if (mutation.type === 'characterData' && mutation.target.parentNode && mutation.target.parentNode.nodeName === 'OPTION' && mutation.target.parentNode.parentNode.matches && mutation.target.parentNode.parentNode.matches(this.selector)) {
 				affectedSelects.add(mutation.target.parentNode.parentNode);
+			}
+			// Handle character data changes within options inside optgroups
+			else if (mutation.type === 'characterData' && mutation.target.parentNode && mutation.target.parentNode.nodeName === 'OPTION' && mutation.target.parentNode.parentNode.nodeName === 'OPTGROUP' && mutation.target.parentNode.parentNode.parentNode.matches && mutation.target.parentNode.parentNode.parentNode.matches(this.selector)) {
+				affectedSelects.add(mutation.target.parentNode.parentNode.parentNode);
 			}
 		});
 
