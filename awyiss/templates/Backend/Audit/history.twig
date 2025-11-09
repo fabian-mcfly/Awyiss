@@ -145,7 +145,7 @@
 	@var settings array
 	#}
 
-	{% set isAttribute = attribute is not empty %}
+	{% set isAttribute = attribute != null %}
 	{% set columnType = schema.columnType(isAttribute ? field|underscore : staticCall(entity, 'unmapField', field)) %}
 	{% set isLanguage = language is not empty %}
 
