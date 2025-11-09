@@ -8,6 +8,7 @@ use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\Media;
+use Awyiss\Model\Entity\MediaAssignment;
 use Awyiss\Model\Entity\Survey;
 use Awyiss\Model\Entity\WidgetTemplate;
 use Cake\Datasource\Exception\RecordNotFoundException;
@@ -287,6 +288,10 @@ trait ForcedTitleTrait {
 		}
 		else {
 			$lo_media = $lx_media;
+		}
+
+		if ($lo_media instanceof MediaAssignment) {
+			$lo_media = $lo_media->media ?? [];
 		}
 
 		/** @var \Awyiss\Model\Entity\Media $lo_media */
