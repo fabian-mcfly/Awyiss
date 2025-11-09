@@ -54,6 +54,7 @@ use Cake\Datasource\FactoryLocator;
  * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
  * @property array|null $parentContents
  * @property float|null $realColumnWidth
+ * @property int $realSystemOrder
  */
 class Content extends Entity {
 	use ForcedTitleTrait;

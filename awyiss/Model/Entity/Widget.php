@@ -48,6 +48,7 @@ use Cake\Datasource\FactoryLocator;
  * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
  * @property array|null $parentWidgets
  * @property float|null $realColumnWidth
+ * @property int $realSystemOrder
  */
 class Widget extends Entity {
 	use ForcedTitleTrait;

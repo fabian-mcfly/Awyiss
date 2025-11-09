@@ -97,6 +97,7 @@ trait ContentElementTrait {
 			return '';
 		}
 
+		$li_realSystemOrder = 0;
 		$ls_contentElements = '';
 		$lf_currentWidth = 0;
 		$ls_rowContent = '';
@@ -115,6 +116,8 @@ trait ContentElementTrait {
 		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_entity
 		 */
 		foreach ($entities as $lo_entity) {
+			$lo_entity->realSystemOrder = ++$li_realSystemOrder;
+
 			$ls_children = '';
 
 			if ($lo_entity->children) {

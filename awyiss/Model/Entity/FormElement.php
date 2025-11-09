@@ -47,6 +47,7 @@ use Cake\Utility\Text;
  * @property array|bool|null $readonly
  * @property mixed|null $value
  * @property float|null $realColumnWidth
+ * @property int $realSystemOrder
  */
 class FormElement extends Entity {
 	/**
