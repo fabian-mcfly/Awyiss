@@ -432,6 +432,8 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 							if ($la_dataErrors) {
 								$la_errors[] = $la_dataErrors;
 							}
+							$lo_entity->unset('createdBy');
+							$lo_entity->unset('createdOn');
 
 							$la_mediaAssignments[] = $lo_entity;
 
