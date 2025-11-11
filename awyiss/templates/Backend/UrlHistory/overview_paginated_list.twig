@@ -67,4 +67,12 @@
 	</tr>
 {% endblock %}
 
+{% block tableOverviewCellDisplayedFieldDefaultValue %}
+	{% if field == 'scope' %}
+		{{ __('scope_' ~ entity.scope) }}
+	{% else %}
+		{{ parent() }}
+	{% endif %}
+{% endblock %}
+
 {% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}

@@ -16,6 +16,16 @@ use Cake\Datasource\RepositoryInterface;
  */
 class NumericPaginator extends BaseNumericPaginator {
 	/**
+	 * Constructor
+	 * Sets the `fieldTranslations` as a default field so CakePHP does not complain about
+	 * additional settings.
+	 */
+	public function __construct() {
+		$this->_defaultConfig['fieldTranslations'] = [];
+	}
+
+
+	/**
 	 * Re-implementation of the original method to sanitize the data before passing it to the parent method.
 	 *
 	 * @param array $data
@@ -63,7 +73,6 @@ class NumericPaginator extends BaseNumericPaginator {
 			['order' => null, 'page' => null, 'limit' => null],
 		);
 
-
 		$la_args = [];
 		$lx_type = $la_options['finder'] ?? null;
 		if (is_array($lx_type)) {
@@ -87,6 +96,20 @@ class NumericPaginator extends BaseNumericPaginator {
 				$lo_expr = $lo_query->func()->coalesce($la_fields);
 
 				if ($lx_directionOrCoalesce['direction'] === 'asc') {
+					$lo_query->orderByAsc($lo_expr);
+				}
+				else {
+					$lo_query->orderByDesc($lo_expr);
+				}
+			}
+			elseif (isset($data['options']['fieldTranslations'][ $ls_field ])) {
+				$la_translations = $data['options']['fieldTranslations'][ $ls_field ];
+				$lo_expr = $lo_query->newExpr()->case();
+				foreach ($la_translations as $ls_key => $ls_value) {
+					$lo_expr->when([$ls_field => $ls_key])->then($ls_value);
+				}
+				$lo_expr->else($ls_field);
+				if ($lx_directionOrCoalesce === 'asc') {
 					$lo_query->orderByAsc($lo_expr);
 				}
 				else {
@@ -154,7 +177,6 @@ class NumericPaginator extends BaseNumericPaginator {
 		if (!is_array($la_options['order'])) {
 			return $la_options;
 		}
-
 		$lb_sortAllowed = false;
 		if (isset($la_options['sortableFields'])) {
 			$ls_field = key($la_options['order']);
@@ -189,6 +211,7 @@ class NumericPaginator extends BaseNumericPaginator {
 		}
 
 		$la_options['order'] = $this->prefix($object, $la_options['order'], $lb_sortAllowed);
+		$la_options['fieldTranslations'] = $this->prefix($object, $la_options['fieldTranslations'], $lb_sortAllowed);
 
 		return $la_options;
 	}

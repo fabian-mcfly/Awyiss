@@ -42,6 +42,10 @@ class PaginateComponent extends Component {
 	 * @var array
 	 */
 	protected array $defaultSortableFields = [];
+	/**
+	 * @var array
+	 */
+	protected array $fieldTranslations = [];
 
 
 	/**
@@ -53,6 +57,9 @@ class PaginateComponent extends Component {
 
 		$this->enabled = $config['enabled'] ?? true;
 		$this->setConfig('enabled');
+
+		$this->fieldTranslations = $config['fieldTranslations'] ?? [];
+		$this->setConfig('fieldTranslations');
 	}
 
 
@@ -93,6 +100,7 @@ class PaginateComponent extends Component {
 		$la_settings = $settings;
 		$la_settings += $this->getConfig();
 		$la_settings += [
+			'fieldTranslations' => $this->fieldTranslations,
 			'order' => [
 				'title' => 'asc',
 			],

@@ -16,6 +16,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
+use Cake\Utility\Text;
 
 
 /**
@@ -29,7 +30,6 @@ class AttributesController extends Controller {
 	 */
 	protected array $attributeScopes;
 
-
 	/**
 	 * Called after the `__construct()` method
 	 *
@@ -38,6 +38,18 @@ class AttributesController extends Controller {
 	 */
 	public function initialize(): void {
 		$this->attributeScopes = $this->Attributes->getAvailableScopes();
+
+		$la_inputTypes = $this->Attributes->getAvailableInputTypes();
+		$this->paginate['fieldTranslations'] = [
+			'input_type' => array_combine($la_inputTypes, array_map(function ($type) {
+				return Text::slug(__('input_type_' . $type));
+			}, $this->Attributes->getAvailableInputTypes())),
+		];
+
+		$la_fieldsets = $this->Attributes->getAvailableFieldsets();
+		$this->paginate['fieldTranslations']['fieldset'] = array_combine($la_fieldsets, array_map(function ($fieldset) {
+			return Text::slug(__('fieldset_' . $fieldset));
+		}, $la_fieldsets));
 
 		parent::initialize();
 	}
@@ -86,6 +98,7 @@ class AttributesController extends Controller {
 			'attributes' => $lo_attributes,
 			'attributesGroupedByFieldset' => $la_attributesGroupedByFieldset ?? [],
 			'availableFieldsets' => $la_availableFieldsets,
+			'availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
 			'paginated' => $lb_paginated,
 			'selectedScope' => $ls_selectedScope,
 		]);

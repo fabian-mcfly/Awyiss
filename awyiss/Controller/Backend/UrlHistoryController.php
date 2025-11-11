@@ -14,6 +14,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
+use Cake\Utility\Text;
 
 
 /**
@@ -36,6 +37,18 @@ class UrlHistoryController extends Controller {
 	 * @var \Cake\Collection\Iterator\TreeIterator
 	 */
 	protected CollectionInterface $threadedPages;
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		$la_scopes = $this->UrlHistory->getAvailableScopes();
+		$this->paginate['fieldTranslations']['scope'] = array_combine($la_scopes, array_map(function ($scope) {
+			return Text::slug(__('scope_' . $scope));
+		}, $la_scopes));
+
+		parent::initialize();
+	}
 
 
 	/**

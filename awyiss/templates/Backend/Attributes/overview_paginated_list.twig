@@ -3,6 +3,7 @@
 @var attributes \Awyiss\Model\Entity\Attribute[]
 @var attributesGroupedByFieldset array
 @var attributeScopes array
+@var availableInputTypes array
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -24,6 +25,10 @@
 {% block tableOverviewCellDisplayedFieldDefaultValue %}
 	{% if field == 'default_value' %}
 		{{ entity.defaultValue ?? '<em>null</em>' }}
+	{% elseif field == 'fieldset' %}
+		{{ __('fieldset_' ~ entity.fieldset) }}
+	{% elseif field == 'input_type' %}
+		{{ __('input_type_' ~ entity.inputType) }}
 	{% else %}
 		{{ parent() }}
 	{% endif %}

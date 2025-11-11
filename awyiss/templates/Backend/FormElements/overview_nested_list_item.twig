@@ -33,6 +33,8 @@
 		{{ entity.column.width.label }}
 	{% elseif field == 'column_indent' %}
 		{{ entity.column.indent.label }}
+	{% elseif field == 'type' %}
+		{{ __('type_' ~ entity.type) }}
 	{% else %}
 		{{ parent() }}
 	{% endif %}

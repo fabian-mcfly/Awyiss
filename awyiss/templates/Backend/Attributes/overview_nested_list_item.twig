@@ -23,6 +23,10 @@
 {% block nestedListItemDataDisplayedFieldDefaultValue %}
 	{% if field == 'default_value' %}
 		{{ entity.defaultValue ?? '<em>null</em>' }}
+	{% elseif field == 'fieldset' %}
+		{{ __('fieldset_' ~ entity.fieldset) }}
+	{% elseif field == 'input_type' %}
+		{{ __('input_type_' ~ entity.inputType) }}
 	{% else %}
 		{{ parent() }}
 	{% endif %}
