@@ -10,6 +10,7 @@ use Awyiss\View\Cell\Frontend\Trait\FrontendRenderingTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
 use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
+use Awyiss\View\FrontendView;
 use Cake\View\Cell;
 
 
@@ -32,11 +33,15 @@ class SurveyCell extends Cell {
 	/**
 	 * @param string|int $identifier
 	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param \Awyiss\View\FrontendView $view
 	 * @param array $options
 	 * @return void
+	 * @throws \Exception
 	 * @throws \ReflectionException
 	 */
-	public function display(string|int $identifier, Page $page, array $options = []): void {
+	public function display(string|int $identifier, Page $page, FrontendView $view, array $options = []): void {
+		$this->View = $view;
+
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Survey');
 

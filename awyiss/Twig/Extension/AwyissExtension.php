@@ -89,7 +89,12 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = Hash::merge($la_options, $options);
 
 					try {
-						return $context['_view']->cell('Frontend/Contents', [$name, $context['page'], $la_options])->render() ?: null;
+						return $context['_view']->cell('Frontend/Contents', [
+							'contentArea' => $name,
+							'page' => $context['page'],
+							'view' => $context['_view'],
+							'options' => $la_options,
+						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
@@ -115,7 +120,12 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = Hash::merge($la_options, $options);
 
 					try {
-						return $context['_view']->cell('Frontend/Form', [$identifier, $context['page'], $la_options])->render() ?: null;
+						return $context['_view']->cell('Frontend/Form', [
+							'identifier' => $identifier,
+							'page' => $context['page'],
+							'view' => $context['_view'],
+							'options' => $la_options,
+						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
@@ -172,7 +182,12 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = Hash::merge($la_options, $options);
 
 					try {
-						return $context['_view']->cell('Frontend/Menu', [$name, $context['languageShortcode'], $la_options])->render() ?: null;
+						return $context['_view']->cell('Frontend/Menu', [
+							'identifier' => $name,
+							'languageShortcode' => $context['languageShortcode'],
+							'view' => $context['_view'],
+							'options' => $la_options,
+						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
@@ -235,7 +250,12 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = Hash::merge($la_options, $options);
 
 					try {
-						return $context['_view']->cell('Frontend/Survey', [$identifier, $context['page'], $la_options])->render() ?: null;
+						return $context['_view']->cell('Frontend/Survey', [
+							'identifier' => $identifier,
+							'page' => $context['page'],
+							'view' => $context['_view'],
+							'options' => $la_options,
+						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware
@@ -253,7 +273,11 @@ class AwyissExtension extends AbstractExtension {
 					$la_options = Hash::merge($la_options, $options);
 
 					try {
-						return $context['_view']->cell('Frontend/Widgets', [$name, $la_options])->render() ?: null;
+						return $context['_view']->cell('Frontend/Widgets', [
+							'identifier' => $name,
+							'view' => $context['_view'],
+							'options' => $la_options,
+						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
 						// Redirects are handled by the middleware

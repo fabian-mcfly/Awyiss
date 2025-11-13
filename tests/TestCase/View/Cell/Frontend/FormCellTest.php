@@ -7,6 +7,7 @@ namespace Awyiss\Test\TestCase\View\Cell\Frontend;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Test\TestSuite\TestCase;
+use Awyiss\View\FrontendView;
 use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -30,6 +31,10 @@ class FormCellTest extends TestCase {
 	 * @var \Cake\Http\ServerRequest
 	 */
 	protected ServerRequest $request;
+	/**
+	 * @var \Awyiss\View\FrontendView
+	 */
+	protected FrontendView $view;
 
 
 	/**
@@ -62,6 +67,7 @@ class FormCellTest extends TestCase {
 		]);
 
 		$this->response = $this->createMock(Response::class);
+		$this->view = new FrontendView($this->request);
 	}
 
 
@@ -79,6 +85,7 @@ class FormCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Form', [
 			'contact',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'includeWrapper' => true,
@@ -108,6 +115,7 @@ class FormCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Form', [
 			'unknown',
 			$page,
+			$this->view,
 		]);
 
 		$this->assertSame('', $output);
@@ -127,6 +135,7 @@ class FormCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Form', [
 			1,
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -156,6 +165,7 @@ class FormCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Form', [
 			1,
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -185,6 +195,7 @@ class FormCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Form', [
 			1,
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -212,6 +223,7 @@ class FormCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Form', [
 			2,
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -240,6 +252,7 @@ class FormCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Form', [
 			2,
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,

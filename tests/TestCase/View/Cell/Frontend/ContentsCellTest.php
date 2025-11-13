@@ -11,6 +11,7 @@ use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Awyiss\View\Cell\Frontend\ContentsCell;
+use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -38,6 +39,10 @@ class ContentsCellTest extends TestCase {
 	 * @var \Cake\Http\ServerRequest
 	 */
 	protected ServerRequest $request;
+	/**
+	 * @var \Awyiss\View\FrontendView
+	 */
+	protected FrontendView $view;
 
 
 	/**
@@ -72,7 +77,11 @@ class ContentsCellTest extends TestCase {
 
 		$this->response = $this->createMock(Response::class);
 
-		$this->cell = new ContentsCell($this->request, $this->response, null, ['action' => 'display']);
+		$this->view = new FrontendView($this->request);
+		$this->cell = new ContentsCell($this->request, $this->response, null, [
+			'action' => 'display',
+			'view' => $this->view,
+		]);
 	}
 
 
@@ -1009,6 +1018,7 @@ class ContentsCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Contents', [
 			'ContentArea',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -1037,6 +1047,7 @@ class ContentsCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Contents', [
 			'ContentArea',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -1276,6 +1287,7 @@ class ContentsCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Contents', [
 			'ContentArea',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'includeWrapper' => true,
@@ -1300,6 +1312,7 @@ class ContentsCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Contents', [
 			'ContentArea',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'includeWrapper' => false,
@@ -1322,6 +1335,7 @@ class ContentsCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Contents', [
 			'ContentArea',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -1347,6 +1361,7 @@ class ContentsCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Contents', [
 			'ContentArea',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,

@@ -40,6 +40,10 @@ class MenuCellTest extends TestCase {
 	 * @var \Cake\Http\ServerRequest
 	 */
 	protected ServerRequest $request;
+	/**
+	 * @var \Awyiss\View\FrontendView
+	 */
+	protected FrontendView $view;
 
 
 	/**
@@ -71,6 +75,7 @@ class MenuCellTest extends TestCase {
 
 		$this->response = $this->createMock(Response::class);
 
+		$this->view = new FrontendView($this->request);
 		$this->cell = new MenuCell($this->request, $this->response);
 	}
 
@@ -574,7 +579,8 @@ class MenuCellTest extends TestCase {
 	public function testDisplay(): void {
 		$output = (string)$this->cell('Frontend/Menu', [
 			'main',
-			'languageShortcode' => 'de',
+			'de',
+			$this->view,
 		]);
 		$output = trim(preg_replace('/\s+/', ' ', $output));
 		$output = str_replace('> ', '>' . PHP_EOL, $output);
@@ -591,7 +597,8 @@ class MenuCellTest extends TestCase {
 	public function testDisplayUsesCustomerClasses(): void {
 		$cell = $this->cell('Frontend/Menu', [
 			'main',
-			'languageShortcode' => 'de',
+			'de',
+			$this->view,
 		]);
 
 		/** @noinspection PhpUnusedLocalVariableInspection */

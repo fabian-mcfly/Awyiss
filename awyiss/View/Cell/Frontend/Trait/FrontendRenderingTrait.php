@@ -12,9 +12,6 @@ use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Collection\CollectionInterface;
-use Cake\Event\EventManagerInterface;
-use Cake\Http\Response;
-use Cake\Http\ServerRequest;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\View;
 use Dom\HTMLDocument;
@@ -25,18 +22,6 @@ use Dom\HTMLDocument;
  * that work with media and texts that need parsing and rendering
  */
 trait FrontendRenderingTrait {
-	/**
-	 * @inheritDoc
-	 * @noinspection PhpMultipleClassDeclarationsInspection
-	 */
-	public function __construct(ServerRequest $request, Response $response, ?EventManagerInterface $eventManager = null, array $cellOptions = []) {
-		parent::__construct($request, $response, $eventManager, $cellOptions);
-
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-		$this->View = $this->createView('Frontend');
-	}
-
-
 	/**
 	 * @param array $options
 	 * @return array
@@ -238,6 +223,11 @@ trait FrontendRenderingTrait {
 	 * @return \Cake\View\View
 	 */
 	protected function getView(): View {
+		if (!isset($this->View)) {
+			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+			$this->View = $this->createView('Frontend');
+		}
+
 		return $this->View;
 	}
 

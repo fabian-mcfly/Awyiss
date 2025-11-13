@@ -70,14 +70,16 @@ class MenuCell extends Cell {
 	}
 
 
-
 	/**
 	 * @param string $identifier
 	 * @param string $languageShortcode
+	 * @param \Awyiss\View\FrontendView $view
 	 * @param array $options
 	 * @return void
 	 */
-	public function display(string $identifier, string $languageShortcode, array $options = []): void {
+	public function display(string $identifier, string $languageShortcode, FrontendView $view, array $options = []): void {
+		$this->View = $view;
+
 		$la_options = $options + [
 			'includeWrapper' => true,
 			'currentRoute' => Router::url($this->request->getRequestTarget()),

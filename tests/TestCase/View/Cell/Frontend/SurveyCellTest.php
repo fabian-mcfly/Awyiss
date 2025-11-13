@@ -7,6 +7,7 @@ namespace Awyiss\Test\TestCase\View\Cell\Frontend;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Test\TestSuite\TestCase;
+use Awyiss\View\FrontendView;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
@@ -29,6 +30,10 @@ class SurveyCellTest extends TestCase {
 	 * @var \Cake\Http\ServerRequest
 	 */
 	protected ServerRequest $request;
+	/**
+	 * @var \Awyiss\View\FrontendView
+	 */
+	protected FrontendView $view;
 
 
 	/**
@@ -60,6 +65,7 @@ class SurveyCellTest extends TestCase {
 		]);
 
 		$this->response = $this->createMock(Response::class);
+		$this->view = new FrontendView($this->request);
 	}
 
 
@@ -75,6 +81,7 @@ class SurveyCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Survey', [
 			'dummy_survey',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -116,6 +123,7 @@ class SurveyCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Survey', [
 			'dummy_survey',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -160,6 +168,7 @@ class SurveyCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Survey', [
 			'dummy_survey',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -207,6 +216,7 @@ class SurveyCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Survey', [
 			'dummy_survey',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -228,6 +238,7 @@ class SurveyCellTest extends TestCase {
 		$output = (string)$this->cell('Frontend/Survey', [
 			'dummy_survey',
 			$page,
+			$this->view,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,

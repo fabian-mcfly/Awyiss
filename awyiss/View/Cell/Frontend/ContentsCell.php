@@ -12,6 +12,7 @@ use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
 use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
+use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\ORM\Query\SelectQuery;
@@ -33,11 +34,14 @@ class ContentsCell extends Cell {
 	/**
 	 * @param string $contentArea
 	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param \Awyiss\View\FrontendView $view
 	 * @param array $options
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public function display(string $contentArea, Page $page, array $options = []): void {
+	public function display(string $contentArea, Page $page, FrontendView $view, array $options = []): void {
+		$this->View = $view;
+
 		$la_options = $this->initCellOptions($options);
 
 		if ($options['pageId'] ?? null) {

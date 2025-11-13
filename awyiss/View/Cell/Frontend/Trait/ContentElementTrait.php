@@ -244,6 +244,7 @@ trait ContentElementTrait {
 	 * @param string $contents
 	 * @param string $type
 	 * @param array $rowClasses
+	 * @param bool $autoSection
 	 * @return string
 	 */
 	protected function renderContentRow(string $contents, string $type = 'content', array $rowClasses = [], bool $autoSection = false): string {
@@ -310,7 +311,6 @@ trait ContentElementTrait {
 			$entity->cssClass .= ' ' . $ls_cssClass;
 		}
 
-		/** @noinspection PhpUndefinedFieldInspection */
 		if (
 			!$entity->active ||
 			($entity->publicationStart && $entity->publicationStart > $ld_now) ||

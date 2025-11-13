@@ -11,6 +11,7 @@ use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
 use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
+use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\View\Cell;
@@ -30,11 +31,14 @@ class WidgetsCell extends Cell {
 
 	/**
 	 * @param string $identifier
+	 * @param \Awyiss\View\FrontendView $view
 	 * @param array $options
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public function display(string $identifier, array $options = []): void {
+	public function display(string $identifier, FrontendView $view, array $options = []): void {
+		$this->View = $view;
+
 		$la_options = $this->initCellOptions($options);
 		$la_options['viewVars']['identifier'] = $identifier;
 
