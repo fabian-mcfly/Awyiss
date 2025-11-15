@@ -243,7 +243,7 @@ class MenuCell extends Cell {
 
 		if (!empty($la_data['children'])) {
 			$la_data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger" />' . PHP_EOL .
-				'<label for="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger-Label"></label>';
+				'<label for="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger-Label" tabindex="0">' . __('submenu_trigger') . '</label>';
 		}
 
 		$la_data['isPreview'] = '';

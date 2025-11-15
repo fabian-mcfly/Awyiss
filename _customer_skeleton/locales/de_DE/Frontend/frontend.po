@@ -1,2 +1,8 @@
 msgid "menu_trigger_open"
 msgstr "Menü"
+
+msgid "menu_trigger_close"
+msgstr "Menü schließen"
+
+msgid "submenu_trigger"
+msgstr "Untermenü ein-/ausblenden"
