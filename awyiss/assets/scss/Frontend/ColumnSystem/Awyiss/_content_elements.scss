@@ -65,12 +65,16 @@
 			}
 
 			&:first-child {
-				margin-left:var(--columnMargin, 0);
+				@media screen and (width > $singleColumnBreakpoint) {
+					margin-left:var(--columnMargin, 0);
+				}
 			}
 
 			~ .ContentElement {
 				&:last-child {
-					margin-left:0;
+					@media screen and (width > $singleColumnBreakpoint) {
+						margin-left:0;
+					}
 				}
 			}
 		}
