@@ -22,12 +22,12 @@
 	<div class="Module-NewsListing">
 		{% if news.count %}
 			{% block newsListingList %}
-				<ul class="List">
+				<ul class="{% block newsListClass %}List{% endblock %}">
 					{# @var newsItem \Awyiss\Model\Entity\Page #}
 					{% for newsItem in news %}
 						{% block newsListingItem %}
 							{% set link = UrlHelper.build({lang: newsItem.languageShortcode, slug: newsItem.slug}) %}
-							<li class="Item NewsItem{{ newsItem.active == false and previewMode.enabled == true ? ' ' ~ previewMode.inactiveElementClass : ''}}" id="NewsItem{{ newsItem.id }}">
+							<li class="{% block newsItemClass %}Item NewsItem{{ newsItem.active == false and previewMode.enabled == true ? ' ' ~ previewMode.inactiveElementClass : ''}}{% endblock %}" id="NewsItem{{ newsItem.id }}">
 								{% block newsListingItemImage %}
 									{% if newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia %}
 										<div class="Image">
