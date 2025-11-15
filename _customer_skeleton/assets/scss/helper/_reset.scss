@@ -41,8 +41,9 @@
 	}
 
 	p, h1, h2, h3, h4, h5, h6, hr, ul, ol, blockquote {
-		overflow-wrap:break-word;
 		hyphens:auto;
+		hyphenate-limit-chars:10 4 4;
+		overflow-wrap:break-word;
 	}
 
 	:is(h1, h2, h3, h4, h5, h6) {
