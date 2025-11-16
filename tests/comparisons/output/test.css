@@ -105,15 +105,19 @@
       order: 1;
     }
   }
-  :is(.ContentElement,
-  .FormElement,
-  .WidgetElement).Column-Rtl:first-child {
-    margin-left: var(--columnMargin, 0);
+  @media screen and (width > 860px) {
+    :is(.ContentElement,
+    .FormElement,
+    .WidgetElement).Column-Rtl:first-child {
+      margin-left: var(--columnMargin, 0);
+    }
   }
-  :is(.ContentElement,
-  .FormElement,
-  .WidgetElement).Column-Rtl ~ .ContentElement:last-child {
-    margin-left: 0;
+  @media screen and (width > 860px) {
+    :is(.ContentElement,
+    .FormElement,
+    .WidgetElement).Column-Rtl ~ .ContentElement:last-child {
+      margin-left: 0;
+    }
   }
   .Column-100 {
     --elementWidth:var(--columnWidth100);

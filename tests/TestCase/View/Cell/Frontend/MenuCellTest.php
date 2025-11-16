@@ -455,7 +455,7 @@ class MenuCellTest extends TestCase {
 			'identifier' => 'TestContent',
 			'children' => '<ul><li>Child 1</li><li>Child 2</li></ul>',
 			'submenuTrigger' => '<input type="checkbox" id="SubmenuTrigger-19" class="SubmenuTrigger" />' . PHP_EOL .
-				'<label for="SubmenuTrigger-19" class="SubmenuTrigger-Label"></label>',
+				'<label for="SubmenuTrigger-19" class="SubmenuTrigger-Label" tabindex="0">submenu_trigger</label>',
 		])->willReturn('Test Content');
 
 		$data = [
