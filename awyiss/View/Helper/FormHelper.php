@@ -11,6 +11,7 @@ use Awyiss\Utility\Inflector;
 use Awyiss\View\StringTemplate;
 use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
+use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper as BaseFormHelper;
@@ -763,5 +764,19 @@ class FormHelper extends BaseFormHelper {
 		}
 
 		return $la_options;
+	}
+
+
+	/**
+	 * @param \Cake\View\Form\ContextInterface|\Cake\Datasource\EntityInterface|null $context
+	 * @return \Cake\View\Form\ContextInterface
+	 */
+	public function context(ContextInterface|EntityInterface|null $context = null): ContextInterface {
+		if ($context instanceof EntityInterface) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$context = $this->_getContext(['entity' => $context]);
+		}
+
+		return parent::context($context);
 	}
 }

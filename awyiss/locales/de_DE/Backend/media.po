@@ -20,6 +20,9 @@ msgstr "Datei hinzufügen"
 msgid "meta_title_edit"
 msgstr "Datei bearbeiten"
 
+msgid "meta_title_batch_edit"
+msgstr "Mehrere Dateien bearbeiten"
+
 msgid "menu_title"
 msgstr "Media"
 
@@ -51,7 +54,7 @@ msgid "add_failed"
 msgstr "Die Datei konnte nicht hinzugefügt werden"
 
 msgid "headline_edit"
-msgstr "Datei bearbeiten"
+msgstr "Mehrere Datei bearbeiten"
 
 msgid "edit_succeeded"
 msgstr "Die Datei wurde erfolgreich aktualisiert"
@@ -61,6 +64,18 @@ msgstr "Die Datei konnte nicht aktualisiert werden"
 
 msgid "record_not_found"
 msgstr "Die Datei wurde nicht gefunden"
+
+msgid "headline_batch_edit"
+msgstr "Mehrere Dateien bearbeiten"
+
+msgid "menu_batch_edit"
+msgstr "Mehrere Dateien bearbeiten"
+
+msgid "batch_edit_succeeded"
+msgstr "Die Dateien wurden erfolgreich aktualisiert"
+
+msgid "batch_edit_failed"
+msgstr "Die Dateien konnten nicht aktualisiert werden"
 
 msgid "confirm_delete"
 msgstr "Sind Sie sicher, dass Sie diesen Datei (ID: {0}) löschen möchten?"

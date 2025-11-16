@@ -7,6 +7,7 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Entity\PageRole;
@@ -15,6 +16,7 @@ use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -43,6 +45,7 @@ class MediaController extends Controller {
 			'parents_active' => true,
 			'hidden' => false,
 		],
+		'startupMethods' => ['overview', 'batchEdit'],
 		'uriParam' => 'media-folder-id',
 	];
 	/**
@@ -352,6 +355,43 @@ class MediaController extends Controller {
 
 
 	/**
+	 * Batch Edit method
+	 *
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpUnused
+	 */
+	public function batchEdit(): void {
+		$this->Authorization->ensure('create');
+
+		$this->paginate['enabled'] = false;
+		$lo_query = $this->getOverviewQuery()->find('translations');
+		$lo_media = $lo_query->all();
+		$this->Paginate->disable();
+
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$this->batchSave($lo_media);
+		}
+
+		$la_languages = [];
+		foreach (LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND) as $lo_language) {
+			if (!$lo_language->active) {
+				continue;
+			}
+
+			$la_languages[ $lo_language->shortcode ] = $lo_language;
+		}
+
+		$this->set([
+			'media' => $lo_media,
+			'languages' => $la_languages,
+			'languageRealm' => Awyiss::REALM_FRONTEND,
+		]);
+	}
+
+
+
+	/**
 	 * Delete method
 	 *
 	 * @param ?int $id
@@ -607,6 +647,7 @@ class MediaController extends Controller {
 	 * Rebuild the system order to ensure that there are no gaps in the order
 	 *
 	 * @return void
+	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
@@ -696,6 +737,7 @@ class MediaController extends Controller {
 	 *
 	 * @return \Cake\Http\Response
 	 * @throws \Exception
+	 * @noinspection PhpUnused
 	 */
 	public function usages(): Response {
 		$this->Authorization->ensure('read');
@@ -814,6 +856,38 @@ class MediaController extends Controller {
 
 
 	/**
+	 * @param \Cake\Datasource\ResultSetInterface $media
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function batchSave(ResultSetInterface $media): void {
+		$la_media = $media->indexBy('id')->toArray();
+		$la_requestData = $this->request->getData('media');
+		$la_requestData = array_map(function ($data, $id): array {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$data['id'] = $id;
+
+			return $data;
+		}, $la_requestData, array_keys($la_requestData));
+		$la_requestData = array_filter($la_requestData, function ($data) use ($la_media): bool {
+			return !empty($data['name']) && isset($la_media[ $data['id'] ]);
+		});
+
+		$this->Media->patchEntities($la_media, $la_requestData, [
+			'fields' => ['name', 'alt', '_translations'],
+		]);
+
+		if ($this->Media->saveMany($la_media)) {
+			$this->Flash->success(__('batch_edit_succeeded'));
+
+			throw new RedirectException(Router::url(['action' => 'batchEdit'], true), 302);
+		}
+
+		$this->Flash->error(__('batch_edit_failed'));
+	}
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected function _saveSystemOrder(array $requestData, Table $table): int {
@@ -853,6 +927,7 @@ class MediaController extends Controller {
 
 	/**
 	 * @return \Cake\Http\Response
+	 * @throws \Exception
 	 */
 	protected function _deleteMultiple(): Response {
 		$li_ids = $this->request->getData('ids');
@@ -880,7 +955,6 @@ class MediaController extends Controller {
 			}
 			elseif ($lo_media->count() > 1) {
 				// Rebuild the system order if multiple records were deleted
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
 					'media_folder_id' => (int)$li_mediaFolderId,
 				]);
@@ -1073,6 +1147,7 @@ class MediaController extends Controller {
 				$usedScopes[ $ls_pageRole ] = !str_contains($ls_translation, '::') ? $ls_translation : $pageRoles[ $ls_pageRole ]->label;
 			}
 
+			/** @noinspection PhpUndefinedFieldInspection */
 			$lo_assignment->entity = $lo_content;
 
 			$la_groupedAssignments[ $ls_pageRole ][] = $lo_assignment;

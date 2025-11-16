@@ -1,0 +1,93 @@
+.Media.BatchEdit {
+	.Preview {
+		width:100px;
+		height:52px;
+
+		img {
+			width:100%;
+			height:100%;
+			object-fit:cover;
+			object-position:center;
+		}
+	}
+
+	.Overview-Table {
+		@media screen and (width <= 660px) {
+			display:block;
+		}
+
+		:is(
+			tbody,
+			tr,
+			td,
+			th
+		) {
+			@media screen and (width <= 660px) {
+				display:block;
+			}
+		}
+	}
+
+	thead {
+		@media screen and (width <= 660px) {
+			display:none;
+		}
+	}
+
+	tr {
+		&:first-child {
+			td {
+				@media screen and (width <= 660px) {
+					border-top-width:0;
+				}
+			}
+		}
+	}
+
+	th {
+		&.TableHeader-Preview {
+			width:140px;
+		}
+
+		&.TableHeader-Name {
+			width:40%;
+		}
+	}
+
+	td {
+		@media screen and (width <= 660px) {
+			border-top-width:0;
+		}
+
+		&:is(
+			.TableCell-Name,
+			.TableCell-Alt
+		) {
+			.Label {
+				@media screen and (660px < width) {
+					display:none;
+				}
+			}
+		}
+
+		&:not(:last-child) {
+			@media screen and (width <= 660px) {
+				border-bottom-width:0;
+			}
+		}
+
+		&::before {
+			@media screen and (width <= 660px) {
+				display:none;
+			}
+		}
+	}
+
+	.FormInputType-TranslatableText {
+		.ShowTranslationDialog {
+			@media screen and (660px < width) {
+				top:0;
+			}
+		}
+	}
+}

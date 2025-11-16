@@ -184,6 +184,22 @@
 					}
 				}
 			},
+			"media_batch_edit": {
+				"title": {
+					"translate": ["media", "menu_batch_edit"]
+				},
+				"link": {
+					"url": {
+						"controller": "Media",
+						"action": "batch-edit"
+					}
+				},
+				"access": {
+					"scope": "media",
+					"identifier": "create"
+				},
+				"children": null
+			},
 			"media_elements": {
 				"title": {
 					"translate": ["media_elements", "menu_title"]

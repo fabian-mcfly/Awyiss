@@ -1,0 +1,146 @@
+{#
+@var media \Awyiss\Model\Entity\Media[]
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Media Form BatchEdit">
+	{% block headlinesBatchEdit %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
+
+			{% block headlineBatchEdit %}
+				<h1>{{ __('headline_batch_edit') }}</h1>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formBatchEditButtons %}
+				{% block categoriesFilterBatchEdit %}
+					{% if isAjax == false %}
+						{{ CategoriesHelper.filter('mediaFolder', null, {
+							groupBy: 'languageShortcode',
+							groupLabels: {general: 'Global'}|merge(LocaleHelper.languagesForRealm(languageRealm))
+						}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block formBatchEditButtonSave %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'MediaForm'}) }}
+				{% endblock %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block formBatchEditFormOpen %}
+		{{ FormHelper.create(media|first ?: null, {
+			method: 'post',
+			id: 'MediaForm',
+			idPrefix: 'media',
+		}) }}
+	{% endblock %}
+
+	{% block tableBatchEdit %}
+		<table class="Overview-Table">
+			{% block tableBatchEditHead %}
+				<thead>
+					{% block tableBatchEditHeadRow %}
+						<tr>
+							{% block tableBatchEditHeadRowInner %}
+								{% block tableBatchEditHeaderPreview %}
+									<th class="TableHeader-Preview">{{ __('preview') }}</th>
+								{% endblock %}
+
+								{% block tableBatchEditHeaderName %}
+									<th class="TableHeader-Name">{{ __('name') }}</th>
+								{% endblock %}
+
+								{% block tableBatchEditHeaderAlt %}
+									<th class="TableHeader-Alt">{{ __('alt') }}</th>
+								{% endblock %}
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				</thead>
+			{% endblock %}
+			{% block tableBatchEditBody %}
+				<tbody>
+					{% for mediaItem in media %}
+						{% block tableBatchEditBodyRow %}
+							{% do FormHelper.context(mediaItem) %}
+							<tr>
+								{% block tableBatchEditBodyRowInner %}
+									{% block tableBatchEditCellPreview %}
+										<td class="TableCell-Preview">
+											{% set preview %}
+												{{ MediaHelper.preview(mediaItem, {
+													class: 'Preview',
+													resize: {
+														width: 100,
+														height: 100,
+														strategy: enum(ResizeStrategy).Crop,
+													},
+												}) }}
+											{% endset %}
+											{{ HtmlHelper.link(preview, mediaItem.path, {
+												escape: false,
+												target: '_blank',
+											}) }}
+										</td>
+									{% endblock %}
+
+									{% block tableBatchEditCellName %}
+										<td class="TableCell-Name">
+											{% block formControlName %}
+												{{ FormHelper.control('media.' ~ mediaItem.id ~ '.name', {required: true, val: mediaItem.cleanName}) }}
+											{% endblock %}
+										</td>
+									{% endblock %}
+
+									{% block tableBatchEditCellAlt %}
+										<td class="TableCell-Alt">
+											{% block formControlAlt %}
+												{{ FormHelper.control('media.' ~ mediaItem.id ~ '.alt', {
+													required: false,
+													type: languages|length > 1 ? 'translatableText' : 'text',
+													val: mediaItem.alt,
+													values: mediaItem._translations,
+												}) }}
+											{% endblock %}
+										</td>
+									{% endblock %}
+								{% endblock %}
+							</tr>
+						{% endblock %}
+					{% endfor %}
+				</tbody>
+			{% endblock %}
+		</table>
+	{% endblock %}
+
+	{% block formBatchEditFormClose %}
+		{{ FormHelper.end() }}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formBatchEditButtons') }}
+		</div>
+	{% endblock %}
+</div>

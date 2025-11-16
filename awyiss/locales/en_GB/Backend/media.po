@@ -20,6 +20,9 @@ msgstr "Add File"
 msgid "meta_title_edit"
 msgstr "Edit File"
 
+msgid "meta_title_batch_edit"
+msgstr "Batch edit files"
+
 msgid "menu_title"
 msgstr "Media"
 
@@ -61,6 +64,18 @@ msgstr "The File could not be updated"
 
 msgid "record_not_found"
 msgstr "The File was not found"
+
+msgid "headline_batch_edit"
+msgstr "Batch edit files"
+
+msgid "menu_batch_edit"
+msgstr "Batch edit files"
+
+msgid "batch_edit_succeeded"
+msgstr "The files were successfully updated"
+
+msgid "batch_edit_failed"
+msgstr "The files could not be updated"
 
 msgid "confirm_delete"
 msgstr "Are you sure you want to delete this File (ID: {0})?"
