@@ -19,6 +19,33 @@ use Cake\Datasource\FactoryLocator;
  */
 class ImageHandlerTest extends TestCase {
 	/**
+	 * Get all media entities indexed by ID.
+	 * This is called lazily only when tests actually run.
+	 *
+	 * @return array
+	 */
+	protected function getMediaArray(): array {
+		return FactoryLocator::get('Table')->get('Media')->find('all')->all()->indexBy('id')->toArray();
+	}
+
+
+	/**
+	 * Get FrontendView and MediaRenderOptions for tests.
+	 * This is called lazily only when tests actually run.
+	 *
+	 * @return array{0: \Awyiss\View\FrontendView, 1: \Awyiss\Utility\Media\MediaRenderOptions}
+	 */
+	protected function getViewAndRenderOptions(): array {
+		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
+
+		return [
+			new FrontendView(),
+			new MediaRenderOptions(baseWidth: 1440.00),
+		];
+	}
+
+
+	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
@@ -258,8 +285,11 @@ class ImageHandlerTest extends TestCase {
 
 		ImageHandler::replaceImageTags($content);
 
-		$this->assertSame('<p>Test image: <awyiss-responsive-image>{"alt":"Test Image","mediaId":"2"}</awyiss-responsive-image></p>'
-			. '<p>Another image: <awyiss-responsive-image>{"alt":"Test Image","mediaId":"2"}</awyiss-responsive-image></p>', $content->text);
+		$this->assertSame(
+			'<p>Test image: <awyiss-responsive-image>{"alt":"Test Image","mediaId":"2"}</awyiss-responsive-image></p>' .
+			'<p>Another image: <awyiss-responsive-image>{"alt":"Test Image","mediaId":"2"}</awyiss-responsive-image></p>',
+			$content->text
+		);
 
 		$this->assertCount(1, $content->mediaAssignments);
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
@@ -427,7 +457,6 @@ class ImageHandlerTest extends TestCase {
 		$this->assertSame(2, $content->mediaAssignments[0]->mediaId);
 		$this->assertSame('contents', $content->mediaAssignments[0]->scope);
 	}
-
 
 
 	/**
@@ -843,13 +872,12 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaProvider
-	 * @param array $media
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInText()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
 	 */
-	public function testRebuildSimpleImageTagsInText(array $media): void {
+	public function testRebuildSimpleImageTagsInText(): void {
+		$media = $this->getMediaArray();
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->fetchTable('Contents')->get(44);
 
@@ -860,13 +888,12 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaProvider
-	 * @param array $media
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInText()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
 	 */
-	public function testRebuildSimpleImageTagsInTextWithUnknownMediaId(array $media): void {
+	public function testRebuildSimpleImageTagsInTextWithUnknownMediaId(): void {
+		$media = $this->getMediaArray();
 		/** @var \Awyiss\Model\Entity\Content $content */
 		$content = $this->fetchTable('Contents')->get(44);
 		$content->text = '<p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p>';
@@ -878,13 +905,12 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaProvider
-	 * @param array $media
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInText()
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
 	 */
-	public function testRebuildSimpleImageTagsInTextMultipleInOneField(array $media): void {
+	public function testRebuildSimpleImageTagsInTextMultipleInOneField(): void {
+		$media = $this->getMediaArray();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 22])->first();
 
@@ -898,15 +924,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTags(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTags(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
@@ -922,15 +946,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsWithMediaRenderOptions(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsWithMediaRenderOptions(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
@@ -948,7 +970,10 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
 		$this->assertStringContainsString('<picture>', $widget->text);
-		$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">', $widget->text);
+		$this->assertStringContainsString(
+			'<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">',
+			$widget->text
+		);
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
 		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
 		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
@@ -957,15 +982,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsWithUnknownImage(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsWithUnknownImage(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 		$widget->text = '<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
@@ -980,15 +1003,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsWithTagAttributes(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsWithTagAttributes(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 		$widget->text = '<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4","alt":"Test Image","class":"Dummyclass"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
@@ -1005,15 +1026,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsWithFields(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsWithFields(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 		$widget->title = $widget->text;
@@ -1043,15 +1062,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function testReplaceCustomImageTagsInAttribute(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsInAttribute(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Page $news */
 		$news = $this->fetchTable('News')->find('all')->find('mediaAssignments')->where(['id' => 38])->first();
 
@@ -1067,15 +1084,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function testReplaceCustomImageTagsInTranslations(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsInTranslations(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/**
 		 * @var \Awyiss\Model\Entity\Page $news
 		 * @uses \Awyiss\Model\Table::findTranslations()
@@ -1094,15 +1109,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsMultipleInOneField(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsMultipleInOneField(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/**
 		 * @var \Awyiss\Model\Entity\Page $news
 		 * @uses \Awyiss\Model\Table::findTranslations()
@@ -1124,15 +1137,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsInField(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsInField(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
@@ -1150,15 +1161,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsInFieldWithMediaRenderOptions(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsInFieldWithMediaRenderOptions(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
@@ -1180,7 +1189,10 @@ class ImageHandlerTest extends TestCase {
 
 		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
 		$this->assertStringContainsString('<picture>', $widget->text);
-		$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">', $widget->text);
+		$this->assertStringContainsString(
+			'<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">',
+			$widget->text
+		);
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
 		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
 		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
@@ -1189,15 +1201,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsInFieldWithUnknownImage(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsInFieldWithUnknownImage(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 		$widget->text = '<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
@@ -1214,15 +1224,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsInFieldWithTagAttributes(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsInFieldWithTagAttributes(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Widget $widget */
 		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 		$widget->text = '<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4","alt":"Test Image","class":"Dummyclass"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
@@ -1241,15 +1249,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function testReplaceCustomImageTagsInFieldInAttribute(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsInFieldInAttribute(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/** @var \Awyiss\Model\Entity\Page $news */
 		$news = $this->fetchTable('News')->find('all')->find('mediaAssignments')->where(['id' => 38])->first();
 
@@ -1267,15 +1273,13 @@ class ImageHandlerTest extends TestCase {
 
 
 	/**
-	 * @dataProvider mediaHelperProvider
-	 * @param \Awyiss\View\FrontendView $view
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
 	 */
-	public function testReplaceCustomImageTagsInFieldMultipleInOneField(FrontendView $view, MediaRenderOptions $mediaRenderOptions): void {
+	public function testReplaceCustomImageTagsInFieldMultipleInOneField(): void {
+		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
 		/**
 		 * @var \Awyiss\Model\Entity\Page $news
 		 * @uses \Awyiss\Model\Table::findTranslations()
@@ -1295,34 +1299,5 @@ class ImageHandlerTest extends TestCase {
 		$this->assertStringContainsString('<noscript><img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg"', $widget->text);
 		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
 		$this->assertEquals(2, mb_substr_count($widget->text, '</picture>'));
-	}
-
-
-	/**
-	 * @return array
-	 * @noinspection PhpPossiblePolymorphicInvocationInspection
-	 */
-	public static function mediaProvider(): array {
-		return [
-			[
-				FactoryLocator::get('Table')->get('Media')->find('all')->all()->indexBy('id')->toArray(),
-			],
-		];
-	}
-
-
-	/**
-	 * @return array
-	 * @noinspection PhpPossiblePolymorphicInvocationInspection
-	 */
-	public static function mediaHelperProvider(): array {
-		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
-
-		return [
-			[
-				new FrontendView(),
-				new MediaRenderOptions(baseWidth: 1440.00),
-			],
-		];
 	}
 }
