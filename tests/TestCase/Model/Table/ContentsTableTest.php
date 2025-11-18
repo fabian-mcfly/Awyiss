@@ -4,12 +4,14 @@
 namespace Awyiss\Test\TestCase\Model\Table;
 
 
+use Awyiss\Middleware\DesignMiddleware;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\ContentsTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
+use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Content\AwyissColumn;
 use Awyiss\Utility\Content\AwyissColumnSystem;
@@ -1468,5 +1470,276 @@ class ContentsTableTest extends TestCase {
 			3 => 'Dummy Survey (Inline Image)',
 			4 => 'Dummy Survey (Survey Results)',
 		], $result);
+	}
+
+
+	/**
+	 * Test valid SCSS compilation
+	 *
+	 * @return void
+	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBuildRulesValidScss(): void {
+		// Mock DesignMiddleware with design variables
+		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock->method('getDesignVariables')->willReturn([]);
+
+		$request = Router::getRequest();
+		$request = $request->withAttribute('design', $designMiddlewareMock);
+		Router::setRequest($request);
+
+		// Test with valid SCSS
+		$data = [
+			'pageId' => 1,
+			'contentAreaId' => 1,
+			'contentTemplateId' => 1,
+			'systemOrder' => 1,
+			'css' => 'background-color: #ff0000; color: #ffffff;',
+		];
+
+		$entity = $this->contentsTable->newEntity($data);
+		$result = $this->contentsTable->checkRules($entity);
+
+		$this->assertTrue($result);
+		$errors = $entity->getErrors();
+		$this->assertArrayNotHasKey('css', $errors);
+	}
+
+
+	/**
+	 * Test invalid SCSS compilation
+	 *
+	 * @return void
+	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBuildRulesInvalidScss(): void {
+		// Mock DesignMiddleware with design variables
+		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock->method('getDesignVariables')->willReturn([]);
+
+		$request = Router::getRequest();
+		$request = $request->withAttribute('design', $designMiddlewareMock);
+		Router::setRequest($request);
+
+		// Test with invalid SCSS (unclosed brace)
+		$data = [
+			'pageId' => 1,
+			'contentAreaId' => 1,
+			'contentTemplateId' => 1,
+			'systemOrder' => 1,
+			'css' => 'background-color: #ff0000; &:hover { color: #ffffff;',
+		];
+
+		$entity = $this->contentsTable->newEntity($data);
+		$result = $this->contentsTable->checkRules($entity);
+
+		$this->assertFalse($result);
+		$errors = $entity->getErrors();
+		$this->assertArrayHasKey('css', $errors);
+		$this->assertArrayHasKey('validCss', $errors['css']);
+	}
+
+
+	/**
+	 * Test SCSS with known variables (from design settings)
+	 *
+	 * @return void
+	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBuildRulesScssWithKnownVariables(): void {
+		// Mock DesignMiddleware with design variables
+		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock->method('getDesignVariables')->willReturn([
+			'primaryColor' => '#ff0000',
+			'secondaryColor' => '#00ff00',
+			'fontSize' => '16px',
+		]);
+
+		$request = Router::getRequest();
+		$request = $request->withAttribute('design', $designMiddlewareMock);
+		Router::setRequest($request);
+
+		// Test with SCSS using known variables
+		$data = [
+			'pageId' => 1,
+			'contentAreaId' => 1,
+			'contentTemplateId' => 1,
+			'systemOrder' => 1,
+			'css' => 'background-color: $primaryColor; color: $secondaryColor; font-size: $fontSize;',
+		];
+
+		$entity = $this->contentsTable->newEntity($data);
+		$result = $this->contentsTable->checkRules($entity);
+
+		$this->assertTrue($result);
+		$errors = $entity->getErrors();
+		$this->assertArrayNotHasKey('css', $errors);
+	}
+
+
+	/**
+	 * Test SCSS with unknown variables
+	 *
+	 * @return void
+	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBuildRulesScssWithUnknownVariables(): void {
+		// Mock DesignMiddleware with design variables
+		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock->method('getDesignVariables')->willReturn([
+			'primaryColor' => '#ff0000',
+		]);
+
+		$request = Router::getRequest();
+		$request = $request->withAttribute('design', $designMiddlewareMock);
+		Router::setRequest($request);
+
+		// Test with SCSS using unknown variable
+		$data = [
+			'pageId' => 1,
+			'contentAreaId' => 1,
+			'contentTemplateId' => 1,
+			'systemOrder' => 1,
+			'css' => 'background-color: $unknownVariable;',
+		];
+
+		$entity = $this->contentsTable->newEntity($data);
+		$result = $this->contentsTable->checkRules($entity);
+
+		$this->assertFalse($result);
+		$errors = $entity->getErrors();
+		$this->assertArrayHasKey('css', $errors);
+		$this->assertArrayHasKey('validCss', $errors['css']);
+	}
+
+
+	/**
+	 * Test that @import is rejected in CSS
+	 *
+	 * @return void
+	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBuildRulesCssWithImport(): void {
+		// Mock DesignMiddleware with design variables
+		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock->method('getDesignVariables')->willReturn([]);
+
+		$request = Router::getRequest();
+		$request = $request->withAttribute('design', $designMiddlewareMock);
+		Router::setRequest($request);
+
+		// Test with @import statement
+		$data = [
+			'pageId' => 1,
+			'contentAreaId' => 1,
+			'contentTemplateId' => 1,
+			'systemOrder' => 1,
+			'css' => '@import "some-file.css"; background-color: #ff0000;',
+		];
+
+		$entity = $this->contentsTable->newEntity($data);
+		$result = $this->contentsTable->checkRules($entity);
+
+		$this->assertFalse($result);
+		$errors = $entity->getErrors();
+		$this->assertArrayHasKey('css', $errors);
+		$this->assertArrayHasKey('validCss', $errors['css']);
+	}
+
+
+	/**
+	 * Test that valid SCSS with nested selectors is accepted
+	 *
+	 * @return void
+	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBuildRulesValidNestedScss(): void {
+		// Mock DesignMiddleware with design variables
+		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock->method('getDesignVariables')->willReturn([]);
+
+		$request = Router::getRequest();
+		$request = $request->withAttribute('design', $designMiddlewareMock);
+		Router::setRequest($request);
+
+		// Test with valid nested SCSS
+		$data = [
+			'pageId' => 1,
+			'contentAreaId' => 1,
+			'contentTemplateId' => 1,
+			'systemOrder' => 1,
+			'css' => 'background-color: #ff0000; &:hover { background-color: #00ff00; }',
+		];
+
+		$entity = $this->contentsTable->newEntity($data);
+		$result = $this->contentsTable->checkRules($entity);
+
+		$this->assertTrue($result);
+		$errors = $entity->getErrors();
+		$this->assertArrayNotHasKey('css', $errors);
+	}
+
+
+	/**
+	 * Test that empty CSS is valid
+	 *
+	 * @return void
+	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBuildRulesEmptyCss(): void {
+		// Test with empty CSS
+		$data = [
+			'pageId' => 1,
+			'contentAreaId' => 1,
+			'contentTemplateId' => 1,
+			'systemOrder' => 1,
+			'css' => '',
+		];
+
+		$entity = $this->contentsTable->newEntity($data);
+		$result = $this->contentsTable->checkRules($entity);
+
+		$this->assertTrue($result);
+		$errors = $entity->getErrors();
+		$this->assertArrayNotHasKey('css', $errors);
+	}
+
+
+	/**
+	 * Test that null CSS is valid
+	 *
+	 * @return void
+	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testBuildRulesNullCss(): void {
+		// Test with null CSS
+		$data = [
+			'pageId' => 1,
+			'contentAreaId' => 1,
+			'contentTemplateId' => 1,
+			'systemOrder' => 1,
+			'css' => null,
+		];
+
+		$entity = $this->contentsTable->newEntity($data);
+		$result = $this->contentsTable->checkRules($entity);
+
+		$this->assertTrue($result);
+		$errors = $entity->getErrors();
+		$this->assertArrayNotHasKey('css', $errors);
 	}
 }
