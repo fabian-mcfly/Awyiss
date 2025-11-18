@@ -1737,6 +1737,7 @@ class ContentsCustomSeed extends AbstractSeed {
 				'column_last' => 0,
 				'column_rtl' => 0,
 				'css_class' => null,
+				'css' => 'background-color:red;',
 				'duplicate_of' => null,
 				'data' => null,
 				'form_id' => null,

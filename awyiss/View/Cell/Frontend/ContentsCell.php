@@ -60,6 +60,8 @@ class ContentsCell extends Cell {
 
 		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth']);
 
+		$this->addDynamicCss($lo_contents);
+
 		$this->setViewVars($la_options);
 
 		$ls_contents = $this->buildContents($lo_contents->toArray(), false, $options['autoSection'] ?? true);
@@ -308,5 +310,24 @@ class ContentsCell extends Cell {
 		]);
 
 		return $lo_query;
+	}
+
+
+	/**
+	 * @param \Cake\Collection\CollectionInterface $contents
+	 * @return void
+	 */
+	protected function addDynamicCss(CollectionInterface $contents): void {
+		/** @var \Awyiss\View\Helper\AssetHelper $lo_assetHelper */
+		$lo_assetHelper = $this->View->helpers()->get('Asset');
+
+		/** @var \Awyiss\Model\Entity\Content $lo_content */
+		foreach ($contents->listNested() as $lo_content) {
+			if (empty($lo_content->css)) {
+				continue;
+			}
+
+			$lo_assetHelper->addContentStyleBlock('#Content' . $lo_content->id, $lo_content->css);
+		}
 	}
 }

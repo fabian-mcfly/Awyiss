@@ -10,6 +10,7 @@
 	<exclude-pattern>./awyiss/assets/js/*.min.js</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/**/*.min.js</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/AirDatepicker/*</exclude-pattern>
+	<exclude-pattern>./awyiss/assets/js/CodeCup/*</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/Coloris/*</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/Frontend/Captcha/altcha.i18n.js</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/Frontend/MapLibre/*.js</exclude-pattern>

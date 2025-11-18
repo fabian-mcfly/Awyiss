@@ -4,6 +4,7 @@ import AddressFinder from 'Form/AddressFinder';
 import Audit from 'Audit/Audit';
 import ButtonArea from 'ButtonArea';
 import ButtonHandler from 'ButtonHandler';
+import CodeEditor from 'Form/CodeEditor';
 import ColorPicker from 'Form/ColorPicker';
 import CustomSelect from 'Form/CustomSelect';
 import DatePicker from 'Form/DatePicker';
@@ -28,6 +29,7 @@ import PlaceholderHelper from 'Form/PlaceholderHelper';
 import Search from 'Search';
 import TitleSetter from 'TitleSetter';
 import TranslatableTexts from 'Form/TranslatableTexts';
+import GenericDialog from './Modules/GenericDialog';
 
 window.bodyRemoved = false;
 // If the document contains a flash message, send an event to the parent window
@@ -380,6 +382,12 @@ export async function initMainOnReady() {
 
 	/**
 	 * @global
+	 * @type {GenericDialog}
+	 */
+	window.genericDialog = new GenericDialog();
+
+	/**
+	 * @global
 	 * @type {FormUpdater}
 	 */
 	window.formUpdater = new FormUpdater();
@@ -474,9 +482,6 @@ export async function initMainOnReady() {
 	if (controllerClass) {
 		await loadControllerClass(controllerClass);
 	}
-
-	// Remove the "ready" event listener
-	document.removeEventListener('DOMContentLoaded', initMainOnReady);
 }
 
 /**
@@ -500,6 +505,8 @@ export function initMainOnLoad() {
 		 */
 		window.overflowMenu = new OverflowMenu('#Menu-System', 'li.Level1');
 	}
+
+	window.codeEditor = new CodeEditor();
 
 	/**
 	 * @global
@@ -550,9 +557,6 @@ export function initMainOnLoad() {
 			checkbox.dispatchEvent(new Event('change', {bubbles: true}));
 		}, label);
 	});
-
-	// Remove the load event listener
-	window.removeEventListener('load', initMainOnLoad);
 }
 
 // Check if the main.js is imported in the custom main.js

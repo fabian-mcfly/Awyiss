@@ -7,6 +7,7 @@ namespace Awyiss\Test\TestCase\View\Cell\Frontend;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Content;
+use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
@@ -74,14 +75,17 @@ class ContentsCellTest extends TestCase {
 				'plugin' => null,
 			],
 		]);
+		Router::setRequest($this->request);
 
 		$this->response = $this->createMock(Response::class);
 
 		$this->view = new FrontendView($this->request);
 		$this->cell = new ContentsCell($this->request, $this->response, null, [
 			'action' => 'display',
-			'view' => $this->view,
+			'args' => [],
 		]);
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$this->view->helpers()->get('Asset')->clearAssets();
 	}
 
 
@@ -1371,5 +1375,52 @@ class ContentsCellTest extends TestCase {
 		$this->assertStringNotContainsString('Heuer bei uns an!</h1>', $output);
 		$this->assertStringContainsString('Titel H1</h1>', $output);
 		$this->assertStringContainsString('id="Content34"', $output);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::display()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testDisplayAddsDynamicContentCss(): void {
+		$page = $this->getTableLocator()->get('Pages')->get(29);
+
+		(string)$this->cell('Frontend/Contents', [
+			'ContentArea',
+			$page,
+			$this->view,
+			[
+				'fullWidth' => 1440.00,
+				'singleColumnBreakpoint' => 768.00,
+			],
+		]);
+
+		/** @var \Awyiss\View\Helper\AssetHelper $assetHelper */
+		$assetHelper = $this->view->helpers()->get('Asset');
+		$this->assertEmpty($assetHelper->getContentStyleBlocks());
+
+		$page = $this->getTableLocator()->get('Pages')->get(50);
+
+		(string)$this->cell('Frontend/Contents', [
+			'ContentArea',
+			$page,
+			$this->view,
+			[
+				'fullWidth' => 1440.00,
+				'singleColumnBreakpoint' => 768.00,
+			],
+		]);
+
+		/** @var \Awyiss\View\Helper\AssetHelper $assetHelper */
+		$assetHelper = $this->view->helpers()->get('Asset');
+		$styleBlocks = $assetHelper->getContentStyleBlocks();
+		$this->assertNotEmpty($styleBlocks);
+
+		$this->assertArrayHasKey('#Content57', $styleBlocks);
+		$this->assertSame([
+			'content' => 'background-color:red;',
+			'priority' => 10,
+		], $styleBlocks['#Content57']);
 	}
 }

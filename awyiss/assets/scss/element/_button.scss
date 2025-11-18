@@ -215,6 +215,7 @@
 		&-Save,
 		&-SaveClose,
 		&-SaveSystemOrder,
+		&-Style,
 		&-Target,
 		&-View,
 		&-ViewContents,
@@ -493,6 +494,12 @@
 	&-Delete,
 	&-SaveSystemOrder {
 		transition:outline-color 0.1s ease-in-out;
+	}
+
+	&-Style {
+		&::after {
+			content:'\f53f';
+		}
 	}
 
 	&-Target {

@@ -12,6 +12,7 @@ use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\AwyissColumnSystem;
 use Awyiss\Utility\Inflector;
 use Awyiss\Validation\Validator;
@@ -25,7 +26,10 @@ use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator as BaseValidator;
+use Exception;
 use RuntimeException;
+use ScssPhp\ScssPhp\Exception\SassException;
+use SplFileInfo;
 
 
 /**
@@ -381,6 +385,13 @@ class ContentsTable extends Table {
 		]);
 
 
+		$validator->add('css', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
+		]);
+
+
 		$validator->add('duplicateOf', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
@@ -584,6 +595,53 @@ class ContentsTable extends Table {
 			'validDuplicateOf',
 			[
 				'errorField' => 'duplicateOf',
+			]
+		);
+
+
+		$rules->add(
+			function (Content $entity) {
+				if (empty($entity->css) || !$entity->isDirty('css')) {
+					return true;
+				}
+
+				// Replace any Windows line endings with Unix line endings
+				$entity->css = str_replace("\r\n", "\n", $entity->css);
+
+				if ($entity->hasOriginal('css') && $entity->getOriginal('css') === $entity->css) {
+					return true;
+				}
+
+				// If there's an @import rule, the SCSS is invalid
+				if (str_contains($entity->css, '@import')) {
+					return false;
+				}
+
+				// compileScss requires a \SplFileInfo instance and the file needs to have the `.scss` extension
+				$ls_tempFile = tempnam(sys_get_temp_dir(), 'awyiss_scss_');
+				rename($ls_tempFile, $ls_tempFile . '.scss');
+				$ls_tempFile .= '.scss';
+				file_put_contents($ls_tempFile, '#Content { ' . $entity->css . ' }');
+				$lo_tempFile = new SplFileInfo($ls_tempFile);
+
+				/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
+				$ls_compilerClass = App::className('ScssCompiler', 'Utility/Design');
+				try {
+					/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
+					$lo_designMiddleware = Router::getRequest()->getAttribute('design');
+					$ls_css = $ls_compilerClass::compileScss($lo_tempFile, ROOT . DS . CUSTOM_DIR . DS . 'asset' . DS, $lo_designMiddleware?->getDesignVariables() ?? [], true);
+				}
+				catch (Exception | SassException) {
+					$ls_css = false;
+				}
+
+				unlink($lo_tempFile->getRealPath());
+
+				return $ls_css !== false;
+			},
+			'validCss',
+			[
+				'errorField' => 'css',
 			]
 		);
 

@@ -5,6 +5,7 @@ namespace Awyiss\View\Helper;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Utility\Minify\Css;
 use Cake\Core\Configure;
 use Cake\Log\Log;
@@ -13,19 +14,14 @@ use Cake\View\Helper;
 use Exception;
 use InvalidArgumentException;
 use MatthiasMullie\Minify;
+use ScssPhp\ScssPhp\Exception\SassException;
+use SplFileInfo;
 
 
 /**
- * AssetHelper is a class that extends the Helper class.
- * This class is used to manage and manipulate assets in a web application.
- * It provides methods for adding assets, generating HTML tags for assets, minifying assets, and more.
- *
- * The class maintains an array of assets, which can be of various types (e.g., CSS, JavaScript, Fonts).
- * Each asset can have several properties, such as whether it is minified or critical, and its priority.
- * The class also provides methods for sorting assets by priority and for generating fallback content
- * for users who have JavaScript disabled in their browser.
- *
- * @extends \Cake\View\Helper
+ * AssetHelper
+ * Registers and resolves CSS, JS and font assets, renders the corresponding HTML tags and import maps.
+ * Optionally produces minified asset files and sets HTTP/2 preload headers for delivered assets.
  */
 class AssetHelper extends Helper {
 	/**
@@ -73,6 +69,12 @@ class AssetHelper extends Helper {
 	 * @var array $noScriptAssets
 	 */
 	protected static array $noScriptAssets = [];
+	/**
+	 * An array of content-specific (S)CSS blocks, indexed by content ID or unique identifier.
+	 *
+	 * @var array $contentStyleBlocks
+	 */
+	protected static array $contentStyleBlocks = [];
 	/**
 	 * The realm of the application. This is used to determine the base path for assets.
 	 *
@@ -950,6 +952,140 @@ class AssetHelper extends Helper {
 		static::$checkedAssets = [];
 		static::$jsModules = [];
 		static::$noScriptAssets = [];
+		static::$contentStyleBlocks = [];
+	}
+
+
+	/**
+	 * Registers a content-specific (S)CSS block that will be compiled with others.
+	 *
+	 * @param string $contentId Unique identifier for this content block
+	 * @param string $scssContent The SCSS/CSS content
+	 * @param int $priority Optional priority for ordering. Higher = later. Default: 10.
+	 * @return void
+	 */
+	public function addContentStyleBlock(string $contentId, string $scssContent, int $priority = 10): void {
+		static::$contentStyleBlocks[ $contentId ] = [
+			'content' => $scssContent,
+			'priority' => $priority,
+		];
+	}
+
+
+	/**
+	 * Removes a content style block.
+	 *
+	 * @param string $contentId The content block identifier
+	 * @return void
+	 */
+	public function removeContentStyleBlock(string $contentId): void {
+		if (isset(static::$contentStyleBlocks[ $contentId ])) {
+			unset(static::$contentStyleBlocks[ $contentId ]);
+		}
+	}
+
+
+	/**
+	 * Clears all content style blocks.
+	 *
+	 * @return void
+	 */
+	public function clearContentStyleBlocks(): void {
+		static::$contentStyleBlocks = [];
+	}
+
+
+	/**
+	 * Returns all registered content style blocks.
+	 *
+	 * @return array
+	 */
+	public function getContentStyleBlocks(): array {
+		return static::$contentStyleBlocks;
+	}
+
+
+	/**
+	 * Adds the dynamic CSS file to the assets.
+	 *
+	 * @param int $pageId The current page ID (for caching purposes)
+	 * @return void
+	 * @throws Exception
+	 */
+	public function addDynamicContentsStylesheet(int $pageId): void {
+		$ls_cssFileName = $this->compileContentStyles($pageId);
+
+		if ($ls_cssFileName) {
+			$this->add($ls_cssFileName);
+		}
+	}
+
+
+	/**
+	 * Compiles and caches all registered content style blocks.
+	 * Returns the asset path if successful, null if no blocks registered.
+	 *
+	 * @param int $pageId The current page ID (for caching purposes)
+	 * @return string|null CSS asset filename or null
+	 */
+	protected function compileContentStyles(int $pageId): ?string {
+		if (empty(static::$contentStyleBlocks)) {
+			return null;
+		}
+
+		// Sort blocks by priority
+		$la_blocks = static::$contentStyleBlocks;
+		uasort($la_blocks, function ($a, $b) {
+			return $a['priority'] <=> $b['priority'];
+		});
+
+		// Combine content
+		$ls_combined = '';
+		foreach ($la_blocks as $ls_contentId => $la_block) {
+			$ls_combined .= $ls_contentId . ' {' . PHP_EOL;
+			$ls_combined .= $la_block['content'] . PHP_EOL;
+			$ls_combined .= '}' . PHP_EOL;
+		}
+
+		$ls_assetsPath = Configure::read('App.paths.assets.Frontend.customer');
+		if (!$ls_assetsPath) {
+			return null;
+		}
+
+		// Check if file exists
+		$ls_fileName = 'page_' . $pageId . '_' . hash('xxh64', $ls_combined);
+		$ls_scssPath = $ls_assetsPath . 'scss/_dynamic/';
+
+		// Create the font directory if it doesn't exist
+		if (!is_dir($ls_scssPath)) {
+			mkdir($ls_scssPath, 0755, true);
+		}
+
+		if (!file_exists($ls_scssPath . $ls_fileName . '.scss')) {
+			$this->unlinkDynamicAssets($pageId);
+			if (!file_put_contents($ls_scssPath . $ls_fileName . '.scss', $ls_combined)) {
+				return null;
+			}
+		}
+
+		$ls_cssPath = $ls_assetsPath . 'css/_dynamic/';
+		if (file_exists($ls_cssPath . $ls_fileName . '.css')) {
+			return '_dynamic/' . $ls_fileName . '.css';
+		}
+
+		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
+		$ls_compilerClass = App::className('ScssCompiler', 'Utility/Design');
+		try {
+			$lo_scssFile = new SplFileInfo($ls_scssPath . $ls_fileName . '.scss');
+			/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
+			$lo_designMiddleware = Router::getRequest()->getAttribute('design');
+			$ls_compilerClass::compileScss($lo_scssFile, $ls_assetsPath, $lo_designMiddleware?->getDesignVariables() ?? [], false);
+		}
+		catch (Exception | SassException) {
+			return null;
+		}
+
+		return '_dynamic/' . $ls_fileName . '.css';
 	}
 
 
@@ -1155,5 +1291,29 @@ class AssetHelper extends Helper {
 		}
 
 		return $ls_minifiedPath;
+	}
+
+
+	/**
+	 * Unlinks all dynamic assets for the given page ID to avoid accumulation of unused files.
+	 *
+	 * @param int $pageId
+	 * @return void
+	 */
+	protected function unlinkDynamicAssets(int $pageId): void {
+		$ls_assetsPath = Configure::read('App.paths.assets.Frontend.customer');
+		$ls_fileName = 'page_' . $pageId . '_*';
+		$la_paths = [
+			$ls_assetsPath . 'scss/_dynamic/' . $ls_fileName . '.scss',
+			$ls_assetsPath . 'css/_dynamic/' . $ls_fileName . '.css',
+			$ls_assetsPath . 'css/_dynamic/' . $ls_fileName . '.css.map',
+		];
+
+		foreach ($la_paths as $ls_pathPattern) {
+			$la_files = glob($ls_pathPattern);
+			foreach ($la_files ?: [] as $ls_file) {
+				unlink($ls_file);
+			}
+		}
 	}
 }

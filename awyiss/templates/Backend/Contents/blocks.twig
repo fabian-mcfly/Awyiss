@@ -262,10 +262,24 @@
 
 
 {% block formControlCssClass %}
+	{% set cssDialogButton %}
+		{{ FormHelper.button(__('edit_css'), {
+			class: 'Button Button-Style ShowDialog InFieldButton' ~ (
+				settings.content.error('css') ? ' Button-Error' :
+				(settings.content.css|length ? ' Button-Success' : '')
+			),
+			type: 'button',
+			'data-dialog': 'CssDialog',
+		}) }}
+	{% endset %}
+
 	{{ FormHelper.control('css_class', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
+		templateVars: {
+			additionalContent: cssDialogButton,
+		}
 	}) }}
 {% endblock %}
 

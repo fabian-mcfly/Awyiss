@@ -118,3 +118,9 @@ msgstr "Column View"
 
 msgid "configuration_identifier_backend_overview_column_view_enabled"
 msgstr "Enabled"
+
+msgid "edit_css"
+msgstr "Edit (S)CSS"
+
+msgid "css"
+msgstr "(S)CSS"

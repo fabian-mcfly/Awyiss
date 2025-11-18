@@ -157,3 +157,13 @@ msgstr "Spaltenansicht"
 
 msgid "configuration_identifier_backend_overview_column_view_enabled"
 msgstr "Aktiviert"
+
+msgid "edit_css"
+msgstr "(S)CSS bearbeiten"
+
+msgid "css"
+msgstr "(S)CSS"
+
+msgid "css_dialog_info"
+msgstr "(S)CSS, das hier eingegeben wird, wird mit dem <code>#Content&lt;ID&gt;</code>-Selektor auf den aktuellen Inhalt angewendet. "
+"Es ist möglich, sowohl CSS- als auch SCSS-Code einzugeben. SCSS-Variablen, die in den Design-Einstellungen definiert wurden, sind verfügbar."

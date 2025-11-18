@@ -1,0 +1,156 @@
+#CssDialog {
+	max-width:640px;
+	padding:52px 0 0;
+	grid-template-columns:auto;
+
+	@media screen and (width <= 768px) {
+		padding-top:42px;
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			padding-top:42px;
+		}
+	}
+
+	&::after {
+		content:attr(data-title, 'Seo Analyze');
+		padding-right:180px;
+
+		@media screen and (width <= 540px) {
+			padding-right:140px;
+		}
+
+		@media screen and (width <= 480px) {
+			padding-right:80px;
+		}
+	}
+
+	> .ButtonArea {
+		width:max-content;
+		margin:0;
+		padding:2px;
+		position:absolute;
+		top:0;
+		right:0;
+		z-index:10;
+
+		@media screen and (width <= 640px) {
+			display:flex;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				margin-top:0;
+			}
+		}
+
+		.Button {
+			width:auto;
+			height:48px;
+			background-color:transparent;
+			line-height:26px;
+
+			@media screen and (width <= 768px) {
+				height:38px;
+			}
+
+			@media screen and (width <= 540px) {
+				padding-inline:10px;
+			}
+
+			@media screen and (width <= 480px) {
+				font-size:0;
+				line-height:0;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					height:38px;
+				}
+			}
+
+			&::after {
+				@media screen and (width <= 480px) {
+					margin-left:0;
+				}
+			}
+		}
+	}
+
+	.Inner {
+		--columns:1;
+
+		display:grid;
+		height:100%;
+		max-height:calc(80vh - 52px);
+		padding:30px;
+		border-radius:5px;
+		border:10px solid transparent;
+		overflow:auto;
+		gap:20px;
+		grid-auto-rows:min-content;
+		grid-template-columns:auto;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+
+		@media screen and (width <= 768px) {
+			padding:10px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding:5px;
+			border-width:5px;
+			gap:10px;
+		}
+
+		@media screen and (width <= 480px) {
+			grid-template-columns:auto;
+		}
+
+		&:focus {
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-3px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding:10px;
+			}
+		}
+	}
+
+	.ButtonArea {
+		&.ButtonArea-Bottom {
+			margin-top:20px;
+
+			@media screen and (width <= 768px) {
+				margin-top:10px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-top:10px;
+				}
+			}
+
+			.Button-Close {
+				margin-left:auto;
+			}
+		}
+	}
+
+	.InfoArea {
+		font-size:14px;
+		line-height:1.4;
+
+		code {
+			display:inline-block;
+			padding:0;
+			background-color:transparent;
+			color:inherit;
+			font-size:inherit;
+			line-height:inherit;
+		}
+	}
+}

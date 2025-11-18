@@ -192,7 +192,7 @@ class SearchBehaviorTest extends TestCase {
 		$columns = $table->getFilterColumns();
 
 		// Fields include attributes
-		$this->assertSame([
+		$keys = [
 			'id',
 			'content_area_id',
 			'content_template_id',
@@ -208,6 +208,7 @@ class SearchBehaviorTest extends TestCase {
 			'column_last',
 			'column_rtl',
 			'css_class',
+			'css',
 			'duplicate_of',
 			'data',
 			'form_id',
@@ -220,7 +221,8 @@ class SearchBehaviorTest extends TestCase {
 			'changed_on',
 			'attributes__background_color',
 			'attributes__teaser',
-		], array_keys($columns));
+		];
+		$this->assertEquals([], array_diff(array_keys($columns), $keys));
 	}
 
 

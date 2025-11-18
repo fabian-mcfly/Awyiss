@@ -56,6 +56,7 @@ class WidgetTest extends TestCase {
 			'columnLast' => true,
 			'columnRtl' => true,
 			'cssClass' => true,
+			'css' => true,
 			'data' => true,
 			'formId' => true,
 			'surveyId' => true,

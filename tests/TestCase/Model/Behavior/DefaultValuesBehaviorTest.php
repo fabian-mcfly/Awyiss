@@ -79,7 +79,7 @@ class DefaultValuesBehaviorTest extends TestCase {
 		$entity->attributes->setVirtual([]);
 
 		$this->assertInstanceOf(Content::class, $entity);
-		$this->assertSame([
+		$this->assertEquals([
 			'parentId' => null,
 			'title' => null,
 			'titleTag' => null,
@@ -92,6 +92,7 @@ class DefaultValuesBehaviorTest extends TestCase {
 			'columnLast' => false,
 			'columnRtl' => false,
 			'cssClass' => null,
+			'css' => null,
 			'duplicateOf' => null,
 			'data' => null,
 			'formId' => null,

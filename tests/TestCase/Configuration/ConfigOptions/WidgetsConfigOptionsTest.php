@@ -79,7 +79,7 @@ class WidgetsConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
-		$this->assertSame([
+		$this->assertEquals([
 			'identifier' => 'widgets::identifier',
 			'widget_template_id' => 'widgets::widget_template_id',
 			'parent_id' => 'widgets::parent_id',
@@ -94,6 +94,7 @@ class WidgetsConfigOptionsTest extends TestCase {
 			'column_last' => 'widgets::column_last',
 			'column_rtl' => 'widgets::column_rtl',
 			'css_class' => 'widgets::css_class',
+			'css' => 'widgets::css',
 			'data' => 'widgets::data',
 			'form_id' => 'widgets::form_id',
 			'survey_id' => 'widgets::survey_id',

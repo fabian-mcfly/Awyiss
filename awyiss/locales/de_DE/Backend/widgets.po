@@ -121,3 +121,9 @@ msgstr "Spaltenansicht"
 
 msgid "configuration_identifier_backend_overview_column_view_enabled"
 msgstr "Aktiviert"
+
+msgid "edit_css"
+msgstr "(S)CSS bearbeiten"
+
+msgid "css"
+msgstr "(S)CSS"

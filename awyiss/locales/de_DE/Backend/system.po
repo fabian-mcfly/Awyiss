@@ -543,3 +543,9 @@ msgstr "Suchen..."
 
 msgid "select_empty_label"
 msgstr "---"
+
+msgid "css_dialog_title"
+msgstr "Benutzerdefiniertes CSS bearbeiten"
+
+msgid "css_dialog_close"
+msgstr "Schließen"

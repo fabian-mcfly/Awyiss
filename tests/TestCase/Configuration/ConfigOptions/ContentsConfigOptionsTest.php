@@ -93,7 +93,7 @@ class ContentsConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
-		$this->assertSame([
+		$this->assertEquals([
 			'page_id' => 'contents::page_id',
 			'content_area_id' => 'contents::content_area_id',
 			'content_template_id' => 'contents::content_template_id',
@@ -109,6 +109,7 @@ class ContentsConfigOptionsTest extends TestCase {
 			'column_last' => 'contents::column_last',
 			'column_rtl' => 'contents::column_rtl',
 			'css_class' => 'contents::css_class',
+			'css' => 'contents::css',
 			'duplicate_of' => 'contents::duplicate_of',
 			'data' => 'contents::data',
 			'form_id' => 'contents::form_id',

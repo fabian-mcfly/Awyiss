@@ -1959,3 +1959,24 @@ textarea {
 		}
 	}
 }
+
+.CodeEditor {
+	.CodeCup {
+		code {
+			padding:0;
+			background:inherit;
+			color:inherit;
+			font:inherit;
+		}
+
+		textarea {
+			&:focus-visible {
+				box-shadow:none;
+			}
+		}
+	}
+
+	> textarea {
+		display:none;
+	}
+}

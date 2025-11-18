@@ -28,6 +28,7 @@ use Cake\Datasource\FactoryLocator;
  * @property bool $columnLast
  * @property bool $columnRtl
  * @property string|null $cssClass
+ * @property string|null $css
  * @property string|null $data
  * @property int|null $formId
  * @property int|null $surveyId
@@ -100,6 +101,7 @@ class Widget extends Entity {
 		'columnLast' => true,
 		'columnRtl' => true,
 		'cssClass' => true,
+		'css' => true,
 		'data' => true,
 		'formId' => true,
 		'surveyId' => true,

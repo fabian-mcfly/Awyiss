@@ -29,6 +29,7 @@ use Cake\Datasource\FactoryLocator;
  * @property bool $columnLast
  * @property bool $columnRtl
  * @property string|null $cssClass
+ * @property string|null $css
  * @property int|null $duplicateOf
  * @property string|null $data
  * @property int|null $formId
@@ -113,6 +114,7 @@ class Content extends Entity {
 		'columnLast' => true,
 		'columnRtl' => true,
 		'cssClass' => true,
+		'css' => true,
 		'duplicateOf' => true,
 		'data' => true,
 		'formId' => true,

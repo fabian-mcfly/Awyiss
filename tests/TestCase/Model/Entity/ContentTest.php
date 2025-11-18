@@ -57,6 +57,7 @@ class ContentTest extends TestCase {
 			'columnLast' => true,
 			'columnRtl' => true,
 			'cssClass' => true,
+			'css' => true,
 			'duplicateOf' => true,
 			'data' => true,
 			'formId' => true,

@@ -59,12 +59,6 @@
 		border-color:rgba(255, 255, 255, .1);
 	}
 
-	html.Scale-Small & {
-		@media screen and (width > 768px) {
-			padding-block:5px;
-		}
-	}
-
 	&[disabled] {
 		opacity:.5;
 		cursor:not-allowed;

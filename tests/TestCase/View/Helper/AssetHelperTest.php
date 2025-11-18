@@ -5,6 +5,8 @@ namespace Awyiss\Test\TestCase\View\Helper;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Middleware\DesignMiddleware;
+use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
 use Awyiss\View\Helper\AssetHelper;
@@ -1623,7 +1625,7 @@ class AssetHelperTest extends TestCase {
 		$modules = $this->helper->getJsModules();
 
 		$this->assertArrayHasKey('dummy.js', $modules);
-		$this->assertSame($modules['dummy.js']['as'], 'DifferentName');
+		$this->assertSame('DifferentName', $modules['dummy.js']['as']);
 	}
 
 
@@ -1639,7 +1641,7 @@ class AssetHelperTest extends TestCase {
 		$modules = $this->helper->getJsModules();
 
 		$this->assertArrayHasKey('dummy.js', $modules);
-		$this->assertSame($modules['dummy.js']['realm'], Awyiss::REALM_FRONTEND);
+		$this->assertSame(Awyiss::REALM_FRONTEND, $modules['dummy.js']['realm']);
 	}
 
 
@@ -2464,5 +2466,312 @@ class AssetHelperTest extends TestCase {
 		$this->assertStringEqualsFile($filePath, 'console.log("This is a dummy JavaScript file for testing purposes.");const name="Test User";let count=0;function incrementCount(){count+=1;console.log(`Count is now: ${count}`);return count}' . PHP_EOL . 'const config={enabled:!0,timeout:3000};document.addEventListener(\'click\',function(){incrementCount()});export{incrementCount,config}');
 
 		unlink($filePath);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addContentStyleBlock()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddContentStyleBlock(): void {
+		$cssBlock = '.custom-class { color: red; }';
+		$this->helper->addContentStyleBlock('#Content123', $cssBlock);
+
+		$result = $this->helper->getContentStyleBlocks();
+		$this->assertArrayHasKey('#Content123', $result);
+		$this->assertSame([
+			'content' => $cssBlock,
+			'priority' => 10,
+		], $result['#Content123']);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::removeContentStyleBlock()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testRemoveContentStyleBlock(): void {
+		$cssBlock = '.custom-class { color: red; }';
+		$this->helper->addContentStyleBlock('#Content123', $cssBlock);
+
+		$cssBlock = '.custom-class { color: blue; }';
+		$this->helper->addContentStyleBlock('#Content234', $cssBlock);
+
+		$this->helper->removeContentStyleBlock('#Content123');
+
+		$result = $this->helper->getContentStyleBlocks();
+		$this->assertArrayNotHasKey('#Content123', $result);
+		$this->assertArrayHasKey('#Content234', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::clearContentStyleBlocks()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testClearContentStyleBlocks(): void {
+		$cssBlock = '.custom-class { color: red; }';
+		$this->helper->addContentStyleBlock('#Content123', $cssBlock);
+		$cssBlock = '.custom-class { color: blue; }';
+		$this->helper->addContentStyleBlock('#Content234', $cssBlock);
+
+		$this->helper->clearContentStyleBlocks();
+
+		$result = $this->helper->getContentStyleBlocks();
+		$this->assertEmpty($result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::clearAssets()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testClearAssetsRemovedContentStyleBlocks(): void {
+		$cssBlock = '.custom-class { color: red; }';
+		$this->helper->addContentStyleBlock('#Content123', $cssBlock);
+		$cssBlock = '.custom-class { color: blue; }';
+		$this->helper->addContentStyleBlock('#Content234', $cssBlock);
+
+		$this->helper->clearAssets();
+
+		$result = $this->helper->getContentStyleBlocks();
+		$this->assertEmpty($result);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addDynamicContentsStylesheet()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddDynamicContentsStylesheetCreatesNewScssFile(): void {
+		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_b3e052fc6c30f602.scss';
+		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css';
+		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css.map';
+
+		if (file_exists($scssPath)) {
+			unlink($scssPath);
+		}
+		if (file_exists($cssPath)) {
+			unlink($cssPath);
+		}
+		if (file_exists($cssMapPath)) {
+			unlink($cssMapPath);
+		}
+
+		$this->helper->setRealm(Awyiss::REALM_FRONTEND);
+
+		$scssContent = '$primary-color: #63d1a5; background-color: $primary-color;';
+		$this->helper->addContentStyleBlock('#Content123', $scssContent);
+		$this->helper->addDynamicContentsStylesheet(123);
+
+		$allTags = $this->helper->getTags();
+		/** @noinspection JSUnresolvedLibraryURL */
+		$this->assertStringContainsString('<link rel="preload" href="http://localhost/assets/css/_dynamic/page_123_b3e052fc6c30f602.', $allTags);
+		/** @noinspection JSUnresolvedLibraryURL */
+		$this->assertStringContainsString('<noscript><link rel="stylesheet" type="text/css" href="http://localhost/assets/css/_dynamic/page_123_b3e052fc6c30f602.', $allTags);
+
+		$this->assertFileExists($scssPath);
+		unlink($scssPath);
+
+		$this->assertFileExists($cssPath);
+		unlink($cssPath);
+
+		$this->assertFileExists($cssMapPath);
+		unlink($cssMapPath);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addDynamicContentsStylesheet()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddDynamicContentsStylesheetNotUpdatesExistingScssFile(): void {
+		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_b3e052fc6c30f602.scss';
+		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css';
+		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css.map';
+
+		if (file_exists($cssPath)) {
+			unlink($cssPath);
+		}
+		if (file_exists($cssMapPath)) {
+			unlink($cssMapPath);
+		}
+
+		touch($scssPath, time() - 3600);
+
+		$scssContent = '$primary-color: #63d1a5; background-color: $primary-color;';
+		$this->helper->addContentStyleBlock('#Content123', $scssContent);
+		$this->helper->addDynamicContentsStylesheet(123);
+
+		$this->assertFileExists($scssPath);
+		$this->assertEquals(time() - 3600, filemtime($scssPath));
+
+		$this->assertFileExists($cssPath);
+		unlink($cssPath);
+
+		$this->assertFileExists($cssMapPath);
+		unlink($cssMapPath);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addDynamicContentsStylesheet()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddDynamicContentsStylesheetNotUpdatesExistingCssFile(): void {
+		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_b3e052fc6c30f602.scss';
+		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css';
+		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css.map';
+
+		touch($scssPath, time() - 3600);
+		touch($cssPath, time() - 3600);
+		touch($cssMapPath, time() - 3600);
+
+		$scssContent = '$primary-color: #63d1a5; background-color: $primary-color;';
+		$this->helper->addContentStyleBlock('#Content123', $scssContent);
+		$this->helper->addDynamicContentsStylesheet(123);
+
+		$this->assertFileExists($scssPath);
+		$this->assertEquals(time() - 3600, filemtime($scssPath));
+
+		$this->assertFileExists($cssPath);
+		$this->assertEquals(time() - 3600, filemtime($cssPath));
+
+		$this->assertFileExists($cssMapPath);
+		$this->assertEquals(time() - 3600, filemtime($cssMapPath));
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addDynamicContentsStylesheet()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddDynamicContentsStylesheetRemovesOutdatedFiles(): void {
+		$oldScssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_b3e052fc6c30f602.scss';
+		$newScssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_4b0b55b40350baaf.scss';
+		$oldCssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css';
+		$newCssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_4b0b55b40350baaf.css';
+		$oldCssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_b3e052fc6c30f602.css.map';
+		$newCssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_4b0b55b40350baaf.css.map';
+
+		touch($oldScssPath, time() - 7200);
+		touch($oldCssPath, time() - 7200);
+		touch($oldCssMapPath, time() - 7200);
+
+		$scssContent = '$primary-color: #FFC53A; background-color: $primary-color;';
+		$this->helper->addContentStyleBlock('#Content123', $scssContent);
+		$this->helper->addDynamicContentsStylesheet(123);
+
+		$this->assertFileExists($newScssPath);
+		$this->assertFileExists($newCssPath);
+		$this->assertFileExists($newCssMapPath);
+
+		$this->assertFileDoesNotExist($oldScssPath);
+		$this->assertFileDoesNotExist($oldCssPath);
+		$this->assertFileDoesNotExist($oldCssMapPath);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addDynamicContentsStylesheet()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddDynamicContentsStylesheetRespectsPriority(): void {
+		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_9a26370f2d2e3100.scss';
+		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_9a26370f2d2e3100.css';
+		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_9a26370f2d2e3100.css.map';
+
+		$scssContent1 = 'color: red;';
+		$scssContent2 = 'color: blue;';
+
+		$this->helper->addContentStyleBlock('#Content123', $scssContent1, 50);
+		$this->helper->addContentStyleBlock('#Content234', $scssContent2, 5);
+		$this->helper->addDynamicContentsStylesheet(123);
+
+		$this->assertFileExists($scssPath);
+		$this->assertFileExists($cssPath);
+		$this->assertFileExists($cssMapPath);
+
+		$cssContent = file_get_contents($cssPath);
+		/** @noinspection CssUnusedSymbol */
+		$this->assertSame(<<<CSS
+#Content234 {
+  color: blue;
+}
+
+#Content123 {
+  color: red;
+}
+
+/*# sourceMappingURL=page_123_9a26370f2d2e3100.css.map */
+CSS, $cssContent);
+
+		unlink($scssPath);
+		unlink($cssPath);
+		unlink($cssMapPath);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\View\Helper\AssetHelper::addDynamicContentsStylesheet()
+	 * @throws \Exception
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAddDynamicContentsStylesheetUsesDesignSettings(): void {
+		$scssPath = ROOT . DS . CUSTOM_DIR . '/assets/scss/_dynamic/page_123_07de357242c7fade.scss';
+		$cssPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_07de357242c7fade.css';
+		$cssMapPath = ROOT . DS . CUSTOM_DIR . '/assets/css/_dynamic/page_123_07de357242c7fade.css.map';
+
+		if (file_exists($scssPath)) {
+			unlink($scssPath);
+		}
+		if (file_exists($cssPath)) {
+			unlink($cssPath);
+		}
+		if (file_exists($cssMapPath)) {
+			unlink($cssMapPath);
+		}
+
+		$this->helper->setRealm(Awyiss::REALM_FRONTEND);
+
+		$request = $this->helper->getView()->getRequest();
+		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
+		$designMiddlewareMock->method('getDesignVariables')->willReturn([
+			'body-bg-color' => '#ffffff',
+		]);
+
+		$request = $request->withAttribute('design', $designMiddlewareMock);
+		$this->helper->getView()->setRequest($request);
+		Router::setRequest($request);
+
+		$scssContent = 'body { background-color: $body-bg-color; }';
+		$this->helper->addContentStyleBlock('#Content123', $scssContent);
+		$this->helper->addDynamicContentsStylesheet(123);
+
+		$this->assertFileExists($scssPath);
+		unlink($scssPath);
+
+		$this->assertFileExists($cssPath);
+		$cssFileContent = file_get_contents($cssPath);
+		$this->assertStringContainsString('background-color: #ffffff;', $cssFileContent);
+		unlink($cssPath);
+
+		$this->assertFileExists($cssMapPath);
+		unlink($cssMapPath);
 	}
 }

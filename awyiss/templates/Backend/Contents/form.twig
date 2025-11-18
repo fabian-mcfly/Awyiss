@@ -223,8 +223,11 @@
 		{% block formInputReloadForm %}
 			{{ FormHelper.hidden('reload_form', {val: 0}) }}
 		{% endblock %}
+
+		{% include '@Backend/element/css_dialog.twig' %}
 	</div>
 {% endblock %}
+
 
 {% block lockDialog %}
 	{{ element('lock_dialog', {entity: content}) }}

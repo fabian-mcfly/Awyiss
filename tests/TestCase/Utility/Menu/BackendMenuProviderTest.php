@@ -108,6 +108,7 @@ class BackendMenuProviderTest extends TestCase {
 		$this->assertInstanceOf(BackendMenuItem::class, $mediaItem);
 		$this->assertSame([
 			'media_folders',
+			'media_batch_edit',
 			'media_elements',
 			'media_configure',
 		], array_keys($mediaItem->getChildren()->getItems()));
@@ -149,6 +150,7 @@ class BackendMenuProviderTest extends TestCase {
 		$this->assertSame([
 			'dummy_entry1',
 			'media_folders',
+			'media_batch_edit',
 			'media_elements',
 			'media_configure',
 		], array_keys($mediaItem->getChildren()->getItems()));
@@ -195,6 +197,7 @@ class BackendMenuProviderTest extends TestCase {
 			1,
 			'dummy_entry1',
 			'media_folders',
+			'media_batch_edit',
 			'media_elements',
 			'media_configure',
 		], array_keys($mediaItem->getChildren()->getItems()));

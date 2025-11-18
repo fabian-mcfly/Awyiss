@@ -157,3 +157,13 @@ msgstr "Column View"
 
 msgid "configuration_identifier_backend_overview_column_view_enabled"
 msgstr "Enabled"
+
+msgid "edit_css"
+msgstr "Edit (S)CSS"
+
+msgid "css"
+msgstr "(S)CSS"
+
+msgid "css_dialog_info"
+msgstr "(S)CSS entered here will wrapped with the <code>#Content&lt;ID&gt;</code> selector so it applies to the current Content. "
+"It is possible to enter both CSS and SCSS code. SCSS variables, as defined in the Design settings, will be available."

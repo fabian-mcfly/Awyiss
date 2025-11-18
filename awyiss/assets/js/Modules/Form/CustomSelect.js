@@ -657,7 +657,7 @@ export default class CustomSelect {
 	handleKeyDown(event) {
 		const filterInput = event.target.closest(`.${this.filterClass}`);
 		const wrapper = event.target.closest(`.${this.wrapperClass}`);
-		const selectElement = wrapper.customSelectData?.selectElement;
+		const selectElement = wrapper?.customSelectData?.selectElement;
 
 		if (!selectElement) {
 			return;

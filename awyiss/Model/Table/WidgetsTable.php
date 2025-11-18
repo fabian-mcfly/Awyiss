@@ -254,6 +254,13 @@ class WidgetsTable extends Table {
 		]);
 
 
+		$validator->add('css', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
+		]);
+
+
 		$validator->add('data', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
