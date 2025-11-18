@@ -59,6 +59,7 @@
 		position:absolute;
 		top:0;
 		right:0;
+		z-index:10;
 
 		@media screen and (width <= 640px) {
 			display:flex;
@@ -235,6 +236,22 @@
 
 		.Icon {
 			background-color:var(--colorError);
+		}
+	}
+
+	.ButtonArea {
+		&.ButtonArea-Bottom {
+			margin-top:20px;
+
+			@media screen and (width <= 768px) {
+				margin-top:10px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-top:10px;
+				}
+			}
 		}
 	}
 }

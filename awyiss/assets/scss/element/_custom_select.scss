@@ -80,11 +80,23 @@
 				padding-right:82px;
 			}
 
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-right:82px;
+				}
+			}
+
 			&::after {
 				right:77px;
 
 				@media screen and (width <= 768px) {
 					right:67px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						right:67px;
+					}
 				}
 			}
 		}
@@ -98,11 +110,23 @@
 				padding-right:112px;
 			}
 
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-right:112px;
+				}
+			}
+
 			&::after {
 				right:117px;
 
 				@media screen and (width <= 768px) {
 					right:97px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						right:97px;
+					}
 				}
 			}
 		}

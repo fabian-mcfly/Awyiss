@@ -334,6 +334,14 @@ body {
 			&__text-container {
 				line-height:1;
 			}
+
+			&__wordcount {
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						padding-block:0;
+					}
+				}
+			}
 		}
 
 		.tox-insert-table-picker {

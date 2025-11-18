@@ -1,6 +1,7 @@
 #Content {
 	min-height:calc(100dvh - 80px - 54px - 60px);
 	padding:var(--rowGap) 40px;
+	overflow-x:clip;
 
 	@media screen and (width <= 1024px) {
 	}

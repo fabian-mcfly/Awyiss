@@ -84,7 +84,7 @@
 		}
 
 		&:has(form[data-locked="true"]) {
-			.ButtonArea {
+			.ButtonArea:not(dialog .ButtonArea) {
 				display:none;
 			}
 		}
@@ -241,7 +241,7 @@
 			pointer-events:none;
 
 			:is(
-				.ButtonArea,
+				.ButtonArea:not(dialog .ButtonArea),
 				.FormInput
 			) {
 				opacity:.25;
@@ -290,6 +290,33 @@
 	.Button
 ) {
 	@extend %Input;
+}
+
+:where(
+	input,
+	output,
+	select,
+	textarea
+) {
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			padding-block:5px;
+		}
+	}
+
+	&:has(+ .InFieldButton) {
+		padding-right:62px;
+
+		@media screen and (width <= 768px) {
+			padding-right:52px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding-right:52px;
+			}
+		}
+	}
 }
 
 :is(
