@@ -624,6 +624,7 @@ class ContentsTable extends Table {
 				file_put_contents($ls_tempFile, '#Content { ' . $entity->css . ' }');
 				$lo_tempFile = new SplFileInfo($ls_tempFile);
 
+				ob_start();
 				/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
 				$ls_compilerClass = App::className('ScssCompiler', 'Utility/Design');
 				try {
@@ -634,6 +635,7 @@ class ContentsTable extends Table {
 				catch (Exception | SassException) {
 					$ls_css = false;
 				}
+				ob_end_clean();
 
 				unlink($lo_tempFile->getRealPath());
 
