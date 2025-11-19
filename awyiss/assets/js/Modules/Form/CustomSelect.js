@@ -262,7 +262,7 @@ export default class CustomSelect {
 		optionDiv.classList.add(this.optionClass);
 		optionDiv.textContent = option.textContent;
 
-		if (!option.value && index === 0) {
+		if (!option.value && index === 0 && !option.textContent) {
 			optionDiv.innerHTML = '<i>' + (selectElement.dataset.emptyLabel ?? '---') + '</i>';
 		}
 
