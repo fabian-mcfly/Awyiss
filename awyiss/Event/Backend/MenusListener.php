@@ -71,10 +71,6 @@ class MenusListener implements EventListenerInterface {
 		$lo_listedEntries = $lo_entries->listNested('desc', 'childMenuEntries');
 		/** @var \Awyiss\Model\Entity\MenuEntry $lo_menuEntry */
 		foreach ($lo_listedEntries as $lo_menuEntry) {
-			$lo_menuEntry->unset((array)$lo_table->getPrimaryKey());
-			$lo_menuEntry->unset(['menuId']);
-			$lo_menuEntry->setNew(true);
-
 			$lo_menuEntry->menuId = $entity->id;
 		}
 

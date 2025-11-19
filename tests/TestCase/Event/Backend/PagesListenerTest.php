@@ -179,51 +179,6 @@ class PagesListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public function testBeforeCopyRemovesPrimaryKeyOfNestedChildren(): void {
-		$pagesTable = $this->fetchTable('Pages');
-		/** @var \Awyiss\Model\Entity\Page $page */
-		$page = $pagesTable->get(2);
-		/** @noinspection PhpUndefinedFieldInspection */
-		$page->originalEntity = $page;
-
-		$options = new ArrayObject(['_primary' => true, 'copyDescendantsWithDifferentPageRole' => true]);
-		$event = new Event('Model.Pages.beforeCopy', $pagesTable);
-
-		$this->listener->beforeCopy($event, $page, $options);
-
-		$children = collection($page->get('childPages'))->listNested('desc', 'childPages')->toList();
-
-		/** @var \Awyiss\Model\Entity\Page $child */
-		foreach ($children as $child) {
-			$this->assertFalse($child->has('id'));
-			/** @noinspection PhpUndefinedFieldInspection */
-			$this->assertNotEmpty($child->originalPrimaryKeyValues);
-		}
-
-		$originalPrimaryKeyValues = array_column($children, 'originalPrimaryKeyValues');
-		$this->assertSame([
-			['id' => 3],
-			['id' => 4],
-			['id' => 5],
-			['id' => 6],
-			['id' => 7],
-			['id' => 36],
-			['id' => 40],
-			['id' => 37],
-			['id' => 41],
-			['id' => 39],
-			['id' => 38],
-			['id' => 34],
-			['id' => 35],
-		], $originalPrimaryKeyValues);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 */
 	public function testBeforeCopyPropagatesRelatedColumnChangesToNestedChildren(): void {
 		$pagesTable = $this->fetchTable('Pages');
 		/** @var \Awyiss\Model\Entity\Page $page */
@@ -622,8 +577,8 @@ class PagesListenerTest extends TestCase {
 		$pagesTable = $this->fetchTable('Pages');
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->get(2);
-		/** @noinspection PhpUndefinedFieldInspection */
-		$page->originalEntity = $page;
+
+		$this->callProtectedMethod($pagesTable, 'prepareForCopy', $page);
 
 		$attributesPagesTable = $this->fetchTable('AttributesPages');
 		$attributesNewsTable = $this->fetchTable('AttributesNews');
@@ -642,6 +597,8 @@ class PagesListenerTest extends TestCase {
 
 		$id = 345;
 		foreach ($children as $child) {
+			$this->callProtectedMethod($pagesTable, 'prepareForCopy', $child);
+
 			// Make sure an id is set
 			$child->id = $id++;
 		}
@@ -667,8 +624,8 @@ class PagesListenerTest extends TestCase {
 		$pagesTable = $this->fetchTable('Pages');
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->get(2);
-		/** @noinspection PhpUndefinedFieldInspection */
-		$page->originalEntity = $page;
+
+		$this->callProtectedMethod($pagesTable, 'prepareForCopy', $page);
 
 		$attributesPagesTable = $this->fetchTable('AttributesPages');
 		$attributesNewsTable = $this->fetchTable('AttributesNews');
@@ -687,6 +644,8 @@ class PagesListenerTest extends TestCase {
 
 		$id = 345;
 		foreach ($children as $child) {
+			$this->callProtectedMethod($pagesTable, 'prepareForCopy', $child);
+
 			// Make sure an id is set
 			$child->id = $id++;
 		}
@@ -711,8 +670,8 @@ class PagesListenerTest extends TestCase {
 		$pagesTable = $this->fetchTable('Pages');
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->get(2);
-		/** @noinspection PhpUndefinedFieldInspection */
-		$page->originalEntity = $page;
+
+		$this->callProtectedMethod($pagesTable, 'prepareForCopy', $page);
 
 		$attributesPagesTable = $this->fetchTable('AttributesPages');
 		$attributesNewsTable = $this->fetchTable('AttributesNews');
@@ -731,6 +690,8 @@ class PagesListenerTest extends TestCase {
 
 		$id = 345;
 		foreach ($children as $child) {
+			$this->callProtectedMethod($pagesTable, 'prepareForCopy', $child);
+
 			// Make sure an id is set
 			$child->id = $id++;
 		}
@@ -755,9 +716,8 @@ class PagesListenerTest extends TestCase {
 		$pagesTable = $this->fetchTable('Pages');
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->get(1);
-		/** @noinspection PhpUndefinedFieldInspection */
-		$page->originalEntity = unserialize(serialize($page));
-		$page->unset('id');
+		$this->callProtectedMethod($pagesTable, 'prepareForCopy', $page);
+		$this->callProtectedMethod($pagesTable, 'prepareAssociationsForCopy', $page);
 
 		$options = new ArrayObject(['_primary' => true]);
 		$event = new Event('Model.Pages.beforeCopy', $pagesTable);
@@ -821,9 +781,8 @@ class PagesListenerTest extends TestCase {
 		$pagesTable = $this->fetchTable('Pages');
 		/** @var \Awyiss\Model\Entity\Page $page */
 		$page = $pagesTable->get(1);
-		/** @noinspection PhpUndefinedFieldInspection */
-		$page->originalEntity = unserialize(serialize($page));
-		$page->unset('id');
+
+		$this->callProtectedMethod($pagesTable, 'prepareForCopy', $page);
 
 		$options = new ArrayObject(['_primary' => true]);
 		$event = new Event('Model.Pages.beforeCopy', $pagesTable);

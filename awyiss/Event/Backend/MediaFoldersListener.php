@@ -434,10 +434,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		$lo_files = $table->Media->find('translations')->where(['media_folder_id' => $originalEntity->id])->all();
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
 		foreach ($lo_files as $lo_file) {
-			$lo_file->unset((array)$table->getPrimaryKey());
-			$lo_file->unset(['mediaFolderId', 'path']);
 			$lo_file->setNew(true);
-
 			$lo_file->mediaFolderId = $entity->id;
 		}
 

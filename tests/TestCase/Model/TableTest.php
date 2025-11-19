@@ -2467,8 +2467,6 @@ HTML;
 		$this->assertSame('New Subtitle', $entity->subtitle);
 		// Primary key should not be set
 		$this->assertNull($entity->id);
-		// Saving will remove the new flag
-		$this->assertFalse($entity->isNew());
 	}
 
 

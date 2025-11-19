@@ -775,64 +775,12 @@ class Table extends BaseTable {
 		$la_options['asCopy'] ??= false;
 
 		if ($la_options['asCopy'] === true || $la_options['isCopy'] === true) {
-			if (!isset($entity->originalEntity)) {
-				/** @noinspection PhpDynamicFieldDeclarationInspection */
-				$entity->originalEntity = unserialize(serialize($entity));
-				$entity->setVirtual(['originalEntity'], true);
-
-				$entity->originalEntity->patch(
-					$entity->extractOriginalChanged(
-						$entity->getOriginalFields()
-					)
-				);
-
-				$entity->originalEntity->clean();
-			}
-
-			$la_primaryKeys = $entity->extractOriginal((array)$this->getPrimaryKey());
-			if ($la_primaryKeys) {
-				$entity->originalPrimaryKeyValues ??= $la_primaryKeys;
-				$entity->unset((array)$this->getPrimaryKey());
-			}
+			$this->prepareForCopy($entity);
 		}
 
 		if ($la_options['asCopy'] === true) {
-			$entity->unset((array)$this->getPrimaryKey());
-			$entity->setNew(true);
-
 			$la_options['isCopy'] = true;
-
-			/**
-			 * Traverse all associations of type HasMany and HasOne,
-			 * unset the primary key of the associated entities,
-			 * and mark them as new.
-			 */
-			foreach ($this->associations() as $lo_association) {
-				$ls_property = $lo_association->getProperty();
-
-				if (!$entity->has($ls_property) || !$entity->get($ls_property)) {
-					continue;
-				}
-
-				if ($lo_association instanceof HasMany) {
-					$entity->setDirty($ls_property);
-					foreach (($entity->get($ls_property) ?? []) as $lx_associated) {
-						if (!($lx_associated instanceof EntityInterface)) {
-							continue;
-						}
-
-						$lx_associated->unset((array)$lo_association->getPrimaryKey());
-						$lx_associated->setNew(true);
-					}
-				}
-
-				if ($lo_association instanceof HasOne) {
-					$entity->setDirty($ls_property);
-					$lo_associated = $entity->get($ls_property);
-					$lo_associated->unset((array)$lo_association->getPrimaryKey());
-					$lo_associated->setNew(true);
-				}
-			}
+			$this->prepareAssociationsForCopy($entity);
 		}
 
 		unset($la_options['asCopy']);
@@ -1180,6 +1128,74 @@ class Table extends BaseTable {
 			/** @var \Awyiss\Utility\Content\ImageHandler $ls_className */
 			$ls_className = App::className('ImageHandler', 'Utility/Content');
 			$ls_className::replaceImageTags($entity);
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return void
+	 */
+	protected function prepareForCopy(EntityInterface $entity): void {
+		if (!isset($entity->originalEntity)) {
+			/** @noinspection PhpDynamicFieldDeclarationInspection */
+			$entity->originalEntity = unserialize(serialize($entity));
+			$entity->setVirtual(['originalEntity'], true);
+
+			$entity->originalEntity->patch(
+				$entity->extractOriginalChanged(
+					$entity->getOriginalFields()
+				)
+			);
+
+			$entity->originalEntity->clean();
+		}
+
+		$la_primaryKeys = $entity->extractOriginal((array)$this->getPrimaryKey());
+		if ($la_primaryKeys) {
+			$entity->originalPrimaryKeyValues ??= $la_primaryKeys;
+			$entity->unset((array)$this->getPrimaryKey());
+		}
+
+		$entity->setNew(true);
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return void
+	 */
+	protected function prepareAssociationsForCopy(EntityInterface $entity): void {
+		/**
+		 * Traverse all associations of type HasMany and HasOne,
+		 * unset the primary key of the associated entities,
+		 * and mark them as new.
+		 */
+		foreach ($this->associations() as $lo_association) {
+			$ls_property = $lo_association->getProperty();
+
+			if (!$entity->has($ls_property) || !$entity->get($ls_property)) {
+				continue;
+			}
+
+			if ($lo_association instanceof HasMany) {
+				$entity->setDirty($ls_property);
+				foreach (($entity->get($ls_property) ?? []) as $lx_associated) {
+					if (!($lx_associated instanceof EntityInterface)) {
+						continue;
+					}
+
+					$lx_associated->unset((array)$lo_association->getPrimaryKey());
+					$lx_associated->setNew(true);
+				}
+			}
+
+			if ($lo_association instanceof HasOne) {
+				$entity->setDirty($ls_property);
+				$lo_associated = $entity->get($ls_property);
+				$lo_associated->unset((array)$lo_association->getPrimaryKey());
+				$lo_associated->setNew(true);
+			}
 		}
 	}
 }

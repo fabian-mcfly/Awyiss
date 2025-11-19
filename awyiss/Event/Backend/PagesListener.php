@@ -116,32 +116,6 @@ class PagesListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Model\Entity\Page $lo_childPage */
 		foreach ($lo_children as $lo_childPage) {
-			if (!isset($lo_childPage->originalEntity)) {
-				/**
-				 * Serialize and unserialize the entity to create a deep copy of it.
-				 *
-				 * @noinspection PhpUndefinedFieldInspection
-				 */
-				$lo_childPage->originalEntity = unserialize(serialize($lo_childPage));
-				$lo_childPage->setVirtual(['originalEntity'], true);
-
-				$lo_childPage->originalEntity->patch(
-					$lo_childPage->extractOriginalChanged(
-						$lo_childPage->getOriginalFields()
-					)
-				);
-
-				$lo_childPage->originalEntity->clean();
-			}
-
-			$la_primaryKeys = $lo_childPage->extractOriginal((array)$lo_table->getPrimaryKey());
-			if ($la_primaryKeys) {
-				$lo_childPage->originalPrimaryKeyValues ??= $la_primaryKeys;
-				$lo_childPage->unset((array)$lo_table->getPrimaryKey());
-			}
-
-			$lo_childPage->setNew(true);
-
 			$lo_childPage->patch($la_relatedColumnValues);
 
 			if ($lo_childPage->pageRoleId !== $entity->pageRoleId) {
@@ -305,10 +279,6 @@ class PagesListener implements EventListenerInterface {
 		$lo_listedEntries = $lo_entries->listNested('desc', 'childContents');
 		/** @var \Awyiss\Model\Entity\Content $lo_content */
 		foreach ($lo_listedEntries as $lo_content) {
-			$lo_content->unset((array)$lo_table->getPrimaryKey());
-			$lo_content->unset(['pageId']);
-			$lo_content->setNew(true);
-
 			$lo_content->pageId = $entity->id;
 		}
 

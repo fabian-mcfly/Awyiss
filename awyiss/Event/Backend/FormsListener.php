@@ -59,10 +59,6 @@ class FormsListener implements EventListenerInterface {
 		$lo_listedElements = $lo_elements->listNested('desc', 'childFormElements');
 		/** @var \Awyiss\Model\Entity\FormElement $lo_formElement */
 		foreach ($lo_listedElements as $lo_formElement) {
-			$lo_formElement->unset((array)$lo_table->getPrimaryKey());
-			$lo_formElement->unset(['formId']);
-			$lo_formElement->setNew(true);
-
 			$lo_formElement->formId = $entity->id;
 		}
 

@@ -918,6 +918,7 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->path = 'media/test.jpg';
 
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->path = 'media/new-test.jpg';
 
 		$this->listener->afterSave($event, $mockEntity, new ArrayObject());
@@ -955,6 +956,7 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->path = 'media/test.jpg';
 
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
 		$mockEntity->path = 'media/new-test.jpg';
 		$mockEntity->path = 'media/test.jpg';
@@ -990,6 +992,7 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->path = 'media/test.jpg';
 
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1024,6 +1027,7 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->path = 'media/test.jpg';
 
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
 		$mockEntity->path = 'media/new-test.jpg';
 		$mockEntity->path = 'media/test.jpg';
@@ -1059,6 +1063,8 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
 
+		$mockEntity->setNew(false);
+
 		$mockEntity->expects($this->once())->method('deleteConvertedFiles');
 		$mockEntity->expects($this->never())->method('moveConvertedFiles');
 
@@ -1087,6 +1093,8 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
+
+		$mockEntity->setNew(false);
 
 		$mockEntity->expects($this->never())->method('deleteConvertedFiles');
 		$mockEntity->expects($this->never())->method('moveConvertedFiles');
@@ -1117,6 +1125,7 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->path = 'media/test.jpg';
 
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1153,6 +1162,7 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->path = 'media/test.jpg';
 
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
 		$mockEntity->path = 'media/new-test.jpg';
 		$mockEntity->path = 'media/test.jpg';
@@ -1186,6 +1196,8 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
 
+		$mockEntity->setNew(false);
+
 		$mockEntity->expects($this->once())->method('deleteResizedFiles');
 		$mockEntity->expects($this->never())->method('moveResizedFiles');
 
@@ -1214,6 +1226,8 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
+
+		$mockEntity->setNew(false);
 
 		$mockEntity->expects($this->never())->method('deleteResizedFiles');
 		$mockEntity->expects($this->never())->method('moveResizedFiles');
@@ -1244,6 +1258,7 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->path = 'media/test.jpg';
 
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1280,6 +1295,7 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->path = 'media/test.jpg';
 
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
 		$mockEntity->path = 'media/new-test.jpg';
 		$mockEntity->path = 'media/test.jpg';
@@ -1322,8 +1338,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1366,8 +1383,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1419,8 +1437,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1472,8 +1491,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1516,8 +1536,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1559,8 +1580,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
 		$mockEntity->path = 'media/new-test.jpg';
 		$mockEntity->path = 'media/test.jpg';
@@ -1610,8 +1632,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = $mockFile;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1649,8 +1672,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = null;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
 		$mockEntity->path = 'media/new-test.jpg';
 		$mockEntity->path = 'media/test.jpg';
@@ -1696,8 +1720,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->file = null;
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		$mockEntity->name = 'new-test.jpg';
 		$mockEntity->path = 'media/new-test.jpg';
 
@@ -1730,8 +1755,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
 		$mockEntity->focusPoint = '1,0';
-		$mockEntity->clean();
 
+		$mockEntity->clean();
+		$mockEntity->setNew(false);
 		/** @noinspection PhpFieldImmediatelyRewrittenInspection */
 		$mockEntity->focusPoint = '0,0';
 		$mockEntity->focusPoint = '1,0';
@@ -1766,7 +1792,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
 		$mockEntity->focusPoint = '1,0';
+
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 
 		$mockEntity->focusPoint = '0,0';
 
@@ -1799,7 +1827,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
 		$mockEntity->focusPoint = '1,0';
+
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 
 		$mockEntity->focusPoint = '0,0';
 
@@ -1829,7 +1859,9 @@ class MediaListenerTest extends TestCase {
 		$mockEntity->name = 'test.jpg';
 		$mockEntity->path = 'media/test.jpg';
 		$mockEntity->focusPoint = '1,0';
+
 		$mockEntity->clean();
+		$mockEntity->setNew(false);
 
 		$mockEntity->focusPoint = '0,0';
 
