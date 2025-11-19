@@ -230,7 +230,7 @@ class MediaListener implements EventListenerInterface {
 				unlink(WWW_ROOT . str_replace('/', DS, $entity->getOriginal('path')));
 			}
 		}
-		elseif ($entity->hasOriginal('path') && $entity->getOriginal('path') !== $entity->get('path')) {
+		elseif (!$entity->isNew() && $entity->hasOriginal('path') && $entity->getOriginal('path') !== $entity->get('path')) {
 			$this->createHistoricalPaths($entity, $entity->getOriginal('path'));
 
 			$entity->moveConvertedFiles();
@@ -242,7 +242,7 @@ class MediaListener implements EventListenerInterface {
 			);
 		}
 
-		if ($entity->hasOriginal('focusPoint') && $entity->getOriginal('focusPoint') !== $entity->get('focusPoint')) {
+		if (!$entity->isNew() && $entity->hasOriginal('focusPoint') && $entity->getOriginal('focusPoint') !== $entity->get('focusPoint')) {
 			$entity->deleteResizedFiles();
 		}
 
