@@ -238,7 +238,7 @@ class Media extends Entity {
 			$ls_targetFile = $this->avifPathAbsolute;
 			if ($ls_targetFile) {
 				if (!is_dir(dirname($ls_targetFile))) {
-					mkdir(dirname($ls_targetFile));
+					mkdir(dirname($ls_targetFile), 0755, true);
 				}
 
 				rename($ls_sourceFile, $ls_targetFile);
@@ -253,7 +253,7 @@ class Media extends Entity {
 			$ls_targetFile = $this->webpPathAbsolute;
 			if ($ls_targetFile) {
 				if (!is_dir(dirname($ls_targetFile))) {
-					mkdir(dirname($ls_targetFile));
+					mkdir(dirname($ls_targetFile), 0755, true);
 				}
 
 				rename($ls_sourceFile, $ls_targetFile);
@@ -268,7 +268,7 @@ class Media extends Entity {
 			$ls_targetFile = $this->previewPathAbsolute;
 			if ($ls_targetFile) {
 				if (!is_dir(dirname($ls_targetFile))) {
-					mkdir(dirname($ls_targetFile));
+					mkdir(dirname($ls_targetFile), 0755, true);
 				}
 
 				rename($ls_sourceFile, $ls_targetFile);
@@ -353,7 +353,7 @@ class Media extends Entity {
 			$ls_targetFilePath = $ls_targetPath . $ls_targetFileName;
 
 			if (!is_dir($ls_targetPath)) {
-				mkdir($ls_targetPath);
+				mkdir($ls_targetPath, 0755, true);
 			}
 
 			rename($ls_filePath, $ls_targetFilePath);
@@ -807,7 +807,8 @@ class Media extends Entity {
 
 
 	/**
-	 * @return string|null
+	 * @return int|null
+	 * @noinspection PhpUnused
 	 */
 	protected function _getFilemtime(): ?int {
 		$ls_path = $this->pathAbsolute;
@@ -822,6 +823,7 @@ class Media extends Entity {
 
 	/**
 	 * @return int|null
+	 * @noinspection PhpUnused
 	 */
 	protected function _getPreviewFilemtime(): ?int {
 		$ls_path = $this->previewPathAbsolute;
