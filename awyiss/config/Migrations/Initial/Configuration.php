@@ -52,7 +52,7 @@ class Configuration {
 			'null' => false,
 		])->addColumn('value', 'string', [
 			'default' => null,
-			'limit' => 255,
+			'limit' => 1024,
 			'null' => true,
 		])->addColumn('language_shortcode', 'char', [
 			'default' => null,
