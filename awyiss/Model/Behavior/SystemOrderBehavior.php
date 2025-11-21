@@ -1064,6 +1064,7 @@ class SystemOrderBehavior extends Behavior {
 				'nest' => ['skip' => true],
 				'systemOrder' => ['skip' => true],
 				'transaction' => false,
+				'associated' => [],
 			]);
 		}
 		catch (PersistenceFailedException $ex) {
