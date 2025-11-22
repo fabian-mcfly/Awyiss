@@ -36,12 +36,13 @@ class SystemConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Configuration\ConfigOptions\SystemConfigOptions::initializeConfigOptions()
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(20, $configOptions);
+		$this->assertCount(26, $configOptions);
 
 		$this->assertArrayHasKey('Frontend.editor', $configOptions);
 		$this->assertFalse($configOptions['Frontend.editor']->isLocalizable());
@@ -123,6 +124,82 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Frontend.timezone']->getValidate());
 		$this->assertIsCallable($configOptions['Frontend.timezone']->getValues());
 		$this->assertArrayHasKey('auto', $configOptions['Frontend.timezone']->getValues(true));
+
+		$this->assertArrayHasKey('Backend.autoTranslate.deeplApiKey', $configOptions);
+		$this->assertFalse($configOptions['Backend.autoTranslate.deeplApiKey']->isLocalizable());
+		$this->assertTrue($configOptions['Backend.autoTranslate.deeplApiKey']->isNullable());
+		$this->assertFalse($configOptions['Backend.autoTranslate.deeplApiKey']->isPersonalizable());
+		$this->assertNull($configOptions['Backend.autoTranslate.deeplApiKey']->getDefaultValue());
+		$this->assertNull($configOptions['Backend.autoTranslate.deeplApiKey']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::String, $configOptions['Backend.autoTranslate.deeplApiKey']->getType());
+		$this->assertNull($configOptions['Backend.autoTranslate.deeplApiKey']->getTypecast());
+		$this->assertNull($configOptions['Backend.autoTranslate.deeplApiKey']->getValidate());
+		$this->assertNull($configOptions['Backend.autoTranslate.deeplApiKey']->getValues());
+
+		$this->assertArrayHasKey('Backend.autoTranslate.googleApiKey', $configOptions);
+		$this->assertFalse($configOptions['Backend.autoTranslate.googleApiKey']->isLocalizable());
+		$this->assertTrue($configOptions['Backend.autoTranslate.googleApiKey']->isNullable());
+		$this->assertFalse($configOptions['Backend.autoTranslate.googleApiKey']->isPersonalizable());
+		$this->assertNull($configOptions['Backend.autoTranslate.googleApiKey']->getDefaultValue());
+		$this->assertNull($configOptions['Backend.autoTranslate.googleApiKey']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::String, $configOptions['Backend.autoTranslate.googleApiKey']->getType());
+		$this->assertNull($configOptions['Backend.autoTranslate.googleApiKey']->getTypecast());
+		$this->assertNull($configOptions['Backend.autoTranslate.googleApiKey']->getValidate());
+		$this->assertNull($configOptions['Backend.autoTranslate.googleApiKey']->getValues());
+
+		$this->assertArrayHasKey('Backend.autoTranslate.openAiApiKey', $configOptions);
+		$this->assertFalse($configOptions['Backend.autoTranslate.openAiApiKey']->isLocalizable());
+		$this->assertTrue($configOptions['Backend.autoTranslate.openAiApiKey']->isNullable());
+		$this->assertFalse($configOptions['Backend.autoTranslate.openAiApiKey']->isPersonalizable());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiApiKey']->getDefaultValue());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiApiKey']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::String, $configOptions['Backend.autoTranslate.openAiApiKey']->getType());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiApiKey']->getTypecast());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiApiKey']->getValidate());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiApiKey']->getValues());
+
+		$this->assertArrayHasKey('Backend.autoTranslate.openAiModel', $configOptions);
+		$this->assertFalse($configOptions['Backend.autoTranslate.openAiModel']->isLocalizable());
+		$this->assertTrue($configOptions['Backend.autoTranslate.openAiModel']->isNullable());
+		$this->assertFalse($configOptions['Backend.autoTranslate.openAiModel']->isPersonalizable());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiModel']->getDefaultValue());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiModel']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::String, $configOptions['Backend.autoTranslate.openAiModel']->getType());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiModel']->getTypecast());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiModel']->getValidate());
+		$this->assertNull($configOptions['Backend.autoTranslate.openAiModel']->getValues());
+
+		$this->assertArrayHasKey('Backend.autoTranslate.mode', $configOptions);
+		$this->assertFalse($configOptions['Backend.autoTranslate.mode']->isLocalizable());
+		$this->assertFalse($configOptions['Backend.autoTranslate.mode']->isNullable());
+		$this->assertFalse($configOptions['Backend.autoTranslate.mode']->isPersonalizable());
+		$this->assertSame('disabled', $configOptions['Backend.autoTranslate.mode']->getDefaultValue());
+		$this->assertSame('system::auto_translate_disabled', $configOptions['Backend.autoTranslate.mode']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.autoTranslate.mode']->getType());
+		$this->assertNull($configOptions['Backend.autoTranslate.mode']->getTypecast());
+		$this->assertNull($configOptions['Backend.autoTranslate.mode']->getValidate());
+		$this->assertIsCallable($configOptions['Backend.autoTranslate.mode']->getValues());
+		$this->assertSame([
+			'disabled' => 'system::auto_translate_disabled',
+			'auto' => 'system::auto_translate_automatic',
+			'manual' => 'system::auto_translate_manual',
+		], $configOptions['Backend.autoTranslate.mode']->getValues(true));
+
+		$this->assertArrayHasKey('Backend.autoTranslate.translationService', $configOptions);
+		$this->assertFalse($configOptions['Backend.autoTranslate.translationService']->isLocalizable());
+		$this->assertTrue($configOptions['Backend.autoTranslate.translationService']->isNullable());
+		$this->assertFalse($configOptions['Backend.autoTranslate.translationService']->isPersonalizable());
+		$this->assertNull($configOptions['Backend.autoTranslate.translationService']->getDefaultValue());
+		$this->assertNull($configOptions['Backend.autoTranslate.translationService']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::ListKey, $configOptions['Backend.autoTranslate.translationService']->getType());
+		$this->assertNull($configOptions['Backend.autoTranslate.translationService']->getTypecast());
+		$this->assertNull($configOptions['Backend.autoTranslate.translationService']->getValidate());
+		$this->assertIsCallable($configOptions['Backend.autoTranslate.translationService']->getValues());
+		$this->assertSame([
+			'\Awyiss\Utility\Translation\DeepLTranslationService' => '\Awyiss\Utility\Translation\DeepLTranslationService',
+			'\Awyiss\Utility\Translation\GoogleCloudTranslationService' => '\Awyiss\Utility\Translation\GoogleCloudTranslationService',
+			'\Awyiss\Utility\Translation\OpenAITranslationService' => '\Awyiss\Utility\Translation\OpenAITranslationService',
+		], $configOptions['Backend.autoTranslate.translationService']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.htmlCleaning', $configOptions);
 		$this->assertFalse($configOptions['Backend.htmlCleaning']->isLocalizable());

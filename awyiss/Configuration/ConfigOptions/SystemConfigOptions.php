@@ -10,6 +10,7 @@ use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Core\App;
 use Awyiss\Utility\Route\RoutingServiceInterface;
+use Awyiss\Utility\Translation\TranslationServiceInterface;
 use DateTimeZone;
 
 
@@ -83,6 +84,56 @@ class SystemConfigOptions extends AbstractConfigOptions {
 
 
 		$this->add(Awyiss::REALM_BACKEND, [
+			'autoTranslate' => [
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'deeplApiKey',
+					localizable: false,
+					nullable: true,
+					type: ConfigOptionType::String,
+				),
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'googleApiKey',
+					localizable: false,
+					nullable: true,
+					type: ConfigOptionType::String,
+				),
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'openAiApiKey',
+					localizable: false,
+					nullable: true,
+					type: ConfigOptionType::String,
+				),
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'openAiModel',
+					localizable: false,
+					nullable: true,
+					type: ConfigOptionType::String,
+				),
+				new ConfigOption(
+					defaultValue: 'disabled',
+					identifier: 'mode',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::ListKey,
+					values: function () {
+						return [
+							'disabled' => __d('system', 'auto_translate_disabled'),
+							'auto' => __d('system', 'auto_translate_automatic'),
+						];
+					},
+				),
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'translationService',
+					localizable: false,
+					type: ConfigOptionType::ListKey,
+					values: $this->getTranslationServices(...),
+				),
+			],
 			new ConfigOption(
 				defaultValue: 'strict',
 				identifier: 'htmlCleaning',
@@ -217,6 +268,23 @@ class SystemConfigOptions extends AbstractConfigOptions {
 
 		// Traverse both namespaces
 		foreach (App::classes('*', 'Utility/Route', 'RoutingService', RoutingServiceInterface::class) as $ls_classPath) {
+			$la_classes[ $ls_classPath ] = $ls_classPath;
+		}
+
+		return $la_classes;
+	}
+
+
+	/**
+	 * Get all available translation service classes
+	 *
+	 * @return array
+	 */
+	protected function getTranslationServices(): array {
+		$la_classes = [];
+
+		// Traverse both namespaces
+		foreach (App::classes('*', 'Utility/Translation', 'TranslationService', TranslationServiceInterface::class) as $ls_classPath) {
 			$la_classes[ $ls_classPath ] = $ls_classPath;
 		}
 

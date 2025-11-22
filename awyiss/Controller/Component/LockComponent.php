@@ -80,16 +80,12 @@ class LockComponent extends Component {
 	 * @return void
 	 */
 	public function beforeRender(): void {
-		if (!$this->getConfig('enabled')) {
-			return;
-		}
+		// Delete locks that timed out
+		$this->deleteTimedOutLocks();
 
 		$lo_controller = $this->getController();
 		$ls_action = $lo_controller->getRequest()->getParam('action');
 		$lx_autoload = $this->getConfig('autoload');
-
-		// Delete locks that timed out
-		$this->deleteTimedOutLocks();
 
 		//Shall we autoload the records?
 		if (
@@ -117,6 +113,10 @@ class LockComponent extends Component {
 
 		$lo_lock = $this->createLock($li_id);
 
+		if (!$lo_lock) {
+			return;
+		}
+
 		$lo_controller->set('_lock', [
 			'controller' => Text::slug($lo_controller->getName()),
 			'entityId' => $li_id,
@@ -143,16 +143,12 @@ class LockComponent extends Component {
 	 * @return \Awyiss\Model\Entity\Lock|false
 	 */
 	public function createLock(int $id): Lock|false {
-		if (!$this->getConfig('enabled')) {
-			return false;
-		}
-
 		// Delete locks that timed out
 		$this->deleteTimedOutLocks();
 
 		$lo_lock = $this->findLock($id);
 
-		if (!$lo_lock) {
+		if ($this->getConfig('enabled') && !$lo_lock) {
 			$lo_lock = $this->locksTable->newDefaultEntity();
 
 			$this->locksTable->patchEntity($lo_lock, [
@@ -171,7 +167,7 @@ class LockComponent extends Component {
 		}
 
 		// Update the lock if it is older than the timeout
-		if ($this->isOwnLock($lo_lock)) {
+		if ($lo_lock && $this->isOwnLock($lo_lock)) {
 			$lo_lock->set('createdOn', new DateTime());
 
 			if (!$this->locksTable->save($lo_lock)) {
@@ -179,7 +175,7 @@ class LockComponent extends Component {
 			}
 		}
 
-		return $lo_lock;
+		return $lo_lock ?? false;
 	}
 
 

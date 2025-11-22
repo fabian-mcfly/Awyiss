@@ -287,6 +287,42 @@ msgstr "Title-Tag"
 msgid "login_logo"
 msgstr "Login Logo"
 
+msgid "auto_translation"
+msgstr "Auto-Translation"
+
+msgid "configuration_category_backend_auto_translate"
+msgstr "Auto-Translation"
+
+msgid "configuration_identifier_backend_auto_translate_deepl_api_key"
+msgstr "DeepL API Key"
+
+msgid "configuration_identifier_backend_auto_translate_google_api_key"
+msgstr "Google Translation API Key"
+
+msgid "configuration_identifier_backend_auto_translate_open_ai_api_key"
+msgstr "OpenAI API Key"
+
+msgid "configuration_identifier_backend_auto_translate_open_ai_model"
+msgstr "OpenAI Model"
+
+msgid "configuration_identifier_backend_auto_translate_mode"
+msgstr "Mode"
+
+msgid "configuration_identifier_backend_auto_translate_translation_service"
+msgstr "Translation Service"
+
+msgid "auto_translate_disabled"
+msgstr "Disabled"
+
+msgid "auto_translate_automatic"
+msgstr "Automatic"
+
+msgid "auto_translate_manual"
+msgstr "Manual"
+
+msgid "auto_translate_system"
+msgstr "Auto Translation System"
+
 msgid "html_cleaning_none"
 msgstr "Inactive"
 
@@ -493,8 +529,14 @@ msgstr "Appendix"
 msgid "configuration_identifier_frontend_meta_title_separator"
 msgstr "Separator"
 
-msgid "configuration_identifier_frontend_ors_api_key"
+msgid "configuration_category_frontend_route"
+msgstr "Route-Planer"
+
+msgid "configuration_identifier_frontend_route_ors_api_key"
 msgstr "OpenRouteService API Key"
+
+msgid "configuration_identifier_frontend_route_routing_service"
+msgstr "Route-Planer Service"
 
 msgid "configuration_category_frontend_publication"
 msgstr "Publication"

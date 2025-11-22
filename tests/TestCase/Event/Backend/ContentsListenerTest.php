@@ -4,15 +4,19 @@
 namespace Awyiss\Test\TestCase\Event\Backend;
 
 
+use ArrayObject;
 use Awyiss\Awyiss;
 use Awyiss\Event\Backend\ContentsListener;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\DesignMiddleware;
+use Awyiss\Model\Table\LocksTable;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
+use Exception;
+use Queue\Model\Table\QueuedJobsTable;
 
 
 /**
@@ -61,6 +65,9 @@ class ContentsListenerTest extends TestCase {
 
 		$this->assertSame([
 			'Model.Contents.beforeSave' => 'beforeSave',
+			'Model.Contents.afterSave' => 'afterSave',
+			'Model.Contents.afterSaveCommit' => 'afterSaveCommit',
+			'Model.Pages.afterSaveCommit' => 'afterPageSaveCommit',
 			'Configuration.Contents.Backend.columnSystem.className.afterSaveCommit' => 'recompileAfterClassNameSave',
 			'Configuration.Contents.Backend.columnSystem.maxColumns.afterSaveCommit' => 'recompileAfterMaxColumnsSave',
 			'Configuration.Contents.Backend.columnSystem.className.afterDeleteCommit' => 'recompileAfterClassNameDelete',
@@ -288,5 +295,411 @@ class ContentsListenerTest extends TestCase {
 		$this->listener->recompileAfterMaxColumnsDelete();
 
 		$this->assertNull(Configure::read('Awyiss.Contents.Backend.columnSystem.maxColumns'));
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\ContentsListener::afterSave()
+	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
+	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitCreatesAutoTranslationJobWhenLanguageChanges(): void {
+		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
+
+		$contentsTable = $this->fetchTable('Contents');
+		/** @var \Awyiss\Model\Entity\Content $entity */
+		$entity = $contentsTable->get(1);
+
+		// Move content from page 1 (de) to page 50 (es)
+		$entity->pageId = 50;
+
+		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
+		$event = new Event('Model.Contents.afterSave', $contentsTable);
+
+		// Call afterSave to detect language change
+		$this->listener->afterSave($event, $entity, $options);
+
+		// Mock Queue and Locks tables
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())
+			->method('createJob')
+			->with(
+				'AutoTranslate',
+				$this->callback(function ($data) {
+					return $data['sourceLanguage'] === 'de'
+						&& $data['targetLanguage'] === 'es'
+						&& $data['ids'] === [1]
+						&& $data['type'] === 'content';
+				}),
+				[
+					'group' => 'general',
+					'priority' => 1,
+					'reference' => 'system::auto_translation',
+				]
+			);
+
+		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['saveMany'])->getMock();
+
+		$locksTable->expects($this->once())
+			->method('saveMany')
+			->with(
+				$this->callback(function ($locks) {
+					return count($locks) === 1
+						&& $locks[0]->scope === 'contents'
+						&& $locks[0]->foreignKey === 1
+						&& $locks[0]->uniqueId === 'autoTranslate';
+				}),
+				['checkRules' => false]
+			);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->remove('Queue.QueuedJobs');
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->remove('Locks');
+		$tableLocator->set('Locks', $locksTable);
+
+		// Call afterSaveCommit to trigger job creation
+		$event = new Event('Model.Contents.afterSaveCommit', $contentsTable);
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
+	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitNotCreatesJobWhenAutoTranslateManual(): void {
+		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'manual');
+
+		$contentsTable = $this->fetchTable('Contents');
+		/** @var \Awyiss\Model\Entity\Content $entity */
+		$entity = $contentsTable->get(1);
+
+		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
+
+		// Mock Queue and Locks tables
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->never())->method('createJob');
+
+		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['saveMany'])->getMock();
+
+		$locksTable->expects($this->never())->method('saveMany');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->remove('Queue.QueuedJobs');
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->remove('Locks');
+		$tableLocator->set('Locks', $locksTable);
+
+		// Call afterSaveCommit
+		$event = new Event('Model.Contents.afterSaveCommit', $contentsTable);
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
+	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitNotCreatesJobWhenAutoTranslateDisabled(): void {
+		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'disabled');
+
+		$contentsTable = $this->fetchTable('Contents');
+		/** @var \Awyiss\Model\Entity\Content $entity */
+		$entity = $contentsTable->get(1);
+
+		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
+
+		// Mock Queue and Locks tables
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->never())->method('createJob');
+
+		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['saveMany'])->getMock();
+
+		$locksTable->expects($this->never())->method('saveMany');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->remove('Queue.QueuedJobs');
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->remove('Locks');
+		$tableLocator->set('Locks', $locksTable);
+
+		// Call afterSaveCommit
+		$event = new Event('Model.Contents.afterSaveCommit', $contentsTable);
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
+	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitDoesNotCreateJobWhenNoLanguageChange(): void {
+		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
+
+		$contentsTable = $this->fetchTable('Contents');
+		/** @var \Awyiss\Model\Entity\Content $entity */
+		$entity = $contentsTable->get(1);
+
+		// Move content from page 1 (de) to page 2 (de) - same language
+		$entity->pageId = 2;
+
+		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
+		$event = new Event('Model.Contents.afterSave', $contentsTable);
+
+		$this->listener->afterSave($event, $entity, $options);
+
+		// Mock Queue and Locks tables
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->disableOriginalConstructor()->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->never())->method('createJob');
+
+		$locksTable = $this->getMockBuilder(LocksTable::class)->disableOriginalConstructor()->onlyMethods(['saveMany'])->getMock();
+
+		$locksTable->expects($this->never())->method('saveMany');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->remove('Queue.QueuedJobs');
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->remove('Locks');
+		$tableLocator->set('Locks', $locksTable);
+
+		// Call afterSaveCommit
+		$event = new Event('Model.Contents.afterSaveCommit', $contentsTable);
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
+	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitBundlesMultipleContentsIntoOneJob(): void {
+		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
+
+		$contentsTable = $this->fetchTable('Contents');
+
+		// Move multiple contents from page 1 (de) to page 50 (es)
+		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
+		$event = new Event('Model.Contents.afterSave', $contentsTable);
+
+		foreach ([27, 32, 37] as $contentId) {
+			/** @var \Awyiss\Model\Entity\Content $entity */
+			$entity = $contentsTable->get($contentId);
+			$entity->pageId = 50;
+			$options['transactionId'] = 'test-transaction-' . $contentId;
+			$this->listener->afterSave($event, $entity, $options);
+		}
+
+		// Mock Queue and Locks tables
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())
+			->method('createJob')
+			->with(
+				'AutoTranslate',
+				$this->callback(function ($data) {
+					return $data['sourceLanguage'] === 'de'
+						&& $data['targetLanguage'] === 'es'
+						&& $data['ids'] === [27, 32, 37]
+						&& $data['type'] === 'content';
+				}),
+				[
+					'group' => 'general',
+					'priority' => 1,
+					'reference' => 'system::auto_translation',
+				]
+			);
+
+		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['saveMany'])->getMock();
+
+		$locksTable->expects($this->once())
+			->method('saveMany')
+			->with(
+				$this->callback(function ($locks) {
+					return count($locks) === 3;
+				}),
+				['checkRules' => false]
+			);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->remove('Queue.QueuedJobs');
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->remove('Locks');
+		$tableLocator->set('Locks', $locksTable);
+
+		$event = new Event('Model.Contents.afterSaveCommit', $contentsTable);
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
+	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitRemovesContentsWithNoLanguageChange(): void {
+		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
+
+		$contentsTable = $this->fetchTable('Contents');
+
+		// Move multiple contents from page 1 (de) to page 50 (es)
+		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
+		$event = new Event('Model.Contents.afterSave', $contentsTable);
+
+		foreach ([27, 50, 37] as $contentId) {
+			/** @var \Awyiss\Model\Entity\Content $entity */
+			$entity = $contentsTable->get($contentId);
+			$entity->pageId = 50;
+			$options['transactionId'] = 'test-transaction-' . $contentId;
+			$this->listener->afterSave($event, $entity, $options);
+		}
+
+		// Mock Queue and Locks tables
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())
+			->method('createJob')
+			->with(
+				'AutoTranslate',
+				$this->callback(function ($data) {
+					return $data['sourceLanguage'] === 'de'
+						&& $data['targetLanguage'] === 'es'
+						&& $data['ids'] === [27, 37]
+						&& $data['type'] === 'content';
+				}),
+				[
+					'group' => 'general',
+					'priority' => 1,
+					'reference' => 'system::auto_translation',
+				]
+			);
+
+		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['saveMany'])->getMock();
+
+		$locksTable->expects($this->once())
+			->method('saveMany')
+			->with(
+				$this->callback(function ($locks) {
+					return count($locks) === 2;
+				}),
+				['checkRules' => false]
+			);
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->remove('Queue.QueuedJobs');
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->remove('Locks');
+		$tableLocator->set('Locks', $locksTable);
+
+		$event = new Event('Model.Contents.afterSaveCommit', $contentsTable);
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitSkipsContentsWhenPageIdNotChanged(): void {
+		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
+
+		$contentsTable = $this->fetchTable('Contents');
+		/** @var \Awyiss\Model\Entity\Content $entity */
+		$entity = $contentsTable->get(1);
+
+		$entity->clean();
+		$entity->pageId = 1;
+
+		// Don't change pageId, just change something else
+		$entity->title = 'New Title';
+
+		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
+		$event = new Event('Model.Contents.afterSave', $contentsTable);
+
+		$this->listener->afterSave($event, $entity, $options);
+
+		// Mock Queue and Locks tables
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)
+			->disableOriginalConstructor()
+			->onlyMethods(['createJob'])
+			->getMock();
+
+		$queueTable->expects($this->never())->method('createJob');
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->remove('Queue.QueuedJobs');
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+
+		// Call afterSaveCommit
+		$event = new Event('Model.Contents.afterSaveCommit', $contentsTable);
+		$this->listener->afterSaveCommit($event, $entity, $options);
+	}
+
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
+	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testAfterSaveCommitIgnoresExceptionWhenLockSaveFails(): void {
+		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
+
+		$contentsTable = $this->fetchTable('Contents');
+		/** @var \Awyiss\Model\Entity\Content $entity */
+		$entity = $contentsTable->get(1);
+		$entity->setNew(false);
+		$entity->clean();
+
+		// Move content from page 1 (de) to page 50 (es)
+		$entity->pageId = 50;
+
+		$options = new ArrayObject(['transactionId' => 'test-transaction-1']);
+		$event = new Event('Model.Contents.afterSave', $contentsTable);
+
+		$this->listener->afterSave($event, $entity, $options);
+
+		// Mock Queue and Locks tables
+		$queueTable = $this->getMockBuilder(QueuedJobsTable::class)->onlyMethods(['createJob'])->getMock();
+
+		$queueTable->expects($this->once())->method('createJob');
+
+		$locksTable = $this->getMockBuilder(LocksTable::class)->onlyMethods(['saveMany'])->getMock();
+
+		// Simulate saveMany throwing an exception
+		$locksTable->expects($this->once())->method('saveMany')->willThrowException(new Exception('Lock save failed'));
+
+		$tableLocator = FactoryLocator::get('Table');
+		$tableLocator->remove('Queue.QueuedJobs');
+		$tableLocator->set('Queue.QueuedJobs', $queueTable);
+		$tableLocator->remove('Locks');
+		$tableLocator->set('Locks', $locksTable);
+
+		// Call afterSaveCommit - should not throw exception
+		$event = new Event('Model.Contents.afterSaveCommit', $contentsTable);
+		$this->listener->afterSaveCommit($event, $entity, $options);
 	}
 }

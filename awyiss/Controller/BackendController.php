@@ -311,6 +311,11 @@ abstract class BackendController extends AppController {
 			/** @var \Awyiss\Model\Entity $lo_entity */
 			$lo_entity = $this->fetchTable($this->defaultTable)->get($lo_lock->foreignKey);
 
+			$ls_lockingUser = $lo_lock->createdByUser?->username ?? __d('audit', 'user_system');
+			if (!$lo_lock->createdByUser && $lo_lock->uniqueId === 'autoTranslate') {
+				$ls_lockingUser = __d('system', 'auto_translate_system');
+			}
+
 			$la_data = [
 				'referenceDate' => ($lo_entity->changedOn ?? $lo_entity->createdOn)->format('Y-m-d H:i:s'),
 				'createdOn' => $lo_lock->createdOn->format('Y-m-d H:i:s'),
@@ -318,7 +323,7 @@ abstract class BackendController extends AppController {
 				'isOwnLock' => $this->Lock->isOwnLock($lo_lock),
 				'lockWarningMessage' => __df($ls_controller, 'locks', 'lock_warning', $lo_lockedUntil->nice($ls_timezone)),
 				'lockTimedOutMessage' => __df($ls_controller, 'locks', 'lock_warning_timed_out'),
-				'lockedMessage' => __df($ls_controller, 'locks', 'locked_message', $lo_lockedUntil->nice($ls_timezone), $lo_lock->createdByUser?->username ?? __d('audit', 'user_system')),
+				'lockedMessage' => __df($ls_controller, 'locks', 'locked_message', $lo_lockedUntil->nice($ls_timezone), $ls_lockingUser),
 			];
 
 			$this->response = $this->response->withStatus(200);

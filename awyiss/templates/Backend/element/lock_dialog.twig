@@ -40,7 +40,11 @@
 		</div>
 
 		<div class="LockedMessage">
-			<div class="Message">{{ __df(controller|underscore, 'locks', 'locked_message', TimeHelper.nice(_lock.lockedUntil), _lock.lock.createdByUser.username ?? __d('audit', 'user_system'))|raw }}</div>
+			{% set lockingUser = _lock.lock.createdByUser.username ?? __d('audit', 'user_system') %}
+			{% if _lock.lock.createdByUser is null and _lock.lock.uniqueId == 'autoTranslate' %}
+				{% set lockingUser = __d('system', 'auto_translate_system') %}
+			{% endif %}
+			<div class="Message">{{ __df(controller|underscore, 'locks', 'locked_message', TimeHelper.nice(_lock.lockedUntil), lockingUser)|raw }}</div>
 
 			<p><button class="Button Button-RequestLock">{{ __df(controller, 'locks', 'button_request_lock') }}</button></p>
 		</div>

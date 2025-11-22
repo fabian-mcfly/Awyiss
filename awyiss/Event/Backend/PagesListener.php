@@ -10,11 +10,14 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\PagesTable;
 use Awyiss\Utility\Inflector;
+use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Exception;
 
 
 /**
@@ -23,6 +26,12 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 class PagesListener implements EventListenerInterface {
 	use IdentityAwareTrait;
 	use LocatorAwareTrait;
+
+
+	/**
+	 * @var array
+	 */
+	protected array $checkedTransactions = [];
 
 
 	/**
@@ -41,6 +50,7 @@ class PagesListener implements EventListenerInterface {
 				'Model.' . $ls_identifier . '.afterCopy' => 'afterCopy',
 				'Model.' . $ls_identifier . '.beforeSave' => 'beforeSave',
 				'Model.' . $ls_identifier . '.afterSave' => 'afterSave',
+				'Model.' . $ls_identifier . '.afterSaveCommit' => 'afterSaveCommit',
 				'Model.' . $ls_identifier . '.beforeSoftDelete' => 'beforeSoftDelete',
 				'Model.' . $ls_identifier . '.beforeDelete' => 'beforeDelete',
 				'Model.' . $ls_identifier . '.afterSoftDelete' => 'afterSoftDelete',
@@ -297,6 +307,8 @@ class PagesListener implements EventListenerInterface {
 	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $event, Page $entity, ArrayObject $options): void {
+		$this->detectLanguageChange($entity, $options);
+
 		foreach ($entity->addMenuEntry ?? [] as $li_menuId) {
 			$this->addMenuEntry($li_menuId, $entity);
 		}
@@ -336,6 +348,18 @@ class PagesListener implements EventListenerInterface {
 				$lb_parentsActiveChanged
 			);
 		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSaveCommit(Event $event, Page $entity, ArrayObject $options): void {
+		$this->createAutoTranslationJobs();
 	}
 
 
@@ -486,6 +510,131 @@ class PagesListener implements EventListenerInterface {
 
 
 	/**
+	 * Will detect if the Page is moved or copied to a different language
+	 * than the original one. If so, it will mark the transaction for auto-translation.
+	 *
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 */
+	protected function detectLanguageChange(Page $entity, ArrayObject $options): void {
+		if (
+			Configure::read('Awyiss.System.Backend.autoTranslate.mode') !== 'auto' ||
+			!isset($options['transactionId'])
+		) {
+			return;
+		}
+
+		$ls_transactionId = $options['transactionId'];
+		$this->checkedTransactions[ $ls_transactionId ] ??= [
+			'languageChanged' => null,
+			'sourceLanguage' => null,
+			'targetLanguage' => null,
+			'pageIds' => [],
+		];
+
+		if ($this->checkedTransactions[ $ls_transactionId ]['languageChanged'] === null) {
+			$this->checkedTransactions[ $ls_transactionId ]['languageChanged'] = $entity->hasOriginal('languageShortcode') &&
+																				 $entity->getOriginal('languageShortcode') !== $entity->languageShortcode;
+			$this->checkedTransactions[ $ls_transactionId ]['sourceLanguage'] = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode') : null;
+			$this->checkedTransactions[ $ls_transactionId ]['targetLanguage'] = $entity->languageShortcode;
+		}
+
+		if ($this->checkedTransactions[ $ls_transactionId ]['languageChanged'] === true) {
+			$this->checkedTransactions[ $ls_transactionId ]['pageIds'][ $entity->pageRoleId->name ] ??= [];
+			$this->checkedTransactions[ $ls_transactionId ]['pageIds'][ $entity->pageRoleId->name ][] = $entity->id;
+		}
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function createAutoTranslationJobs(): void {
+		if (Configure::read('Awyiss.System.Backend.autoTranslate.mode') !== 'auto') {
+			return;
+		}
+
+		// Bundle all transactions with the same source and target languages and the same page role into one job
+		$la_jobsData = $this->bundleAutoTranslateJobData();
+		$this->checkedTransactions = [];
+
+		if (!$la_jobsData) {
+			return;
+		}
+
+		foreach ($la_jobsData as $la_jobData) {
+			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			$lo_queue->createJob('AutoTranslate', $la_jobData, [
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'system::auto_translation',
+			]);
+
+			/** @var \Awyiss\Model\Table\LocksTable $lo_locksTable */
+			$lo_locksTable = FactoryLocator::get('Table')->get('Locks');
+			$la_locks = [];
+			$ld_dateTimeNow = new DateTime()->addHours(1);
+
+			foreach ($la_jobData['ids'] as $li_pageId) {
+				$la_locks[] = $lo_locksTable->newDefaultEntity([
+					'scope' => Inflector::pluralize($la_jobData['type']),
+					'foreignKey' => $li_pageId,
+					'uniqueId' => 'autoTranslate',
+					'createdOn' => $ld_dateTimeNow,
+					'createdBy' => 0,
+				]);
+			}
+
+			try {
+				$lo_locksTable->saveMany($la_locks, [
+					'checkRules' => false,
+				]);
+			}
+			catch (Exception) {
+				// Ignore lock save errors
+			}
+		}
+	}
+
+
+	/**
+	 * Bundles all transactions that have the same source and target language settings
+	 * and the same page role into one entry to avoid creating multiple jobs for the same translation task.
+	 * Transactions with no language changes are ignored.
+	 *
+	 * @return array|null
+	 */
+	protected function bundleAutoTranslateJobData(): ?array {
+		$la_jobData = [];
+
+		foreach ($this->checkedTransactions as $la_transactionData) {
+			if ($la_transactionData['languageChanged'] !== true) {
+				continue;
+			}
+
+			$ls_key = $la_transactionData['sourceLanguage'] . '->' . $la_transactionData['targetLanguage'];
+
+			foreach ($la_transactionData['pageIds'] as $ls_pageRole => $la_pageIds) {
+				$ls_fullKey = $ls_key . '::' . $ls_pageRole;
+
+				$la_jobData[ $ls_fullKey ] ??= [
+					'sourceLanguage' => $la_transactionData['sourceLanguage'],
+					'targetLanguage' => $la_transactionData['targetLanguage'],
+					'type' => Inflector::underscore($ls_pageRole),
+					'ids' => [],
+				];
+
+				$la_jobData[ $ls_fullKey ]['ids'] = array_merge($la_jobData[ $ls_fullKey ]['ids'], $la_pageIds);
+			}
+		}
+
+		return $la_jobData;
+	}
+
+
+	/**
 	 * @param \Awyiss\Model\Table\PagesTable $table
 	 * @param \Awyiss\Model\Entity\Page $entity
 	 * @param string|null $originalLanguage
@@ -562,9 +711,7 @@ class PagesListener implements EventListenerInterface {
 			return $expression->like('slug', ($ls_originalSlug ?? $lo_entity->slug) . '/%');
 		};
 
-		if ($lo_subQuery) {
-			$lo_subQuery->where($lc_where)->execute();
-		}
+		$lo_subQuery?->where($lc_where)->execute();
 
 		$lo_query->where($lc_where)->execute();
 	}
