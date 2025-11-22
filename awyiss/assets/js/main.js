@@ -15,6 +15,7 @@ import FooterReveal from 'FooterReveal';
 import FormLeaveConfirmation from 'Form/FormLeaveConfirmation';
 import FormLock from 'Form/FormLock';
 import FormUpdater from 'Form/FormUpdater';
+import GenericDialog from 'GenericDialog';
 import IdentifierAutofill from 'Form/IdentifierAutofill';
 import InputListManager from 'Form/InputListManager';
 import MediaElements from 'Media/Elements';
@@ -29,7 +30,6 @@ import PlaceholderHelper from 'Form/PlaceholderHelper';
 import Search from 'Search';
 import TitleSetter from 'TitleSetter';
 import TranslatableTexts from 'Form/TranslatableTexts';
-import GenericDialog from './Modules/GenericDialog';
 
 window.bodyRemoved = false;
 // If the document contains a flash message, send an event to the parent window
