@@ -1,6 +1,7 @@
 //Base dialog
 @import 'dialog';
 
+@import 'access_helper_dialog';
 @import 'button';
 @import 'button_area';
 @import 'confirm_dialog';
@@ -9,6 +10,7 @@
 @import 'form_leave_confirm_dialog';
 @import 'flash_message';
 @import 'geocode_multiple_results_dialog';
+@import 'link_helper_dialog';
 @import 'link_select';
 @import 'list_control';
 @import 'locks';

@@ -1,0 +1,58 @@
+{#
+@var controllers array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block linkHelperDialog %}
+	<dialog id="LinkHelperDialog" data-title="{{ __d('system', 'link_helper_dialog_title') }}">
+		<div class="FormInput FormInputType-Select FormInputName-LinkHelperController">
+			<label class="Label" for="MenuEntry-LinkHelperController">{{ __d('system', 'link_helper_dialog_label_controller') }}</label>
+			<select
+					name="link_helper[controller]" id="MenuEntry-LinkHelperController"
+					data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
+					data-empty-label="{{ __d('system', 'select_empty_label') }}"
+			></select>
+		</div>
+
+		<div class="FormInput FormInputType-Select FormInputName-LinkHelperMethod">
+			<label class="Label" for="MenuEntry-LinkHelperMethod">{{ __d('system', 'link_helper_dialog_label_method') }}</label>
+			<select
+					name="link_helper[method]" id="MenuEntry-LinkHelperMethod"
+					data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
+					data-empty-label="{{ __d('system', 'select_empty_label') }}"
+			></select>
+		</div>
+
+		<div
+				class="FormInput FormInputType-List FormInputName-UrlParams" data-list-item-add="{{ __d('system', 'link_helper_dialog_label_url_param_add') }}"
+				data-list-item-remove="{{ __d('system', 'link_helper_dialog_label_url_param_remove') }}">
+			<label class="Label">{{ __d('system', 'link_helper_dialog_label_url_params') }}</label>
+
+			<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+				{{ FormHelper.text('param.0.key') }}
+				{{ FormHelper.text('param.0.value') }}
+			</div>
+		</div>
+
+		<button id="LinkHelperDialog-Button-Apply" class="Button Button-Success Button-Save Button-Apply">
+			{{ __d('system', 'link_helper_dialog_confirm_apply') }}
+		</button>
+
+		<button id="LinkHelperDialog-Button-Cancel" class="Button Button-Cancel Button-Close">
+			{{ __d('system', 'link_helper_dialog_confirm_cancel') }}
+		</button>
+	</dialog>
+{% endblock %}

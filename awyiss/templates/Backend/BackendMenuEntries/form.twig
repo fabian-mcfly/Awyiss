@@ -4,6 +4,7 @@
 @var possibleParentMenuEntries \Cake\Collection\CollectionInterface
 @var insertAfterOptions array
 @var controllers array
+@var policies array
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -19,6 +20,11 @@
 @var TimeHelper \Cake\View\Helper\TimeHelper
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
+
+{% do AssetHelper.addJsModule([
+	'Modules/Form/AccessHelperDialog.js',
+	'Modules/Form/LinkHelperDialog.js',
+]) %}
 
 {{ FormHelper.create(backendMenuEntry, {method: 'post', id: 'MenuEntryForm', idPrefix: 'menuEntry'}) }}
 <input type="hidden" name="attributes" value="">
@@ -45,6 +51,7 @@
 						templateVars: {
 							additionalContent: helperFormControl
 						},
+						'data-link-helper': 'true',
 						'data-link-helper-button-text': __('link_helper_button_text'),
 					}) }}
 				{% endblock %}
@@ -62,6 +69,7 @@
 							additionalContent: helperFormControl
 						},
 						val: backendMenuEntry.access ? backendMenuEntry.access|json_encode : '',
+						'data-access-helper': 'true',
 						'data-access-helper-button-text': __('access_helper_button_text'),
 					}) }}
 				{% endblock %}
@@ -223,67 +231,7 @@
 
 {{ FormHelper.end() }}
 
-{% block linkHelperDialog %}
-	<dialog id="LinkHelperDialog" data-title="{{ __('link_helper_dialog_title') }}">
-		<div class="FormInput FormInputType-Select FormInputName-LinkHelperController">
-			<label class="Label" for="MenuEntry-LinkHelperController">{{ __('link_helper_dialog_label_controller') }}</label>
-			<select name="link_helper[controller]" id="MenuEntry-LinkHelperController"
-				data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
-				data-empty-label="{{ __d('system', 'select_empty_label') }}"
-			></select>
-		</div>
+{% include '@Backend/element/access_helper_dialog.twig' %}
 
-		<div class="FormInput FormInputType-Select FormInputName-LinkHelperMethod">
-			<label class="Label" for="MenuEntry-LinkHelperMethod">{{ __('link_helper_dialog_label_method') }}</label>
-			<select name="link_helper[method]" id="MenuEntry-LinkHelperMethod"
-				data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
-				data-empty-label="{{ __d('system', 'select_empty_label') }}"
-			></select>
-		</div>
+{% include '@Backend/element/link_helper_dialog.twig' %}
 
-		<div class="FormInput FormInputType-List FormInputName-UrlParams" data-list-item-add="{{ __('link_helper_dialog_label_url_param_add') }}" data-list-item-remove="{{ __('link_helper_dialog_label_url_param_remove') }}">
-			<label class="Label">{{ __('link_helper_dialog_label_url_params') }}</label>
-
-			<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-				{{ FormHelper.input('param.0.key') }}
-				{{ FormHelper.input('param.0.value') }}
-			</div>
-		</div>
-
-		<button id="LinkHelperDialog-Button-Apply" class="Button Button-Success Button-Save Button-Apply">
-			{{ __('link_helper_dialog_confirm_apply') }}
-		</button>
-
-		<button id="LinkHelperDialog-Button-Cancel" class="Button Button-Cancel Button-Close">
-			{{ __('link_helper_dialog_confirm_cancel') }}
-		</button>
-	</dialog>
-{% endblock %}
-
-{% block accessHelperDialog %}
-	<dialog id="AccessHelperDialog" data-title="{{ __('access_helper_dialog_title') }}">
-		<div class="FormInput FormInputType-Select FormInputName-AccessHelperScope">
-			<label class="Label" for="MenuEntry-AccessHelperScope">{{ __('access_helper_dialog_label_scope') }}</label>
-			<select name="access_helper[scope]" id="MenuEntry-AccessHelperScope"
-				data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
-				data-empty-label="{{ __d('system', 'select_empty_label') }}"
-			></select>
-		</div>
-
-		<div class="FormInput FormInputType-Select FormInputName-AccessHelperPermission">
-			<label class="Label" for="MenuEntry-AccessHelperPermission">{{ __('access_helper_dialog_label_permission') }}</label>
-			<select name="access_helper[permission]" id="MenuEntry-AccessHelperPermission"
-				data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
-				data-empty-label="{{ __d('system', 'select_empty_label') }}"
-			></select>
-		</div>
-
-		<button id="AccessHelperDialog-Button-Apply" class="Button Button-Success Button-Save Button-Apply">
-			{{ __('access_helper_dialog_confirm_apply') }}
-		</button>
-
-		<button id="AccessHelperDialog-Button-Cancel" class="Button Button-Cancel Button-Close">
-			{{ __('access_helper_dialog_confirm_cancel') }}
-		</button>
-	</dialog>
-{% endblock %}

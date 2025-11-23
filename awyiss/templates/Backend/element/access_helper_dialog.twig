@@ -1,0 +1,47 @@
+{#
+@var policies array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block accessHelperDialog %}
+	<dialog id="AccessHelperDialog" data-title="{{ __d('system', 'access_helper_dialog_title') }}">
+		<div class="FormInput FormInputType-Select FormInputName-AccessHelperScope">
+			<label class="Label" for="DashboardElement-AccessHelperScope">{{ __d('system', 'access_helper_dialog_label_scope') }}</label>
+			<select
+					name="access_helper[scope]" id="DashboardElement-AccessHelperScope"
+					data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
+					data-empty-label="{{ __d('system', 'select_empty_label') }}"
+			></select>
+		</div>
+
+		<div class="FormInput FormInputType-Select FormInputName-AccessHelperPermission">
+			<label class="Label" for="DashboardElement-AccessHelperPermission">{{ __d('system', 'access_helper_dialog_label_permission') }}</label>
+			<select
+					name="access_helper[permission]" id="DashboardElement-AccessHelperPermission"
+					data-filter-placeholder="{{ __d('system', 'select_filter_placeholder') }}"
+					data-empty-label="{{ __d('system', 'select_empty_label') }}"
+			></select>
+		</div>
+
+		<button id="AccessHelperDialog-Button-Apply" class="Button Button-Success Button-Save Button-Apply">
+			{{ __d('system', 'access_helper_dialog_confirm_apply') }}
+		</button>
+
+		<button id="AccessHelperDialog-Button-Cancel" class="Button Button-Cancel Button-Close">
+			{{ __d('system', 'access_helper_dialog_confirm_cancel') }}
+		</button>
+	</dialog>
+{% endblock %}

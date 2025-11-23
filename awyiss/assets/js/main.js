@@ -1,5 +1,6 @@
 //noinspection NpmUsedModulesInstalled
 
+import AccessHelperDialog from 'Form/AccessHelperDialog';
 import AddressFinder from 'Form/AddressFinder';
 import Audit from 'Audit/Audit';
 import ButtonArea from 'ButtonArea';
@@ -18,6 +19,7 @@ import FormUpdater from 'Form/FormUpdater';
 import GenericDialog from 'GenericDialog';
 import IdentifierAutofill from 'Form/IdentifierAutofill';
 import InputListManager from 'Form/InputListManager';
+import LinkHelperDialog from 'Form/LinkHelperDialog';
 import MediaElements from 'Media/Elements';
 import MediaOverlay from 'Media/Overlay';
 import MediaProgressChecker from 'Media/ProgressChecker';
@@ -510,9 +512,21 @@ export function initMainOnLoad() {
 
 	/**
 	 * @global
+	 * @type {AccessHelperDialog}
+	 */
+	window.accessHelperDialog = new AccessHelperDialog();
+
+	/**
+	 * @global
 	 * @type {FooterReveal}
 	 */
 	window.footerReveal = new FooterReveal();
+
+	/**
+	 * @global
+	 * @type {LinkHelperDialog}
+	 */
+	window.linkHelperDialog = new LinkHelperDialog();
 
 	/**
 	 * @global

@@ -1,0 +1,32 @@
+#AccessHelperDialog {
+	@media screen and (width <= 540px) {
+		row-gap:10px;
+	}
+
+	.FormInput {
+		grid-column:1 / -1;
+
+		&:nth-last-child(1 of .FormInput) {
+			margin-bottom:20px;
+
+			@media screen and (width <= 768px) {
+				margin-bottom:0;
+			}
+
+			@media screen and (width <= 540px) {
+				margin-bottom:10px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-bottom:0;
+				}
+			}
+		}
+	}
+
+	.FormInputType-Select {
+		width:100%;
+		flex:0 0 100%;
+	}
+}

@@ -196,6 +196,7 @@
 
 	#TranslationDialog-Apply &,
 	:is(
+		&-AccessHelper,
 		&-Add,
 		&-Close,
 		&-Configure,
@@ -208,6 +209,7 @@
 		&-Geocode,
 		&-History,
 		&-Leave,
+		&-LinkHelper,
 		&-Loading,
 		&-Menu,
 		&-Preview,
@@ -280,6 +282,13 @@
 					vertical-align:-1px;
 				}
 			}
+		}
+	}
+
+	&-AccessHelper {
+		&::after {
+			content:'\f023';
+			vertical-align:-1px;
 		}
 	}
 
@@ -411,6 +420,12 @@
 					vertical-align:-2px;
 				}
 			}
+		}
+	}
+
+	&-LinkHelper {
+		&::after {
+			content:'\f0c1';
 		}
 	}
 
