@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Inflector;
+use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -73,16 +74,16 @@ class PageRolesTable extends Table {
 
 
 	/**
-	 * @return \Cake\Datasource\ResultSetInterface
+	 * @return \Cake\Collection\CollectionInterface
 	 */
-	public function findAllAndCache(): ResultSetInterface {
+	public function findAllAndCache(): CollectionInterface {
 		if (!isset(static::$cachedPageRoles)) {
 			/** @uses \Awyiss\Model\Table::findTranslations() */
 			static::$cachedPageRoles = static::find('translations')->all();
 		}
 
 
-		return static::$cachedPageRoles;
+		return static::$cachedPageRoles->compile();
 	}
 
 

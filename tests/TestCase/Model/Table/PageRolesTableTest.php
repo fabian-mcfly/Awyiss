@@ -11,8 +11,8 @@ use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
+use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
-use Cake\Datasource\ResultSetInterface;
 use Cake\Datasource\RulesChecker;
 
 
@@ -139,7 +139,7 @@ class PageRolesTableTest extends TestCase {
 		$result = $this->pageRolesTable->findAllAndCache();
 
 		/** @noinspection PhpConditionAlreadyCheckedInspection */
-		$this->assertInstanceOf(ResultSetInterface::class, $result);
+		$this->assertInstanceOf(CollectionInterface::class, $result);
 
 		$pageRoles = $result->toArray();
 		$pageRoles = array_column($pageRoles, 'identifier', 'id');
@@ -153,7 +153,11 @@ class PageRolesTableTest extends TestCase {
 
 		// Test that subsequent calls return the same cached result
 		$secondResult = $this->pageRolesTable->findAllAndCache();
-		$this->assertSame($result, $secondResult);
+		$this->assertNotSame($secondResult, $result);
+		/** @noinspection PhpConditionAlreadyCheckedInspection */
+		$this->assertInstanceOf(CollectionInterface::class, $secondResult);
+
+		$this->assertSame($result->toArray(), $secondResult->toArray());
 	}
 
 

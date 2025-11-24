@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\Datatable;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Inflector;
+use Cake\Collection\CollectionInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -167,9 +168,9 @@ class DatatablesTable extends Table {
 
 
 	/**
-	 * @return \Cake\Datasource\ResultSetInterface
+	 * @return \Cake\Collection\CollectionInterface
 	 */
-	public function findAllAndCache(): ResultSetInterface {
+	public function findAllAndCache(): CollectionInterface {
 		if (!isset(static::$cachedDatatables)) {
 			/**
 			 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
@@ -180,6 +181,6 @@ class DatatablesTable extends Table {
 		}
 
 
-		return static::$cachedDatatables;
+		return static::$cachedDatatables->compile();
 	}
 }
