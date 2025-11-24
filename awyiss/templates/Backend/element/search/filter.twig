@@ -38,7 +38,10 @@
 					data-list-item-remove="{{ __d('search', 'filter_remove_column') }}">
 					{{ FormHelper.label(
 						'filter[' ~ scope ~ '][' ~ column ~ '][value]',
-						settings.title ?? (column in ['meta_title', 'meta_description', 'robots_index', 'robots_follow'] ? __d('seo', column) : __d(i18nDomain ?? scope, column)),
+						settings.title ?? (column in ['meta_title', 'meta_description', 'robots_index', 'robots_follow'] ?
+							__d('seo', column) :
+							(i18nDomain == 'generic_pages' ? __df(scope, 'generic_pages', column) : __d(i18nDomain ?? scope, column))
+						),
 					) }}
 
 					{{ FormHelper.hidden('filter[' ~ scope ~ '][' ~ column ~ '][order]') }}

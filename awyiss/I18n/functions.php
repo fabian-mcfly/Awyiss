@@ -165,6 +165,22 @@ if (!function_exists('__df')) {
 
 		if ($ls_return === $string || empty($ls_return)) {
 			$ls_return = Inflector::underscore($domain) . '::' . $string;
+
+			// Fallback to system domain
+			if (
+				$fallbackDomain === 'generic_pages' &&
+				!in_array($string, [
+					'meta_title_overview',
+					'menu_title',
+					'headline_overview',
+				])
+			) {
+				$ls_fallback = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
+
+				if ($ls_fallback !== $string && !empty($ls_fallback)) {
+					$ls_return = $ls_fallback;
+				}
+			}
 		}
 
 
