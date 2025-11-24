@@ -26,24 +26,20 @@ trait TableFieldsTrait {
 
 
 	/**
+	 * @param string|null $scope
 	 * @return array
 	 */
-	public function getTableFields(): array {
+	public function getTableFields(?string $scope = null): array {
 		static $la_tables;
 
 		if (!isset($la_tables)) {
 			$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		}
 
-		if (method_exists($this, 'getDynamicScope')) {
-			$ls_scope = $this->getDynamicScope();
-		}
-		else {
-			$ls_scope = static::getScope();
-		}
+		$ls_scope = $scope ?? (method_exists($this, 'getDynamicScope') ? $this->getDynamicScope() : static::getScope());
 
 		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($ls_scope);
+		$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ls_scope));
 		$la_columns = [];
 
 		if (!in_array($lo_table->getTable(), $la_tables)) {
