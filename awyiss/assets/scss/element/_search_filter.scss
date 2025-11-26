@@ -166,6 +166,10 @@
 
 			&Type-Radio {
 				display:flex;
+
+				@container (width < 220px) {
+					flex-wrap:wrap;
+				}
 			}
 		}
 
@@ -270,6 +274,7 @@
 			@media screen and (width > 768px) {
 				width:42px;
 				height:42px;
+				top:0;
 			}
 		}
 
