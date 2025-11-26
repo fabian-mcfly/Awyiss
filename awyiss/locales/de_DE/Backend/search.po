@@ -112,3 +112,33 @@ msgstr "Filter anwenden"
 
 msgid "filter_reset"
 msgstr "Filter zurücksetzen"
+
+msgid "date_operator_since_last_login"
+msgstr "Seit letztem Login"
+
+msgid "date_operator_last_24_hours"
+msgstr "Letzte 24 Stunden"
+
+msgid "date_operator_today"
+msgstr "Heute"
+
+msgid "date_operator_yesterday"
+msgstr "Gestern"
+
+msgid "date_operator_this_week"
+msgstr "Diese Woche"
+
+msgid "date_operator_last_week"
+msgstr "Letzte Woche"
+
+msgid "date_operator_this_month"
+msgstr "Dieser Monat"
+
+msgid "date_operator_last_month"
+msgstr "Letzter Monat"
+
+msgid "date_operator_this_year"
+msgstr "Dieses Jahr"
+
+msgid "date_operator_last_year"
+msgstr "Letztes Jahr"
