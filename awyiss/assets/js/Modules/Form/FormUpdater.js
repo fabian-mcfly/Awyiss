@@ -9,7 +9,7 @@ export default class FormUpdater {
 	 * The data attribute used to select elements.
 	 * @type {string}
 	 */
-	dataAttribute = 'formUpdater';
+	dataAttribute = 'data-form-updater';
 	/**
 	 * The event handler instance.
 	 * @type {EventHandler}
@@ -32,11 +32,11 @@ export default class FormUpdater {
 	constructor(dataAttribute) {
 		if (dataAttribute) {
 			// Set the data attribute
-			if (dataAttribute.startsWith('data-')) {
-				dataAttribute = dataAttribute.substring(5);
-			}
+			this.dataAttribute = dataAttribute
 
-			this.dataAttribute = this.camelCase(dataAttribute);
+			if (!this.dataAttribute.startsWith('data-')) {
+				this.dataAttribute = 'data-' + this.dataAttribute;
+			}
 		}
 
 		// Attach a single event listener to the document
@@ -105,10 +105,14 @@ export default class FormUpdater {
 		}
 
 		// Check if the event target has the required data attribute
-		if (!event.target.dataset[this.dataAttribute]) {
+		if (
+			!event.target.matches(`[${this.dataAttribute}="true"]`) &&
+			!event.target.closest(`[${this.dataAttribute}="1"]`)
+		) {
 			return;
 		}
-		const dataAttributeValue = event.target.dataset[this.dataAttribute];
+
+		const dataAttributeValue = event.target.getAttribute(this.dataAttribute);
 
 		if (!form || !dataAttributeValue || dataAttributeValue === '0' || dataAttributeValue.toLowerCase() === 'false') {
 			return;
@@ -344,23 +348,6 @@ export default class FormUpdater {
 			// Remove the 'focusin' event listener
 			this.eventHandler.remove('focusin', this.handleFocus.bind(this));
 		});
-	}
-
-	/**
-	 * Converts a string to camel case.
-	 *
-	 * @param string
-	 * @returns {string}
-	 */
-	camelCase(string) {
-		return string.split('-').map((word, index) => {
-			// Don't change the first word
-			if (index === 0) {
-				return word;
-			}
-			// Capitalize the first letter of the rest
-			return word.charAt(0).toUpperCase() + word.slice(1);
-		}).join('');
 	}
 
 	/**
