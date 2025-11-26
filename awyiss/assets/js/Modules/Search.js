@@ -390,7 +390,7 @@ export class SearchFilter {
 				}
 				else {
 					// Select the date
-					valueInput.datepicker.selectDate(datePickerInput.value);
+					valueInput.datepicker.selectDate(valueInput.value);
 				}
 			}
 		}
