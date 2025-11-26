@@ -2,25 +2,20 @@
 
 export default class AccessHelperDialog {
 	/**
-	 * The access input element.
-	 * @type {HTMLInputElement}
-	 */
-	element;
-	/**
 	 * The event handler instance.
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
 	/**
-	 * The select element for the access helper.
-	 * @type {HTMLSelectElement}
-	 */
-	helperSelect;
-	/**
 	 * Remembered state of the form before the dialog was opened.
 	 * @type {boolean}
 	 */
 	isFormChanged = false;
+	/**
+	 * The access input element.
+	 * @type {HTMLInputElement}
+	 */
+	openerElement;
 	/**
 	 * The selector for the access elements.
 	 * @type {string}
@@ -36,17 +31,16 @@ export default class AccessHelperDialog {
 			this.selector = selector;
 		}
 
-		const accessInput = document.querySelector(this.selector);
-		if (accessInput) {
-			this.element = accessInput;
-			this.initAccessInput(accessInput);
-		}
-
 		this.dialog = document.querySelector('#AccessHelperDialog');
 
 		if (!this.dialog) {
 			return;
 		}
+
+		const accessInputs = document.querySelectorAll(this.selector);
+		accessInputs.forEach(accessInput => {
+			this.initAccessInput(accessInput);
+		});
 
 		// Bind the apply button handler
 		this.eventHandler.add('click', event => {
@@ -56,7 +50,7 @@ export default class AccessHelperDialog {
 			const permission = this.dialog.querySelector('select[name="access_helper[permission]"]').value;
 
 			// Set the value of the access input
-			this.element.value = `{"scope":"${scope}","identifier":"${permission}"}`;
+			this.openerElement.value = `{"scope":"${scope}","identifier":"${permission}"}`;
 
 			// Mark the form as changed
 			window.formLeaveConfirmation.formChanged();
@@ -90,9 +84,6 @@ export default class AccessHelperDialog {
 		button.textContent = accessInput.dataset.accessHelperButtonText;
 		accessInput.parentElement.appendChild(button);
 
-		// Get the access helper select
-		this.helperSelect = this.element.parentElement.querySelector('.AccessHelper select');
-
 		// Add an event listener to the button
 		this.eventHandler.add('click', this.handleButtonClick.bind(this), button);
 	}
@@ -104,11 +95,16 @@ export default class AccessHelperDialog {
 	handleButtonClick(event) {
 		event.preventDefault();
 
+		this.openerElement = event.target.closest('.FormInput').querySelector(this.selector);
+
 		const scopeSelect = this.dialog.querySelector('select[name="access_helper[scope]"]');
 		const permissionSelect = this.dialog.querySelector('select[name="access_helper[permission]"]');
 
+		// Get the access helper select
+		const helperSelect = this.openerElement.parentElement.querySelector('.AccessHelper select');
+
 		// Get all optgroups and put their titles as options
-		const optgroups = this.helperSelect.querySelectorAll('optgroup');
+		const optgroups = helperSelect.querySelectorAll('optgroup');
 		scopeSelect.innerHTML = '<option></option>';
 
 		permissionSelect.disabled = true;
@@ -157,8 +153,11 @@ export default class AccessHelperDialog {
 		// Get the selected scope
 		const selectedController = event.target.value;
 
+		// Get the access helper select
+		const helperSelect = this.openerElement.parentElement.querySelector('.AccessHelper select');
+
 		// Get the optgroup with the selected scope from the helper select
-		const optgroup = this.helperSelect.querySelector(`optgroup[label="${selectedController}"]`);
+		const optgroup = helperSelect.querySelector(`optgroup[label="${selectedController}"]`);
 
 		// Get all options from the optgroup and put them in the permission select
 		const options = optgroup.querySelectorAll('option');
