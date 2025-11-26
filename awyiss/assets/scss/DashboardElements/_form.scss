@@ -1,0 +1,282 @@
+.DashboardElements.Form {
+	.AccessHelper {
+		display:none;
+	}
+
+	.Fieldset-FilterSettings {
+		padding-inline:0;
+		padding-bottom:10px;
+	}
+
+	:is(
+		.FormInputName-Settings-Fields,
+		.FormInputName-FilterSettings,
+		.FormInputName-Settings-ListSort
+	) {
+		> .Label {
+			display:none;
+		}
+	}
+
+	.Columns {
+		container:columns / inline-size;
+
+		.ButtonArea {
+			display:flex;
+			width:100%;
+			margin:40px 0 30px 0;
+			padding:0 30px;
+			justify-content:space-between;
+
+			@container columns (width <= 768px) {
+				margin-block:20px 10px;
+				padding-inline:10px;
+			}
+
+			@container columns (width <= 640px) {
+				display:grid;
+				justify-content:stretch;
+			}
+
+			@container columns (width <= 540px) {
+				margin-block:10px 5px;
+				padding-inline:5px;
+			}
+
+			html.Scale-Small & {
+				@container columns (width > 768px) {
+					margin-top:20px;
+					margin-bottom:10px;
+					padding-inline:10px;
+				}
+			}
+
+			.Button {
+				margin:0;
+				outline-offset:2px;
+			}
+		}
+	}
+
+	.Column {
+		--labelWidth:1fr;
+		--selectWidth:230px;
+		--inputWidth:1fr;
+		--buttonWidth:52px;
+
+		display:grid;
+		margin:0;
+		padding:5px 40px;
+		align-items:center;
+		gap:0 5px;
+		grid-template-columns:var(--labelWidth) var(--selectWidth) var(--inputWidth) var(--buttonWidth);
+
+		@media screen and (width <= 1280px) {
+			padding-inline:20px;
+		}
+
+		@media screen and (width <= 768px) {
+			--buttonWidth:42px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-inline:10px;
+		}
+
+		@container columns (width <= 768px) {
+			--labelWidth:0;
+		}
+
+		@container columns (width <= 520px) {
+			--selectWidth:80px;
+			--inputWidth:1fr;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				--buttonWidth:42px;
+
+				padding-inline:20px;
+			}
+
+			@container columns (width > 768px) {
+				--labelWidth:0;
+			}
+		}
+
+		&.Active {
+			.Button-Remove {
+				opacity:inherit;
+				pointer-events:initial;
+			}
+		}
+
+		&:nth-child(even) {
+			background-color:var(--colorLight);
+
+			html.🌚 & {
+				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4))
+			}
+		}
+
+		> .Label {
+			line-height:1.1;
+
+			@container columns (width <= 768px) {
+				grid-column:1 / -1;
+			}
+
+			html.Scale-Small & {
+				@container columns (width > 768px) {
+					grid-column:1 / -1;
+				}
+			}
+		}
+
+		.FormInput {
+			margin-bottom:0;
+
+			&Type-Radio {
+				display:flex;
+
+				@container (width < 220px) {
+					flex-wrap:wrap;
+				}
+			}
+		}
+
+		.Operator {
+			@container columns (width <= 768px) {
+				grid-column:1 / span 2;
+			}
+
+			html.Scale-Small & {
+				@container columns (width > 768px) {
+					grid-column:1 / span 2;
+				}
+			}
+
+			&:not(:has(+ .Input)) {
+				grid-column-end:span 2;
+			}
+
+			.Label {
+				display:none;
+			}
+		}
+
+		.Input {
+			&.InputType-Boolean {
+				margin-left:5px;
+				container-type:inline-size;
+
+				.Label {
+					display:inline-block;
+					margin-left:20px;
+
+					@container (width < 175px) {
+						width:100%;
+						margin-left:0;
+					}
+
+					&:first-of-type {
+						margin-left:0;
+
+						@container (width < 240px) {
+							width:100%;
+						}
+					}
+
+					&:nth-of-type(2) {
+						@container (width < 240px) {
+							margin-left:0;
+						}
+					}
+				}
+			}
+
+			&:is(
+				.InputType-Date,
+				.InputType-Time,
+				.InputType-Datetime
+			) {
+				.FormInput {
+					display:grid;
+					grid-template-columns:1fr;
+
+					input {
+						grid-row-start:1;
+						grid-column-start:1;
+
+						&[name=""] {
+							z-index:1;
+						}
+					}
+				}
+			}
+		}
+
+		.Button-Remove {
+			@extend %InFieldButton;
+
+			width:52px;
+			height:52px;
+			position:relative;
+			top:0;
+			right:0;
+			opacity:0.1;
+			pointer-events:none;
+
+			@media screen and (width <= 768px) {
+				width:42px;
+				height:42px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					width:42px;
+					height:42px;
+					top:0;
+				}
+			}
+
+			&.Disabled {
+				opacity:.25;
+				visibility:visible;
+				pointer-events:none;
+			}
+
+			&::after {
+				@extend %LineAwesomeIcon;
+				content:'\f00d';
+				font-size:24px;
+				line-height:50px;
+
+				@media screen and (width <= 768px) {
+					line-height:40px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						line-height:40px;
+					}
+				}
+			}
+
+			.Hover {
+				background-color:var(--colorError);
+			}
+		}
+	}
+
+	.FormInputName-Settings-ListSort {
+		.FormInputType-ListItem {
+			display:grid;
+			grid-template-columns:repeat(2, 1fr);
+		}
+
+		.FormInputType-Select {
+			grid-column:auto / auto;
+		}
+	}
+}

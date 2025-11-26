@@ -1,0 +1,63 @@
+{#
+@var dashboardElement array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block dashboardElementFieldset %}
+	<fieldset class="Overview-Fieldset Fieldset-{{ dashboardElement.scope|camelize }} StatusCell Collapsible">
+		{% block dashboardElementFieldsetLegend %}
+			<legend>{{ dashboardElement.title }}</legend>
+		{% endblock %}
+
+		{% block dashboardElementFieldsetInner %}
+			<div class="Table-Overflow">
+				{% block tableOverview %}
+					<table class="Overview-Table">
+						{% block tableOverviewHead %}
+							<thead>
+								{% block tableOverviewHeadRow %}
+									<tr>
+										{% for field in dashboardElement.selectedFields %}
+											{% block tableOverviewHeadCell %}
+												{% set class = field %}
+												{% if class|substr(0, 11) == 'attributes.' %}
+													{% set class = class|substr(11) %}
+												{% endif %}
+												<th class="TableHeader-{{ class|ucparts(false) }}">
+													{{ dashboardElement.availableFields[ field ] }}
+												</th>
+											{% endblock %}
+										{% endfor %}
+										<th class="TableHeader-Actions"></th>
+									</tr>
+								{% endblock %}
+							</thead>
+						{% endblock %}
+						{% block tableOverviewBody %}
+							<tbody>
+								{% for entity in dashboardElement.records %}
+									{% block tableOverviewBodyRow %}
+										{{ include(['@Backend/element/Dashboard/' ~ dashboardElement.scope ~ '_element_row.twig', '@Backend/element/Dashboard/element_row.twig']) }}
+									{% endblock %}
+								{% endfor %}
+							</tbody>
+						{% endblock %}
+					</table>
+				{% endblock %}
+			</div>
+		{% endblock %}
+	</fieldset>
+{% endblock %}

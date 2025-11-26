@@ -1,4 +1,5 @@
 {#
+@var dashboardElements array
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -32,9 +33,9 @@
 			</p>
 		</fieldset>
 
-		{{ cell('Backend/FormEntriesStatus') }}
-
-		{{ cell('Backend/UrlsNotFoundStatus') }}
+		{% for dashboardElement in dashboardElements %}
+			{% include '@Backend/element/Dashboard/element.twig' %}
+		{% endfor %}
 	</div>
 
 	<fieldset class="Overview-Fieldset Fieldset-QuickActions">

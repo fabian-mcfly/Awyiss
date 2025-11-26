@@ -47,18 +47,28 @@
 			}
 		}
 
+		&.StatusCell {
+			table {
+				table-layout:auto;
+			}
+
+			th {
+				min-width:200px;
+			}
+		}
+
 		&:has(> .Table-Overflow) {
 			padding:0;
 
 			.Table-Overflow {
 				margin:0;
 				overflow-x:scroll;
+				scrollbar-color:var(--scrollbarColor);
+				scrollbar-width:thin;
 
 				&:has(tr:nth-child(5)) {
 					height:300px;
-					overflow:hidden auto;
-					scrollbar-color:var(--scrollbarColor);
-					scrollbar-width:thin;
+					overflow-y:auto;
 
 					.TableHeader-Actions {
 						border-top-right-radius:0;

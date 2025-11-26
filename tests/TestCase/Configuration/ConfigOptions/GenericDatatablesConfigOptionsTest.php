@@ -108,6 +108,7 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 			'ContentTemplateElements' => 'ContentTemplateElements',
 			'ContentTemplates' => 'ContentTemplates',
 			'Contents' => 'Contents',
+			'DashboardElements' => 'DashboardElements',
 			'Datatables' => 'Datatables',
 			'Designs' => 'Designs',
 			'DummyUsers' => 'DummyUsers',

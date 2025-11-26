@@ -63,6 +63,8 @@
 		<i class="las la-check">{{ __('true') }}</i>
 	{% elseif value is same as false or value is same as 'false' %}
 		<i class="las la-times">{{ __('false') }}</i>
+	{% elseif (value is enum) %}
+		{{ value.name }}
 	{% else %}
 		{{ value }}
 	{% endif %}

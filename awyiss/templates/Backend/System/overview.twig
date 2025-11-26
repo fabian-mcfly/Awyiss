@@ -49,6 +49,7 @@
 				{% if (AuthorizationHelper.anyIsAccessible(
 					{scope: 'attributes', identifier: 'read'},
 					{scope: 'backend_menu_entries', identifier: 'read'},
+					{scope: 'dashboard_elements', identifier: 'read'},
 					{scope: 'datatables', identifier: 'read'},
 					{scope: 'page_roles', identifier: 'read'}
 				)) %}
@@ -69,6 +70,14 @@
 									{% if AuthorizationHelper.scopeIsAccessible('backend_menu_entries', [], 'read') %}
 										<li>
 											{{ HtmlHelper.link(__d('backend_menu_entries', 'headline_overview'), {controller: 'BackendMenuEntries', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemDashboardElementsOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('dashboard_elements', [], 'read') %}
+										<li>
+											{{ HtmlHelper.link(__d('dashboard_elements', 'headline_overview'), {controller: 'DashboardElements', action: 'overview'}) }}
 										</li>
 									{% endif %}
 								{% endblock %}

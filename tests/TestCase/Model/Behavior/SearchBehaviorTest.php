@@ -95,6 +95,7 @@ class SearchBehaviorTest extends TestCase {
 		$this->assertSame([
 			'getPossibleFieldValues' => 'getPossibleFieldValues',
 			'getFilterColumns' => 'getFilterColumns',
+			'searchFilterQuery' => 'filterQuery',
 			'normalizeColumnType' => 'normalizeColumnType',
 			'searchIsActive' => 'isActive',
 		], $config['implementedMethods']);

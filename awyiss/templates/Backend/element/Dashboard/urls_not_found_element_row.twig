@@ -1,0 +1,34 @@
+{#
+@var dashboardElement array
+@var entity \Awyiss\Model\Entity\UrlNotFound
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% extends '@Backend/element/Dashboard/element_row.twig' %}
+
+{% block tableOverviewBodyCellActions %}
+	<td class="TableCell-Actions">
+		{% set canCreateUrlHistory = AuthorizationHelper.scopeIsAccessible('urlHistory', [], 'create') %}
+
+		{% if canCreateUrlHistory %}
+			<form class="Actions" method="post" action="{{ UrlHelper.build({controller: 'UrlHistory', action: 'add'}) }}">
+				{{ FormHelper.button(__d('urls_not_found', 'create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit_type', value: 'submit'}) }}
+				{{ FormHelper.hidden('reload_form', {val: 1}) }}
+				{{ FormHelper.hidden('url', {val: entity.url|trim('/')}) }}
+			</form>
+		{% endif %}
+	</td>
+{% endblock %}

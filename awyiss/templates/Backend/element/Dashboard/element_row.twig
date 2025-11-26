@@ -1,0 +1,57 @@
+{#
+@var dashboardElement array
+@var entity \Awyiss\Model\Entity
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<tr class="
+	{%- if entity.active is defined and entity.active == false %} Inactive{% endif -%}
+	{%- if entity.parentsActive is defined and entity.parentsActive == false %} ParentsInactive{% endif %}
+	{%- if entity.isPublished() is same as false %} NotPublished{% endif %}">
+
+	{% for field in dashboardElement.selectedFields %}
+		{% block tableOverviewBodyCell %}
+			{% set class = field %}
+			{% if class|substr(0, 11) == 'attributes.' %}
+				{% set class = class|substr(11) %}
+			{% endif %}
+
+			<td class="TableCell-{{ class|ucparts(false) }}">
+				{% if field starts with 'attributes.' %}
+					{% set field = field|slice(11)|underscore %}
+					{% block tableOverviewBodyCellDisplayedFieldAttributeValue %}
+						{% include '@Backend/element/overview/list_item_attribute_value.twig' %}
+					{% endblock %}
+				{% else %}
+					{% set field = field|underscore %}
+					{% block tableOverviewBodyCellDisplayedFieldValue %}
+						{% include '@Backend/element/overview/list_item_value.twig' %}
+					{% endblock %}
+				{% endif %}
+			</td>
+		{% endblock %}
+	{% endfor %}
+
+	{% block tableOverviewBodyCellActions %}
+		<td class="TableCell-Actions">
+			<div class="Actions">
+				{% if AuthorizationHelper.scopeIsAccessible(dashboardElement.scope, [], 'update') %}
+					{{ HtmlHelper.link(__d(dashboardElement.scope, 'edit'), {controller: dashboardElement.scope, action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+				{% endif %}
+			</div>
+		</td>
+	{% endblock %}
+</tr>

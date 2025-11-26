@@ -1,0 +1,362 @@
+{#
+@var dashboardElement \Awyiss\Model\Entity\DashboardElement
+@var fields array
+@var policies array
+@var operators array
+@var dateOperators array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% do AssetHelper.addJsModule([
+	'Modules/Form/AccessHelperDialog.js',
+]) %}
+
+{{ FormHelper.create(dashboardElement, {method: 'post', id: 'DashboardElementForm', idPrefix: 'dashboardElement'}) }}
+<input type="hidden" name="attributes" value="">
+
+{% set fieldsetGeneral %}
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{% block formControlTitle %}
+					{{ FormHelper.control('title') }}
+				{% endblock %}
+
+				{% block formControlscope %}
+					{{ FormHelper.control('scope', {
+						options: controllers ?? [],
+						'data-form-updater': true,
+					}) }}
+				{% endblock %}
+
+				{% set accessHelperFormControl %}
+					<div class="AccessHelper">
+						{{ FormHelper.select('access_helper_options', policies) }}
+					</div>
+				{% endset %}
+
+				{% block formControlAccess %}
+					{{ FormHelper.control('access', {
+						templateVars: {
+							additionalContent: accessHelperFormControl
+						},
+						val: dashboardElement.access ? dashboardElement.access|json_encode : '',
+						'data-access-helper': 'true',
+						'data-access-helper-button-text': __('access_helper_button_text'),
+					}) }}
+				{% endblock %}
+
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetSettings %}
+	{% block fieldsetListFields %}
+		{% if fields %}
+			<fieldset class="Fieldset-ListFields">
+				<legend>{{ __('fieldset_list_fields') }}</legend>
+
+				{% block fieldsetListFieldsInner %}
+					{{ FormHelper.control('settings.fields', {
+						options: fields,
+						disabled: ['id'],
+						label: __('list_fields'),
+						type: 'multicheckbox',
+					}) }}
+				{% endblock %}
+			</fieldset>
+		{% endif %}
+	{% endblock %}
+
+	{% block fieldsetFilterSettings %}
+		{% if filterColumns %}
+			<fieldset class="Fieldset-FilterSettings">
+				<legend>{{ __('fieldset_filter_settings') }}</legend>
+
+				{% block fieldsetFilterSettingsInner %}
+					<div class="FormInput FormInputType-Select FormInputName-FilterSettings">
+						<label class="Label" for="DashboardElement-FilterSettings">{{ __('filter_settings') }}</label>
+						<div class="Columns">
+							{% set scope = dashboardElement.scope %}
+							{% for column, settings in filterColumns %}
+								{# @var settings Awyiss\Model\Behavior\Search\FilterColumnSettings #}
+								<div class="Column Column-{{ column|camelize }}{% if settings.operator or (settings.type == 'boolean' and settings.value != null) %} Active{% endif %}" data-column="{{ column }}">
+									{{ FormHelper.label(
+										'settings.filter.' ~ column ~ '.value',
+										settings.title ?? (column in ['meta_title', 'meta_description', 'robots_index', 'robots_follow'] ?
+											__d('seo', column) :
+											(i18nDomain == 'generic_pages' ? __df(scope, 'generic_pages', column) : __d(i18nDomain ?? scope, column))
+										),
+									) }}
+
+									{{ FormHelper.hidden('settings.filter.' ~ column ~ '.active', {
+										val: settings.operator or (settings.type == 'boolean' and settings.value != null) ? 1 : 0,
+									}) }}
+
+									<div class="Operator">
+										{% if settings.type in ['date', 'datetime'] %}
+											{{ FormHelper.control('settings.filter.' ~ column ~ '.operator', {
+												disabled: settings.disabledOperators,
+												label: __d('search', 'filter_operator'),
+												options: dateOperators + operators,
+												required: false,
+												val: settings.operator,
+												'data-form-updater': true,
+											}) }}
+										{% else %}
+											{{ FormHelper.control('settings.filter.' ~ column ~ '.operator', {
+												disabled: settings.type == 'boolean' ? true : settings.disabledOperators,
+												label: __d('search', 'filter_operator'),
+												options: operators,
+												required: false,
+												val: settings.operator,
+											}) }}
+										{% endif %}
+									</div>
+
+									{% if settings.type == 'boolean' %}
+										<div class="Input InputType-Boolean">
+											{{ FormHelper.control('settings.filter.' ~ column ~ '.value', {
+												hiddenField: false,
+												label: false,
+												options: {
+													'': __d('search', 'label_boolean_all'),
+													'1': __d('search', 'label_boolean_true'),
+													'0': __d('search', 'label_boolean_false'),
+												},
+												type: 'radio',
+												val: settings.value ?? '',
+											}) }}
+										</div>
+									{% elseif (settings.operator is empty or dateOperators[ settings.operator ] is empty) %}
+										<div class="Input InputType-{{ settings.type|ucparts }}">
+											{% set helperFormControl %}
+												{% if settings.values %}
+													{{ FormHelper.select('value_helper_options', settings.values, {
+														'data-options-for': 'DashboardElement-Settings-Filter-' ~ column|camelize ~ '-Value',
+													}) }}
+												{% endif %}
+											{% endset %}
+
+											{{ FormHelper.control('settings.filter.' ~ column ~ '.value', {
+												label: false,
+												templateVars: {
+													additionalContent: helperFormControl
+												},
+												val: settings.value,
+												'data-type': settings.type,
+												'data-allow-multiple-values': settings.operator in ['in', 'not_in', 'between', 'not_between'] ? 'true' : 'false',
+											}) }}
+										</div>
+									{% endif %}
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				{% endblock %}
+			</fieldset>
+		{% endif %}
+	{% endblock %}
+
+	{% block fieldsetSort %}
+		{% if fields %}
+			<fieldset class="Fieldset-ListSort">
+				<legend>{{ __('fieldset_list_sort') }}</legend>
+
+				{% block fieldsetSortInner %}
+					<div class="FormInput FormInputType-List FormInputName-Settings-ListSort" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
+						<label class="Label">{{ __('list_sort') }}</label>
+
+						{% set counter = 0 %}
+						{% for value in dashboardElement.settings.sort %}
+							<div class="FormInputType-ListItem">
+								<div class="FormInput FormInputType-Select">
+									{{ FormHelper.select('settings.sort.' ~ counter ~ '.field', fields, {val: value.field}) }}
+								</div>
+								<div class="FormInput FormInputType-Select">
+									{{ FormHelper.select('settings.sort.' ~ counter ~ '.direction', {
+										'asc': __('sort_asc'),
+										'desc': __('sort_desc'),
+									}, {val: value.direction}) }}
+								</div>
+							</div>
+							{% set counter = counter + 1 %}
+						{% endfor %}
+
+						<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+							<div class="FormInput FormInputType-Select">
+								{{ FormHelper.select('settings.sort.' ~ counter ~ '.field', fields) }}
+							</div>
+							<div class="FormInput FormInputType-Select">
+								{{ FormHelper.select('settings.sort.' ~ counter ~ '.direction', {
+									'asc': __('sort_asc'),
+									'desc': __('sort_desc'),
+								}) }}
+							</div>
+						</div>
+					</div>
+				{% endblock %}
+			</fieldset>
+		{% endif %}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetContent %}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMedia %}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{{ cell('Backend/MediaElements', [dashboardElement]) }}
+
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetMediaElementAssignments %}
+	{% block fieldsetMediaElementAssignments %}
+		{{ cell('Backend/MediaElements::elementAssignments', [dashboardElement]) }}
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetPresentation %}
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
+
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active') }}
+				{% endblock %}
+
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetConditions %}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block formControlSystemOrder %}
+					{{ SystemOrderHelper.control('system_order', {entity: dashboardElement}) }}
+				{% endblock %}
+
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% set fieldsetAttributes %}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endset %}
+
+{% block sidebarToggle %}
+	{% if config.Awyiss.System.Backend.interface.sidebarMode == true and isOverlayForm != true %}
+		{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+	{% endif %}
+{% endblock %}
+
+{% block fieldsets %}
+	<div class="Fieldsets">
+		{% if config.Awyiss.System.Backend.interface.sidebarMode != true or isOverlayForm == true %}
+			{{ fieldsetPresentation }}
+			{{ fieldsetConditions }}
+			{{ fieldsetGeneral }}
+			{{ fieldsetSettings }}
+			{{ fieldsetContent }}
+			{{ fieldsetMedia }}
+			{{ fieldsetMediaElementAssignments }}
+			{{ fieldsetAttributes }}
+		{% endif %}
+
+		{% block mainFieldsets %}
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true and isOverlayForm != true %}
+				<div class="Main-Fieldsets">
+					{{ fieldsetGeneral }}
+					{{ fieldsetSettings }}
+					{{ fieldsetContent }}
+					{{ fieldsetMedia }}
+					{{ fieldsetMediaElementAssignments }}
+				</div>
+			{% endif %}
+		{% endblock %}
+
+		{% block sidebarFieldsets %}
+			{% if config.Awyiss.System.Backend.interface.sidebarMode == true and isOverlayForm != true %}
+				<div class="Sidebar-Fieldsets">
+					{{ fieldsetPresentation }}
+					{{ fieldsetConditions }}
+					{{ fieldsetAttributes }}
+				</div>
+			{% endif %}
+		{% endblock %}
+
+		{% block formInputReloadForm %}
+			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{% endblock %}
+	</div>
+{% endblock %}
+
+{% block lockDialog %}
+	{{ element('lock_dialog', {entity: dashboardElement}) }}
+{% endblock %}
+
+{{ FormHelper.end() }}
+
+{% include '@Backend/element/access_helper_dialog.twig' %}
