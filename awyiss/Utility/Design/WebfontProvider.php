@@ -4,6 +4,7 @@
 namespace Awyiss\Utility\Design;
 
 
+use Awyiss\Utility\Arrays;
 use Cake\Cache\Cache;
 use Cake\Collection\Collection;
 use RuntimeException;
@@ -55,9 +56,7 @@ class WebfontProvider {
 			];
 		}
 
-		uasort($la_webfonts, function ($a, $b) {
-			return strnatcasecmp($a['name'], $b['name']);
-		});
+		Arrays::naturalSort($la_webfonts, 'name');
 
 		return $la_webfonts;
 	}

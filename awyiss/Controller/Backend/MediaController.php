@@ -14,6 +14,7 @@ use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\ResultSetInterface;
@@ -785,10 +786,7 @@ class MediaController extends Controller {
 			$this->groupAssignmentsByPageRole($la_mediaAssignments, $la_usedScopes, $la_inaccessibleAssignments, $la_pageRoles);
 		}
 
-		// Sort the scopes by their label
-		uasort($la_usedScopes, function ($a, $b) {
-			return strnatcasecmp($a, $b);
-		});
+		Arrays::naturalSort($la_usedScopes);
 
 		$la_inaccessibleAssignments = $this->setInaccessibleScopes($la_inaccessibleAssignments, $la_usedScopes, $la_mediaAssignments);
 

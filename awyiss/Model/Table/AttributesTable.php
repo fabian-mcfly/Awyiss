@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Content\BackendColumnSystem;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Driver\Mysql;
@@ -214,9 +215,7 @@ class AttributesTable extends Table {
 			$la_attributeScopes[ $ls_identifier ] = __d($ls_identifier, 'menu_title');
 		}
 
-		uasort($la_attributeScopes, function (string $a, string $b): int {
-			return strnatcasecmp($a, $b);
-		});
+		Arrays::naturalSort($la_attributeScopes);
 
 		return $la_attributeScopes;
 	}

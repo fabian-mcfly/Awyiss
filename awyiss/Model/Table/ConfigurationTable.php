@@ -11,6 +11,7 @@ use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -90,9 +91,7 @@ class ConfigurationTable extends Table {
 			$la_configScopes[ $ls_identifier ] = __d($ls_identifier, 'menu_title');
 		}
 
-		uasort($la_configScopes, function ($a, $b) {
-			return strnatcasecmp($a, $b);
-		});
+		Arrays::naturalSort($la_configScopes);
 
 		return $la_configScopes;
 	}

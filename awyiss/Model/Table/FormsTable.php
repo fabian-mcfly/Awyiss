@@ -10,6 +10,7 @@ use Awyiss\Form\FormConditionalRecipients;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Form\Templates\FormTemplateInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Mailer\TransportFactory;
@@ -474,9 +475,7 @@ class FormsTable extends Table {
 			return $ls_className::getTitle();
 		}, $la_classes);
 
-		uasort($la_templates, function ($a, $b) {
-			return strnatcasecmp($a, $b);
-		});
+		Arrays::naturalSort($la_templates);
 
 		return $la_templates;
 	}

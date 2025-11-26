@@ -9,10 +9,10 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Survey;
 use Awyiss\Model\Entity\SurveyAnswer;
-use Awyiss\Model\Entity\SurveyQuestion;
 use Awyiss\Model\Entity\SurveySurveyAnswer;
 use Awyiss\Model\Entity\SurveySurveyQuestion;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Arrays;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -54,10 +54,7 @@ class SurveysController extends Controller {
 			->indexBy('id')
 			->toArray();
 
-		// Sort the survey questions by title
-		uasort($this->surveyQuestions, function (SurveyQuestion $a, SurveyQuestion $b) {
-			return strnatcasecmp($a->title, $b->title);
-		});
+		Arrays::naturalSort($this->surveyQuestions, 'title');
 	}
 
 

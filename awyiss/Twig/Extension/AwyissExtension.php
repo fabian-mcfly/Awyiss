@@ -10,13 +10,12 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Module\ModulesProvider;
 use Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor;
+use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Http\Exception\RedirectException;
-use Cake\I18n\I18n;
 use Cake\Utility\Hash;
-use Collator;
 use Dom\HTMLDocument;
 use InvalidArgumentException;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
@@ -201,26 +200,7 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('module', $this->moduleFunction(...), ['needs_context' => true, 'is_safe' => ['all']]),
 
 			new TwigFunction('naturalSort', function (array $data, int|string|null $key = null): array {
-				$lx_key = $key;
-
-				$lo_collator = new Collator(I18n::getLocale());
-				/**
-				 * Ignore case but not accents
-				 * This will allow sorting 'Äpfel' after 'Apfel', not after 'Zitronen'
-				 */
-				$lo_collator->setStrength(Collator::SECONDARY);
-				// Enable natural sorting for numbers
-				$lo_collator->setAttribute(Collator::NUMERIC_COLLATION, Collator::ON);
-
-				/** @noinspection PhpVariableNamingConventionInspection */
-				uasort($data, function ($a, $b) use ($lx_key, $lo_collator) {
-					if (!empty($lx_key)) {
-						return $lo_collator->compare($a[ $lx_key ], $b[ $lx_key ]);
-					}
-
-					return $lo_collator->compare($a, $b);
-				});
-
+				Arrays::naturalSort($data, $key);
 
 				return $data;
 			}),
