@@ -38,6 +38,7 @@ class SearchBehavior extends Behavior {
 		'implementedMethods' => [
 			'getPossibleFieldValues' => 'getPossibleFieldValues',
 			'getFilterColumns' => 'getFilterColumns',
+			'searchFilterQuery' => 'filterQuery',
 			'normalizeColumnType' => 'normalizeColumnType',
 			'searchIsActive' => 'isActive',
 		],
@@ -79,9 +80,10 @@ class SearchBehavior extends Behavior {
 	 * @param array $blocklistedColumns
 	 * @param array|null $selectedOperators
 	 * @param array|null $selectedValues
+	 * @param bool $includePossibleValues
 	 * @return array<string, \Awyiss\Model\Behavior\Search\FilterColumnSettings>
 	 */
-	public function getFilterColumns(array $blocklistedColumns = [], ?array $selectedOperators = null, ?array $selectedValues = null): array {
+	public function getFilterColumns(array $blocklistedColumns = [], ?array $selectedOperators = null, ?array $selectedValues = null, bool $includePossibleValues = true): array {
 		$lo_schema = $this->table()->getSchema();
 
 		$la_blocklistedColumns = array_merge($blocklistedColumns, $this->getConfig('blocklistedColumns', []), ['deleted', 'deleted_on', 'deleted_by']);
@@ -89,9 +91,7 @@ class SearchBehavior extends Behavior {
 		if ($this->getConfig('columns') && $selectedOperators === null && $selectedValues === null) {
 			$la_columns = $this->getConfig('columns');
 
-			$la_columns = array_diff_key($la_columns, array_flip($la_blocklistedColumns));
-
-			return $la_columns;
+			return array_diff_key($la_columns, array_flip($la_blocklistedColumns));
 		}
 
 		$la_selectedOperators = $selectedOperators ?? $this->getConfig('operators');
@@ -101,7 +101,7 @@ class SearchBehavior extends Behavior {
 		foreach ($lo_schema->columns() as $ls_column) {
 			$la_column = $lo_schema->getColumn($ls_column);
 			$ls_type = $this->table()->normalizeColumnType($la_column['type']);
-			$la_values = $this->table()->getPossibleFieldValues($ls_column, $la_column['type']);
+			$la_values = $includePossibleValues ? $this->table()->getPossibleFieldValues($ls_column, $la_column['type']) : [];
 
 			$la_disabledOperators = $this->disabledOperators($ls_type);
 
@@ -126,7 +126,7 @@ class SearchBehavior extends Behavior {
 
 				$la_column = $lo_schema->getColumn($lo_attribute->identifier);
 				$ls_type = $lo_table->normalizeColumnType($la_column['type']);
-				$la_values = $lo_table->getPossibleFieldValues($lo_attribute->identifier, $la_column['type']);
+				$la_values = $includePossibleValues ? $lo_table->getPossibleFieldValues($lo_attribute->identifier, $la_column['type']) : [];
 
 				$la_disabledOperators = $this->disabledOperators($ls_type);
 
@@ -143,11 +143,12 @@ class SearchBehavior extends Behavior {
 			}
 		}
 
-		$this->setConfig('columns', $la_columns);
+		// Only cache the columns if no specific selections are made
+		if ($selectedOperators === null && $selectedValues === null && $includePossibleValues) {
+			$this->setConfig('columns', $la_columns);
+		}
 
-		$la_columns = array_diff_key($la_columns, array_flip($la_blocklistedColumns));
-
-		return $la_columns;
+		return array_diff_key($la_columns, array_flip($la_blocklistedColumns));
 	}
 
 
@@ -264,15 +265,29 @@ class SearchBehavior extends Behavior {
 
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param array|null $filterColumns
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function filterQuery(SelectQuery $query): SelectQuery {
-		if (!$this->getFilterColumns()) {
+	public function filterQuery(SelectQuery $query, ?array $filterColumns = null): SelectQuery {
+		$la_filterColumns = $filterColumns ?? $this->getFilterColumns([], null, null, false);
+
+		if (!$la_filterColumns) {
 			return $query;
 		}
 
-		foreach ($this->getFilterColumns() as $ls_column => $lo_columnSettings) {
-			if ($lo_columnSettings->operator === null) {
+		foreach ($la_filterColumns as $ls_column => $lo_columnSettings) {
+			// If the operator is null and the type is not boolean,
+			// or the type is boolean and the value is null, skip this column
+			if (
+				$lo_columnSettings->operator === null &&
+				(
+					$lo_columnSettings->type !== 'boolean' ||
+					(
+						$lo_columnSettings->type === 'boolean' &&
+						$lo_columnSettings->value === null
+					)
+				)
+			) {
 				continue;
 			}
 
