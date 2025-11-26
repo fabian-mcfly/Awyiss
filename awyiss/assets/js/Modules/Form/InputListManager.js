@@ -157,6 +157,17 @@ export default class InputListManager {
 		// Clone the last row
 		const newRow = lastRow.cloneNode(true);
 
+		const selects = newRow.querySelectorAll('select');
+		selects.forEach((select) => {
+			// Remove the customSelectInitialized data attribute to reinitialize the custom select
+			select.removeAttribute('data-custom-select-initialized');
+
+			const customSelect = select.parentElement.querySelector('.CustomSelect');
+			if (customSelect) {
+				customSelect.remove();
+			}
+		});
+
 		// Insert the new row before the button
 		formInput.insertBefore(newRow, button);
 
@@ -167,6 +178,10 @@ export default class InputListManager {
 		// Clear the input values in the new row and update their names
 		inputs.forEach((input) => {
 			const name = input.name;
+
+			if (!name || name === '') {
+				return;
+			}
 
 			// If the input is not hidden, clear the value
 			if (input.type === 'select-one') {
@@ -216,11 +231,11 @@ export default class InputListManager {
 		const formElements = newRow.querySelectorAll('.FormInput');
 
 		formElements.forEach((formElement) => {
-			// Get the class name that starts with "FormInputName"
-			const className = Array.from(formElement.classList).find(name => name.startsWith("FormInputName"));
+			// Get the class name that starts with `FormInputName`
+			const className = Array.from(formElement.classList).find(name => name.startsWith('FormInputName'));
 
 			// Check if the class contains a number prefixed by a hyphen and followed by a hyphen
-			if (className.match(/-\d+-/)) {
+			if (className?.match(/-\d+-/)) {
 				// Replace the number with the new index
 				const newClassName = className.replace(/-\d+-/, `-${newIndex}-`);
 
