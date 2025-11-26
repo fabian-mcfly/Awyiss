@@ -9,6 +9,7 @@ use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Behavior\Search\FilterColumnSettings;
 use Awyiss\Model\Enum\ComparisonOperator;
+use Awyiss\Model\Enum\DateComparisonOperator;
 use Awyiss\ORM\Behavior;
 use Awyiss\Routing\Router;
 use BackedEnum;
@@ -17,6 +18,7 @@ use Cake\Database\Type\EnumLabelInterface;
 use Cake\Database\Type\EnumType;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\FactoryLocator;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 
 
@@ -328,6 +330,16 @@ class SearchBehavior extends Behavior {
 			'not_starts_with' => $this->addContainsCondition($query, $ls_column, $columnSettings, true, 'end'),
 			'ends_with' => $this->addContainsCondition($query, $ls_column, $columnSettings, false, 'start'),
 			'not_ends_with' => $this->addContainsCondition($query, $ls_column, $columnSettings, true, 'start'),
+			'since_last_login' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::SinceLastLogin),
+			'last_24_hours' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::Last24Hours),
+			'today' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::Today),
+			'yesterday' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::Yesterday),
+			'this_week' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::ThisWeek),
+			'last_week' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::LastWeek),
+			'this_month' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::ThisMonth),
+			'last_month' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::LastMonth),
+			'this_year' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::ThisYear),
+			'last_year' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::LastYear),
 			default => $query,
 		};
 	}
@@ -837,5 +849,76 @@ class SearchBehavior extends Behavior {
 		}
 
 		return $lx_value;
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param string $column
+	 * @param \Awyiss\Model\Enum\DateComparisonOperator $dateComparisonOperator
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	protected function addDateComparisonCondition(SelectQuery $query, string $column, DateComparisonOperator $dateComparisonOperator): SelectQuery {
+		$lo_now = DateTime::now();
+
+		return match ($dateComparisonOperator) {
+			DateComparisonOperator::SinceLastLogin => $this->addSinceLastLoginCondition($query, $column),
+			DateComparisonOperator::Last24Hours => $query->where([
+				$column . ' >=' => $lo_now->subHours(24),
+			]),
+			DateComparisonOperator::Today => $query->where([
+				$column . ' >=' => $lo_now->startOfDay(),
+				$column . ' <' => $lo_now->addDays(1)->startOfDay(),
+			]),
+			DateComparisonOperator::Yesterday => $query->where([
+				$column . ' >=' => $lo_now->subDays(1)->startOfDay(),
+				$column . ' <' => $lo_now->startOfDay(),
+			]),
+			DateComparisonOperator::ThisWeek => $query->where([
+				$column . ' >=' => $lo_now->startOfWeek(),
+				$column . ' <' => $lo_now->addWeeks(1)->startOfWeek(),
+			]),
+			DateComparisonOperator::LastWeek => $query->where([
+				$column . ' >=' => $lo_now->subWeeks(1)->startOfWeek(),
+				$column . ' <' => $lo_now->startOfWeek(),
+			]),
+			DateComparisonOperator::ThisMonth => $query->where([
+				$column . ' >=' => $lo_now->startOfMonth(),
+				$column . ' <' => $lo_now->addMonths(1)->startOfMonth(),
+			]),
+			DateComparisonOperator::LastMonth => $query->where([
+				$column . ' >=' => $lo_now->subMonths(1)->startOfMonth(),
+				$column . ' <' => $lo_now->startOfMonth(),
+			]),
+			DateComparisonOperator::ThisYear => $query->where([
+				$column . ' >=' => $lo_now->startOfYear(),
+				$column . ' <' => $lo_now->addYears(1)->startOfYear(),
+			]),
+			DateComparisonOperator::LastYear => $query->where([
+				$column . ' >=' => $lo_now->subYears(1)->startOfYear(),
+				$column . ' <' => $lo_now->startOfYear(),
+			]),
+		};
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param string $column
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	protected function addSinceLastLoginCondition(SelectQuery $query, string $column): SelectQuery {
+		$lo_request = Router::getRequest();
+		$lo_session = $lo_request->getSession();
+		$lo_lastLogin = $lo_session->read('Backend.lastLogin');
+
+		if (!$lo_lastLogin) {
+			// If there is no last login time, return an empty result set
+			return $query->where(['1 = 0']);
+		}
+
+		return $query->where([
+			$column . ' >=' => $lo_lastLogin,
+		]);
 	}
 }
