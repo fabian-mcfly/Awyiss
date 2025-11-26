@@ -72,15 +72,17 @@ trait TableFieldsTrait {
 			$la_columns[ $ls_column ] = __d(Inflector::underscore($ls_scope), $ls_column);
 		}
 
-		/** @var \Awyiss\Model\Behavior\AttributesBehavior $lo_attributesBehavior */
-		$lo_attributesBehavior = $lo_table->getBehavior('Attributes');
-		foreach ($lo_attributesBehavior->getAttributes() as $lo_attribute) {
-			if (in_array('attributes.' . $lo_attribute->identifier, $this->blocklistedTableFields, true)) {
-				continue;
-			}
+		if ($lo_table->hasBehavior('Attributes')) {
+			/** @var \Awyiss\Model\Behavior\AttributesBehavior $lo_attributesBehavior */
+			$lo_attributesBehavior = $lo_table->getBehavior('Attributes');
+			foreach ($lo_attributesBehavior->getAttributes() as $lo_attribute) {
+				if (in_array('attributes.' . $lo_attribute->identifier, $this->blocklistedTableFields, true)) {
+					continue;
+				}
 
-			if ($lo_attribute->active) {
-				$la_columns[ 'attributes.' . $lo_attribute->identifier ] = $lo_attribute->title;
+				if ($lo_attribute->active) {
+					$la_columns[ 'attributes.' . $lo_attribute->identifier ] = $lo_attribute->title;
+				}
 			}
 		}
 
