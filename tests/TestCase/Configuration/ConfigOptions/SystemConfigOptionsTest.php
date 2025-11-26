@@ -182,7 +182,6 @@ class SystemConfigOptionsTest extends TestCase {
 		$this->assertSame([
 			'disabled' => 'system::auto_translate_disabled',
 			'auto' => 'system::auto_translate_automatic',
-			'manual' => 'system::auto_translate_manual',
 		], $configOptions['Backend.autoTranslate.mode']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.autoTranslate.translationService', $configOptions);
