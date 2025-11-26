@@ -70,3 +70,21 @@ msgstr "Format"
 
 msgid "export"
 msgstr "Exportieren"
+
+msgid "page_id"
+msgstr "Seite"
+
+msgid "body"
+msgstr "E-Mail-Inhalt"
+
+msgid "body_confirmation"
+msgstr "Bestätigungs-E-Mail-Inhalt"
+
+msgid "data"
+msgstr "Formulardaten"
+
+msgid "ip_hash"
+msgstr "IP-Hash"
+
+msgid "post_hash"
+msgstr "Daten-Hash"

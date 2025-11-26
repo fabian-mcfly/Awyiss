@@ -1,0 +1,36 @@
+# Survey Entries translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-11-23 17:34+0000\n"
+"PO-Revision-Date: 2025-11-23 17:34+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Umfrageeinträge"
+
+msgid "menu_title"
+msgstr "Umfrageeinträge"
+
+msgid "headline_overview"
+msgstr "Umfrageeinträge"
+
+msgid "post_hash"
+msgstr "Post Hash"
+
+msgid "page_id"
+msgstr "Seite"
+
+msgid "data"
+msgstr "Formulardaten"
+
+msgid "ip_hash"
+msgstr "IP-Hash"
+
+msgid "post_hash"
+msgstr "Daten-Hash"

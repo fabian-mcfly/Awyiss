@@ -22,3 +22,18 @@ msgstr "Invalid entity."
 
 msgid "error_media_element_unique_for_scope"
 msgstr "This entitiy already exists for this scope."
+
+msgid "meta_title_overview"
+msgstr "Media Element Assignments"
+
+msgid "headline_overview"
+msgstr "Media Element Assignments"
+
+msgid "media_element_id"
+msgstr "Media Element"
+
+msgid "scope"
+msgstr "Scope"
+
+msgid "foreign_key"
+msgstr "Foreign Key"

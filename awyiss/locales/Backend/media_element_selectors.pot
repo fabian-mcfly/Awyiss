@@ -13,3 +13,18 @@ msgstr ""
 
 msgid "error_identifier_unique_for_media_element"
 msgstr "The identifier is already in use by another Media Selector"
+
+msgid "meta_title_overview"
+msgstr "Media Element Selectors"
+
+msgid "headline_overview"
+msgstr "Media Element Selectors"
+
+msgid "media_element_id"
+msgstr "Media Element"
+
+msgid "media_selector_id"
+msgstr "Media Selector"
+
+msgid "column_span"
+msgstr "Column Span"

@@ -115,3 +115,6 @@ msgstr "A folder cannot be moved under the root folder"
 
 msgid "error_not_root_deletion"
 msgstr "The root folder cannot be deleted"
+
+msgid "hidden"
+msgstr "Hidden"

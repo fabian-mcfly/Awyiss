@@ -178,3 +178,12 @@ msgstr "Frontend preview"
 
 msgid "webfont_download"
 msgstr "Webfont Download"
+
+msgid "settings"
+msgstr "Settings"
+
+msgid "css"
+msgstr "CSS"
+
+msgid "is_preview"
+msgstr "Preview"

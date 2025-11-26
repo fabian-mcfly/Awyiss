@@ -1,0 +1,45 @@
+# MediaResizedImages translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-11-26 16:53+0000\n"
+"PO-Revision-Date: 2025-11-26 16:53+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Media: Resized Images"
+
+msgid "headline_overview"
+msgstr "Media: Resized Images"
+
+msgid "media_id"
+msgstr "Media"
+
+msgid "name"
+msgstr "Name"
+
+msgid "path"
+msgstr "Path"
+
+msgid "width"
+msgstr "Width"
+
+msgid "height"
+msgstr "Height"
+
+msgid "real_width"
+msgstr "Real Width"
+
+msgid "real_height"
+msgstr "Real Height"
+
+msgid "strategy"
+msgstr "Strategy"
+
+msgid "status"
+msgstr "Status"

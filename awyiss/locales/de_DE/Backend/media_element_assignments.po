@@ -22,3 +22,18 @@ msgstr "Ungültiger Eintrag."
 
 msgid "error_media_element_unique_for_scope"
 msgstr "Dieser Eintrag existiert bereits für diesen Bereich."
+
+msgid "meta_title_overview"
+msgstr "Medienelement-Zuweisungen"
+
+msgid "headline_overview"
+msgstr "Medienelement-Zuweisungen"
+
+msgid "media_element_id"
+msgstr "Medienelement"
+
+msgid "scope"
+msgstr "Bereich"
+
+msgid "foreign_key"
+msgstr "Fremdschlüssel"

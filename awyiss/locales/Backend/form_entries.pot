@@ -70,3 +70,21 @@ msgstr "Format"
 
 msgid "export"
 msgstr "Export"
+
+msgid "page_id"
+msgstr "Page"
+
+msgid "body"
+msgstr "Email Body"
+
+msgid "body_confirmation"
+msgstr "Confirmation Email Body"
+
+msgid "data"
+msgstr "Form Data"
+
+msgid "ip_hash"
+msgstr "IP Hash"
+
+msgid "post_hash"
+msgstr "Post Hash"

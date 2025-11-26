@@ -119,6 +119,9 @@ msgstr "Average color"
 msgid "preview"
 msgstr "Preview"
 
+msgid "avif"
+msgstr "Avif"
+
 msgid "webp"
 msgstr "WebP"
 

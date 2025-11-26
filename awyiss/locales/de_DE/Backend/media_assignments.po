@@ -1,0 +1,36 @@
+# MediaAssignments translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-11-26 16:45+0000\n"
+"PO-Revision-Date: 2025-11-26 16:45+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Medienzuordnungen"
+
+msgid "headline_overview"
+msgstr "Medienzuordnungen"
+
+msgid "media_element_id"
+msgstr "Medienelement"
+
+msgid "media_element_selector_identifier"
+msgstr "Mediaelement-Selector"
+
+msgid "media_id"
+msgstr "Media"
+
+msgid "media_folder_id"
+msgstr "Medienordner"
+
+msgid "scope"
+msgstr "Bereich"
+
+msgid "foreign_key"
+msgstr "Fremdschlüssel"

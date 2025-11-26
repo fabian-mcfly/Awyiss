@@ -115,3 +115,6 @@ msgstr "Ein Ordner darf nicht unter den Hauptordner verschoben werden"
 
 msgid "error_not_root_deletion"
 msgstr "Der Hauptordner kann nicht gelöscht werden"
+
+msgid "hidden"
+msgstr "Versteckt"

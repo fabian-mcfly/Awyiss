@@ -88,3 +88,6 @@ msgstr "Das Medienelement kann nicht gelöscht werden, da es noch in Verwendung 
 
 msgid "error_not_default_element_deletion"
 msgstr "Das Standard-Medienelement kann nicht gelöscht werden"
+
+msgid "internal"
+msgstr "Intern"
