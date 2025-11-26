@@ -63,7 +63,7 @@ use RuntimeException;
  * @method \Cake\Datasource\EntityInterface|array rebuildMediaAssignments(\Cake\Datasource\EntityInterface|array $entity, bool $useMediaEntity = false)
  * @method \Cake\Collection\CollectionInterface listNested(\Cake\ORM\Query\SelectQuery|\Cake\Collection\Iterator\TreeIterator $query, string $nestingKey = 'children', string $direction = 'desc')
  * @method array getPossibleFieldValues(string $column, ?String $type = null)
- * @method array<string, \Awyiss\Model\Behavior\Search\FilterColumnSettings> getFilterColumns(array $blocklistedColumns = [])
+ * @method array<string, \Awyiss\Model\Behavior\Search\FilterColumnSettings> getFilterColumns(array $blocklistedColumns = [], ?array $selectedOperators = null, ?array $selectedValues = null)
  * @method string normalizeColumnType(string $type)
  * @method bool searchIsActive()
  * @noinspection PhpFullyQualifiedNameUsageInspection

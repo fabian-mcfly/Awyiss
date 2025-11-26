@@ -75,14 +75,16 @@ class SearchBehavior extends Behavior {
 	 * Get columns that should be included in the filter form.
 	 *
 	 * @param array $blocklistedColumns
+	 * @param array|null $selectedOperators
+	 * @param array|null $selectedValues
 	 * @return array<string, \Awyiss\Model\Behavior\Search\FilterColumnSettings>
 	 */
-	public function getFilterColumns(array $blocklistedColumns = []): array {
+	public function getFilterColumns(array $blocklistedColumns = [], ?array $selectedOperators = null, ?array $selectedValues = null): array {
 		$lo_schema = $this->table()->getSchema();
 
 		$la_blocklistedColumns = array_merge($blocklistedColumns, $this->getConfig('blocklistedColumns', []), ['deleted', 'deleted_on', 'deleted_by']);
 
-		if ($this->getConfig('columns')) {
+		if ($this->getConfig('columns') && $selectedOperators === null && $selectedValues === null) {
 			$la_columns = $this->getConfig('columns');
 
 			$la_columns = array_diff_key($la_columns, array_flip($la_blocklistedColumns));
@@ -90,8 +92,8 @@ class SearchBehavior extends Behavior {
 			return $la_columns;
 		}
 
-		$la_selectedOperators = $this->getConfig('operators');
-		$la_selectedValues = $this->getConfig('values');
+		$la_selectedOperators = $selectedOperators ?? $this->getConfig('operators');
+		$la_selectedValues = $selectedValues ?? $this->getConfig('values');
 
 		$la_columns = [];
 		foreach ($lo_schema->columns() as $ls_column) {
