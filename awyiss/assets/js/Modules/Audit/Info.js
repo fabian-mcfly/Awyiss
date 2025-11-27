@@ -20,6 +20,11 @@ export default class AuditInfo {
 	 */
 	mouseOverTimeout = 1000;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The set of elements that have been processed.
 	 * @type {Set}
 	 */
@@ -37,8 +42,7 @@ export default class AuditInfo {
 		const elements = document.querySelectorAll(this.elementSelector);
 		this.bindEvents(elements);
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

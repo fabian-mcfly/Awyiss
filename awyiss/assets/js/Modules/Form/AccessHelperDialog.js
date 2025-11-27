@@ -12,6 +12,11 @@ export default class AccessHelperDialog {
 	 */
 	isFormChanged = false;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The access input element.
 	 * @type {HTMLInputElement}
 	 */
@@ -68,8 +73,7 @@ export default class AccessHelperDialog {
 			window.formLeaveConfirmation.isFormChanged = this.isFormChanged;
 		}, this.dialog.querySelector('.Button-Cancel'));
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

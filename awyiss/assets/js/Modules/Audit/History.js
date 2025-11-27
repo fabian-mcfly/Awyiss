@@ -42,6 +42,11 @@ export default class AuditHistory {
 	 * @type {boolean} isFormChanged
 	 */
 	isFormChanged = false;
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	/**
 	 * Creates a new instance of the AuditHistory class.
@@ -50,8 +55,7 @@ export default class AuditHistory {
 		const elements = document.querySelectorAll(this.elementSelector);
 		this.bindButtonEvents(elements);
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

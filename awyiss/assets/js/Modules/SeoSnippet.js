@@ -23,27 +23,6 @@ export default class SeoSnippet {
 	 */
 	element;
 	/**
-	 * The settings for the SEO snippet
-	 *
-	 * @property {object} settings
-	 */
-	settings = {
-		title: {
-			warning: 56,
-			error: 70,
-		},
-		desc: {
-			warning: 129,
-			error: 160,
-		},
-	};
-	/**
-	 * The SEO element
-	 *
-	 * @property {HTMLElement|null} seo
-	 */
-	seo = null;
-	/**
 	 * The page title input element
 	 *
 	 * @property {HTMLInputElement|null} pageTitle
@@ -62,17 +41,10 @@ export default class SeoSnippet {
 	 */
 	metaDescription = null;
 	/**
-	 * The SEO snippet search term input element
-	 *
-	 * @property {HTMLInputElement|null} seoSnippetSearchTerm
+	 * The observer for the crop frame.
+	 * @type {Observer}
 	 */
-	seoSnippetSearchTerm = null;
-	/**
-	 * The slug element
-	 *
-	 * @property {HTMLElement|null} preSlug
-	 */
-	slug = null;
+	observer = window.observer;
 	/**
 	 * The slug element
 	 *
@@ -85,6 +57,12 @@ export default class SeoSnippet {
 	 * @property {string} selector
 	 */
 	selector;
+	/**
+	 * The SEO element
+	 *
+	 * @property {HTMLElement|null} seo
+	 */
+	seo = null;
 	/**
 	 * The SEO snippet title element
 	 *
@@ -109,6 +87,33 @@ export default class SeoSnippet {
 	 * @property {HTMLElement|null} seoSnippetSearch
 	 */
 	seoSnippetSearch = null;
+	/**
+	 * The SEO snippet search term input element
+	 *
+	 * @property {HTMLInputElement|null} seoSnippetSearchTerm
+	 */
+	seoSnippetSearchTerm = null;
+	/**
+	 * The settings for the SEO snippet
+	 *
+	 * @property {object} settings
+	 */
+	settings = {
+		title: {
+			warning: 56,
+			error: 70,
+		},
+		desc: {
+			warning: 129,
+			error: 160,
+		},
+	};
+	/**
+	 * The slug element
+	 *
+	 * @property {HTMLElement|null} preSlug
+	 */
+	slug = null;
 
 	/**
 	 * Initialize the SEO snippet
@@ -121,8 +126,7 @@ export default class SeoSnippet {
 
 		this.initElement(document.querySelector(selector));
 
-		const observer = window.observer;
-		observer.addObserver(this.observeForNewInputs.bind(this));
+		this.observer.addObserver(this.observeForNewInputs.bind(this));
 
 		// Add event listener for input events
 		this.eventHandler.add('input', this.update.bind(this), document.body);

@@ -20,7 +20,6 @@ import GenericDialog from 'GenericDialog';
 import IdentifierAutofill from 'Form/IdentifierAutofill';
 import InputListManager from 'Form/InputListManager';
 import LinkHelperDialog from 'Form/LinkHelperDialog';
-import MediaElements from 'Media/Elements';
 import MediaOverlay from 'Media/Overlay';
 import MediaProgressChecker from 'Media/ProgressChecker';
 import NestedListHandler from 'NestedListHandler';
@@ -209,8 +208,7 @@ export function handleLabelKeypress() {
 		window.eventHandler.add('keydown', event, label);
 	});
 
-	const observer = window.observer;
-	observer.addObserver(function (mutation) {
+	window.observer.addObserver(function (mutation) {
 		mutation.addedNodes.forEach(node => {
 			if (node.nodeType !== Node.ELEMENT_NODE) {
 				return;
@@ -296,7 +294,6 @@ export async function initMainOnReady() {
 	 * @type {Observer}
 	 */
 	window.observer = new Observer();
-	window.observer.observe(document.body, {childList: true, subtree: true});
 
 	/*
 	 * Create an instance of the EventHandler class, so that it can be used globally
@@ -405,12 +402,6 @@ export async function initMainOnReady() {
 	 * @type {InputListManager}
 	 */
 	window.inputListManager = new InputListManager();
-
-	/**
-	 * @global
-	 * @type {MediaElements}
-	 */
-	window.mediaElements = new MediaElements();
 
 	/**
 	 * @global

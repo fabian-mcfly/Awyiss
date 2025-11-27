@@ -14,6 +14,12 @@ export default class NestedListHandler {
 	 */
 	static handleToggleButtonClickBound = false;
 	/**
+	 * An array to store the default order of the list items.
+	 * It will be populated with the ids of the list items when the SortableJS instance is created.
+	 * @property {Array} defaultOrder
+	 */
+	defaultOrder;
+	/**
 	 * The detached items when dragging multiple selected items
 	 * @type {HTMLElement[]}
 	 */
@@ -60,11 +66,10 @@ export default class NestedListHandler {
 	 */
 	saveOrderButtons;
 	/**
-	 * An array to store the default order of the list items.
-	 * It will be populated with the ids of the list items when the SortableJS instance is created.
-	 * @property {Array} defaultOrder
+	 * The observer for the crop frame.
+	 * @type {Observer}
 	 */
-	defaultOrder;
+	observer = window.observer;
 	/**
 	 * Timeout to disallow the auto scroll of the footer after drag start and end
 	 * @property {number} scrollTimeout
@@ -97,8 +102,7 @@ export default class NestedListHandler {
 			this.eventHandler.add('click', (event) => this.saveOrderButtonHandler(event), button);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

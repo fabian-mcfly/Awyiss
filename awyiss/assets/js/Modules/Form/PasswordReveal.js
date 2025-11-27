@@ -12,6 +12,11 @@ export default class PasswordReveal {
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	/**
 	 * Selects all password input fields and adds a button to toggle visibility of each password.
@@ -25,8 +30,7 @@ export default class PasswordReveal {
 			this.addShowPasswordButton(passwordField);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeForNewPasswordFields.bind(this));
+		this.observer.addObserver(this.observeForNewPasswordFields.bind(this));
 
 		// Attach the event handler to the window
 		this.eventHandler.add('click', this.handleShowPasswordButtonClick.bind(this));

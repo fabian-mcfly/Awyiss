@@ -22,6 +22,11 @@ export default class LinkHelperDialog {
 	 */
 	isFormChanged = false;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the link elements.
 	 * @type {string}
 	 */
@@ -93,8 +98,7 @@ export default class LinkHelperDialog {
 			window.formLeaveConfirmation.isFormChanged = this.isFormChanged;
 		}, this.dialog.querySelector('.Button-Cancel'));
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

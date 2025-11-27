@@ -20,6 +20,11 @@ export default class Selectors {
 	 */
 	multiFileSelector = '.MediaSelector-MultiFile';
 	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The overlay instance.
 	 * @type {Overlay}
 	 */
@@ -34,9 +39,7 @@ export default class Selectors {
 
 		new MediaFolderSelect();
 
-		// Observe the document for new elements that match the selectors
-		const observer = window.observer;
-		observer.addObserver(this.observeSelectors.bind(this));
+		this.observer.addObserver(this.observeSelectors.bind(this));
 	}
 
 	/**
@@ -279,12 +282,16 @@ export class MediaFolderSelect {
 	 * @type {boolean} isFormChanged
 	 */
 	isFormChanged = false;
+	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	constructor() {
 		document.querySelectorAll(this.folderSelector).forEach(this.initFolderSelector.bind(this));
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

@@ -28,6 +28,11 @@ export default class InputListManager {
 	 */
 	eventHandler = window.eventHandler;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * Selector for FormInputType-List elements
 	 * @type {string}
 	 */
@@ -48,8 +53,7 @@ export default class InputListManager {
 		// Initialize on existing elements
 		this.initList(document.body);
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 

@@ -23,6 +23,11 @@ export default class ButtonHandler {
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
+	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	/**
 	 * The constructor of the ButtonHandler class.
@@ -51,8 +56,7 @@ export default class ButtonHandler {
 				this.elements = this.elements.concat(elements);
 			});
 
-			const observer = window.observer;
-			observer.addObserver(this.observeMutations.bind(this));
+			this.observer.addObserver(this.observeMutations.bind(this));
 		}
 
 		// Create the dialog elements

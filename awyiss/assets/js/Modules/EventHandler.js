@@ -24,10 +24,14 @@ export default class EventHandler {
 	 * @type {Map<any, any>}
 	 */
 	listeners = new Map();
+	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	constructor() {
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

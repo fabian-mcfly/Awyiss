@@ -27,6 +27,11 @@ export default class FieldsetManager {
 	 */
 	fieldsetStatuses
 	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the fieldsets.
 	 * @type {string}
 	 */
@@ -104,8 +109,7 @@ export default class FieldsetManager {
 		this.setInitialCollapseState();
 
 		// Add observer for fieldsets
-		const observer = window.observer;
-		observer.addObserver(this.observeFieldsets.bind(this));
+		this.observer.addObserver(this.observeFieldsets.bind(this));
 
 		this.eventHandler.add('click', this.handleClick.bind(this), document.body);
 

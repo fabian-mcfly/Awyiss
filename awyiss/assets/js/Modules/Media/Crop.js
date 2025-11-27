@@ -121,7 +121,7 @@ export default class ImageCropper {
 
 		window.eventHandler.add('resize', this.handleResize.bind(this));
 
-		this.observer.addObserver(this.observeCropArea.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this), this.canvas.closest('.Form'));
 	}
 
 	/**
@@ -993,7 +993,7 @@ export default class ImageCropper {
 	 * Observes the document for added crop areas.
 	 * @param {MutationRecord} mutation - The mutation to observe.
 	 */
-	observeCropArea(mutation) {
+	observeMutations(mutation) {
 		mutation.addedNodes.forEach(node => {
 			if (node.nodeType !== Node.ELEMENT_NODE) {
 				return;

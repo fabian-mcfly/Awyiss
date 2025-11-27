@@ -13,6 +13,11 @@ export default class AddressFinder {
 	 */
 	eventHandler = window.eventHandler;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the address input field.
 	 * @type {string}
 	 */
@@ -25,8 +30,7 @@ export default class AddressFinder {
 			this.initInput(input);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 

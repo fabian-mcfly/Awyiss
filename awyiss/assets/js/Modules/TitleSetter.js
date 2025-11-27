@@ -7,6 +7,11 @@
  */
 export default class TitleSetter {
 	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * @type {string} selector - The selector of the elements to set the title attribute for.
 	 */
 	selector = '.DataItem, .Button';
@@ -24,8 +29,7 @@ export default class TitleSetter {
 			this.initElement(element);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

@@ -237,6 +237,11 @@ export class DuplicateOfConfiguration {
 	 * @type {boolean} isFormChanged
 	 */
 	isFormChanged = false;
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	constructor(form = document) {
 		this.duplicateOfInput = form.querySelector('#Content-DuplicateOf');
@@ -246,8 +251,7 @@ export class DuplicateOfConfiguration {
 			this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
 		}
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this), form);
 	}
 
 	/**

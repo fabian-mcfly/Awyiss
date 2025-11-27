@@ -8,6 +8,11 @@ export default class DashboardElementsController {
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	constructor() {
 		if (!document.body.classList.contains('DashboardElementsController')) {
@@ -36,8 +41,7 @@ export default class DashboardElementsController {
 			this.initRow(row);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this), form);
 	}
 
 

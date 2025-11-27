@@ -3,6 +3,12 @@
 import AssignableTemplateElements from 'AssignableTemplateElements';
 
 export default class ContentTemplatesController {
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+
 	constructor() {
 		if (!document.body.classList.contains('ContentTemplatesController')) {
 			return;
@@ -18,8 +24,7 @@ export default class ContentTemplatesController {
 	 * @param {HTMLElement} form The form element
 	 */
 	initForm(form) {
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this), form);
 
 		new AssignableTemplateElements('.ContentElements-List', form);
 	}

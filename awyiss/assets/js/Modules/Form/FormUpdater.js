@@ -21,6 +21,11 @@ export default class FormUpdater {
 	 */
 	lastFocusedElementId = null;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The timeout id for the input event.
 	 * @type {number|null}
 	 */
@@ -50,8 +55,7 @@ export default class FormUpdater {
 			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), form, true);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 

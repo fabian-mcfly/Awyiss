@@ -22,6 +22,11 @@ export default class TranslatableTexts {
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	/**
 	 * Constructor to initialize the Translator.
@@ -30,11 +35,7 @@ export default class TranslatableTexts {
 		// Get all elements with the TranslatableTexts class
 		this.elements = Array.from(document.querySelectorAll(this.elementSelector));
 
-		/**
-		 * @type {import('./Observer').default}
-		 */
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 
 		// Create a single dialog for all elements
 		this.createDialog();

@@ -7,6 +7,11 @@ export default class UsersController {
 	 */
 	eventHandler = window.eventHandler;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the password field.
 	 * @type {string}
 	 */
@@ -34,8 +39,7 @@ export default class UsersController {
 			this.setupPasswordGenerator(element);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this), form);
 	}
 
 	/**

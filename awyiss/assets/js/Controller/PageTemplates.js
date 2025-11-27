@@ -9,6 +9,11 @@ export default class PageTemplatesController {
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	constructor() {
 		if (!document.body.classList.contains('PageTemplatesController')) {
@@ -68,10 +73,11 @@ export default class PageTemplatesController {
 
 	/**
 	 * Initialize the form
+	 *
+	 * @param {HTMLElement} form The form element
 	 */
-	initForm() {
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+	initForm(form) {
+		this.observer.addObserver(this.observeMutations.bind(this), form);
 
 		this.initSortable(form);
 	}

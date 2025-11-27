@@ -4,6 +4,11 @@ export default class FormsController {
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	constructor() {
 		if (!document.body.classList.contains('FormsController')) {
@@ -26,8 +31,7 @@ export default class FormsController {
 			window.eventHandler.add('change', this.handleConditionalRecipientTypeChange.bind(this, form), conditionalRecipients);
 		}
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this), form);
 	}
 
 	/**

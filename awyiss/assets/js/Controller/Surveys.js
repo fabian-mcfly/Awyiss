@@ -35,6 +35,11 @@ export default class SurveysController {
 	 */
 	form;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The settings used for panzoom.
 	 * @type {object}
 	 */
@@ -110,8 +115,7 @@ export default class SurveysController {
 		// If the document is loaded,
 		mermaid.initialize({startOnLoad: false});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this), form);
 	}
 
 

@@ -42,6 +42,11 @@ export default class ResizableContents {
 	 */
 	maxWidth = null;
 	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * @property {string} selector - The selector for the nested list.
 	 */
 	selector = '.NestedList'
@@ -93,8 +98,7 @@ export default class ResizableContents {
 		this.boundResize = this.onResize.bind(this);
 		this.boundStop = this.onEnd.bind(this);
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

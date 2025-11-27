@@ -6,6 +6,11 @@ export default class ConfigurationController {
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	constructor() {
 		if (!document.body.classList.contains('ConfigurationController')) {
@@ -22,8 +27,7 @@ export default class ConfigurationController {
 	 * @param {HTMLElement} form The form element
 	 */
 	initForm(form) {
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this), form);
 
 		const valueInput = form.querySelector('#Configuration-Value');
 		valueInput?.addEventListener('input', this.handleColorChange.bind(this));

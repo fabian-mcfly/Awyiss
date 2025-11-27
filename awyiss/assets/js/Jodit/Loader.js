@@ -10,6 +10,11 @@ export default class Loader {
 	 */
 	isModuleLoading = false;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the Jodit editor
 	 * @type {string}
 	 */
@@ -159,8 +164,7 @@ export default class Loader {
 		// noinspection JSIgnoredPromiseFromCall
 		this.initElements();
 
-		const observer = window.observer;
-		observer.addObserver(this.observeForNewInputs.bind(this));
+		this.observer.addObserver(this.observeForNewInputs.bind(this));
 	}
 
 	/**

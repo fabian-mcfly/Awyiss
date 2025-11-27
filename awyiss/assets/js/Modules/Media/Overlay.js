@@ -48,6 +48,11 @@ export default class Overlay {
 	 */
 	mediaList;
 	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The element that opened the overlay.
 	 * Will receive the selected media item when clicking on the use button.
 	 *
@@ -85,8 +90,7 @@ export default class Overlay {
 		// Initialize the selectors
 		this.selectors = new Selectors(this);
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 
 		// Listen for hash changes
 		this.eventHandler.add('hashchange', this.handleHashChange.bind(this), window);

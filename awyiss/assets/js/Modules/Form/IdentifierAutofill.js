@@ -52,12 +52,16 @@ export default class IdentifierAutofill {
 	 * @type {{}}
 	 */
 	inputs = [];
+	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
 
 	constructor() {
 		this.forms = document.querySelectorAll('form');
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 
 		if (!this.forms.length) {
 			return;

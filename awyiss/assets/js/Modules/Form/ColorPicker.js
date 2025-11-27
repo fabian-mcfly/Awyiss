@@ -4,6 +4,11 @@ import Coloris from 'Coloris/Coloris';
 
 export default class ColorPicker {
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the color picker input.
 	 * @type {string}
 	 */
@@ -18,8 +23,7 @@ export default class ColorPicker {
 			this.initColorPicker(colorPicker);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

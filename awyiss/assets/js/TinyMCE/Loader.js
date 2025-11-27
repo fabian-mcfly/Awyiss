@@ -23,6 +23,11 @@ export default class Loader {
 	 */
 	linkList = {};
 	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the TinyMCE editor
 	 * @type {string}
 	 */
@@ -156,8 +161,7 @@ export default class Loader {
 		// noinspection JSIgnoredPromiseFromCall
 		this.initElements();
 
-		const observer = window.observer;
-		observer.addObserver(this.observeForNewInputs.bind(this));
+		this.observer.addObserver(this.observeForNewInputs.bind(this));
 	}
 
 	/**

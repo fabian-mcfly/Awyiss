@@ -7,10 +7,19 @@ export default class ProgressChecker {
 		webp: `${baseUrl}backend/${languageShortcode}/media/check-webp-progress/`,
 	};
 	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The service worker registration object
 	 * @type {ServiceWorkerRegistration}
 	 */
 	worker;
+	/**
+	 * Whether the worker message listener is bound
+	 * @type {{preview: boolean, resize: boolean, webp: boolean}}
+	 */
 	workerStateListenerBound = {
 		preview: false,
 		resize: false,
@@ -40,8 +49,7 @@ export default class ProgressChecker {
 			console.error('Service Worker Registration Failed: ', error);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

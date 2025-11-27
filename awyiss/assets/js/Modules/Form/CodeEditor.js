@@ -4,6 +4,11 @@ import CodeCup from 'CodeCup/CodeCup';
 
 export default class CodeEditor {
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the CSS code editor textareas
 	 * @type {string}
 	 */
@@ -15,8 +20,7 @@ export default class CodeEditor {
 			this.initCodeEditor(codeEditor);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

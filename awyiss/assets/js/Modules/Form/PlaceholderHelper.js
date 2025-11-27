@@ -7,6 +7,11 @@ export default class PlaceholderHelper {
 	 */
 	eventHandler = window.eventHandler;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the placeholder elements.
 	 * @type {string}
 	 */
@@ -18,8 +23,7 @@ export default class PlaceholderHelper {
 			this.initElement(element);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**

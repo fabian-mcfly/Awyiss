@@ -18,33 +18,47 @@ export default class PagesController {
 	 */
 	eventHandler = window.eventHandler;
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The SEO snippet instance.
 	 * @type {SeoSnippet}
 	 */
 	seoSnippet;
 
 	constructor() {
-		this.initMeta();
+		if (
+			document.body.classList.contains('AddAction') ||
+			document.body.classList.contains('AddBatchAction') ||
+			document.body.classList.contains('EditAction')
+		) {
+			const form = document.querySelector('.Pages.Form')
 
-		// Initialize the SEO snippet
-		this.seoSnippet = new SeoSnippet('.SeoSnippet');
+			this.initMeta(form);
 
-		const batchTextArea = document.querySelector('.FormInputName-Pages > textarea')
-		if (batchTextArea) {
-			new BatchTextArea(batchTextArea);
+			// Initialize the SEO snippet
+			this.seoSnippet = new SeoSnippet('.SeoSnippet');
 
-			const observer = window.observer;
-			observer.addObserver(this.observeMutations.bind(this));
+			const batchTextArea = form.querySelector('.FormInputName-Pages > textarea')
+			if (batchTextArea) {
+				new BatchTextArea(batchTextArea);
+			}
+
+			this.observer.addObserver(this.observeMutations.bind(this), form);
 		}
 	}
 
 	/**
 	 * Initialize the meta title input field
+	 *
+	 * @param {HTMLElement} form The form element
 	 */
-	initMeta() {
+	initMeta(form) {
 		// Find the title input field
-		const titleInput = document.querySelector('input[name="title"]');
-		const metaTitleInput = document.querySelector('input[name="meta_title"]');
+		const titleInput = form.querySelector('input[name="title"]');
+		const metaTitleInput = form.querySelector('input[name="meta_title"]');
 
 		if (!titleInput || !metaTitleInput) {
 			return;

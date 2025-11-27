@@ -6,6 +6,11 @@
  */
 export default class FormLock {
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for forms to be handled
 	 * @type {string}
 	 */
@@ -17,9 +22,7 @@ export default class FormLock {
 			this.initForm(form);
 		});
 
-		// Observe the document
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 
 		window.eventHandler.add('click', this.handleClickEvent.bind(this));
 		window.eventHandler.add('unload', this.handleUnload.bind(this, this.selector));

@@ -4,6 +4,11 @@ import AirDatepicker from 'AirDatepicker/AirDatepicker';
 
 export default class DatePicker {
 	/**
+	 * The observer instance.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for the date picker input
 	 * @type {string}
 	 */
@@ -18,8 +23,7 @@ export default class DatePicker {
 			this.initDatePicker(datePicker);
 		});
 
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+		this.observer.addObserver(this.observeMutations.bind(this));
 	}
 
 

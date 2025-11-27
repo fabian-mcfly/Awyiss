@@ -25,6 +25,11 @@ export default class Search {
 	 */
 	filterSelector = '.SearchFilter-Form';
 	/**
+	 * The observer for the crop frame.
+	 * @type {Observer}
+	 */
+	observer = window.observer;
+	/**
 	 * The selector for reset filter buttons
 	 *
 	 * @type {string}
@@ -53,8 +58,7 @@ export default class Search {
 			});
 		}
 
-		const observer = window.observer;
-		observer.addObserver(this.observe.bind(this));
+		this.observer.addObserver(this.observe.bind(this));
 	}
 
 	bindFilterButtonClick(element) {
