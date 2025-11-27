@@ -1129,8 +1129,8 @@ class ImageHandlerTest extends TestCase {
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
 		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
 		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg"', $widget->text);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $widget->text);
+		$this->assertStringContainsString('<noscript><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $widget->text);
 		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
 		$this->assertEquals(2, mb_substr_count($widget->text, '</picture>'));
 	}
@@ -1295,8 +1295,8 @@ class ImageHandlerTest extends TestCase {
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
 		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
 		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg"', $widget->text);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $widget->text);
+		$this->assertStringContainsString('<noscript><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $widget->text);
 		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
 		$this->assertEquals(2, mb_substr_count($widget->text, '</picture>'));
 	}

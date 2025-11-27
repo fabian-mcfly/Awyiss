@@ -639,11 +639,11 @@ class FormRendererTest extends TestCase {
 		]);
 
 		$this->assertStringContainsString(
-			'<img data-src="_resized/dummypath/logo-awyiss-[w1152].avif" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w2304].avif 2x" alt="logo-awyiss.png"',
+			'<img data-src="_resized/dummypath/logo-awyiss-[w1152].avif" alt="logo-awyiss.png"',
 			$formBody
 		);
 		$this->assertStringContainsString(
-			'<noscript><img src="_resized/dummypath/logo-awyiss-[w1152].avif" srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w2304].avif 2x" alt="logo-awyiss.png"',
+			'<noscript><img src="_resized/dummypath/logo-awyiss-[w1152].avif" alt="logo-awyiss.png"',
 			$formBody
 		);
 	}

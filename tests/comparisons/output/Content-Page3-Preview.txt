@@ -15,8 +15,8 @@
 <!-- Here be dragons -->
 <div class="Image">
 <picture>
-<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg" id="Image-f88d0a10d8313bf" aria-hidden="true" width="1080" height="1920" class="Lazyload">
-<noscript><img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif" alt="logo-awyiss.jpg" id="Image-f88d0a10d8313bf-NoScript" aria-hidden="true" width="1080" height="1920"></noscript>
+<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg" id="Image-f88d0a10d8313bf" aria-hidden="true" width="1080" height="1920" class="Lazyload">
+<noscript><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg" id="Image-f88d0a10d8313bf-NoScript" aria-hidden="true" width="1080" height="1920"></noscript>
 <style>#Image-f88d0a10d8313bf, #Image-f88d0a10d8313bf-NoScript { --imageAspectRatio: 0.56; }</style>
 </picture>
 </div>

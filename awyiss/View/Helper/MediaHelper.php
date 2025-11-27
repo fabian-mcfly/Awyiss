@@ -307,7 +307,7 @@ class MediaHelper extends Helper {
 		$lo_file = $this->getMediaResizedImage($media, $lo_mediaRenderOptions);
 
 		$ls_path = $lo_file?->path;
-		if (!$ls_path) {
+		if (!$ls_path || $lo_file->status !== ProcessStatus::Success) {
 			$ls_path = $media->isImage() ? $this->getTargetPath($media) : $media->previewPath;
 		}
 
@@ -824,7 +824,7 @@ class MediaHelper extends Helper {
 		$lo_file = $this->getMediaResizedImage($media, $mediaRenderOptions);
 
 		$ls_lastPath = $ls_last2xPath = $lo_file?->path;
-		if (!$ls_lastPath) {
+		if (!$ls_lastPath || $lo_file->status !== ProcessStatus::Success) {
 			$ls_lastPath = $ls_last2xPath = $media->isImage() ? $this->getTargetPath($media) : $media->previewPath;
 		}
 
@@ -1078,7 +1078,7 @@ class MediaHelper extends Helper {
 		if ($mediaRenderOptions->getInclude2x()) {
 			/** @noinspection PhpVariableNamingConventionInspection */
 			$lo_2xFile = $this->get2xFile($media, $mediaRenderOptions);
-			if ($lo_2xFile) {
+			if ($lo_2xFile && $lo_2xFile->status === ProcessStatus::Success) {
 				$ls_srcSet = ' ' . $ls_sourceAttribute . 'set="' . $lo_2xFile->path . ' 2x"';
 				$ls_noScriptSrcSet = ' srcset="' . $lo_2xFile->path . ' 2x"';
 			}
@@ -1288,11 +1288,21 @@ class MediaHelper extends Helper {
 	 * @return string|null
 	 */
 	protected function getTargetPath(Media $media): ?string {
-		return match ($this->resizeMediaFileType) {
-			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF => $media->avifPath,
-			MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_WEBP => $media->webpPath,
-			default => $media->path,
-		};
+		if (
+			$this->resizeMediaFileType === MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_AVIF &&
+			in_array($media->avif, [ProcessStatus::Success, ProcessStatus::NotRequired], true)
+		) {
+			return $media->avifPath;
+		}
+
+		if (
+			$this->resizeMediaFileType === MediaConfigOptions::RESIZE_MEDIA_FILE_TYPE_WEBP &&
+			in_array($media->webp, [ProcessStatus::Success, ProcessStatus::NotRequired], true)
+		) {
+			return $media->webpPath;
+		}
+
+		return $media->path;
 	}
 
 

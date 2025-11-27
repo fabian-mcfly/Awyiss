@@ -148,7 +148,7 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->background($media, $mediaRenderOptions);
 
 		$this->assertStringContainsString('<style>.selector', $result);
-		$this->assertStringContainsString('background-image:url(\'/path/to/_avif/image.jpg.avif\');', $result);
+		$this->assertStringContainsString('background-image:url(\'/path/to/image.jpg\');', $result);
 		$this->assertStringContainsString('background-color:#ffff00;', $result);
 	}
 
@@ -177,7 +177,7 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->background($media, $mediaRenderOptions);
 
 		$this->assertStringContainsString('<style>.selector', $result);
-		$this->assertStringContainsString('background-image:url(\'/path/to/_avif/image.jpg.avif\');', $result);
+		$this->assertStringContainsString('background-image:url(\'/path/to/image.jpg\');', $result);
 		$this->assertStringNotContainsString('background-color:', $result);
 	}
 
@@ -423,11 +423,11 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
 
 		$this->assertStringNotContainsString('<picture', $result);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="logo-awyiss.png"', $result);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.png" alt="logo-awyiss.png"', $result);
 		$this->assertStringContainsString('class="Lazyload"', $result);
 		$this->assertStringContainsString('aria-hidden="true"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="logo-awyiss.png"', $result);
+		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png" alt="logo-awyiss.png"', $result);
 	}
 
 
@@ -447,9 +447,9 @@ class MediaHelperTest extends TestCase {
 
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
 
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="Test alt"', $result);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.png" alt="Test alt"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="Test alt"', $result);
+		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png" alt="Test alt"', $result);
 	}
 
 
@@ -475,9 +475,9 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->htmlTag($media, $mediaRenderOptions);
 
 		$this->assertStringNotContainsString('Test alt', $result);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="Another alt"', $result);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.png" alt="Another alt"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif" alt="Another alt"', $result);
+		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png" alt="Another alt"', $result);
 	}
 
 
@@ -653,13 +653,13 @@ class MediaHelperTest extends TestCase {
 
 		if ($lazyload) {
 			$this->assertStringContainsString('class="Lazyload"', $result);
-			$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif"', $result);
+			$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"', $result);
 			$this->assertStringContainsString('<noscript', $result);
-			$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif"', $result);
+			$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"', $result);
 		}
 		else {
 			$this->assertStringNotContainsString('class="Lazyload"', $result);
-			$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.png.avif"', $result);
+			$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"', $result);
 			$this->assertStringNotContainsString('data-src=', $result);
 			$this->assertStringNotContainsString('<noscript', $result);
 		}
@@ -1009,9 +1009,9 @@ class MediaHelperTest extends TestCase {
 
 		$result = $this->mediaHelper->imageTag($media, $this->mediaHelper->getMediaRenderOptions());
 
-		$this->assertStringContainsString('<img data-src="/path/to/_avif/image.jpg.avif"', $result);
+		$this->assertStringContainsString('<img data-src="/path/to/image.jpg"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="/path/to/_avif/image.jpg.avif"', $result);
+		$this->assertStringContainsString('<img src="/path/to/image.jpg"', $result);
 	}
 
 
@@ -1030,9 +1030,9 @@ class MediaHelperTest extends TestCase {
 
 		$result = $this->mediaHelper->imageTag($media, $this->mediaHelper->getMediaRenderOptions());
 
-		$this->assertStringContainsString('<img data-src="/path/to/_avif/image.jpg.avif" alt="Test alt"', $result);
+		$this->assertStringContainsString('<img data-src="/path/to/image.jpg" alt="Test alt"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="/path/to/_avif/image.jpg.avif" alt="Test alt"', $result);
+		$this->assertStringContainsString('<img src="/path/to/image.jpg" alt="Test alt"', $result);
 	}
 
 
@@ -1133,13 +1133,13 @@ class MediaHelperTest extends TestCase {
 
 		if ($lazyload) {
 			$this->assertStringContainsString('class="Lazyload"', $result);
-			$this->assertStringContainsString('<img data-src="/path/to/_avif/image.jpg.avif"', $result);
+			$this->assertStringContainsString('<img data-src="/path/to/image.jpg"', $result);
 			$this->assertStringContainsString('<noscript', $result);
-			$this->assertStringContainsString('<img src="/path/to/_avif/image.jpg.avif"', $result);
+			$this->assertStringContainsString('<img src="/path/to/image.jpg"', $result);
 		}
 		else {
 			$this->assertStringNotContainsString('class="Lazyload"', $result);
-			$this->assertStringContainsString('<img src="/path/to/_avif/image.jpg.avif"', $result);
+			$this->assertStringContainsString('<img src="/path/to/image.jpg"', $result);
 			$this->assertStringNotContainsString('data-src=', $result);
 			$this->assertStringNotContainsString('<noscript', $result);
 		}
@@ -1538,9 +1538,9 @@ class MediaHelperTest extends TestCase {
 
 		$this->assertStringContainsString('<picture>', $result);
 		$this->assertStringNotContainsString('<source', $result);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif"', $result);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"', $result);
 		$this->assertStringContainsString('<noscript', $result);
-		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/_avif/logo-awyiss.jpg.avif"', $result);
+		$this->assertStringContainsString('<img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"', $result);
 	}
 
 
