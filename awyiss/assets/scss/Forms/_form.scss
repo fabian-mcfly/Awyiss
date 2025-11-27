@@ -82,7 +82,7 @@
 
 			&:nth-child(n+2 of .FormInputType-ListItem) {
 				&::before {
-					@container (width <= 1024px) {
+					@container (width <= 860px) {
 						content:'';
 						height:2px;
 						border-radius:1px;
@@ -112,14 +112,14 @@
 
 				> .FormInput {
 					> .Label {
-						@container (width <= 1024px) {
+						@container (width <= 860px) {
 							display:block;
 						}
 					}
 				}
 
 				.SortableHandle {
-					@container (width <= 1024px) {
+					@container (width <= 860px) {
 						top:calc(1rem + 7px);
 					}
 
@@ -135,7 +135,7 @@
 				}
 
 				.Button-Remove {
-					@container (width <= 1024px) {
+					@container (width <= 860px) {
 						top:1.05rem;
 					}
 				}
