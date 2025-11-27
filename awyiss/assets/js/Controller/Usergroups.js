@@ -37,6 +37,80 @@ export default class UsergroupsController {
 			labels.timeout = setTimeout(() => labels.classList.remove('Animate'), 500);
 		}, permissions);
 
+		// Add drag functionality for .Labels elements
+		const labelsElements = permissions.querySelectorAll('.Labels');
+		labelsElements.forEach(labels => {
+			let isDragging = false;
+
+			const handleMouseDown = (e) => {
+				isDragging = true;
+				labels.classList.add('Dragging');
+
+				// Set initial --dragX based on currently selected radio
+				const radios = Array.from(labels.parentElement.querySelectorAll('input[type="radio"]'));
+				const checkedRadio = radios.find(radio => radio.checked);
+				const currentValue = checkedRadio ? checkedRadio.value : '';
+
+				let initialDragX = 0;
+				if (currentValue !== '') {
+					initialDragX = currentValue === '1' ? 28 : -28;
+				}
+
+				labels.style.setProperty('--dragX', `${initialDragX}px`);
+				e.preventDefault();
+			};
+
+			const handleMouseMove = (e) => {
+				if (!isDragging) {
+					return;
+				}
+
+				// Calculate position relative to center of the element
+				const rect = labels.getBoundingClientRect();
+				const centerX = rect.left + rect.width / 2;
+				const dragX = Math.max(-28, Math.min(28, e.clientX - centerX));
+
+				labels.style.setProperty('--dragX', `${dragX}px`);
+
+				// Calculate which third of the element we're in
+				const relativeX = e.clientX - rect.left;
+				const thirdWidth = rect.width / 3;
+
+				// Get all radio buttons in this permission
+				const radios = Array.from(labels.parentElement.querySelectorAll('input[type="radio"]'));
+
+				// Determine which radio to select based on position
+				let targetValue = '1';
+				if (relativeX < thirdWidth) {
+					// First third - disabled (value '0')
+					targetValue = '0';
+				}
+				else if (relativeX < thirdWidth * 2) {
+					// Middle third - indifferent (value '')
+					targetValue = '';
+				}
+
+				// Check the appropriate radio
+				radios.forEach(radio => {
+					radio.checked = radio.value === targetValue;
+				});
+			};
+
+			const handleMouseUp = () => {
+				if (!isDragging) {
+					return;
+				}
+
+				isDragging = false;
+				labels.classList.remove('Dragging');
+				labels.style.removeProperty('--dragX');
+			};
+
+			labels.addEventListener('mousedown', handleMouseDown);
+			document.addEventListener('mousemove', handleMouseMove);
+			document.addEventListener('mouseup', handleMouseUp);
+		});
+
 		// Swiping right will change from '0' to '' to '1'
 		// Swiping left will change from '1' to '' to '0'
 		const permissionElements = permissions.querySelectorAll('.Permission');

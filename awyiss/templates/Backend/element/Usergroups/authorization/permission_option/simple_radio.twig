@@ -26,10 +26,10 @@
 	{% set options = permission.getOptions %}
 
 	<span class="Options SimpleRadio">
-		{% block optionGranted %}
-			<input type="radio" name="{{ fieldName }}" value="{{ options.granted.value }}"
-				{{ value is same as (options.granted) ? 'checked="checked"' : '' }}
-				id="{{ label ~ '-' ~ options.granted.value }}">
+		{% block optionDenied %}
+			<input type="radio" name="{{ fieldName }}" value="{{ options.denied.value }}"
+				{{ value is same as (options.denied) ? 'checked="checked"' : '' }}
+				id="{{ label ~ '-' ~ options.denied.value }}">
 		{% endblock %}
 
 		{% block optionIndifferent %}
@@ -38,10 +38,10 @@
 				id="{{ label }}">
 		{% endblock %}
 
-		{% block optionDenied %}
-			<input type="radio" name="{{ fieldName }}" value="{{ options.denied.value }}"
-				{{ value is same as (options.denied) ? 'checked="checked"' : '' }}
-				id="{{ label ~ '-' ~ options.denied.value }}">
+		{% block optionGranted %}
+			<input type="radio" name="{{ fieldName }}" value="{{ options.granted.value }}"
+				{{ value is same as (options.granted) ? 'checked="checked"' : '' }}
+				id="{{ label ~ '-' ~ options.granted.value }}">
 		{% endblock %}
 
 		{% block optionsLabels %}

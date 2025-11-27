@@ -116,7 +116,7 @@
 
 					html.Scale-Small & {
 						@media screen and (width > 768px) {
-							top:5px;
+							top:8px;
 						}
 					}
 				}
@@ -238,19 +238,11 @@
 				&:checked {
 					~ .Labels {
 						&::after {
-							content:'\f00c';
-							background-color:var(--colorSuccess);
-							transform:translate(33px, 0);
+							--xOffset:-28px;
 
-							@media screen and (width <= 768px) {
-								transform:translate(26px, 0);
-							}
-
-							html.Scale-Small & {
-								@media screen and (width > 768px) {
-									transform:translate(26px, 0);
-								}
-							}
+							content:'\f00d';
+							box-shadow:0 0 15px color-mix(in srgb, var(--colorError), transparent 25%);
+							background-color:var(--colorError);
 						}
 					}
 				}
@@ -260,19 +252,11 @@
 				&:checked {
 					~ .Labels {
 						&::after {
-							content:'\f00d';
-							background-color:var(--colorError);
-							transform:translate(-33px, 0);
+							--xOffset:28px;
 
-							@media screen and (width <= 768px) {
-								transform:translate(-26px, 0);
-							}
-
-							html.Scale-Small & {
-								@media screen and (width > 768px) {
-									transform:translate(-26px, 0);
-								}
-							}
+							content:'\f00c';
+							box-shadow:0 0 15px color-mix(in srgb, var(--colorSuccess), transparent 25%);
+							background-color:var(--colorSuccess);
 						}
 					}
 				}
@@ -290,11 +274,14 @@
 		}
 
 		.Labels {
+			--dragX:0;
+
 			display:inline-block;
-			width:120px;
-			height:16px;
-			margin-top:7px;
+			width:86px;
+			height:28px;
+			padding-inline:1px;
 			border-radius:5px;
+			box-shadow:2px 2px 1px rgba(0, 0, 0, .05) inset;
 			background-color:var(--colorBright);
 			outline:1px solid oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 			font-size:0;
@@ -302,21 +289,9 @@
 			position:relative;
 			vertical-align:top;
 
-			@media screen and (width <= 768px) {
-				width:87px;
-				margin-top:4px;
-			}
-
 			html.🌚 & {
 				outline-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
-			}
-
-			html.Scale-Small & {
-				@media screen and (width > 768px) {
-					width:87px;
-					margin-top:4px;
-				}
 			}
 
 			&.Animate {
@@ -325,14 +300,25 @@
 				}
 			}
 
+			&.Dragging {
+				&::after {
+					content:'';
+					transform:translate(var(--dragX), 0);
+					transition:box-shadow .3s ease-in-out, background-color .3s ease-in-out;
+				}
+			}
+
 			&::after {
+				--xOffset:0;
+
 				@extend %LineAwesomeIcon;
 
-				width:26px;
+				width:28px;
 				height:26px;
 				margin:auto;
-				outline:1px solid var(--colorBright);
 				border-radius:5px;
+				outline:1px solid rgba(0, 0, 0, .03);
+				outline-offset:-2px;
 				background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 				color:var(--colorBright);
 				font-size:20px;
@@ -343,24 +329,8 @@
 				right:0;
 				bottom:0;
 				left:0;
-				transition:background-color .3s ease-in-out .1s, transform .3s ease-in-out .1s;
-				transform:translate(0, 0);
-
-				@media screen and (width <= 768px) {
-					width:20px;
-					height:20px;
-					font-size:18px;
-					line-height:18px;
-				}
-
-				html.Scale-Small & {
-					@media screen and (width > 768px) {
-						width:20px;
-						height:20px;
-						font-size:18px;
-						line-height:18px;
-					}
-				}
+				transition:box-shadow .3s ease-in-out .1s, background-color .3s ease-in-out .1s, transform .3s ease-in-out .1s;
+				transform:translate(var(--xOffset), 0);
 
 				@keyframes blop {
 					0% {
@@ -382,25 +352,12 @@
 
 			label {
 				display:inline-block;
-				width:40px;
+				width:28px;
 				aspect-ratio:1;
 				font-size:0;
 				line-height:0;
 				position:relative;
 				z-index:1;
-				transform:translateY(-12px);
-
-				@media screen and (width <= 768px) {
-					width:29px;
-					transform:translateY(-7px);
-				}
-
-				html.Scale-Small & {
-					@media screen and (width > 768px) {
-						width:29px;
-						transform:translateY(-7px);
-					}
-				}
 			}
 		}
 	}
