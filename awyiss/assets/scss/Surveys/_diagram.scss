@@ -183,21 +183,37 @@
 		}
 	}
 
+	g[data-id^="Inactive"] {
+		opacity:.5;
+	}
+
 	span.Identifier {
 		display:block;
 		width:fit-content;
-		padding:0 10px;
+		height:26px;
 		margin:5px auto 0;
+		padding:0 5px;
 		border-radius:5px;
-		background-color:var(--identifierColor, var(--colorDark));
+		background-color:var(--colorMedium);
 		font-size:12px;
 		line-height:26px;
 		text-align:center;
-		text-shadow:0 0 5px color-mix(in srgb, var(--colorDark), transparent 50%);
 
-		@at-root #SurveyForm .flowchart span.Identifier {
+		@at-root #Surveys-Diagram .flowchart span.Identifier {
 			fill:var(--colorBright);
 			color:var(--colorBright);
+		}
+
+		&::before {
+			content:'';
+			display:inline-block;
+			width:20px;
+			aspect-ratio:1;
+			margin-top:3px;
+			margin-right:5px;
+			border-radius:5px;
+			background-color:var(--identifierColor, transparent);
+			vertical-align:top;
 		}
 	}
 
@@ -205,5 +221,10 @@
 		display:inline-block;
 		padding-inline:5px;
 		border-radius:5px;
+	}
+
+	marker.marker.cross,
+	path[id^="Inactive"] {
+		stroke:var(--colorMedium);
 	}
 }

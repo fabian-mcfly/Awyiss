@@ -118,7 +118,7 @@ class Survey extends Entity {
 	 */
 	protected array $questionsByIdentifier;
 	/**
-	 * @varclass-string<\Awyiss\Model\Enum\Survey\QuestionType>
+	 * @var class-string<\Awyiss\Model\Enum\Survey\QuestionType>
 	 */
 	protected string $questionTypeEnum = '';
 	/**

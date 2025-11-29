@@ -22,7 +22,7 @@ msgid "meta_title_edit"
 msgstr "Umfrage bearbeiten"
 
 msgid "meta_title_diagram"
-msgstr "Diagramm"
+msgstr "Umfragediagramm"
 
 msgid "menu_title"
 msgstr "Umfragen"
@@ -194,3 +194,6 @@ msgstr "Die Umfrage-Frage existiert nicht"
 
 msgid "php_array"
 msgstr "Ergebnisse als PHP Array"
+
+msgid "all_answers"
+msgstr "Alle Antworten"

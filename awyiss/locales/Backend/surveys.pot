@@ -21,7 +21,7 @@ msgid "meta_title_edit"
 msgstr "Edit Survey"
 
 msgid "meta_title_diagram"
-msgstr "Diagram"
+msgstr "Survey Diagram"
 
 msgid "menu_title"
 msgstr "Surveys"
@@ -193,3 +193,6 @@ msgstr "The survey question does not exist"
 
 msgid "php_array"
 msgstr "Results as PHP Array"
+
+msgid "all_answers"
+msgstr "All Answers"
