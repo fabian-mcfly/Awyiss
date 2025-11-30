@@ -24,7 +24,7 @@
 #}
 
 {% set baseColor = (config.Awyiss.System.Backend.interface.highlightColor ?? '#63d1a5')|substr(1, 6) %}
-{% set baseForm = survey.formId ? availableForms[ survey.formId ].label %}
+{% set baseForm = survey.formId ? availableForms[ survey.formId ].label : null %}
 {% set finalAction = 'SaveAndEnd[("' ~ __('next_action_save_and_end') ~ '")]' %}
 {% set shortFinalAction = finalAction %}
 {% set finalActionUsed = false %}
@@ -43,7 +43,7 @@
 		{% set hasSaveStepAfter = 'AndSaveAfterSubmit' %}
 		{% set shortFinalAction = shortFinalAction ~ hasSaveStepAfter %}
 	{% endif %}
-	{% set finalAction %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ baseForm }})"}{{ saveStepAfterFormSubmit }}{% endset %}
+	{% set finalAction %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ baseForm|e }})"}{{ saveStepAfterFormSubmit }}{% endset %}
 {% endif %}
 {% set questionsByIdentifier = survey.surveySurveyQuestions ? survey.surveySurveyQuestions|column(null, 'identifier') : [] %}
 {% if survey.surveySurveyQuestions %}
@@ -72,19 +72,19 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 						{%~ set inheritingAnswers = [] %}
 						{%~ set inheritingAnswersWithOwnNextAction = [] %}
 						{%~ set inactive = question.unused or question.onlyReachableFromUnused or question.surveyQuestion.active == false %}
-						{%~ set questionLabel = question.label|substr(0, -10) ~ '<span class="Identifier Id' ~ question.identifier ~ '" style="--identifierColor:#' ~ question.identifier|substr(0, 6) ~ ';">' ~ question.identifier ~ '</span>' %}
-						{%~ if question.surveySurveyAnswers|length %}
+						{%~ set questionLabel = question.label|substr(0, -10)|e ~ '<span class="Identifier Id' ~ question.identifier ~ '" style="--identifierColor:&num;' ~ question.identifier|substr(0, 6) ~ ';">' ~ question.identifier ~ '</span>' %}
+						{%~ if question.surveyQuestion.type == enum(questionTypeEnum).SingleChoice %}
 							{%~ for answer in question.surveySurveyAnswers %}
-								{% set lines = lines + 1 %}
-								{%~ set link = '--"' ~ answer.label ~ '"-->' %}
+								{%~ set lines = lines + 1 %}
+								{%~ set link = '--"' ~ SurveyHelper.linkLabel(answer.label) ~ '"-->' %}
 								{%~ if answer.nextAction == enum(nextActionEnum).SpecificQuestion and answer.nextActionTarget %}
 									{%~ if questionsByIdentifier[ answer.nextActionTarget ] is defined and questionsByIdentifier[ answer.nextActionTarget ].surveyQuestion.active == false %}
 										{%~ set inheritingAnswers = inheritingAnswers|merge([answer.label]) %}
 										{%~ set inheritingAnswersWithOwnNextAction = inheritingAnswersWithOwnNextAction|merge([answer.label]) %}
-										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ answer.label ~ '".-x' %}
+										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ SurveyHelper.linkLabel(answer.label) ~ '".-x' %}
 									{%~ endif %}
 									{%~ if inactive and questionsByIdentifier[ answer.nextActionTarget ].onlyReachableFromUnused != true %}
-										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ answer.label ~ '".-x' %}
+										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ SurveyHelper.linkLabel(answer.label) ~ '".-x' %}
 									{%~ endif %}
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ answer.nextActionTarget }}
 								{%~ elseif answer.nextAction in [
@@ -102,9 +102,9 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 										{%~ set hasSaveStepAfter = 'AndSaveAfterSubmit' %}
 										{%~ set shortFinalAction = shortFinalAction ~ hasSaveStepAfter %}
 									{%~ endif %}
-									{%~ set end %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}{{ answer.nextActionTarget }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ availableForms[answer.nextActionTarget].label ?? baseForm }})"}{{ saveStepAfterFormSubmit }}{% endset %}
+									{%~ set end %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}{{ answer.nextActionTarget }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ (availableForms[answer.nextActionTarget].label ?? baseForm)|e }})"}{{ saveStepAfterFormSubmit }}{% endset %}
 									{%~ if inactive %}
-										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ answer.label ~ '".-x' %}
+										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ SurveyHelper.linkLabel(answer.label) ~ '".-x' %}
 										{%~ set end = shortFinalAction %}
 									{%~ elseif end == finalAction %}
 										{%~ if finalActionUsed == true %}
@@ -117,13 +117,13 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} Abort@{ shape: diamond, label: "{{ __('next_action_abort') }}"}
 								{%~ elseif answer.nextAction == enum(nextActionEnum).SaveAndEnd %}
 									{%~ if inactive %}
-										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ answer.label ~ '".-x' %}
+										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ SurveyHelper.linkLabel(answer.label) ~ '".-x' %}
 									{%~ endif %}
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} SaveAndEnd[("{{ __('next_action_save_and_end') }}")]
 								{%~ elseif answer.nextAction == enum(nextActionEnum).NextQuestion %}
 									{%~ set realNextQuestion = SurveyHelper.realNextQuestion(survey.surveySurveyQuestions, question.identifier) %}
 									{%~ if inactive and (realNextQuestion == false or realNextQuestion.onlyReachableFromUnused != true) %}
-										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ answer.label ~ '".-x' %}
+										{%~ set link = 'Inactive' ~ lines ~ '@x-."' ~ SurveyHelper.linkLabel(answer.label) ~ '".-x' %}
 									{%~ endif %}
 									{%~ if loop.parent.loop.last or realNextQuestion == false %}
 										{%~ set end = finalAction %}
@@ -142,34 +142,34 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 							{%~ endfor %}
 						{%~ endif %}
 						{%~ if
-							question.surveyQuestion.type in [
-								enum(questionTypeEnum).FreeText,
-								enum(questionTypeEnum).InfoText,
-							] or
+							question.surveyQuestion.type != enum(questionTypeEnum).SingleChoice or
 							inheritingAnswers|length or
 							question.surveySurveyAnswers is empty or
 							question.allowCustomAnswer == true
 						%}
-							{% set lines = lines + 1 %}
+							{%~ set lines = lines + 1 %}
 							{%~ if inheritingAnswers|length == question.surveySurveyAnswers|length %}
 								{%~ set inheritingAnswers = [] %}
-							{%~ elseif question.allowCustomAnswer == true %}
-								{%~ set inheritingAnswers = inheritingAnswers is empty ? [ '<em>' ~ __('custom_answer') ~ '</em>' ] : inheritingAnswers|merge([ '<em>' ~ __('custom_answer') ~ '</em>' ]) %}
+							{%~ elseif question.surveyQuestion.type == enum(questionTypeEnum).SingleChoice and question.allowCustomAnswer == true %}
+								{%~ set inheritingAnswers = inheritingAnswers is empty ? {custom: ''} : inheritingAnswers|merge({custom: ''}) %}
 							{%~ endif %}
-							{%~ set linkLabel = inheritingAnswers ? '"' ~ inheritingAnswers|join('<br>') ~ '"' : null %}
+							{%~ set linkLabel = inheritingAnswers ? '"' ~ SurveyHelper.linkLabel(inheritingAnswers) ~ '"' : null %}
 							{%~ set link = (linkLabel ? '--' ~ linkLabel : '') ~ '-->' %}
 							{%~ if question.nextAction == enum(nextActionEnum).SpecificQuestion and question.nextActionTarget %}
 								{%~ set realNextQuestion = SurveyHelper.realNextQuestion(survey.surveySurveyQuestions, question.identifier) %}
 								{%~ if realNextQuestion and question.nextActionTarget != realNextQuestion.identifier %}
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ realNextQuestion.identifier }}
 									{%~ set lines = lines + 1 %}
-									{%~ set linkLabel = '' %}
+									{%~ set linkLabels = [] %}
 									{%~ for answerLabel in inheritingAnswers %}
-										{%~ if answerLabel not in inheritingAnswersWithOwnNextAction %}
-											{%~ set linkLabel = linkLabel ~ (linkLabel != '' ? '<br>' : '') ~ answerLabel %}
+										{%~ if answerLabel and answerLabel not in inheritingAnswersWithOwnNextAction %}
+											{%~ set linkLabels = linkLabels|merge([answerLabel]) %}
 										{%~ endif %}
 									{%~ endfor %}
-									{%~ set linkLabel = linkLabel ? '"' ~ linkLabel ~ '"' : null %}
+									{%~ if question.surveyQuestion.type == enum(questionTypeEnum).SingleChoice and question.allowCustomAnswer == true %}
+										{%~ set linkLabels = linkLabels|merge({custom: ''}) %}
+									{%~ endif %}
+									{%~ set linkLabel = linkLabels ? '"' ~ SurveyHelper.linkLabel(linkLabels) ~ '"' : null %}
 									{%~ set link = 'Inactive' ~ lines ~ '@x-.' ~ linkLabel ~ '.-x' %}
 								{%~ endif %}
 								{%~ if inactive and questionsByIdentifier[ question.nextActionTarget ].onlyReachableFromUnused != true %}
@@ -191,7 +191,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 									{%~ set hasSaveStepAfter = 'AndSaveAfterSubmit' %}
 									{%~ set shortFinalAction = shortFinalAction ~ hasSaveStepAfter %}
 								{%~ endif %}
-								{%~ set end %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}{{ question.nextActionTarget }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ availableForms[question.nextActionTarget].label ?? baseForm }})"}{{ saveStepAfterFormSubmit }}{% endset %}
+								{%~ set end %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}{{ question.nextActionTarget }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ (availableForms[question.nextActionTarget].label ?? baseForm)|e }})"}{{ saveStepAfterFormSubmit }}{% endset %}
 								{%~ if inactive %}
 									{%~ set link = 'Inactive' ~ lines ~ '@x-.' ~ linkLabel ~ '.-x' %}
 									{%~ set end = shortFinalAction %}
@@ -210,7 +210,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 								{%~ endif %}
 							{%~ elseif question.nextAction == enum(nextActionEnum).SaveAndEnd %}
 								{%~ if inactive %}
-									{%~ set link = 'Inactive' ~ lines ~ '@x-.' ~ (inheritingAnswers ? ('"' ~ inheritingAnswers|join('<br>')) ~ '"' : '') ~ '.-x' %}
+									{%~ set link = 'Inactive' ~ lines ~ '@x-.' ~ (inheritingAnswers ? '"' ~ SurveyHelper.linkLabel(inheritingAnswers) ~ '"' : '') ~ '.-x' %}
 								{%~ endif %}
 								{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} SaveAndEnd[("{{ __('next_action_save_and_end') }}")]
 							{%~ else %}
@@ -220,7 +220,7 @@ StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestion
 									{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ realNextQuestion.identifier }}
 									{%~ set lines = lines + 1 %}
 									{%~ set link = 'Inactive' ~ lines ~ '@x-.' ~ linkLabel ~ '.-x' %}
-								{% endif %}
+								{%~ endif %}
 								{%~ if inactive and (realNextQuestion == false or realNextQuestion.onlyReachableFromUnused != true) %}
 									{%~ set link = 'Inactive' ~ lines ~ '@x-.' ~ linkLabel ~ '.-x' %}
 								{%~ endif %}

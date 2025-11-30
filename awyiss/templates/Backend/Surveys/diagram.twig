@@ -5,6 +5,7 @@
 @var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
 @var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
 @var finalActions array<string, string>
+@var entryData array|null
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -49,6 +50,6 @@
 	{% endblock %}
 
 	{% block questionsDiagram %}
-		{% include '@Backend/Surveys/mermaid_flowchart.twig' %}
+		{% include entryData ? '@Backend/Surveys/mermaid_user_flowchart.twig' : '@Backend/Surveys/mermaid_flowchart.twig' %}
 	{% endblock %}
 </div>

@@ -22,7 +22,7 @@
 {% endif %}
 
 {% set tableFootColSpan -%}
-	{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 4 }}{% endblock %}
+	{% block tableOverviewFootColSpan %}{{ localConfig[action].displayedFields|length + 4 }}{% endblock %}
 {%- endset %}
 
 {% block tableOverview %}
@@ -47,7 +47,7 @@
 							{% block tableOverviewHeaderDefaultFields %}{% endblock %}
 
 							{% block tableOverviewHeaderDisplayedFields %}
-								{% for field in localConfig.overview.displayedFields %}
+								{% for field in localConfig[action].displayedFields %}
 									{% block tableOverviewHeaderDisplayedField %}
 										{% if field starts with 'attributes.' %}
 											{% set field = field|slice(11)|underscore %}
@@ -110,7 +110,7 @@
 								{% block tableOverviewCellDefaultFields %}{% endblock %}
 
 								{% block tableOverviewCellDisplayedFields %}
-									{% for field in localConfig.overview.displayedFields %}
+									{% for field in localConfig[action].displayedFields %}
 										{% block tableOverviewCellDisplayedField %}
 											<td class="TableCell-{{ field|camelize }}">
 												{% if field starts with 'attributes.' %}

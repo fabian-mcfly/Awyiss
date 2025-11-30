@@ -375,10 +375,16 @@
 		td {
 			padding:10px;
 			border-top-width:0;
-			border-radius:5px;
+			border-radius:0;
+
+			&:first-child {
+				border-top-right-radius:5px;
+				border-top-left-radius:5px;
+			}
 
 			&:last-child:last-child {
 				border-bottom-right-radius:5px;
+				border-bottom-left-radius:5px;
 			}
 		}
 	}
@@ -900,10 +906,17 @@
 	tfoot {
 		td {
 			padding:20px;
-			border-radius:0 0 5px 5px;
 			border-top:3px solid oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 			background-color:var(--colorMedium);
 			color:var(--colorBright);
+
+			&:where(:first-child) {
+				border-bottom-left-radius:5px;
+			}
+
+			&:where(:last-child) {
+				border-bottom-right-radius:5px;
+			}
 
 			html.🌚 & {
 				border-top-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));

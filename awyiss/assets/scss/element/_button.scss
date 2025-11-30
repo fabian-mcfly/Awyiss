@@ -198,6 +198,7 @@
 	:is(
 		&-AccessHelper,
 		&-Add,
+		&-Analyze,
 		&-Close,
 		&-Configure,
 		&-Delete,
@@ -289,6 +290,12 @@
 		&::after {
 			content:'\f023';
 			vertical-align:-1px;
+		}
+	}
+
+	&-Analyze {
+		&::after {
+			content:'\f201';
 		}
 	}
 

@@ -1,0 +1,146 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var entries Cake\Collection\CollectionInterface
+@var totalEntries int
+@var analysis array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Surveys Analyze">
+	{% block headlinesAnalyze %}
+		<div class="Headlines">
+			{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+
+			{% block headlineAnalyze %}
+				<h1>{{ __('headline_analyze') }}</h1>
+			{% endblock %}
+
+			{% block subheadlineAnalyze %}
+				<h2>{{ survey.title }}</h2>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block surveySummary %}
+		<div class="Summary">
+			<div class="SummaryItem">
+				<span class="Label">{{ __('type') }}</span>
+				<span class="Value">{{ __('survey_type_' ~ survey.type.value) }}</span>
+			</div>
+			<div class="SummaryItem">
+				<span class="Label">{{ __('analysis_total_entries') }}</span>
+				<span class="Value">{{ entries.totalCount() }}</span>
+			</div>
+			<div class="SummaryItem">
+				<span class="Label">{{ __('analysis_total_questions') }}</span>
+				<span class="Value">{{ survey.surveySurveyQuestions|length }}</span>
+			</div>
+		</div>
+	{% endblock %}
+
+	{% block paginatedOverview %}
+		{% include '@Backend/Surveys/analyze_paginated_list.twig' with _context|merge({records: entries.toArray()}) %}
+	{% endblock %}
+
+	{% block surveyQuestionsSummary %}
+		<div class="QuestionsSummary">
+			{% if entries|length %}
+				{% block questionAnalysis %}
+					{% for identifier, questionData in analysis.questions %}
+						<div class="QuestionsSummaryItem">
+							<h3>{{ questionData.title }}</h3>
+							<h4>{{ __d('survey_questions', 'question_type_' ~ questionData.type.value) }}</h4>
+
+							{% if
+								questionData.question.surveyQuestion.type == enum(questionTypeEnum).SingleChoice or
+								questionData.question.surveyQuestion.type == enum(questionTypeEnum).MultiChoice %}
+								{% set totalAnswers = 0 %}
+								<div class="Table-Overflow">
+									<table class="Overview-Table Responsive-Table Responsive-TableGrid" style="--columns:4; --rows:{{ questionData.answers|length }};">
+										<thead>
+											<tr>
+												<th class="TableHeader-Answer">{{ __('analysis_answer') }}</th>
+												<th class="TableHeader-Count">{{ __('analysis_count') }}</th>
+												<th class="TableHeader-Percentage">{{ __('analysis_percentage') }}</th>
+												<th class="TableHeader-PercentageBar">{{ __('analysis_visualization') }}</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for answerData in questionData.answers %}
+												{% set totalAnswers = totalAnswers + answerData.count %}
+												<tr>
+													<td class="TableCell-Answer">{{ answerData.title }}</td>
+													<td class="TableCell-Count">{{ answerData.count }}</td>
+													<td class="TableCell-Percentage">{{ answerData.percentage }}%</td>
+													<td class="TableCell-PercentageBar">
+														<div class="ProgressBar">
+															<div class="ProgressBar-Fill" style="width: {{ answerData.percentage }}%"></div>
+														</div>
+													</td>
+												</tr>
+											{% endfor %}
+											{% if questionData.question.allowCustomAnswer %}
+												{% set totalAnswers = totalAnswers + questionData.customAnswerCount %}
+												<tr>
+													<td class="TableCell-Answer">{{ __('analysis_custom_answers') }}</td>
+													<td class="TableCell-Count">{{ questionData.customAnswerCount }}</td>
+													<td class="TableCell-Percentage">{{ questionData.customAnswerPercentage }}%</td>
+													<td class="TableCell-PercentageBar">
+														<div class="ProgressBar">
+															<div class="ProgressBar-Fill" style="width: {{ questionData.customAnswerPercentage }}%"></div>
+														</div>
+													</td>
+												</tr>
+											{% endif %}
+										</tbody>
+										<tfoot>
+											<tr>
+												<td class="TableCell-Answer">{{ __('analysis_total_answers') }}
+													{% if questionData.totalResponses != totalAnswers %}
+														/ {{ __('unique_respondents') }}
+													{% endif %}
+												</td>
+												<td class="TableCell-Count">
+													{% if questionData.totalResponses != totalAnswers %}
+														{{ totalAnswers }} / {{ questionData.totalResponses }}
+													{% else %}
+														{{ questionData.totalResponses }}
+													{% endif %}
+												</td>
+												<td class="TableCell-Percentage"></td>
+												<td class="TableCell-PercentageBar"></td>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+							{% endif %}
+
+							{% if questionData.customAnswerCount > 0 %}
+								<div class="CustomAnswerList">
+									<details{% if questionData.question.surveyQuestion.type == enum(questionTypeEnum).FreeText %} open{% endif %}>
+										<summary>{{ __('analysis_custom_answers') }}</summary>
+										<ol class="CustomAnswerItems">
+											{% for customAnswer in analysis.customAnswers[identifier] %}
+												<li>
+													<span class="CustomAnswer">{{ customAnswer }}</span>
+												</li>
+											{% endfor %}
+										</ol>
+									</details>
+								</div>
+							{% endif %}
+						</div>
+					{% endfor %}
+				{% endblock %}
+			{% endif %}
+		</div>
+	{% endblock %}
+</div>

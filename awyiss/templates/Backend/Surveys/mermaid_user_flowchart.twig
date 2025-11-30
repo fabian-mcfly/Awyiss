@@ -1,0 +1,134 @@
+{#
+@var survey \Awyiss\Model\Entity\Survey
+@var availableActions \Awyiss\Model\Enum\Survey\NextAction[]
+@var availableForms \Awyiss\Model\Entity\Form[]
+@var availableQuestions \Awyiss\Model\Entity\SurveyQuestion[]
+@var nextActionEnum class-string<\Awyiss\Model\Enum\Survey\NextAction>
+@var questionTypeEnum class-string<\Awyiss\Model\Enum\Survey\QuestionType>
+@var finalActions array<string, string>
+@var entryData array|null
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SurveyHelper \Awyiss\View\Helper\SurveyHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% set baseColor = (config.Awyiss.System.Backend.interface.highlightColor ?? '#63d1a5')|substr(1, 6) %}
+{% set baseForm = survey.formId ? availableForms[ survey.formId ].label %}
+{% set finalAction = 'SaveAndEnd[("' ~ __('next_action_save_and_end') ~ '")]' %}
+{% set shortFinalAction = finalAction %}
+{% if survey.finalAction in [
+	enum(nextActionEnum).ShowForm,
+	enum(nextActionEnum).SaveAndShowForm,
+	enum(nextActionEnum).ShowFormAndSave,
+] %}
+	{% set saveStepBeforeForm, saveStepAfterFormSubmit, hasSaveStepAfter = '', '', '' %}
+	{% set shortFinalAction = 'ShowForm' %}
+	{% if survey.finalAction == enum(nextActionEnum).SaveAndShowForm %}
+		{% set shortFinalAction = 'SaveAndShowForm' %}
+		{% set saveStepBeforeForm = shortFinalAction ~ '[("' ~ __('save') ~ '")]--> ' %}
+	{% elseif survey.finalAction == enum(nextActionEnum).ShowFormAndSave %}
+		{% set saveStepAfterFormSubmit = '--> ShowFormAndSave[("' ~ __('save') ~ '")]' %}
+		{% set hasSaveStepAfter = 'AndSaveAfterSubmit' %}
+		{% set shortFinalAction = shortFinalAction ~ hasSaveStepAfter %}
+	{% endif %}
+	{% set finalAction %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ baseForm }})"}{{ saveStepAfterFormSubmit }}{% endset %}
+{% endif %}
+{% set questionsByIdentifier = survey.surveySurveyQuestions ? survey.surveySurveyQuestions|column(null, 'identifier') : [] %}
+{% if survey.surveySurveyQuestions %}
+	<dialog class="Questions-Diagram" data-title="{{ __('questions_diagram') }} {{ survey.title }}" id="Surveys-Diagram">
+		<div class="Inner">
+			<div class="Diagram">---
+config:
+  layout: elk
+  theme: base
+  themeVariables:
+    fontFamily: Lato
+    primaryColor: '#{{ baseColor }}22'
+    primaryTextColor: '#{{ config.Awyiss.System.Backend.interface.darkMode == true ? 'FFFFFF' : '202C39' }}'
+    primaryBorderColor: '#{{ baseColor }}'
+    lineColor: '#{{ baseColor }}'
+    secondaryColor: '#{{ config.Awyiss.System.Backend.interface.darkMode == true ? '202C39' : 'FFFFFF' }}'
+  look: handDrawn
+---
+flowchart TD
+				{%~ block diagramQuestions %}
+					{#~ No additional blocks are used in this monster since set calls are limited to the block they are in #}
+StartBlock@{ shape: sm-circ, label: "Start" } --> {{ survey.surveySurveyQuestions|first.identifier }}
+					{#~ @var question \Awyiss\Model\Entity\SurveySurveyQuestion #}
+					{%~ for questionId, answerIds in entryData.progress %}
+						{#~ @var question \Awyiss\Model\Entity\SurveySurveyQuestion #}
+						{%~ set question = questionsByIdentifier[ questionId ] %}
+						{%~ set answersById = question.surveySurveyAnswers|column(null, 'id') %}
+						{%~ set nextAnsweredQuestion = SurveyHelper.nextAnsweredQuestion(entryData.progress, questionId) %}
+						{%~ set questionLabel = question.label|substr(0, -10)|e ~ '<span class="Identifier Id' ~ question.identifier ~ '" style="--identifierColor:#num;' ~ question.identifier|substr(0, 6) ~ ';">' ~ question.identifier ~ '</span>' %}
+						{%~ set linkLabels = [] %}
+						{%~ for answerId in (answerIds is not array ? [answerIds] : answerIds) %}
+							{%~ if answerId != 'custom' %}
+								{%~ set answerLabel = answersById[ answerId ] ? answersById[ answerId ].label : '' %}
+								{%~ set linkLabels = linkLabels|merge([answerLabel]) %}
+							{%~ endif %}
+						{%~ endfor %}
+						{%~ if entryData.customAnswers[ questionId ] is defined %}
+							{%~ set linkLabels = linkLabels|merge({custom: entryData.customAnswers[ questionId ]}) %}
+						{%~ endif %}
+						{%~ set link = (linkLabels ? '--"' ~ SurveyHelper.linkLabel(linkLabels) ~ '"' : '') ~ '-->' %}
+						{%~ if nextAnsweredQuestion %}
+							{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ nextAnsweredQuestion }}
+						{%~ else %}
+							{%~ if
+								question.surveyQuestion.type == enum(questionTypeEnum).SingleChoice and
+								answersById[ answerIds ] is defined and
+								answersById[ answerIds ].nextAction
+							%}
+								{%~ if answersById[ answerIds ].nextAction == enum(nextActionEnum).Abort %}
+									{%~ set finalAction = 'Abort@{ shape: diamond, label: "' ~ __('next_action_abort') ~ '"}' %}
+								{%~ elseif answersById[ answerIds ].nextAction == enum(nextActionEnum).SaveAndEnd %}
+									{%~ set finalAction = 'SaveAndEnd[("' ~ __('next_action_save_and_end') ~ '")]' %}
+								{%~ elseif answersById[ answerIds ].nextAction in [
+										enum(nextActionEnum).ShowForm,
+										enum(nextActionEnum).SaveAndShowForm,
+										enum(nextActionEnum).ShowFormAndSave,
+									] and
+									answersById[ answerIds ].nextActionTarget
+								%}
+									{%~ set shortFinalAction = 'ShowForm' ~ answersById[ answerIds ].nextActionTarget %}
+									{%~ set saveStepBeforeForm, saveStepAfterFormSubmit, hasSaveStepAfter = '', '', '' %}
+									{%~ if answersById[ answerIds ].nextAction == enum(nextActionEnum).SaveAndShowForm %}
+										{%~ set shortFinalAction = 'SaveAndShowForm' ~ answersById[ answerIds ].nextActionTarget %}
+										{%~ set saveStepBeforeForm = shortFinalAction ~ '[("' ~ __('save') ~ '")]--> ' %}
+									{%~ elseif answersById[ answerIds ].nextAction == enum(nextActionEnum).ShowFormAndSave %}
+										{%~ set saveStepAfterFormSubmit = '--> ShowFormAndSave' ~ answersById[ answerIds ].nextActionTarget ~ '[("' ~ __('save') ~ '")]' %}
+										{%~ set hasSaveStepAfter = 'AndSaveAfterSubmit' %}
+										{%~ set shortFinalAction = shortFinalAction ~ hasSaveStepAfter %}
+									{%~ endif %}
+									{%~ set finalAction %}{{ saveStepBeforeForm }}ShowForm{{ hasSaveStepAfter }}{{ answersById[ answerIds ].nextActionTarget }}@{ shape: dbl-circ, label: "{{ __('next_action_form') }}<br>({{ (availableForms[answersById[ answerIds ].nextActionTarget].label ?? baseForm)|e }})"}{{ saveStepAfterFormSubmit }}{% endset %}
+								{%~ endif %}
+							{%~ endif %}
+
+							{{~ question.identifier }}["{{ questionLabel }}"] {{ link }} {{ finalAction }}
+						{%~ endif %}
+					{%~ endfor -%}
+				{%~ endblock %}
+class Abort,None Unused
+			</div>
+			<button class="Button Button-Small Button-Zoom Button-ZoomIn" type="button">{{ __('zoom_in') }}</button>
+			<button class="Button Button-Small Button-Zoom Button-ZoomOut" type="button">{{ __('zoom_out') }}</button>
+			<button class="Button Button-Small Button-Fullscreen" type="button">{{ __('fullscreen') }}</button>
+		</div>
+		<div class="ButtonArea">
+			<button class="Button Button-Close Button-Cancel" type="button">{{ __('close') }}</button>
+		</div>
+	</dialog>
+{% endif %}

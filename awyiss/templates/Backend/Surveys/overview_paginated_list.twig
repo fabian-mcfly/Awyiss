@@ -21,6 +21,10 @@
 {% block tableOverviewCellActions %}
 	<td class="TableCell-Actions">
 		<div class="Actions">
+			{% block tableOverviewCellActionsAnalyze %}
+				{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'analyze') : __('analyze'), {action: 'analyze', id: entity.id}, {class: 'Button Button-Small Button-Analyze'}) }}
+			{% endblock %}
+
 			{% block tableOverviewCellActionsDiagram %}
 				{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'show_diagram') : __('show_diagram'), {action: 'diagram', id: entity.id}, {class: 'Button Button-Small Button-Diagram Button-ShowDiagram'}) }}
 			{% endblock %}

@@ -13,10 +13,12 @@ use Awyiss\Model\Entity\SurveySurveyAnswer;
 use Awyiss\Model\Entity\SurveySurveyQuestion;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Arrays;
+use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Security;
+use Exception;
 
 
 /**
@@ -201,14 +203,19 @@ class SurveysController extends Controller {
 	public function diagram(): void {
 		$this->Authorization->ensure('read');
 
+		$li_id = (int)$this->request->getParam('id');
+
+		if (!$li_id) {
+			$this->Flash->error(__('record_not_found'));
+			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+		}
+
 		/**
 		 * @var \Awyiss\Model\Entity\Survey $lo_survey
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
-		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_survey = $this->Surveys->findById($this->request->getParam('id'))
-			->find('translations')
+		$lo_survey = $this->Surveys->findById($li_id)
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
 			->contain([
@@ -228,7 +235,223 @@ class SurveysController extends Controller {
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
+		$li_entryId = (int)$this->request->getParam('entryId');
+		if ($li_entryId) {
+			$lo_surveyEntriesTable = $this->fetchTable('SurveyEntries');
+			$lo_entry = $lo_surveyEntriesTable->find()->where([
+				'id' => $li_entryId,
+				'survey_id' => $li_id,
+			])->first();
+
+			if ($lo_entry) {
+				$la_postData = $this->decodeEntryData($lo_entry->data);
+				$this->set('entryData', $la_postData);
+			}
+		}
+
 		$this->setViewVars($lo_survey);
+	}
+
+
+	/**
+	 * Analysis method - Shows detailed analysis and statistics for a survey
+	 *
+	 * @return \Cake\Http\Response|void
+	 * @throws \Exception
+	 */
+	public function analyze() {
+		$this->Authorization->ensure('analyze');
+
+		$li_id = (int)$this->request->getParam('id');
+
+		if (!$li_id) {
+			$this->Flash->error(__('record_not_found'));
+			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+		}
+
+		/**
+		 * @var \Awyiss\Model\Entity\Survey $lo_survey
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
+		 */
+		$lo_survey = $this->Surveys->findById($li_id)
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain([
+				'SurveySurveyQuestions' => [
+					'SurveyQuestions' => [
+						'SurveyAnswers',
+					],
+					'SurveySurveyAnswers' => [
+						'SurveyAnswers',
+					],
+				],
+			])->first();
+
+		if (!$lo_survey) {
+			$this->Flash->error(__('record_not_found'));
+			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+		}
+
+		// Fetch all entries for this survey
+		$lo_surveyEntriesTable = $this->fetchTable('SurveyEntries');
+		$lo_entries = $lo_surveyEntriesTable->find()->where([
+			'survey_id' => $li_id,
+		])->orderBy(['created_on' => 'DESC'])->all();
+
+		// Analyze the data
+		$la_analysis = $this->analyzeEntries($lo_survey, $lo_entries);
+
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_questionTypeEnum */
+		$ls_questionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
+
+		$lo_entries = $this->paginate($lo_surveyEntriesTable->find()->where([
+			'survey_id' => $li_id,
+		]), [
+			'limit' => 20,
+			'order' => [
+				'created_on' => 'DESC',
+			],
+		]);
+
+		$this->set([
+			'survey' => $lo_survey,
+			'entries' => $lo_entries,
+			'analysis' => $la_analysis,
+			'questionTypeEnum' => $ls_questionTypeEnum,
+		]);
+	}
+
+
+	/**
+	 * Analyze survey entries and calculate statistics
+	 *
+	 * @param \Awyiss\Model\Entity\Survey $survey
+	 * @param \Cake\Collection\CollectionInterface $entries
+	 * @return array
+	 */
+	protected function analyzeEntries(Survey $survey, CollectionInterface $entries): array {
+		$la_analysis = [
+			'questions' => [],
+			'customAnswers' => [],
+		];
+
+		// Initialize question statistics
+		foreach ($survey->surveySurveyQuestions as $lo_question) {
+			$ls_identifier = $lo_question->identifier;
+
+			$la_analysis['questions'][ $ls_identifier ] = [
+				'question' => $lo_question,
+				'title' => $lo_question->title ?? $lo_question->surveyQuestion->title,
+				'type' => $lo_question->surveyQuestion->type,
+				'answers' => [],
+				'customAnswerCount' => 0,
+				'totalResponses' => 0,
+			];
+
+			// Initialize answer counts
+			foreach ($lo_question->surveySurveyAnswers as $lo_surveyAnswer) {
+				$la_analysis['questions'][ $ls_identifier ]['answers'][ $lo_surveyAnswer->id ] = [
+					'answer' => $lo_surveyAnswer,
+					'title' => $lo_surveyAnswer->title ?? $lo_surveyAnswer->surveyAnswer->title,
+					'count' => 0,
+				];
+			}
+		}
+
+		// Process each entry
+		foreach ($entries as $lo_surveyEntry) {
+			// Decode the entry data
+			$la_postData = $this->decodeEntryData($lo_surveyEntry->data);
+
+			if (!$la_postData || !isset($la_postData['progress'])) {
+				continue;
+			}
+
+			// Ensure customAnswers key exists
+			$la_postData['customAnswers'] ??= [];
+
+			// Process each answer in the progress data
+			foreach ($la_postData['progress'] as $ls_identifier => $lx_answer) {
+				// Skip if the question is unknown, e.g., deleted question
+				if (!isset($la_analysis['questions'][ $ls_identifier ])) {
+					continue;
+				}
+
+				$la_analysis['questions'][ $ls_identifier ]['totalResponses']++;
+
+				// Unify answers to an array to simplify processing
+				$la_answer = !is_array($lx_answer) ? [$lx_answer] : $lx_answer;
+
+				foreach ($la_answer as $lx_answerId) {
+					if ($lx_answerId === 'custom') {
+						$la_analysis['questions'][ $ls_identifier ]['customAnswerCount']++;
+
+						// Store custom answers
+						if (isset($la_postData['customAnswers'][ $ls_identifier ])) {
+							$la_analysis['customAnswers'][ $ls_identifier ] ??= [];
+							$la_analysis['customAnswers'][ $ls_identifier ][] = $la_postData['customAnswers'][ $ls_identifier ];
+						}
+
+						continue;
+					}
+
+					$li_answerId = (int)$lx_answerId;
+					if (isset($la_analysis['questions'][ $ls_identifier ]['answers'][ $li_answerId ])) {
+						$la_analysis['questions'][ $ls_identifier ]['answers'][ $li_answerId ]['count']++;
+					}
+				}
+			}
+		}
+
+		// Calculate percentages
+		foreach ($la_analysis['questions'] as &$la_questionData) {
+			$li_total = $la_questionData['totalResponses'];
+
+			if ($li_total === 0) {
+				continue;
+			}
+
+			foreach ($la_questionData['answers'] as &$la_answerData) {
+				$la_answerData['percentage'] = round($la_answerData['count'] / $li_total * 100, 2);
+			}
+			unset($la_answerData);
+
+			$la_questionData['customAnswerPercentage'] = round($la_questionData['customAnswerCount'] / $li_total * 100, 2);
+		}
+		unset($la_questionData);
+
+		return $la_analysis;
+	}
+
+
+	/**
+	 * Decode entry data from database format
+	 *
+	 * @param string|null $encodedData
+	 * @return array|null
+	 */
+	protected function decodeEntryData(?string $encodedData): ?array {
+		if (empty($encodedData)) {
+			return null;
+		}
+
+		try {
+			$ls_decompressed = gzuncompress(base64_decode($encodedData));
+			if ($ls_decompressed === false) {
+				return null;
+			}
+
+			$la_data = json_decode($ls_decompressed, true);
+			if (json_last_error() !== JSON_ERROR_NONE) {
+				return null;
+			}
+
+			return $la_data ?: [];
+		}
+		catch (Exception) {
+			return null;
+		}
 	}
 
 	/**

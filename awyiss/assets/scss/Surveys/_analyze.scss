@@ -1,0 +1,265 @@
+.Surveys.Analyze {
+	display:grid;
+	width:100%;
+	container:gridParent / inline-size;
+	gap:var(--rowGap) var(--lineHeightMain);
+
+	.Summary {
+		display:grid;
+		padding:20px;
+		border-radius:5px;
+		box-shadow:0 0 1px rgba(0, 0, 0, 0.16), 0 0 10px rgba(0, 0, 0, .05);
+		background-color:var(--backgroundColorContent);
+		gap:20px;
+		grid-template-columns:repeat(3, 1fr);
+
+		@media screen and (width <= 768px) {
+			grid-template-columns:auto;
+		}
+
+		@media screen and (width <= 540px) {
+			padding:10px;
+			gap:10px;
+		}
+	}
+
+	.SummaryItem {
+		padding:20px;
+		border-radius:5px;
+		background-color:var(--colorLight);
+
+		html.🌚 & {
+			background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4))
+		}
+
+		@media screen and (width <= 768px) {
+			display:flex;
+		}
+
+		@media screen and (width <= 540px) {
+			padding:10px;
+		}
+
+		.Label {
+			display:block;
+			color:var(--colorMedium);
+			//noinspection CssNoGenericFontName
+			font-family:var(--fontStackHeading);
+		}
+
+		.Value {
+			font-weight:700;
+			font-size:1.2rem;
+
+			@media screen and (width <= 768px) {
+				margin-left:auto;
+			}
+		}
+	}
+
+	.QuestionsSummary {
+		display:grid;
+		gap:var(--rowGap) var(--lineHeightMain);
+		grid-template-columns:auto;
+
+		h3 {
+			margin-bottom:0;
+			font-size:2rem;
+		}
+
+		h4 {
+			margin-top:0;
+			font-size:1.2rem;
+			color:var(--colorMedium);
+		}
+	}
+
+	.Table-Overflow {
+		margin-top:20px;
+		margin-bottom:0;
+		border-radius:5px;
+		box-shadow:0 0 1px rgba(0, 0, 0, 0.16), 0 0 10px rgba(0, 0, 0, .05);
+		background-color:var(--backgroundColorContent);
+	}
+
+	.QuestionsSummaryItem {
+
+	}
+
+	.Overview-Table {
+		@media screen and (640px < width <= 768px) {
+			--idColumnWidth:40dvw;
+		}
+	}
+
+	tfoot {
+		@media screen and (640px < width <= 768px) {
+			display:grid;
+			grid-column:1 / -1;
+			grid-template-columns:subgrid;
+		}
+
+		tr {
+			@media screen and (width <= 640px) {
+				grid-template-columns:2fr 1fr;
+			}
+		}
+
+		td {
+			&.TableCell-Answer.TableCell-Answer {
+				@media screen and (width <= 640px) {
+					border-top-right-radius:0;
+					border-bottom-left-radius:5px;
+				}
+			}
+
+			&.TableCell-Count.TableCell-Count {
+				@media screen and (width <= 640px) {
+					border-bottom-right-radius:5px;
+					border-bottom-left-radius:5px;
+				}
+
+				@media screen and (width <= 640px) {
+					text-align:right;
+					border-top-right-radius:5px;
+					border-bottom-left-radius:0;
+				}
+			}
+
+			&:is(
+				.TableCell-Percentage,
+				.TableCell-PercentageBar
+			) {
+				@media screen and (width <= 640px) {
+					display:none;
+				}
+			}
+		}
+	}
+
+	th {
+		&:is(
+			.TableHeader-Count,
+			.TableHeader-Percentage
+		) {
+			width:140px;
+			text-align:center;
+
+			@media screen and (width <= 768px) {
+				width:100px;
+			}
+
+			@media screen and (width <= 640px) {
+				text-align:inherit;
+			}
+		}
+
+		&.TableHeader-PercentageBar {
+			width:200px;
+
+			@media screen and (width <= 768px) {
+				width:100px;
+			}
+		}
+	}
+
+	td {
+		&.TableCell-Answer {
+			@media screen and (640px < width <= 768px) {
+				max-width:none;
+			}
+		}
+
+		&:is(
+			.TableCell-Count,
+			.TableCell-Percentage
+		) {
+			text-align:center;
+
+			@media screen and (width <= 640px) {
+				text-align:inherit;
+			}
+		}
+	}
+
+	.ProgressBar {
+		height:var(--lineHeightMain);
+		padding:5px;
+		border-radius:5px;
+		border:1px solid rgba(0, 0, 0, .1);
+		box-shadow:2px 2px 1px rgba(0, 0, 0, .05) inset;
+		background-color:var(--colorLight);
+		overflow:hidden;
+	}
+
+	.ProgressBar-Fill {
+		height:100%;
+		border-radius:5px;
+		background-color:var(--colorSuccess);
+	}
+
+	.CustomAnswerList {
+		margin-top:20px;
+		border-radius:5px;
+		box-shadow:0 0 1px rgba(0, 0, 0, 0.16), 0 0 10px rgba(0, 0, 0, .05);
+		background-color:var(--backgroundColorContent);
+
+		details {
+			border:0 none;
+
+			&[open] {
+				padding-bottom:10px;
+			}
+		}
+	}
+
+	.CustomAnswerItems {
+		--backgroundColorOdd:var(--colorLight);
+		--backgroundColorEven:transparent;
+
+		max-height:300px;
+		margin-top:20px;
+		margin-inline:-20px;
+		overflow:hidden auto;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+		counter-reset:itemCounter;
+
+		@media screen and (width <= 640px) {
+			margin-inline:-10px;
+		}
+
+		html.🌚 & {
+			--backgroundColorOdd:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
+		}
+
+		li {
+			margin:0;
+			padding:10px 20px 10px 50px;
+			background-color:var(--backgroundColorOdd);
+			list-style-type:none;
+			counter-increment:itemCounter;
+			position:relative;
+
+			@media screen and (width <= 640px) {
+				padding-right:10px;
+				padding-left:40px;
+			}
+
+			&::before {
+				content:counter(itemCounter) '.';
+				position:absolute;
+				top:10px;
+				left:20px;
+
+				@media screen and (width <= 640px) {
+					left:10px;
+				}
+			}
+
+			&:nth-child(even) {
+				background-color:var(--backgroundColorEven);
+			}
+		}
+	}
+}

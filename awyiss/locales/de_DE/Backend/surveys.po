@@ -21,6 +21,9 @@ msgstr "Umfrage hinzufügen"
 msgid "meta_title_edit"
 msgstr "Umfrage bearbeiten"
 
+msgid "meta_title_analyze"
+msgstr "Umfrageauswertung"
+
 msgid "meta_title_diagram"
 msgstr "Umfragediagramm"
 
@@ -53,6 +56,9 @@ msgstr "Die Umfrage wurde erfolgreich aktualisiert"
 
 msgid "edit_failed"
 msgstr "Die Umfrage konnte nicht aktualisiert werden"
+
+msgid "headline_analyze"
+msgstr "Umfrageauswertung"
 
 msgid "headline_diagram"
 msgstr "Diagram"
@@ -194,6 +200,39 @@ msgstr "Die Umfrage-Frage existiert nicht"
 
 msgid "php_array"
 msgstr "Ergebnisse als PHP Array"
+
+msgid "analyze"
+msgstr "Auswertung"
+
+msgid "analysis_total_entries"
+msgstr "Einträge insgesamt"
+
+msgid "analysis_total_questions"
+msgstr "Fragen insgesamt"
+
+msgid "analysis_question_analysis"
+msgstr "Fragenauswertung"
+
+msgid "analysis_answer"
+msgstr "Antwort"
+
+msgid "analysis_count"
+msgstr "Anzahl"
+
+msgid "analysis_percentage"
+msgstr "Anteil in %"
+
+msgid "analysis_visualization"
+msgstr " "
+
+msgid "analysis_total_answers"
+msgstr "Gesamt"
+
+msgid "analysis_custom_answers"
+msgstr "Eigene Antworten"
+
+msgid "unique_respondents"
+msgstr "Eindeutige Teilnehmer"
 
 msgid "all_answers"
 msgstr "Alle Antworten"

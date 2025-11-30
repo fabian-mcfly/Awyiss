@@ -173,7 +173,8 @@
 		}
 	}
 
-	g.Inactive {
+	g.Inactive,
+	g.Passive {
 		path {
 			stroke:var(--colorMedium);
 
@@ -183,7 +184,10 @@
 		}
 	}
 
-	g[data-id^="Inactive"] {
+	g:is(
+		[data-id^="Inactive"],
+		[data-id^="Passive"]
+	) {
 		opacity:.5;
 	}
 
@@ -221,10 +225,15 @@
 		display:inline-block;
 		padding-inline:5px;
 		border-radius:5px;
+
+		li {
+			text-align:left;
+		}
 	}
 
 	marker.marker.cross,
-	path[id^="Inactive"] {
+	path[id^="Inactive"],
+	path[id^="Passive"] {
 		stroke:var(--colorMedium);
 	}
 }

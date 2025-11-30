@@ -58,7 +58,7 @@ export default class SurveysController {
 			return;
 		}
 
-		if (document.body.classList.contains('OverviewAction')) {
+		if (document.body.classList.contains('OverviewAction') || document.body.classList.contains('AnalyzeAction')) {
 			const diagramButtons = document.querySelectorAll('.Button-ShowDiagram');
 			diagramButtons.forEach(button => {
 				this.eventHandler.add('click', this.handleOverviewDiagramButton.bind(this), button);

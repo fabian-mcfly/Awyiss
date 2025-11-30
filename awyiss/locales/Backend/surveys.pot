@@ -20,6 +20,9 @@ msgstr "Add Survey"
 msgid "meta_title_edit"
 msgstr "Edit Survey"
 
+msgid "meta_title_analyze"
+msgstr "Analyze Survey"
+
 msgid "meta_title_diagram"
 msgstr "Survey Diagram"
 
@@ -52,6 +55,9 @@ msgstr "The survey was successfully updated"
 
 msgid "edit_failed"
 msgstr "The survey could not be updated"
+
+msgid "headline_analyze"
+msgstr "Analyze Survey"
 
 msgid "headline_diagram"
 msgstr "Diagram"
@@ -193,6 +199,39 @@ msgstr "The survey question does not exist"
 
 msgid "php_array"
 msgstr "Results as PHP Array"
+
+msgid "analyze"
+msgstr "Analyze"
+
+msgid "analysis_total_entries"
+msgstr "Total Entries"
+
+msgid "analysis_total_questions"
+msgstr "Total Questions"
+
+msgid "analysis_question_analysis"
+msgstr "Question Analysis"
+
+msgid "analysis_answer"
+msgstr "Answer"
+
+msgid "analysis_count"
+msgstr "Select Count"
+
+msgid "analysis_percentage"
+msgstr "Share in %"
+
+msgid "analysis_visualization"
+msgstr " "
+
+msgid "analysis_total_answers"
+msgstr "Total"
+
+msgid "analysis_custom_answers"
+msgstr "Custom Answers"
+
+msgid "unique_respondents"
+msgstr "Unique Respondents"
 
 msgid "all_answers"
 msgstr "All Answers"
