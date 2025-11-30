@@ -23,7 +23,7 @@
 {% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}
 
 {% block tableOverview %}
-	<table class="Overview-Table Responsive-Table Responsive-TableGrid" style="--columns:{{ tableFootColSpan }}; --rows:{{ min(records|length, paginate.limit) }};" data-media-folder-id="{{ selectedMediaFolderId }}">
+	<table class="Overview-Table Responsive-Table Responsive-TableGrid" style="--columns:{{ tableFootColSpan }}; --rows:{{ max(1, min(records|length, paginate.limit)) }};" data-media-folder-id="{{ selectedMediaFolderId }}">
 		{{ block('tableOverviewHead') }}
 
 		{% block tableOverviewBody %}

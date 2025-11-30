@@ -64,7 +64,7 @@
 								questionData.question.surveyQuestion.type == enum(questionTypeEnum).MultiChoice %}
 								{% set totalAnswers = 0 %}
 								<div class="Table-Overflow">
-									<table class="Overview-Table Responsive-Table Responsive-TableGrid" style="--columns:4; --rows:{{ questionData.answers|length }};">
+									<table class="Overview-Table Responsive-Table Responsive-TableGrid" style="--columns:4; --rows:{{ max(1, questionData.answers|length) }};">
 										<thead>
 											<tr>
 												<th class="TableHeader-Answer">{{ __('analysis_answer') }}</th>

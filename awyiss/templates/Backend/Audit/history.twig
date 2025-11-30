@@ -416,7 +416,7 @@
 
 				{% block tableHistory %}
 					<table class="Overview-Table AuditHistory-Table"
-						style="--rows:{{ tableBodyRows }}; --columns: 3;"
+						style="--rows:{{ max(1, tableBodyRows) }}; --columns: 3;"
 						data-date-time="{{ TimeHelper.nice(audit.createdOn) }}" data-timestamp="{{ audit.createdOn.timestamp }}">
 						{% block tableHistoryHead %}
 							<thead>

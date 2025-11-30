@@ -344,6 +344,15 @@
 		grid-column:2 / -1;
 		overflow-x:auto;
 
+		&:not(:has(tr)) {
+			height:100%;
+
+			&::after {
+				position:relative;
+				grid-row:1 / -1;
+			}
+		}
+
 		tr {
 			&:first-child {
 				td {
