@@ -49,7 +49,6 @@
 		align-items:safe center;
 		content-visibility:hidden;
 		overflow:hidden;
-		justify-content:safe center;
 
 		&[data-processed="true"] {
 			content-visibility:auto;
@@ -57,7 +56,7 @@
 
 		svg {
 			display:block;
-			margin:40px;
+			margin:40px auto;
 		}
 	}
 
