@@ -54,7 +54,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteAddCommandWithPath(): void {
 		$args = $this->createMock(Arguments::class);
@@ -77,7 +76,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteRemoveCommandWithPath(): void {
 		$args = $this->createMock(Arguments::class);
@@ -100,7 +98,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteCheckCommandWithPath(): void {
 		$args = $this->createMock(Arguments::class);
@@ -127,7 +124,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteInvalidCommand(): void {
 		$args = $this->createMock(Arguments::class);
@@ -148,7 +144,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteAddCommandWithoutPath(): void {
 		$args = $this->createMock(Arguments::class);
@@ -187,7 +182,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddFileWithValidFilePathAddsFileSuccessfully() {
 		$path = 'tests/customer/Model/Enum/PageRole.php';
@@ -213,7 +207,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddFileWithNonExistentFilePathShowsError() {
 		$path = 'invalid/path/to/file.php';
@@ -230,7 +223,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddFileWithValidClassMethodAddsMethodSuccessfully() {
 		$path = '\Awyiss\Test\TestCase\Command\Bake\EnumCommandTest::testEnumCommandHelp';
@@ -255,7 +247,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddFileWithInvalidClassMethodShowsError() {
 		$path = '\Awyiss\Test\TestCase\Command\Bake\EnumCommandTest::testEnumCommandHelpNotExisting';
@@ -273,7 +264,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveFileWithValidFilePathRemovesFileSuccessfully() {
 		$path = 'tests/customer/Model/Enum/PageRole.php';
@@ -296,7 +286,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveFileWithNonExistentFilePathShowsError() {
 		$path = 'tests/customer/Model/Enum/PageRoleDummy.php';
@@ -313,7 +302,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveFileWithUnknownFileShowsError() {
 		$path = 'tests/customer/Model/Enum/PageRole.php';
@@ -330,7 +318,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveFileWithValidClassMethodRemovesMethodSuccessfully() {
 		$path = '\Awyiss\Test\TestCase\Command\Bake\EnumCommandTest::testEnumCommandHelpNotExisting';
@@ -353,7 +340,6 @@ class IntegrityCheckCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveFileWithInvalidClassMethodShowsError() {
 		$path = '\Awyiss\Test\TestCase\Command\Bake\EnumCommandTest::testEnumCommandHelpNotExisting';

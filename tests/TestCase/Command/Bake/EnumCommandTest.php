@@ -42,7 +42,6 @@ class EnumCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnumCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Enum' . DS . 'FoobarEnum.php';
@@ -60,7 +59,6 @@ class EnumCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPageRoleEnumCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Enum' . DS . 'PageRoleTest.php';

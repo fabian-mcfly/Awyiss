@@ -27,7 +27,6 @@ trait BakeTestTrait {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function tearDown(): void {
 		parent::tearDown();

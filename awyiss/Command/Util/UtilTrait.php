@@ -23,40 +23,40 @@ trait UtilTrait {
 	 * @return string Path to output.
 	 */
 	public function getPath(Arguments $args, string $basePath = APP): string {
-		$ls_pathFragment = rtrim($this->pathFragment ?? '', '\\' . DS) . DS;
-		$ls_path = $basePath;
+		$pathFragment = rtrim($this->pathFragment ?? '', '\\' . DS) . DS;
+		$path = $basePath;
 		if ($this->plugin) {
-			$ls_path = $this->_pluginPath($this->plugin) . $ls_pathFragment;
+			$path = $this->_pluginPath($this->plugin) . $pathFragment;
 		}
 		elseif ($args->getOption('namespace')) {
-			$la_namespaceFolders = $this->getAutoloadPathsForNamespace($args->getOption('namespace'));
+			$namespaceFolders = $this->getAutoloadPathsForNamespace($args->getOption('namespace'));
 
-			if (isset($la_namespaceFolders[0])) {
-				$ls_path = rtrim($la_namespaceFolders[0], DS) . DS;
+			if (isset($namespaceFolders[0])) {
+				$path = rtrim($namespaceFolders[0], DS) . DS;
 			}
 			else {
-				$ls_path = ROOT . DS . Inflector::underscore($args->getOption('namespace')) . DS;
+				$path = ROOT . DS . Inflector::underscore($args->getOption('namespace')) . DS;
 			}
 
-			$ls_path .= $ls_pathFragment;
+			$path .= $pathFragment;
 		}
 		elseif ($args->getOption('folder')) {
-			$ls_path = rtrim($args->getOption('folder'), '\\' . DS) . DS;
-			if (!in_array($ls_path[0], ['/', DS])) {
-				$ls_path = ROOT . DS . $ls_path;
+			$path = rtrim($args->getOption('folder'), '\\' . DS) . DS;
+			if (!in_array($path[0], ['/', DS])) {
+				$path = ROOT . DS . $path;
 			}
 		}
-		elseif ($ls_pathFragment && $ls_pathFragment !== DS) {
-			$ls_path .= $ls_pathFragment;
+		elseif ($pathFragment && $pathFragment !== DS) {
+			$path .= $pathFragment;
 		}
 
-		$ls_prefix = $this->getPrefix($args);
-		if ($ls_prefix) {
-			$ls_path .= $ls_prefix . DS;
+		$prefix = $this->getPrefix($args);
+		if ($prefix) {
+			$path .= $prefix . DS;
 		}
 
 
-		return str_replace('/', DS, $ls_path);
+		return str_replace('/', DS, $path);
 	}
 
 
@@ -65,24 +65,24 @@ trait UtilTrait {
 	 * @return array
 	 */
 	protected function getAutoloadPathsForNamespace(string $namespace): array {
-		$la_autoloadFunctions = spl_autoload_functions();
+		$autoloadFunctions = spl_autoload_functions();
 
-		foreach ($la_autoloadFunctions as $lx_function) {
-			if (is_array($lx_function) && $lx_function[0] instanceof ClassLoader) {
-				$lo_classLoader = $lx_function[0];
+		$namespace = rtrim($namespace, '\\') . '\\';
 
-				$lo_reflection = new ReflectionClass($lo_classLoader);
+		foreach ($autoloadFunctions as $function) {
+			if (is_array($function) && $function[0] instanceof ClassLoader) {
+				$classLoader = $function[0];
 
-				$lo_property = $lo_reflection->getProperty('prefixDirsPsr4');
+				$reflection = new ReflectionClass($classLoader);
+
+				$property = $reflection->getProperty('prefixDirsPsr4');
 				/** @noinspection PhpExpressionResultUnusedInspection */
-				$lo_property->setAccessible(true);
+				$property->setAccessible(true);
 
-				$la_prefixDirsPsr4 = $lo_property->getValue($lo_classLoader);
+				$prefixDirsPsr4 = $property->getValue($classLoader);
 
-				$ls_namespace = rtrim($namespace, '\\') . '\\';
-
-				if (isset($la_prefixDirsPsr4[ $ls_namespace ])) {
-					return $la_prefixDirsPsr4[ $ls_namespace ];
+				if (isset($prefixDirsPsr4[ $namespace ])) {
+					return $prefixDirsPsr4[ $namespace ];
 				}
 			}
 		}

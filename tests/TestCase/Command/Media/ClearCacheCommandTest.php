@@ -63,7 +63,6 @@ class ClearCacheCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildOptionParserIncludesSetOptions(): void {
 		$parser = new ConsoleOptionParser('test');
@@ -91,7 +90,6 @@ class ClearCacheCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testExecuteSuccess(): void {
@@ -133,7 +131,6 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeleteFolders(): void {
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->onlyMethods([
@@ -159,7 +156,6 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeleteFoldersWithNoRecords(): void {
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->onlyMethods([
@@ -176,7 +172,6 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveDeletedFoldersFromDatabase(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
@@ -200,7 +195,6 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveDeletedFoldersFromDatabaseWithUnknownType(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
@@ -218,7 +212,6 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResetDatabaseRecords(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
@@ -242,7 +235,6 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeleteResizedDatabaseRecords(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
@@ -265,7 +257,6 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeleteResizedDatabaseRecordsWithUnknownType(): void {
 		$table = $this->createMock(MediaFoldersTable::class);
@@ -283,22 +274,21 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFetchFolders(): void {
 		$this->_createTestFolders();
 
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $this->fetchTable('MediaFolders');
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = $this->fetchTable('MediaFolders');
 		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-		$lo_records = $lo_table->find('withDeleted')->all();
+		$records = $table->find('withDeleted')->all();
 
 		$table = $this->createMock(MediaFoldersTable::class);
 		$query = $this->createMock(SelectQuery::class);
 
 		$table->expects($this->once())->method('find')->willReturn($query);
 		$query->expects($this->once())->method('find')->with('withDeleted')->willReturn($query);
-		$query->expects($this->once())->method('all')->willReturn($lo_records);
+		$query->expects($this->once())->method('all')->willReturn($records);
 
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
 
@@ -325,22 +315,21 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFetchDeletedFolders(): void {
 		$this->_createTestFolders();
 
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $this->fetchTable('MediaFolders');
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = $this->fetchTable('MediaFolders');
 		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findDeleted() */
-		$lo_records = $lo_table->find('deleted')->all();
+		$records = $table->find('deleted')->all();
 
 		$table = $this->createMock(MediaFoldersTable::class);
 		$query = $this->createMock(SelectQuery::class);
 
 		$table->expects($this->once())->method('find')->willReturn($query);
 		$query->expects($this->once())->method('find')->with('deleted')->willReturn($query);
-		$query->expects($this->once())->method('all')->willReturn($lo_records);
+		$query->expects($this->once())->method('all')->willReturn($records);
 
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
 
@@ -357,20 +346,19 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFetchEffectsFolders(): void {
 		$this->_createTestFolders();
 
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $this->fetchTable('MediaFolders');
-		$lo_records = $lo_table->find()->all();
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = $this->fetchTable('MediaFolders');
+		$records = $table->find()->all();
 
 		$table = $this->createMock(MediaFoldersTable::class);
 		$query = $this->createMock(SelectQuery::class);
 
 		$table->expects($this->once())->method('find')->willReturn($query);
-		$query->expects($this->once())->method('all')->willReturn($lo_records);
+		$query->expects($this->once())->method('all')->willReturn($records);
 
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
 
@@ -388,20 +376,19 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFetchPreviewsFolders(): void {
 		$this->_createTestFolders();
 
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $this->fetchTable('MediaFolders');
-		$lo_records = $lo_table->find()->all();
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = $this->fetchTable('MediaFolders');
+		$records = $table->find()->all();
 
 		$table = $this->createMock(MediaFoldersTable::class);
 		$query = $this->createMock(SelectQuery::class);
 
 		$table->expects($this->once())->method('find')->willReturn($query);
-		$query->expects($this->once())->method('all')->willReturn($lo_records);
+		$query->expects($this->once())->method('all')->willReturn($records);
 
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
 
@@ -419,20 +406,19 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFetchResizedFolders(): void {
 		$this->_createTestFolders();
 
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $this->fetchTable('MediaFolders');
-		$lo_records = $lo_table->find()->all();
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = $this->fetchTable('MediaFolders');
+		$records = $table->find()->all();
 
 		$table = $this->createMock(MediaFoldersTable::class);
 		$query = $this->createMock(SelectQuery::class);
 
 		$table->expects($this->once())->method('find')->willReturn($query);
-		$query->expects($this->once())->method('all')->willReturn($lo_records);
+		$query->expects($this->once())->method('all')->willReturn($records);
 
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
 
@@ -450,20 +436,19 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFetchAvifFolders(): void {
 		$this->_createTestFolders();
 
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $this->fetchTable('MediaFolders');
-		$lo_records = $lo_table->find()->all();
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = $this->fetchTable('MediaFolders');
+		$records = $table->find()->all();
 
 		$table = $this->createMock(MediaFoldersTable::class);
 		$query = $this->createMock(SelectQuery::class);
 
 		$table->expects($this->once())->method('find')->willReturn($query);
-		$query->expects($this->once())->method('all')->willReturn($lo_records);
+		$query->expects($this->once())->method('all')->willReturn($records);
 
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
 
@@ -481,20 +466,19 @@ class ClearCacheCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFetchWebpFolders(): void {
 		$this->_createTestFolders();
 
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $this->fetchTable('MediaFolders');
-		$lo_records = $lo_table->find()->all();
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = $this->fetchTable('MediaFolders');
+		$records = $table->find()->all();
 
 		$table = $this->createMock(MediaFoldersTable::class);
 		$query = $this->createMock(SelectQuery::class);
 
 		$table->expects($this->once())->method('find')->willReturn($query);
-		$query->expects($this->once())->method('all')->willReturn($lo_records);
+		$query->expects($this->once())->method('all')->willReturn($records);
 
 		$command = $this->getMockBuilder(ClearCacheCommand::class)->getMock();
 

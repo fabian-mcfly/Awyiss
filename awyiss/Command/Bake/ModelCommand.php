@@ -43,39 +43,39 @@ class ModelCommand extends BaseModelCommand {
 			return;
 		}
 
-		$ls_name = $this->_entityName($model->getAlias());
-		$io->out("\n" . sprintf('Baking entity class for %s...', $ls_name)/*, 1, ConsoleIo::NORMAL*/);
+		$name = $this->_entityName($model->getAlias());
+		$io->out("\n" . sprintf('Baking entity class for %s...', $name)/*, 1, ConsoleIo::NORMAL*/);
 
-		$ls_namespace = Configure::read('App.namespace');
-		$ls_pluginPath = '';
+		$namespace = Configure::read('App.namespace');
+		$pluginPath = '';
 		if ($this->plugin) {
-			$ls_namespace = $this->_pluginNamespace($this->plugin);
-			$ls_pluginPath = $this->plugin . '.';
+			$namespace = $this->_pluginNamespace($this->plugin);
+			$pluginPath = $this->plugin . '.';
 		}
 		elseif ($args->getOption('namespace')) {
-			$ls_namespace = Inflector::underscore($args->getOption('namespace'));
-			$ls_namespace = Inflector::camelize($ls_namespace);
+			$namespace = Inflector::underscore($args->getOption('namespace'));
+			$namespace = Inflector::camelize($namespace);
 		}
 
-		$ls_path = $this->getPath($args);
-		$ls_filePath = $ls_path . 'Entity' . DS . $ls_name . '.php';
+		$path = $this->getPath($args);
+		$filePath = $path . 'Entity' . DS . $name . '.php';
 
-		$lo_parsedFile = null;
+		$parsedFile = null;
 		if ($args->getOption('update')) {
-			$lo_parsedFile = $this->parseFile($ls_filePath);
+			$parsedFile = $this->parseFile($filePath);
 		}
 
-		$la_data = $data + [
+		$data += [
 			'fieldMap' => [],
-			'name' => $ls_name,
-			'namespace' => $ls_namespace,
+			'name' => $name,
+			'namespace' => $namespace,
 			'plugin' => $this->plugin,
-			'pluginPath' => $ls_pluginPath,
+			'pluginPath' => $pluginPath,
 			'primaryKey' => [],
-			'fileBuilder' => new FileBuilder($io, $ls_namespace . '\Model\Entity', $lo_parsedFile),
+			'fileBuilder' => new FileBuilder($io, $namespace . '\Model\Entity', $parsedFile),
 		];
 
-		$la_data['fields'] = array_filter($la_data['fields'], function (string $field): bool {
+		$data['fields'] = array_filter($data['fields'], function (string $field): bool {
 			return !in_array($field, [
 				'deleted',
 				'created_by',
@@ -92,34 +92,34 @@ class ModelCommand extends BaseModelCommand {
 			]);
 		});
 
-		foreach ($la_data['fields'] as &$ls_field) {
-			$ls_variable = Inflector::variable($ls_field);
+		foreach ($data['fields'] as &$field) {
+			$variable = Inflector::variable($field);
 
-			if ($ls_variable !== $ls_field) {
-				$la_data['fieldMap'][ $ls_field ] = $ls_variable;
+			if ($variable !== $field) {
+				$data['fieldMap'][ $field ] = $variable;
 			}
 
-			$ls_field = $ls_variable;
+			$field = $variable;
 		}
-		unset($la_data['fieldMap']['media_element_assignments'], $ls_field);
+		unset($data['fieldMap']['media_element_assignments'], $field);
 
-		foreach ($la_data['hidden'] as &$ls_field) {
-			$ls_field = Inflector::variable($ls_field);
+		foreach ($data['hidden'] as &$field) {
+			$field = Inflector::variable($field);
 		}
-		unset($ls_field);
+		unset($field);
 
-		$ls_template = 'Model/entity';
+		$template = 'Model/entity';
 		if ($args->getOption('is-pagerole')) {
-			$ls_template = 'Model/entity_is_pagerole';
+			$template = 'Model/entity_is_pagerole';
 		}
 
-		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
-		$ls_contents = str_replace('    ', "\t", $ls_contents);
+		$contents = $this->createTemplateRenderer()->set($data)->generate($template);
+		$contents = str_replace('    ', "\t", $contents);
 
-		$this->writeFile($io, $ls_filePath, $ls_contents, $this->force);
+		$this->writeFile($io, $filePath, $contents, $this->force);
 
-		$ls_emptyFile = $ls_path . 'Entity' . DS . '.gitkeep';
-		$this->deleteEmptyFile($ls_emptyFile, $io);
+		$emptyFile = $path . 'Entity' . DS . '.gitkeep';
+		$this->deleteEmptyFile($emptyFile, $io);
 	}
 
 
@@ -138,78 +138,78 @@ class ModelCommand extends BaseModelCommand {
 			return;
 		}
 
-		$ls_name = $model->getAlias();
-		$io->out("\n" . sprintf('Baking table class for %s...', $ls_name)/*, 1, ConsoleIo::NORMAL*/);
+		$name = $model->getAlias();
+		$io->out("\n" . sprintf('Baking table class for %s...', $name)/*, 1, ConsoleIo::NORMAL*/);
 
-		$ls_namespace = Configure::read('App.namespace');
-		$ls_pluginPath = '';
+		$namespace = Configure::read('App.namespace');
+		$pluginPath = '';
 		if ($this->plugin) {
-			$ls_namespace = $this->_pluginNamespace($this->plugin);
+			$namespace = $this->_pluginNamespace($this->plugin);
 		}
 		elseif ($args->getOption('namespace')) {
-			$ls_namespace = Inflector::underscore($args->getOption('namespace'));
-			$ls_namespace = Inflector::camelize($ls_namespace);
+			$namespace = Inflector::underscore($args->getOption('namespace'));
+			$namespace = Inflector::camelize($namespace);
 		}
 
-		$ls_path = $this->getPath($args);
-		$ls_filePath = $ls_path . 'Table' . DS . $ls_name . 'Table.php';
+		$path = $this->getPath($args);
+		$filePath = $path . 'Table' . DS . $name . 'Table.php';
 
-		$lo_parsedFile = null;
+		$parsedFile = null;
 		if ($args->getOption('update')) {
-			$lo_parsedFile = $this->parseFile($ls_filePath);
+			$parsedFile = $this->parseFile($filePath);
 		}
 
-		if ($lo_parsedFile) {
-			unset($lo_parsedFile->class->constants['ATTRIBUTABLE'], $lo_parsedFile->class->constants['TABLE']);
+		if ($parsedFile) {
+			unset($parsedFile->class->constants['ATTRIBUTABLE'], $parsedFile->class->constants['TABLE']);
 		}
 
-		$ls_entity = $this->_entityName($model->getAlias());
+		$entity = $this->_entityName($model->getAlias());
 		if ($args->getOption('is-pagerole')) {
-			$ls_entity = 'Page';
+			$entity = 'Page';
 		}
 
-		$la_data = $data + [
-				'plugin' => $this->plugin,
-				'pluginPath' => $ls_pluginPath,
-				'namespace' => $ls_namespace,
-				'name' => $ls_name,
-				'entity' => $ls_entity,
-				'associations' => [],
-				'primaryKey' => 'id',
-				'displayField' => null,
-				'table' => null,
-				'validation' => [],
-				'rulesChecker' => [],
-				'behaviors' => [],
-				'connection' => $this->connection,
-				'fileBuilder' => new FileBuilder($io, $ls_namespace . '\Model\Table', $lo_parsedFile),
-			];
+		$data += [
+			'plugin' => $this->plugin,
+			'pluginPath' => $pluginPath,
+			'namespace' => $namespace,
+			'name' => $name,
+			'entity' => $entity,
+			'associations' => [],
+			'primaryKey' => 'id',
+			'displayField' => null,
+			'table' => null,
+			'validation' => [],
+			'rulesChecker' => [],
+			'behaviors' => [],
+			'connection' => $this->connection,
+			'fileBuilder' => new FileBuilder($io, $namespace . '\Model\Table', $parsedFile),
+		];
 
-		$ls_template = 'Model/table';
+		$template = 'Model/table';
 		if ($args->getOption('for-pagerole')) {
-			$ls_template = 'Model/table_for_pagerole';
+			$template = 'Model/table_for_pagerole';
 		}
 		if ($args->getOption('is-datatable')) {
-			$ls_template = 'Model/table_is_datatable';
+			$template = 'Model/table_is_datatable';
 		}
 		if ($args->getOption('is-pagerole')) {
-			$ls_template = 'Model/table_is_pagerole';
+			$template = 'Model/table_is_pagerole';
 		}
 
-		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
-		$ls_contents = str_replace('    ', "\t", $ls_contents);
+		$contents = $this->createTemplateRenderer()->set($data)->generate($template);
+		$contents = str_replace('    ', "\t", $contents);
 
-		$this->writeFile($io, $ls_filePath, $ls_contents, $this->force);
+		$this->writeFile($io, $filePath, $contents, $this->force);
 
 		// Work around composer caching that classes/files do not exist.
 		// Check for the file as it might not exist in tests.
-		if (file_exists($ls_filePath)) {
-			require_once $ls_filePath;
+		if (file_exists($filePath)) {
+			require_once $filePath;
 		}
 		$this->getTableLocator()->clear();
 
-		$ls_emptyFile = $ls_path . 'Table' . DS . '.gitkeep';
-		$this->deleteEmptyFile($ls_emptyFile, $io);
+		$emptyFile = $path . 'Table' . DS . '.gitkeep';
+		$this->deleteEmptyFile($emptyFile, $io);
 	}
 
 
@@ -217,31 +217,31 @@ class ModelCommand extends BaseModelCommand {
 	 * @inheritDoc
 	 */
 	public function getAssociations(Table $table, Arguments $args, ConsoleIo $io): array {
-		$la_allAssociations = parent::getAssociations($table, $args, $io);
+		$allAssociations = parent::getAssociations($table, $args, $io);
 
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		if (
 			$args->getOption('for-pagerole') &&
-			$ls_pageRoleEnum::tryFromName($args->getOption('for-pagerole')) &&
-			!empty($la_allAssociations['belongsTo'])
+			$pageRoleEnum::tryFromName($args->getOption('for-pagerole')) &&
+			!empty($allAssociations['belongsTo'])
 		) {
-			foreach ($la_allAssociations['belongsTo'] as &$la_association) {
-				if ($la_association['alias'] === 'Pages') {
-					$la_association['alias'] = Inflector::camelize($args->getOption('for-pagerole'));
+			foreach ($allAssociations['belongsTo'] as &$association) {
+				if ($association['alias'] === 'Pages') {
+					$association['alias'] = Inflector::camelize($args->getOption('for-pagerole'));
 				}
 			}
-			unset($la_associations);
+			unset($associations);
 		}
 
-		foreach ($la_allAssociations as &$la_associations) {
-			$this->camelbackAssociationKeys($la_associations);
+		foreach ($allAssociations as &$associations) {
+			$this->camelbackAssociationKeys($associations);
 		}
-		unset($la_associations);
+		unset($associations);
 
 
-		return $la_allAssociations;
+		return $allAssociations;
 	}
 
 
@@ -253,37 +253,37 @@ class ModelCommand extends BaseModelCommand {
 			return [];
 		}
 
-		$lo_schema = $model->getSchema();
-		$la_fields = $lo_schema->columns();
-		if (!$la_fields) {
+		$schema = $model->getSchema();
+		$fields = $schema->columns();
+		if (!$fields) {
 			return false;
 		}
 
-		$la_validate = [];
-		$ls_primaryKey = $lo_schema->getPrimaryKey();
-		$lx_foreignKeys = [];
+		$validate = [];
+		$primaryKey = $schema->getPrimaryKey();
+		$foreignKeys = [];
 
 		if (isset($associations['belongsTo'])) {
-			foreach ($associations['belongsTo'] as $la_association) {
-				$lx_foreignKeys[] = $la_association['foreignKey'];
+			foreach ($associations['belongsTo'] as $association) {
+				$foreignKeys[] = $association['foreignKey'];
 			}
 		}
 
-		foreach ($la_fields as $ls_fieldName) {
+		foreach ($fields as $fieldName) {
 			// Skip primary key
-			if (in_array($ls_fieldName, $ls_primaryKey, true)) {
+			if (in_array($fieldName, $primaryKey, true)) {
 				continue;
 			}
-			$la_field = $lo_schema->getColumn($ls_fieldName);
-			$la_field['isForeignKey'] = in_array(Inflector::variable($ls_fieldName), $lx_foreignKeys, true);
-			$la_validation = $this->fieldValidation($lo_schema, $ls_fieldName, $la_field, $ls_primaryKey);
-			if ($la_validation) {
-				$la_validate[ Inflector::variable($ls_fieldName) ] = $la_validation;
+			$field = $schema->getColumn($fieldName);
+			$field['isForeignKey'] = in_array(Inflector::variable($fieldName), $foreignKeys, true);
+			$validation = $this->fieldValidation($schema, $fieldName, $field, $primaryKey);
+			if ($validation) {
+				$validate[ Inflector::variable($fieldName) ] = $validation;
 			}
 		}
 
 
-		return $la_validate;
+		return $validate;
 	}
 
 
@@ -293,19 +293,19 @@ class ModelCommand extends BaseModelCommand {
 	 * Extends the parent-method with a check for column type 'json'.
 	 */
 	public function fieldValidation(TableSchemaInterface $schema, string $fieldName, array $metaData, array $primaryKey): array {
-		$la_validations = parent::fieldValidation($schema, $fieldName, $metaData, $primaryKey);
+		$validations = parent::fieldValidation($schema, $fieldName, $metaData, $primaryKey);
 
 		if ($metaData['type'] === 'json') {
-			$la_validations = [
+			$validations = [
 				'isArray' => [
 					'rule' => 'array',
 					'args' => [],
 				],
-			] + $la_validations;
+			] + $validations;
 		}
 
 
-		return $la_validations;
+		return $validations;
 	}
 
 
@@ -313,14 +313,14 @@ class ModelCommand extends BaseModelCommand {
 	 * @inheritDoc
 	 */
 	public function getRules(Table $model, array $associations, Arguments $args): array {
-		$la_rules = parent::getRules($model, $associations, $args);
+		$rules = parent::getRules($model, $associations, $args);
 
-		if (str_starts_with($model->getTable(), 'attributes_') && isset($la_rules['page_id'])) {
-			$la_rules['page_id']['options']['skipPageRoleCheck'] = true;
+		if (str_starts_with($model->getTable(), 'attributes_') && isset($rules['page_id'])) {
+			$rules['page_id']['options']['skipPageRoleCheck'] = true;
 		}
 
 
-		return $la_rules;
+		return $rules;
 	}
 
 
@@ -343,9 +343,9 @@ class ModelCommand extends BaseModelCommand {
 	 * @return ConsoleOptionParser
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('namespace', [
+		$parser->addOption('namespace', [
 			'choices' => [
 				'Awyiss',
 				CUSTOM_NAMESPACE,
@@ -363,7 +363,7 @@ class ModelCommand extends BaseModelCommand {
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 
 
@@ -372,20 +372,19 @@ class ModelCommand extends BaseModelCommand {
 	 * @return void
 	 */
 	protected function camelbackAssociationKeys(array &$associations): void {
-		foreach ($associations as &$la_association) {
-			if (!empty($la_association['foreignKey'])) {
-				if (is_string($la_association['foreignKey'])) {
-					$la_association['foreignKey'] = Inflector::variable($la_association['foreignKey']);
+		foreach ($associations as &$association) {
+			if (!empty($association['foreignKey'])) {
+				if (is_string($association['foreignKey'])) {
+					$association['foreignKey'] = Inflector::variable($association['foreignKey']);
 				}
-				elseif (is_array($la_association['foreignKey'])) {
-					array_walk($la_association['foreignKey'], function (&$field): void {
-						/** @noinspection PhpVariableNamingConventionInspection */
+				elseif (is_array($association['foreignKey'])) {
+					array_walk($association['foreignKey'], function (&$field): void {
 						$field = Inflector::variable($field);
 					});
 				}
 			}
 		}
-		unset($la_association);
+		unset($association);
 	}
 
 

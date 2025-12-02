@@ -37,9 +37,9 @@ class CompileCommand extends Command {
 	 * @return \Cake\Console\ConsoleOptionParser
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('realm', [
+		$parser->addOption('realm', [
 			'choices' => [
 				'Backend',
 				'Frontend',
@@ -50,7 +50,7 @@ class CompileCommand extends Command {
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 
 
@@ -64,15 +64,15 @@ class CompileCommand extends Command {
 	public function execute(Arguments $args, ConsoleIo $io): int {
 		$io->out(sprintf('Fetching folders for realm `%s`... ', $args->getOption('realm')), 0);
 
-		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
-		$ls_compilerClass = $this->getCompilerClass();
+		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $compilerClass */
+		$compilerClass = $this->getCompilerClass();
 
 		// Set the exception handling for the ScssCompiler
-		$ls_compilerClass::showExceptions(true);
+		$compilerClass::showExceptions(true);
 
 		// Discover the SCSS files in the realm
 		try {
-			$la_files = $ls_compilerClass::discoverRealmFiles($args->getOption('realm'));
+			$files = $compilerClass::discoverRealmFiles($args->getOption('realm'));
 		}
 		catch (InvalidArgumentException) {
 			$io->err('No files found.');
@@ -80,19 +80,19 @@ class CompileCommand extends Command {
 			return static::CODE_ERROR;
 		}
 
-		$io->out(sprintf('%d folders found.', count($la_files)));
+		$io->out(sprintf('%d folders found.', count($files)));
 
-		$la_designSettings = [];
+		$designSettings = [];
 
 		if ($args->getOption('realm') == 'Frontend') {
-			$lo_designTable = FactoryLocator::get('Table')->get('Designs');
-			/** @var \Awyiss\Model\Entity\Design $lo_design */
-			$lo_design = $lo_designTable->find()->where(['in_use' => true])->first();
-			$la_designSettings = $lo_design->settings ?? [];
+			$designTable = FactoryLocator::get('Table')->get('Designs');
+			/** @var \Awyiss\Model\Entity\Design $design */
+			$design = $designTable->find()->where(['in_use' => true])->first();
+			$designSettings = $design->settings ?? [];
 		}
 
 		// Compile the SCSS files
-		if ($ls_compilerClass::compileFolders($la_files, $la_designSettings)) {
+		if ($compilerClass::compileFolders($files, $designSettings)) {
 			$io->success('All files compiled successfully.');
 
 			return static::CODE_SUCCESS;

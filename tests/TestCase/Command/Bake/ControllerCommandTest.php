@@ -42,7 +42,6 @@ class ControllerCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControllerCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Controller' . DS . 'Backend' . DS . 'UsersController.php';

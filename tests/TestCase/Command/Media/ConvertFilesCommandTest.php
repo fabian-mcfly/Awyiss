@@ -57,7 +57,6 @@ class ConvertFilesCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
@@ -82,7 +81,6 @@ class ConvertFilesCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildOptionParserIncludesSetOptions(): void {
 		$parser = new ConsoleOptionParser('test');
@@ -109,7 +107,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteSuccess(): void {
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -143,7 +140,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteWithError(): void {
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
@@ -177,7 +173,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessCropFilesReturnsFileCountWhenFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -200,7 +195,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessCropFilesReturnsZeroWhenNoFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -222,7 +216,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessCropFilesReturnsFalseWhenCropImagesFails(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -245,7 +238,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNonImageFilesReturnsFileCountWhenFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -268,7 +260,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNonImageFilesReturnsZeroWhenNoFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -289,7 +280,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNonImageFilesReturnsFalseWhenConvertNonImagesFails(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -312,7 +302,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessAvifConversionReturnsFileCountWhenFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -335,7 +324,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessAvifConversionReturnsZeroWhenNoFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -357,7 +345,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessAvifConversionReturnsFalseWhenConvertImagesFails(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -380,7 +367,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessWebpConversionReturnsFileCountWhenFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -403,7 +389,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessWebpConversionReturnsZeroWhenNoFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -425,7 +410,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessWebpConversionReturnsFalseWhenConvertImagesFails(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -448,7 +432,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessResizingReturnsFileCountWhenFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -471,7 +454,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessResizingReturnsZeroWhenNoFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -493,7 +475,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessResizingReturnsFalseWhenResizeImagesFails(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -516,7 +497,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessAverageColorCalculationReturnsFileCountWhenFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -539,7 +519,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessAverageColorCalculationReturnsZeroWhenNoFilesExist(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -561,7 +540,6 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessAverageColorCalculationReturnsFalseWhenCalculateAverageColorsFails(): void {
 		$files = $this->createMock(ResultSetInterface::class);
@@ -585,12 +563,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCalculateAverageColorsForValidFiles(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->limit(5)->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->limit(5)->all();
 
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll');
@@ -613,12 +590,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCalculateAverageColorsForNonExistentFile(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 9])->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->where(['id' => 9])->all();
 
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll');
@@ -643,12 +619,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCalculateAverageColorsForPngFile(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 4])->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->where(['id' => 4])->all();
 
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll');
@@ -671,12 +646,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCalculateAverageColorsForFile(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 2])->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->where(['id' => 2])->all();
 
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll');
@@ -701,13 +675,12 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCalculateAverageColor(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
 		/** @var \Awyiss\Model\Entity\Media $media */
-		$media = $lo_table->find()->where(['id' => 2])->first();
+		$media = $table->find()->where(['id' => 2])->first();
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->getMock();
 
@@ -726,12 +699,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConvertImagesToAvif(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 2])->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->where(['id' => 2])->all();
 
 		// Mock the MediaTable
 		$table = $this->createMock(MediaTable::class);
@@ -779,12 +751,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConvertImagesToAvifFailed(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 10])->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->where(['id' => 10])->all();
 
 		// Mock the MediaTable
 		$table = $this->createMock(MediaTable::class);
@@ -823,12 +794,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConvertImagesToWebp(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 2])->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->where(['id' => 2])->all();
 
 		// Mock the MediaTable
 		$table = $this->createMock(MediaTable::class);
@@ -876,12 +846,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConvertImagesToWebpFailed(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 10])->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->where(['id' => 10])->all();
 
 		// Mock the MediaTable
 		$table = $this->createMock(MediaTable::class);
@@ -921,12 +890,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConvertNonImages(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 3])->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->where(['id' => 3])->all();
 
 		Configure::write('AvailableCommands.imageMagick.pdf', true);
 
@@ -984,12 +952,11 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConvertNonImagesWithUnknownCommand(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 1])->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->where(['id' => 1])->all();
 
 		// Mock the MediaTable
 		$table = $this->createMock(MediaTable::class);
@@ -1037,12 +1004,11 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCropCommand(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->all();
 
 		// Mock the ConvertFilesCommand
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->getMock();
@@ -1131,12 +1097,11 @@ class ConvertFilesCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetResizeCommand(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->all();
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
+		$resultSet = $table->find()->all();
 
 		// Mock the ConvertFilesCommand
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->getMock();
@@ -1230,13 +1195,12 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetResizeCommandRespectsQualitySetting(): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = $this->fetchTable('Media');
 		/** @var \Awyiss\Model\Entity\Media $media */
-		$media = $lo_table->find()->where(['id' => 2])->first();
+		$media = $table->find()->where(['id' => 2])->first();
 
 		Configure::write('Awyiss.Media.Frontend.resizing.quality', 54);
 

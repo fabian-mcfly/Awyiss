@@ -37,7 +37,6 @@ class BackupCommandTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
@@ -53,8 +52,7 @@ class BackupCommandTest extends TestCase {
 
 	/**
 	 * Test the backup command
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection*/
+	 **/
 	public function testBackupCommand(): void {
 		// Get the backup file name
 		$backupFile = ROOT . DS . 'backup' . DS . 'backup-' . date('Y-m-d-H-i-s') . '.zip';

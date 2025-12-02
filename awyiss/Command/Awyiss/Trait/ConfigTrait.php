@@ -53,20 +53,20 @@ trait ConfigTrait {
 			return;
 		}
 
-		$ls_envExampleFilePath = ROOT . DS . $this->customerName . DS . '.env.example';
-		$ls_envFilePath = ROOT . DS . '.env';
+		$envExampleFilePath = ROOT . DS . $this->customerName . DS . '.env.example';
+		$envFilePath = ROOT . DS . '.env';
 
 		// Load the contents of the .env.example file
-		$ls_envExampleContents = file_get_contents($ls_envExampleFilePath);
+		$envExampleContents = file_get_contents($envExampleFilePath);
 
 		// Replace the placeholders with the user inputs
-		$ls_envContents = str_replace('CONFIG_ENV=\'development\'', 'CONFIG_ENV=\'' . $this->installEnvironment . '\'', $ls_envExampleContents);
-		$ls_envContents = str_replace('CUSTOM_DIR=\'customer\'', 'CUSTOM_DIR=\'' . $this->customerName . '\'', $ls_envContents);
+		$envContents = str_replace('CONFIG_ENV=\'development\'', 'CONFIG_ENV=\'' . $this->installEnvironment . '\'', $envExampleContents);
+		$envContents = str_replace('CUSTOM_DIR=\'customer\'', 'CUSTOM_DIR=\'' . $this->customerName . '\'', $envContents);
 
 		// Write the updated contents back to the .env file
-		file_put_contents($ls_envFilePath, $ls_envContents);
+		file_put_contents($envFilePath, $envContents);
 
-		unlink($ls_envExampleFilePath);
+		unlink($envExampleFilePath);
 
 		$this->io->success('.env file created.');
 	}
@@ -87,25 +87,25 @@ trait ConfigTrait {
 		}
 
 		// Define the path to the base configuration file
-		$ls_baseConfigFilePath = ROOT . DS . $this->customerName . DS . 'config/awyiss.php';
+		$baseConfigFilePath = ROOT . DS . $this->customerName . DS . 'config/awyiss.php';
 
 		// Load the base config file
-		$ls_baseConfig = include $ls_baseConfigFilePath;
+		$baseConfig = include $baseConfigFilePath;
 
 		// Generate a new salt
-		$ls_securitySalt = bin2hex(random_bytes(32));
+		$securitySalt = bin2hex(random_bytes(32));
 
 		// Replace the salt in the base config file
-		$ls_baseConfig['Security']['salt'] = $ls_securitySalt;
+		$baseConfig['Security']['salt'] = $securitySalt;
 
 		// Set the cookie name based on the customer name
-		$ls_baseConfig['Session']['cookie'] = $this->customerName;
+		$baseConfig['Session']['cookie'] = $this->customerName;
 
 		// Convert the updated configuration array to a string of PHP code
-		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
-		$ls_contents .= VarExporter::export($ls_baseConfig, VarExporter::TRAILING_COMMA_IN_ARRAY);
-		$ls_contents .= ';';
-		$ls_contents = str_replace('    ', "\t", $ls_contents);
+		$contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
+		$contents .= VarExporter::export($baseConfig, VarExporter::TRAILING_COMMA_IN_ARRAY);
+		$contents .= ';';
+		$contents = str_replace('    ', "\t", $contents);
 
 		/**
 		 * Replace
@@ -120,16 +120,16 @@ trait ConfigTrait {
 		 *
 		 * since including the config file evaluates the statement
 		 */
-		$ls_contents = str_replace([
+		$contents = str_replace([
 			'\'previewScssFiles\' => null,',
 			'\'scssFiles\' => null,',
 		], [
 			'\'previewScssFiles\' => defined(\'CUSTOM_DIR\') ? [ROOT . DS . CUSTOM_DIR . \'/assets/scss/full.scss\'] : null,',
 			'\'scssFiles\' => defined(\'CUSTOM_DIR\') ? [ROOT . DS . CUSTOM_DIR . \'/assets/scss/helper/_variables.scss\'] : null,',
-		], $ls_contents);
+		], $contents);
 
 		// Write the updated contents back to the base config file
-		file_put_contents($ls_baseConfigFilePath, $ls_contents);
+		file_put_contents($baseConfigFilePath, $contents);
 
 		$this->io->success('Base config file set.');
 	}
@@ -156,57 +156,57 @@ trait ConfigTrait {
 			return;
 		}
 
-		$ls_skeletonEnvironmentFilePath = ROOT . DS . $this->customerName . DS . 'config' . DS . 'environment_skeleton.php';
-		$ls_environmentConfigFilePath = ROOT . DS . $this->customerName . DS . 'config' . DS . $this->installEnvironment . DS . 'awyiss.php';
+		$skeletonEnvironmentFilePath = ROOT . DS . $this->customerName . DS . 'config' . DS . 'environment_skeleton.php';
+		$environmentConfigFilePath = ROOT . DS . $this->customerName . DS . 'config' . DS . $this->installEnvironment . DS . 'awyiss.php';
 
-		$ls_environmentFolderPath = dirname($ls_environmentConfigFilePath);
+		$environmentFolderPath = dirname($environmentConfigFilePath);
 
 		// Create the environment folder if it does not exist
-		if (!file_exists($ls_environmentFolderPath)) {
-			mkdir($ls_environmentFolderPath, 0755, true);
+		if (!file_exists($environmentFolderPath)) {
+			mkdir($environmentFolderPath, 0755, true);
 		}
 
 		// Copy the environment skeleton file to the environment config file
-		rename($ls_skeletonEnvironmentFilePath, $ls_environmentConfigFilePath);
+		rename($skeletonEnvironmentFilePath, $environmentConfigFilePath);
 
 		// Determine if the environment resembles a production environment
-		$lb_isProductionEnvironment = in_array($this->installEnvironment, ['production', 'prod', 'live']);
+		$isProductionEnvironment = in_array($this->installEnvironment, ['production', 'prod', 'live']);
 
 		// Set the log and debug flags and error level based on the environment
-		$ls_logFlag = !$lb_isProductionEnvironment;
-		$ls_debugFlag = !$lb_isProductionEnvironment;
-		$ls_errorLevel = $lb_isProductionEnvironment ? 0 : E_ALL;
+		$logFlag = !$isProductionEnvironment;
+		$debugFlag = !$isProductionEnvironment;
+		$errorLevel = $isProductionEnvironment ? 0 : 'E_ALL';
 
 		// Load the environment config file
-		$la_environmentConfig = include $ls_environmentConfigFilePath;
+		$environmentConfig = include $environmentConfigFilePath;
 
 		// Set the database configuration based on user inputs
-		$la_environmentConfig['Datasources']['default']['database'] = $this->dbName;
-		$la_environmentConfig['Datasources']['default']['host'] = $this->dbHost;
-		$la_environmentConfig['Datasources']['default']['log'] = $ls_logFlag;
-		$la_environmentConfig['Datasources']['default']['password'] = $this->dbPassword;
-		$la_environmentConfig['Datasources']['default']['username'] = $this->dbUsername;
+		$environmentConfig['Datasources']['default']['database'] = $this->dbName;
+		$environmentConfig['Datasources']['default']['host'] = $this->dbHost;
+		$environmentConfig['Datasources']['default']['log'] = $logFlag;
+		$environmentConfig['Datasources']['default']['password'] = $this->dbPassword;
+		$environmentConfig['Datasources']['default']['username'] = $this->dbUsername;
 
 		// Temporarily set the 'custom' connection as the default connection to apply the new database configuration immediately
-		$la_config = ConnectionManager::get('default')->config();
-		ConnectionManager::setConfig('custom', array_merge($la_config, $la_environmentConfig['Datasources']['default'], [
+		$config = ConnectionManager::get('default')->config();
+		ConnectionManager::setConfig('custom', array_merge($config, $environmentConfig['Datasources']['default'], [
 			'className' => Connection::class,
 		]));
 		ConnectionManager::alias('custom', 'default');
 
 
 		// Set the debug flag and error level based on the environment
-		$la_environmentConfig['debug'] = $ls_debugFlag;
-		$la_environmentConfig['Error']['errorLevel'] = $ls_errorLevel;
+		$environmentConfig['debug'] = $debugFlag;
+		$environmentConfig['Error']['errorLevel'] = $errorLevel;
 
-		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
+		$contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
 
-		$ls_contents .= VarExporter::export($la_environmentConfig, VarExporter::TRAILING_COMMA_IN_ARRAY);
-		$ls_contents .= ';';
-		$ls_contents = str_replace('    ', "\t", $ls_contents);
+		$contents .= VarExporter::export($environmentConfig, VarExporter::TRAILING_COMMA_IN_ARRAY);
+		$contents .= ';';
+		$contents = str_replace('    ', "\t", $contents);
 
 		// Write the updated contents back to the environment config file
-		file_put_contents($ls_environmentConfigFilePath, $ls_contents);
+		file_put_contents($environmentConfigFilePath, $contents);
 
 		$this->io->success('Environment config file set.');
 	}
@@ -225,16 +225,16 @@ trait ConfigTrait {
 		}
 
 		// Define the path to the ContentsAttributeOptions.php file
-		$ls_filePath = ROOT . DS . $this->customerName . DS . 'Attribute' . DS . 'AttributeOptions' . DS . 'ContentsAttributeOptions.php';
+		$filePath = ROOT . DS . $this->customerName . DS . 'Attribute' . DS . 'AttributeOptions' . DS . 'ContentsAttributeOptions.php';
 
 		// Load the contents of the ContentsAttributeOptions.php file
-		$ls_fileContents = file_get_contents($ls_filePath);
+		$fileContents = file_get_contents($filePath);
 
-		$ls_newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Attribute\\AttributeOptions;';
-		$ls_fileContents = str_replace('namespace Customer\\Attribute\\AttributeOptions;', $ls_newNamespace, $ls_fileContents);
+		$newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Attribute\\AttributeOptions;';
+		$fileContents = str_replace('namespace Customer\\Attribute\\AttributeOptions;', $newNamespace, $fileContents);
 
 		// Write the updated contents back to the ContentsAttributeOptions.php file
-		file_put_contents($ls_filePath, $ls_fileContents);
+		file_put_contents($filePath, $fileContents);
 
 		$this->io->success('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.');
 	}
@@ -253,17 +253,17 @@ trait ConfigTrait {
 		}
 
 		// Define the path to the MenuCell.php file
-		$ls_filePath = ROOT . DS . $this->customerName . DS . 'View' . DS . 'Cell' . DS . 'Frontend' . DS . 'MenuCell.php';
+		$filePath = ROOT . DS . $this->customerName . DS . 'View' . DS . 'Cell' . DS . 'Frontend' . DS . 'MenuCell.php';
 
 		// Load the contents of the MenuCell.php file
-		$ls_fileContents = file_get_contents($ls_filePath);
+		$fileContents = file_get_contents($filePath);
 
 		// Replace the namespace with the camelized version of the given customer name
-		$ls_newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\View\\Cell\\Frontend;';
-		$ls_fileContents = str_replace('namespace Customer\\View\\Cell\\Frontend;', $ls_newNamespace, $ls_fileContents);
+		$newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\View\\Cell\\Frontend;';
+		$fileContents = str_replace('namespace Customer\\View\\Cell\\Frontend;', $newNamespace, $fileContents);
 
 		// Write the updated contents back to the MenuCell.php file
-		file_put_contents($ls_filePath, $ls_fileContents);
+		file_put_contents($filePath, $fileContents);
 
 		$this->io->success('\Customer\View\Cell\Frontend\MenuCell file updated.');
 	}
@@ -282,22 +282,22 @@ trait ConfigTrait {
 		}
 
 		// Define the path to the ide-twig.json file
-		$ls_filePath = ROOT . DS . $this->customerName . DS . 'templates' . DS . 'ide-twig.json';
+		$filePath = ROOT . DS . $this->customerName . DS . 'templates' . DS . 'ide-twig.json';
 
 		// Load the contents of the ide-twig.json file
-		$ls_fileContents = file_get_contents($ls_filePath);
+		$fileContents = file_get_contents($filePath);
 
 		// Decode the JSON content to a PHP array
-		$la_content = json_decode($ls_fileContents, true);
+		$content = json_decode($fileContents, true);
 
 		// Change the value of the namespace key to the camelized version of the given customer name
-		$la_content['namespaces'][0]['namespace'] = Inflector::camelize($this->customerName);
+		$content['namespaces'][0]['namespace'] = Inflector::camelize($this->customerName);
 
 		// Encode the updated PHP array back to a JSON string
-		$ls_updatedContents = json_encode($la_content, JSON_PRETTY_PRINT);
+		$updatedContents = json_encode($content, JSON_PRETTY_PRINT);
 
 		// Write the updated JSON string back to the ide-twig.json file
-		file_put_contents($ls_filePath, $ls_updatedContents);
+		file_put_contents($filePath, $updatedContents);
 
 		$this->io->success('ide-twig.json file updated.');
 	}
@@ -316,24 +316,24 @@ trait ConfigTrait {
 		}
 
 		// Define the path to the CustomerExtension.php file
-		$ls_filePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . 'CustomerExtension.php';
+		$filePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . 'CustomerExtension.php';
 
 		// Load the contents of the CustomerExtension.php file
-		$ls_fileContents = file_get_contents($ls_filePath);
+		$fileContents = file_get_contents($filePath);
 
 		// Replace the namespace and class name with the camelized version of the given customer name
-		$ls_newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Twig\\Extension;';
-		$ls_newClassName = 'class ' . Inflector::camelize($this->customerName) . 'Extension extends AbstractExtension {';
+		$newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Twig\\Extension;';
+		$newClassName = 'class ' . Inflector::camelize($this->customerName) . 'Extension extends AbstractExtension {';
 
-		$ls_fileContents = str_replace('namespace Customer\\Twig\\Extension;', $ls_newNamespace, $ls_fileContents);
-		$ls_fileContents = str_replace('class CustomerExtension extends AbstractExtension {', $ls_newClassName, $ls_fileContents);
+		$fileContents = str_replace('namespace Customer\\Twig\\Extension;', $newNamespace, $fileContents);
+		$fileContents = str_replace('class CustomerExtension extends AbstractExtension {', $newClassName, $fileContents);
 
 		// Write the updated contents back to the CustomerExtension.php file
-		file_put_contents($ls_filePath, $ls_fileContents);
+		file_put_contents($filePath, $fileContents);
 
 		// Rename the CustomerExtension.php file to match the new class name
-		$ls_newFilePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . Inflector::camelize($this->customerName) . 'Extension.php';
-		rename($ls_filePath, $ls_newFilePath);
+		$newFilePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . Inflector::camelize($this->customerName) . 'Extension.php';
+		rename($filePath, $newFilePath);
 
 		$this->io->success('\Twig\Extension\CustomerExtension file updated and renamed.');
 	}
@@ -355,18 +355,19 @@ trait ConfigTrait {
 			return;
 		}
 
-		$lo_configTable = $this->fetchTable('Configuration');
-		$lo_configTable->getBehavior('Categories')->setConfig('buildRules', false);
-		$lo_config = $lo_configTable->newDefaultEntity();
+		/** @var \Awyiss\Model\Table\ConfigurationTable $configTable */
+		$configTable = $this->fetchTable('Configuration');
+		$configTable->getBehavior('Categories')->setConfig('buildRules', false);
+		$config = $configTable->newDefaultEntity();
 
-		$lo_configTable->patchEntity($lo_config, [
+		$configTable->patchEntity($config, [
 			'realm' => Awyiss::REALM_BACKEND,
 			'scope' => 'system',
 			'identifier' => 'interface.editor',
 			'value' => strtolower($this->rtEditor),
 		]);
 
-		if ($lo_configTable->save($lo_config)) {
+		if ($configTable->save($config)) {
 			$this->io->success('Rich text editor set.');
 		}
 		else {

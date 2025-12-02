@@ -56,7 +56,6 @@ class ModelCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModelCommand(): void {
 		$this->generatedFiles[0] = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'DummyUser.php';
@@ -79,7 +78,6 @@ class ModelCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testForPageRoleModelCommand(): void {
 		$generatedEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesNews.php';
@@ -102,7 +100,6 @@ class ModelCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAttributesModelCommand(): void {
 		$generatedEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'AttributesContent.php';
@@ -125,7 +122,6 @@ class ModelCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPageRoleModelCommand(): void {
 		$generatedEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'Newscategory.php';
@@ -148,7 +144,6 @@ class ModelCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDatatableModelCommand(): void {
 		$generatedEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . 'Employer.php';

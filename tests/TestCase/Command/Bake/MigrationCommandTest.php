@@ -43,7 +43,6 @@ class MigrationCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMigrationCreateCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_CreateDummyMigration.php';
@@ -61,7 +60,6 @@ class MigrationCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMigrationAddCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_AddBackgroundColorToDummyMigration.php';
@@ -79,7 +77,6 @@ class MigrationCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMigrationAlterCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_AlterBackgroundColorOnDummyMigration.php';
@@ -97,7 +94,6 @@ class MigrationCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMigrationAlterTwiceCommand(): void {
 		$this->generatedFiles[0] = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_AlterBackgroundColorOnDummyMigration.php';
@@ -131,7 +127,6 @@ class MigrationCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMigrationAlterRenameCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_AlterBackgroundColorOnDummyMigration.php';

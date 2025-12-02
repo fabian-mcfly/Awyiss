@@ -42,58 +42,58 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function templateData(Arguments $arguments): array {
-		$ls_className = $this->_name;
-		$ls_namespace = Configure::read('App.namespace');
-		$ls_pluginPath = '';
+		$className = $this->_name;
+		$namespace = Configure::read('App.namespace');
+		$pluginPath = '';
 		if ($this->plugin) {
-			$ls_namespace = $this->_pluginNamespace($this->plugin);
-			$ls_pluginPath = $this->plugin . '.';
+			$namespace = $this->_pluginNamespace($this->plugin);
+			$pluginPath = $this->plugin . '.';
 		}
 
-		$la_arguments = $arguments->getArguments();
-		unset($la_arguments[0]);
-		$lo_columnParser = new ColumnParser();
-		$la_fields = $lo_columnParser->parseFields($la_arguments);
-		$la_indexes = $lo_columnParser->parseIndexes($la_arguments);
-		$la_primaryKeys = $lo_columnParser->parsePrimaryKey($la_arguments);
+		$arguments = $arguments->getArguments();
+		unset($arguments[0]);
+		$columnParser = new ColumnParser();
+		$fields = $columnParser->parseFields($arguments);
+		$indexes = $columnParser->parseIndexes($arguments);
+		$primaryKeys = $columnParser->parsePrimaryKey($arguments);
 
-		$la_actions = $this->detectAction($ls_className);
+		$actions = $this->detectAction($className);
 
-		if (!$la_actions && count($la_fields)) {
+		if (!$actions && count($fields)) {
 			/** @psalm-suppress PossiblyNullReference */
 			$this->io->abort(
 				'When applying fields the migration name should start with one of the following prefixes: `Create`, `Drop`, `Add`, `Remove`, `Alter`. See: https://book.cakephp.org/migrations/4/en/index.html#migrations-file-name'
 			);
 		}
 
-		if (empty($la_actions)) {
+		if (empty($actions)) {
 			return [
 				'plugin' => $this->plugin,
-				'pluginPath' => $ls_pluginPath,
-				'namespace' => $ls_namespace,
+				'pluginPath' => $pluginPath,
+				'namespace' => $namespace,
 				'tables' => [],
 				'action' => null,
-				'name' => $ls_className,
+				'name' => $className,
 				'backend' => Configure::read('Migrations.backend', 'builtin'),
 			];
 		}
 
-		if (in_array($la_actions[0], ['alter_table', 'add_field'], true) && !empty($la_primaryKeys)) {
+		if (in_array($actions[0], ['alter_table', 'add_field'], true) && !empty($primaryKeys)) {
 			/** @psalm-suppress PossiblyNullReference */
 			$this->io->abort('Adding a primary key to an already existing table is not supported.');
 		}
 
-		[$ls_action, $ls_table] = $la_actions;
+		[$action, $table] = $actions;
 
 		//If the requested action is to alter a column,
-		if ($ls_action === 'alter_field') {
+		if ($action === 'alter_field') {
 			//Extract the name of the column from the migration name
-			if (preg_match('/^Alter(.+?)On(.*)/', $ls_className, $la_matches)) {
+			if (preg_match('/^Alter(.+?)On(.*)/', $className, $matches)) {
 				//Get the field name of the column from inside the migration
-				$ls_key = array_key_first($la_fields);
+				$key = array_key_first($fields);
 
-				$ls_fieldName = Inflector::underscore($la_matches[1]);
-				if ($ls_key != $ls_fieldName) {
+				$fieldName = Inflector::underscore($matches[1]);
+				if ($key != $fieldName) {
 					/**
 					 * If the column name in the migration name and the one inside the migration differ,
 					 * we want to rename the column. This is something the normal CakePHP-migration does not offer.
@@ -101,7 +101,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 					 * This way, we can check for the `originalName`-key of the field inside the `skeleton.twig`-file
 					 * and call the `rename`-method of the migration
 					 */
-					$la_fields[ $ls_key ]['originalName'] = $ls_fieldName;
+					$fields[ $key ]['originalName'] = $fieldName;
 				}
 			}
 		}
@@ -109,16 +109,16 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 
 		return [
 			'plugin' => $this->plugin,
-			'pluginPath' => $ls_pluginPath,
-			'namespace' => $ls_namespace,
-			'tables' => [$ls_table],
-			'action' => $ls_action,
+			'pluginPath' => $pluginPath,
+			'namespace' => $namespace,
+			'tables' => [$table],
+			'action' => $action,
 			'columns' => [
-				'fields' => $la_fields,
-				'indexes' => $la_indexes,
-				'primaryKey' => $la_primaryKeys,
+				'fields' => $fields,
+				'indexes' => $indexes,
+				'primaryKey' => $primaryKeys,
 			],
-			'name' => $ls_className,
+			'name' => $className,
 			'backend' => Configure::read('Migrations.backend', 'builtin'),
 		];
 	}
@@ -143,33 +143,33 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 		$this->_name = $name;
 
 		//Remember the name of the table
-		[, $ls_table] = $this->detectAction($this->_name);
+		[, $table] = $this->detectAction($this->_name);
 
 		$this->io = $io;
 		$this->args = $arguments;
 		if ($this->isReservedKeyword($name)) {
-			$ls_prefix = $io->ask('Reserved keywords cannot be used for class names. What prefix would you like to use? Defaults to `Migration`.', 'Migration');
-			$this->_name = $ls_prefix . ucfirst($name);
+			$prefix = $io->ask('Reserved keywords cannot be used for class names. What prefix would you like to use? Defaults to `Migration`.', 'Migration');
+			$this->_name = $prefix . ucfirst($name);
 		}
 
 		$this->pathFragment .= DS . $arguments->getOption('source');
 
-		$ls_path = $this->getPath($arguments);
+		$path = $this->getPath($arguments);
 
 		//If migration(s) with the same name already exist(s)
-		$la_migrationWithSameName = glob($ls_path . '*_' . $this->_name . '.php');
-		if ($la_migrationWithSameName) {
+		$migrationWithSameName = glob($path . '*_' . $this->_name . '.php');
+		if ($migrationWithSameName) {
 			//Shell the migration be overwritten?
 			if ($arguments->getOption('force')) {
 				//If so, delete all existing migrations
 				$io->info(sprintf('A migration with the name `%s` already exists, it will be deleted.', $this->_name));
-				foreach ($la_migrationWithSameName as $ls_migration) {
-					$io->info(sprintf('Deleting migration file `%s`...', $ls_migration));
-					if (unlink($ls_migration)) {
-						$io->success(sprintf('Deleted `%s`', $ls_migration));
+				foreach ($migrationWithSameName as $migration) {
+					$io->info(sprintf('Deleting migration file `%s`...', $migration));
+					if (unlink($migration)) {
+						$io->success(sprintf('Deleted `%s`', $migration));
 					}
 					else {
-						$io->err(sprintf('An error occurred while deleting `%s`', $ls_migration));
+						$io->err(sprintf('An error occurred while deleting `%s`', $migration));
 					}
 				}
 			}
@@ -178,18 +178,18 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 				 * No "--force" option provided means we will neither overwrite nor delete existing migrations
 				 * but we will append a version number to the filename.
 				 */
-				$li_version = 2;
-				while (glob($ls_path . '*_' . $this->_name . 'V' . $li_version . '.php')) {
-					$li_version++;
+				$version = 2;
+				while (glob($path . '*_' . $this->_name . 'V' . $version . '.php')) {
+					$version++;
 				}
 
-				$this->_name .= 'V' . $li_version;
+				$this->_name .= 'V' . $version;
 			}
 		}
 
-		$lo_renderer = new TemplateRenderer($this->theme);
-		$lo_renderer->set('name', $this->_name);
-		$lo_renderer->set($this->templateData($arguments));
+		$renderer = new TemplateRenderer($this->theme);
+		$renderer->set('name', $this->_name);
+		$renderer->set($this->templateData($arguments));
 
 		/*
 		 * Manually set the remembered name of the table as a view variable, since versionizing a migration will
@@ -197,15 +197,15 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 		 *
 		 * For example, a migration 'CreateAttributesContentsV2' would create a table named 'attributes_contents_v2'
 		 */
-		$lo_renderer->set('tables', [$ls_table]);
+		$renderer->set('tables', [$table]);
 
-		$ls_contents = $lo_renderer->generate($this->template());
+		$contents = $renderer->generate($this->template());
 
-		$ls_filePath = $ls_path . $this->fileName($this->_name);
-		$this->createFile($ls_filePath, $ls_contents, $arguments, $io);
+		$filePath = $path . $this->fileName($this->_name);
+		$this->createFile($filePath, $contents, $arguments, $io);
 
-		$ls_emptyFile = $ls_path . '.gitkeep';
-		$this->deleteEmptyFile($ls_emptyFile, $io);
+		$emptyFile = $path . '.gitkeep';
+		$this->deleteEmptyFile($emptyFile, $io);
 	}
 
 
@@ -219,13 +219,13 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('folder', [
+		$parser->addOption('folder', [
 			'help' => 'The folder to save the migration in.',
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 }

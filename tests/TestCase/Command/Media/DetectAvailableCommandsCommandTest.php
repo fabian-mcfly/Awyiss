@@ -51,7 +51,6 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildOptionParser() {
 		$parser = $this->createMock(ConsoleOptionParser::class);
@@ -69,7 +68,6 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetectCommands() {
 		Configure::write('AvailableCommands');
@@ -99,7 +97,6 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteWithoutRetryOption() {
 		$this->args->method('getOption')->with('retry')->willReturn(false);
@@ -118,7 +115,6 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteWithRetryOption() {
 		$this->args->method('getOption')->with('retry')->willReturn(true);
@@ -150,7 +146,6 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTestUnknownProcess() {
 		$this->io->expects($this->once())->method('out')
@@ -172,7 +167,6 @@ class DetectAvailableCommandsCommandTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception|\ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTestKnownProcess() {
 		$this->io->expects($this->once())->method('out')

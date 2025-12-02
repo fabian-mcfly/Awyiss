@@ -29,13 +29,13 @@ class TemplateAllCommand extends BaseTemplateAllCommand {
 	 * @inheritDoc
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('folder', [
+		$parser->addOption('folder', [
 			'help' => 'The folder to save the templates in. Defaults to the the first item in config `App.paths.templates`.',
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 }

@@ -41,15 +41,15 @@ class EnumCommand extends BaseBakeEnumCommand {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function templateData(Arguments $args): array {
-		$la_data = parent::templateData($args);
+		$data = parent::templateData($args);
 
-		$ls_namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
-		$la_data['namespace'] = $ls_namespace;
+		$namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
+		$data['namespace'] = $namespace;
 
-		$la_data['isPageRole'] = $args->getOption('is-pagerole');
+		$data['isPageRole'] = $args->getOption('is-pagerole');
 
 
-		return $la_data;
+		return $data;
 	}
 
 
@@ -62,9 +62,7 @@ class EnumCommand extends BaseBakeEnumCommand {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function bake(string $name, Arguments $args, ConsoleIo $io): void {
-		$ls_name = Inflector::camelize($name);
-
-		parent::bake($ls_name, $args, $io);
+		parent::bake(Inflector::camelize($name), $args, $io);
 	}
 
 
@@ -77,9 +75,9 @@ class EnumCommand extends BaseBakeEnumCommand {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('namespace', [
+		$parser->addOption('namespace', [
 			'choices' => [
 				'Awyiss',
 				CUSTOM_NAMESPACE,
@@ -92,6 +90,6 @@ class EnumCommand extends BaseBakeEnumCommand {
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 }

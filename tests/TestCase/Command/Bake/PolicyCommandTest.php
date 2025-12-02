@@ -42,7 +42,6 @@ class PolicyCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPolicyCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Authorization' . DS . 'Policy' . DS . 'DummyPolicy.php';
@@ -59,7 +58,6 @@ class PolicyCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPolicyPrefixCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'Authorization' . DS . 'Policy' . DS . 'Backend' . DS . 'DummyPolicy.php';
