@@ -11,7 +11,7 @@ use RuntimeException;
 
 /**
  * A collection that can hold multiple permissions for different scopes.
- * Allows retreiving permissions for a specific scope or for a specific scope and a specific identifier.
+ * Allows retrieving permissions for a specific scope or for a specific scope and a specific identifier.
  *
  * This also offers the scopeIsAccessible()-method, used in AuthorizationComponent, AuthorizationBehavior and AuthorizationHelper
  */
@@ -40,17 +40,17 @@ class PermissionCollection {
 	public function __construct(?AuthorizationService $authorizationService, array $permissions = []) {
 		$this->authorizationService = $authorizationService;
 
-		foreach ($permissions as $lx_permission) {
-			if ($lx_permission instanceof Permission) {
-				$this->add($lx_permission);
+		foreach ($permissions as $permission) {
+			if ($permission instanceof Permission) {
+				$this->add($permission);
 			}
-			elseif ($lx_permission instanceof PermissionInterface) {
+			elseif ($permission instanceof PermissionInterface) {
 				//$this->add($lx_permission);
-				$this->add(Permission::createFromObject($lx_permission));
+				$this->add(Permission::createFromObject($permission));
 			}
-			elseif (is_array($lx_permission)) {
+			elseif (is_array($permission)) {
 				//$this->add(...$lx_permission);
-				$this->add(Permission::createFromArray($lx_permission));
+				$this->add(Permission::createFromArray($permission));
 			}
 			else {
 				throw new RuntimeException(
@@ -58,7 +58,7 @@ class PermissionCollection {
 						'Permission must be of type `array|%s` in `%s`. `%s` given',
 						PermissionInterface::class,
 						static::class,
-						gettype($lx_permission)
+						gettype($permission)
 					)
 				);
 			}
@@ -77,10 +77,10 @@ class PermissionCollection {
 	public function add(Permission $permission): static {
 		$permission->setAuthorizationService($this->authorizationService);
 
-		$ls_scope = AuthorizationService::sanitizeScope($permission->getScope());
-		$ls_identifier = AuthorizationService::sanitizeIdentifier($permission->getIdentifier());
+		$scope = AuthorizationService::sanitizeScope($permission->getScope());
+		$identifier = AuthorizationService::sanitizeIdentifier($permission->getIdentifier());
 
-		$this->permissions[ $ls_scope ][ $ls_identifier ][] = $permission;
+		$this->permissions[ $scope ][ $identifier ][] = $permission;
 
 		return $this;
 	}
@@ -117,15 +117,15 @@ class PermissionCollection {
 	 * @return array<array<string, Permission[]>>|array<string, Permission[]>|null
 	 */
 	public function getPermissions(string $scope, ?string $identifier = null): ?array {
-		$ls_scope = AuthorizationService::sanitizeScope($scope);
+		$scope = AuthorizationService::sanitizeScope($scope);
 
 		if ($identifier) {
-			$ls_identifier = AuthorizationService::sanitizeIdentifier($identifier);
+			$identifier = AuthorizationService::sanitizeIdentifier($identifier);
 
-			return $this->permissions[ $ls_scope ][ $ls_identifier ] ?? null;
+			return $this->permissions[ $scope ][ $identifier ] ?? null;
 		}
 
-		return $this->permissions[ $ls_scope ] ?? null;
+		return $this->permissions[ $scope ] ?? null;
 	}
 
 
@@ -138,7 +138,7 @@ class PermissionCollection {
 	 * - indifferent if it returns null
 	 *
 	 * `$identifier` captures all remaining arguments provided to `scopeIsAccessible`,
-	 * which are then used to checked accesibility.
+	 * which are then used to checked accessibility.
 	 *
 	 * - Providing a list of arguments, for example `scopeIsAccessible(..., 'read', 'create', 'update', 'delete')` means
 	 * that every one of those identifiers must be accessible for this method to return true.
@@ -155,30 +155,24 @@ class PermissionCollection {
 	 * @param array $additionalData
 	 * @param array|string ...$identifier
 	 * @return bool
-	 * @throws \ReflectionException
 	 */
 	public function scopeIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): bool {
-		/*
-		 * Traverse the provided identifiers and remember the accessibility in $lx_policyClass,
-		 * using the identity's currently assigned permissions.
-		 *
-		 */
-		$la_accessible = [];
-		foreach ($identifier as $lx_identifier) {
-			if (!is_array($lx_identifier)) {
-				$lx_identifier = [$lx_identifier];
+		$accessible = [];
+		$identifiers = $identifier;
+		foreach ($identifiers as $identifier) {
+			if (!is_array($identifier)) {
+				$identifier = [$identifier];
 			}
 
-			$la_accessible[] = $this->identifierIsAccessible($scope, $additionalData, ...$lx_identifier);
+			$accessible[] = $this->identifierIsAccessible($scope, $additionalData, ...$identifier);
 		}
 
-		//If true is part of the result, and the result is only true, and nothing but true, access is granted.
-		if (array_unique($la_accessible) === [true]) {
+		// If the result consists of only `true`, access is granted.
+		if (array_unique($accessible) === [true]) {
 			return true;
 		}
 
-
-		//I am sorry Dave. I'm afraid I can't do that.
+		// I am sorry Dave. I'm afraid I can't do that.
 		return false;
 	}
 
@@ -190,33 +184,32 @@ class PermissionCollection {
 	 * @param array $additionalData
 	 * @param array|array<string> $identifier
 	 * @return bool|null
-	 * @throws \ReflectionException
 	 */
 	protected function identifierIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): ?bool {
-		$la_accessible = [];
+		$accessible = [];
 
-		//Traverse the identifiers and check if it's accessible, given the collection of permissions for `$scope`
-		foreach ($identifier as $ls_identifier) {
-			if (!is_string($ls_identifier)) {
-				throw new RuntimeException(sprintf('The identifier is invalid. Expected `string`, `%s` given', gettype($ls_identifier)));
+		$identifiers = $identifier;
+		foreach ($identifiers as $identifier) {
+			if (!is_string($identifier)) {
+				throw new RuntimeException(sprintf('The identifier is invalid. Expected `string`, `%s` given', gettype($identifier)));
 			}
 
-			$la_permissions = $this->getPermissions($scope, $ls_identifier);
+			$permissions = $this->getPermissions($scope, $identifier);
 
-			if (!$la_permissions) {
+			if (!$permissions) {
 				continue;
 			}
 
-			$la_accessible[] = $this->permissionsAreAccessible($la_permissions, $additionalData);
+			$accessible[] = $this->permissionsAreAccessible($permissions, $additionalData);
 		}
 
-		//If true is part of the result access is granted.
-		if (in_array(true, $la_accessible, true)) {
+		// If true is part of the result access is granted.
+		if (in_array(true, $accessible, true)) {
 			return true;
 		}
 
 
-		//Otherwise the access depends on the default accessible. false makes sense as a fallback.
+		// Otherwise the access depends on the default accessible. false makes sense as a fallback.
 		return Permission::DEFAULT_PERMISSION;
 	}
 
@@ -225,26 +218,27 @@ class PermissionCollection {
 	 * @param array<Permission> $permissions
 	 * @param array $additionalData
 	 * @return bool|null
-	 * @throws \ReflectionException
 	 */
 	protected function permissionsAreAccessible(array $permissions, array $additionalData = []): ?bool {
-		$la_accessible = [];
+		$accessible = [];
 
-		foreach ($permissions as $lo_permission) {
-			if (!($lo_permission instanceof Permission)) {
-				throw new RuntimeException(sprintf('The permission is invalid. Expected instance of `%s`, `%s` given', Permission::class, gettype($lo_permission)));
+		foreach ($permissions as $permission) {
+			if (!($permission instanceof Permission)) {
+				throw new RuntimeException(sprintf('The permission is invalid. Expected instance of `%s`, `%s` given', Permission::class, gettype($permission)));
 			}
 
-			$la_accessible[] = $lo_permission->isAccessible($additionalData, $this);
+			$accessible[] = $permission->isAccessible($additionalData, $this);
 		}
 
-		if (in_array(false, $la_accessible, true)) {
+		// If false is part of the result, access is denied.
+		if (in_array(false, $accessible, true)) {
 			return false;
 		}
-		elseif (in_array(true, $la_accessible, true)) {
+
+		// If true is part of the result, access is granted.
+		if (in_array(true, $accessible, true)) {
 			return true;
 		}
-
 
 		return null;
 	}

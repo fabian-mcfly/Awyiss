@@ -24,7 +24,6 @@ class FoobarsPolicyTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPermissionOptions(): void {
 		$permissionOptions = FoobarsPolicy::getPermissionOptions();
@@ -38,7 +37,6 @@ class FoobarsPolicyTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPermissionOption(): void {
 		$permissionOption = FoobarsPolicy::getPermissionOption('create');

@@ -12,6 +12,12 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
  * Permission for the Forms scope
  */
 class FormsPolicy extends AbstractPolicy {
+	/**
+	 * @var PermissionOptionCollection
+	 */
 	protected static PermissionOptionCollection $permissionOptionCollection;
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 }

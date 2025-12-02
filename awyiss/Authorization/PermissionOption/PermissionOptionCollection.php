@@ -30,13 +30,13 @@ class PermissionOptionCollection extends ObjectRegistry {
 	public function __construct(string $scope, array $config = []) {
 		$this->scope = AuthorizationService::sanitizeScope($scope);
 
-		foreach ($config as $lx_key => $lx_value) {
-			if (is_int($lx_key)) {
-				$this->add($lx_value);
+		foreach ($config as $key => $value) {
+			if (is_int($key)) {
+				$this->add($value);
 				continue;
 			}
 
-			$this->add($lx_key, $lx_value);
+			$this->add($key, $value);
 		}
 	}
 
@@ -65,7 +65,6 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 */
 	public function add(string $identifier, array|string $config = []): static {
 		if (is_string($config)) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$config = ['className' => $config];
 		}
 
@@ -93,9 +92,9 @@ class PermissionOptionCollection extends ObjectRegistry {
 			throw new RuntimeException('Missing config key `className`');
 		}
 
-		$ls_identifier = AuthorizationService::sanitizeIdentifier($identifier);
+		$identifier = AuthorizationService::sanitizeIdentifier($identifier);
 
-		return parent::load($ls_identifier, ['identifier' => $ls_identifier] + $config);
+		return parent::load($identifier, ['identifier' => $identifier] + $config);
 	}
 
 
@@ -119,14 +118,14 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _create($class, string $alias, array $config): PermissionOptionInterface {
-		$lo_permission = new $class($config, $this);
+		$permission = new $class($config, $this);
 
-		if (!($lo_permission instanceof PermissionOptionInterface)) {
+		if (!$permission instanceof PermissionOptionInterface) {
 			throw new RuntimeException(sprintf('Permission class `%s` must implement `%s`.', $class, PermissionOptionInterface::class));
 		}
 
 
-		return $lo_permission;
+		return $permission;
 	}
 
 
@@ -139,10 +138,7 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _resolveClassName(string $class): ?string {
-		$ls_className = App::className($class);
-
-
-		return is_string($ls_className) ? $ls_className : null;
+		return App::className($class);
 	}
 
 

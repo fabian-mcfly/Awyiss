@@ -24,6 +24,10 @@ class CallbackPermissionOption extends SimplePermissionOption {
 		'Model.beforeSoftDelete' => null,
 		'Model.beforeDelete' => null,
 	];
+	/**
+	 * @var string
+	 */
+	protected string $type = 'callback';
 
 
 	/**
@@ -79,8 +83,8 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	 * @return $this
 	 */
 	public function setCallbacks(array $callbacks): static {
-		foreach ($callbacks as $ls_event => $lc_callback) {
-			$this->setCallback($ls_event, $lc_callback);
+		foreach ($callbacks as $event => $callback) {
+			$this->setCallback($event, $callback);
 		}
 
 
@@ -95,23 +99,22 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	 * This allows the callback to define additional logic for the accessibility of the permission
 	 */
 	public function isAccessible(mixed $access, mixed $settings, array $additionalData, PermissionCollection $permissionCollection): ?bool {
-		$lb_accessible = parent::isAccessible($access, $settings, $additionalData, $permissionCollection);
+		$isAccessible = parent::isAccessible($access, $settings, $additionalData, $permissionCollection);
 
-		$lc_callback = null;
+		$callback = null;
 		if (!empty($additionalData['event'])) {
-			$lc_callback = $this->getCallback($additionalData['event']);
+			$callback = $this->getCallback($additionalData['event']);
 		}
 
-		//If the callback for the given event is not set, fall back to the general one. To disable one event completely, its callback needs to be false
-		if ($lc_callback === null) {
-			$lc_callback = $this->getCallback('general');
+		// If the callback for the given event is not set, fall back to the general one. To disable one event completely, its callback needs to be false
+		if ($callback === null) {
+			$callback = $this->getCallback('general');
 		}
 
-		if ($lc_callback) {
-			$lb_accessible = call_user_func($lc_callback, $lb_accessible, $access, $settings, $additionalData, $permissionCollection);
+		if ($callback) {
+			$isAccessible = call_user_func($callback, $isAccessible, $access, $settings, $additionalData, $permissionCollection);
 		}
 
-
-		return $lb_accessible;
+		return $isAccessible;
 	}
 }

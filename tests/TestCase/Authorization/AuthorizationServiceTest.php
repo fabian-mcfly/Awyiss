@@ -17,7 +17,6 @@ use Awyiss\Test\TestSuite\TestCase;
 class AuthorizationServiceTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAuthenticationService(): void {
 		$service = new AuthorizationService('realm');
@@ -28,7 +27,6 @@ class AuthorizationServiceTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testSetAuthenticationService(): void {
@@ -41,7 +39,6 @@ class AuthorizationServiceTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetRealm(): void {
 		$service = new AuthorizationService('realm');
@@ -52,7 +49,6 @@ class AuthorizationServiceTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPolicies(): void {
 		$service = new AuthorizationService('Backend');
@@ -83,7 +79,6 @@ class AuthorizationServiceTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPolicy(): void {
 		$service = new AuthorizationService('frontend');
@@ -122,7 +117,6 @@ class AuthorizationServiceTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSanitizeScope(): void {
 		$service = new AuthorizationService('realm');
@@ -138,7 +132,6 @@ class AuthorizationServiceTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSanitizeIdentifier(): void {
 		$service = new AuthorizationService('realm');

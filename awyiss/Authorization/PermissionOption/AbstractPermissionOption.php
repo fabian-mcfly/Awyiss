@@ -4,9 +4,7 @@
 namespace Awyiss\Authorization\PermissionOption;
 
 
-use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Utility\Text;
 use RuntimeException;
 
 
@@ -46,13 +44,6 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 * @inheritDoc
 	 */
 	public function __construct(array $config, PermissionOptionCollection $permissionOptionCollection) {
-		$ls_type = static::getType();
-		$ls_testType = strtolower(Text::slug($ls_type, '_'));
-
-		if ($ls_testType !== $ls_type) {
-			$this->type = $ls_testType;
-		}
-
 		$this->permissionOptionCollection = $permissionOptionCollection;
 
 		$this->setConfig($config);
@@ -71,14 +62,6 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 * @inheritDoc
 	 */
 	public function getType(): string {
-		if (!isset($this->type)) {
-			$la_parts = explode('\\', static::class);
-			$this->type = array_pop($la_parts) ?? '';
-			$this->type = substr($this->type, 0, -10);
-			$this->type = Inflector::underscore($this->type);
-		}
-
-
 		return $this->type;
 	}
 

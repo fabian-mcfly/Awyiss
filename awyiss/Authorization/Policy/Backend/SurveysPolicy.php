@@ -28,12 +28,12 @@ class SurveysPolicy extends AbstractPolicy {
 	 * @throws \Exception
 	 */
 	protected static function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissionOptions = parent::loadPermissionOptions();
+		$permissionOptions = parent::loadPermissionOptions();
 
-		$lo_permissionOptions->load('analyze', [
+		$permissionOptions->load('analyze', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		return $lo_permissionOptions;
+		return $permissionOptions;
 	}
 }

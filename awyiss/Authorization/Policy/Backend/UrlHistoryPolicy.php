@@ -12,6 +12,12 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
  * Permission for the UrlHistory scope
  */
 class UrlHistoryPolicy extends AbstractPolicy {
+	/**
+	 * @var PermissionOptionCollection
+	 */
 	protected static PermissionOptionCollection $permissionOptionCollection;
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 }

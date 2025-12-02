@@ -18,7 +18,6 @@ class SimplePermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorInitializesOptionsCorrectly(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -39,7 +38,6 @@ class SimplePermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHarmonizeOptionValueReturnsNullForEmptyValue(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -54,7 +52,6 @@ class SimplePermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHarmonizeOptionValueReturnsPermissionAccess(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -76,7 +73,6 @@ class SimplePermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleReturnsTrueForGrantedAccess(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -94,7 +90,6 @@ class SimplePermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleReturnsFalseForDeniedAccess(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -113,7 +108,6 @@ class SimplePermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleReturnsNullForIndifferentAccess(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);

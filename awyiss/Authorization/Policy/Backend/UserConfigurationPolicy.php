@@ -33,42 +33,38 @@ class UserConfigurationPolicy extends AbstractPolicy {
 	 * @param array $additionalData
 	 * @param PermissionCollection $permissionCollection
 	 * @return bool|null
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public static function callback(?bool $accessible, mixed $access, mixed $settings, array $additionalData, PermissionCollection $permissionCollection): ?bool {
-		$lb_accessible = $accessible;
-
 		//Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
-		if (!$lb_accessible) {
-			return $lb_accessible;
+		if (!$accessible) {
+			return $accessible;
 		}
 
 		if (!array_key_exists('scope', $additionalData)) {
 			throw new RuntimeException(sprintf('CallbackPermission in `%s` requires additional data (`scope`)', static::class));
 		}
 
-		$ls_scope = $additionalData['scope'];
-		if (!$ls_scope) {
-			return $lb_accessible;
+		if (!$additionalData['scope']) {
+			return $accessible;
 		}
 
-		$ls_scope = Inflector::underscore($ls_scope);
+		$scope = Inflector::underscore($additionalData['scope']);
 
-		if (!in_array($ls_scope, ['contents', 'system'], true)) {
+		if (!in_array($scope, ['contents', 'system'], true)) {
 			// Form elements are accessible if the user has access to the Forms scope
-			if ($ls_scope === 'form_elements') {
-				$ls_scope = 'forms';
+			if ($scope === 'form_elements') {
+				$scope = 'forms';
 			}
 			// Menu entries are accessible if the user has access to the Menus scope
-			elseif ($ls_scope === 'menu_entries') {
-				$ls_scope = 'menus';
+			elseif ($scope === 'menu_entries') {
+				$scope = 'menus';
 			}
 
-			$lb_accessible = $permissionCollection->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure']);
+			$accessible = $permissionCollection->scopeIsAccessible($scope, [], ['read', 'create', 'update', 'configure']);
 		}
 
-		return $lb_accessible;
+		return $accessible;
 	}
 
 
@@ -80,33 +76,33 @@ class UserConfigurationPolicy extends AbstractPolicy {
 	 * @throws \Exception
 	 */
 	protected static function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissions = new PermissionOptionCollection(static::getScope());
+		$permissions = new PermissionOptionCollection(static::getScope());
 
-		$la_callbacks = [
+		$callbacks = [
 			'general' => static::callback(...),
 		];
 
-		$lo_permissions->load('read', [
+		$permissions->load('read', [
 			'className' => CallbackPermissionOption::class,
-			'callbacks' => $la_callbacks,
+			'callbacks' => $callbacks,
 		]);
 
-		$lo_permissions->load('create', [
+		$permissions->load('create', [
 			'className' => CallbackPermissionOption::class,
-			'callbacks' => $la_callbacks,
+			'callbacks' => $callbacks,
 		]);
 
-		$lo_permissions->load('update', [
+		$permissions->load('update', [
 			'className' => CallbackPermissionOption::class,
-			'callbacks' => $la_callbacks,
+			'callbacks' => $callbacks,
 		]);
 
-		$lo_permissions->load('delete', [
+		$permissions->load('delete', [
 			'className' => CallbackPermissionOption::class,
-			'callbacks' => $la_callbacks,
+			'callbacks' => $callbacks,
 		]);
 
 
-		return $lo_permissions;
+		return $permissions;
 	}
 }

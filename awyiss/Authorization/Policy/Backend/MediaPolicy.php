@@ -28,10 +28,10 @@ class MediaPolicy extends AbstractPolicy {
 	 * @inheritDoc
 	 */
 	protected static function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissionOptions = parent::loadPermissionOptions();
+		$permissionOptions = parent::loadPermissionOptions();
 
-		$lo_permissionOptions->unload('update');
+		$permissionOptions->unload('update');
 
-		return $lo_permissionOptions;
+		return $permissionOptions;
 	}
 }

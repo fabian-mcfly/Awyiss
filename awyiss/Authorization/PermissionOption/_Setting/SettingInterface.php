@@ -12,11 +12,11 @@ interface SettingInterface {
 	/**
 	 * WIP
 	 */
-	final public const TYPE_RADIO = 'radio';
+	final public const string TYPE_RADIO = 'radio';
 	/**
 	 * WIP
 	 */
-	final public const TYPE_SELECT = 'select';
+	final public const string TYPE_SELECT = 'select';
 
 
 	/**

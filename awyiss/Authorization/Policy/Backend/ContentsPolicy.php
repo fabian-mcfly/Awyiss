@@ -33,16 +33,15 @@ class ContentsPolicy extends AbstractPolicy {
 	 * @throws \Exception
 	 */
 	protected static function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissionOptions = new PermissionOptionCollection(static::getScope());
-
+		$permissionOptions = new PermissionOptionCollection(static::getScope());
 
 		if (ConfigOptionsProvider::getConfigOptionsFile(static::getScope())) {
-			$lo_permissionOptions->load('configure', [
+			$permissionOptions->load('configure', [
 				'className' => SimplePermissionOption::class,
 			]);
 		}
 
 
-		return $lo_permissionOptions;
+		return $permissionOptions;
 	}
 }

@@ -17,7 +17,6 @@ class AuthorizationTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAuthorizationService(): void {
 		$authorization = new Authorization('Backend');

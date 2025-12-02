@@ -39,14 +39,13 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	 * @inheritDoc
 	 */
 	public function harmonizeOptionValue(mixed $value): ?PermissionAccess {
-		$lx_value = $value !== '' && $value !== null ? (int)$value : null;
+		$value = $value !== '' && $value !== null ? (int)$value : null;
 
-		if ($lx_value === null) {
+		if ($value === null) {
 			return null;
 		}
 
-
-		return PermissionAccess::tryFrom($lx_value);
+		return PermissionAccess::tryFrom($value);
 	}
 
 
@@ -54,16 +53,14 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	 * @inheritDoc
 	 */
 	public function isAccessible(mixed $access, mixed $settings, array $additionalData, PermissionCollection $permissionCollection): ?bool {
-		$lx_access = $access;
-
-		if (!$lx_access instanceof PermissionAccess) {
-			$lx_access = $this->harmonizeOptionValue($access);
+		if (!$access instanceof PermissionAccess) {
+			$access = $this->harmonizeOptionValue($access);
 		}
 
-		if ($lx_access === PermissionAccess::Granted) {
+		if ($access === PermissionAccess::Granted) {
 			return true;
 		}
-		elseif ($lx_access === PermissionAccess::Denied) {
+		elseif ($access === PermissionAccess::Denied) {
 			return false;
 		}
 
