@@ -127,30 +127,28 @@ class AttributeOption {
 	 * @return array
 	 */
 	public function buildOptions(array $currentOptions, ?Entity $entity = null): array {
-		$la_currentOptions = $currentOptions;
+		$disabled = $this->getDisabled(true, $entity, $currentOptions);
+		$options = $this->getOptions(true, $entity, $currentOptions);
+		$readonly = $this->getReadonly(true, $entity, $currentOptions);
+		$value = $this->getValue(true, $entity, $currentOptions);
 
-		$lx_disabled = $this->getDisabled(true, $entity, $la_currentOptions);
-		$lx_options = $this->getOptions(true, $entity, $la_currentOptions);
-		$lx_readonly = $this->getReadonly(true, $entity, $la_currentOptions);
-		$lx_value = $this->getValue(true, $entity, $la_currentOptions);
-
-		if ($lx_disabled !== null) {
-			$la_currentOptions['disabled'] = $lx_disabled;
+		if ($disabled !== null) {
+			$currentOptions['disabled'] = $disabled;
 		}
 
-		if ($lx_options !== null) {
-			$la_currentOptions['options'] = $lx_options;
+		if ($options !== null) {
+			$currentOptions['options'] = $options;
 		}
 
-		if ($lx_readonly !== null) {
-			$la_currentOptions['readonly'] = $lx_readonly;
+		if ($readonly !== null) {
+			$currentOptions['readonly'] = $readonly;
 		}
 
-		if ($lx_value !== null) {
-			$la_currentOptions['val'] = $lx_value;
+		if ($value !== null) {
+			$currentOptions['val'] = $value;
 		}
 
-		return $la_currentOptions;
+		return $currentOptions;
 	}
 
 
@@ -303,54 +301,52 @@ class AttributeOption {
 	 * @return string|bool
 	 */
 	public function validateValue(mixed $value, ?Entity $entity = null): bool|string {
-		$lx_validate = $this->getValidate();
+		$validate = $this->getValidate();
 
 		// No validation? Every value is valid.
-		if ($lx_validate === false) {
+		if ($validate === false) {
 			return true;
 		}
 
 		// Return the result of the callable, if given
-		if (is_callable($lx_validate)) {
-			return $lx_validate($value, $entity, $this);
+		if (is_callable($validate)) {
+			return $validate($value, $entity, $this);
 		}
 
 		// Any other value is invalid
-		if ($lx_validate !== null) {
+		if ($validate !== null) {
 			throw new RuntimeException(sprintf('No valid `valite` option set in `%s`.', static::class));
 		}
 
-		$lx_disabled = $this->getDisabled(true, $entity);
+		$disabled = $this->getDisabled(true, $entity);
 
 		// Disabled means no value is allowed
-		if (in_array($lx_disabled, ['disabled', true], true) && !empty($value)) {
+		if (in_array($disabled, ['disabled', true], true) && !empty($value)) {
 			return false;
 		}
 
-		$lx_value = $value;
 		if ($value === null) {
 			return true;
 		}
 
-		$la_options = $this->getOptions(true, $entity);
+		$options = $this->getOptions(true, $entity);
 
 		// If the value is an array, we need to check if all values are valid
-		if (is_array($lx_value)) {
-			$lb_inOptions = count(array_intersect_key($la_options, array_flip($lx_value))) === count($lx_value);
-			$lb_inDisabled = array_intersect($lx_value, (array)$lx_disabled);
+		if (is_array($value)) {
+			$inOptions = count(array_intersect_key($options, array_flip($value))) === count($value);
+			$inDisabled = array_intersect($value, (array)$disabled);
 
-
-			return $lb_inOptions && !$lb_inDisabled;
+			return $inOptions && !$inDisabled;
 		}
 
-		if (!is_scalar($lx_value)) {
-			$lx_value = $this->toScalar($lx_value, $entity);
+		if (!is_scalar($value)) {
+			$value = $this->toScalar($value, $entity);
 		}
 
-		$lb_inOptions = array_key_exists($lx_value, $la_options);
-		$lb_inDisabled = is_array($lx_disabled) && in_array($lx_value, $lx_disabled) ? $lx_disabled : false;
+		$inOptions = array_key_exists($value, $options);
+		$inDisabled = is_array($disabled) && in_array($value, $disabled) ? $disabled : false;
 
-		return $lb_inOptions && !$lb_inDisabled;
+		return $inOptions && !$inDisabled;
 	}
 
 

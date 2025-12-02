@@ -19,7 +19,6 @@ class AttributeOptionsTest extends TestCase {
 	 * Test constructor and getters
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorAndGetters(): void {
 		$attributeOptions = new AttributeOption(
@@ -45,8 +44,6 @@ class AttributeOptionsTest extends TestCase {
 
 	/**
 	 * Test constructor with named arguments
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithNamedArguments(): void {
 		$attributeOptions = new AttributeOption(
@@ -70,7 +67,6 @@ class AttributeOptionsTest extends TestCase {
 	 * Test the setters
 	 */
 	public function testSetters(): void {
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$attributeOptions = new AttributeOption('testIdentifier');
 
 		$attributeOptions->setIdentifier('new identifier?');
@@ -109,8 +105,6 @@ class AttributeOptionsTest extends TestCase {
 
 	/**
 	 * Test the evaluated disabled
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEvaluateDisabled(): void {
 		$attributeOptions = new AttributeOption('testIdentifier');
@@ -130,8 +124,6 @@ class AttributeOptionsTest extends TestCase {
 
 	/**
 	 * Test the evaluated options
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEvaluateOptions(): void {
 		$attributeOptions = new AttributeOption('testIdentifier');
@@ -160,8 +152,6 @@ class AttributeOptionsTest extends TestCase {
 
 	/**
 	 * Test the evaluated readonly
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEvaluateReadonly(): void {
 		$attributeOptions = new AttributeOption('testIdentifier');
@@ -181,8 +171,6 @@ class AttributeOptionsTest extends TestCase {
 
 	/**
 	 * Test toScalar
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToScalar(): void {
 		$attributeOptions = new AttributeOption('testIdentifier');
@@ -197,8 +185,6 @@ class AttributeOptionsTest extends TestCase {
 
 	/**
 	 * Test validate
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidate(): void {
 		$attributeOptions = new AttributeOption('testIdentifier');
@@ -253,8 +239,6 @@ class AttributeOptionsTest extends TestCase {
 
 	/**
 	 * Test the value
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValue(): void {
 		$attributeOptions = new AttributeOption('testIdentifier');
@@ -272,8 +256,6 @@ class AttributeOptionsTest extends TestCase {
 
 	/**
 	 * Test the value with a scalar value
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValueWithScalarValue(): void {
 		$attributeOptions = new AttributeOption('testIdentifier');
@@ -288,7 +270,6 @@ class AttributeOptionsTest extends TestCase {
 	 * Test buildOptions method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildOptions(): void {
 		$attributeOptions = new AttributeOption('testIdentifier');

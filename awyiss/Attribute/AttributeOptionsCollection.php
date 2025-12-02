@@ -38,36 +38,37 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 		 * add it to the current collection
 		 */
 		if ($attributeOption instanceof AttributeOption) {
-			$ls_identifier = $attributeOption->getIdentifier();
+			$identifier = $attributeOption->getIdentifier();
 
 			//We cannot have the same identifier more than once inside this collection
-			if ($this->offsetExists($ls_identifier)) {
-				throw new RuntimeException(sprintf('The identifier `%s` is already in use.', $ls_identifier));
+			if ($this->offsetExists($identifier)) {
+				throw new RuntimeException(sprintf('The identifier `%s` is already in use.', $identifier));
 			}
 
-			$this->offsetSet($ls_identifier, $attributeOption);
+			$this->offsetSet($identifier, $attributeOption);
 
 
 			return $this;
 		}
 
 		//Traverse the provided array
-		foreach ($attributeOption as $lx_key => $lx_attributeOption) {
+		$attributeOptions = $attributeOption;
+		foreach ($attributeOptions as $key => $attributeOption) {
 			//If the current value is an instance of AttributeOptionsCollection, add it as is
-			if ($lx_attributeOption instanceof AttributeOption) {
-				$this->add($lx_attributeOption);
+			if ($attributeOption instanceof AttributeOption) {
+				$this->add($attributeOption);
 			}
 			/*
 			 * Otherwise the current value is most likely an array. So we try creating an instance of AttributeOptionsCollection with it
 			 * and then add that instance to the collection.
 			 * */
 			else {
-				if (is_string($lx_key)) {
+				if (is_string($key)) {
 					//No need to sanitize the key here, since `AttributeOptions::setIdentifier()` will do this
-					$lx_attributeOption += ['identifier' => $lx_key];
+					$attributeOption += ['identifier' => $key];
 				}
 
-				$this->add(new AttributeOption(...$lx_attributeOption));
+				$this->add(new AttributeOption(...$attributeOption));
 			}
 		}
 
@@ -80,10 +81,10 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	 * @inheritDoc
 	 */
 	public function getAttributeOption(string $identifier): ?AttributeOption {
-		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
+		$identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
 		/** @var AttributeOption $lo_attributeOptions */
-		return Hash::get($this, $ls_identifier);
+		return Hash::get($this, $identifier);
 	}
 
 
@@ -91,17 +92,17 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	 * @inheritDoc
 	 */
 	public function getAttributeOptionsAttributes(string $identifier, array $currentOptions = [], ?ContextInterface $context = null): array {
-		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
+		$identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
-		/** @var AttributeOption $lo_attributeOptions */
-		$lo_attributeOptions = Hash::get($this, $ls_identifier);
+		/** @var \Awyiss\Attribute\AttributeOption $attributeOptions */
+		$attributeOptions = Hash::get($this, $identifier);
 
-		if (!$lo_attributeOptions) {
+		if (!$attributeOptions) {
 			return $currentOptions;
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $lo_attributeOptions->buildOptions($currentOptions, $context?->entity());
+		return $attributeOptions->buildOptions($currentOptions, $context?->entity());
 	}
 
 
@@ -109,15 +110,15 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	 * @inheritDoc
 	 */
 	public function validateValue(string $identifier, mixed $value, ?Entity $entity = null): bool|string {
-		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
+		$identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
-		/** @var AttributeOption $lo_attributeOptions */
-		$lo_attributeOptions = Hash::get($this, $ls_identifier);
-		if (!$lo_attributeOptions) {
+		/** @var \Awyiss\Attribute\AttributeOption $attributeOptions */
+		$attributeOptions = Hash::get($this, $identifier);
+		if (!$attributeOptions) {
 			return true;
 		}
 
 
-		return $lo_attributeOptions->validateValue($value, $entity);
+		return $attributeOptions->validateValue($value, $entity);
 	}
 }
