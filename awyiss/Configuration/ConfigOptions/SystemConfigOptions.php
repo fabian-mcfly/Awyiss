@@ -74,10 +74,10 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				personalizable: true,
 				type: ConfigOptionType::ListKey,
 				values: function () {
-					$la_timezones = DateTimeZone::listIdentifiers();
-					$la_timezones = array_combine($la_timezones, $la_timezones);
+					$timezones = DateTimeZone::listIdentifiers();
+					$timezones = array_combine($timezones, $timezones);
 
-					return ['auto' => __d('system', 'timezone_automatic')] + $la_timezones;
+					return ['auto' => __d('system', 'timezone_automatic')] + $timezones;
 				},
 			),
 		]);
@@ -248,10 +248,10 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				personalizable: true,
 				type: ConfigOptionType::ListKey,
 				values: function () {
-					$la_timezones = DateTimeZone::listIdentifiers();
-					$la_timezones = array_combine($la_timezones, $la_timezones);
+					$timezones = DateTimeZone::listIdentifiers();
+					$timezones = array_combine($timezones, $timezones);
 
-					return ['auto' => __d('system', 'timezone_automatic')] + $la_timezones;
+					return ['auto' => __d('system', 'timezone_automatic')] + $timezones;
 				},
 			),
 		]);
@@ -264,14 +264,14 @@ class SystemConfigOptions extends AbstractConfigOptions {
 	 * @return array
 	 */
 	protected function getRoutingServices(): array {
-		$la_classes = [];
+		$classes = [];
 
 		// Traverse both namespaces
-		foreach (App::classes('*', 'Utility/Route', 'RoutingService', RoutingServiceInterface::class) as $ls_classPath) {
-			$la_classes[ $ls_classPath ] = $ls_classPath;
+		foreach (App::classes('*', 'Utility/Route', 'RoutingService', RoutingServiceInterface::class) as $classPath) {
+			$classes[ $classPath ] = $classPath;
 		}
 
-		return $la_classes;
+		return $classes;
 	}
 
 
@@ -281,13 +281,13 @@ class SystemConfigOptions extends AbstractConfigOptions {
 	 * @return array
 	 */
 	protected function getTranslationServices(): array {
-		$la_classes = [];
+		$classes = [];
 
 		// Traverse both namespaces
-		foreach (App::classes('*', 'Utility/Translation', 'TranslationService', TranslationServiceInterface::class) as $ls_classPath) {
-			$la_classes[ $ls_classPath ] = $ls_classPath;
+		foreach (App::classes('*', 'Utility/Translation', 'TranslationService', TranslationServiceInterface::class) as $classPath) {
+			$classes[ $classPath ] = $classPath;
 		}
 
-		return $la_classes;
+		return $classes;
 	}
 }

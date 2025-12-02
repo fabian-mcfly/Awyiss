@@ -18,7 +18,7 @@ class ConfigOptionCollectionTest extends TestCase {
 	/**
 	 * Test constructor and the scope
 	 *
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @return void
 	 */
 	public function testConstructorAndScope(): void {
 		$dummyOptionsCollection = new ConfigOptionsCollection('dummy identifier');
@@ -29,7 +29,6 @@ class ConfigOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddConfigOptionSuccessfully() {
 		$configOption = new ConfigOption(
@@ -51,7 +50,6 @@ class ConfigOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddConfigOptionThrowsExceptionWhenIdentifierIsDuplicate(): void {
 		$this->expectException(RuntimeException::class);
@@ -82,7 +80,6 @@ class ConfigOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddArrayWithStringKeyAddsSubCollection() {
 		$configOption = $this->createMock(ConfigOption::class);
@@ -100,7 +97,6 @@ class ConfigOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddArrayWithNumericKeyAddsConfigOption() {
 		$configOption = $this->createMock(ConfigOption::class);
@@ -117,7 +113,6 @@ class ConfigOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddArrayWithNestedArrayCreatesConfigOption() {
 		$collection = new ConfigOptionsCollection('root');
@@ -138,7 +133,6 @@ class ConfigOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCollectionAddsNewCollectionSuccessfully() {
 		$collection = new ConfigOptionsCollection('root');
@@ -153,7 +147,6 @@ class ConfigOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCollectionMergesNestedCollectionsSuccessfully() {
 		$collection = new ConfigOptionsCollection('root');
@@ -175,7 +168,6 @@ class ConfigOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCollectionThrowsNoExceptionWhenCollectionIdentifierIsDuplicate() {
 		$collection = new ConfigOptionsCollection('root');
@@ -215,7 +207,6 @@ class ConfigOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCollectionThrowsExceptionWhenIdentifierIsOption() {
 		$collection = new ConfigOptionsCollection('root');
@@ -250,7 +241,6 @@ class ConfigOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsPrependsPathPartsToIdentifier(): void {
 		$collection = new ConfigOptionsCollection('root');
@@ -286,7 +276,6 @@ class ConfigOptionCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeepArrayCopy(): void {
 		$collection = new ConfigOptionsCollection('root');

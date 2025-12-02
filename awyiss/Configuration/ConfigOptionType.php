@@ -59,12 +59,12 @@ enum ConfigOptionType {
 			case self::List:
 			case self::Json:
 				try {
-					$la_value = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+					$value = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
 				}
 				catch (Exception | TypeError) {
 					return false;
 				}
-				return is_array($la_value);
+				return is_array($value);
 
 			case self::Enum:
 			case self::ValueCollection:

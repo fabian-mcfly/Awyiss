@@ -37,7 +37,6 @@ class GenericPagesConfigOptionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Configuration\AbstractGenericConfigOptions::getDynamicScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDynamicScope(): void {
 		$this->assertSame('News', $this->configOptions->getDynamicScope());
@@ -52,7 +51,6 @@ class GenericPagesConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
@@ -378,7 +376,6 @@ class GenericPagesConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastSystemOrder(): void {
 		$configOption = $this->configOptions->getConfigOption('Backend', 'systemOrder.direction');

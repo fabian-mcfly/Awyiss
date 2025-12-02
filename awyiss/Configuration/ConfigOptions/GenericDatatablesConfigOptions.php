@@ -101,11 +101,11 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title']);
+						unset($fields['id'], $fields['title']);
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],
@@ -170,45 +170,45 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 			],
 		]);
 
-		$lo_splitIntoLanguages = new ConfigOption(
+		$splitIntoLanguages = new ConfigOption(
 			defaultValue: true,
 			identifier: 'splitIntoLanguages',
 			localizable: false,
 			nullable: false,
 			type: ConfigOptionType::Bool,
 		);
-		$lo_splitIntoLanguages->setValidate(function (mixed $value, ?string $languageShortcode = null) use ($lo_splitIntoLanguages): bool|string {
+		$splitIntoLanguages->setValidate(function (mixed $value, ?string $languageShortcode = null) use ($splitIntoLanguages): bool|string {
 			if ($value) {
-				$ls_scope = $this->getDynamicScope();
-				if (Configure::read('Awyiss.' . $ls_scope . '.Backend.translatable')) {
+				$scope = $this->getDynamicScope();
+				if (Configure::read('Awyiss.' . $scope . '.Backend.translatable')) {
 					return __d('configuration', 'error_option_when_split_into_languages_when_translatable');
 				}
 			}
 
-			return $lo_splitIntoLanguages->validate($value, $languageShortcode);
+			return $splitIntoLanguages->validate($value, $languageShortcode);
 		});
 
-		$this->add('Backend', $lo_splitIntoLanguages);
+		$this->add('Backend', $splitIntoLanguages);
 
-		$lo_translatable = new ConfigOption(
+		$translatable = new ConfigOption(
 			defaultValue: false,
 			identifier: 'translatable',
 			localizable: false,
 			nullable: false,
 			type: ConfigOptionType::Bool,
 		);
-		$lo_translatable->setValidate(function (mixed $value, ?string $languageShortcode = null) use ($lo_translatable): bool|string {
+		$translatable->setValidate(function (mixed $value, ?string $languageShortcode = null) use ($translatable): bool|string {
 			if ($value) {
-				$ls_scope = $this->getDynamicScope();
-				if (Configure::read('Awyiss.' . $ls_scope . '.Backend.splitIntoLanguages')) {
+				$scope = $this->getDynamicScope();
+				if (Configure::read('Awyiss.' . $scope . '.Backend.splitIntoLanguages')) {
 					return __d('configuration', 'error_option_not_translatable_when_split_into_languages');
 				}
 			}
 
-			return $lo_translatable->validate($value, $languageShortcode);
+			return $translatable->validate($value, $languageShortcode);
 		});
 
-		$this->add('Backend', $lo_translatable);
+		$this->add('Backend', $translatable);
 
 		$this->add(Awyiss::REALM_FRONTEND, [
 			'mediaFolders' => [
@@ -234,15 +234,15 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 	 * Returns a list of all media folders
 	 */
 	protected function getMediaFolders(?string $languageShortcode): array {
-		$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+		$mediaFoldersTable = $this->fetchTable('MediaFolders');
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_query = $lo_mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode ?? false, includeGlobal: false)->where([
+		$query = $mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode ?? false, includeGlobal: false)->where([
 			'id !=' => 1,
 			'hidden' => false,
 		]);
-		/** @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolders */
-		$lo_mediaFolders = $lo_mediaFoldersTable->listNested($lo_query);
+		/** @var \Cake\Collection\Iterator\TreeIterator $mediaFolders */
+		$mediaFolders = $mediaFoldersTable->listNested($query);
 
-		return $lo_mediaFolders->printer('label', 'id', '- ')->toArray();
+		return $mediaFolders->printer('label', 'id', '- ')->toArray();
 	}
 }

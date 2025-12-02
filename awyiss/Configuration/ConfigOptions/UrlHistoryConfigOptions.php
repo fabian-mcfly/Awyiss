@@ -31,11 +31,11 @@ class UrlHistoryConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title']);
+						unset($fields['id'], $fields['title']);
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],

@@ -33,11 +33,11 @@ class PageTemplatesConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title'], $la_fields['page_role_id']);
+						unset($fields['id'], $fields['title'], $fields['page_role_id']);
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],

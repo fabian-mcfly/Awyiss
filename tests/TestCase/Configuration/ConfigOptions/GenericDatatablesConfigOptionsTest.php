@@ -38,7 +38,6 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Configuration\AbstractGenericConfigOptions::getDynamicScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDynamicScope(): void {
 		$this->assertSame('Cars', $this->configOptions->getDynamicScope());
@@ -53,7 +52,6 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
@@ -370,7 +368,6 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateSplitIntoLanguages(): void {
 		$configOption = $this->configOptions->getConfigOption('Backend', 'splitIntoLanguages');
@@ -387,7 +384,6 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateTranslatable(): void {
 		$configOption = $this->configOptions->getConfigOption('Backend', 'translatable');
@@ -404,7 +400,6 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastSystemOrder(): void {
 		$configOption = $this->configOptions->getConfigOption('Backend', 'systemOrder.direction');

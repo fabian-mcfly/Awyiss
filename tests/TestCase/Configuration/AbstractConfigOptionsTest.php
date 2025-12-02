@@ -35,7 +35,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAndRetrieveConfigOption(): void {
 		$realm = 'Backend';
@@ -58,7 +57,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAndRetrieveConfigOptionForInvalidRealm(): void {
 		$realm = 'InvalidRealm';
@@ -80,7 +78,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptions(): void {
 		$realm = 'Backend';
@@ -93,7 +90,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsForInvalidRealm(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -105,7 +101,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOption(): void {
 		$realm = 'Backend';
@@ -120,7 +115,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionForInvalidRealm(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -132,7 +126,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionForUnknownPath(): void {
 		$result = $this->configOptions->getConfigOption('Backend', 'unknownPath');
@@ -144,7 +137,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionForCollectionPath(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -157,7 +149,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValue(): void {
 		$isValid = $this->configOptions->validateConfigValue('Backend', 'contents.enabled', true);
@@ -181,7 +172,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValueForLocalizableOption(): void {
 		$isValid = $this->configOptions->validateConfigValue('Backend', 'contents.enabled', true, 'en');
@@ -204,7 +194,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValueForNullableOption(): void {
 		$isValid = $this->configOptions->validateConfigValue('Backend', 'contents.enabled', null);
@@ -227,7 +216,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastConfigValue(): void {
 		$typecastedValue = $this->configOptions->typecastConfigValue('Backend', 'paginate.limit', '20');
@@ -238,7 +226,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastConfigValueInvalid(): void {
 		$typecastedValue = $this->configOptions->typecastConfigValue('Backend', 'paginate.limit', 'false');
@@ -249,7 +236,6 @@ class AbstractConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScope(): void {
 		$scope = PagesConfigOptions::getScope();

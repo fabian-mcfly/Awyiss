@@ -49,17 +49,17 @@ require CAKE . 'functions.php';
 
 
 if (!env('CONFIG_ENV') && file_exists(ROOT . DS . '.env')) {
-	$lo_dotenv = new Loader([ROOT . DS . '.env']);
-	$lo_dotenv->parse()->putenv()->toEnv()->toServer();
+	$dotenv = new Loader([ROOT . DS . '.env']);
+	$dotenv->parse()->putenv()->toEnv()->toServer();
 }
 
 if (!defined('CONFIG_ENV')) {
 	/**
 	 * The current environment
 	 */
-	$ls_configEnv = env('CONFIG_ENV');
-	if ($ls_configEnv) {
-		define('CONFIG_ENV', $ls_configEnv);
+	$configEnv = env('CONFIG_ENV');
+	if ($configEnv) {
+		define('CONFIG_ENV', $configEnv);
 	}
 }
 
@@ -67,9 +67,9 @@ if (!defined('CUSTOM_DIR')) {
 	/**
 	 * The directory for customer logic and frontend data
 	 */
-	$ls_customDir = env('CUSTOM_DIR');
-	if ($ls_customDir) {
-		define('CUSTOM_DIR', $ls_customDir);
+	$customDir = env('CUSTOM_DIR');
+	if ($customDir) {
+		define('CUSTOM_DIR', $customDir);
 	}
 }
 
@@ -83,14 +83,12 @@ if (defined('CUSTOM_DIR')) {
 	 * Custom namespace
 	 */
 	if (!defined('CUSTOM_NAMESPACE')) {
-		$la_parts = explode(DS, CUSTOM_DIR);
-		array_walk($la_parts, function (&$part) {
-			/** @noinspection PhpVariableNamingConventionInspection */
+		$parts = explode(DS, CUSTOM_DIR);
+		array_walk($parts, function (&$part) {
 			$part = Inflector::camelize($part, '-');
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$part = Inflector::camelize($part);
 		});
-		define('CUSTOM_NAMESPACE', implode('/', $la_parts));
+		define('CUSTOM_NAMESPACE', implode('/', $parts));
 	}
 
 	if (defined('CONFIG_ENV')) {
@@ -132,7 +130,7 @@ date_default_timezone_set(Configure::read('App.defaultTimezone'));
 
 
 /*
- * Configure the mbstring extension to use the correct encoding.
+ * Configure the `mbstring` extension to use the correct encoding.
  */
 mb_internal_encoding(Configure::read('App.encoding'));
 
@@ -147,8 +145,8 @@ ini_set('intl.default_locale', Configure::read('App.defaultLocale'));
 /*
  * Register application error and exception handlers.
  */
-(new ErrorTrap(Configure::read('Error')))->register();
-(new ExceptionTrap(Configure::read('Error')))->register();
+new ErrorTrap(Configure::read('Error'))->register();
+new ExceptionTrap(Configure::read('Error'))->register();
 
 
 /*
@@ -163,23 +161,23 @@ if (PHP_SAPI === 'cli') {
  * Set the full base URL.
  * This URL is used as the base of all absolute links.
  */
-$ls_fullBaseUrl = Configure::read('App.fullBaseUrl');
-if (!$ls_fullBaseUrl) {
-	$ls_https = null;
+$fullBaseUrl = Configure::read('App.fullBaseUrl');
+if (!$fullBaseUrl) {
+	$https = null;
 	if (env('HTTPS')) {
-		$ls_https = 's';
+		$https = 's';
 	}
 
-	$ls_httpHost = env('HTTP_HOST');
-	if (isset($ls_httpHost)) {
-		$ls_fullBaseUrl = 'http' . $ls_https . '://' . $ls_httpHost;
+	$httpHost = env('HTTP_HOST');
+	if (isset($httpHost)) {
+		$fullBaseUrl = 'http' . $https . '://' . $httpHost;
 	}
-	unset($ls_httpHost, $ls_https);
+	unset($httpHost, $https);
 }
-if ($ls_fullBaseUrl) {
-	Router::fullBaseUrl($ls_fullBaseUrl);
+if ($fullBaseUrl) {
+	Router::fullBaseUrl($fullBaseUrl);
 }
-unset($ls_fullBaseUrl);
+unset($fullBaseUrl);
 
 Cache::setConfig(Configure::consume('Cache'));
 ConnectionManager::setConfig(PHP_SAPI === 'cli' ? Configure::read('Datasources') : Configure::consume('Datasources'));
@@ -197,15 +195,14 @@ ini_set('intl.default_locale', 'de_DE');
 I18n::setLocale('de_DE');
 
 I18n::config('_fallback', function (string $domain, string $locale): Package {
-	$ls_domain = $domain;
-	if (!str_contains($ls_domain, '/')) {
-		$ls_domain = Awyiss::getRealm() . '/' . $ls_domain;
+	if (!str_contains($domain, '/')) {
+		$domain = Awyiss::getRealm() . '/' . $domain;
 	}
 
-	$lo_fileLoader = new MessagesFileLoader($ls_domain, $locale, 'po');
-	$lo_default = $lo_fileLoader();
+	$fileLoader = new MessagesFileLoader($domain, $locale, 'po');
+	$default = $fileLoader();
 
-	return new Package('default', null, $lo_default->getMessages());
+	return new Package('default', null, $default->getMessages());
 });
 
 /*

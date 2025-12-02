@@ -64,11 +64,11 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id']);
+						unset($fields['id']);
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],
@@ -89,13 +89,13 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 	 * @return array<<class-string<ColumnSystemInterface>, string>
 	 */
 	protected function getColumnSystemClasses(): array {
-		$la_classes = [];
+		$classes = [];
 
-		/** @var class-string<ColumnSystemInterface> $ls_class */
-		foreach (App::classes('*', 'Utility/Content', 'ColumnSystem', ColumnSystemInterface::class, null, ['BackendColumnSystem']) as $ls_class) {
-			$la_classes[ $ls_class ] = $ls_class::getName();
+		/** @var class-string<ColumnSystemInterface> $class */
+		foreach (App::classes('*', 'Utility/Content', 'ColumnSystem', ColumnSystemInterface::class, null, ['BackendColumnSystem']) as $class) {
+			$classes[ $class ] = $class::getName();
 		}
 
-		return $la_classes;
+		return $classes;
 	}
 }

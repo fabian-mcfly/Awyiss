@@ -129,11 +129,11 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title'], $la_fields['slug']);
+						unset($fields['id'], $fields['title'], $fields['slug']);
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],
@@ -256,16 +256,16 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	 * Returns a list of all media folders
 	 */
 	protected function getMediaFolders(?string $languageShortcode): array {
-		$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+		$mediaFoldersTable = $this->fetchTable('MediaFolders');
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_query = $lo_mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode ?? false, includeGlobal: false)->where([
+		$query = $mediaFoldersTable->find('forCurrentLanguage', languageShortcode: $languageShortcode ?? false, includeGlobal: false)->where([
 			'id !=' => 1,
 			'hidden' => false,
 		]);
-		/** @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolders */
-		$lo_mediaFolders = $lo_mediaFoldersTable->listNested($lo_query);
+		/** @var \Cake\Collection\Iterator\TreeIterator $mediaFolders */
+		$mediaFolders = $mediaFoldersTable->listNested($query);
 
-		return $lo_mediaFolders->printer('label', 'id', '- ')->toArray();
+		return $mediaFolders->printer('label', 'id', '- ')->toArray();
 	}
 
 
@@ -273,12 +273,12 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	 * Returns a list of all pages
 	 */
 	protected function getPages(?string $languageShortcode): array {
-		$lo_pagesTable = $this->fetchTable('Pages');
+		$pagesTable = $this->fetchTable('Pages');
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_query = $lo_pagesTable->find('forCurrentLanguage', languageShortcode: $languageShortcode);
-		/** @var \Cake\Collection\Iterator\TreeIterator $lo_pages */
-		$lo_pages = $lo_pagesTable->listNested($lo_query);
+		$query = $pagesTable->find('forCurrentLanguage', languageShortcode: $languageShortcode);
+		/** @var \Cake\Collection\Iterator\TreeIterator $pages */
+		$pages = $pagesTable->listNested($query);
 
-		return $lo_pages->printer('label', 'id', '- ')->toArray();
+		return $pages->printer('label', 'id', '- ')->toArray();
 	}
 }

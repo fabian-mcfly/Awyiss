@@ -47,7 +47,6 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorInitializesConfigOptions(): void {
 		$mock = $this->getMockBuilder(GenericPagesConfigOptions::class)->setConstructorArgs(['news'])
@@ -79,10 +78,11 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMultipleInstancesNotShareDynamicScope(): void {
+		/** @var \Awyiss\Configuration\AbstractGenericConfigOptions $configOptions1 */
 		$configOptions1 = ConfigOptionsProvider::loadConfigOptions('News');
+		/** @var \Awyiss\Configuration\AbstractGenericConfigOptions $configOptions2 */
 		$configOptions2 = ConfigOptionsProvider::loadConfigOptions('Product');
 
 		$this->assertSame('News', $configOptions1->getDynamicScope());
@@ -105,7 +105,6 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAndRetrieveConfigOption(): void {
 		$realm = 'Backend';
@@ -146,7 +145,6 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptions(): void {
 		$options = $this->configOptions->getConfigOptions('Backend');
@@ -157,7 +155,6 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValue(): void {
 		$isValid = $this->configOptions->validateConfigValue('Backend', 'contents.enabled', true);
@@ -168,7 +165,6 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastConfigValue(): void {
 		$typecastedValue = $this->configOptions->typecastConfigValue('Backend', 'paginate.limit', '20');
@@ -179,7 +175,6 @@ class AbstractGenericConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScope(): void {
 		$scope = GenericPagesConfigOptions::getScope();

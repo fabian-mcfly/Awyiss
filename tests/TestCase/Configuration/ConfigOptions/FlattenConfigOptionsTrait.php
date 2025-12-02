@@ -17,7 +17,6 @@ trait FlattenConfigOptionsTrait {
 	 * @param \Awyiss\Configuration\ConfigOptionsInterface|array $configOptions
 	 * @param array $currentKeys
 	 * @return array<\Awyiss\Configuration\ConfigOption>
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function flattenConfigOptions(ConfigOptionsInterface|array $configOptions, array $currentKeys = []): array {
 		$result = [];

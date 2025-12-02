@@ -11,9 +11,9 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 	/** @uses \Awyiss\Routing\Route\AwyissRoute */
 	$routeBuilder->setRouteClass(App::className('Awyiss', 'Routing/Route', 'Route'));
 
-	/** @var class-string<\Awyiss\Middleware\RealmMiddleware> $ls_realmMiddlewareClass */
-	$ls_realmMiddlewareClass = App::className('Realm', 'Middleware', 'Middleware');
-	$routeBuilder->registerMiddleware('backendRealm', new $ls_realmMiddlewareClass(Awyiss::REALM_BACKEND));
+	/** @var class-string<\Awyiss\Middleware\RealmMiddleware> $realmMiddlewareClass */
+	$realmMiddlewareClass = App::className('Realm', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('backendRealm', new $realmMiddlewareClass(Awyiss::REALM_BACKEND));
 	$routeBuilder->applyMiddleware('backendRealm');
 
 	// Load the configuration as early as possible to make it available for all other middleware
@@ -22,20 +22,20 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 	// Load the event listeners as early as possible to possibly listen to middleware events
 	$routeBuilder->applyMiddleware('eventListeners');
 
-	/** @var class-string<\Awyiss\Authentication\AuthenticationService> $ls_authenticationClass */
-	$ls_authenticationClass = App::className('Authentication', 'Authentication');
-	$lo_authentication = new $ls_authenticationClass(Awyiss::REALM_BACKEND);
-	/** @var class-string<\Awyiss\Middleware\AuthenticationMiddleware> $ls_authenticationMiddlewareClass */
-	$ls_authenticationMiddlewareClass = App::className('Authentication', 'Middleware', 'Middleware');
-	$routeBuilder->registerMiddleware('backendAuthentication', new $ls_authenticationMiddlewareClass($lo_authentication));
+	/** @var class-string<\Awyiss\Authentication\AuthenticationService> $authenticationClass */
+	$authenticationClass = App::className('Authentication', 'Authentication');
+	$authentication = new $authenticationClass(Awyiss::REALM_BACKEND);
+	/** @var class-string<\Awyiss\Middleware\AuthenticationMiddleware> $authenticationMiddlewareClass */
+	$authenticationMiddlewareClass = App::className('Authentication', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('backendAuthentication', new $authenticationMiddlewareClass($authentication));
 	$routeBuilder->applyMiddleware('backendAuthentication');
 
-	/** @var class-string<\Awyiss\Authorization\Authorization> $ls_authorizationClass */
-	$ls_authorizationClass = App::className('Authorization', 'Authorization');
-	$lo_authorization = new $ls_authorizationClass(Awyiss::REALM_BACKEND);
-	/** @var class-string<\Awyiss\Middleware\AuthorizationMiddleware> $ls_authorizationMiddlewareClass */
-	$ls_authorizationMiddlewareClass = App::className('Authorization', 'Middleware', 'Middleware');
-	$routeBuilder->registerMiddleware('backendAuthorization', new $ls_authorizationMiddlewareClass($lo_authorization));
+	/** @var class-string<\Awyiss\Authorization\Authorization> $authorizationClass */
+	$authorizationClass = App::className('Authorization', 'Authorization');
+	$authorization = new $authorizationClass(Awyiss::REALM_BACKEND);
+	/** @var class-string<\Awyiss\Middleware\AuthorizationMiddleware> $authorizationMiddlewareClass */
+	$authorizationMiddlewareClass = App::className('Authorization', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('backendAuthorization', new $authorizationMiddlewareClass($authorization));
 	$routeBuilder->applyMiddleware('backendAuthorization');
 
 	$routeBuilder->applyMiddleware('csp');
@@ -51,14 +51,14 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 	 * - for the custom_dir
 	 */
 	if (defined('CUSTOM_CONFIG')) {
-		$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
-		if (is_file($ls_file)) {
-			include $ls_file;
+		$file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
+		if (is_file($file)) {
+			include $file;
 		}
 
-		$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
-		if (is_file($ls_file)) {
-			include $ls_file;
+		$file = CUSTOM_CONFIG . 'routes_backend.php';
+		if (is_file($file)) {
+			include $file;
 		}
 	}
 

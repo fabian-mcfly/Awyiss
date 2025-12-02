@@ -36,7 +36,6 @@ class MediaConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
@@ -194,7 +193,6 @@ class MediaConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastDefaultBreakpoints(): void {
 		$configOption = $this->configOptions->getConfigOption('Frontend', 'defaultBreakpoints');
@@ -212,7 +210,6 @@ class MediaConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateQuality(): void {
 		$configOption = $this->configOptions->getConfigOption('Frontend', 'resizing.quality');

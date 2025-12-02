@@ -31,11 +31,11 @@ class ContentAreasConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title'], $la_fields['identifier']);
+						unset($fields['id'], $fields['title'], $fields['identifier']);
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],

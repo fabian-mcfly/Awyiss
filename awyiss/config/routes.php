@@ -9,15 +9,15 @@ use Cake\Routing\RouteBuilder;
 
 /**  @var \Cake\Routing\RouteBuilder $routes */
 
-/** @var class-string<\Awyiss\Middleware\ConfigMiddleware> $ls_configMiddlewareClass */
-$ls_configMiddlewareClass = App::className('Config', 'Middleware', 'Middleware');
-$routes->registerMiddleware('config', new $ls_configMiddlewareClass());
+/** @var class-string<\Awyiss\Middleware\ConfigMiddleware> $configMiddlewareClass */
+$configMiddlewareClass = App::className('Config', 'Middleware', 'Middleware');
+$routes->registerMiddleware('config', new $configMiddlewareClass());
 
-/** @var class-string<\Cake\Http\Middleware\CspMiddleware> $ls_cspMiddlewareClass */
-$ls_cspMiddlewareClass = App::className('Csp', 'Http/Middleware', 'Middleware');
+/** @var class-string<\Cake\Http\Middleware\CspMiddleware> $cspMiddlewareClass */
+$cspMiddlewareClass = App::className('Csp', 'Http/Middleware', 'Middleware');
 $routes->registerMiddleware(
 	'csp',
-	new $ls_cspMiddlewareClass(
+	new $cspMiddlewareClass(
 		[
 			'base-uri' => [
 				'allow' => Configure::read('Csp.baseUri.allow'),
@@ -89,26 +89,26 @@ $routes->registerMiddleware(
 	)
 );
 
-/** @var class-string<\Awyiss\Middleware\EventListenersMiddleware> $ls_eventListenersMiddlewareClass */
-$ls_eventListenersMiddlewareClass = App::className('EventListeners', 'Middleware', 'Middleware');
-$routes->registerMiddleware('eventListeners', new $ls_eventListenersMiddlewareClass());
+/** @var class-string<\Awyiss\Middleware\EventListenersMiddleware> $eventListenersMiddlewareClass */
+$eventListenersMiddlewareClass = App::className('EventListeners', 'Middleware', 'Middleware');
+$routes->registerMiddleware('eventListeners', new $eventListenersMiddlewareClass());
 
-/** @var class-string<\Awyiss\Middleware\DesignMiddleware> $ls_designMiddlewareClass */
-$ls_designMiddlewareClass = App::className('Design', 'Middleware', 'Middleware');
-$routes->registerMiddleware('design', new $ls_designMiddlewareClass());
+/** @var class-string<\Awyiss\Middleware\DesignMiddleware> $designMiddlewareClass */
+$designMiddlewareClass = App::className('Design', 'Middleware', 'Middleware');
+$routes->registerMiddleware('design', new $designMiddlewareClass());
 
-/** @var class-string<\Awyiss\Middleware\LocaleMiddleware> $ls_localeMiddlewareClass */
-$ls_localeMiddlewareClass = App::className('Locale', 'Middleware', 'Middleware');
-$routes->registerMiddleware('requestLocale', new $ls_localeMiddlewareClass());
+/** @var class-string<\Awyiss\Middleware\LocaleMiddleware> $localeMiddlewareClass */
+$localeMiddlewareClass = App::className('Locale', 'Middleware', 'Middleware');
+$routes->registerMiddleware('requestLocale', new $localeMiddlewareClass());
 
 
 $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	/** @uses \Awyiss\Routing\Route\AwyissRoute */
 	$routeBuilder->setRouteClass(App::className('Awyiss', 'Routing/Route', 'Route'));
 
-	/** @var class-string<\Awyiss\Middleware\RealmMiddleware> $ls_realmMiddlewareClass */
-	$ls_realmMiddlewareClass = App::className('Realm', 'Middleware', 'Middleware');
-	$routeBuilder->registerMiddleware('frontendRealm', new $ls_realmMiddlewareClass(Awyiss::REALM_FRONTEND));
+	/** @var class-string<\Awyiss\Middleware\RealmMiddleware> $realmMiddlewareClass */
+	$realmMiddlewareClass = App::className('Realm', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('frontendRealm', new $realmMiddlewareClass(Awyiss::REALM_FRONTEND));
 	$routeBuilder->applyMiddleware('frontendRealm');
 
 	// Load the configuration as early as possible to make it available for all other middleware
@@ -130,14 +130,14 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	 * - for the custom_dir
 	 */
 	if (defined('CUSTOM_CONFIG')) {
-		$ls_file = ENV_CUSTOM_CONFIG . 'routes.php';
-		if (is_file($ls_file)) {
-			include $ls_file;
+		$file = ENV_CUSTOM_CONFIG . 'routes.php';
+		if (is_file($file)) {
+			include $file;
 		}
 
-		$ls_file = CUSTOM_CONFIG . 'routes.php';
-		if (is_file($ls_file)) {
-			include $ls_file;
+		$file = CUSTOM_CONFIG . 'routes.php';
+		if (is_file($file)) {
+			include $file;
 		}
 	}
 
