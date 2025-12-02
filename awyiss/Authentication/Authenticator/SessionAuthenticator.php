@@ -35,36 +35,35 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function authenticate(ServerRequestInterface $request): ResultInterface {
-		$ls_sessionKey = $this->getConfig('sessionKey');
-		/** @var \Cake\Http\Session $lo_session */
-		$lo_session = $request->getAttribute('session');
-		/** @var \Awyiss\Model\Entity\User $lo_user */
-		$lo_user = $lo_session->read($ls_sessionKey);
+		$sessionKey = $this->getConfig('sessionKey');
+		/** @var \Cake\Http\Session $session */
+		$session = $request->getAttribute('session');
+		/** @var \Awyiss\Model\Entity\User $user */
+		$user = $session->read($sessionKey);
 
-		if (!$lo_user) {
+		if (!$user) {
 			return new Result(null, ResultInterface::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
-		$lx_identify = $this->getConfig('identify');
-		if (is_callable($lx_identify)) {
-			$lx_identify = $lx_identify($lo_user);
+		$identify = $this->getConfig('identify');
+		if (is_callable($identify)) {
+			$identify = $identify($user);
 		}
 
-		if ($lx_identify) {
-			$la_credentials = $lx_identify;
-			if ($lx_identify === true) {
-				$la_credentials = [];
-				foreach ($this->getConfig('fields') as $lx_key => $lx_field) {
-					$la_credentials[ $lx_key ] = $lo_user[ $lx_field ];
-				}
+		if ($identify) {
+			$credentials = $identify;
+			if ($identify === true) {
+				$credentials = array_map(function ($field) use ($user) {
+					return $user[ $field ];
+				}, $this->getConfig('fields'));
 			}
 
-			/** @var \Awyiss\Model\Entity\User $lo_reidentifiedUser */
-			$lo_reidentifiedUser = $this->_identifier->reidentify($la_credentials);
+			/** @var \Awyiss\Model\Entity\User $reidentifiedUser */
+			$reidentifiedUser = $this->_identifier->reidentify($credentials);
 
-			if (!$lo_reidentifiedUser) {
+			if (!$reidentifiedUser) {
 				// If the user is not found, redirect to the login
-				$lo_session->delete($ls_sessionKey);
+				$session->delete($sessionKey);
 
 				return new Result(null, ResultInterface::FAILURE_IDENTITY_NOT_FOUND);
 			}
@@ -72,23 +71,23 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 			//If the db entry of the user changed,
 			if (
 				(
-					!$lo_user->changedOn &&
-					$lo_reidentifiedUser->changedOn
+					!$user->changedOn &&
+					$reidentifiedUser->changedOn
 				) ||
-				$lo_reidentifiedUser->changedOn?->notEquals($lo_user->changedOn)
+				$reidentifiedUser->changedOn?->notEquals($user->changedOn)
 			) {
 				// unset the permissions and use the new changedOn value
-				$lo_user->unsetPermissionCollection();
-				$lo_user->changedOn = $lo_reidentifiedUser->changedOn;
+				$user->unsetPermissionCollection();
+				$user->changedOn = $reidentifiedUser->changedOn;
 			}
 		}
 
-		if (!($lo_user instanceof ArrayAccess)) {
-			$lo_user = new ArrayObject($lo_user);
+		if (!($user instanceof ArrayAccess)) {
+			$user = new ArrayObject($user);
 		}
 
 
-		return new Result($lo_user, ResultInterface::SUCCESS);
+		return new Result($user, ResultInterface::SUCCESS);
 	}
 
 

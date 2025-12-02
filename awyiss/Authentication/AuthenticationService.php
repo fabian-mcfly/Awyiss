@@ -42,17 +42,17 @@ class AuthenticationService extends BaseAuthenticationService {
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function authenticate(ServerRequestInterface $request): ResultInterface {
-		$lx_result = null;
-		/** @var \Authentication\Authenticator\AuthenticatorInterface $lo_authenticator */
-		foreach ($this->authenticators() as $lo_authenticator) {
-			$lx_result = $lo_authenticator->authenticate($request);
-			if ($lx_result->isValid()) {
-				$this->_successfulAuthenticator = $lo_authenticator;
+		$result = null;
+		/** @var \Authentication\Authenticator\AuthenticatorInterface $authenticator */
+		foreach ($this->authenticators() as $authenticator) {
+			$result = $authenticator->authenticate($request);
+			if ($result->isValid()) {
+				$this->_successfulAuthenticator = $authenticator;
 
-				$this->_result = $lx_result;
+				$this->_result = $result;
 
 				$this->dispatchEvent('Authentication.afterAuthenticate', [
-					'authenticator' => $lo_authenticator,
+					'authenticator' => $authenticator,
 					'identity' => $this->getIdentity(),
 				], $this);
 
@@ -60,19 +60,19 @@ class AuthenticationService extends BaseAuthenticationService {
 				return $this->_result;
 			}
 
-			if ($lo_authenticator instanceof StatelessInterface) {
-				$lo_authenticator->unauthorizedChallenge($request);
+			if ($authenticator instanceof StatelessInterface) {
+				$authenticator->unauthorizedChallenge($request);
 			}
 		}
 
-		if ($lx_result === null) {
+		if ($result === null) {
 			throw new RuntimeException('No authenticators loaded. You need to load at least one authenticator.');
 		}
 
 		$this->_successfulAuthenticator = null;
 
 
-		return $this->_result = $lx_result;
+		return $this->_result = $result;
 	}
 
 
@@ -87,17 +87,17 @@ class AuthenticationService extends BaseAuthenticationService {
 		 * parameter containing the old path. That looks amateurish.
 		 */
 
-		$lo_uri = $request->getUri();
-		$ls_redirectUri = $lo_uri->getPath();
+		$uri = $request->getUri();
+		$redirectUri = $uri->getPath();
 
 		if (
-			!str_ends_with($ls_redirectUri, '/request-lock/') &&
-			!str_ends_with($ls_redirectUri, '/release-lock/') &&
-			!str_contains($ls_redirectUri, '/mode:frontend-editor/')
+			!str_ends_with($redirectUri, '/request-lock/') &&
+			!str_ends_with($redirectUri, '/release-lock/') &&
+			!str_contains($redirectUri, '/mode:frontend-editor/')
 		) {
-			/** @var \Cake\Http\Session $lo_session */
-			$lo_session = $request->getAttribute('session');
-			$lo_session->write('unauthenticatedRedirectUrl', $ls_redirectUri);
+			/** @var \Cake\Http\Session $session */
+			$session = $request->getAttribute('session');
+			$session->write('unauthenticatedRedirectUrl', $redirectUri);
 		}
 
 		return parent::getUnauthenticatedRedirectUrl($request);
@@ -110,11 +110,11 @@ class AuthenticationService extends BaseAuthenticationService {
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function getLoginRedirect(ServerRequestInterface $request): ?string {
-		/** @var \Cake\Http\Session $lo_session */
-		$lo_session = $request->getAttribute('session');
+		/** @var \Cake\Http\Session $session */
+		$session = $request->getAttribute('session');
 
 
-		return $lo_session->read('unauthenticatedRedirectUrl');
+		return $session->read('unauthenticatedRedirectUrl');
 	}
 
 
@@ -125,9 +125,9 @@ class AuthenticationService extends BaseAuthenticationService {
 	 */
 	public function authenticators(): AuthenticatorCollection {
 		if ($this->_authenticators === null) {
-			$lo_identifiers = $this->identifiers();
-			$lx_authenticators = $this->getConfig('authenticators');
-			$this->_authenticators = new AuthenticatorCollection($lo_identifiers, $lx_authenticators);
+			$identifiers = $this->identifiers();
+			$authenticators = $this->getConfig('authenticators');
+			$this->_authenticators = new AuthenticatorCollection($identifiers, $authenticators);
 		}
 
 		return $this->_authenticators;

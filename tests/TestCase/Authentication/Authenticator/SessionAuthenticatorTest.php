@@ -19,7 +19,6 @@ use Cake\Http\Session;
 class SessionAuthenticatorTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCallableAuthentication(): void {
 		$authenticator = new SessionAuthenticator(new IdentifierCollection());

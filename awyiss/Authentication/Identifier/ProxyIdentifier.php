@@ -10,7 +10,7 @@ use Authentication\Identifier\Resolver\ResolverAwareTrait;
 
 
 /**
- * An identifier that uses both a remote and a local resolver to retreive resp. store data
+ * An identifier that uses both a remote and a local resolver to retrieve resp. store data
  */
 class ProxyIdentifier extends AbstractIdentifier {
 	use ResolverAwareTrait;
