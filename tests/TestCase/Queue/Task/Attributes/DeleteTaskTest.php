@@ -79,7 +79,6 @@ class DeleteTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\DeleteTask::run()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRun(string $identifier, int $identityId): void {
 		$data = [
@@ -170,7 +169,6 @@ class DeleteTaskTest extends TestCase {
 	 * Data provider for scope testing
 	 *
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function scopeDataProvider(): array {
 		return [

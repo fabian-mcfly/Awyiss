@@ -1000,7 +1000,6 @@ class AwyissRouteTest extends TestCase {
 	 * @param array $expectedResults
 	 * @return void
 	 * @see \Awyiss\Routing\Route\AwyissRoute::parse()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParse(string $template, array $defaults, array $options, array $testUrls, array $expectedResults): void {
 		$route = new AwyissRoute($template, $defaults, $options);
@@ -1037,7 +1036,6 @@ class AwyissRouteTest extends TestCase {
 	 * @param array $matches
 	 * @return void
 	 * @see \Awyiss\Routing\Route\AwyissRoute::match()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMatch(string $template, array $defaults, array $options, array $pattern, array $urls, array $matches): void {
 		$route = new AwyissRoute($template, $defaults, $options);

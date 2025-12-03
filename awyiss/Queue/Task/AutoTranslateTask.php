@@ -54,9 +54,9 @@ class AutoTranslateTask extends Task {
 			return;
 		}
 
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-		if ($ls_pageRoleEnum::tryFromName($data['type'])) {
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		if ($pageRoleEnum::tryFromName($data['type'])) {
 			$this->translatePages($data['type'], $data['sourceLanguage'], $data['targetLanguage'], $data['ids']);
 		}
 	}
@@ -74,17 +74,17 @@ class AutoTranslateTask extends Task {
 	 */
 	protected function translateContents(string $sourceLanguage, string $targetLanguage, array $ids): void {
 		/** @var class-string<\Awyiss\Utility\Translation\TranslationServiceInterface>|null $ls_translationServiceClass */
-		$lo_translationService = $this->getTranslationService($sourceLanguage, $targetLanguage);
+		$translationService = $this->getTranslationService($sourceLanguage, $targetLanguage);
 
-		$li_batchSize = $lo_translationService->getBatchSize();
+		$batchSize = $translationService->getBatchSize();
 
-		if (count($ids) > $li_batchSize) {
-			$lo_queueJobsTable = $this->fetchTable('Queue.QueuedJobs');
-			$la_remainingContentIds = array_slice($ids, $li_batchSize);
-			$lo_queueJobsTable->createJob('AutoTranslate', [
+		if (count($ids) > $batchSize) {
+			$queueJobsTable = $this->fetchTable('Queue.QueuedJobs');
+			$remainingContentIds = array_slice($ids, $batchSize);
+			$queueJobsTable->createJob('AutoTranslate', [
 				'sourceLanguage' => $sourceLanguage,
 				'targetLanguage' => $targetLanguage,
-				'ids' => $la_remainingContentIds,
+				'ids' => $remainingContentIds,
 				'type' => 'content',
 			], [
 				'group' => 'general',
@@ -93,9 +93,9 @@ class AutoTranslateTask extends Task {
 			]);
 		}
 
-		$la_contentIds = array_slice($ids, 0, $li_batchSize);
-		$lo_contentsTable = $this->fetchTable('Contents');
-		$this->translateEntities($lo_contentsTable, $la_contentIds, $lo_translationService, $targetLanguage, $sourceLanguage, 'content');
+		$contentIds = array_slice($ids, 0, $batchSize);
+		$contentsTable = $this->fetchTable('Contents');
+		$this->translateEntities($contentsTable, $contentIds, $translationService, $targetLanguage, $sourceLanguage, 'content');
 	}
 
 
@@ -111,17 +111,17 @@ class AutoTranslateTask extends Task {
 	 * @throws \Exception
 	 */
 	protected function translatePages(string $type, mixed $sourceLanguage, mixed $targetLanguage, mixed $ids): void {
-		$lo_translationService = $this->getTranslationService($sourceLanguage, $targetLanguage);
+		$translationService = $this->getTranslationService($sourceLanguage, $targetLanguage);
 
-		$li_batchSize = $lo_translationService->getBatchSize();
+		$batchSize = $translationService->getBatchSize();
 
-		if (count($ids) > $li_batchSize) {
-			$lo_queueJobsTable = $this->fetchTable('Queue.QueuedJobs');
-			$la_remainingContentIds = array_slice($ids, $li_batchSize);
-			$lo_queueJobsTable->createJob('AutoTranslate', [
+		if (count($ids) > $batchSize) {
+			$queueJobsTable = $this->fetchTable('Queue.QueuedJobs');
+			$remainingContentIds = array_slice($ids, $batchSize);
+			$queueJobsTable->createJob('AutoTranslate', [
 				'sourceLanguage' => $sourceLanguage,
 				'targetLanguage' => $targetLanguage,
-				'ids' => $la_remainingContentIds,
+				'ids' => $remainingContentIds,
 				'type' => $type,
 			], [
 				'group' => 'general',
@@ -130,9 +130,9 @@ class AutoTranslateTask extends Task {
 			]);
 		}
 
-		$la_pageIds = array_slice($ids, 0, $li_batchSize);
-		$lo_pagesTable = $this->fetchTable(Inflector::camelize(Inflector::pluralize($type)));
-		$this->translateEntities($lo_pagesTable, $la_pageIds, $lo_translationService, $targetLanguage, $sourceLanguage, $type);
+		$pageIds = array_slice($ids, 0, $batchSize);
+		$pagesTable = $this->fetchTable(Inflector::camelize(Inflector::pluralize($type)));
+		$this->translateEntities($pagesTable, $pageIds, $translationService, $targetLanguage, $sourceLanguage, $type);
 	}
 
 
@@ -142,24 +142,24 @@ class AutoTranslateTask extends Task {
 	 * @return \Awyiss\Utility\Translation\TranslationServiceInterface
 	 */
 	protected function getTranslationService(string $sourceLanguage, string $targetLanguage): TranslationServiceInterface {
-		/** @var class-string<\Awyiss\Utility\Translation\TranslationServiceInterface>|null $ls_translationServiceClass */
-		$ls_translationServiceClass = Configure::read('Awyiss.System.Backend.autoTranslate.translationService');
-		if (!$ls_translationServiceClass) {
+		/** @var class-string<\Awyiss\Utility\Translation\TranslationServiceInterface>|null $translationServiceClass */
+		$translationServiceClass = Configure::read('Awyiss.System.Backend.autoTranslate.translationService');
+		if (!$translationServiceClass) {
 			throw new RuntimeException('No translation service configured for auto translation.');
 		}
 
-		/** @var \Awyiss\Utility\Translation\TranslationServiceInterface $lo_translationService */
-		$lo_translationService = new $ls_translationServiceClass();
+		/** @var \Awyiss\Utility\Translation\TranslationServiceInterface $translationService */
+		$translationService = new $translationServiceClass();
 
-		if (!in_array($sourceLanguage, $lo_translationService->getSupportedSourceLanguages())) {
+		if (!in_array($sourceLanguage, $translationService->getSupportedSourceLanguages())) {
 			throw new RuntimeException(sprintf('Source language `%s` is not supported by the translation service.', $sourceLanguage));
 		}
 
-		if (!in_array($targetLanguage, $lo_translationService->getSupportedTargetLanguages())) {
+		if (!in_array($targetLanguage, $translationService->getSupportedTargetLanguages())) {
 			throw new RuntimeException(sprintf('Target language `%s` is not supported by the translation service.', $targetLanguage));
 		}
 
-		return $lo_translationService;
+		return $translationService;
 	}
 
 
@@ -181,31 +181,31 @@ class AutoTranslateTask extends Task {
 		string $sourceLanguage,
 		string $type
 	): void {
-		$lo_entities = $table->find()->where(['id IN' => $ids])->all();
+		$entities = $table->find()->where(['id IN' => $ids])->all();
 
-		if (!$lo_entities->count()) {
+		if (!$entities->count()) {
 			return;
 		}
 
-		$la_translatedEntities = [];
-		foreach ($lo_entities as $lo_entity) {
+		$translatedEntities = [];
+		foreach ($entities as $entity) {
 			if ($table->hasAttributes()) {
-				$lo_entity->setAccess('attributes', true);
+				$entity->setAccess('attributes', true);
 			}
 
-			$lo_translatedEntity = $translationService->translateEntity(
-				$lo_entity,
+			$translatedEntity = $translationService->translateEntity(
+				$entity,
 				$targetLanguage,
 				$sourceLanguage,
 			);
 
-			if ($lo_translatedEntity !== false) {
-				$la_translatedEntities[] = $lo_translatedEntity;
+			if ($translatedEntity !== false) {
+				$translatedEntities[] = $translatedEntity;
 			}
 		}
 
-		if (!empty($la_translatedEntities)) {
-			$la_options = [
+		if (!empty($translatedEntities)) {
+			$options = [
 				'audit' => ['skip' => true],
 				'atomic' => false,
 				'checkRules' => false,
@@ -215,16 +215,16 @@ class AutoTranslateTask extends Task {
 			];
 
 			if ($table->hasAttributes()) {
-				$la_options['associated'] = [$table->getAttributesTableName(true)];
+				$options['associated'] = [$table->getAttributesTableName(true)];
 			}
 
-			$table->saveMany($la_translatedEntities, $la_options);
+			$table->saveMany($translatedEntities, $options);
 		}
 
 		// Remove locks
-		/** @var \Awyiss\Model\Table\LocksTable $lo_locksTable */
-		$lo_locksTable = $this->fetchTable('Locks');
-		$lo_locksTable->deleteAll([
+		/** @var \Awyiss\Model\Table\LocksTable $locksTable */
+		$locksTable = $this->fetchTable('Locks');
+		$locksTable->deleteAll([
 			'scope' => Inflector::pluralize($type),
 			'foreign_key IN' => $ids,
 			'unique_id' => 'autoTranslate',

@@ -73,7 +73,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @param string $realm
 	 * @return \Psr\Http\Message\ServerRequestInterface
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setRequestRealm(string $realm): ServerRequestInterface {
 		Awyiss::setRealm($realm);
@@ -90,7 +89,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlWithStringUrl(): void {
 		$url = '/test/path';
@@ -103,7 +101,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlWithStringUrlFull(): void {
 		$url = '/test/path';
@@ -116,7 +113,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlWithNullUrl(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -130,7 +126,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlWithNullUrlFull(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -147,7 +142,6 @@ class RouterTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Awyiss::getRealm()
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlWithArrayUrlWithoutNameOrPluginUsesCurrentRealm(): void {
 		$this->setRequestRealm(Awyiss::REALM_BACKEND);
@@ -169,7 +163,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlWithArrayUrlWithName(): void {
 		$url = ['_name' => 'custom_route', 'controller' => 'Pages'];
@@ -184,7 +177,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlWithArrayUrlForOppositeRealm(): void {
 		$this->setRequestRealm(Awyiss::REALM_BACKEND);
@@ -210,7 +202,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlWithArrayUrlWithEmptyName(): void {
 		$this->setRequestRealm(Awyiss::REALM_BACKEND);
@@ -233,7 +224,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlFrontendRealmWithoutSlugOrLang(): void {
 		$this->setRequestRealm(Awyiss::REALM_FRONTEND);
@@ -250,7 +240,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlFrontendRealmWithSlug(): void {
 		$this->setRequestRealm(Awyiss::REALM_FRONTEND);
@@ -267,7 +256,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlFrontendRealmWithLang(): void {
 		$this->setRequestRealm(Awyiss::REALM_FRONTEND);
@@ -284,7 +272,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlBackendRealmWithoutController(): void {
 		$this->setRequestRealm(Awyiss::REALM_BACKEND);
@@ -301,7 +288,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlBackendRealmWithController(): void {
 		$this->setRequestRealm(Awyiss::REALM_BACKEND);
@@ -318,7 +304,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlBackendRealmWithoutAction(): void {
 		$this->setRequestRealm(Awyiss::REALM_BACKEND);
@@ -335,7 +320,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlBackendRealmWithAction(): void {
 		$this->setRequestRealm(Awyiss::REALM_BACKEND);
@@ -351,7 +335,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlFrontendRealmWithLanguageShortcodeDisabled(): void {
 		Configure::write('Route.includeLanguageShortcode', false);
@@ -369,7 +352,6 @@ class RouterTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Routing\Router::url()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUrlFrontendRealmWithLanguageShortcodeEnabled(): void {
 		Configure::write('Route.includeLanguageShortcode', true);

@@ -23,11 +23,9 @@ class Router extends BaseRouter {
 			return parent::url($url, $full);
 		}
 
-		$la_url = $url;
-
 		// If the `_name` key is not set, set it to the current realm.
-		if (!array_key_exists('_name', $la_url)) {
-			$la_url['_name'] = Awyiss::getRealm();
+		if (!array_key_exists('_name', $url)) {
+			$url['_name'] = Awyiss::getRealm();
 
 			/**
 			 * If the realm is the frontend but both `slug` and `lang` are empty,
@@ -36,14 +34,14 @@ class Router extends BaseRouter {
 			 * This is used to keep routes like the frontend root or the frontend language root,
 			 * as well as form anti-spam and route generation urls.
 			 */
-			if ($la_url['_name'] === Awyiss::REALM_FRONTEND && empty($la_url['slug']) && empty($la_url['lang'])) {
-				$la_url['_name'] = Router::getRequest()->getParam('_name');
+			if ($url['_name'] === Awyiss::REALM_FRONTEND && empty($url['slug']) && empty($url['lang'])) {
+				$url['_name'] = Router::getRequest()->getParam('_name');
 			}
 		}
 
 		// If the `_name` key is set but empty, remove it.
-		if (empty($la_url['_name'])) {
-			unset($la_url['_name']);
+		if (empty($url['_name'])) {
+			unset($url['_name']);
 		}
 
 		/**
@@ -60,8 +58,8 @@ class Router extends BaseRouter {
 		 *
 		 * @see \Cake\Routing\RouteBuilder::_makeRoute()
 		 */
-		if (($la_url['_name'] ?? null) === Awyiss::REALM_BACKEND && empty($la_url['action'])) {
-			$la_url['action'] = static::getRequest()->getParam('action');
+		if (($url['_name'] ?? null) === Awyiss::REALM_BACKEND && empty($url['action'])) {
+			$url['action'] = static::getRequest()->getParam('action');
 		}
 
 		/**
@@ -69,10 +67,10 @@ class Router extends BaseRouter {
 		 * remove the language shortcode from the URL if the config
 		 * `Route.includeLanguageShortcode` is set to false.
 		 */
-		if (($la_url['_name'] ?? null) === Awyiss::REALM_FRONTEND && !Configure::read('Route.includeLanguageShortcode')) {
-			unset($la_url['lang']);
+		if (($url['_name'] ?? null) === Awyiss::REALM_FRONTEND && !Configure::read('Route.includeLanguageShortcode')) {
+			unset($url['lang']);
 		}
 
-		return parent::url($la_url, $full);
+		return parent::url($url, $full);
 	}
 }

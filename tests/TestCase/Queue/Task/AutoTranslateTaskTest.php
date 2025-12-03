@@ -29,7 +29,6 @@ use RuntimeException;
 class AutoTranslateTaskTest extends TestCase {
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -43,7 +42,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::run()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunThrowsExceptionWhenTypeIsMissing(): void {
 		$task = new AutoTranslateTask();
@@ -60,7 +58,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::run()
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::translateContents()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunCallsTranslateContentsWhenTypeIsContent(): void {
 		// Create a mock translation service
@@ -116,7 +113,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::run()
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::translatePages()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunCallsTranslatePagesWhenTypeIsPage(): void {
 		// Create a mock translation service
@@ -148,10 +144,10 @@ class AutoTranslateTaskTest extends TestCase {
 		$pagesTable = $this->getMockBuilder(PagesTable::class)->disableOriginalConstructor()->onlyMethods(['saveMany'])->getMock();
 
 		$reflection = new ReflectionClass($pagesTable);
-		$reflection_property = $reflection->getProperty('pageRole');
+		$reflectionProperty = $reflection->getProperty('pageRole');
 		/** @noinspection PhpExpressionResultUnusedInspection */
-		$reflection_property->setAccessible(true);
-		$reflection_property->setValue($pagesTable, PageRole::Page);
+		$reflectionProperty->setAccessible(true);
+		$reflectionProperty->setValue($pagesTable, PageRole::Page);
 
 		$pagesTable->__construct();
 
@@ -179,7 +175,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::translateContents()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateContentsCreatesSplitJobWhenBatchSizeExceeded(): void {
 		// Create a mock translation service with batch size 2
@@ -241,7 +236,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::translatePages()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslatePagesCreatesSplitJobWhenBatchSizeExceeded(): void {
 		// Create a mock translation service with batch size 2
@@ -279,10 +273,10 @@ class AutoTranslateTaskTest extends TestCase {
 		$pagesTable = $this->getMockBuilder(PagesTable::class)->disableOriginalConstructor()->onlyMethods(['saveMany'])->getMock();
 
 		$reflection = new ReflectionClass($pagesTable);
-		$reflection_property = $reflection->getProperty('pageRole');
+		$reflectionProperty = $reflection->getProperty('pageRole');
 		/** @noinspection PhpExpressionResultUnusedInspection */
-		$reflection_property->setAccessible(true);
-		$reflection_property->setValue($pagesTable, PageRole::Page);
+		$reflectionProperty->setAccessible(true);
+		$reflectionProperty->setValue($pagesTable, PageRole::Page);
 
 		$pagesTable->__construct();
 
@@ -312,7 +306,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::translateEntities()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntitiesSkipsEntitiesThatReturnFalse(): void {
 		// Create a mock translation service that returns false for some entities
@@ -365,7 +358,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::translateEntities()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntitiesRemovesLocksAfterCompletion(): void {
 		// Create a mock translation service
@@ -416,7 +408,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::getTranslationService()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTranslationServiceThrowsExceptionWhenNotConfigured(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.translationService');
@@ -439,7 +430,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::getTranslationService()
 	 * @throws \ReflectionException|\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTranslationServiceThrowsExceptionWhenSourceLanguageNotSupported(): void {
 		// Create a mock service that doesn't support 'de'
@@ -544,7 +534,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::getTranslationService()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTranslationServiceThrowsExceptionWhenTargetLanguageNotSupported(): void {
 		// Create a mock service that doesn't support 'es'
@@ -649,7 +638,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::getTranslationService()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTranslationServiceReturnsServiceWhenLanguagesSupported(): void {
 		// Create a mock service that supports both languages
@@ -750,7 +738,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\AutoTranslateTask::translateEntities()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntitiesReturnsEarlyWhenNoEntitiesFound(): void {
 		// Create a mock translation service
@@ -788,7 +775,6 @@ class AutoTranslateTaskTest extends TestCase {
 	 * @return void
 	 * @seej \Awyiss\Queue\Task\AutoTranslateTask::translatePages()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslatePagesUsesCorrectTableForNews(): void {
 		// Create a mock translation service
@@ -820,10 +806,10 @@ class AutoTranslateTaskTest extends TestCase {
 		$newsTable = $this->getMockBuilder(PagesTable::class)->disableOriginalConstructor()->onlyMethods(['saveMany'])->getMock();
 
 		$reflection = new ReflectionClass($newsTable);
-		$reflection_property = $reflection->getProperty('pageRole');
+		$reflectionProperty = $reflection->getProperty('pageRole');
 		/** @noinspection PhpExpressionResultUnusedInspection */
-		$reflection_property->setAccessible(true);
-		$reflection_property->setValue($newsTable, PageRole::News);
+		$reflectionProperty->setAccessible(true);
+		$reflectionProperty->setValue($newsTable, PageRole::News);
 
 		$newsTable->__construct();
 
