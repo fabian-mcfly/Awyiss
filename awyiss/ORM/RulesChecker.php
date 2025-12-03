@@ -36,13 +36,13 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 */
 	public function add(callable $rule, array|string|null $name = null, array $options = []): static {
-		$ls_name = is_string($name) ? $name : $this->extractName($name);
+		$name = is_string($name) ? $name : $this->extractName($name);
 
-		if ($this->ruleExists($ls_name)) {
-			throw new RuntimeException(sprintf('Rule `%s` already exists in `%s`', $ls_name, static::class));
+		if ($this->ruleExists($name)) {
+			throw new RuntimeException(sprintf('Rule `%s` already exists in `%s`', $name, static::class));
 		}
 
-		$this->_rules[ $ls_name ] = $this->_addError($rule, $ls_name, $options);
+		$this->_rules[ $name ] = $this->_addError($rule, $name, $options);
 
 		return $this;
 	}
@@ -52,13 +52,13 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 */
 	public function addCreate(callable $rule, array|string|null $name = null, array $options = []): static {
-		$ls_name = is_string($name) ? $name : $this->extractName($name);
+		$name = is_string($name) ? $name : $this->extractName($name);
 
-		if ($this->ruleExists($ls_name)) {
-			throw new RuntimeException(sprintf('Rule `%s` already exists in `%s`', $ls_name, static::class));
+		if ($this->ruleExists($name)) {
+			throw new RuntimeException(sprintf('Rule `%s` already exists in `%s`', $name, static::class));
 		}
 
-		$this->_createRules[ $ls_name ] = $this->_addError($rule, $ls_name, $options);
+		$this->_createRules[ $name ] = $this->_addError($rule, $name, $options);
 
 		return $this;
 	}
@@ -68,13 +68,13 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 */
 	public function addUpdate(callable $rule, array|string|null $name = null, array $options = []): static {
-		$ls_name = is_string($name) ? $name : $this->extractName($name);
+		$name = is_string($name) ? $name : $this->extractName($name);
 
-		if ($this->ruleExists($ls_name)) {
-			throw new RuntimeException(sprintf('Rule `%s` already exists in `%s`', $ls_name, static::class));
+		if ($this->ruleExists($name)) {
+			throw new RuntimeException(sprintf('Rule `%s` already exists in `%s`', $name, static::class));
 		}
 
-		$this->_updateRules[ $ls_name ] = $this->_addError($rule, $ls_name, $options);
+		$this->_updateRules[ $name ] = $this->_addError($rule, $name, $options);
 
 		return $this;
 	}
@@ -84,13 +84,13 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 */
 	public function addDelete(callable $rule, array|string|null $name = null, array $options = []): static {
-		$ls_name = is_string($name) ? $name : $this->extractName($name);
+		$name = is_string($name) ? $name : $this->extractName($name);
 
-		if ($this->ruleExists($ls_name)) {
-			throw new RuntimeException(sprintf('Rule `%s` already exists in `%s`', $ls_name, static::class));
+		if ($this->ruleExists($name)) {
+			throw new RuntimeException(sprintf('Rule `%s` already exists in `%s`', $name, static::class));
 		}
 
-		$this->_deleteRules[ $ls_name ] = $this->_addError($rule, $ls_name, $options);
+		$this->_deleteRules[ $name ] = $this->_addError($rule, $name, $options);
 
 		return $this;
 	}
@@ -100,20 +100,20 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 */
 	public function existsIn(array|string $field, BaseTable|Association|string $table, array|string|null $message = null): RuleInvoker {
-		$la_options = is_array($message) ? $message : ['message' => $message];
-		$ls_message = !empty($la_options['message']) ? $la_options['message'] : __d('validation', 'error_exists_in');
-		unset($la_options['message']);
+		$options = is_array($message) ? $message : ['message' => $message];
+		$message = !empty($options['message']) ? $options['message'] : __d('validation', 'error_exists_in');
+		unset($options['message']);
 
-		if (!empty($message['errorField'])) {
-			$ls_errorField = $message['errorField'];
+		if (!empty($options['errorField'])) {
+			$errorField = $options['errorField'];
 		}
 		else {
-			$ls_errorField = is_string($field) ? $field : current($field);
+			$errorField = is_string($field) ? $field : current($field);
 		}
 
-		$la_fields = $this->unmapFields((array)$field);
+		$fields = $this->unmapFields((array)$field);
 
-		return $this->_addError(new ExistsIn($la_fields, $table, $la_options), '_existsIn', ['errorField' => $ls_errorField, 'message' => $ls_message]);
+		return $this->_addError(new ExistsIn($fields, $table, $options), '_existsIn', ['errorField' => $errorField, 'message' => $message]);
 	}
 
 
@@ -121,20 +121,20 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 */
 	public function isUnique(array $fields, array|string|null $message = null): RuleInvoker {
-		$la_options = is_array($message) ? $message : ['message' => $message];
-		$ls_message = !empty($la_options['message']) ? $la_options['message'] : __d('validation', 'error_unique');
-		unset($la_options['message']);
+		$options = is_array($message) ? $message : ['message' => $message];
+		$message = !empty($options['message']) ? $options['message'] : __d('validation', 'error_unique');
+		unset($options['message']);
 
-		if (!empty($message['errorField'])) {
-			$ls_errorField = $message['errorField'];
+		if (!empty($options['errorField'])) {
+			$errorField = $options['errorField'];
 		}
 		else {
-			$ls_errorField = current($fields);
+			$errorField = current($fields);
 		}
 
-		$la_fields = $this->unmapFields($fields);
+		$fields = $this->unmapFields($fields);
 
-		return $this->_addError(new IsUnique($la_fields, $la_options), '_isUnique', ['errorField' => $ls_errorField, 'message' => $ls_message]);
+		return $this->_addError(new IsUnique($fields, $options), '_isUnique', ['errorField' => $errorField, 'message' => $message]);
 	}
 
 
@@ -147,7 +147,7 @@ class RulesChecker extends BaseRulesChecker {
 	 * @return \Cake\Datasource\RuleInvoker
 	 */
 	public function validCount(string $field, int $count = 0, string $operator = '>', ?string $message = null): RuleInvoker {
-		$ls_message = $message ?: __d('validation', 'error_valid_count', [$operator, $count]);
+		$message = $message ?: __d('validation', 'error_valid_count', [$operator, $count]);
 
 		return $this->_addError(
 			new ValidCount($this->unmapField($field)),
@@ -156,7 +156,7 @@ class RulesChecker extends BaseRulesChecker {
 				'count' => $count,
 				'operator' => $operator,
 				'errorField' => $field,
-				'message' => $ls_message,
+				'message' => $message,
 			]
 		);
 	}
@@ -180,10 +180,10 @@ class RulesChecker extends BaseRulesChecker {
 		string $linkStatus,
 		string $ruleName
 	): RuleInvoker {
-		$ls_associationAlias = $association instanceof Association ? $association->getName() : $association;
-		$ls_message = $message ?: __d('validation', 'error_link_constraint_rule', $ls_associationAlias);
+		$associationAlias = $association instanceof Association ? $association->getName() : $association;
+		$message = $message ?: __d('validation', 'error_link_constraint_rule', $associationAlias);
 
-		return parent::_addLinkConstraintRule($association, $errorField, $ls_message, $linkStatus, $ruleName);
+		return parent::_addLinkConstraintRule($association, $errorField, $message, $linkStatus, $ruleName);
 	}
 
 
@@ -194,15 +194,15 @@ class RulesChecker extends BaseRulesChecker {
 	 * @return bool
 	 */
 	public function ruleExists(string $ruleName): bool {
-		/** @var array<\Cake\Datasource\RuleInvoker> $la_rules */
-		$la_rules = array_merge(
+		/** @var array<\Cake\Datasource\RuleInvoker> $rules */
+		$rules = array_merge(
 			array_keys($this->_rules),
 			array_keys($this->_createRules),
 			array_keys($this->_updateRules),
 			array_keys($this->_deleteRules),
 		);
 
-		return in_array($ruleName, $la_rules);
+		return in_array($ruleName, $rules);
 	}
 
 
@@ -230,10 +230,10 @@ class RulesChecker extends BaseRulesChecker {
 			return $field;
 		}
 
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $this->_options['repository']->getEntityClass() ?? null;
-		if ($ls_entityClass) {
-			return $ls_entityClass::unmapField($field);
+		/** @var \Awyiss\Model\Entity $entityClass */
+		$entityClass = $this->_options['repository']->getEntityClass() ?? null;
+		if ($entityClass) {
+			return $entityClass::unmapField($field);
 		}
 
 		return $field;
@@ -249,10 +249,10 @@ class RulesChecker extends BaseRulesChecker {
 			return $fields;
 		}
 
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $this->_options['repository']->getEntityClass() ?? null;
-		if ($ls_entityClass) {
-			return $ls_entityClass::unmapFields($fields);
+		/** @var \Awyiss\Model\Entity $entityClass */
+		$entityClass = $this->_options['repository']->getEntityClass() ?? null;
+		if ($entityClass) {
+			return $entityClass::unmapFields($fields);
 		}
 
 		return $fields;

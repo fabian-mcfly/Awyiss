@@ -51,7 +51,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeWithAccessibleFieldsAsString(): void {
 		$data = ['name' => 'Test Name', 'email' => 'test@example.com'];
@@ -81,7 +80,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeWithAccessibleFieldsAsArrayWithStringValues(): void {
 		$data = ['name' => 'Test Name', 'email' => 'test@example.com'];
@@ -123,7 +121,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeWithAccessibleFieldsAsAssociativeArray(): void {
 		$data = ['name' => 'Test Name', 'email' => 'test@example.com'];
@@ -166,7 +163,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeWithSetterOptionPassedToEntitySetWhenFieldsIsSet(): void {
 		$data = ['name' => 'Test Name'];
@@ -195,7 +191,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeWithSetterOptionPassedToEntitySetWhenFieldsIsNotSet(): void {
 		$data = ['name' => 'Test Name'];
@@ -225,7 +220,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeWithDefaultSetterOptionWhenFieldsIsSet(): void {
 		$data = ['name' => 'Test Name'];
@@ -254,7 +248,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeWithDefaultSetterOptionWhenFieldsIsNotSet(): void {
 		$data = ['name' => 'Test Name'];
@@ -285,7 +278,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeSkipsEventsWhenEventsIsFalse(): void {
 		$data = ['name' => 'Test Name'];
@@ -315,7 +307,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeDispatchesAfterMarshalEventWhenEventsIsTrue(): void {
 		$data = ['name' => 'Test Name'];
@@ -357,7 +348,6 @@ class MarshallerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Marshaller::merge()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeDispatchesAfterMarshalEventByDefault(): void {
 		$data = ['name' => 'Test Name'];
@@ -401,7 +391,6 @@ class MarshallerTest extends TestCase {
 	 * @see \Awyiss\ORM\Marshaller::_prepareDataAndOptions()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeUnmapsFieldNames(): void {
 		$data = ['includeInLinklist' => true, 'systemOrder' => 5, 'title' => 'Test Title'];
@@ -427,7 +416,6 @@ class MarshallerTest extends TestCase {
 	 * @see \Awyiss\ORM\Marshaller::_prepareDataAndOptions()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrepareDataAndOptionsWithoutUnmapFieldMethod(): void {
 		$data = ['includeInLinklist' => true, 'systemOrder' => 5, 'title' => 'Test Title'];

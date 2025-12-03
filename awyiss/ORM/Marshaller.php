@@ -21,7 +21,6 @@ class Marshaller extends BaseMarshaller {
 	 * - skip the `beforeMarshal` and `afterMarshal` events if `$options['events']` is given and not `true`.
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface {
 		[$data, $options] = $this->_prepareDataAndOptions($data, $options);
@@ -113,7 +112,6 @@ class Marshaller extends BaseMarshaller {
 	 * @param array $data
 	 * @param array $errors
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function buildProperties(EntityInterface $entity, array $propertyMap, array $data, array $errors): array {
 		$properties = [];
@@ -144,7 +142,6 @@ class Marshaller extends BaseMarshaller {
 	 * - unmap field names if the entity class has a `unmapField()` method.
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function _prepareDataAndOptions(array $data, array $options): array {
 		$options += ['validate' => true];

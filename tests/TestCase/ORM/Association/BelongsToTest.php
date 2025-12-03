@@ -37,7 +37,6 @@ class BelongsToTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -59,7 +58,6 @@ class BelongsToTest extends TestCase {
 	 * @param bool $exists
 	 * @return void
 	 * @see \Awyiss\ORM\Association\BelongsTo::exists()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsPassesOptionsToTargetTable(bool $exists): void {
 		$conditions = ['dummy' => 123];

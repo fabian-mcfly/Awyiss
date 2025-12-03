@@ -37,7 +37,6 @@ class BelongsToManyTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -77,7 +76,6 @@ class BelongsToManyTest extends TestCase {
 	 * @param bool $exists
 	 * @return void
 	 * @see \Awyiss\ORM\Association\BelongsToMany::exists()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsPassesOptionsToTargetTable(bool $exists): void {
 		$conditions = ['dummy' => 123];
@@ -108,7 +106,6 @@ class BelongsToManyTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Association\BelongsToMany::hasThrough()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasThroughReturnsFalseWhenNoThroughTable(): void {
 		$result = $this->belongsToManyAssociation->hasThrough();
@@ -123,7 +120,6 @@ class BelongsToManyTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Association\BelongsToMany::hasThrough()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasThroughReturnsTrueWhenThroughTableIsSet(): void {
 		$throughTable = $this->createMock(Table::class);

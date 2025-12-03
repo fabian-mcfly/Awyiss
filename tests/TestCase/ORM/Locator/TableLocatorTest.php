@@ -21,7 +21,6 @@ class TableLocatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\ORM\Locator\TableLocator
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFactoryLocatorReturnsTableLocatorInstance(): void {
 		$locator = FactoryLocator::get('Table');
@@ -32,7 +31,6 @@ class TableLocatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\ORM\Locator\TableLocator::getInstances()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetInstancesReturnsEmptyArrayInitially(): void {
 		/** @var \Awyiss\ORM\Locator\TableLocator $locator */
@@ -48,7 +46,6 @@ class TableLocatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\ORM\Locator\TableLocator::getInstances()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetInstancesReturnsNonEmptyArrayAfterCreatingInstance(): void {
 		/** @var \Awyiss\ORM\Locator\TableLocator $locator */
@@ -69,7 +66,6 @@ class TableLocatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\ORM\Locator\TableLocator::get()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetReturnsCustomerClass(): void {
 		/** @var \Awyiss\ORM\Locator\TableLocator $locator */
@@ -83,7 +79,6 @@ class TableLocatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\ORM\Locator\TableLocator::get()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLoadsGlobalEventListeners(): void {
 		/** @var \Awyiss\ORM\Locator\TableLocator $locator */

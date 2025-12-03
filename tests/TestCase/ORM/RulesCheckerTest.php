@@ -58,7 +58,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::add()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddWithStringName(): void {
@@ -77,7 +76,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::add()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddWithArrayName(): void {
@@ -96,7 +94,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::add()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddThrowsExceptionForDuplicateRule(): void {
@@ -118,7 +115,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::addCreate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddCreateWithStringName(): void {
@@ -137,7 +133,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::addCreate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddCreateWithArrayName(): void {
@@ -156,7 +151,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::addCreate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddCreateThrowsExceptionForDuplicateRule(): void {
@@ -178,7 +172,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::addUpdate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddUpdateWithStringName(): void {
@@ -197,7 +190,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::addUpdate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddUpdateWithArrayName(): void {
@@ -216,7 +208,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::addUpdate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddUpdateThrowsExceptionForDuplicateRule(): void {
@@ -238,7 +229,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::addDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddDeleteWithStringName(): void {
@@ -257,7 +247,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::addDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddDeleteWithArrayName(): void {
@@ -276,7 +265,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::addDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testAddDeleteThrowsExceptionForDuplicateRule(): void {
@@ -299,7 +287,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::existsIn()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsInWithStringField(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -337,7 +324,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::existsIn()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsInWithArrayField(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -375,7 +361,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::existsIn()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsInWithAssociation(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -422,7 +407,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::existsIn()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsInWithTableString(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -460,7 +444,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::existsIn()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsInWithErrorField(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -488,7 +471,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::existsIn()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsInWithDefaultMessage(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -516,7 +498,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::existsIn()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsInUnmapsFields(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -557,7 +538,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::isUnique()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsUniqueWithErrorField(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -585,7 +565,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::isUnique()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsUniqueWithDefaultMessage(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -613,7 +592,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::isUnique()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsUniqueUnmapsFields(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -654,7 +632,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::validCount()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidCount(): void {
 		$result = $this->rulesChecker->validCount('items');
@@ -677,7 +654,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::validCount()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidCountWithCustomParameters(): void {
 		$result = $this->rulesChecker->validCount('tags', 5, '>=', 'Must have at least 5 tags');
@@ -703,7 +679,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::validCount()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidCountWithDifferentOperators(string $operator, int $count): void {
 		$result = $this->rulesChecker->validCount('field', $count, $operator);
@@ -725,7 +700,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::validCount()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidCountUnmapsFields(): void {
 		$mockTargetTable = $this->createMock(Table::class);
@@ -765,7 +739,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::ruleExists()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testRuleExistsReturnsTrueForExistingRules(): void {
@@ -791,7 +764,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::ruleExists()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleExistsReturnsFalseForNonExistingRules(): void {
 		$this->assertFalse($this->rulesChecker->ruleExists('nonExistentRule'));
@@ -804,7 +776,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::extractName()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractNameThrowsExceptionWhenNameMissing(): void {
 		$this->expectException(RuntimeException::class);
@@ -820,7 +791,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::extractName()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractNameThrowsExceptionWhenNameIsNull(): void {
 		$this->expectException(RuntimeException::class);
@@ -836,7 +806,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::extractName()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractNameThrowsExceptionWhenNameIsEmpty(): void {
 		$this->expectException(RuntimeException::class);
@@ -852,7 +821,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::extractName()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractNameReturnsCorrectName(): void {
 		$result = $this->callProtectedMethod($this->rulesChecker, 'extractName', ['name' => 'testRule']);
@@ -868,7 +836,6 @@ class RulesCheckerTest extends TestCase {
 	 * @see \Awyiss\ORM\RulesChecker::_addLinkConstraintRule()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddLinkConstraintRuleWithAssociation(): void {
 		$mockAssociation = $this->createMock(Association::class);
@@ -903,7 +870,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::_addLinkConstraintRule()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddLinkConstraintRuleWithStringAssociation(): void {
 		$result = $this->callProtectedMethod(
@@ -935,7 +901,6 @@ class RulesCheckerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker::_addLinkConstraintRule()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddLinkConstraintRuleWithDefaultMessage(): void {
 		$result = $this->callProtectedMethod(
@@ -966,7 +931,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testDuplicateRulesAcrossRuleSets(): void {
@@ -987,7 +951,6 @@ class RulesCheckerTest extends TestCase {
 	 * Data provider for validCount operator testing
 	 *
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function validCountOperatorProvider(): array {
 		return [
@@ -1006,7 +969,6 @@ class RulesCheckerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\RulesChecker
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testMultipleRuleAdditionsAndExistence(): void {

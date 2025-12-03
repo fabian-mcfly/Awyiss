@@ -40,7 +40,6 @@ class ExistsInTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -61,7 +60,6 @@ class ExistsInTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInvokeReturnsTrueWhenSourceAndTargetAreSame(): void {
 		$options = [
@@ -83,7 +81,6 @@ class ExistsInTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInvokeWithAllowNullableNullsFiltersNullableFields(): void {
 		$schema = $this->createMock(TableSchema::class);
@@ -135,7 +132,6 @@ class ExistsInTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInvokeWithoutAllowNullableNullsFiltersNullableFields(): void {
 		$schema = $this->createMock(TableSchema::class);
@@ -188,7 +184,6 @@ class ExistsInTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInvokeCallsAttributeFieldsAreDirtyWhenEntityFieldsAreNotDirty(): void {
 		$existsInRule = $this->getMockBuilder(ExistsIn::class)->
@@ -218,7 +213,6 @@ class ExistsInTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInvokeNotCallsAttributeFieldsAreDirtyWhenEntityFieldsAreDirty(): void {
 		$existsInRule = $this->getMockBuilder(ExistsIn::class)->
@@ -248,7 +242,6 @@ class ExistsInTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Rule\ExistsIn::__invoke()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInvokeSetsFinderFromAssociation(): void {
 		$existsInRule = new ExistsIn(['user_id'], $this->mockAssociation, ['something' => 'else']);
@@ -287,7 +280,6 @@ class ExistsInTest extends TestCase {
 	 * @see \Awyiss\ORM\Rule\ExistsIn::attributeFieldsAreDirty()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAttributeFieldsAreDirtyWithMatchingAttributes(): void {
 		$attributesEntity = $this->createMock(EntityInterface::class);
@@ -338,7 +330,6 @@ class ExistsInTest extends TestCase {
 	 * @see \Awyiss\ORM\Rule\ExistsIn::attributeFieldsAreDirty()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAttributeFieldsAreNotDirtyWithMatchingAttributes(): void {
 		$attributesEntity = $this->createMock(EntityInterface::class);
@@ -388,7 +379,6 @@ class ExistsInTest extends TestCase {
 	 * @see \Awyiss\ORM\Rule\ExistsIn::setRepository()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetRepositoryThrowsExceptionWhenAssociationDoesNotExist(): void {
 		$associationName = 'NonExistentAssociation';

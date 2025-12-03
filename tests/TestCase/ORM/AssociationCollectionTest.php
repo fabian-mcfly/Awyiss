@@ -58,7 +58,6 @@ class AssociationCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::save()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestedContentsCanBeCopied(): void {
 		$request = new ServerRequest([
