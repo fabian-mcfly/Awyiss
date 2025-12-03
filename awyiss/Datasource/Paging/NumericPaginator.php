@@ -32,32 +32,30 @@ class NumericPaginator extends BaseNumericPaginator {
 	 * @return void
 	 */
 	protected function addSortingParams(array $data): void {
-		$la_data = $data;
-
-		if (isset($la_data['options']['sort']) && is_array($la_data['options']['sort'])) {
-			$la_data['options']['sort'] = current($la_data['options']['sort']);
+		if (isset($data['options']['sort']) && is_array($data['options']['sort'])) {
+			$data['options']['sort'] = current($data['options']['sort']);
 		}
 
-		if (isset($la_data['options']['order'])) {
+		if (isset($data['options']['order'])) {
 			// Make sure the fields of the _COALESCE key are flattened and at the
-			$la_order = [];
-			foreach ($la_data['options']['order'] as $ls_field => $lx_directionOrCoalesce) {
-				if ($ls_field === '_COALESCE') {
-					foreach ($lx_directionOrCoalesce['fields'] as $ls_field) {
-						if (!isset($la_order[ $ls_field ])) {
-							$la_order[ $ls_field ] = $lx_directionOrCoalesce['direction'];
+			$order = [];
+			foreach ($data['options']['order'] as $field => $directionOrCoalesce) {
+				if ($field === '_COALESCE') {
+					foreach ($directionOrCoalesce['fields'] as $field) {
+						if (!isset($order[ $field ])) {
+							$order[ $field ] = $directionOrCoalesce['direction'];
 						}
 					}
 				}
-				elseif (!isset($la_order[ $ls_field ])) {
-					$la_order[ $ls_field ] = $lx_directionOrCoalesce;
+				elseif (!isset($order[ $field ])) {
+					$order[ $field ] = $directionOrCoalesce;
 				}
 			}
 
-			$la_data['options']['order'] = $la_order;
+			$data['options']['order'] = $order;
 		}
 
-		parent::addSortingParams($la_data);
+		parent::addSortingParams($data);
 	}
 
 
@@ -67,64 +65,63 @@ class NumericPaginator extends BaseNumericPaginator {
 	 * @inheritDoc
 	 */
 	protected function getQuery(RepositoryInterface $object, ?QueryInterface $query, array $data): QueryInterface {
-		$la_options = $data['options'];
-		$la_queryOptions = array_intersect_key(
-			$la_options,
+		$options = $data['options'];
+		$queryOptions = array_intersect_key(
+			$options,
 			['order' => null, 'page' => null, 'limit' => null],
 		);
 
-		$la_args = [];
-		$lx_type = $la_options['finder'] ?? null;
-		if (is_array($lx_type)) {
-			$la_args = (array)current($lx_type);
-			$lx_type = key($lx_type);
+		$args = [];
+		$type = $options['finder'] ?? null;
+		if (is_array($type)) {
+			$args = (array)current($type);
+			$type = key($type);
 		}
 
-		$lo_query = $query;
-		if ($lo_query === null) {
-			$lo_query = $object->find($lx_type ?? 'all', ...$la_args);
+		if ($query === null) {
+			$query = $object->find($type ?? 'all', ...$args);
 		}
-		elseif ($lx_type !== null) {
-			$lo_query->find($lx_type, ...$la_args);
+		elseif ($type !== null) {
+			$query->find($type, ...$args);
 		}
 
-		foreach ($la_queryOptions['order'] as $ls_field => $lx_directionOrCoalesce) {
-			if ($ls_field === '_COALESCE') {
-				$la_fields = array_map(function ($field) {
+		foreach ($queryOptions['order'] as $field => $directionOrCoalesce) {
+			if ($field === '_COALESCE') {
+				$fields = array_map(function ($field) {
 					return new IdentifierExpression($field);
-				}, $lx_directionOrCoalesce['fields']);
-				$lo_expr = $lo_query->func()->coalesce($la_fields);
+				}, $directionOrCoalesce['fields']);
+				$expr = $query->func()->coalesce($fields);
 
-				if ($lx_directionOrCoalesce['direction'] === 'asc') {
-					$lo_query->orderByAsc($lo_expr);
+				if ($directionOrCoalesce['direction'] === 'asc') {
+					$query->orderByAsc($expr);
 				}
 				else {
-					$lo_query->orderByDesc($lo_expr);
+					$query->orderByDesc($expr);
 				}
 			}
-			elseif (isset($data['options']['fieldTranslations'][ $ls_field ])) {
-				$la_translations = $data['options']['fieldTranslations'][ $ls_field ];
-				$lo_expr = $lo_query->newExpr()->case();
-				foreach ($la_translations as $ls_key => $ls_value) {
-					$lo_expr->when([$ls_field => $ls_key])->then($ls_value);
+			elseif (isset($data['options']['fieldTranslations'][ $field ])) {
+				$translations = $data['options']['fieldTranslations'][ $field ];
+				$expr = $query->newExpr()->case();
+				foreach ($translations as $translationKey => $translationValue) {
+					$expr->when([$field => $translationKey])->then($translationValue);
 				}
-				$lo_expr->else($ls_field);
-				if ($lx_directionOrCoalesce === 'asc') {
-					$lo_query->orderByAsc($lo_expr);
+				$expr->else($field);
+				if ($directionOrCoalesce === 'asc') {
+					$query->orderByAsc($expr);
 				}
 				else {
-					$lo_query->orderByDesc($lo_expr);
+					$query->orderByDesc($expr);
 				}
 			}
 			else {
-				$lo_query->orderBy([$ls_field => $lx_directionOrCoalesce]);
+				$query->orderBy([$field => $directionOrCoalesce]);
 			}
 		}
-		unset($la_queryOptions['order']);
+		unset($queryOptions['order']);
 
-		$lo_query->applyOptions($la_queryOptions);
+		$query->applyOptions($queryOptions);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -136,84 +133,82 @@ class NumericPaginator extends BaseNumericPaginator {
 	 * @return array
 	 */
 	protected function validateSort(RepositoryInterface $object, array $options): array {
-		$la_options = $options;
-
-		if (isset($la_options['sort'])) {
-			$ls_direction = null;
-			if (isset($la_options['direction'])) {
-				$ls_direction = strtolower($la_options['direction']);
+		if (isset($options['sort'])) {
+			$direction = null;
+			if (isset($options['direction'])) {
+				$direction = strtolower($options['direction']);
 			}
-			if (!in_array($ls_direction, ['asc', 'desc'], true)) {
-				$ls_direction = 'asc';
+			if (!in_array($direction, ['asc', 'desc'], true)) {
+				$direction = 'asc';
 			}
 
-			$la_defaultOrder = isset($la_options['order']) && is_array($la_options['order']) ? $la_options['order'] : [];
-			if ($la_defaultOrder && is_string($la_options['sort']) && !str_contains($la_options['sort'], '.')) {
-				$la_defaultOrder = $this->_removeAliases($la_defaultOrder, $object->getAlias());
+			$defaultOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
+			if ($defaultOrder && is_string($options['sort']) && !str_contains($options['sort'], '.')) {
+				$defaultOrder = $this->_removeAliases($defaultOrder, $object->getAlias());
 			}
 
-			if (is_array($la_options['sort'])) {
-				$la_options['order'] = [
+			if (is_array($options['sort'])) {
+				$options['order'] = [
 					'_COALESCE' => [
-						'fields' => $la_options['sort'],
-						'direction' => $ls_direction,
+						'fields' => $options['sort'],
+						'direction' => $direction,
 					],
 				];
 			}
 			else {
-				$la_options['order'] = [$la_options['sort'] => $ls_direction];
+				$options['order'] = [$options['sort'] => $direction];
 			}
 
-			$la_options['order'] += $la_defaultOrder;
+			$options['order'] += $defaultOrder;
 		}
 		else {
-			$la_options['sort'] = null;
+			$options['sort'] = null;
 		}
-		unset($la_options['direction']);
+		unset($options['direction']);
 
-		if (empty($la_options['order'])) {
-			$la_options['order'] = [];
+		if (empty($options['order'])) {
+			$options['order'] = [];
 		}
-		if (!is_array($la_options['order'])) {
-			return $la_options;
+		if (!is_array($options['order'])) {
+			return $options;
 		}
-		$lb_sortAllowed = false;
-		if (isset($la_options['sortableFields'])) {
-			$ls_field = key($la_options['order']);
+		$sortAllowed = false;
+		if (isset($options['sortableFields'])) {
+			$field = key($options['order']);
 
-			if ($ls_field === '_COALESCE') {
-				$la_fields = $la_options['order'][ $ls_field ]['fields'];
-				foreach ($la_fields as $ls_field) {
-					$lb_sortAllowed = in_array($ls_field, $la_options['sortableFields'], true);
-					if (!$lb_sortAllowed) {
-						$la_options['order'] = [];
-						$la_options['sort'] = null;
+			if ($field === '_COALESCE') {
+				$fields = $options['order'][ $field ]['fields'];
+				foreach ($fields as $field) {
+					$sortAllowed = in_array($field, $options['sortableFields'], true);
+					if (!$sortAllowed) {
+						$options['order'] = [];
+						$options['sort'] = null;
 
-						return $la_options;
+						return $options;
 					}
 				}
 			}
 			else {
-				$lb_sortAllowed = in_array($ls_field, $la_options['sortableFields'], true);
-				if (!$lb_sortAllowed) {
-					$la_options['order'] = [];
-					$la_options['sort'] = null;
+				$sortAllowed = in_array($field, $options['sortableFields'], true);
+				if (!$sortAllowed) {
+					$options['order'] = [];
+					$options['sort'] = null;
 
-					return $la_options;
+					return $options;
 				}
 			}
 		}
 
 		if (
-			$la_options['sort'] === null && count($la_options['order']) >= 1 && !is_numeric(key($la_options['order']))
+			$options['sort'] === null && count($options['order']) >= 1 && !is_numeric(key($options['order']))
 		) {
-			$la_options['sort'] = key($la_options['order']);
+			$options['sort'] = key($options['order']);
 		}
 
-		$la_options['order'] = $this->prefix($object, $la_options['order'], $lb_sortAllowed);
-		$la_options['fieldTranslations'] = $this->prefix($object, $la_options['fieldTranslations'], $lb_sortAllowed);
+		$options['order'] = $this->prefix($object, $options['order'], $sortAllowed);
+		$options['fieldTranslations'] = $this->prefix($object, $options['fieldTranslations'], $sortAllowed);
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -227,17 +222,17 @@ class NumericPaginator extends BaseNumericPaginator {
 	 * @return array
 	 */
 	protected function prefix(RepositoryInterface $object, array $order, bool $allowed = false): array {
-		$la_order = [];
+		$cleanOrder = [];
 
-		foreach ($order as $ls_field => $lx_directionOrCoalesce) {
-			if ($ls_field === '_COALESCE') {
-				$la_fields = array_merge($this->_prefix($object, array_flip($lx_directionOrCoalesce['fields']), $allowed));
-				$lx_directionOrCoalesce['fields'] = array_flip($la_fields);
+		foreach ($order as $field => $directionOrCoalesce) {
+			if ($field === '_COALESCE') {
+				$fields = array_merge($this->_prefix($object, array_flip($directionOrCoalesce['fields']), $allowed));
+				$directionOrCoalesce['fields'] = array_flip($fields);
 			}
 
-			$la_order[ $ls_field ] = $lx_directionOrCoalesce;
+			$cleanOrder[ $field ] = $directionOrCoalesce;
 		}
 
-		return $this->_prefix($object, $la_order, $allowed);
+		return $this->_prefix($object, $cleanOrder, $allowed);
 	}
 }

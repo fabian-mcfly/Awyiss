@@ -24,15 +24,13 @@ class IntegerType extends BaseIntegerType {
 			return null;
 		}
 
-		$lx_value = $value;
-
-		if ($lx_value instanceof BackedEnum) {
-			$lx_value = $lx_value->value;
+		if ($value instanceof BackedEnum) {
+			$value = $value->value;
 		}
 
-		$this->checkNumeric($lx_value);
+		$this->checkNumeric($value);
 
 
-		return (int)$lx_value;
+		return (int)$value;
 	}
 }

@@ -35,7 +35,6 @@ class StringTypeTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -48,7 +47,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithNullValue(): void {
 		$result = $this->type->toDatabase(null, $this->driver);
@@ -59,7 +57,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithStringValue(): void {
 		// Test regular string
@@ -91,7 +88,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithDateObject(): void {
 		// Test standard date
@@ -125,7 +121,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithDateTimeObject(): void {
 		// Test standard datetime
@@ -159,7 +154,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithTimeObject(): void {
 		// Test standard time
@@ -193,7 +187,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithStringableObject(): void {
 		// Create a Stringable object
@@ -214,7 +207,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithScalarValues(): void {
 		// Integer
@@ -258,7 +250,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithBackedEnum(): void {
 		$enum = ComparisonOperator::EndsWith;
@@ -271,7 +262,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithInvalidValue(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -285,7 +275,6 @@ class StringTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\StringType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithIntBackedEnum(): void {
 		$this->expectException(InvalidArgumentException::class);

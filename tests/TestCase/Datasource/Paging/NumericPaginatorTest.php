@@ -26,7 +26,6 @@ class NumericPaginatorTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -37,7 +36,6 @@ class NumericPaginatorTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		if (!empty($this->createdUserIds)) {
@@ -53,7 +51,6 @@ class NumericPaginatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPaginateWithStringSortFieldSortsCorrectly(): void {
 		$table = $this->fetchTable('Users');
@@ -109,7 +106,6 @@ class NumericPaginatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPaginateWithArraySortFieldUsesFirstFieldForSorting(): void {
 		$table = $this->fetchTable('Users');
@@ -153,7 +149,6 @@ class NumericPaginatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPaginateWithCoalesceOrderStructure(): void {
 		$table = $this->fetchTable('Users');
@@ -233,7 +228,6 @@ class NumericPaginatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPaginateWithSortableFieldsValidation(): void {
 		$table = $this->fetchTable('Users');
@@ -290,7 +284,6 @@ class NumericPaginatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPaginateWithArraySortFieldAndSortableFieldsValidation(): void {
 		$table = $this->fetchTable('Users');
@@ -352,7 +345,6 @@ class NumericPaginatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createTestUsers(): void {
 		$table = $this->fetchTable('Users');
