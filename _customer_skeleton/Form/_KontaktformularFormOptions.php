@@ -20,7 +20,6 @@ class KontaktformularFormOptions extends FormOptions {
 	 * @inheritDoc
 	 */
 	public function setValidationRules(Validator $validator): Validator {
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$validator = parent::setValidationRules($validator);
 
 		// Add custom validation rules

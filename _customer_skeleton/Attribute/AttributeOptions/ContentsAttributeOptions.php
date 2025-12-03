@@ -22,14 +22,14 @@ class ContentsAttributeOptions extends AttributeOptionsCollection {
 		$this->add([
 			'backgroundColor' => [
 				/*'disabled' => function(?EntityInterface $entity = null, array &$currentOptions) {
-					$lo_date = new FrozenDate('now', $currentOptions['timezone'] ?? NULL);
+					$date = new FrozenDate('now', $currentOptions['timezone'] ?? NULL);
 
 					for ($i = 0; $i <= 5; $i++) {
-						$lo_date = $lo_date->modify('+2 days');
-						$la_options[] = $lo_date->format('Y-m-d');
+						$date = $date->modify('+2 days');
+						$options[] = $date->format('Y-m-d');
 					}
 
-					return $la_options;
+					return $options;
 				},*/
 				'options' => [
 					'text' => 'Text',
