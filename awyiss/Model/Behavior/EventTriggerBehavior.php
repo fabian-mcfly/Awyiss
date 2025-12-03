@@ -62,20 +62,20 @@ class EventTriggerBehavior extends Behavior {
 			return [];
 		}
 
-		$la_events = [];
-		foreach ($this->getConfig('events') as $ls_event => $lx_callable) {
-			if (is_numeric($ls_event)) {
-				if (!is_string($lx_callable)) {
-					throw new RuntimeException(sprintf('When provided a callable, the key must be a string. `%s` given', gettype($ls_event)));
+		$events = [];
+		foreach ($this->getConfig('events') as $eventName => $callable) {
+			if (is_numeric($eventName)) {
+				if (!is_string($callable)) {
+					throw new RuntimeException(sprintf('When provided a callable, the key must be a string. `%s` given', gettype($eventName)));
 				}
-				$ls_event = 'Model.' . $lx_callable;
+				$eventName = 'Model.' . $callable;
 			}
 
-			$la_events[ $ls_event ] = $lx_callable;
+			$events[ $eventName ] = $callable;
 		}
 
 
-		return $la_events;
+		return $events;
 	}
 
 
@@ -95,13 +95,13 @@ class EventTriggerBehavior extends Behavior {
 		//Saving an entity should create custom events
 		if (in_array($name, ['beforeSave', 'afterSave', 'afterSaveCommit']) && isset($arguments[1]) && is_a($arguments[1], Entity::class)) {
 			if (($arguments[2]['isCopy'] ?? false) === true && $arguments[1]->isNew()) {
-				$lb_return = $this->dispatchCopyEvents($name, ...$arguments);
+				$return = $this->dispatchCopyEvents($name, ...$arguments);
 			}
 			else {
-				$lb_return = $this->dispatchCreateUpdateEvents($name, ...$arguments);
+				$return = $this->dispatchCreateUpdateEvents($name, ...$arguments);
 			}
 
-			if ($lb_return === false) {
+			if ($return === false) {
 				return;
 			}
 		}
@@ -118,16 +118,16 @@ class EventTriggerBehavior extends Behavior {
 			return $this->alias;
 		}
 
-		$ls_alias = $this->table()->getAlias();
+		$alias = $this->table()->getAlias();
 
-		if (str_starts_with($ls_alias, 'Child')) {
-			$ls_alias = substr($ls_alias, 5);
+		if (str_starts_with($alias, 'Child')) {
+			$alias = substr($alias, 5);
 		}
-		elseif (str_starts_with($ls_alias, 'Parent')) {
-			$ls_alias = substr($ls_alias, 6);
+		elseif (str_starts_with($alias, 'Parent')) {
+			$alias = substr($alias, 6);
 		}
 
-		$this->alias = $ls_alias;
+		$this->alias = $alias;
 
 
 		return $this->alias;
@@ -142,13 +142,13 @@ class EventTriggerBehavior extends Behavior {
 	 */
 	protected function dispatchEvent(string $name, Event $originalEvent, mixed ...$arguments): bool {
 		//Create a new event with the modified name and dispatch it.
-		$lo_event = new Event('Model.' . $name, $this->table(), $arguments);
-		$this->table()->getEventManager()->dispatch($lo_event);
+		$event = new Event('Model.' . $name, $this->table(), $arguments);
+		$this->table()->getEventManager()->dispatch($event);
 
 		//If the new event was stopped, stop the old one as well and set the result.
-		if ($lo_event->isStopped()) {
+		if ($event->isStopped()) {
 			$originalEvent->stopPropagation();
-			$originalEvent->setResult($lo_event->getResult());
+			$originalEvent->setResult($event->getResult());
 
 
 			return false;
@@ -174,7 +174,7 @@ class EventTriggerBehavior extends Behavior {
 			return true;
 		}
 
-		$ls_name = match (true) {
+		$name = match (true) {
 			$name == 'beforeSave' && $subject->isNew() => 'beforeCreate',
 			$name == 'beforeSave' && !$subject->isNew() => 'beforeUpdate',
 			$name == 'afterSave' && $subject->isNew() => 'afterCreate',
@@ -184,13 +184,13 @@ class EventTriggerBehavior extends Behavior {
 		};
 
 		//Create a new event with the modified name and dispatch it.
-		if (!$this->dispatchEvent($ls_name, $originalEvent, $subject, ...$arguments)) {
+		if (!$this->dispatchEvent($name, $originalEvent, $subject, ...$arguments)) {
 			return false;
 		}
 
 
 		//Create a new table specific event with the modified name and dispatch it.
-		return $this->dispatchEvent($this->getAlias() . '.' . $ls_name, $originalEvent, $subject, ...$arguments);
+		return $this->dispatchEvent($this->getAlias() . '.' . $name, $originalEvent, $subject, ...$arguments);
 	}
 
 
@@ -202,19 +202,19 @@ class EventTriggerBehavior extends Behavior {
 	 * @return bool|null
 	 */
 	protected function dispatchCopyEvents(string $name, Event $originalEvent, Entity $subject, mixed ...$arguments): ?bool {
-		$ls_name = match (true) {
+		$name = match (true) {
 			$name == 'beforeSave' => 'beforeCopy',
 			$name == 'afterSave' => 'afterCopy',
 			$name == 'afterSaveCommit' => 'afterCopyCommit',
 		};
 
 		//Create a new event with the modified name and dispatch it.
-		if (!$this->dispatchEvent($ls_name, $originalEvent, $subject, ...$arguments)) {
+		if (!$this->dispatchEvent($name, $originalEvent, $subject, ...$arguments)) {
 			return false;
 		}
 
 
 		//Create a new table specific event with the modified name and dispatch it.
-		return $this->dispatchEvent($this->getAlias() . '.' . $ls_name, $originalEvent, $subject, ...$arguments);
+		return $this->dispatchEvent($this->getAlias() . '.' . $name, $originalEvent, $subject, ...$arguments);
 	}
 }

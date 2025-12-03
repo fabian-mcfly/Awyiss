@@ -53,7 +53,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		$this->table->deleteAll([]);
@@ -73,7 +72,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialization(): void {
 		$config = $this->behavior->getConfig();
@@ -102,7 +100,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationDisablesWhenNoDeletedColumn(): void {
 		// Create a table without a deleted column
@@ -129,7 +126,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$events = $this->behavior->implementedEvents();
@@ -145,7 +141,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::findDeleted()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindDeletedReturnsOnlyDeletedEntities(): void {
 		$result = $this->table->saveMany([
@@ -174,7 +169,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::findDeleted()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindDeletedWhenDisabled(): void {
 		$result = $this->table->saveMany([
@@ -203,7 +197,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindWithDeletedReturnsAllEntities(): void {
 		$result = $this->table->saveMany([
@@ -230,7 +223,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindWithDeletedWhenDisabled(): void {
 		$result = $this->table->saveMany([
@@ -258,7 +250,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesAddsUpdateRuleWhenDeleted(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Active', 'languageShortcode' => 'de', 'deleted' => true], ['accessibleFields' => ['deleted']]);
@@ -284,7 +275,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesAddsUpdateRuleWhenOriginalDeleted(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Active', 'languageShortcode' => 'de', 'deleted' => true], ['accessibleFields' => ['deleted']]);
@@ -313,7 +303,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -336,7 +325,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindExcludesDeletedByDefault(): void {
 		$query = $this->table->find();
@@ -359,7 +347,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -380,7 +367,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithIncludeDeletedOption(): void {
 		$query = $this->table->find();
@@ -399,7 +385,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteInterceptsAndCallsSoftDelete(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity', 'languageShortcode' => 'de']);
@@ -425,7 +410,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -451,7 +435,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteWhenSkipped(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity', 'languageShortcode' => 'de',]);
@@ -475,7 +458,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteThrowsExceptionOnMissingPrimaryKey(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity']);
@@ -494,7 +476,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteThrowsExceptionOnFailure(): void {
 		$this->table = $this->getMockBuilder(EmployersTable::class)->setConstructorArgs([
@@ -527,7 +508,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteUnsetsCheckRules(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity', 'systemOrder' => 5]);
@@ -562,7 +542,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteDispatchesAfterSoftDeleteCommit(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity', 'languageShortcode' => 'de']);
@@ -588,7 +567,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteNotDispatchesAfterSoftDeleteCommitWhenSoftDeleteFails(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity', 'languageShortcode' => 'de']);
@@ -622,7 +600,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::softDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSoftDeleteDispatchesEvents(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity', 'languageShortcode' => 'de']);
@@ -656,7 +633,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::softDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSoftDeleteCleansEntity(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity', 'languageShortcode' => 'de']);
@@ -682,7 +658,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::softDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSoftDeleteStopsWhenBeforeEventStopped(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity', 'languageShortcode' => 'de']);
@@ -707,7 +682,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::softDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSoftDeleteThrowsExceptionWhenMissingPrimaryKey(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity']);
@@ -724,7 +698,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::softDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSoftDeleteReturnsFalseOnSaveFailure(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Entity', 'languageShortcode' => 'de']);
@@ -749,7 +722,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior::softDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpFieldAssignmentTypeMismatchInspection
 	 */
 	public function testSoftDeleteDeletesCascadeAssociations(): void {
@@ -790,7 +762,6 @@ class SoftDeleteBehaviorTest extends TestCase {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function markBeforeFindFired(SelectQuery $query): void {
 		$reflection = new ReflectionClass($query);

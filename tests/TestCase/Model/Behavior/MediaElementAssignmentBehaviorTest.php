@@ -53,7 +53,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationForEntityLevel(): void {
 		$config = $this->behavior->getConfig();
@@ -75,7 +74,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationForModelLevel(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -101,7 +99,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationDisabledInFrontend(): void {
 		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
@@ -121,7 +118,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationWithDatatablesTable(): void {
 		$table = TableRegistry::getTableLocator()->get('Datatables');
@@ -136,7 +132,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSkipsInitializationForMediaElementsTables(): void {
 		$mediaElementsTable = TableRegistry::getTableLocator()->get('MediaElements');
@@ -150,7 +145,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSkipsInitializationForMediaElementAssignmentsTables(): void {
 		$this->mediaElementAssignmentsTable->addBehavior('MediaElementAssignment');
@@ -163,7 +157,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAssociations(): void {
 		$association = $this->table->getAssociation('MediaElementAssignments');
@@ -181,7 +174,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindMediaElementAssignments(): void {
 		$query = $this->table->find('mediaElementAssignments');
@@ -205,7 +197,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindMediaElementAssignmentsWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -225,7 +216,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindMediaElementAssignmentsWhenNotEntityLevel(): void {
 		$this->behavior->setConfig('assignable.entityLevel', false);
@@ -245,7 +235,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::getScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScope(): void {
 		$scope = $this->behavior->getConfig('referenceName');
@@ -256,7 +245,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMap(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -297,7 +285,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMapWithExistingAssignments(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -338,7 +325,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMapWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -371,7 +357,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMapWhenMediaElementAssignmentsDisabled(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -404,7 +389,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMarshalMediaElementAssignmentsSkipsZeroMediaElementId(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -438,7 +422,6 @@ class MediaElementAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMarshalMediaElementAssignmentsSetsErrors(): void {
 		$entity = $this->table->get(2);

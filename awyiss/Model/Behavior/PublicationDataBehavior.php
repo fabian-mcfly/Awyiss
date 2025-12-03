@@ -69,12 +69,12 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @param array $config
 	 */
 	public function __construct(Table $table, array $config = []) {
-		$la_config = $config + [
+		$config += [
 			'referenceName' => $this->getScope($table),
 			'tableLocator' => $table->associations()->getTableLocator(),
 		];
 
-		parent::__construct($table, $la_config);
+		parent::__construct($table, $config);
 	}
 
 
@@ -102,14 +102,15 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return string
 	 */
 	protected function getScope(Table $table): string {
-		$ls_name = namespaceSplit($table::class);
-		$ls_name = substr((string)end($ls_name), 0, -5);
-		if (empty($ls_name)) {
-			$ls_name = $table->getTable() ?: $table->getAlias();
+		$name = namespaceSplit($table::class);
+		$name = substr((string)end($name), 0, -5);
+
+		if (empty($name)) {
+			$name = $table->getTable() ?: $table->getAlias();
 		}
 
 
-		return Inflector::underscore($ls_name);
+		return Inflector::underscore($name);
 	}
 
 
@@ -119,70 +120,68 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 */
 	protected function rowMapper(CollectionInterface $results): CollectionInterface {
 		return $results->map(function (EntityInterface|array|null $row): EntityInterface|array|null {
-			$lx_row = $row;
-
-			if ($lx_row === null) {
+			if ($row === null) {
 				return null;
 			}
 
-			$ls_alias = $this->_table->getAlias();
-			$lb_hydrated = $lx_row instanceof EntityInterface;
+			$alias = $this->_table->getAlias();
+			$hydrated = $row instanceof EntityInterface;
 
 			// If the row is already hydrated, we can skip the following steps
-			if (isset($lx_row['_publicationData'])) {
-				return $lx_row;
+			if (isset($row['_publicationData'])) {
+				return $row;
 			}
 
-			$lx_row['_publicationData'] = [];
-			foreach ($this->types::cases() as $le_dataType) {
-				$ls_identifier = $le_dataType->value;
+			$row['_publicationData'] = [];
+			foreach ($this->types::cases() as $dataType) {
+				$identifier = $dataType->value;
 
-				$ls_name = 'publication_' . $ls_identifier;
+				$name = 'publication_' . $identifier;
 
-				/** @var \Awyiss\Model\Entity\PublicationData $lo_publicationData */
-				$lo_publicationData = $lx_row[ '_' . $ls_name ];
-				$ls_matchingAlias = Inflector::camelize($ls_alias . '_' . 'publication_data_' . $ls_identifier);
-				if (isset($lx_row['_matchingData'][ $ls_matchingAlias ])) {
-					$lo_publicationData = $lx_row['_matchingData'][ $ls_matchingAlias ];
-					unset($lx_row['_matchingData'][ $ls_matchingAlias ]);
-					if (!$lo_publicationData->id) {
-						unset($lx_row[ $ls_name ]);
+				/** @var \Awyiss\Model\Entity\PublicationData $publicationData */
+				$publicationData = $row[ '_' . $name ];
+				$matchingAlias = Inflector::camelize($alias . '_' . 'publication_data_' . $identifier);
+				if (isset($row['_matchingData'][ $matchingAlias ])) {
+					$publicationData = $row['_matchingData'][ $matchingAlias ];
+					unset($row['_matchingData'][ $matchingAlias ]);
+					if (!$publicationData->id) {
+						unset($row[ $name ]);
 						continue;
 					}
 				}
 
-				$lx_row['_publicationData'][] = $lo_publicationData;
+				$row['_publicationData'][] = $publicationData;
 
-				if (is_array($lo_publicationData)) {
-					$lx_row[ $ls_name ] = $lo_publicationData['date_time'];
+				if (is_array($publicationData)) {
+					$row[ $name ] = $publicationData['date_time'];
 				}
 				else {
-					$lx_row[ $ls_name ] = $lo_publicationData?->dateTime;
+					$row[ $name ] = $publicationData?->dateTime;
 				}
 
-				if ($lb_hydrated) {
-					$lx_row->setDirty($ls_name, false);
-					$lx_row->setVirtual([$ls_name], true);
+				if ($hydrated) {
+					$row->setDirty($name, false);
+					$row->setVirtual([$name], true);
 				}
 
-				unset($lx_row[ '_' . $ls_name ]);
+				unset($row[ '_' . $name ]);
 			}
 
-			if ($lb_hydrated) {
-				$lx_row['_publicationData'] = array_filter($lx_row['_publicationData']);
+			if ($hydrated) {
+				$row['_publicationData'] = array_filter($row['_publicationData']);
 
-				$lx_row['_publicationData'] = array_combine(
-					array_map(fn (PublicationData $publicationData) => $publicationData->type->value, $lx_row['_publicationData']),
-					$lx_row['_publicationData']
+				$row['_publicationData'] = array_combine(
+					array_map(fn (PublicationData $publicationData) => $publicationData->type->value, $row['_publicationData']),
+					$row['_publicationData']
 				);
-				$lx_row->setDirty('_publicationData', false);
+				$row->setDirty('_publicationData', false);
 			}
 
-			if (empty($lx_row['_matchingData'])) {
-				unset($lx_row['_matchingData']);
+			if (empty($row['_matchingData'])) {
+				unset($row['_matchingData']);
 			}
 
-			return $lx_row;
+			return $row;
 		});
 	}
 
@@ -191,62 +190,62 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return void
 	 */
 	protected function setupAssociations(): void {
-		$ls_targetAlias = $this->publicationDataTable->getAlias();
-		$ls_alias = $this->_table->getAlias();
-		$lo_tableLocator = $this->getTableLocator();
+		$targetAlias = $this->publicationDataTable->getAlias();
+		$alias = $this->_table->getAlias();
+		$tableLocator = $this->getTableLocator();
 
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $this->_table->getEntityClass();
+		/** @var \Awyiss\Model\Entity $entityClass */
+		$entityClass = $this->_table->getEntityClass();
 
-		foreach ($this->types::cases() as $le_dataType) {
-			$ls_identifier = $le_dataType->value;
+		foreach ($this->types::cases() as $dataType) {
+			$identifier = $dataType->value;
 
-			$ls_name = Inflector::camelize($ls_alias . '_publication_data_' . $ls_identifier);
+			$name = Inflector::camelize($alias . '_publication_data_' . $identifier);
 
-			if (!$lo_tableLocator->exists($ls_name)) {
-				$lo_fieldTable = $lo_tableLocator->get($ls_name, [
+			if (!$tableLocator->exists($name)) {
+				$fieldTable = $tableLocator->get($name, [
 					'className' => $this->publicationDataTable::class,
-					'alias' => $ls_name,
+					'alias' => $name,
 					'table' => $this->publicationDataTable->getTable(),
 				]);
 			}
 			else {
-				$lo_fieldTable = $lo_tableLocator->get($ls_name);
+				$fieldTable = $tableLocator->get($name);
 			}
 
-			$la_conditions = [
-				$ls_name . '.type' => $ls_identifier,
+			$conditions = [
+				$name . '.type' => $identifier,
 			];
 
-			$ls_scope = $this->getConfig('referenceName');
+			$scope = $this->getConfig('referenceName');
 			if ($this->getConfig('referenceName') === 'pages') {
-				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-				$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-				$la_scope = array_map(function ($pageRole) {
+				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+				$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+				$scopes = array_map(function ($pageRole) {
 					return Inflector::underscore(Inflector::pluralize($pageRole->name));
-				}, $ls_pageRoleEnum::cases());
-				$la_conditions[ $ls_name . '.scope IN' ] = $la_scope;
+				}, $pageRoleEnum::cases());
+				$conditions[ $name . '.scope IN' ] = $scopes;
 			}
 			else {
-				$la_conditions[ $ls_name . '.scope' ] = $ls_scope;
+				$conditions[ $name . '.scope' ] = $scope;
 			}
 
 			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
-			$this->_table->hasOne($ls_name, [
-				'conditions' => $la_conditions,
+			$this->_table->hasOne($name, [
+				'conditions' => $conditions,
 				'foreignKey' => 'foreign_key',
 				'joinType' => SelectQuery::JOIN_TYPE_LEFT,
-				'propertyName' => '_publication_' . $ls_identifier,
-				'targetTable' => $lo_fieldTable,
+				'propertyName' => '_publication_' . $identifier,
+				'targetTable' => $fieldTable,
 			]);
 
-			$ls_entityClass::addFieldMapping('publication_' . $ls_identifier, Inflector::variable('publication_' . $ls_identifier));
+			$entityClass::addFieldMapping('publication_' . $identifier, Inflector::variable('publication_' . $identifier));
 		}
 
-		$this->_table->hasMany($ls_targetAlias, [
+		$this->_table->hasMany($targetAlias, [
 			'className' => $this->publicationDataTable::class,
 			'conditions' => [
-				$ls_targetAlias . '.scope' => $this->getConfig('referenceName'),
+				$targetAlias . '.scope' => $this->getConfig('referenceName'),
 			],
 			'cascadeCallbacks' => true,
 			'dependent' => true,
@@ -256,7 +255,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			'strategy' => 'subquery',
 		]);
 
-		$ls_entityClass::addFieldMapping('_publication_data', '_publicationData');
+		$entityClass::addFieldMapping('_publication_data', '_publicationData');
 	}
 
 
@@ -276,10 +275,10 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			return $query;
 		}
 
-		$lo_date = $at ?? new DateTime('now');
+		$date = $at ?? new DateTime('now');
 
-		$this->findPublishedStartingBefore($query, $lo_date);
-		$this->findPublishedEndingAfter($query, $lo_date);
+		$this->findPublishedStartingBefore($query, $date);
+		$this->findPublishedEndingAfter($query, $date);
 
 		return $query;
 	}
@@ -300,17 +299,17 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function find(SelectQuery $query, ?DateTime $date, PublicationDataType $type, string $when, bool $includeUndefined): SelectQuery {
-		$ls_alias = $this->_table->getAlias();
-		$lo_date = $date ?? new DateTime('now');
-		$ls_operator = $when === 'before' ? '<=' : '>=';
-		$ls_name = Inflector::camelize($ls_alias . '_publication_data_' . $type->value);
+		$alias = $this->_table->getAlias();
+		$date ??= new DateTime('now');
+		$operator = $when === 'before' ? '<=' : '>=';
+		$name = Inflector::camelize($alias . '_publication_data_' . $type->value);
 
 		if ($query->isAutoFieldsEnabled() === null) {
 			$query->enableAutoFields();
 		}
 
 		if ($query->isAutoFieldsEnabled() !== false) {
-			$query->select($this->_table->$ls_name);
+			$query->select($this->_table->$name);
 		}
 
 		if ($query->getOptions()['_hasPublicationData' . $type->name] ?? false) {
@@ -325,16 +324,16 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 		if ($includeUndefined) {
-			return $query->leftJoinWith($ls_name)->where([
+			return $query->leftJoinWith($name)->where([
 				'OR' => [
-					$ls_name . '.date_time ' . $ls_operator => $lo_date,
-					$ls_name . '.date_time IS' => null,
+					$name . '.date_time ' . $operator => $date,
+					$name . '.date_time IS' => null,
 				],
 			]);
 		}
 
-		return $query->leftJoinWith($ls_name)->where([
-			$ls_name . '.date_time ' . $ls_operator => $lo_date,
+		return $query->leftJoinWith($name)->where([
+			$name . '.date_time ' . $operator => $date,
 		]);
 	}
 
@@ -445,25 +444,21 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			return;
 		}
 
-		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'publicationData'));
-		if ($la_options['skip'] === true) {
+		$queryOptions = Hash::merge($this->getConfig(), Hash::get($options, 'publicationData'));
+		if ($queryOptions['skip'] === true) {
 			return;
 		}
 
-		$la_contain = [];
-		$ls_alias = $this->_table->getAlias();
-		$la_select = $query->clause('select');
+		$contain = [];
+		$alias = $this->_table->getAlias();
+		$select = $query->clause('select');
 
-		$lc_conditions = function (string $field, SelectQuery $query, array $select) {
-			$ls_field = $field;
-			$lo_query = $query;
-			$la_select = $select;
-
-			return function (SelectQuery $q) use ($ls_field, $lo_query, $la_select) {
+		$conditions = function (string $field, SelectQuery $query, array $select) {
+			return function (SelectQuery $q) use ($field, $query, $select) {
 				if (
-					$lo_query->isAutoFieldsEnabled() !== false ||
-					in_array($ls_field, $la_select, true) ||
-					in_array($this->_table->aliasField($ls_field), $la_select, true)
+					$query->isAutoFieldsEnabled() !== false ||
+					in_array($field, $select, true) ||
+					in_array($this->_table->aliasField($field), $select, true)
 				) {
 					$q->select(['id', 'scope', 'foreign_key', 'type', 'date_time']);
 				}
@@ -472,20 +467,20 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			};
 		};
 
-		$la_matching = $query->getEagerLoader()->getMatching();
-		foreach ($this->types::cases() as $le_dataType) {
-			$ls_identifier = $le_dataType->value;
+		$matching = $query->getEagerLoader()->getMatching();
+		foreach ($this->types::cases() as $dataType) {
+			$identifier = $dataType->value;
 
-			$ls_name = Inflector::camelize($ls_alias . '_' . 'publication_data_' . $ls_identifier);
+			$name = Inflector::camelize($alias . '_' . 'publication_data_' . $identifier);
 
-			if (isset($la_matching[ $ls_name ])) {
+			if (isset($matching[ $name ])) {
 				continue;
 			}
 
-			$la_contain[ $ls_name ]['queryBuilder'] = $lc_conditions($ls_identifier, $query, $la_select);
+			$contain[ $name ]['queryBuilder'] = $conditions($identifier, $query, $select);
 		}
 
-		$query->contain($la_contain);
+		$query->contain($contain);
 		$query->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results), $query::PREPEND);
 	}
 
@@ -502,23 +497,22 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			return;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$options['associated'] = [$this->publicationDataTable->getAlias() => ['validate' => false]] + $options['associated'];
 
-		$la_data = $entity->get('_publicationData');
-		/** @var \Awyiss\Model\Entity\PublicationData $lo_publicationData */
-		foreach ($la_data as $ls_key => $lo_publicationData) {
-			if (!$lo_publicationData->dateTime) {
-				$la_data[ $ls_key ] = false;
+		$data = $entity->get('_publicationData');
+		/** @var \Awyiss\Model\Entity\PublicationData $publicationData */
+		foreach ($data as $key => $publicationData) {
+			if (!$publicationData->dateTime) {
+				$data[ $key ] = false;
 			}
 
 			if (($options['isCopy'] ?? false) === true) {
-				$lo_publicationData->unset(['id', 'foreignKey']);
-				$lo_publicationData->setNew(true);
+				$publicationData->unset(['id', 'foreignKey']);
+				$publicationData->setNew(true);
 			}
 		}
 
-		$entity->set('_publicationData', array_values(array_filter($la_data)));
+		$entity->set('_publicationData', array_values(array_filter($data)));
 	}
 
 
@@ -536,32 +530,32 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		return [
 			'_publication_data' => function (array $values, EntityInterface $entity) {
 				/**
-				 * @var array<string, \Awyiss\Model\Entity\PublicationData> $la_publicationData
+				 * @var array<string, \Awyiss\Model\Entity\PublicationData> $publicationData
 				 */
-				$la_publicationData = $entity->get('_publicationData') ?? [];
+				$publicationData = $entity->get('_publicationData') ?? [];
 
-				$la_errors = [];
-				$lo_marshaller = $this->publicationDataTable->marshaller();
+				$errors = [];
+				$marshaller = $this->publicationDataTable->marshaller();
 
-				foreach ($values as $ls_type => $la_data) {
-					if (!isset($la_publicationData[ $ls_type ])) {
-						$la_publicationData[ $ls_type ] = $this->publicationDataTable->newEmptyEntity();
+				foreach ($values as $type => $data) {
+					if (!isset($publicationData[ $type ])) {
+						$publicationData[ $type ] = $this->publicationDataTable->newEmptyEntity();
 					}
 
-					$la_data['type'] ??= $ls_type;
+					$data['type'] ??= $type;
 
-					$la_data['date_time'] ??= null;
-					if (is_string($la_data['date_time']) && $la_data['date_time'] !== '') {
-						$la_data['date_time'] = TypeFactory::build('datetime')->marshal($la_data['date_time']);
+					$data['date_time'] ??= null;
+					if (is_string($data['date_time']) && $data['date_time'] !== '') {
+						$data['date_time'] = TypeFactory::build('datetime')->marshal($data['date_time']);
 					}
 
-					$la_data['scope'] = $this->getConfig('referenceName');
+					$data['scope'] = $this->getConfig('referenceName');
 
-					if (empty($la_data['scope'])) {
-						dd($la_data, $this);
+					if (empty($data['scope'])) {
+						dd($data, $this);
 					}
 
-					$lo_marshaller->merge($la_publicationData[ $ls_type ], $la_data, [
+					$marshaller->merge($publicationData[ $type ], $data, [
 						'fields' => [
 							'type',
 							'dateTime',
@@ -572,20 +566,20 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 						'isMerge' => true,
 					]);
 
-					$la_dataErrors = $la_publicationData[ $ls_type ]->getErrors();
-					if ($la_dataErrors) {
-						$la_errors[ $ls_type ] = $la_dataErrors;
+					$dataErrors = $publicationData[ $type ]->getErrors();
+					if ($dataErrors) {
+						$errors[ $type ] = $dataErrors;
 					}
 				}
 
 				//Set errors into the root entity, so validation errors match the original form data position.
-				if ($la_errors) {
-					$entity->setErrors(['_publicationData' => $la_errors]);
+				if ($errors) {
+					$entity->setErrors(['_publicationData' => $errors]);
 				}
 
 				$entity->setDirty('_publicationData');
 
-				return $la_publicationData;
+				return $publicationData;
 			},
 		];
 	}

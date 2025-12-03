@@ -39,7 +39,6 @@ class NestBehaviorTest extends TestCase {
 
 	/**
 	 * @return array<\Cake\Datasource\EntityInterface>|false
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	protected function saveTestData(): iterable|false {
@@ -188,7 +187,6 @@ class NestBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::__construct()
 	 * @see \Awyiss\Model\Behavior\NestBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationWhenEnabled(): void {
 		$config = $this->behavior->getConfig();
@@ -213,7 +211,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationWhenDisabled(): void {
 		Configure::write('Awyiss.Employers.Backend.Nest.enabled', false);
@@ -240,7 +237,6 @@ class NestBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::initialize()
 	 * @see \Awyiss\Model\Behavior\NestBehavior::buildAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAssociations(): void {
 		$childAssociation = $this->table->getAssociation('ChildEmployers');
@@ -260,7 +256,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildren(): void {
 		$result = $this->saveTestData();
@@ -294,7 +289,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildrenWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -312,7 +306,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildrenWithForceEnabledWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -349,7 +342,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildrenWithFinderInConfig(): void {
 		$result = $this->saveTestData();
@@ -379,7 +371,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildrenWithFinderInOptions(): void {
 		$result = $this->saveTestData();
@@ -408,7 +399,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildrenWithFindersInOptions(): void {
 		$result = $this->saveTestData();
@@ -434,7 +424,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildrenWithNoChildren(): void {
 		$result = $this->saveTestData();
@@ -451,7 +440,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildren(): void {
 		$result = $this->saveTestData();
@@ -504,7 +492,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildrenWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -519,7 +506,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildrenWithForceEnabledWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -539,7 +525,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildrenWithMaxLevel(): void {
 		$result = $this->saveTestData();
@@ -575,7 +560,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildrenWithFinderInConfig(): void {
 		$result = $this->saveTestData();
@@ -611,7 +595,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildrenWithFinderInOptions(): void {
 		$result = $this->saveTestData();
@@ -646,7 +629,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildrenWithFindersInOptions(): void {
 		$result = $this->saveTestData();
@@ -678,7 +660,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildrenWithNoChildren(): void {
 		$result = $this->saveTestData();
@@ -692,7 +673,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParent(): void {
 		$result = $this->saveTestData();
@@ -707,7 +687,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -723,7 +702,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithForceEnabledWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -740,7 +718,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithFinderInConfig(): void {
 		$result = $this->saveTestData();
@@ -756,7 +733,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithFinderInOptions(): void {
 		$result = $this->saveTestData();
@@ -771,7 +747,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithFindersInOptions(): void {
 		$result = $this->saveTestData();
@@ -787,7 +762,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithNoParent(): void {
 		$result = $this->saveTestData();
@@ -801,7 +775,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParents(): void {
 		$result = $this->saveTestData();
@@ -824,7 +797,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -840,7 +812,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWithForceEnabledWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -867,7 +838,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWithMaxLevel(): void {
 		$result = $this->saveTestData();
@@ -890,7 +860,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWithFinderInConfig(): void {
 		$result = $this->saveTestData();
@@ -907,7 +876,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWithFinderInOptions(): void {
 		$result = $this->saveTestData();
@@ -922,7 +890,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWithFindersInOptions(): void {
 		$result = $this->saveTestData();
@@ -939,7 +906,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWithNoParents(): void {
 		$result = $this->saveTestData();
@@ -954,7 +920,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getPossibleParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleParents(): void {
 		$result = $this->saveTestData();
@@ -1006,7 +971,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getPossibleParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleParentsForNewEntity(): void {
 		$result = $this->saveTestData();
@@ -1022,7 +986,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::listNested()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testListNested(): void {
 		$this->saveTestData();
@@ -1052,7 +1015,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::listNested()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testListNestedWithTreeIteratorAndCustomKey(): void {
 		$this->saveTestData();
@@ -1083,7 +1045,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::listNested()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testListNestedWithDirection(): void {
 		$this->saveTestData();
@@ -1111,7 +1072,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesWithUnknownParent(): void {
 		$result = $this->saveTestData();
@@ -1134,7 +1094,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesPreventingCircularReferences(): void {
 		$result = $this->saveTestData();
@@ -1157,7 +1116,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesWithValidParent(): void {
 		$result = $this->saveTestData();
@@ -1174,7 +1132,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesWithNullParent(): void {
 		$result = $this->saveTestData();
@@ -1191,7 +1148,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -1210,7 +1166,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesWhenBuildRulesDisabled(): void {
 		$this->behavior->setConfig('buildRules', false);
@@ -1229,7 +1184,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyLoadsChildren(): void {
 		$result = $this->saveTestData();
@@ -1255,7 +1209,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -1278,7 +1231,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyWhenNotPrimary(): void {
 		$result = $this->saveTestData();
@@ -1299,7 +1251,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyLoadsMediaAssignmentsOfChildren(): void {
 		$table = $this->fetchTable('Widgets');
@@ -1324,7 +1275,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyLoadsTranslationsOfChildren(): void {
 		$table = $this->fetchTable('Widgets');
@@ -1349,7 +1299,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyUnsetsPrimaryKeysOfChildren(): void {
 		$result = $this->saveTestData();
@@ -1381,7 +1330,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyTransfersRelatedColumnsToChildren(): void {
 		$result = $this->saveTestData();
@@ -1431,7 +1379,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyNotTransfersBlocklistedRelatedColumnsToChildren(): void {
 		$result = $this->saveTestData();
@@ -1482,7 +1429,6 @@ class NestBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyDisabledRulesOnChildAssociation(): void {
 		$table = $this->fetchTable('Contents');
@@ -1507,7 +1453,6 @@ class NestBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveTransfersRelatedColumnsToChildren(): void {
 		$result = $this->saveTestData();
@@ -1548,7 +1493,6 @@ class NestBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\NestBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveTransfersBlocklistedRelatedColumnsToChildren(): void {
 		$result = $this->saveTestData();

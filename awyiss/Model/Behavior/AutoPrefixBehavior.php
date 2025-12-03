@@ -79,16 +79,16 @@ class AutoPrefixBehavior extends Behavior {
 			$expression->traverse(function (IdentifierExpression|QueryExpression|ComparisonExpression $expression) {
 				//If the expression is an instance of ComparisonExpression, set the prefixed field if it does not contain '.'
 				if ($expression instanceof ComparisonExpression) {
-					$ls_field = $expression->getField();
-					if (!str_contains($ls_field, '.')) {
-						$expression->setField($this->alias . '.' . $ls_field);
+					$field = $expression->getField();
+					if (!str_contains($field, '.')) {
+						$expression->setField($this->alias . '.' . $field);
 					}
 				}
 				//If the expression is an instance of IdentifierExpression, set the prefixed identifier if it does not contain '.'
 				elseif ($expression instanceof IdentifierExpression) {
-					$ls_field = $expression->getIdentifier();
-					if (!str_contains($ls_field, '.')) {
-						$expression->setIdentifier($this->alias . '.' . $ls_field);
+					$field = $expression->getIdentifier();
+					if (!str_contains($field, '.')) {
+						$expression->setIdentifier($this->alias . '.' . $field);
 					}
 				}
 
@@ -106,18 +106,18 @@ class AutoPrefixBehavior extends Behavior {
 		$expression->iterateParts(function (ExpressionInterface $expression) {
 			//If the expression is an instance of ComparisonExpression, set the prefixed field if it does not contain '.'
 			if ($expression instanceof ComparisonExpression) {
-				$la_field = $expression->getField();
-				if (!is_array($la_field)) {
-					$la_field = [$la_field];
+				$fields = $expression->getField();
+				if (!is_array($fields)) {
+					$fields = [$fields];
 				}
 
-				foreach ($la_field as $ls_field) {
-					if (!is_string($ls_field)) {
+				foreach ($fields as $field) {
+					if (!is_string($field)) {
 						continue;
 					}
 
-					if (!str_contains($ls_field, '.')) {
-						$expression->setField($this->alias . '.' . $ls_field);
+					if (!str_contains($field, '.')) {
+						$expression->setField($this->alias . '.' . $field);
 					}
 				}
 			}

@@ -51,7 +51,6 @@ class SystemOrderBehaviorTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		$this->table->deleteAll([]);
@@ -71,7 +70,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialization(): void {
 		$config = $this->behavior->getConfig();
@@ -112,7 +110,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$events = $this->behavior->implementedEvents();
@@ -137,7 +134,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeFind()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindAddsOrdering(): void {
 		$query = $this->table->find();
@@ -157,7 +153,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWhenDisabled(): void {
 		$query = $this->table->find();
@@ -179,7 +174,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWhenSkipped(): void {
 		$query = $this->table->find();
@@ -203,7 +197,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalRemovesCurrentValuePlaceholder(): void {
 		$data = new ArrayObject([
@@ -236,7 +229,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalRemovesSnakeCaseCurrentValuePlaceholder(): void {
 		$data = new ArrayObject([
@@ -271,7 +263,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyDoesNothingWhenDisabled(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -296,7 +287,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyDoesNothingWhenNotPrimary(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -319,7 +309,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyDoesNothingWhenRelatedColumnsChanged(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -343,7 +332,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyIncrementsSystemOrderWhenCopyOrderHigherThanOriginal(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -375,7 +363,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyIncrementsSystemOrderWhenCopyOrderEqualToOriginal(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -407,7 +394,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyDoesNotIncrementWhenCopyOrderLowerThanOriginal(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -439,7 +425,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveDoesNothingWhenDisabled(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -464,7 +449,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveDoesNothingWhenNotPrimary(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -487,7 +471,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveDoesNothingWhenSkipped(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -515,7 +498,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAssignsHighestSystemOrderForNewEntity(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'First', 'languageShortcode' => 'de']);
@@ -545,7 +527,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAssignsHighestSystemOrderForNewEntityWhenTooLarge(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'First', 'systemOrder' => 1, 'languageShortcode' => 'de']);
@@ -574,7 +555,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAssignsHighestSystemOrderForNewEntityWhenZero(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'First', 'systemOrder' => 0, 'languageShortcode' => 'de']);
@@ -603,7 +583,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAssigns1SystemOrderForNewEntityWhenBelowZero(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'First', 'systemOrder' => -1, 'languageShortcode' => 'de']);
@@ -632,7 +611,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAssigns1SystemOrderForForExistingEntityWhenBelowOne(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'First', 'systemOrder' => 1, 'languageShortcode' => 'de']);
@@ -657,7 +635,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAssignsHighestSystemOrderForExistingEntityWhenTooLarge(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'First', 'systemOrder' => 1, 'languageShortcode' => 'de']);
@@ -690,7 +667,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveHonorsRelatedFieldsWhenDeterminingHighestSystemOrder(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'First', 'systemOrder' => 1, 'languageShortcode' => 'de']);
@@ -720,7 +696,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveHonorsRelatedFieldsWhenDeterminingAutoOrder(): void {
 		$this->behavior->setConfig('field', 'title');
@@ -752,7 +727,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAssignsHighestSystemOrderForExistingEntityWhenTooLargeAndScopeChanged(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'First', 'systemOrder' => 1, 'languageShortcode' => 'es']);
@@ -791,7 +765,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveCleansSystemOrderForExistingEntityWhenSame(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'First', 'systemOrder' => 1, 'languageShortcode' => 'de']);
@@ -824,7 +797,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsAutoOrderWhenFieldNotSystemOrder(): void {
 		$this->behavior->setConfig('field', 'title');
@@ -855,7 +827,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveCleansSystemOrderForExistingEntityWhenSameWithAutoOrder(): void {
 		$this->behavior->setConfig('field', 'title');
@@ -895,7 +866,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveDoesNothingWhenDisabled(): void {
 		$result = $this->table->saveMany([
@@ -934,7 +904,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveDoesNothingWhenNotPrimary(): void {
 		$result = $this->table->saveMany([
@@ -971,7 +940,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveDoesNothingWhenSkipped(): void {
 		$result = $this->table->saveMany([
@@ -1013,7 +981,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveReordersOnInsert(): void {
 		$result = $this->table->saveMany([
@@ -1051,7 +1018,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotReordersOnInsertWhenDifferentScope(): void {
 		$result = $this->table->saveMany([
@@ -1089,7 +1055,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveReordersOnMoveForward(): void {
 		$result = $this->table->saveMany([
@@ -1131,7 +1096,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveReordersOnMoveBackward(): void {
 		$result = $this->table->saveMany([
@@ -1173,7 +1137,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveClosesGapOnScopeChange(): void {
 		$result = $this->table->saveMany([
@@ -1213,7 +1176,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveMovesItemsOnScopeChange(): void {
 		$result = $this->table->saveMany([
@@ -1268,7 +1230,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteSetsSystemOrderToMax(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'systemOrder' => 1, 'languageShortcode' => 'es']);
@@ -1289,7 +1250,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteSetsSystemOrderToMaxWhenNotPrimary(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'systemOrder' => 1, 'languageShortcode' => 'es']);
@@ -1310,7 +1270,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSoftDeleteSetsSystemOrderToMax(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'systemOrder' => 1, 'languageShortcode' => 'es']);
@@ -1331,7 +1290,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::beforeSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSoftDeleteSetsSystemOrderToMaxWhenNotPrimary(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'systemOrder' => 1, 'languageShortcode' => 'es']);
@@ -1353,7 +1311,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteReordersRemainingEntities(): void {
 		$this->table->saveMany([
@@ -1384,7 +1341,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteNotReordersRemainingEntitiesWhenDisabled(): void {
 		$this->table->saveMany([
@@ -1417,7 +1373,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteNotReordersRemainingEntitiesWhenNotPrimary(): void {
 		$this->table->saveMany([
@@ -1448,7 +1403,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteNotReordersRemainingEntitiesWhenSkipped(): void {
 		$this->table->saveMany([
@@ -1484,7 +1438,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteReordersRemainingEntities(): void {
 		$this->table->saveMany([
@@ -1515,7 +1468,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteNotReordersRemainingEntitiesWhenDisabled(): void {
 		$this->table->saveMany([
@@ -1548,7 +1500,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteNotReordersRemainingEntitiesWhenNotPrimary(): void {
 		$this->table->saveMany([
@@ -1579,7 +1530,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteNotReordersRemainingEntitiesWhenSkipped(): void {
 		$this->table->saveMany([
@@ -1615,7 +1565,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitDoesNothingWhenDisabled(): void {
 		$this->table->saveMany([
@@ -1655,7 +1604,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitDoesNothingWhenNoRelatedData(): void {
 		$this->table->saveMany([
@@ -1687,7 +1635,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitReordersRemainingEntities(): void {
 		$this->table->saveMany([
@@ -1733,7 +1680,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsReturnsFalseWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -1750,7 +1696,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsCreatesNewQueryWhenNullProvided(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -1764,7 +1709,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsAddsWhereClausesForRelatedColumns(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -1785,7 +1729,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsSkipsIdSystemOrderColumns(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -1806,7 +1749,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsHandlesNullValues(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => null]);
@@ -1824,7 +1766,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsUsesCurrentValuesWhenPreferOriginalFalse(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -1848,7 +1789,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsUsesOriginalValuesWhenPreferOriginalTrue(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -1872,7 +1812,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _testAddQueryConditionsWithMultipleRelatedColumns(): void {
 		// Set up multiple related columns
@@ -1896,7 +1835,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsReturnsOriginalQuery(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -1912,7 +1850,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsKeepsPreExistingConditions(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -1931,7 +1868,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionsWithAttributes(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -1974,7 +1910,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddQueryConditionWithResult(): void {
 		$result = $this->table->saveMany([
@@ -2009,7 +1944,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::getHighestSystemOrder()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHighestSystemOrderWithEmptyTable(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test']);
@@ -2024,7 +1958,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::getHighestSystemOrder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHighestSystemOrderWithExistingEntities(): void {
 		$result = $this->table->saveMany([
@@ -2052,7 +1985,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::getDirtyRelatedColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDirtyRelatedColumns(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -2068,7 +2000,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::getDirtyRelatedColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDirtyRelatedColumnsWithNoDirtyFields(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -2083,7 +2014,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::getDirtyRelatedColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDirtyRelatedColumnsWithAttributes(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -2110,7 +2040,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::hasDirtyRelatedColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasDirtyRelatedColumns(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test', 'languageShortcode' => 'de']);
@@ -2126,7 +2055,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::hasDirtyRelatedColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasDirtyRelatedColumnsWithNoDirtyFields(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test']);
@@ -2140,7 +2068,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::hasDirtyRelatedColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasDirtyRelatedColumnsWithAttributes(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -2173,7 +2100,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::rebuildSystemOrder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildSystemOrderForFieldSystemOrder(): void {
 		$result = $this->table->saveMany([
@@ -2235,7 +2161,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::rebuildSystemOrder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildSystemOrderForFieldSystemOrderDescending(): void {
 		$result = $this->table->saveMany([
@@ -2278,7 +2203,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::rebuildSystemOrder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildSystemOrderForFieldSystemOrderWithAdditionalWhere(): void {
 		$result = $this->table->saveMany([
@@ -2321,7 +2245,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::rebuildSystemOrder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildSystemOrderForFieldSystemOrderWithoutRelatedFields(): void {
 		$result = $this->table->saveMany([
@@ -2385,7 +2308,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::rebuildSystemOrder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildSystemOrderForTextField(): void {
 		$result = $this->table->saveMany([
@@ -2454,7 +2376,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::rebuildSystemOrder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildSystemOrderForTextAttribute(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -2516,7 +2437,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::rebuildSystemOrder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildSystemOrderForTextAttributeWithPrefix(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -2577,7 +2497,6 @@ class SystemOrderBehaviorTest extends TestCase {
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function markBeforeFindFired(SelectQuery $query): void {
 		$reflection = new ReflectionClass($query);

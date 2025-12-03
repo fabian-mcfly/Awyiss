@@ -23,7 +23,6 @@ use RuntimeException;
 class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialization(): void {
 		$table = new Table([
@@ -43,7 +42,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Customer\Model\Table\EmployersTable $table */
@@ -122,7 +120,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithAdditionalData(): void {
 		$additionalData = [
@@ -145,7 +142,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithAttribute(): void {
 		$additionalData = [
@@ -167,7 +163,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithOptions(): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $table */
@@ -188,7 +183,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWhenDisabled(): void {
 		/** @var \Customer\Model\Table\EmployersTable $table */
@@ -207,7 +201,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithUnmappedFields(): void {
 		$additionalData = [
@@ -230,7 +223,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntitySetsDefaultBooleanValues(): void {
 		/** @var \Customer\Model\Table\NewsTable $table */
@@ -245,7 +237,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityTypeCastsDateValues(): void {
 		/** @var \Customer\Model\Table\NewsTable $table */
@@ -261,7 +252,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalUnsetsEmptyNullables(): void {
 		/** @var \Awyiss\Model\Table\ContentsTable $table */
@@ -289,7 +279,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithNonNullableFields(): void {
 		$table = $this->fetchTable('ContentTemplates');
@@ -310,7 +299,6 @@ class DefaultValuesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithNonEmptyValues(): void {
 		$table = $this->fetchTable('ContentTemplates');

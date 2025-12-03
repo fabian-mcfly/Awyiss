@@ -42,7 +42,6 @@ class CategoriesBehaviorTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -83,7 +82,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialization(): void {
 		$config = $this->behavior->getConfig();
@@ -119,7 +117,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$events = $this->behavior->implementedEvents();
@@ -134,7 +131,6 @@ class CategoriesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::implementedMethods()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedMethods(): void {
 		$methods = $this->behavior->implementedMethods();
@@ -152,7 +148,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategories(): void {
 		$result = $this->behavior->getCategories();
@@ -168,7 +163,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategoriesRaw(): void {
 		$result = $this->behavior->getCategories(true);
@@ -196,7 +190,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategoriesWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -212,7 +205,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategoriesWithoutDatasourceUsesBuildCategoriesOfTable(): void {
 		$table = new class extends ContentsTable {
@@ -251,7 +243,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategoriesWithoutDatasource(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -289,7 +280,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::resetCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResetCategories(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -308,7 +298,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::fieldIsAttribute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldIsAttribute(): void {
 		$this->behavior->setConfig('field', 'date');
@@ -326,7 +315,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::fieldIsAttribute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldIsAttributeWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -340,7 +328,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::filterQuery()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQuery(): void {
 		$this->behavior->setConfig('selectedCategory', 36);
@@ -368,7 +355,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::filterQuery()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithProvidedCategory(): void {
 		$this->behavior->setConfig('selectedCategory', 36);
@@ -396,7 +382,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::filterQuery()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithoutCategoryUsesFirstAvailable(): void {
 		$this->assertNull($this->behavior->getSelectedCategory());
@@ -446,7 +431,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::filterQuery()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWhenDisabled(): void {
 		$this->behavior->setConfig('selectedCategory', 35);
@@ -470,7 +454,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::filterQuery()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithoutDatasource(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -491,7 +474,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetQueryConditions(): void {
 		$this->behavior->setConfig('selectedCategory', 34);
@@ -505,7 +487,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetQueryConditionsWithoutCategoryUsesFirstAvailable(): void {
 		$this->assertNull($this->behavior->getSelectedCategory());
@@ -536,7 +517,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetQueryConditionsWithAggregationKey(): void {
 		$this->behavior->setConfig('selectedCategory', 'dummy');
@@ -554,7 +534,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetQueryConditionsWithUnassignedKeyKey(): void {
 		$this->behavior->setConfig('selectedCategory', 'dummy');
@@ -577,7 +556,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetQueryConditionsWithUnassignedKeyKeyAndNoCategories(): void {
 		$table = new class extends ContentsTable {
@@ -611,7 +589,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getQueryConditions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetQueryConditionsWhenDisabled(): void {
 		$this->behavior->setConfig('allowAggregation', false);
@@ -632,7 +609,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getSelectedCategory()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSelectedCategory(): void {
 		$this->behavior->setConfig('selectedCategory', 'tech');
@@ -645,7 +621,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getSelectedCategory()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSelectedCategoryWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -658,7 +633,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getSelectedCategory()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSelectedCategoryFromEntity(): void {
 		$this->behavior->setConfig('field', 'teaser');
@@ -673,7 +647,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::groupResult()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGroupResult(): void {
 		$query = $this->table->find();
@@ -705,7 +678,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::groupResult()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGroupResultWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -725,7 +697,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::groupResult()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGroupResultWithCustomColumn(): void {
 		$query = $this->table->find();
@@ -741,7 +712,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::groupResult()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGroupResultWithEmptyAssociationName(): void {
 		$query = $this->table->find();
@@ -756,7 +726,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::groupResult()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGroupResultWithUnknownAssociationName(): void {
 		$query = $this->table->find();
@@ -771,7 +740,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::groupResult()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGroupResultNonDatasourceMode(): void {
 		$this->behavior->setConfig('identifier', 'parentId');
@@ -808,7 +776,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::sortQuery()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortQuery(): void {
 		$query = $this->table->find();
@@ -829,7 +796,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::sortQuery()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortQueryWithEmptyCategories(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -854,7 +820,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::sortQuery()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortQueryWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -878,7 +843,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getValidSelectionValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetValidSelectionValues(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -903,7 +867,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getValidSelectionValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetValidSelectionValuesWithoutAggregation(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -926,7 +889,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getValidSelectionValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetValidSelectionValuesWithCustomAggregation(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -951,7 +913,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getValidSelectionValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetValidSelectionValuesWithoutUnassigned(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -974,7 +935,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getValidSelectionValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetValidSelectionValuesWithCustomUnassigned(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -999,7 +959,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::verifySelection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVerifySelection(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -1017,7 +976,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::verifySelection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVerifySelectionWithInvalidCategory(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -1033,7 +991,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::verifySelection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVerifySelectionWithStringConversion(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -1049,7 +1006,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::verifySelection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVerifySelectionAggregationKey(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -1067,7 +1023,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::verifySelection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVerifySelectionUnassignedKey(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -1085,7 +1040,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getParentCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentCategories(): void {
 		$result = $this->behavior->getParentCategories();
@@ -1135,7 +1089,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::getParentCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentCategoriesIncludingCurrentCategories(): void {
 		$result = $this->behavior->getParentCategories(true);
@@ -1189,7 +1142,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::assignParentCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAssignParentCategories(): void {
 		$this->behavior->assignParentCategories();
@@ -1234,7 +1186,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::assignParentCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAssignParentCategoriesWithMaxLEvel(): void {
 		$this->behavior->assignParentCategories(1);
@@ -1267,7 +1218,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValid(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -1285,7 +1235,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidWithoutDatasource(): void {
 		$this->behavior->setConfig('useDatasource', false);
@@ -1312,7 +1261,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMissingCategory(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -1334,7 +1282,6 @@ class CategoriesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidCategory(): void {
 		$entity = $this->table->newDefaultEntity([

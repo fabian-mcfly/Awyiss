@@ -76,78 +76,76 @@ class DefaultValuesBehavior extends Behavior {
 		}
 
 		// Retrieve the class that's used by the table for the creation of new entities
-		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = $this->table()->getEntityClass();
-		/** @var \Awyiss\Model\Entity $lo_entity */
-		$lo_entity = new $ls_entityClass([], ['source' => $this->table()->getRegistryAlias()]);
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = $this->table()->getEntityClass();
+		/** @var \Awyiss\Model\Entity $entity */
+		$entity = new $entityClass([], ['source' => $this->table()->getRegistryAlias()]);
 
-		$lo_table = $this->table();
+		$table = $this->table();
 
-		$lo_schema = $lo_table->getSchema();
+		$schema = $table->getSchema();
 		//Get the default values
-		$la_defaults = $lo_schema->defaultValues();
+		$defaults = $schema->defaultValues();
 
-		$la_defaults += array_combine($lo_schema->columns(), array_fill(0, count($lo_schema->columns()), null));
+		$defaults += array_combine($schema->columns(), array_fill(0, count($schema->columns()), null));
 
 		//No primary keys
-		$la_defaults = array_diff_key($la_defaults, array_flip($lo_schema->getPrimaryKey()));
+		$defaults = array_diff_key($defaults, array_flip($schema->getPrimaryKey()));
 
 		//Typecast the defaults based on the schema
-		$this->typecastDefaults($la_defaults, $lo_schema);
+		$this->typecastDefaults($defaults, $schema);
 
-		$la_additionalData = $additionalData;
 		if ($additionalData) {
 			// Unmap the fields in case the additional data contains mapped keys
-			$la_additionalData = $ls_entityClass::unmapFields($additionalData, true);
+			$additionalData = $entityClass::unmapFields($additionalData, true);
 		}
 
 		if (
-			$lo_table->hasBehavior('Categories') &&
-			$lo_table->getBehavior('Categories')->getConfig('enabled') === true &&
+			$table->hasBehavior('Categories') &&
+			$table->getBehavior('Categories')->getConfig('enabled') === true &&
 			($options['includeCategory'] ?? true) === true
 		) {
-			$this->addCategoryDefault($la_defaults, $lo_table, $lo_attributesTable ?? null);
+			$this->addCategoryDefault($defaults, $table, $attributesTable ?? null);
 		}
 
-		if ($lo_table->hasAttributes()) {
-			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributesTable */
-			$lo_attributesTable = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
-			/** @var \Awyiss\Model\Entity $ls_attributesEntityClass */
-			$ls_attributesEntityClass = $lo_attributesTable->getEntityClass();
-			$la_attributeColumns = $lo_attributesTable->getSchema()->columns();
-			$la_attributeData = $la_additionalData['attributes'] ?? [];
+		if ($table->hasAttributes()) {
+			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $attributesTable */
+			$attributesTable = $table->getAssociation($table->getAttributesTableName(true));
+			/** @var \Awyiss\Model\Entity $attributesEntityClass */
+			$attributesEntityClass = $attributesTable->getEntityClass();
+			$attributeColumns = $attributesTable->getSchema()->columns();
+			$attributeData = $additionalData['attributes'] ?? [];
 
 			// Check if any of the attribute columns are part of the additional data directly
-			foreach ($la_attributeColumns as $ls_column) {
-				$ls_column = $ls_attributesEntityClass::unmapField($ls_column);
-				if (array_key_exists($ls_column, $la_additionalData)) {
-					$la_attributeData[ $ls_column ] = $la_additionalData[ $ls_column ];
-					unset($la_additionalData[ $ls_column ]);
+			foreach ($attributeColumns as $column) {
+				$column = $attributesEntityClass::unmapField($column);
+				if (array_key_exists($column, $additionalData)) {
+					$attributeData[ $column ] = $additionalData[ $column ];
+					unset($additionalData[ $column ]);
 					continue;
 				}
 
-				$ls_column = $ls_attributesEntityClass::mapField($ls_column);
-				if (array_key_exists($ls_column, $la_additionalData)) {
-					$la_attributeData[ $ls_column ] = $la_additionalData[ $ls_column ];
-					unset($la_additionalData[ $ls_column ]);
+				$column = $attributesEntityClass::mapField($column);
+				if (array_key_exists($column, $additionalData)) {
+					$attributeData[ $column ] = $additionalData[ $column ];
+					unset($additionalData[ $column ]);
 				}
 			}
 
-			$la_defaults['attributes'] = $lo_attributesTable->newDefaultEntity($la_attributeData);
-			/** @noinspection PhpVariableNamingConventionInspection */
-			unset($la_additionalData['attributes']);
+			$defaults['attributes'] = $attributesTable->newDefaultEntity($attributeData);
+			unset($additionalData['attributes']);
 		}
 
-		$lo_entity = $this->marshallDefaults($lo_entity, $la_defaults, $la_additionalData, $options);
+		$entity = $this->marshallDefaults($entity, $defaults, $additionalData, $options);
 
 		//Set the entity to the attributes entity
-		if ($lo_table->hasAttributes()) {
+		if ($table->hasAttributes()) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_entity->attributes->setEntity($lo_entity);
+			$entity->attributes->setEntity($entity);
 		}
 
 
-		return $lo_entity;
+		return $entity;
 	}
 
 
@@ -157,7 +155,6 @@ class DefaultValuesBehavior extends Behavior {
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
 		/** @noinspection PhpParamsInspection */
@@ -172,23 +169,21 @@ class DefaultValuesBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function addCategoryDefault(array &$defaults, Table $table, ?Association $attributes = null): void {
-		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_categories */
-		$lo_categories = $table->getBehavior('Categories');
+		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $categories */
+		$categories = $table->getBehavior('Categories');
 
-		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = $table->getEntityClass();
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = $table->getEntityClass();
 
-		$ls_column = $lo_categories->getConfig('field') ?: $lo_categories->getConfig('identifier');
-		$ls_column = $ls_entityClass::unmapField($ls_column);
+		$column = $categories->getConfig('field') ?: $categories->getConfig('identifier');
+		$column = $entityClass::unmapField($column);
 
-		if ($attributes && $attributes->getSchema()->getColumn($ls_column)) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$defaults[ $attributes->getProperty() ][ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+		if ($attributes && $attributes->getSchema()->getColumn($column)) {
+			$defaults[ $attributes->getProperty() ][ $column ] = $categories->getConfig('selectedCategory');
 		}
 
-		if ($table->getSchema()->getColumn($ls_column)) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$defaults[ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+		if ($table->getSchema()->getColumn($column)) {
+			$defaults[ $column ] = $categories->getConfig('selectedCategory');
 		}
 	}
 
@@ -201,21 +196,19 @@ class DefaultValuesBehavior extends Behavior {
 	 * @return \Cake\Datasource\EntityInterface
 	 */
 	protected function marshallDefaults(EntityInterface $entity, array $defaults, array $additionalData, array $options): EntityInterface {
-		$la_defaults = $additionalData;
-		/** @var \Awyiss\Model\Entity $entity */
-		$la_defaults += $entity::unmapFields($entity->defaultValues(), true);
-		$la_defaults += $defaults;
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$defaults = $additionalData + $entity::unmapFields($entity->defaultValues(), true) + $defaults;
 
-		$la_options = $options + [
-			'fields' => array_keys($la_defaults),
+		$options += [
+			'fields' => array_keys($defaults),
 			'setter' => false,
 			'validate' => false,
 			'events' => false,
 		];
 
-		$lo_marshaller = $this->table()->marshaller();
+		$marshaller = $this->table()->marshaller();
 
-		return $lo_marshaller->merge($entity, $la_defaults, $la_options);
+		return $marshaller->merge($entity, $defaults, $options);
 	}
 
 
@@ -227,70 +220,68 @@ class DefaultValuesBehavior extends Behavior {
 	 * @param \Awyiss\Model\Table $table
 	 * @return void
 	 * @copyright https://github.com/dereuromark/cakephp-shim/tree/master
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function processArray(ArrayObject $data, Table $table): void {
-		$la_associations = [];
+		$associations = [];
 
-		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = $table->getEntityClass();
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = $table->getEntityClass();
 
-		/** @var \Cake\ORM\Association $lo_association */
-		foreach ($table->associations() as $lo_association) {
-			$la_associations[ $ls_entityClass::unmapField($lo_association->getProperty()) ] = $lo_association->getName();
+		/** @var \Cake\ORM\Association $association */
+		foreach ($table->associations() as $association) {
+			$associations[ $entityClass::unmapField($association->getProperty()) ] = $association->getName();
 		}
 
-		foreach ($data as $ls_key => $lx_value) {
-			if (is_numeric($ls_key)) {
+		foreach ($data as $key => $value) {
+			if (is_numeric($key)) {
 				continue;
 			}
 
-			if (array_key_exists($ls_key, $la_associations)) {
-				if ($lx_value === null) {
+			if (array_key_exists($key, $associations)) {
+				if ($value === null) {
 					continue;
 				}
 
-				if ($lx_value === '') {
-					$lx_value = $ls_key === 'attributes' ? [] : null;
+				if ($value === '') {
+					$value = $key === 'attributes' ? [] : null;
 				}
-				elseif ($lx_value instanceof EntityInterface) {
+				elseif ($value instanceof EntityInterface) {
 					/** @noinspection PhpParamsInspection */
-					$lx_value = $this->processEntity(
-						$lx_value,
-						$table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
+					$value = $this->processEntity(
+						$value,
+						$table->getAssociation($associations[ $entityClass::unmapField($key) ])->getTarget()
 					);
 				}
-				elseif (is_array($lx_value) || $lx_value instanceof ArrayObject) {
-					if (!$lx_value instanceof ArrayObject) {
-						$lx_value = new ArrayObject($lx_value);
+				elseif (is_array($value) || $value instanceof ArrayObject) {
+					if (!$value instanceof ArrayObject) {
+						$value = new ArrayObject($value);
 					}
 
 					/** @noinspection PhpParamsInspection */
 					$this->processArray(
-						$lx_value,
-						$table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
+						$value,
+						$table->getAssociation($associations[ $entityClass::unmapField($key) ])->getTarget()
 					);
 
-					$lx_value = $lx_value->getArrayCopy();
+					$value = $value->getArrayCopy();
 				}
 
-				$data[ $ls_key ] = $lx_value;
+				$data[ $key ] = $value;
 
 				continue;
 			}
 
-			$lb_nullable = Hash::get((array)$table->getSchema()->getColumn($ls_entityClass::unmapField($ls_key)), 'null');
+			$nullable = Hash::get((array)$table->getSchema()->getColumn($entityClass::unmapField($key)), 'null');
 
-			if ($lb_nullable !== true) {
+			if ($nullable !== true) {
 				continue;
 			}
 
-			if ($lx_value !== '') {
+			if ($value !== '') {
 				continue;
 			}
 
-			$lx_default = Hash::get((array)$table->getSchema()->getColumn($ls_entityClass::unmapField($ls_key)), 'default');
-			$data[ $ls_key ] = $lx_default;
+			$data[ $key ] = Hash::get((array)$table->getSchema()->getColumn($entityClass::unmapField($key)), 'default');
 		}
 	}
 
@@ -305,36 +296,36 @@ class DefaultValuesBehavior extends Behavior {
 	 * @copyright https://github.com/dereuromark/cakephp-shim/tree/master
 	 */
 	protected function processEntity(EntityInterface $entity, Table $table): EntityInterface {
-		$la_associations = [];
-		/** @var \Cake\ORM\Association $lo_association */
-		foreach ($table->associations() as $lo_association) {
-			$la_associations[ $entity::mapField($lo_association->getProperty()) ] = $lo_association->getName();
+		$associations = [];
+		/** @var \Cake\ORM\Association $association */
+		foreach ($table->associations() as $association) {
+			$associations[ $entity::mapField($association->getProperty()) ] = $association->getName();
 		}
 
-		foreach ($entity->getDirty() as $ls_field) {
-			$lx_value = $entity->get($ls_field);
+		foreach ($entity->getDirty() as $field) {
+			$value = $entity->get($field);
 
-			if (array_key_exists($ls_field, $la_associations)) {
-				if ($lx_value !== null) {
-					if ($lx_value === '') {
-						$lx_value = null;
+			if (array_key_exists($field, $associations)) {
+				if ($value !== null) {
+					if ($value === '') {
+						$value = null;
 					}
-					elseif ($lx_value instanceof EntityInterface) {
+					elseif ($value instanceof EntityInterface) {
 						/** @noinspection PhpParamsInspection */
-						$lx_value = $this->processEntity($lx_value, $table->getAssociation($la_associations[ $ls_field ])->getTarget());
+						$value = $this->processEntity($value, $table->getAssociation($associations[ $field ])->getTarget());
 					}
-					elseif (is_array($lx_value) || $lx_value instanceof ArrayObject) {
-						if (!$lx_value instanceof ArrayObject) {
-							$lx_value = new ArrayObject($lx_value);
+					elseif (is_array($value) || $value instanceof ArrayObject) {
+						if (!$value instanceof ArrayObject) {
+							$value = new ArrayObject($value);
 						}
 
 						/** @noinspection PhpParamsInspection */
-						$this->processArray($lx_value, $table->getAssociation($la_associations[ $ls_field ])->getTarget());
+						$this->processArray($value, $table->getAssociation($associations[ $field ])->getTarget());
 
-						$lx_value = $lx_value->getArrayCopy();
+						$value = $value->getArrayCopy();
 					}
 
-					$entity->set($ls_field, $lx_value);
+					$entity->set($field, $value);
 				}
 
 				continue;
@@ -342,21 +333,21 @@ class DefaultValuesBehavior extends Behavior {
 
 
 			if ($entity instanceof Entity) {
-				$ls_field = $entity::unmapField($ls_field);
+				$field = $entity::unmapField($field);
 			}
 
-			$lb_nullable = Hash::get((array)$table->getSchema()->getColumn($ls_field), 'null');
+			$nullable = Hash::get((array)$table->getSchema()->getColumn($field), 'null');
 
-			if ($lb_nullable !== true) {
+			if ($nullable !== true) {
 				continue;
 			}
 
-			if ($lx_value !== '') {
+			if ($value !== '') {
 				continue;
 			}
 
-			$lx_default = Hash::get((array)$table->getSchema()->getColumn($ls_field), 'default');
-			$entity->set($ls_field, $lx_default);
+			$default = Hash::get((array)$table->getSchema()->getColumn($field), 'default');
+			$entity->set($field, $default);
 		}
 
 
@@ -370,45 +361,45 @@ class DefaultValuesBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function typecastDefaults(array &$defaults, SchemaInterface $schema): void {
-		$la_typeMap = $schema->typeMap();
+		$typeMap = $schema->typeMap();
 
-		foreach ($defaults as $ls_column => &$lx_default) {
-			if (is_null($lx_default)) {
+		foreach ($defaults as $column => &$default) {
+			if (is_null($default)) {
 				//No default value? That's already the entities default.
 				continue;
 			}
 
-			if (str_starts_with($la_typeMap[ $ls_column ], 'enum-')) {
-				$lo_dbType = TypeFactory::build($la_typeMap[ $ls_column ]);
-				if ($lo_dbType instanceof EnumType) {
-					$lx_default = $this->typecastEnumDefault($lx_default, $lo_dbType);
+			if (str_starts_with($typeMap[ $column ], 'enum-')) {
+				$dbType = TypeFactory::build($typeMap[ $column ]);
+				if ($dbType instanceof EnumType) {
+					$default = $this->typecastEnumDefault($default, $dbType);
 					continue;
 				}
 			}
 
 			//Typecast each default value, depending on the column type
 			try {
-				$lx_default = match ($la_typeMap[ $ls_column ]) {
-					'boolean' => match ($lx_default) {
+				$default = match ($typeMap[ $column ]) {
+					'boolean' => match ($default) {
 						'1', 'true', 'TRUE' => true,
 						'0', 'false', 'FALSE' => false,
-						default => boolval($lx_default),
+						default => boolval($default),
 					},
-					'date' => $lx_default ? new Date($lx_default) : null,
-					'datetime' => $lx_default && $lx_default !== 'current_timestamp()' ? new DateTime($lx_default) : null,
-					'float' => floatval($lx_default),
-					'integer' => intval($lx_default),
-					'json' => json_decode(trim($lx_default, '\'')),
-					'string', 'text' => strval($lx_default),
-					'time' => $lx_default ? new Time($lx_default) : null,
+					'date' => $default ? new Date($default) : null,
+					'datetime' => $default && $default !== 'current_timestamp()' ? new DateTime($default) : null,
+					'float' => floatval($default),
+					'integer' => intval($default),
+					'json' => json_decode(trim($default, '\'')),
+					'string', 'text' => strval($default),
+					'time' => $default ? new Time($default) : null,
 				};
 			}
 			/** @noinspection PhpMultipleClassDeclarationsInspection */
 			catch (UnhandledMatchError) {
-				dd($la_typeMap[ $ls_column ], __FILE__, __LINE__, $lx_default);
+				dd($typeMap[ $column ], __FILE__, __LINE__, $default);
 			}
 		}
-		unset($lx_default);
+		unset($default);
 	}
 
 
@@ -416,7 +407,6 @@ class DefaultValuesBehavior extends Behavior {
 	 * @param mixed $default
 	 * @param \Cake\Database\Type\EnumType $dbType
 	 * @return \BackedEnum|null
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function typecastEnumDefault(mixed $default, EnumType $dbType): ?BackedEnum {
 		/**
@@ -425,16 +415,16 @@ class DefaultValuesBehavior extends Behavior {
 		 * This does not match the enum backing type and will throw an exception in EnumType::toPHP().
 		 * Here we convert "FALSE" to 0 and "TRUE" to 1 for int backed enums.
 		 */
-		$ls_className = $dbType->getEnumClassName();
+		$className = $dbType->getEnumClassName();
 
 		// Check if it's an int-backed enum using reflection
-		$lb_isIntBackedEnum = false;
-		if (enum_exists($ls_className)) {
-			$lo_reflection = new ReflectionEnum($ls_className);
-			$lb_isIntBackedEnum = $lo_reflection->getBackingType()->getName() === 'int';
+		$isIntBackedEnum = false;
+		if (enum_exists($className)) {
+			$reflection = new ReflectionEnum($className);
+			$isIntBackedEnum = $reflection->getBackingType()->getName() === 'int';
 		}
 
-		if ($lb_isIntBackedEnum) {
+		if ($isIntBackedEnum) {
 			$default = match ($default) {
 				'true', 'TRUE' => 1,
 				'false', 'FALSE' => 0,

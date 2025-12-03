@@ -77,7 +77,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialization(): void {
 		$config = $this->behavior->getConfig();
@@ -144,7 +143,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsFieldMapping(): void {
 		/** @var \Awyiss\Model\Entity\Page $entityClass */
@@ -163,7 +161,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::initialize()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::addAssociation()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsUserAssociations(): void {
 		$this->assertTrue($this->table->hasAssociation('CreatedByUser'));
@@ -185,7 +182,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::initialize()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$implementedEvents = $this->behavior->implementedEvents();
@@ -223,7 +219,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::implementedMethods()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedMethods(): void {
 		$implementedMethods = $this->behavior->implementedMethods();
@@ -239,7 +234,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::findWithAuditUsers()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindWithAuditUsers(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -280,7 +274,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::countAuditData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCountAuditData(): void {
 		$this->login();
@@ -313,7 +306,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::getAuditData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAuditData(): void {
 		$this->login();
@@ -352,7 +344,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::getHistoryFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHistoryFields(): void {
 		$historyFields = $this->behavior->getHistoryFields();
@@ -383,7 +374,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::buildValidator()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildValidator(): void {
 		$validator = new Validator();
@@ -415,7 +405,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::beforeDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteSetsTransactionId(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Employer']);
@@ -434,7 +423,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::beforeCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyUnsetsCreatedAndChanged(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -468,7 +456,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsTransactionId(): void {
 		$entity = $this->table->newDefaultEntity(['title' => 'Test Employer']);
@@ -487,7 +474,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithNewEntity(): void {
 		$this->login(2);
@@ -516,7 +502,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithExistingEntity(): void {
 		$this->login(3);
@@ -549,7 +534,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithSoftDelete(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -581,7 +565,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithSkipOption(): void {
 		$entity = $this->table->newDefaultEntity([
@@ -609,7 +592,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithDisabledTimeSettings(): void {
 		$this->behavior->setConfig('setTimeOnCreate', false);
@@ -655,7 +637,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithNewEntity(): void {
 		$this->login(3);
@@ -680,7 +661,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithDisabledBehavior(): void {
 		$this->login(3);
@@ -712,7 +692,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithSkipOption(): void {
 		$this->login(3);
@@ -742,7 +721,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithoutAuditData(): void {
 		$this->login(3);
@@ -772,7 +750,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithoutBeforeSave(): void {
 		$this->login(3);
@@ -802,7 +779,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithChangedData(): void {
 		$this->login(3);
@@ -833,7 +809,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithPatchedChangedData(): void {
 		$this->login(3);
@@ -867,7 +842,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithUnchangedData(): void {
 		$this->login(3);
@@ -904,7 +878,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithPatchedUnchangedData(): void {
 		$this->login(3);
@@ -943,7 +916,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithDisabledAudit(): void {
 		$this->login(3);
@@ -982,7 +954,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithSimpleChanges(): void {
 		$this->login(3);
@@ -1082,7 +1053,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithIgnoredFields(): void {
 		$this->login(3);
@@ -1122,7 +1092,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditPublicationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithPublicationDataAdded(): void {
 		$this->login(3);
@@ -1197,7 +1166,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditPublicationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithPublicationDataChanged(): void {
 		$this->login(3);
@@ -1273,7 +1241,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditPublicationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithPublicationDataUnchanged(): void {
 		$this->login(3);
@@ -1313,7 +1280,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditPublicationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithPublicationDataRemoved(): void {
 		$this->login(3);
@@ -1372,7 +1338,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditTranslations()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithTranslationsAdded(): void {
 		$this->login(3);
@@ -1437,7 +1402,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditTranslations()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithTranslationsChanged(): void {
 		$this->login(3);
@@ -1512,7 +1476,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditTranslations()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithTranslationsUnchanged(): void {
 		$this->login(3);
@@ -1569,7 +1532,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditTranslations()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithTranslationsChangesPartial(): void {
 		$this->login(3);
@@ -1643,7 +1605,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditTranslations()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithTranslationsRemoved(): void {
 		$this->login(3);
@@ -1713,7 +1674,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditTranslations()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithEntityWithoutTranslateBehavior(): void {
 		$this->login(3);
@@ -1764,7 +1724,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditMediaAssignments()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithMediaAssignmentsAdded(): void {
 		$this->login();
@@ -1844,7 +1803,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditMediaAssignments()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithMediaAssignmentsChanged(): void {
 		$this->login();
@@ -1931,7 +1889,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditMediaAssignments()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithMediaAssignmentsNotTracksIgnoredColumns(): void {
 		$this->login();
@@ -2044,7 +2001,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditMediaAssignments()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithMediaAssignmentsRemoved(): void {
 		$this->login();
@@ -2114,7 +2070,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::auditMediaAssignments()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithMediaAssignmentsUnchanged(): void {
 		$this->login();
@@ -2168,7 +2123,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanHasManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithHasManyAssociationWithCascadingAndOwnAuditNotTracksChanges(): void {
 		$this->login();
@@ -2235,7 +2189,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanHasManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithHasManyAssociationAdded(): void {
 		$this->login();
@@ -2306,7 +2259,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanHasManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithHasManyAssociationChanged(): void {
 		$this->login();
@@ -2418,7 +2370,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanHasManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithHasManyAssociationUnchanged(): void {
 		$this->login();
@@ -2485,7 +2436,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanHasManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithHasManyAssociationRemoved(): void {
 		$this->login();
@@ -2576,7 +2526,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanHasManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithHasManyAssociationLoadsExistingAssociations(): void {
 		$this->login();
@@ -2739,7 +2688,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanHasOneAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithHasOneAssociationAdded(): void {
 		$this->login();
@@ -2801,7 +2749,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanHasOneAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithHasOneAssociationChanged(): void {
 		$this->login();
@@ -2876,7 +2823,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanHasOneAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithHasOneAssociationUnchanged(): void {
 		$this->login();
@@ -2932,7 +2878,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanBelongsToManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithBelongsToManyAssociationAdded(): void {
 		$this->login();
@@ -2997,7 +2942,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanBelongsToManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithBelongsToManyAssociationChanged(): void {
 		$this->login();
@@ -3068,7 +3012,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanBelongsToManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithBelongsToManyAssociationUnchanged(): void {
 		$this->login();
@@ -3132,7 +3075,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanBelongsToManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithBelongsToManyAssociationRemoved(): void {
 		$this->login();
@@ -3201,7 +3143,6 @@ class AuditBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanBelongsToManyAssociationData()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithBelongsToManyAssociationLoadsExistingAssociations(): void {
 		$this->login();
@@ -3260,7 +3201,6 @@ class AuditBehaviorTest extends TestCase {
 	/**
 	 * @param int $userId The user ID to log in as.
 	 * @return \Awyiss\Model\Entity\User
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function login(int $userId = 1): User {
 		$request = new ServerRequest([

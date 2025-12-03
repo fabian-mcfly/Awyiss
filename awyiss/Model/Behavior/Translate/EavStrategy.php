@@ -24,13 +24,13 @@ class EavStrategy extends BaseEavStrategy {
 	protected function setupAssociations(): void {
 		parent::setupAssociations();
 
-		$ls_targetAlias = $this->translationTable->getAlias();
-		$lo_association = $this->table->getAssociation($ls_targetAlias);
+		$targetAlias = $this->translationTable->getAlias();
+		$association = $this->table->getAssociation($targetAlias);
 
 		// Remove the "not empty" condition for the content field since null fields are allowed
-		$la_conditions = $lo_association->getConditions();
-		unset($la_conditions['I18n.content !=']);
-		$lo_association->setConditions($la_conditions);
+		$conditions = $association->getConditions();
+		unset($conditions['I18n.content !=']);
+		$association->setConditions($conditions);
 	}
 
 	/**
@@ -41,9 +41,9 @@ class EavStrategy extends BaseEavStrategy {
 	 * @return void
 	 */
 	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void {
-		$la_options = Hash::get($options, 'translate', []);
+		$queryOptions = Hash::get($options, 'translate', []);
 
-		if (($la_options['skip'] ?? false) === true) {
+		if (($queryOptions['skip'] ?? false) === true) {
 			return;
 		}
 
@@ -61,8 +61,7 @@ class EavStrategy extends BaseEavStrategy {
 	 * @param ArrayObject $options the options passed to the save method
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		$ls_locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();
-		/** @noinspection PhpVariableNamingConventionInspection */
+		$locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();
 		$options['associated'] = [$this->translationTable->getAlias() => ['validate' => false]] + $options['associated'];
 
 		// Check early if empty translations are present in the entity.
@@ -76,68 +75,68 @@ class EavStrategy extends BaseEavStrategy {
 		 * If the entity is a copy, we need to mark all translations as new
 		 * to ensure they are saved as well.
 		 *
-		 * @var array<string, \Cake\Datasource\EntityInterface> $la_translations
+		 * @var array<string, \Cake\Datasource\EntityInterface> $translations
 		 */
-		$la_translations = (array)$entity->get('_translations');
-		if ($la_translations && ($options['isCopy'] ?? false) === true) {
-			foreach ($la_translations as $lo_translation) {
-				$lo_translation->setNew(true);
+		$translations = (array)$entity->get('_translations');
+		if ($translations && ($options['isCopy'] ?? false) === true) {
+			foreach ($translations as $translation) {
+				$translation->setNew(true);
 			}
 		}
 
 		$this->bundleTranslatedFields($entity);
-		$la_bundled = $entity->has('_i18n') ? $entity->get('_i18n') : [];
-		$lb_noBundled = count($la_bundled) === 0;
+		$bundled = $entity->has('_i18n') ? $entity->get('_i18n') : [];
+		$noBundled = count($bundled) === 0;
 
 		// No additional translation records need to be saved,
 		// as the entity is in the default locale.
-		if ($lb_noBundled) {
+		if ($noBundled) {
 			return;
 		}
 
-		$la_values = $entity->extract($this->_config['fields'], true);
-		$la_fields = array_keys($la_values);
-		$lb_noFields = $la_fields === [];
+		$values = $entity->extract($this->_config['fields'], true);
+		$fields = array_keys($values);
+		$noFields = $fields === [];
 
 		// If there are no fields and no bundled translations, or both fields
 		// in the default locale and bundled translations we can
 		// skip the remaining logic as it is not necessary.
-		if ($lb_noFields || ($la_fields && $la_bundled)) {
+		if ($noFields || ($fields && $bundled)) {
 			return;
 		}
 
-		/** @var string $ls_primaryKey */
-		$ls_primaryKey = current((array)$this->table->getPrimaryKey());
-		$li_key = $entity->has($ls_primaryKey) ? $entity->get($ls_primaryKey) : null;
+		/** @var string $primaryKey */
+		$primaryKey = current((array)$this->table->getPrimaryKey());
+		$key = $entity->has($primaryKey) ? $entity->get($primaryKey) : null;
 
 		// When we have no key and bundled translations, we
 		// need to mark the entity dirty so the root
 		// entity persists.
-		if ($la_bundled && !$li_key) {
-			foreach ($this->_config['fields'] as $ls_field) {
-				$entity->setDirty($ls_field);
+		if ($bundled && !$key) {
+			foreach ($this->_config['fields'] as $field) {
+				$entity->setDirty($field);
 			}
 
 			return;
 		}
 
-		$ls_modelName = $this->_config['referenceName'];
+		$modelName = $this->_config['referenceName'];
 
-		$la_preexistentValues = [];
-		if ($li_key) {
-			$la_preexistentValues = $this->translationTable->find()->select(['id', 'field'])->where([
-				'field IN' => $la_fields,
-				'locale' => $ls_locale,
-				'foreign_key' => $li_key,
-				'model' => $ls_modelName,
+		$preexistentValues = [];
+		if ($key) {
+			$preexistentValues = $this->translationTable->find()->select(['id', 'field'])->where([
+				'field IN' => $fields,
+				'locale' => $locale,
+				'foreign_key' => $key,
+				'model' => $modelName,
 			])->all()->indexBy('field')->toArray();
 		}
 
 
-		$la_newValues = $this->prepareTranslationEntities($la_preexistentValues, $la_values, $ls_locale, $ls_modelName);
+		$newValues = $this->prepareTranslationEntities($preexistentValues, $values, $locale, $modelName);
 
-		$entity->set('_i18n', array_merge($la_bundled, $la_newValues));
-		$entity->set('_locale', $ls_locale, ['setter' => false]);
+		$entity->set('_i18n', array_merge($bundled, $newValues));
+		$entity->set('_locale', $locale, ['setter' => false]);
 		$entity->setDirty('_locale', false);
 		/* With those lines, the main language would not find its way in the db
 		foreach ($la_fields as $ls_field) {
@@ -155,36 +154,36 @@ class EavStrategy extends BaseEavStrategy {
 	 * @return void
 	 */
 	public function afterSave(EventInterface $event, EntityInterface $entity): void {
-		$la_original = $entity->hasOriginal('_translations') ? $entity->getOriginal('_translations') : [];
-		$la_translationsDiff = array_diff_key($la_original, $entity->get('_translations') ?? []);
+		$original = $entity->hasOriginal('_translations') ? $entity->getOriginal('_translations') : [];
+		$translationsDiff = array_diff_key($original, $entity->get('_translations') ?? []);
 
-		if (!empty($la_translationsDiff)) {
-			$la_primaryKey = (array)$this->table->getPrimaryKey();
+		if (!empty($translationsDiff)) {
+			$primaryKey = (array)$this->table->getPrimaryKey();
 			$this->translationTable->deleteQuery()->delete()->where([
-				'locale IN' => array_keys($la_translationsDiff),
-				'foreign_key' => $entity->get(current($la_primaryKey)),
+				'locale IN' => array_keys($translationsDiff),
+				'foreign_key' => $entity->get(current($primaryKey)),
 				'model' => $this->_config['referenceName'],
 			])->execute();
 		}
 
 		//Check if there are keys in the translation entities that aren't set in the config
-		$la_unusedKeys = [];
-		foreach ($entity->get('_translations') ?? [] as $lo_translation) {
-			$la_keys = array_diff(array_keys($lo_translation->extract()), $this->getConfig('fields'), ['locale']);
-			if ($la_keys) {
-				$lo_translation->unset($la_keys);
+		$unusedKeys = [];
+		foreach ($entity->get('_translations') ?? [] as $translation) {
+			$keys = array_diff(array_keys($translation->extract()), $this->getConfig('fields'), ['locale']);
+			if ($keys) {
+				$translation->unset($keys);
 			}
 
-			$la_unusedKeys = array_merge($la_unusedKeys, $la_keys);
+			$unusedKeys = array_merge($unusedKeys, $keys);
 		}
 
 		//Delete unused entries for fields that aren't set in the config
-		if ($la_unusedKeys) {
-			$la_primaryKey = (array)$this->table->getPrimaryKey();
+		if ($unusedKeys) {
+			$primaryKey = (array)$this->table->getPrimaryKey();
 			$this->translationTable->deleteQuery()->delete()->where([
 				'locale IN' => array_keys($entity->get('_translations')),
-				'foreign_key' => $entity->get(current($la_primaryKey)),
-				'field IN' => $la_unusedKeys,
+				'foreign_key' => $entity->get(current($primaryKey)),
+				'field IN' => $unusedKeys,
 				'model' => $this->_config['referenceName'],
 			])->execute();
 		}
@@ -206,36 +205,34 @@ class EavStrategy extends BaseEavStrategy {
 				return $row;
 			}
 
-			$la_translations = $row->has('_i18n') ? $row->get('_i18n') : [];
-			if ($la_translations === []) {
+			$translations = $row->has('_i18n') ? $row->get('_i18n') : [];
+			if ($translations === []) {
 				if ($row->has('_translations')) {
 					return $row;
 				}
 
 				$row->set('_translations', [])->setDirty('_translations', false);
-				/** @noinspection PhpVariableNamingConventionInspection */
 				unset($row['_i18n']);
 
 				return $row;
 			}
 
-			$lo_grouped = new Collection($la_translations);
+			$grouped = new Collection($translations);
 
-			$la_result = [];
-			$ls_entityClass = $this->table->getEntityClass();
+			$result = [];
+			$entityClass = $this->table->getEntityClass();
 
-			foreach ($lo_grouped->combine('field', 'content', 'locale') as $ls_locale => $la_keys) {
-				$lo_translation = new $ls_entityClass($la_keys + ['locale' => $ls_locale], [
+			foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
+				$translation = new $entityClass($keys + ['locale' => $locale], [
 					'markNew' => false,
 					'useSetters' => false,
 					'markClean' => true,
 					'source' => $row->getSource(),
 				]);
-				$la_result[ $ls_locale ] = $lo_translation;
+				$result[ $locale ] = $translation;
 			}
 
-			$row->set('_translations', $la_result, ['setter' => false, 'guard' => false])->setDirty('_translations', false);
-			/** @noinspection PhpVariableNamingConventionInspection */
+			$row->set('_translations', $result, ['setter' => false, 'guard' => false])->setDirty('_translations', false);
 			unset($row['_i18n']);
 
 			return $row;
@@ -261,38 +258,37 @@ class EavStrategy extends BaseEavStrategy {
 			return;
 		}
 
-		/** @var array<\Awyiss\Model\Entity> $la_translations */
-		$la_translations = $entity->get('_translations');
+		/** @var array<\Awyiss\Model\Entity> $translations */
+		$translations = $entity->get('_translations');
 
+		foreach ($translations as $locale => $translation) {
+			$fields = $translation->extract($this->getConfig('fields'));
 
-		foreach ($la_translations as $ls_locale => $lo_translation) {
-			$la_fields = $lo_translation->extract($this->getConfig('fields'));
+			foreach ($fields as $field => $value) {
+				if ($value === null || $value === '') {
+					$translation->unset($field);
 
-			foreach ($la_fields as $ls_field => $lx_value) {
-				if ($lx_value === null || $lx_value === '') {
-					$lo_translation->unset($ls_field);
-
-					if ($lo_translation->hasOriginal($ls_field)) {
-						$lo_translation->setDirty($ls_field);
+					if ($translation->hasOriginal($field)) {
+						$translation->setDirty($field);
 					}
 				}
 			}
 
-			$la_translatedFields = $lo_translation->extract($this->getConfig('fields'));
+			$translatedFields = $translation->extract($this->getConfig('fields'));
 
 			// If now, the current locale property is empty,
 			// unset it completely.
-			if (array_filter($la_translatedFields) === []) {
-				unset($la_translations[ $ls_locale ]);
+			if (array_filter($translatedFields) === []) {
+				unset($translations[ $locale ]);
 			}
 		}
 
 		//Set the _translations property to the cleared array of translations
-		$entity->set('_translations', $la_translations, ['guard' => false]);
+		$entity->set('_translations', $translations, ['guard' => false]);
 
 		// If now, the whole _translations property is empty,
 		// unset it completely and return
-		if (empty($la_translations)) {
+		if (empty($translations)) {
 			$entity->unset('_translations');
 		}
 	}
@@ -310,20 +306,20 @@ class EavStrategy extends BaseEavStrategy {
 	 * @return array An array of translation entities, ready to be saved.
 	 */
 	protected function prepareTranslationEntities(array $preExistentValues, array $values, string $locale, string $modelName): array {
-		$la_modifiedValues = [];
+		$modifiedValues = [];
 		/** @noinspection PhpLoopCanBeConvertedToArrayMapInspection */
-		foreach ($preExistentValues as $ls_field => $lo_translation) {
+		foreach ($preExistentValues as $field => $translation) {
 			//$lo_translation->set('content', $values[ $ls_field ]);
-			$la_modifiedValues[ $ls_field ] = $lo_translation;
+			$modifiedValues[ $field ] = $translation;
 		}
 
-		$la_newValues = array_diff_key($values, $la_modifiedValues);
-		$ls_entityClass = $this->table->getEntityClass();
-		foreach ($la_newValues as $ls_field => $ls_content) {
-			$la_newValues[ $ls_field ] = new $ls_entityClass([
+		$newValues = array_diff_key($values, $modifiedValues);
+		$entityClass = $this->table->getEntityClass();
+		foreach ($newValues as $field => $content) {
+			$newValues[ $field ] = new $entityClass([
 				'locale' => $locale,
-				'field' => $ls_field,
-				'content' => $ls_content,
+				'field' => $field,
+				'content' => $content,
 				'model' => $modelName,
 			], [
 				'useSetters' => false,
@@ -331,6 +327,6 @@ class EavStrategy extends BaseEavStrategy {
 			]);
 		}
 
-		return array_values($la_modifiedValues + $la_newValues);
+		return array_values($modifiedValues + $newValues);
 	}
 }

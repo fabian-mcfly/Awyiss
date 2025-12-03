@@ -34,7 +34,6 @@ class TranslateBehaviorTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -50,7 +49,6 @@ class TranslateBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\TranslateBehavior::initialize()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		$this->assertInstanceOf(EavStrategy::class, $this->behavior->getStrategy());
@@ -73,7 +71,6 @@ class TranslateBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\TranslateBehavior::initialize()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeWithoutLocale(): void {
 		$table = new ContentTemplatesTable();
@@ -121,7 +118,6 @@ class TranslateBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\TranslateBehavior::implementedEvents()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$events = $this->behavior->implementedEvents();
@@ -148,7 +144,6 @@ class TranslateBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\TranslateBehavior::beforeMarshal()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithoutTranslations(): void {
 		$this->behavior->setConfig('fields', ['title', 'content']);
@@ -169,7 +164,6 @@ class TranslateBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\TranslateBehavior::beforeMarshal()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithTranslations(): void {
 		$this->behavior->setConfig('fields', ['title', 'content']);
@@ -208,7 +202,6 @@ class TranslateBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\TranslateBehavior::beforeMarshal()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithForcedFields(): void {
 		$this->behavior->setConfig([
@@ -267,7 +260,6 @@ class TranslateBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\TranslateBehavior::beforeMarshal()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithEmptyStringValues(): void {
 		$this->behavior->setConfig('fields', ['title', 'content']);
@@ -307,7 +299,6 @@ class TranslateBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\TranslateBehavior::beforeMarshal()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithoutFields(): void {
 		$this->behavior->setConfig('fields', [], false);

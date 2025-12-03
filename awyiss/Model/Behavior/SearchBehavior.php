@@ -58,19 +58,19 @@ class SearchBehavior extends Behavior {
 	 * @inheritDoc
 	 */
 	public function initialize(array $config = []): void {
-		$ls_sessionIdentifier = '_filter.' . $this->table()->getAlias();
-		$this->setConfig('sessionIdentifier', $ls_sessionIdentifier);
+		$sessionIdentifier = '_filter.' . $this->table()->getAlias();
+		$this->setConfig('sessionIdentifier', $sessionIdentifier);
 
-		$lo_request = Router::getRequest();
-		$lo_session = $lo_request?->getSession();
+		$request = Router::getRequest();
+		$session = $request?->getSession();
 
-		if (!$lo_session) {
+		if (!$session) {
 			return;
 		}
 
-		$la_sessionSettings = $lo_session->read($this->getConfig('sessionIdentifier'), []);
-		$this->setConfig('operators', $la_sessionSettings['operators'] ?? []);
-		$this->setConfig('values', $la_sessionSettings['values'] ?? []);
+		$sessionSettings = $session->read($this->getConfig('sessionIdentifier'), []);
+		$this->setConfig('operators', $sessionSettings['operators'] ?? []);
+		$this->setConfig('values', $sessionSettings['values'] ?? []);
 	}
 
 
@@ -84,71 +84,71 @@ class SearchBehavior extends Behavior {
 	 * @return array<string, \Awyiss\Model\Behavior\Search\FilterColumnSettings>
 	 */
 	public function getFilterColumns(array $blocklistedColumns = [], ?array $selectedOperators = null, ?array $selectedValues = null, bool $includePossibleValues = true): array {
-		$lo_schema = $this->table()->getSchema();
+		$schema = $this->table()->getSchema();
 
-		$la_blocklistedColumns = array_merge($blocklistedColumns, $this->getConfig('blocklistedColumns', []), ['deleted', 'deleted_on', 'deleted_by']);
+		$blocklistedColumns = array_merge($blocklistedColumns, $this->getConfig('blocklistedColumns', []), ['deleted', 'deleted_on', 'deleted_by']);
 
 		if ($this->getConfig('columns') && $selectedOperators === null && $selectedValues === null) {
-			$la_columns = $this->getConfig('columns');
+			$columns = $this->getConfig('columns');
 
-			return array_diff_key($la_columns, array_flip($la_blocklistedColumns));
+			return array_diff_key($columns, array_flip($blocklistedColumns));
 		}
 
-		$la_selectedOperators = $selectedOperators ?? $this->getConfig('operators');
-		$la_selectedValues = $selectedValues ?? $this->getConfig('values');
+		$selectedOperators ??= $this->getConfig('operators');
+		$selectedValues ??= $this->getConfig('values');
 
-		$la_columns = [];
-		foreach ($lo_schema->columns() as $ls_column) {
-			$la_column = $lo_schema->getColumn($ls_column);
-			$ls_type = $this->table()->normalizeColumnType($la_column['type']);
-			$la_values = $includePossibleValues ? $this->table()->getPossibleFieldValues($ls_column, $la_column['type']) : [];
+		$columns = [];
+		foreach ($schema->columns() as $column) {
+			$columnData = $schema->getColumn($column);
+			$type = $this->table()->normalizeColumnType($columnData['type']);
+			$values = $includePossibleValues ? $this->table()->getPossibleFieldValues($column, $columnData['type']) : [];
 
-			$la_disabledOperators = $this->disabledOperators($ls_type);
+			$disabledOperators = $this->disabledOperators($type);
 
-			$la_columns[$ls_column] = new FilterColumnSettings(
-				disabledOperators: $la_disabledOperators,
-				nullable: $la_column['null'],
-				maxLength: $la_column['length'],
-				operator: $la_selectedOperators[ $ls_column ] ?? null,
-				type: $ls_type,
-				value: $la_selectedValues[ $ls_column ] ?? null,
-				values: $la_values,
+			$columns[$column] = new FilterColumnSettings(
+				disabledOperators: $disabledOperators,
+				nullable: $columnData['null'],
+				maxLength: $columnData['length'],
+				operator: $selectedOperators[ $column ] ?? null,
+				type: $type,
+				value: $selectedValues[ $column ] ?? null,
+				values: $values,
 			);
 		}
 
 		if ($this->table()->hasAttributes()) {
-			$lo_table = $this->table()->getAttributesTable();
-			$lo_schema = $lo_table->getSchema();
-			foreach ($this->table()->getAttributes() as $lo_attribute) {
-				if (!$lo_schema->getColumn($lo_attribute->identifier)) {
+			$attributesTable = $this->table()->getAttributesTable();
+			$schema = $attributesTable->getSchema();
+			foreach ($this->table()->getAttributes() as $attribute) {
+				if (!$schema->getColumn($attribute->identifier)) {
 					continue;
 				}
 
-				$la_column = $lo_schema->getColumn($lo_attribute->identifier);
-				$ls_type = $lo_table->normalizeColumnType($la_column['type']);
-				$la_values = $includePossibleValues ? $lo_table->getPossibleFieldValues($lo_attribute->identifier, $la_column['type']) : [];
+				$columnData = $schema->getColumn($attribute->identifier);
+				$type = $attributesTable->normalizeColumnType($columnData['type']);
+				$values = $includePossibleValues ? $attributesTable->getPossibleFieldValues($attribute->identifier, $columnData['type']) : [];
 
-				$la_disabledOperators = $this->disabledOperators($ls_type);
+				$disabledOperators = $this->disabledOperators($type);
 
-				$la_columns['attributes__' . $lo_attribute->identifier] = new FilterColumnSettings(
-					disabledOperators: $la_disabledOperators,
-					nullable: $la_column['null'],
-					maxLength: $la_column['length'],
-					operator: $la_selectedOperators['attributes__' . $lo_attribute->identifier ] ?? null,
-					title: $lo_attribute->title,
-					type: $ls_type,
-					value: $la_selectedValues['attributes__' . $lo_attribute->identifier ] ?? null,
-					values: $la_values,
+				$columns['attributes__' . $attribute->identifier] = new FilterColumnSettings(
+					disabledOperators: $disabledOperators,
+					nullable: $columnData['null'],
+					maxLength: $columnData['length'],
+					operator: $selectedOperators['attributes__' . $attribute->identifier ] ?? null,
+					title: $attribute->title,
+					type: $type,
+					value: $selectedValues['attributes__' . $attribute->identifier ] ?? null,
+					values: $values,
 				);
 			}
 		}
 
 		// Only cache the columns if no specific selections are made
 		if ($selectedOperators === null && $selectedValues === null && $includePossibleValues) {
-			$this->setConfig('columns', $la_columns);
+			$this->setConfig('columns', $columns);
 		}
 
-		return array_diff_key($la_columns, array_flip($la_blocklistedColumns));
+		return array_diff_key($columns, array_flip($blocklistedColumns));
 	}
 
 
@@ -158,9 +158,9 @@ class SearchBehavior extends Behavior {
 	 * @return bool
 	 */
 	public function isActive(): bool {
-		$la_sessionData = Router::getRequest()->getSession()->read($this->getConfig('sessionIdentifier'));
+		$sessionData = Router::getRequest()->getSession()->read($this->getConfig('sessionIdentifier'));
 
-		return !empty($la_sessionData['values']);
+		return !empty($sessionData['values']);
 	}
 
 
@@ -173,56 +173,55 @@ class SearchBehavior extends Behavior {
 	 * @throws \ReflectionException
 	 */
 	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
-		$lo_table = $this->table();
+		$table = $this->table();
 
-		if ($lo_table->hasBehavior('Categories')) {
-			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_categoriesBehavior */
-			$lo_categoriesBehavior = $lo_table->getBehavior('Categories');
+		if ($table->hasBehavior('Categories')) {
+			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $categoriesBehavior */
+			$categoriesBehavior = $table->getBehavior('Categories');
 			if (
-				$lo_categoriesBehavior->getConfig('enabled') &&
-				$lo_categoriesBehavior->getConfig('foreignKey') === $column
+				$categoriesBehavior->getConfig('enabled') &&
+				$categoriesBehavior->getConfig('foreignKey') === $column
 			) {
-				return $lo_categoriesBehavior->getCategories();
+				return $categoriesBehavior->getCategories();
 			}
 		}
 
-		if ($lo_table->hasBehavior('Nest')) {
-			/** @var \Awyiss\Model\Behavior\NestBehavior $lo_nestBehavior */
-			$lo_nestBehavior = $lo_table->getBehavior('Nest');
+		if ($table->hasBehavior('Nest')) {
+			/** @var \Awyiss\Model\Behavior\NestBehavior $nestBehavior */
+			$nestBehavior = $table->getBehavior('Nest');
 			if (
-				$lo_nestBehavior->getConfig('enabled') &&
-				$lo_nestBehavior->getConfig('parent.foreignKey') === $column
+				$nestBehavior->getConfig('enabled') &&
+				$nestBehavior->getConfig('parent.foreignKey') === $column
 			) {
-				$lo_query = $lo_table->find('all');
-
+				$query = $table->find('all');
 
 				if (
-					in_array($lo_table->getAlias(), ['Contents', 'Widgets']) &&
-					$lo_table->hasAssociation('MediaAssignments')
+					in_array($table->getAlias(), ['Contents', 'Widgets']) &&
+					$table->hasAssociation('MediaAssignments')
 				) {
-					$lo_query->find('mediaAssignments', useMediaEntity: true);
+					$query->find('mediaAssignments', useMediaEntity: true);
 				}
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				return $lo_nestBehavior->listNested($lo_query)->printer('label', 'id', '- ')->toArray();
+				return $nestBehavior->listNested($query)->printer('label', 'id', '- ')->toArray();
 			}
 		}
 
 		if ($column === 'language_shortcode') {
-			$la_languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
+			$languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
 
-			return array_column($la_languages, 'label', 'shortcode');
+			return array_column($languages, 'label', 'shortcode');
 		}
 
-		$lo_attributesBehavior = $this->table()->hasBehavior('Attributes') ? $lo_table->getBehavior('Attributes') : null;
-		if ($lo_attributesBehavior && $lo_attributesBehavior->getConfig('isAttributesTable')) {
-			$lo_attributeOptions = AttributeOptionsProvider::getAttributeOptionsFile(
-				$lo_attributesBehavior->getConfig('sourceTable'),
+		$attributesBehavior = $this->table()->hasBehavior('Attributes') ? $table->getBehavior('Attributes') : null;
+		if ($attributesBehavior && $attributesBehavior->getConfig('isAttributesTable')) {
+			$attributeOptions = AttributeOptionsProvider::getAttributeOptionsFile(
+				$attributesBehavior->getConfig('sourceTable'),
 				true
 			)?->getAttributeOption($column);
 
-			if ($lo_attributeOptions) {
-				return $lo_attributeOptions->getOptions(true) ?? [];
+			if ($attributeOptions) {
+				return $attributeOptions->getOptions(true) ?? [];
 			}
 		}
 
@@ -231,15 +230,14 @@ class SearchBehavior extends Behavior {
 		}
 
 		// Try to get the type from the table schema if not provided
-		if (!$type && $lo_table->getSchema()->hasColumn($column)) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$type = $lo_table->getSchema()->getColumnType($column);
+		if (!$type && $table->getSchema()->hasColumn($column)) {
+			$type = $table->getSchema()->getColumnType($column);
 		}
 
 		if ($type && str_starts_with($type, 'enum-')) {
-			$lo_dbType = TypeFactory::build($type);
-			if ($lo_dbType instanceof EnumType) {
-				return $this->getEnumValues($lo_dbType);
+			$dbType = TypeFactory::build($type);
+			if ($dbType instanceof EnumType) {
+				return $this->getEnumValues($dbType);
 			}
 		}
 
@@ -269,29 +267,26 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	public function filterQuery(SelectQuery $query, ?array $filterColumns = null): SelectQuery {
-		$la_filterColumns = $filterColumns ?? $this->getFilterColumns([], null, null, false);
+		$filterColumns ??= $this->getFilterColumns([], null, null, false);
 
-		if (!$la_filterColumns) {
+		if (!$filterColumns) {
 			return $query;
 		}
 
-		foreach ($la_filterColumns as $ls_column => $lo_columnSettings) {
+		foreach ($filterColumns as $column => $columnSettings) {
 			// If the operator is null and the type is not boolean,
 			// or the type is boolean and the value is null, skip this column
 			if (
-				$lo_columnSettings->operator === null &&
+				$columnSettings->operator === null &&
 				(
-					$lo_columnSettings->type !== 'boolean' ||
-					(
-						$lo_columnSettings->type === 'boolean' &&
-						$lo_columnSettings->value === null
-					)
+					$columnSettings->type !== 'boolean' ||
+					$columnSettings->value === null
 				)
 			) {
 				continue;
 			}
 
-			$this->addFilterCondition($query, $ls_column, $lo_columnSettings);
+			$this->addFilterCondition($query, $column, $columnSettings);
 		}
 
 		return $query;
@@ -305,8 +300,8 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addFilterCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings): SelectQuery {
-		$ls_operator = $columnSettings->operator ?? '=';
-		if (is_array($columnSettings->disabledOperators) && in_array($ls_operator, $columnSettings->disabledOperators)) {
+		$operator = $columnSettings->operator ?? '=';
+		if (is_array($columnSettings->disabledOperators) && in_array($operator, $columnSettings->disabledOperators)) {
 			return $query;
 		}
 
@@ -314,47 +309,46 @@ class SearchBehavior extends Behavior {
 			return $query;
 		}
 
-		$ls_column = $column;
 		if (str_starts_with($column, 'attributes__')) {
-			$ls_column = $this->table()->getAttributesTableName(true) . '.' . substr($column, 12);
+			$column = $this->table()->getAttributesTableName(true) . '.' . substr($column, 12);
 		}
-		elseif (!str_contains('.', $ls_column)) {
-			$ls_column = $query->getRepository()->getAlias() . '.' . $ls_column;
+		elseif (!str_contains('.', $column)) {
+			$column = $query->getRepository()->getAlias() . '.' . $column;
 		}
 
-		return match ($ls_operator) {
-			'=' => $this->addEqualsCondition($query, $ls_column, $columnSettings),
-			'!=' => $this->addEqualsCondition($query, $ls_column, $columnSettings, true),
-			'<' => $this->addGreaterThanCondition($query, $ls_column, $columnSettings, false, true),
-			'<=' => $this->addGreaterThanCondition($query, $ls_column, $columnSettings, true, true),
-			'>' => $this->addGreaterThanCondition($query, $ls_column, $columnSettings),
-			'>=' => $this->addGreaterThanCondition($query, $ls_column, $columnSettings, true),
-			'between' => $this->addBetweenCondition($query, $ls_column, $columnSettings),
-			'not_between' => $this->addBetweenCondition($query, $ls_column, $columnSettings, true),
-			'length_equal' => $this->addLengthEqualToCondition($query, $ls_column, $columnSettings),
-			'length_not_equal' => $this->addLengthEqualToCondition($query, $ls_column, $columnSettings, true),
-			'shorter_than' => $this->addLongerThanCondition($query, $ls_column, $columnSettings, false, true),
-			'shorter_than_or_equal' => $this->addLongerThanCondition($query, $ls_column, $columnSettings, true, true),
-			'longer_than' => $this->addLongerThanCondition($query, $ls_column, $columnSettings),
-			'longer_than_or_equal' => $this->addLongerThanCondition($query, $ls_column, $columnSettings, true),
-			'in' => $this->addInCondition($query, $ls_column, $columnSettings),
-			'not_in' => $this->addInCondition($query, $ls_column, $columnSettings, true),
-			'contains' => $this->addContainsCondition($query, $ls_column, $columnSettings),
-			'not_contains' => $this->addContainsCondition($query, $ls_column, $columnSettings, true),
-			'starts_with' => $this->addContainsCondition($query, $ls_column, $columnSettings, false, 'end'),
-			'not_starts_with' => $this->addContainsCondition($query, $ls_column, $columnSettings, true, 'end'),
-			'ends_with' => $this->addContainsCondition($query, $ls_column, $columnSettings, false, 'start'),
-			'not_ends_with' => $this->addContainsCondition($query, $ls_column, $columnSettings, true, 'start'),
-			'since_last_login' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::SinceLastLogin),
-			'last_24_hours' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::Last24Hours),
-			'today' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::Today),
-			'yesterday' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::Yesterday),
-			'this_week' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::ThisWeek),
-			'last_week' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::LastWeek),
-			'this_month' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::ThisMonth),
-			'last_month' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::LastMonth),
-			'this_year' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::ThisYear),
-			'last_year' => $this->addDateComparisonCondition($query, $ls_column, DateComparisonOperator::LastYear),
+		return match ($operator) {
+			'=' => $this->addEqualsCondition($query, $column, $columnSettings),
+			'!=' => $this->addEqualsCondition($query, $column, $columnSettings, true),
+			'<' => $this->addGreaterThanCondition($query, $column, $columnSettings, false, true),
+			'<=' => $this->addGreaterThanCondition($query, $column, $columnSettings, true, true),
+			'>' => $this->addGreaterThanCondition($query, $column, $columnSettings),
+			'>=' => $this->addGreaterThanCondition($query, $column, $columnSettings, true),
+			'between' => $this->addBetweenCondition($query, $column, $columnSettings),
+			'not_between' => $this->addBetweenCondition($query, $column, $columnSettings, true),
+			'length_equal' => $this->addLengthEqualToCondition($query, $column, $columnSettings),
+			'length_not_equal' => $this->addLengthEqualToCondition($query, $column, $columnSettings, true),
+			'shorter_than' => $this->addLongerThanCondition($query, $column, $columnSettings, false, true),
+			'shorter_than_or_equal' => $this->addLongerThanCondition($query, $column, $columnSettings, true, true),
+			'longer_than' => $this->addLongerThanCondition($query, $column, $columnSettings),
+			'longer_than_or_equal' => $this->addLongerThanCondition($query, $column, $columnSettings, true),
+			'in' => $this->addInCondition($query, $column, $columnSettings),
+			'not_in' => $this->addInCondition($query, $column, $columnSettings, true),
+			'contains' => $this->addContainsCondition($query, $column, $columnSettings),
+			'not_contains' => $this->addContainsCondition($query, $column, $columnSettings, true),
+			'starts_with' => $this->addContainsCondition($query, $column, $columnSettings, false, 'end'),
+			'not_starts_with' => $this->addContainsCondition($query, $column, $columnSettings, true, 'end'),
+			'ends_with' => $this->addContainsCondition($query, $column, $columnSettings, false, 'start'),
+			'not_ends_with' => $this->addContainsCondition($query, $column, $columnSettings, true, 'start'),
+			'since_last_login' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::SinceLastLogin),
+			'last_24_hours' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::Last24Hours),
+			'today' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::Today),
+			'yesterday' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::Yesterday),
+			'this_week' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::ThisWeek),
+			'last_week' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::LastWeek),
+			'this_month' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::ThisMonth),
+			'last_month' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::LastMonth),
+			'this_year' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::ThisYear),
+			'last_year' => $this->addDateComparisonCondition($query, $column, DateComparisonOperator::LastYear),
 			default => $query,
 		};
 	}
@@ -368,13 +362,13 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addEqualsCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
-		$lx_value = $this->normalizeValue($columnSettings->value, $columnSettings);
+		$value = $this->normalizeValue($columnSettings->value, $columnSettings);
 
-		if ($lx_value === null) {
-			$ls_operator = $not ? ' IS NOT' : ' IS';
+		if ($value === null) {
+			$operator = $not ? ' IS NOT' : ' IS';
 		}
 		else {
-			$ls_operator = $not ? ' !=' : '';
+			$operator = $not ? ' !=' : '';
 
 			if ($not && $this->getConfig('handleNulls', true) === true) {
 				/**
@@ -385,7 +379,7 @@ class SearchBehavior extends Behavior {
 				 */
 				return $query->where([
 					'OR' => [
-						$column . $ls_operator => $lx_value,
+						$column . $operator => $value,
 						$column . ' IS' => null,
 					],
 				]);
@@ -393,7 +387,7 @@ class SearchBehavior extends Behavior {
 		}
 
 		return $query->where([
-			$column . $ls_operator => $lx_value,
+			$column . $operator => $value,
 		]);
 	}
 
@@ -407,15 +401,15 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addGreaterThanCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $orEqual = false, bool $not = false): SelectQuery {
-		$lx_value = $this->normalizeValue($columnSettings->value, $columnSettings);
+		$value = $this->normalizeValue($columnSettings->value, $columnSettings);
 
-		if ($lx_value === null) {
+		if ($value === null) {
 			return $query;
 		}
 
-		$ls_operator = $not ? ' <' : ' >';
+		$operator = $not ? ' <' : ' >';
 		if ($orEqual) {
-			$ls_operator = $not ? ' <=' : ' >=';
+			$operator = $not ? ' <=' : ' >=';
 		}
 
 		if ($not && $this->getConfig('handleNulls', true) === true) {
@@ -427,14 +421,14 @@ class SearchBehavior extends Behavior {
 			 */
 			return $query->where([
 				'OR' => [
-					$column . $ls_operator => $lx_value,
+					$column . $operator => $value,
 					$column . ' IS' => null,
 				],
 			]);
 		}
 
 		return $query->where([
-			$column . $ls_operator => $lx_value,
+			$column . $operator => $value,
 		]);
 	}
 
@@ -447,33 +441,33 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addBetweenCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
-		$la_values = $columnSettings->value ?? [];
+		$values = $columnSettings->value ?? [];
 
-		if (!is_array($la_values)) {
-			$la_values = explode(',', $la_values);
+		if (!is_array($values)) {
+			$values = explode(',', $values);
 		}
 
 		// Trim and remove non-numeric values
-		$la_values = array_map(function (mixed $value): mixed {
+		$values = array_map(function (mixed $value): mixed {
 			if ($value === null) {
 				return '';
 			}
 
 			return is_string($value) ? trim($value) : $value;
-		}, $la_values);
-		$la_values = array_filter($la_values, fn ($value) => is_numeric($value));
+		}, $values);
+		$values = array_filter($values, fn ($value) => is_numeric($value));
 
-		if (!$la_values || count($la_values) !== 2) {
+		if (!$values || count($values) !== 2) {
 			return $query;
 		}
 
 		// Normalize all
-		$la_values = array_map(fn ($value) => $this->normalizeValue($value, $columnSettings), $la_values);
+		$values = array_map(fn ($value) => $this->normalizeValue($value, $columnSettings), $values);
 
 		if ($not) {
-			$la_where = [
-				$column . ' <' => $la_values[0],
-				$column . ' >' => $la_values[1],
+			$where = [
+				$column . ' <' => $values[0],
+				$column . ' >' => $values[1],
 			];
 
 			if ($this->getConfig('handleNulls', true) === true) {
@@ -483,15 +477,15 @@ class SearchBehavior extends Behavior {
 				 * we want to find all records that do not match a specific range.
 				 * So we add a third condition to include null values.
 				 */
-				$la_where[ $column . ' IS' ] = null;
+				$where[ $column . ' IS' ] = null;
 			}
 
-			return $query->where(['OR' => $la_where]);
+			return $query->where(['OR' => $where]);
 		}
 
 		return $query->where([
-			$column . ' >=' => $la_values[0],
-			$column . ' <=' => $la_values[1],
+			$column . ' >=' => $values[0],
+			$column . ' <=' => $values[1],
 		]);
 	}
 
@@ -502,20 +496,19 @@ class SearchBehavior extends Behavior {
 	 * @param \Awyiss\Model\Behavior\Search\FilterColumnSettings $columnSettings
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function addLengthEqualToCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
 		if ($columnSettings->value === null) {
 			return $query;
 		}
 
-		$li_value = (int)$columnSettings->value;
+		$value = (int)$columnSettings->value;
 
 		if (
 			$this->getConfig('handleNulls', true) === true &&
 			(
-				($not && $li_value !== 0) ||
-				(!$not && $li_value === 0)
+				($not && $value !== 0) ||
+				(!$not && $value === 0)
 			)
 		) {
 			/**
@@ -528,22 +521,22 @@ class SearchBehavior extends Behavior {
 			 */
 			return $query->where([
 				'OR' => [
-					function (QueryExpression $exp) use ($column, $query, $li_value, $not) {
+					function (QueryExpression $exp) use ($column, $query, $value, $not) {
 						/** @noinspection PhpUndefinedMethodInspection */
-						$lo_lengthExp = $query->func()->length([$column => 'identifier']);
+						$lengthExp = $query->func()->length([$column => 'identifier']);
 
-						return $not ? $exp->notEq($lo_lengthExp, $li_value, 'integer') : $exp->eq($lo_lengthExp, $li_value, 'integer');
+						return $not ? $exp->notEq($lengthExp, $value, 'integer') : $exp->eq($lengthExp, $value, 'integer');
 					},
 					$column . ' IS' => null,
 				],
 			]);
 		}
 
-		return $query->where(function (QueryExpression $exp) use ($column, $query, $li_value, $not) {
+		return $query->where(function (QueryExpression $exp) use ($column, $query, $value, $not) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$lo_lengthExp = $query->func()->length([$column => 'identifier']);
+			$lengthExp = $query->func()->length([$column => 'identifier']);
 
-			return $not ? $exp->notEq($lo_lengthExp, $li_value, 'integer') : $exp->eq($lo_lengthExp, $li_value, 'integer');
+			return $not ? $exp->notEq($lengthExp, $value, 'integer') : $exp->eq($lengthExp, $value, 'integer');
 		});
 	}
 
@@ -555,22 +548,21 @@ class SearchBehavior extends Behavior {
 	 * @param bool $orEqual
 	 * @param bool $not
 	 * @return \Cake\ORM\Query\SelectQuery
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function addLongerThanCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $orEqual = false, bool $not = false): SelectQuery {
 		if ($columnSettings->value === null) {
 			return $query;
 		}
 
-		$li_value = (int)$columnSettings->value;
+		$value = (int)$columnSettings->value;
 
-		$ls_operator = $not ? ' <' : ' >';
+		$operator = $not ? ' <' : ' >';
 		if ($orEqual) {
-			$ls_operator = $not ? ' <=' : ' >=';
+			$operator = $not ? ' <=' : ' >=';
 		}
 
 		if ($this->getConfig('handleNulls', true) === true) {
-			if (!$not && $orEqual && $li_value === 0) {
+			if (!$not && $orEqual && $value === 0) {
 				/**
 				 * If the operator is "longer than or equal" and the value is "0",
 				 * null values would not be included in the result set, even though
@@ -579,18 +571,18 @@ class SearchBehavior extends Behavior {
 				 */
 				return $query->where([
 					'OR' => [
-						function (QueryExpression $exp) use ($column, $query, $li_value, $ls_operator) {
+						function (QueryExpression $exp) use ($column, $query, $value, $operator) {
 							/** @noinspection PhpUndefinedMethodInspection */
-							$lo_lengthExp = $query->func()->length([$column => 'identifier']);
+							$lengthExp = $query->func()->length([$column => 'identifier']);
 
-							return $exp->gte($lo_lengthExp, $li_value, 'integer');
+							return $exp->gte($lengthExp, $value, 'integer');
 						},
 						$column . ' IS' => null,
 					],
 				]);
 			}
 
-			if ($not && ($li_value !== 0 || $orEqual)) {
+			if ($not && ($value !== 0 || $orEqual)) {
 				/**
 				 * If the operator is
 				 * - "shorter than" and the value is "0" or
@@ -601,13 +593,13 @@ class SearchBehavior extends Behavior {
 				 */
 				return $query->where([
 					'OR' => [
-						function (QueryExpression $exp) use ($column, $query, $li_value, $ls_operator) {
+						function (QueryExpression $exp) use ($column, $query, $value, $operator) {
 							/** @noinspection PhpUndefinedMethodInspection */
-							$lo_lengthExp = $query->func()->length([$column => 'identifier']);
+							$lengthExp = $query->func()->length([$column => 'identifier']);
 
-							return match ($ls_operator) {
-								' <' => $exp->lt($lo_lengthExp, $li_value, 'integer'),
-								' <=' => $exp->lte($lo_lengthExp, $li_value, 'integer'),
+							return match ($operator) {
+								' <' => $exp->lt($lengthExp, $value, 'integer'),
+								' <=' => $exp->lte($lengthExp, $value, 'integer'),
 							};
 						},
 						$column . ' IS' => null,
@@ -617,15 +609,15 @@ class SearchBehavior extends Behavior {
 		}
 
 
-		return $query->where(function (QueryExpression $exp) use ($column, $query, $li_value, $ls_operator) {
+		return $query->where(function (QueryExpression $exp) use ($column, $query, $value, $operator) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$lo_lengthExp = $query->func()->length([$column => 'identifier']);
+			$lengthExp = $query->func()->length([$column => 'identifier']);
 
-			return match ($ls_operator) {
-				' >' => $exp->gt($lo_lengthExp, $li_value, 'integer'),
-				' >=' => $exp->gte($lo_lengthExp, $li_value, 'integer'),
-				' <' => $exp->lt($lo_lengthExp, $li_value, 'integer'),
-				' <=' => $exp->lte($lo_lengthExp, $li_value, 'integer'),
+			return match ($operator) {
+				' >' => $exp->gt($lengthExp, $value, 'integer'),
+				' >=' => $exp->gte($lengthExp, $value, 'integer'),
+				' <' => $exp->lt($lengthExp, $value, 'integer'),
+				' <=' => $exp->lte($lengthExp, $value, 'integer'),
 				default => $exp,
 			};
 		});
@@ -640,35 +632,35 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addInCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false): SelectQuery {
-		$la_values = $columnSettings->value ?? [];
+		$values = $columnSettings->value ?? [];
 
-		if (!is_array($la_values)) {
-			$la_values = explode(',', $la_values);
+		if (!is_array($values)) {
+			$values = explode(',', $values);
 		}
 
 		// Trim and remove duplicate values
-		$la_values = array_map(function (mixed $value): mixed {
+		$values = array_map(function (mixed $value): mixed {
 			if ($value === null) {
 				return '';
 			}
 
 			return is_string($value) ? trim($value) : $value;
-		}, $la_values);
-		$la_values = array_unique($la_values);
+		}, $values);
+		$values = array_unique($values);
 
-		if (!$la_values) {
+		if (!$values) {
 			return $query;
 		}
 
-		$lb_hasEmpty = in_array('', $la_values, true);
+		$hasEmpty = in_array('', $values, true);
 
 		// Normalize all
-		$la_values = array_map(fn ($value) => $this->normalizeValue($value, $columnSettings), $la_values);
+		$values = array_map(fn ($value) => $this->normalizeValue($value, $columnSettings), $values);
 
-		$ls_operator = $not ? ' NOT IN' : ' IN';
+		$operator = $not ? ' NOT IN' : ' IN';
 		if (
-			($not && !$lb_hasEmpty) ||
-			(!$not && $lb_hasEmpty)
+			($not && !$hasEmpty) ||
+			(!$not && $hasEmpty)
 		) {
 			/**
 			 * If the operator is
@@ -680,14 +672,14 @@ class SearchBehavior extends Behavior {
 			 */
 			return $query->where([
 				'OR' => [
-					$column . $ls_operator => $la_values,
+					$column . $operator => $values,
 					$column . ' IS' => null,
 				],
 			]);
 		}
 
 		return $query->where([
-			$column . $ls_operator => $la_values,
+			$column . $operator => $values,
 		]);
 	}
 
@@ -699,26 +691,24 @@ class SearchBehavior extends Behavior {
 	 * @param bool $not
 	 * @param string $wildcard
 	 * @return \Cake\ORM\Query\SelectQuery
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function addContainsCondition(SelectQuery $query, string $column, FilterColumnSettings $columnSettings, bool $not = false, string $wildcard = 'both'): SelectQuery {
-		$lx_value = $this->normalizeValue($columnSettings->value, $columnSettings);
+		$value = $this->normalizeValue($columnSettings->value, $columnSettings);
 
-		$ls_wildcard = $wildcard;
 		if (!in_array($wildcard, ['both', 'start', 'end'])) {
-			$ls_wildcard = 'both';
+			$wildcard = 'both';
 		}
 
-		if ($lx_value === null) {
+		if ($value === null) {
 			return $query;
 		}
 
-		$ls_expression = '%' . $lx_value . '%';
-		if ($ls_wildcard === 'start') {
-			$ls_expression = '%' . $lx_value;
+		$expression = '%' . $value . '%';
+		if ($wildcard === 'start') {
+			$expression = '%' . $value;
 		}
-		elseif ($ls_wildcard === 'end') {
-			$ls_expression = $lx_value . '%';
+		elseif ($wildcard === 'end') {
+			$expression = $value . '%';
 		}
 
 		if ($not) {
@@ -730,16 +720,16 @@ class SearchBehavior extends Behavior {
 			 */
 			return $query->where([
 				'OR' => [
-					function (QueryExpression $exp) use ($column, $ls_expression) {
-						return $exp->notLike($column, $ls_expression, 'string');
+					function (QueryExpression $exp) use ($column, $expression) {
+						return $exp->notLike($column, $expression, 'string');
 					},
 					$column . ' IS' => null,
 				],
 			]);
 		}
 
-		return $query->where(function (QueryExpression $exp) use ($column, $ls_expression) {
-			return $exp->like($column, $ls_expression, 'string');
+		return $query->where(function (QueryExpression $exp) use ($column, $expression) {
+			return $exp->like($column, $expression, 'string');
 		});
 	}
 
@@ -749,23 +739,23 @@ class SearchBehavior extends Behavior {
 	 * @return array
 	 */
 	protected function getEnumValues(EnumType $dbType): array {
-		$ls_enumClass = $dbType->getEnumClassName();
+		$enumClass = $dbType->getEnumClassName();
 
-		$la_values = [];
+		$values = [];
 
-		foreach ($ls_enumClass::cases() as $le_case) {
-			if ($le_case instanceof EnumLabelInterface) {
-				$la_values[ $le_case->value ] = $le_case->label();
+		foreach ($enumClass::cases() as $case) {
+			if ($case instanceof EnumLabelInterface) {
+				$values[ $case->value ] = $case->label();
 			}
-			elseif ($le_case instanceof BackedEnum) {
-				$la_values[ $le_case->value ] = $le_case->name;
+			elseif ($case instanceof BackedEnum) {
+				$values[ $case->value ] = $case->name;
 			}
 			else {
-				$la_values[ $le_case->name ] = $le_case->name;
+				$values[ $case->name ] = $case->name;
 			}
 		}
 
-		return $la_values;
+		return $values;
 	}
 
 
@@ -790,10 +780,10 @@ class SearchBehavior extends Behavior {
 	 * @return array|null
 	 */
 	protected function disabledOperators(string $type): ?array {
-		$la_operators = [];
+		$operators = [];
 
 		if ($type === 'text') {
-			$la_operators = [
+			$operators = [
 				ComparisonOperator::LessThan,
 				ComparisonOperator::LessThanOrEqual,
 				ComparisonOperator::GreaterThan,
@@ -804,7 +794,7 @@ class SearchBehavior extends Behavior {
 		}
 
 		if (in_array($type, ['date', 'time', 'datetime'])) {
-			$la_operators = [
+			$operators = [
 				ComparisonOperator::LengthEqual,
 				ComparisonOperator::LengthNotEqual,
 				ComparisonOperator::ShorterThan,
@@ -820,10 +810,10 @@ class SearchBehavior extends Behavior {
 			];
 		}
 
-		if ($la_operators) {
+		if ($operators) {
 			return array_map(function (ComparisonOperator $operator) {
 				return $operator->value;
-			}, $la_operators);
+			}, $operators);
 		}
 
 
@@ -837,33 +827,31 @@ class SearchBehavior extends Behavior {
 	 * @return mixed|string
 	 */
 	protected function normalizeValue(mixed $value, FilterColumnSettings $columnSettings): mixed {
-		$lx_value = $value;
-
-		if (!$columnSettings->nullable && $lx_value === null) {
-			$lx_value = '';
+		if (!$columnSettings->nullable && $value === null) {
+			$value = '';
 		}
 
-		if ($lx_value === null) {
+		if ($value === null) {
 			return null;
 		}
 
 		if ($columnSettings->type === 'boolean') {
-			if ($columnSettings->nullable && empty($lx_value)) {
+			if ($columnSettings->nullable && empty($value)) {
 				return null;
 			}
 
-			return $lx_value !== '0';
+			return $value !== '0';
 		}
 
 		if ($columnSettings->type === 'float') {
-			return (float)str_replace(',', '.', (string)$lx_value);
+			return (float)str_replace(',', '.', (string)$value);
 		}
 
 		if ($columnSettings->type === 'integer') {
-			return (int)$lx_value;
+			return (int)$value;
 		}
 
-		return $lx_value;
+		return $value;
 	}
 
 
@@ -874,44 +862,44 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addDateComparisonCondition(SelectQuery $query, string $column, DateComparisonOperator $dateComparisonOperator): SelectQuery {
-		$lo_now = DateTime::now();
+		$now = DateTime::now();
 
 		return match ($dateComparisonOperator) {
 			DateComparisonOperator::SinceLastLogin => $this->addSinceLastLoginCondition($query, $column),
 			DateComparisonOperator::Last24Hours => $query->where([
-				$column . ' >=' => $lo_now->subHours(24),
+				$column . ' >=' => $now->subHours(24),
 			]),
 			DateComparisonOperator::Today => $query->where([
-				$column . ' >=' => $lo_now->startOfDay(),
-				$column . ' <' => $lo_now->addDays(1)->startOfDay(),
+				$column . ' >=' => $now->startOfDay(),
+				$column . ' <' => $now->addDays(1)->startOfDay(),
 			]),
 			DateComparisonOperator::Yesterday => $query->where([
-				$column . ' >=' => $lo_now->subDays(1)->startOfDay(),
-				$column . ' <' => $lo_now->startOfDay(),
+				$column . ' >=' => $now->subDays(1)->startOfDay(),
+				$column . ' <' => $now->startOfDay(),
 			]),
 			DateComparisonOperator::ThisWeek => $query->where([
-				$column . ' >=' => $lo_now->startOfWeek(),
-				$column . ' <' => $lo_now->addWeeks(1)->startOfWeek(),
+				$column . ' >=' => $now->startOfWeek(),
+				$column . ' <' => $now->addWeeks(1)->startOfWeek(),
 			]),
 			DateComparisonOperator::LastWeek => $query->where([
-				$column . ' >=' => $lo_now->subWeeks(1)->startOfWeek(),
-				$column . ' <' => $lo_now->startOfWeek(),
+				$column . ' >=' => $now->subWeeks(1)->startOfWeek(),
+				$column . ' <' => $now->startOfWeek(),
 			]),
 			DateComparisonOperator::ThisMonth => $query->where([
-				$column . ' >=' => $lo_now->startOfMonth(),
-				$column . ' <' => $lo_now->addMonths(1)->startOfMonth(),
+				$column . ' >=' => $now->startOfMonth(),
+				$column . ' <' => $now->addMonths(1)->startOfMonth(),
 			]),
 			DateComparisonOperator::LastMonth => $query->where([
-				$column . ' >=' => $lo_now->subMonths(1)->startOfMonth(),
-				$column . ' <' => $lo_now->startOfMonth(),
+				$column . ' >=' => $now->subMonths(1)->startOfMonth(),
+				$column . ' <' => $now->startOfMonth(),
 			]),
 			DateComparisonOperator::ThisYear => $query->where([
-				$column . ' >=' => $lo_now->startOfYear(),
-				$column . ' <' => $lo_now->addYears(1)->startOfYear(),
+				$column . ' >=' => $now->startOfYear(),
+				$column . ' <' => $now->addYears(1)->startOfYear(),
 			]),
 			DateComparisonOperator::LastYear => $query->where([
-				$column . ' >=' => $lo_now->subYears(1)->startOfYear(),
-				$column . ' <' => $lo_now->startOfYear(),
+				$column . ' >=' => $now->subYears(1)->startOfYear(),
+				$column . ' <' => $now->startOfYear(),
 			]),
 		};
 	}
@@ -923,17 +911,17 @@ class SearchBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addSinceLastLoginCondition(SelectQuery $query, string $column): SelectQuery {
-		$lo_request = Router::getRequest();
-		$lo_session = $lo_request->getSession();
-		$lo_lastLogin = $lo_session->read('Backend.lastLogin');
+		$request = Router::getRequest();
+		$session = $request->getSession();
+		$lastLogin = $session->read('Backend.lastLogin');
 
-		if (!$lo_lastLogin) {
+		if (!$lastLogin) {
 			// If there is no last login time, return an empty result set
 			return $query->where(['1 = 0']);
 		}
 
 		return $query->where([
-			$column . ' >=' => $lo_lastLogin,
+			$column . ' >=' => $lastLogin,
 		]);
 	}
 }

@@ -112,14 +112,14 @@ class AttributesBehavior extends Behavior {
 			return;
 		}
 
-		$ls_identifier = Inflector::camelize($this->attributesTable);
+		$identifier = Inflector::camelize($this->attributesTable);
 
-		if (!App::className($ls_identifier, 'Model\Table', 'Table')) {
+		if (!App::className($identifier, 'Model\Table', 'Table')) {
 			return;
 		}
 
 		$this->hasAttributes = true;
-		$this->table()->hasOne($ls_identifier, [
+		$this->table()->hasOne($identifier, [
 			'cascadeCallbacks' => true,
 			//'className' => $ls_attributesClass,
 			'dependent' => true,
@@ -127,19 +127,19 @@ class AttributesBehavior extends Behavior {
 			'propertyName' => 'attributes',
 		]);
 
-		$la_finders = $this->getConfig('implementedFinders');
+		$finders = $this->getConfig('implementedFinders');
 
-		foreach ($this->getAttributes() as $lo_attribute) {
-			if (!in_array($lo_attribute->type, ['date', 'datetime', 'time'])) {
+		foreach ($this->getAttributes() as $attribute) {
+			if (!in_array($attribute->type, ['date', 'datetime', 'time'])) {
 				continue;
 			}
 
-			$ls_name = Inflector::camelize($lo_attribute->identifier);
-			$la_finders[ 'future' . $ls_name ] = 'future' . $ls_name;
-			$la_finders[ 'past' . $ls_name ] = 'past' . $ls_name;
+			$name = Inflector::camelize($attribute->identifier);
+			$finders[ 'future' . $name ] = 'future' . $name;
+			$finders[ 'past' . $name ] = 'past' . $name;
 		}
 
-		$this->setConfig('implementedFinders', $la_finders);
+		$this->setConfig('implementedFinders', $finders);
 	}
 
 
@@ -151,20 +151,20 @@ class AttributesBehavior extends Behavior {
 	 * @return array
 	 */
 	public function extractAttributeFields(array $fields, bool $inlcudeBaseFields = false): array {
-		$la_columns = [];
+		$columns = [];
 
-		foreach ($fields as $ls_column) {
-			if (str_starts_with($ls_column, 'attributes.')) {
-				$la_columns[] = substr($ls_column, 11);
+		foreach ($fields as $column) {
+			if (str_starts_with($column, 'attributes.')) {
+				$columns[] = substr($column, 11);
 			}
 
-			if ($inlcudeBaseFields && !str_contains($ls_column, '.')) {
-				$la_columns[] = $ls_column;
+			if ($inlcudeBaseFields && !str_contains($column, '.')) {
+				$columns[] = $column;
 			}
 		}
 
 
-		return $la_columns;
+		return $columns;
 	}
 
 
@@ -178,37 +178,35 @@ class AttributesBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 */
 	public function findWithMatchingAttributes(SelectQuery $query, Entity $entity, array $fields): SelectQuery {
-		$ls_attributesTable = $this->table()->getAttributesTableName(true);
-		$la_conditions = [];
+		$attributesTableName = $this->table()->getAttributesTableName(true);
+		$conditions = [];
 
-		$lo_attributes = $entity->get('attributes');
-		if (!$lo_attributes) {
+		$attributes = $entity->get('attributes');
+		if (!$attributes) {
 			return $query;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$fields = $entity::unmapFields($fields);
 
-		$ls_attributesEntityClass = $this->getAttributesTable()->getEntityClass();
-		/** @noinspection PhpVariableNamingConventionInspection */
-		$fields = $ls_attributesEntityClass::unmapFields($fields);
+		$attributesEntityClass = $this->getAttributesTable()->getEntityClass();
+		$fields = $attributesEntityClass::unmapFields($fields);
 
-		foreach ($this->extractAttributeFields($fields, true) as $ls_field) {
-			if (!$lo_attributes->has($ls_field)) {
+		foreach ($this->extractAttributeFields($fields, true) as $field) {
+			if (!$attributes->has($field)) {
 				continue;
 			}
 
-			$lx_value = $lo_attributes->get($ls_field);
+			$value = $attributes->get($field);
 
-			if ($lx_value === null) {
-				$ls_field .= ' IS';
+			if ($value === null) {
+				$field .= ' IS';
 			}
 
-			$la_conditions[ $ls_attributesTable . '.' . $ls_field ] = $lx_value;
+			$conditions[ $attributesTableName . '.' . $field ] = $value;
 		}
 
-		if ($la_conditions) {
-			$query->where($la_conditions);
+		if ($conditions) {
+			$query->where($conditions);
 		}
 
 
@@ -253,36 +251,36 @@ class AttributesBehavior extends Behavior {
 	 */
 	public function getAttributes(): array {
 		if (!$this->getConfig('isAttributesTable')) {
-			$ls_assocatiation = Inflector::camelize($this->attributesTable);
+			$assocatiationName = Inflector::camelize($this->attributesTable);
 
-			if (!$this->table()->hasAssociation($ls_assocatiation)) {
+			if (!$this->table()->hasAssociation($assocatiationName)) {
 				return [];
 			}
 
-			/** @var \Awyiss\Model\Table $lo_association */
-			$lo_association = $this->table()->getAssociation($ls_assocatiation);
+			/** @var \Awyiss\Model\Table $association */
+			$association = $this->table()->getAssociation($assocatiationName);
 
 
-			return $lo_association->getAttributes();
+			return $association->getAttributes();
 		}
 
-		$ls_scope = substr($this->table()->getTable(), 11);
+		$scope = substr($this->table()->getTable(), 11);
 
 		if (isset(static::$attributes)) {
-			return static::$attributes[ $ls_scope ] ?? [];
+			return static::$attributes[ $scope ] ?? [];
 		}
 
-		/** @var \Awyiss\Model\Table\AttributesTable $lo_attributesTable */
-		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$lo_attributesQuery = $lo_attributesTable->find('all');
+		/** @var \Awyiss\Model\Table\AttributesTable $attributesTable */
+		$attributesTable = FactoryLocator::get('Table')->get('Attributes');
+		$attributesQuery = $attributesTable->find('all');
 
-		$lo_attributesQuery = $this->addOrderByFieldset($lo_attributesQuery, $lo_attributesTable);
+		$attributesQuery = $this->addOrderByFieldset($attributesQuery, $attributesTable);
 
-		static::$attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function (array $attributes): array {
+		static::$attributes = $attributesQuery->all()->groupBy('scope')->map(function (array $attributes): array {
 			return collection($attributes)->indexBy('identifier')->toArray();
 		})->toArray();
 
-		return static::$attributes[ $ls_scope ] ?? [];
+		return static::$attributes[ $scope ] ?? [];
 	}
 
 
@@ -298,35 +296,31 @@ class AttributesBehavior extends Behavior {
 			return;
 		}
 
-		$lo_table = $event->getSubject();
-		$ls_entityClass = $lo_table->getEntityClass();
-		$la_data = $data->getArrayCopy();
-		$la_data = $ls_entityClass::unmapFields($la_data, true);
+		$table = $event->getSubject();
+		$entityClass = $table->getEntityClass();
+		$unmappedData = $data->getArrayCopy();
+		$unmappedData = $entityClass::unmapFields($unmappedData, true);
 
-		foreach ($this->getAttributes() as $lo_attribute) {
-			if (!in_array($lo_attribute->inputType, ['input_list', 'input_key_value_list'])) {
+		foreach ($this->getAttributes() as $attribute) {
+			if (!in_array($attribute->inputType, ['input_list', 'input_key_value_list'])) {
 				continue;
 			}
 			// If the attribute is not set, skip it
-			if (!isset($la_data[ $lo_attribute->identifier ]) || !is_array($la_data[ $lo_attribute->identifier ])) {
+			if (!isset($unmappedData[ $attribute->identifier ]) || !is_array($unmappedData[ $attribute->identifier ])) {
 				continue;
 			}
 
 			/**
 			 * Unset any mapped fields as the identifier will be used
 			 * and is already an underscored version of the field name.
-			 *
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
-			unset($data[ $ls_entityClass::mapField($lo_attribute->identifier) ]);
+			unset($data[ $entityClass::mapField($attribute->identifier) ]);
 
-			if ($lo_attribute->inputType === 'input_list') {
+			if ($attribute->inputType === 'input_list') {
 				/**
 				 * Filter out all empty values
-				 *
-				 * @noinspection PhpVariableNamingConventionInspection
 				 */
-				$data[ $lo_attribute->identifier ] = array_values(array_filter($la_data[ $lo_attribute->identifier ], function (mixed $value): bool {
+				$data[ $attribute->identifier ] = array_values(array_filter($unmappedData[ $attribute->identifier ], function (mixed $value): bool {
 					return !empty($value) || $value === '0' || $value === 0;
 				}));
 
@@ -337,18 +331,15 @@ class AttributesBehavior extends Behavior {
 			 * For key-value-list items, empty values are allowed
 			 * if the key is set. And empty keys are allowed
 			 * if the value is set.
-			 *
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
-			$data[ $lo_attribute->identifier ] = array_filter($la_data[ $lo_attribute->identifier ], function (array $value): bool {
+			$data[ $attribute->identifier ] = array_filter($unmappedData[ $attribute->identifier ], function (array $value): bool {
 				return (!empty($value['key']) || $value['key'] === '0' || $value['key'] === 0) ||
 					(!empty($value['value']) || $value['value'] === '0' || $value['value'] === 0);
 			});
 
 			// If the data isn't empty, combine the key and value into a single array
-			if ($data[ $lo_attribute->identifier ]) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$data[ $lo_attribute->identifier ] = array_column($data[ $lo_attribute->identifier ], 'value', 'key');
+			if ($data[ $attribute->identifier ]) {
+				$data[ $attribute->identifier ] = array_column($data[ $attribute->identifier ], 'value', 'key');
 			}
 		}
 	}
@@ -368,38 +359,38 @@ class AttributesBehavior extends Behavior {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table $lo_subject */
-		$lo_subject = $event->getSubject();
-		$ls_source = substr($lo_subject->getTable(), 11);
+		/** @var \Awyiss\Model\Table $subject */
+		$subject = $event->getSubject();
+		$source = substr($subject->getTable(), 11);
 
-		/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
-		$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
-		/** @var \Awyiss\Attribute\AttributeOptionsCollectionInterface $lo_attributeOptions */
-		$lo_attributeOptions = static::$attributeOptions[ $ls_source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($ls_source, true);
+		/** @var AttributeOptionsProvider $attributeOptionsProvider */
+		$attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
+		/** @var \Awyiss\Attribute\AttributeOptionsCollectionInterface $attributeOptions */
+		$attributeOptions = static::$attributeOptions[ $source ] = $attributeOptionsProvider::getAttributeOptionsFile($source, true);
 
-		/** @var \Awyiss\Model\Entity\Attribute $lo_attribute */
-		foreach ($this->getAttributes() as $lo_attribute) {
-			$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($lo_attribute->identifier);
+		/** @var \Awyiss\Model\Entity\Attribute $attribute */
+		foreach ($this->getAttributes() as $attribute) {
+			$identifier = AttributeOptionsProvider::sanitizeIdentifier($attribute->identifier);
 
-			if (!isset($lo_attributeOptions[ $ls_identifier ])) {
-				if ($lo_attribute->required) {
-					$rules->add(function (Entity $entity/*, array $options*/) use ($lo_attribute, $ls_identifier): bool|string {
-						return !empty($entity->{$ls_identifier});
-					}, 'validValue' . Inflector::camelize($ls_identifier), [
-						'errorField' => $ls_identifier,
-						'message' => __df($ls_source, 'validation', 'error_valid_value'),
+			if (!isset($attributeOptions[ $identifier ])) {
+				if ($attribute->required) {
+					$rules->add(function (Entity $entity/*, array $options*/) use ($attribute, $identifier): bool|string {
+						return !empty($entity->{$identifier});
+					}, 'validValue' . Inflector::camelize($identifier), [
+						'errorField' => $identifier,
+						'message' => __df($source, 'validation', 'error_valid_value'),
 					]);
 				}
 
 				continue;
 			}
 
-			$rules->add(function (Entity $entity/*, array $options*/) use ($lo_attribute, $lo_attributeOptions, $ls_identifier): bool|string {
+			$rules->add(function (Entity $entity/*, array $options*/) use ($attribute, $attributeOptions, $identifier): bool|string {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				return $lo_attributeOptions->validateValue($ls_identifier, $entity->get($ls_identifier), $entity->getEntity());
-			}, 'validValue' . Inflector::camelize($ls_identifier), [
-				'errorField' => $lo_attribute->identifier,
-				'message' => __df($ls_source, 'validation', 'error_valid_value'),
+				return $attributeOptions->validateValue($identifier, $entity->get($identifier), $entity->getEntity());
+			}, 'validValue' . Inflector::camelize($identifier), [
+				'errorField' => $attribute->identifier,
+				'message' => __df($source, 'validation', 'error_valid_value'),
 			]);
 		}
 	}
@@ -418,14 +409,14 @@ class AttributesBehavior extends Behavior {
 			return;
 		}
 
-		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'attributes'));
+		$queryOptions = Hash::merge($this->getConfig(), Hash::get($options, 'attributes'));
 
-		if ($la_options['skip'] === true) {
+		if ($queryOptions['skip'] === true) {
 			return;
 		}
 
-		$lb_containsI18n = isset($query->getContain()['I18n']);
-		if ($lb_containsI18n) {
+		$containsI18n = isset($query->getContain()['I18n']);
+		if ($containsI18n) {
 			$query->contain([
 				$this->getAttributesTableName(true) => [
 					'finder' => 'translations',
@@ -475,17 +466,17 @@ class AttributesBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 */
 	public function beforeCopy(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		$lo_attributes = $entity->get('attributes');
+		$attributes = $entity->get('attributes');
 
-		if ($this->getConfig('isAttributesTable') || !$lo_attributes) {
+		if ($this->getConfig('isAttributesTable') || !$attributes) {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table $table */
+		$table = $event->getSubject();
 
-		$lo_attributes->unset((array)$lo_table->getPrimaryKey());
-		$lo_attributes->setNew(true);
+		$attributes->unset((array)$table->getPrimaryKey());
+		$attributes->setNew(true);
 	}
 
 
@@ -506,18 +497,18 @@ class AttributesBehavior extends Behavior {
 			return;
 		}
 
-		foreach ($this->getAttributes() as $lo_attribute) {
-			if ($lo_attribute->inputType !== 'password') {
+		foreach ($this->getAttributes() as $attribute) {
+			if ($attribute->inputType !== 'password') {
 				continue;
 			}
 
-			if (!$entity->get($lo_attribute->identifier)) {
-				$entity->setDirty($lo_attribute->identifier, false);
+			if (!$entity->get($attribute->identifier)) {
+				$entity->setDirty($attribute->identifier, false);
 			}
 			else {
 				$entity->set(
-					$lo_attribute->identifier,
-					password_hash($entity->get($lo_attribute->identifier), PASSWORD_BCRYPT, ['cost' => 12])
+					$attribute->identifier,
+					password_hash($entity->get($attribute->identifier), PASSWORD_BCRYPT, ['cost' => 12])
 				);
 			}
 		}
@@ -558,61 +549,61 @@ class AttributesBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function findAttributes(Entity $entity): void {
-		$lo_table = $this->table();
+		$table = $this->table();
 
 		// If the entity is not a Page, just return the default attributes entity
 		if (!$entity instanceof Page) {
-			/** @var \Awyiss\Model\Table $lo_attributesTable */
-			$lo_attributesTable = $lo_table->{$lo_table->getAttributesTableName(true)};
-			$entity->attributes = $lo_attributesTable->newDefaultEntity();
+			/** @var \Awyiss\Model\Table $attributesTable */
+			$attributesTable = $table->{$table->getAttributesTableName(true)};
+			$entity->attributes = $attributesTable->newDefaultEntity();
 
 			return;
 		}
 
-		$ls_alias = $this->table()->getAlias();
+		$alias = $this->table()->getAlias();
 
-		if (str_starts_with($ls_alias, 'Child')) {
-			$ls_alias = substr($ls_alias, 5);
+		if (str_starts_with($alias, 'Child')) {
+			$alias = substr($alias, 5);
 		}
-		elseif (str_starts_with($ls_alias, 'Parent')) {
-			$ls_alias = substr($ls_alias, 6);
+		elseif (str_starts_with($alias, 'Parent')) {
+			$alias = substr($alias, 6);
 		}
 
-		$ls_pageRole = $entity->pageRoleId ? Inflector::pluralize($entity->pageRoleId->name) : $ls_alias;
+		$pageRole = $entity->pageRoleId ? Inflector::pluralize($entity->pageRoleId->name) : $alias;
 		// If the page role matches the current table, return the default attributes entity
-		if ($ls_alias === $ls_pageRole) {
-			/** @var \Awyiss\Model\Table $lo_attributesTable */
-			$lo_attributesTable = $lo_table->{$lo_table->getAttributesTableName(true)};
-			$entity->attributes = $lo_attributesTable->newDefaultEntity();
+		if ($alias === $pageRole) {
+			/** @var \Awyiss\Model\Table $attributesTable */
+			$attributesTable = $table->{$table->getAttributesTableName(true)};
+			$entity->attributes = $attributesTable->newDefaultEntity();
 
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\PagesTable $lo_pageRoleTable */
-		$lo_pageRoleTable = $this->fetchTable($ls_pageRole);
+		/** @var \Awyiss\Model\Table\PagesTable $pageRoleTable */
+		$pageRoleTable = $this->fetchTable($pageRole);
 
-		/** @var \Awyiss\Model\Table|null $lo_table */
-		if (!$lo_pageRoleTable->hasAttributes()) {
+		/** @var \Awyiss\Model\Table|null $table */
+		if (!$pageRoleTable->hasAttributes()) {
 			return;
 		}
 
 		// No id? Just return the default attributes entity
 		if (!$entity->id) {
-			/** @var \Awyiss\Model\Table $lo_attributesTable */
-			$lo_attributesTable = $lo_pageRoleTable->{$lo_pageRoleTable->getAttributesTableName(true)};
-			$entity->attributes = $lo_attributesTable->newDefaultEntity();
+			/** @var \Awyiss\Model\Table $attributesTable */
+			$attributesTable = $pageRoleTable->{$pageRoleTable->getAttributesTableName(true)};
+			$entity->attributes = $attributesTable->newDefaultEntity();
 
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table|\Awyiss\ORM\Association\HasOne $lo_attributesTable */
-		$lo_attributesTable = $lo_pageRoleTable->{$lo_pageRoleTable->getAttributesTableName(true)};
+		/** @var \Awyiss\Model\Table|\Awyiss\ORM\Association\HasOne $attributesTable */
+		$attributesTable = $pageRoleTable->{$pageRoleTable->getAttributesTableName(true)};
 
-		$lo_attributes = $lo_attributesTable->find('all')->where([
-			$lo_attributesTable->getForeignKey() => $entity->id,
+		$attributes = $attributesTable->find('all')->where([
+			$attributesTable->getForeignKey() => $entity->id,
 		])->first();
 
-		$entity->attributes = $lo_attributes ?? $lo_attributesTable->newDefaultEntity();
+		$entity->attributes = $attributes ?? $attributesTable->newDefaultEntity();
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$entity->attributes->setEntity($entity);
 	}
@@ -632,20 +623,21 @@ class AttributesBehavior extends Behavior {
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param mixed|null $date
 	 * @return \Cake\ORM\Query\SelectQuery
+	 * @noinspection SpellCheckingInspection
 	 */
 	protected function _dynamicFinder(string $method, SelectQuery $query, mixed $date = null): SelectQuery {
-		$ls_method = Inflector::underscore($method);
-		preg_match('/^(future|past)_(\w+)/', $ls_method, $la_matches);
+		$method = Inflector::underscore($method);
+		preg_match('/^(future|past)_(\w+)/', $method, $matches);
 
-		$lo_now = $date ?? new DateTime('now');
+		$now = $date ?? new DateTime('now');
 
-		$ls_attributesTable = $this->table()->getAttributesTableName(true);
-		$ls_field = $la_matches[2];
+		$attributesTable = $this->table()->getAttributesTableName(true);
+		$field = $matches[2];
 
-		$ls_comparator = $la_matches[1] === 'future' ? ' >=' : ' <=';
+		$comparator = $matches[1] === 'future' ? ' >=' : ' <=';
 
 		return $query->where([
-			$ls_attributesTable . '.'  . $ls_field . $ls_comparator => $lo_now,
+			$attributesTable . '.'  . $field . $comparator => $now,
 		]);
 	}
 
@@ -657,8 +649,8 @@ class AttributesBehavior extends Behavior {
 	 * @throws \BadMethodCallException
 	 */
 	public function __call(string $method, array $args): SelectQuery {
-		$la_finders = $this->getConfig('implementedFinders');
-		if (isset($la_finders[ $method ])) {
+		$finders = $this->getConfig('implementedFinders');
+		if (isset($finders[ $method ])) {
 			return $this->_dynamicFinder($method, ...$args);
 		}
 
@@ -674,28 +666,28 @@ class AttributesBehavior extends Behavior {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function addOrderByFieldset(SelectQuery $attributesQuery, Table\AttributesTable $attributesTable): SelectQuery {
-		$lo_dialect = $attributesQuery->getConnection()->getDriver()->schemaDialect();
+		$dialect = $attributesQuery->getConnection()->getDriver()->schemaDialect();
 
 		/**
 		 * SQLite does not support FIELD(),
 		 * so ordering using CASE WHEN is used instead
 		 */
-		if ($lo_dialect instanceof SqliteSchemaDialect) {
-			$la_fieldsets = $attributesTable->getAvailableFieldsets();
+		if ($dialect instanceof SqliteSchemaDialect) {
+			$fieldsets = $attributesTable->getAvailableFieldsets();
 
-			$attributesQuery->orderBy(function (QueryExpression $exp) use ($la_fieldsets) {
-				$li_index = 0;
+			$attributesQuery->orderBy(function (QueryExpression $exp) use ($fieldsets) {
+				$index = 0;
 
-				$lo_case = $exp->case();
-				foreach ($la_fieldsets as $ls_fieldset) {
-					$lo_case->when(['fieldset' => $ls_fieldset])->then($li_index, 'integer');
+				$case = $exp->case();
+				foreach ($fieldsets as $fieldset) {
+					$case->when(['fieldset' => $fieldset])->then($index, 'integer');
 
-					$li_index++;
+					$index++;
 				}
 
-				$lo_case->else(999, 'integer');
+				$case->else(999, 'integer');
 
-				return $lo_case;
+				return $case;
 			});
 
 			return $attributesQuery;
