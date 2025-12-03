@@ -51,25 +51,25 @@ abstract class AbstractModule implements ModuleInterface {
 		/**
 		 * Get the form helper
 		 *
-		 * @var \Awyiss\View\Helper\FormHelper $lo_formHelper
+		 * @var \Awyiss\View\Helper\FormHelper $formHelper
 		 */
-		$lo_formHelper = $view->helpers()->get('Form');
+		$formHelper = $view->helpers()->get('Form');
 
-		$ls_return = '';
+		$return = '';
 
-		foreach (static::getFormFields($view, $frontendLanguage, $userLanguage, $settings) as $ls_name => $lx_options) {
-			if (is_string($lx_options)) {
-				$ls_return .= $lx_options;
+		foreach (static::getFormFields($view, $frontendLanguage, $userLanguage, $settings) as $name => $options) {
+			if (is_string($options)) {
+				$return .= $options;
 				continue;
 			}
 
-			$ls_methodName = $lx_options['method'] ?? 'control';
-			unset($lx_options['method']);
+			$methodName = $options['method'] ?? 'control';
+			unset($options['method']);
 
-			$ls_return .= $lo_formHelper->{$ls_methodName}($ls_name, $lx_options);
+			$return .= $formHelper->{$methodName}($name, $options);
 		}
 
-		return $ls_return;
+		return $return;
 	}
 
 
@@ -83,9 +83,9 @@ abstract class AbstractModule implements ModuleInterface {
 		?Entity $entity = null,
 		?Language $frontendLanguage = null
 	): string {
-		$ls_elementName = Inflector::underscore(ModulesProvider::extractIdentifierFromClassName(static::class));
+		$elementName = Inflector::underscore(ModulesProvider::extractIdentifierFromClassName(static::class));
 
-		return $view->element('module/' . $ls_elementName, [
+		return $view->element('module/' . $elementName, [
 			'entity' => $entity,
 			'frontendLanguage' => $frontendLanguage,
 			'mediaRenderOptions' => $mediaRenderOptions,

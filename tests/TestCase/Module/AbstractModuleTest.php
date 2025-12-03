@@ -48,7 +48,6 @@ class AbstractModuleTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -111,7 +110,6 @@ class AbstractModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\AbstractModule::isAvailable()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAvailableReturnsTrueByDefault(): void {
 		$result = $this->testModule::isAvailable();
@@ -125,7 +123,6 @@ class AbstractModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\AbstractModule::isAvailable()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAvailableCanBeOverridden(): void {
 		$customModule = new class extends AbstractModule {
@@ -166,7 +163,6 @@ class AbstractModuleTest extends TestCase {
 	 * @see \Awyiss\Module\AbstractModule::renderForm()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderFormWithFormFields(): void {
 		$frontendLanguage = $this->mockLanguage;
@@ -203,7 +199,6 @@ class AbstractModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\AbstractModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderCallsViewElement(): void {
 		$settings = ['title' => 'Test Title', 'content' => 'Test Content'];
@@ -241,7 +236,6 @@ class AbstractModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\AbstractModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderConvertsIdentifierToUnderscore(): void {
 		$camelCaseModule = new NewsListingModule();
@@ -264,7 +258,6 @@ class AbstractModuleTest extends TestCase {
 	 * @see \Awyiss\Module\AbstractModule::renderForm()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderFormWithEmptyFields(): void {
 		$emptyModule = new class extends AbstractModule {

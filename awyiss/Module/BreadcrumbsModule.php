@@ -14,6 +14,7 @@ use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\View\BackendView;
 use Awyiss\View\FrontendView;
 use Cake\Datasource\FactoryLocator;
+use Exception;
 
 
 /**
@@ -76,45 +77,50 @@ class BreadcrumbsModule extends AbstractModule {
 	 * @inheritDoc
 	 */
 	public static function render(array $settings, FrontendView $view, ?MediaRenderOptions $mediaRenderOptions, ?Entity $entity = null, ?Language $frontendLanguage = null): string {
-		$lb_includeHomepage = $settings['includeHomepage'] ?? true;
-		$lb_includeCurrentPage = $settings['includeCurrentPage'] ?? true;
-		$lb_showOnHomepage = $settings['showOnHomepage'] ?? false;
-		$li_homepageId = $settings['homepageId'] ?? null;
+		$includeHomepage = $settings['includeHomepage'] ?? true;
+		$includeCurrentPage = $settings['includeCurrentPage'] ?? true;
+		$showOnHomepage = $settings['showOnHomepage'] ?? false;
+		$homepageId = $settings['homepageId'] ?? null;
 
-		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
-		$lo_pagesTable = FactoryLocator::get('Table')->get('Pages');
+		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
+		$pagesTable = FactoryLocator::get('Table')->get('Pages');
 
-		if ($li_homepageId) {
-			$lo_homepage = $lo_pagesTable->get($li_homepageId);
+		try {
+			if ($homepageId) {
+				$homepage = $pagesTable->get($homepageId);
+			}
+			else {
+				$homepage = static::findHomepage($pagesTable, $frontendLanguage?->shortcode);
+			}
+			$homepageId = $homepage?->id;
 		}
-		else {
-			$lo_homepage = static::findHomepage($lo_pagesTable, $frontendLanguage?->shortcode);
+		catch (Exception) {
+			$homepage = null;
+			$includeHomepage = false;
 		}
-
-		$li_homepageId = $lo_homepage->id;
 
 		// Get the current path
-		$ls_path = trim($settings['path'] ?? Router::getRequest()?->getPath() ?? '', '/');
-		$la_pathParts = explode('/', $ls_path);
-		array_shift($la_pathParts);
+		$path = trim($settings['path'] ?? Router::getRequest()?->getPath() ?? '', '/');
+		$pathParts = explode('/', $path);
+		array_shift($pathParts);
 
 		// Get all pages in the current path
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_query = $lo_pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true);
+		$query = $pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true);
 
-		$ls_currentPath = '';
-		$la_paths = [];
-		foreach ($la_pathParts as $ls_pathPart) {
-			$ls_currentPath .= ($ls_currentPath ? '/' : '') . $ls_pathPart;
-			$la_paths[] = $ls_currentPath;
+		$currentPath = '';
+		$paths = [];
+		foreach ($pathParts as $pathPart) {
+			$currentPath .= ($currentPath ? '/' : '') . $pathPart;
+			$paths[] = $currentPath;
 		}
 
-		if (!$lb_includeCurrentPage) {
-			array_pop($la_paths);
+		if (!$includeCurrentPage) {
+			array_pop($paths);
 		}
 
-		if ($la_paths) {
-			$lo_query->where(['Pages.slug IN' => $la_paths])
+		if ($paths) {
+			$query->where(['Pages.slug IN' => $paths])
 				/**
 				 * Order by the length of the slug since
 				 * all slugs are nested, and we want to
@@ -122,26 +128,26 @@ class BreadcrumbsModule extends AbstractModule {
 				 * (e.g. /about/team should come before /about/team/john)
 				 */
 				->orderBy(['LENGTH(Pages.slug)' => 'ASC']);
-			$la_pages = $lo_query->all()->indexBy('id')->toArray();
+			$pages = $query->all()->indexBy('id')->toArray();
 		}
 		else {
-			$la_pages = [];
+			$pages = [];
 		}
 
-		if ($lb_includeHomepage) {
-			$la_pages = [$li_homepageId => $lo_homepage] + $la_pages;
+		if ($includeHomepage) {
+			$pages = [$homepageId => $homepage] + $pages;
 		}
 
 		return $view->element('module/breadcrumbs', [
 			'entity' => $entity,
 			'frontendLanguage' => $frontendLanguage,
 			'mediaRenderOptions' => $mediaRenderOptions,
-			'includeHomepage' => $lb_includeHomepage,
-			'includeCurrentPage' => $lb_includeCurrentPage,
-			'showOnHomepage' => $lb_showOnHomepage,
-			'homepageId' => $li_homepageId,
-			'homepage' => $lo_homepage,
-			'pages' => $la_pages,
+			'includeHomepage' => $includeHomepage,
+			'includeCurrentPage' => $includeCurrentPage,
+			'showOnHomepage' => $showOnHomepage,
+			'homepageId' => $homepageId,
+			'homepage' => $homepage,
+			'pages' => $pages,
 			'settings' => $settings,
 		]);
 	}
@@ -151,24 +157,25 @@ class BreadcrumbsModule extends AbstractModule {
 	 * @return array
 	 */
 	protected static function getHomepageOptions(): array {
-		$la_options = [];
+		$options = [];
 
-		/** @var \Awyiss\Model\Table\PagesTable $lo_pageTable */
-		$lo_pageTable = FactoryLocator::get('Table')->get('Pages');
+		/** @var \Awyiss\Model\Table\PagesTable $pageTable */
+		$pageTable = FactoryLocator::get('Table')->get('Pages');
 
 		/**
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 * @uses \Awyiss\Model\Table::findActive()
 		 */
-		$lo_query = $lo_pageTable->find('active')->find('forCurrentLanguage');
-		$lo_pages = $lo_pageTable->listNested($lo_query);
+		$query = $pageTable->find('active')->find('forCurrentLanguage');
+		$pages = $pageTable->listNested($query);
 
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		foreach ($lo_pages ?? [] as $lo_page) {
-			$la_options[ $lo_page->id ] = str_repeat('- ', $lo_page->level) . ' ' . $lo_page->title;
+		/** @var \Awyiss\Model\Entity\Page $page */
+		foreach ($pages ?? [] as $page) {
+			/** @noinspection PhpUndefinedFieldInspection */
+			$options[ $page->id ] = str_repeat('- ', $page->level) . ' ' . $page->title;
 		}
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -179,10 +186,10 @@ class BreadcrumbsModule extends AbstractModule {
 	 * @throws \Exception
 	 */
 	protected static function findHomepage(PagesTable $pagesTable, ?string $languageShortcode = null): ?Page {
-		$lo_query = $pagesTable->find(!static::isPreview() ? 'published' : 'all', skipPageRoleCheck: true);
+		$query = $pagesTable->find(!static::isPreview() ? 'published' : 'all', skipPageRoleCheck: true);
 
 		// Include the languages in the query, including deleted languages
-		$lo_query->contain([
+		$query->contain([
 			'DuplicateOfPage',
 			'Languages' => [
 				'finder' => $languageShortcode ? 'withDeleted' : 'all',
@@ -193,31 +200,31 @@ class BreadcrumbsModule extends AbstractModule {
 
 		if (static::$isPreview) {
 			// Order all by deleted, system_order
-			$lo_query->orderBy([
+			$query->orderBy([
 				'Pages.deleted' => 'ASC',
 			]);
 		}
 		else {
 			// Order all by deleted, parents_active, active, system_order
-			$lo_query->orderBy([
+			$query->orderBy([
 				'Pages.deleted' => 'ASC',
 				'Pages.parents_active' => 'DESC',
 				'Pages.active' => 'DESC',
 			]);
 		}
 
-		$lo_query->orderBy([
+		$query->orderBy([
 			'PageRoles.active' => 'DESC',
 			'PageRoles.system_order' => 'ASC',
 		]);
 
-		$lo_query->where(['language_shortcode' => $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode]);
+		$query->where(['language_shortcode' => $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode]);
 
 		// Order by parent_id first
-		$lo_query->orderBy(['Pages.parent_id' => 'ASC']);
+		$query->orderBy(['Pages.parent_id' => 'ASC']);
 
-		$lo_query->limit(1);
+		$query->limit(1);
 
-		return $lo_query->first();
+		return $query->first();
 	}
 }
