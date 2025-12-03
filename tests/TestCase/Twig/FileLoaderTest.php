@@ -19,7 +19,6 @@ class FileLoaderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::getPaths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPaths(): void {
 		$loader = new FileLoader(['.twig']);
@@ -37,7 +36,6 @@ class FileLoaderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::getPaths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPathsWithNamespace(): void {
 		$loader = new FileLoader(['.twig']);
@@ -52,7 +50,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::setPaths()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetPathsWithString(): void {
 		$loader = new FileLoader(['.twig']);
@@ -72,7 +69,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::setPaths()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetPathsWithArray(): void {
 		$loader = new FileLoader(['.twig']);
@@ -92,7 +88,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::setPaths()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetPathsWithNamespace(): void {
 		$loader = new FileLoader(['.twig']);
@@ -120,7 +115,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::addPath()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddPath(): void {
 		$loader = new FileLoader(['.twig']);
@@ -147,7 +141,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::addPath()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddPathAvoidsDuplicates(): void {
 		$loader = new FileLoader(['.twig']);
@@ -176,7 +169,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::addPath()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddPathWithPrepend(): void {
 		$loader = new FileLoader(['.twig']);
@@ -192,7 +184,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::addPath()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddPathWithPrependPrependsAlreadyExistingPaths(): void {
 		$loader = new FileLoader(['.twig']);
@@ -215,7 +206,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::addPath()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddPathWithNamespace(): void {
 		$loader = new FileLoader(['.twig']);
@@ -241,7 +231,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::addPath()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddPathAppendsDS(): void {
 		$loader = new FileLoader(['.twig']);
@@ -262,7 +251,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::prependPath()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrependPath(): void {
 		$loader = new FileLoader(['.twig']);
@@ -281,7 +269,6 @@ class FileLoaderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::getNamespaces()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNamespaces(): void {
 		$loader = new FileLoader(['.twig']);
@@ -299,7 +286,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplate(): void {
 		$loader = new FileLoader(['.twig']);
@@ -318,7 +304,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateWithAbsolutePath(): void {
 		$loader = new FileLoader(['.twig']);
@@ -336,7 +321,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateWithRelativePath(): void {
 		$loader = new FileLoader(['.twig']);
@@ -358,7 +342,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateWithNamespace(): void {
 		$loader = new FileLoader(['.twig']);
@@ -377,7 +360,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateWithNamespacePrefersCustomerNamespace(): void {
 		$loader = new FileLoader(['.twig']);
@@ -409,7 +391,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateChecksAllFolders(): void {
 		$loader = new FileLoader(['.twig']);
@@ -440,7 +421,6 @@ class FileLoaderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateWithUnknownNamespace(): void {
 		$loader = new FileLoader(['.twig']);
@@ -456,7 +436,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateWithInvalidNamespace(): void {
 		$loader = new FileLoader(['.twig']);
@@ -473,7 +452,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateWitInvalidTemplateName(): void {
 		$loader = new FileLoader(['.twig']);
@@ -490,7 +468,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateWithNonExistentTemplate(): void {
 		$loader = new FileLoader(['.twig']);
@@ -506,7 +483,6 @@ class FileLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\FileLoader::findTemplate()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTemplateWithPathBreakingOut(): void {
 		$loader = new FileLoader(['.twig']);

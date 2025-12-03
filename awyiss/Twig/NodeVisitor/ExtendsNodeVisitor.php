@@ -52,38 +52,38 @@ class ExtendsNodeVisitor implements NodeVisitorInterface {
 	 */
 	protected function processExtendsNode(ModuleNode $node): Node {
 		// Get the current template name and path
-		$lo_sourceContext = $node->getSourceContext();
-		$ls_currentTemplateName = $lo_sourceContext->getName(); // e.g., "@Frontend/some/template.twig"
+		$sourceContext = $node->getSourceContext();
+		$currentTemplateName = $sourceContext->getName(); // e.g., "@Frontend/some/template.twig"
 
 		// Get the name of the parent template being extended
-		$lo_parentTemplateNode = $node->getNode('parent');
+		$parentTemplateNode = $node->getNode('parent');
 
-		if (!$lo_parentTemplateNode instanceof ConstantExpression) {
+		if (!$parentTemplateNode instanceof ConstantExpression) {
 			return $node;
 		}
 
-		$ls_targetTemplateName = $lo_parentTemplateNode->getAttribute('value');
+		$targetTemplateName = $parentTemplateNode->getAttribute('value');
 
-		$ls_customerTemplatePath = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS;
-		if (str_starts_with($ls_currentTemplateName, $ls_customerTemplatePath)) {
-			$ls_currentTemplateName = substr_replace($ls_currentTemplateName, '@', 0, strlen($ls_customerTemplatePath));
+		$customerTemplatePath = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS;
+		if (str_starts_with($currentTemplateName, $customerTemplatePath)) {
+			$currentTemplateName = substr_replace($currentTemplateName, '@', 0, strlen($customerTemplatePath));
 		}
 
 		if (
-			$ls_currentTemplateName !== $ls_targetTemplateName ||
+			$currentTemplateName !== $targetTemplateName ||
 			(
-				!str_starts_with($ls_targetTemplateName, '@Frontend/') &&
-				!str_starts_with($ls_targetTemplateName, '@Backend/')
+				!str_starts_with($targetTemplateName, '@Frontend/') &&
+				!str_starts_with($targetTemplateName, '@Backend/')
 			)
 		) {
 			return $node;
 		}
 
-		$ls_newTemplateName = '@Awyiss/' . substr($ls_targetTemplateName, 1);
+		$newTemplateName = '@Awyiss/' . substr($targetTemplateName, 1);
 
 		// Replace the parent template node with the new template name
-		$lo_newParentTemplateNode = new ConstantExpression($ls_newTemplateName, $lo_parentTemplateNode->getTemplateLine());
-		$node->setNode('parent', $lo_newParentTemplateNode);
+		$newParentTemplateNode = new ConstantExpression($newTemplateName, $parentTemplateNode->getTemplateLine());
+		$node->setNode('parent', $newParentTemplateNode);
 
 		return $node;
 	}

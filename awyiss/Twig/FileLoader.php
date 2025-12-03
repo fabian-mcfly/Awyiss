@@ -19,7 +19,7 @@ class FileLoader extends BaseFileLoader {
 	/**
 	 * Identifier for main namespace paths
 	 */
-	public const MAIN_NAMESPACE = '__main__';
+	public const string MAIN_NAMESPACE = '__main__';
 	/**
 	 * @var array
 	 */
@@ -59,11 +59,11 @@ class FileLoader extends BaseFileLoader {
 	 * @throws LoaderError
 	 */
 	public function setPaths(array|string $paths, string $namespace = self::MAIN_NAMESPACE): void {
-		$la_paths = !is_array($paths) ? [$paths] : $paths;
+		$paths = !is_array($paths) ? [$paths] : $paths;
 
 		$this->paths[ $namespace ] = [];
-		foreach ($la_paths as $ls_path) {
-			$this->addPath($ls_path, $namespace);
+		foreach ($paths as $path) {
+			$this->addPath($path, $namespace);
 		}
 	}
 
@@ -89,28 +89,28 @@ class FileLoader extends BaseFileLoader {
 	 * @throws LoaderError
 	 */
 	public function addPath(string $path, string $namespace = self::MAIN_NAMESPACE, bool $prepend = false): void {
-		$ls_path = rtrim($path, '/\\') . DS;
+		$path = rtrim($path, '/\\') . DS;
 
-		$ls_checkPath = $this->isAbsolutePath($ls_path) ? $ls_path : $this->rootPath . $ls_path;
-		if (!is_dir($ls_checkPath)) {
-			throw new LoaderError(sprintf('The "%s" directory does not exist ("%s").', $path, $ls_checkPath));
+		$checkPath = $this->isAbsolutePath($path) ? $path : $this->rootPath . $path;
+		if (!is_dir($checkPath)) {
+			throw new LoaderError(sprintf('The "%s" directory does not exist ("%s").', $path, $checkPath));
 		}
 
 		if (!isset($this->paths[ $namespace ])) {
-			$this->paths[ $namespace ] = [$ls_path];
+			$this->paths[ $namespace ] = [$path];
 		}
 		else {
-			$li_key = array_search($ls_path, $this->paths[ $namespace ]);
+			$key = array_search($path, $this->paths[ $namespace ]);
 
 			if ($prepend) {
-				if ($li_key !== false) {
-					unset($this->paths[ $namespace ][ $li_key ]);
+				if ($key !== false) {
+					unset($this->paths[ $namespace ][ $key ]);
 				}
 
-				array_unshift($this->paths[ $namespace ], $ls_path);
+				array_unshift($this->paths[ $namespace ], $path);
 			}
-			elseif ($li_key === false) {
-				$this->paths[ $namespace ][] = $ls_path;
+			elseif ($key === false) {
+				$this->paths[ $namespace ][] = $path;
 			}
 		}
 	}
@@ -143,48 +143,48 @@ class FileLoader extends BaseFileLoader {
 			return $name;
 		}
 
-		$ls_name = $name;
-		if (str_ends_with($ls_name, '.twig')) {
-			$ls_name = substr($ls_name, 0, -5);
+		$originalName = $name;
+		if (str_ends_with($name, '.twig')) {
+			$name = substr($name, 0, -5);
 		}
 
 		// Keep the name as is, in case no Plugin was found
-		[$ls_plugin, $ls_pluginTemplateName] = pluginSplit($ls_name);
-		$ls_pluginTemplateName = str_replace('/', DS, $ls_pluginTemplateName);
+		[$plugin, $pluginTemplateName] = pluginSplit($name);
+		$pluginTemplateName = str_replace('/', DS, $pluginTemplateName);
 
-		if ($ls_plugin) {
-			$ls_templatePath = Plugin::templatePath($ls_plugin);
-			$ls_path = $this->checkExtensions($ls_templatePath . $ls_pluginTemplateName);
-			if ($ls_path !== null) {
-				return $ls_path;
+		if ($plugin) {
+			$templatePath = Plugin::templatePath($plugin);
+			$path = $this->checkExtensions($templatePath . $pluginTemplateName);
+			if ($path !== null) {
+				return $path;
 			}
 
-			throw new LoaderError(sprintf("Could not find template `%s` in plugin `%s` in these paths:\n\n" . "- `%s`\n", $name, $ls_plugin, $ls_templatePath));
+			throw new LoaderError(sprintf("Could not find template `%s` in plugin `%s` in these paths:\n\n" . "- `%s`\n", $originalName, $plugin, $templatePath));
 		}
 
 		//Make sure the given filename is valid and inside the set paths
-		$this->validateName($ls_name);
+		$this->validateName($name);
 
-		[$ls_namespace, $ls_shortname] = $this->parseName($ls_name);
+		[$namespace, $shortname] = $this->parseName($name);
 
 		//If the file is in a namespace but no path for that namespace exists, we can't continue
-		if (!isset($this->paths[ $ls_namespace ])) {
-			throw new LoaderError(sprintf('There are no registered paths for namespace "%s".', $ls_namespace));
+		if (!isset($this->paths[ $namespace ])) {
+			throw new LoaderError(sprintf('There are no registered paths for namespace "%s".', $namespace));
 		}
 
 		//Traverse all paths and if one contains the file we're looking for, return the full path of it.
-		foreach ($this->paths[ $ls_namespace ] as $ls_templatePath) {
-			$ls_path = $this->checkExtensions($ls_templatePath . $ls_shortname);
-			if ($ls_path !== null) {
-				return $ls_path;
+		foreach ($this->paths[ $namespace ] as $templatePath) {
+			$path = $this->checkExtensions($templatePath . $shortname);
+			if ($path !== null) {
+				return $path;
 			}
 		}
 
-		$ls_error = sprintf("Could not find template `%s` in these paths:\n", $ls_shortname);
-		foreach ($this->paths[ $ls_namespace ] as $ls_templatePath) {
-			$ls_error .= sprintf("- `%s`\n", $ls_templatePath);
+		$error = sprintf("Could not find template `%s` in these paths:\n", $shortname);
+		foreach ($this->paths[ $namespace ] as $templatePath) {
+			$error .= sprintf("- `%s`\n", $templatePath);
 		}
-		throw new LoaderError($ls_error);
+		throw new LoaderError($error);
 	}
 
 
@@ -203,15 +203,15 @@ class FileLoader extends BaseFileLoader {
 			return [self::MAIN_NAMESPACE, $name];
 		}
 
-		$li_pos = strpos($name, DS);
-		if ($li_pos === false) {
+		$pos = strpos($name, DS);
+		if ($pos === false) {
 			throw new LoaderError(sprintf('Malformed namespaced template name "%s" (expecting "@namespace%stemplate_name").', $name, DS));
 		}
 
-		$ls_namespace = substr($name, 1, $li_pos - 1);
-		$ls_shortname = substr($name, $li_pos + 1);
+		$namespace = substr($name, 1, $pos - 1);
+		$shortname = substr($name, $pos + 1);
 
-		return [$ls_namespace, $ls_shortname];
+		return [$namespace, $shortname];
 	}
 
 
@@ -227,19 +227,20 @@ class FileLoader extends BaseFileLoader {
 			throw new LoaderError('A template name cannot contain NUL bytes.');
 		}
 
-		$ls_name = ltrim($name, '/');
-		$la_parts = explode('/', $ls_name);
-		$li_level = 0;
-		foreach ($la_parts as $ls_part) {
-			if ($ls_part === '..') {
-				--$li_level;
+		$originalName = $name;
+		$name = ltrim($name, '/');
+		$parts = explode('/', $name);
+		$level = 0;
+		foreach ($parts as $part) {
+			if ($part === '..') {
+				--$level;
 			}
-			elseif ($ls_part !== '.') {
-				++$li_level;
+			elseif ($part !== '.') {
+				++$level;
 			}
 
-			if ($li_level < 0) {
-				throw new LoaderError(sprintf('Looks like you try to load a template outside configured directories (%s).', $name));
+			if ($level < 0) {
+				throw new LoaderError(sprintf('Looks like you try to load a template outside configured directories (%s).', $originalName));
 			}
 		}
 	}
