@@ -220,47 +220,47 @@ class Form extends Entity {
 	 * @throws \Exception
 	 */
 	public function loadFormElements(): static {
-		/** @var \Awyiss\Model\Table\FormElementsTable $lo_formElementsTable */
-		$lo_formElementsTable = $this->fetchTable('FormElements');
+		/** @var \Awyiss\Model\Table\FormElementsTable $formElementsTable */
+		$formElementsTable = $this->fetchTable('FormElements');
 
 		if ($this->isPreview) {
-			$lo_query = $lo_formElementsTable->find('all');
+			$query = $formElementsTable->find('all');
 		}
 		else {
 			/**
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$lo_query = $lo_formElementsTable->find('active')->find('published');
+			$query = $formElementsTable->find('active')->find('published');
 		}
 
-		$lo_formElements = $lo_query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)->where([
+		$formElements = $query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)->where([
 			'form_id' => $this->id,
 		])->all()->filter(function (FormElement $content) {
 			return $content->parentId === null;
 		})->compile();
 
-		if (!$lo_formElements->count()) {
+		if (!$formElements->count()) {
 			return $this;
 		}
 
-		/** @var array<\Awyiss\Model\Entity\FormElement> $la_formElements */
-		$la_formElements = $lo_formElements->listNested()->toList();
-		foreach ($la_formElements as $lo_formElement) {
-			if (in_array($lo_formElement->type, ['checkbox', 'radio', 'select', 'select_multiple'])) {
-				$lo_formElement->options = $lo_formElement->parseOptions(
-					$lo_formElement->options,
-					$lo_formElement->type,
+		/** @var array<\Awyiss\Model\Entity\FormElement> $listedFormElements */
+		$listedFormElements = $formElements->listNested()->toList();
+		foreach ($listedFormElements as $formElement) {
+			if (in_array($formElement->type, ['checkbox', 'radio', 'select', 'select_multiple'])) {
+				$formElement->options = $formElement->parseOptions(
+					$formElement->options,
+					$formElement->type,
 					$this->sourcePage?->languageShortcode ?? LocaleMiddleware::getLanguage()?->shortcode ?? null
 				);
 			}
 
-			$this->getFormOptions()->modifyFormElement($lo_formElement);
+			$this->getFormOptions()->modifyFormElement($formElement);
 		}
 
-		$this->formElementsChecksum = md5(serialize($la_formElements));
+		$this->formElementsChecksum = md5(serialize($listedFormElements));
 
-		$this->formElements = $lo_formElements;
+		$this->formElements = $formElements;
 
 		return $this;
 	}
@@ -299,13 +299,13 @@ class Form extends Entity {
 	 */
 	public function loadFormOptions(): static {
 		if (!isset($this->formOptions)) {
-			$ls_className = App::className(Inflector::ucparts($this->identifier, false) . 'FormOptions', 'Form');
+			$className = App::className(Inflector::ucparts($this->identifier, false) . 'FormOptions', 'Form');
 
-			if (!$ls_className) {
-				$ls_className = App::className('FormOptions', 'Form');
+			if (!$className) {
+				$className = App::className('FormOptions', 'Form');
 			}
 
-			$this->formOptions = new $ls_className($this, $this->sourcePage);
+			$this->formOptions = new $className($this, $this->sourcePage);
 		}
 
 		return $this;
@@ -335,12 +335,10 @@ class Form extends Entity {
 	 * @return \Awyiss\Validation\Validator
 	 */
 	public function getValidator(): Validator {
-		$lo_validator = new Validator();
-		$lo_validator->setI18nDomain('form');
+		$validator = new Validator();
+		$validator->setI18nDomain('form');
 
-		//$lo_validator->setStopOnFailure();
-
-		return $lo_validator;
+		return $validator;
 	}
 
 
@@ -351,9 +349,9 @@ class Form extends Entity {
 	 * @return bool
 	 */
 	public function validate(?array $formData = null, ?Validator $validator = null, ?bool $validateProtection = null): bool {
-		$lo_validator = $validator ?? $this->getFormOptions()->setValidationRules($this->getValidator());
+		$validator ??= $this->getFormOptions()->setValidationRules($this->getValidator());
 
-		$this->setErrors($lo_validator->validate($formData ?? $this->getFormData()));
+		$this->setErrors($validator->validate($formData ?? $this->getFormData()));
 
 		// Validate the protection methods if forced (true)
 		// or if no other validation errors are present (null)
@@ -368,8 +366,8 @@ class Form extends Entity {
 		}
 
 		// Modify the form using the protection methods
-		foreach ($this->getProtectionMethods() as $lo_protectionMethod) {
-			$lo_protectionMethod->modifyForm($this);
+		foreach ($this->getProtectionMethods() as $protectionMethod) {
+			$protectionMethod->modifyForm($this);
 		}
 
 		return !$this->getErrors();
@@ -388,37 +386,37 @@ class Form extends Entity {
 	 * @return static
 	 */
 	protected function initProtectionMethods(): static {
-		$la_protectionMethods = Configure::read('Awyiss.Forms.Frontend.protection.methods');
+		$protectionMethods = Configure::read('Awyiss.Forms.Frontend.protection.methods');
 
-		if (!$la_protectionMethods) {
+		if (!$protectionMethods) {
 			$this->protectionMethods = [];
 			return $this;
 		}
 
-		$la_formElements = $this->formElements ?? [];
-		if (!is_array($la_formElements)) {
-			$lo_formElements = $la_formElements->listNested()->filter(fn (FormElement $element) => $element->identifier !== null);
-			$la_formElements = $lo_formElements->indexBy('identifier')->toArray();
+		$formElements = $this->formElements ?? [];
+		if (!is_array($formElements)) {
+			$filteredFormElements = $formElements->listNested()->filter(fn (FormElement $element) => $element->identifier !== null);
+			$formElements = $filteredFormElements->indexBy('identifier')->toArray();
 		}
 
 		$this->protectionMethods = [];
 
-		foreach ($la_protectionMethods as $ls_identifier) {
-			$ls_class = FormProtectionProvider::getFormProtectionFile($ls_identifier);
+		foreach ($protectionMethods as $identifier) {
+			$class = FormProtectionProvider::getFormProtectionFile($identifier);
 
-			if ($ls_class === null) {
+			if ($class === null) {
 				continue;
 			}
 
-			$lo_protection = new $ls_class();
+			$protection = new $class();
 
-			$lo_protection->initialize($this, $la_formElements, $this->formOptions, $this->view);
+			$protection->initialize($this, $formElements, $this->formOptions, $this->view);
 
-			$la_parts = explode('\\', $lo_protection::class);
-			$ls_identifier = array_pop($la_parts);
-			$ls_identifier = FormProtectionProvider::sanitizeIdentifier(substr($ls_identifier, 0, -14));
+			$parts = explode('\\', $protection::class);
+			$identifier = array_pop($parts);
+			$identifier = FormProtectionProvider::sanitizeIdentifier(substr($identifier, 0, -14));
 
-			$this->protectionMethods[ $ls_identifier ] = $lo_protection;
+			$this->protectionMethods[ $identifier ] = $protection;
 		}
 
 		return $this;
@@ -445,13 +443,13 @@ class Form extends Entity {
 			return $this;
 		}
 
-		foreach ($this->getProtectionMethods() as $ls_identifier => $lo_protection) {
-			$ls_error = $lo_protection->validateData($formData);
+		foreach ($this->getProtectionMethods() as $identifier => $protection) {
+			$error = $protection->validateData($formData);
 
-			if ($ls_error !== true) {
-				$la_errors = $this->getError('_general') ?? [];
-				$la_errors[ $ls_identifier ] = $ls_error;
-				$this->setError('_general', $la_errors);
+			if ($error !== true) {
+				$errors = $this->getError('_general') ?? [];
+				$errors[ $identifier ] = $error;
+				$this->setError('_general', $errors);
 			}
 		}
 
@@ -471,8 +469,8 @@ class Form extends Entity {
 			return null;
 		}
 
-		$ls_identifier = Text::slug($identifier, ['replacement' => '_']);
+		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
-		return mb_strtolower($ls_identifier);
+		return mb_strtolower($identifier);
 	}
 }

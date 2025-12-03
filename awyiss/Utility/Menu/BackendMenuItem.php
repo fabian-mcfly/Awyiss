@@ -55,8 +55,6 @@ class BackendMenuItem extends MenuItem {
 		}
 		/**
 		 * Make sure to not set the identity in the config to avoid confusion
-		 *
-		 * @noinspection PhpVariableNamingConventionInspection
 		 */
 		unset($config['identity']);
 		$this->setConfig($config);
@@ -73,8 +71,8 @@ class BackendMenuItem extends MenuItem {
 	 */
 	public function isCurrentRoute(string $currentRoute): bool {
 		if (!isset(static::$testUrl)) {
-			$lo_request = Router::getRequest();
-			$ls_controller = $lo_request->getParam('controller');
+			$request = Router::getRequest();
+			$controller = $request->getParam('controller');
 
 			/**
 			 * Some controllers depend on others, like contents on any page-role,
@@ -86,16 +84,16 @@ class BackendMenuItem extends MenuItem {
 			 *
 			 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
 			 */
-			$ls_controller = match ($ls_controller) {
-				'Contents' => $this->getPageRoleFromUrl($currentRoute) ?? $ls_controller,
+			$controller = match ($controller) {
+				'Contents' => $this->getPageRoleFromUrl($currentRoute) ?? $controller,
 				'FormElements' => 'Forms',
 				'MenuEntries' => 'Menus',
-				default => $ls_controller,
+				default => $controller,
 			};
 
 			static::$testUrl = Router::url([
-				'lang' => $lo_request->getParam('lang'),
-				'controller' => $ls_controller,
+				'lang' => $request->getParam('lang'),
+				'controller' => $controller,
 				'action' => 'overview',
 			], true);
 		}
@@ -104,27 +102,26 @@ class BackendMenuItem extends MenuItem {
 			return $this->isCurrentRoute;
 		}
 
-		$ls_itemUrl = $this->getLink()?->getUrl();
-		if (!$ls_itemUrl) {
+		$itemUrl = $this->getLink()?->getUrl();
+		if (!$itemUrl) {
 			$this->isCurrentRoute = false;
 			return false;
 		}
 
-		$ls_currentRoute = rtrim($currentRoute, '/') . '/';
-		$ls_itemUrl = rtrim($ls_itemUrl, '/') . '/';
+		$currentRoute = rtrim($currentRoute, '/') . '/';
+		$itemUrl = rtrim($itemUrl, '/') . '/';
 
 		// Make sure the itemUrl is absolute
-		if (!str_contains($ls_itemUrl, '//')) {
-			$ls_itemUrl = Router::url($ls_itemUrl, true);
+		if (!str_contains($itemUrl, '//')) {
+			$itemUrl = Router::url($itemUrl, true);
 		}
 
 		// Make sure the currentRoute is absolute
-		if (!str_contains($ls_currentRoute, '//')) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$ls_currentRoute = Router::url($ls_currentRoute, true);
+		if (!str_contains($currentRoute, '//')) {
+			$currentRoute = Router::url($currentRoute, true);
 		}
 
-		$this->isCurrentRoute = $ls_itemUrl === $ls_currentRoute || $ls_itemUrl === static::$testUrl;
+		$this->isCurrentRoute = $itemUrl === $currentRoute || $itemUrl === static::$testUrl;
 
 		return $this->isCurrentRoute;
 	}
@@ -137,25 +134,25 @@ class BackendMenuItem extends MenuItem {
 	 * @return string|null
 	 */
 	protected function getPageRoleFromUrl(string $currentRoute): ?string {
-		$la_parts = explode('/', trim($currentRoute, '/'));
+		$parts = explode('/', trim($currentRoute, '/'));
 
 		// Filter out all parameters
-		$la_parts = array_filter($la_parts, static function ($item) {
+		$parts = array_filter($parts, static function ($item) {
 			return !str_contains($item, ':');
 		});
 
 		// The page role is the second to last part
-		$ls_pageRole = array_slice($la_parts, -2, 1)[0] ?? null;
+		$pageRole = array_slice($parts, -2, 1)[0] ?? null;
 
-		if (!$ls_pageRole) {
+		if (!$pageRole) {
 			return null;
 		}
 
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-		if ($ls_pageRoleEnum::tryFromName($ls_pageRole)) {
-			return $ls_pageRole;
+		if ($pageRoleEnum::tryFromName($pageRole)) {
+			return $pageRole;
 		}
 
 		return null;

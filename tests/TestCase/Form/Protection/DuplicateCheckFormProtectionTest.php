@@ -67,7 +67,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -81,7 +80,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\DuplicateCheckFormProtection::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		$result = $this->duplicateCheckFormProtection->initialize(
@@ -98,7 +96,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\DuplicateCheckFormProtection::getHtml()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHtml(): void {
 		$this->duplicateCheckFormProtection->initialize(
@@ -122,7 +119,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\DuplicateCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithNoExistingEntries(): void {
 		$this->duplicateCheckFormProtection->initialize(
@@ -142,7 +138,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\DuplicateCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithExistingRecentDuplicate(): void {
 		$this->duplicateCheckFormProtection->initialize(
@@ -178,7 +173,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\DuplicateCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithExistingOldDuplicate(): void {
 		$this->duplicateCheckFormProtection->initialize(
@@ -214,7 +208,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\DuplicateCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithDifferentData(): void {
 		$this->duplicateCheckFormProtection->initialize(
@@ -251,7 +244,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\DuplicateCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithCustomTimeout(): void {
 		// Mock form options with custom timeout
@@ -293,7 +285,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\DuplicateCheckFormProtection::modifyForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyForm(): void {
 		$this->duplicateCheckFormProtection->initialize(
@@ -313,7 +304,6 @@ class DuplicateCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\DuplicateCheckFormProtection::modifyFormEntry()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyFormEntry(): void {
 		$this->duplicateCheckFormProtection->initialize(

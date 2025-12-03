@@ -105,34 +105,34 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			$this->addDefaultAuthenticators($service, $request);
 		}
 
-		$la_authenticators = static::$authenticators;
-		usort($la_authenticators, function (array $a, array $b): int {
+		$authenticators = static::$authenticators;
+		usort($authenticators, function (array $a, array $b): int {
 			return $a['priority'] <=> $b['priority'];
 		});
 
-		foreach ($la_authenticators as $la_authenticator) {
-			$lx_authenticator = $la_authenticator['authenticator'];
+		foreach ($authenticators as $authenticator) {
+			$authenticator = $authenticator['authenticator'];
 
 			/*
-			 * If $la_authenticator is not callable, the `addAuthenticator`-method has set the `name` and `config` keys.
+			 * If $authenticator is not callable, the `addAuthenticator`-method has set the `name` and `config` keys.
 			 * If it's a callable, we need to check those keys here.
 			 */
-			if (is_callable($lx_authenticator)) {
-				$lx_authenticator = $lx_authenticator();
-				if (!isset($lx_authenticator['name'])) {
+			if (is_callable($authenticator)) {
+				$authenticator = $authenticator();
+				if (!isset($authenticator['name'])) {
 					throw new Exception(__d('authenticator', 'authenticator_name_missing'));
 				}
 
-				if (!isset($lx_authenticator['config'])) {
-					$lx_authenticator['config'] = [];
+				if (!isset($authenticator['config'])) {
+					$authenticator['config'] = [];
 				}
-				elseif (!is_array($lx_authenticator['config'])) {
+				elseif (!is_array($authenticator['config'])) {
 					throw new Exception(__d('authenticator', 'authenticator_config_not_array'));
 				}
 			}
 
-			if (!$service->authenticators()->has($lx_authenticator['name'])) {
-				$service->loadAuthenticator($lx_authenticator['name'], $lx_authenticator['config']);
+			if (!$service->authenticators()->has($authenticator['name'])) {
+				$service->loadAuthenticator($authenticator['name'], $authenticator['config']);
 			}
 		}
 	}
@@ -148,8 +148,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		$this->addAuthenticator(SessionAuthenticator::class, [
 			'identify' => function (User $user): bool {
 				//Set last_login
-				$lo_checkTime = DateTime::now()->subMinutes(1);
-				if ($lo_checkTime >= $user->lastLogin) {
+				$checkTime = DateTime::now()->subMinutes(1);
+				if ($checkTime >= $user->lastLogin) {
 					$user->set('lastLogin', DateTime::now());
 
 					return true;
@@ -186,32 +186,32 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			return $a['priority'] <=> $b['priority'];
 		});
 
-		$la_identifiers = [];
-		foreach (static::$identifiers as $la_identifier) {
-			$lx_identifier = $la_identifier['identifier'];
+		$identifiers = [];
+		foreach (static::$identifiers as $identifier) {
+			$identifier = $identifier['identifier'];
 
 			/*
-			 * If $lx_identifier is not callable, the `addIdentifier`-method set the `name` and `config` keys
+			 * If $identifier is not callable, the `addIdentifier`-method set the `name` and `config` keys
 			 * If it's a callable, we need to check those keys here.
 			 */
-			if (is_callable($lx_identifier)) {
-				$lx_identifier = $lx_identifier();
-				if (!isset($lx_identifier['name'])) {
+			if (is_callable($identifier)) {
+				$identifier = $identifier();
+				if (!isset($identifier['name'])) {
 					throw new Exception(__d('authenticator', 'identifier_name_missing'));
 				}
 
-				if (!isset($lx_identifier['config'])) {
-					$lx_identifier['config'] = [];
+				if (!isset($identifier['config'])) {
+					$identifier['config'] = [];
 				}
-				if (!is_array($lx_identifier['config'])) {
+				if (!is_array($identifier['config'])) {
 					throw new Exception(__d('authenticator', 'identifier_config_not_array'));
 				}
 			}
 
-			$la_identifiers[ $lx_identifier['name'] ] = $lx_identifier['config'];
+			$identifiers[ $identifier['name'] ] = $identifier['config'];
 		}
 
-		return $la_identifiers;
+		return $identifiers;
 	}
 
 
@@ -240,10 +240,10 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected function getBackendAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface {
-		$lo_service = new AuthenticationService();
+		$service = new AuthenticationService();
 
 		// Define where users should be redirected to when they are not authenticated
-		$lo_service->setConfig([
+		$service->setConfig([
 			'unauthenticatedRedirect' => Router::url([
 				'_name' => Awyiss::REALM_BACKEND,
 				'action' => 'login',
@@ -255,9 +255,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			'queryParam' => null,
 		]);
 
-		$this->loadAuthenticators($lo_service, $request);
+		$this->loadAuthenticators($service, $request);
 
-		return $lo_service;
+		return $service;
 	}
 
 
@@ -277,13 +277,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				],
 				'priority' => $priority,
 			];
+
+			return;
 		}
-		else {
-			static::$authenticators[] = [
-				'authenticator' => $authenticator,
-				'priority' => $priority,
-			];
-		}
+
+		static::$authenticators[] = [
+			'authenticator' => $authenticator,
+			'priority' => $priority,
+		];
 	}
 
 
@@ -314,13 +315,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				],
 				'priority' => $priority,
 			];
+
+			return;
 		}
-		else {
-			static::$identifiers[] = [
-				'identifier' => $identifier,
-				'priority' => $priority,
-			];
-		}
+
+		static::$identifiers[] = [
+			'identifier' => $identifier,
+			'priority' => $priority,
+		];
 	}
 
 

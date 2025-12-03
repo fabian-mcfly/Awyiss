@@ -28,30 +28,4 @@ interface SettingPermissionOptionInterface {
 	 * @noinspection PhpUnused
 	 */
 	public function setSettings(SettingCollection $settings): static;
-	/*
-	protected SettingCollection $settingCollection;
-
-
-	public function getSettings (): SettingCollection {
-		if (!isset($this->settingCollection)) {
-			$this->settingCollection = $this->defaultSettings();
-		}
-
-		return $this->settingCollection;
-	}
-	public function setSettings (SettingCollection $settings): static {
-		$this->settingCollection = $settings;
-
-		return $this;
-	}
-	protected function defaultSettings (): SettingCollection {
-		$lo_settingCollection = new SettingCollection();
-
-		$lo_settingCollection->load(\Awyiss\Authorization\Permission\Setting\SingleChoiceSetting::class, [
-			'options' => [0, 1],
-			'type' => \Awyiss\Authorization\Permission\Setting\SingleChoiceSetting::TYPE_SELECT,
-		]);
-
-		return $lo_settingCollection;
-	}*/
 }

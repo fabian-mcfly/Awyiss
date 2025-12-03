@@ -20,19 +20,19 @@ class OrsRoutingService implements RoutingServiceInterface {
 	 * @inheritDoc
 	 */
 	public function findCoordinates(string $search, ?string $languageShortcode = null): AddressCollection|false {
-		$la_params = [
+		$params = [
 			'api_key' => Configure::read('Awyiss.System.Frontend.route.orsApiKey'),
 			'language' => $languageShortcode ?? Router::getRequest()->getParam('lang'),
 			'text' => $search,
 		];
 
-		$ls_url = 'https://api.openrouteservice.org/geocode/search';
+		$url = 'https://api.openrouteservice.org/geocode/search';
 
-		$lo_client = $this->getClient();
+		$client = $this->getClient();
 
-		$lo_response = $lo_client->get(
-			$ls_url,
-			$la_params,
+		$response = $client->get(
+			$url,
+			$params,
 			[
 				'headers' => [
 					'Accept' => 'application/json',
@@ -42,29 +42,29 @@ class OrsRoutingService implements RoutingServiceInterface {
 			]
 		);
 
-		if ($lo_response->getStatusCode() !== 200) {
+		if ($response->getStatusCode() !== 200) {
 			return false;
 		}
 
-		$la_response = $lo_response->getJson();
+		$response = $response->getJson();
 
-		if (empty($la_response['features'])) {
+		if (empty($response['features'])) {
 			return false;
 		}
 
-		$lo_addresses = new AddressCollection();
+		$addresses = new AddressCollection();
 
-		/** @var class-string<\Awyiss\Utility\Route\Address> $ls_addressClass */
-		$ls_addressClass = App::className('Address', 'Utility/Route');
+		/** @var class-string<\Awyiss\Utility\Route\Address> $addressClass */
+		$addressClass = App::className('Address', 'Utility/Route');
 
-		foreach ($la_response['features'] as $la_feature) {
-			$lo_address = $ls_addressClass::fromOrs($la_feature);
-			if ($lo_address) {
-				$lo_addresses->add($lo_address);
+		foreach ($response['features'] as $feature) {
+			$address = $addressClass::fromOrs($feature);
+			if ($address) {
+				$addresses->add($address);
 			}
 		}
 
-		return $lo_addresses;
+		return $addresses;
 	}
 
 
@@ -78,22 +78,22 @@ class OrsRoutingService implements RoutingServiceInterface {
 		?string $languageShortcode = null,
 		array $params = []
 	): RouteInterface|false {
-		$la_params = $params + [
+		$params += [
 			'language' => $languageShortcode ?? Router::getRequest()->getParam('lang'),
 			'instructions_format' => 'html',
 		];
 
 		// The provided start and end addresses define the route.
-		$la_params['coordinates'] = [
+		$params['coordinates'] = [
 			[$start->getLng(), $start->getLat()],
 			[$end->getLng(), $end->getLat()],
 		];
 
-		$ls_url = 'https://api.openrouteservice.org/v2/directions/' . $transportationMode . '/geojson';
+		$url = 'https://api.openrouteservice.org/v2/directions/' . $transportationMode . '/geojson';
 
-		$lo_client = $this->getClient();
+		$client = $this->getClient();
 
-		$lo_response = $lo_client->post($ls_url, json_encode($la_params), [
+		$response = $client->post($url, json_encode($params), [
 			'headers' => [
 				'Accept' => 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
 				'Authorization' => Configure::read('Awyiss.System.Frontend.route.orsApiKey'),
@@ -102,20 +102,20 @@ class OrsRoutingService implements RoutingServiceInterface {
 			],
 		]);
 
-		if ($lo_response->getStatusCode() !== 200) {
+		if ($response->getStatusCode() !== 200) {
 			return false;
 		}
 
-		$la_response = $lo_response->getJson();
+		$response = $response->getJson();
 
-		if (!$la_response) {
+		if (!$response) {
 			return false;
 		}
 
-		/** @var class-string<\Awyiss\Utility\Route\RouteInterface> $ls_routeClass */
-		$ls_routeClass = App::className('Route', 'Utility/Route');
+		/** @var class-string<\Awyiss\Utility\Route\RouteInterface> $routeClass */
+		$routeClass = App::className('Route', 'Utility/Route');
 
-		return new $ls_routeClass($start, $end, $la_response['features'][0]);
+		return new $routeClass($start, $end, $response['features'][0]);
 	}
 
 

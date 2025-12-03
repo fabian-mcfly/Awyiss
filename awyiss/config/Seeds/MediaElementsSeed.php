@@ -10,7 +10,7 @@ class MediaElementsSeed extends AbstractSeed {
 	 * {@inheritDoc}
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
             [
                 'id' => 1,
                 'title' => 'Hidden Folder',
@@ -93,10 +93,10 @@ class MediaElementsSeed extends AbstractSeed {
             ],
         ];
 
-		$lo_table = $this->table('media_elements');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('media_elements');
+		$table->insert($data)->save();
 
-		$la_data = [
+		$data = [
 			[
 				'locale' => 'de',
 				'model' => 'media_elements',
@@ -141,7 +141,7 @@ class MediaElementsSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('i18n');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('i18n');
+		$table->insert($data)->save();
 	}
 }

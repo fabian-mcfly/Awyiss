@@ -12,7 +12,7 @@ class ContentAreasSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'identifier' => 'ContentArea',
@@ -28,7 +28,7 @@ class ContentAreasSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('content_areas');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('content_areas');
+		$table->insert($data)->save();
 	}
 }

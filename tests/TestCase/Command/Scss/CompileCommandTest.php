@@ -33,7 +33,6 @@ class CompileCommandTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -59,7 +58,6 @@ class CompileCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDescription(): void {
 		$description = CompileCommand::getDescription();
@@ -70,7 +68,6 @@ class CompileCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildOptionParserIncludesRealmOption(): void {
 		$parser = new ConsoleOptionParser('test');
@@ -88,7 +85,6 @@ class CompileCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteWithFrontendRealmSuccess(): void {
 		$testCssPath = ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'css' . DS . 'test.css';
@@ -111,7 +107,6 @@ class CompileCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExecuteWithBackendRealmSuccess(): void {
 		$mainBackendCssPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'css' . DS . 'main.css';

@@ -25,7 +25,9 @@ class CarsListener implements EventListenerInterface {
 	/**
 	 * Dummy listener for Cars model
 	 *
+	 * @param \Cake\Event\EventInterface $event
 	 * @return void
+	 * @noinspection PhpUnused
 	 */
 	public function dummyListener(EventInterface $event): void {
 		$event->setResult('dummyListener called in CarsListener');

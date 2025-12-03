@@ -31,9 +31,8 @@ class TableLocator extends BaseTableLocator {
 		EventListenersProvider::loadListener($alias, 'Global');
 
 		if (empty($options['associations'])) {
-			$lo_associations = new AssociationCollection($this);
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$options['associations'] = $lo_associations;
+			$associations = new AssociationCollection($this);
+			$options['associations'] = $associations;
 		}
 
 		return parent::createInstance($alias, $options);
@@ -62,7 +61,6 @@ class TableLocator extends BaseTableLocator {
 	 */
 	protected function _getClassName(string $alias, array $options = []): ?string {
 		if (empty($options['className'])) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$options['className'] = $alias;
 		}
 
@@ -70,10 +68,10 @@ class TableLocator extends BaseTableLocator {
 			return $options['className'];
 		}
 
-		foreach ($this->locations as $ls_location) {
-			$ls_className = App::className($options['className'], $ls_location, 'Table');
-			if ($ls_className !== null) {
-				return $ls_className;
+		foreach ($this->locations as $location) {
+			$className = App::className($options['className'], $location, 'Table');
+			if ($className !== null) {
+				return $className;
 			}
 		}
 

@@ -32,10 +32,10 @@ class MenusController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Menus->find();
-		$this->Search->filterQuery($lo_query);
+		$query = $this->Menus->find();
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -47,19 +47,19 @@ class MenusController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_menus = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$menus = $this->paginate($query);
 		}
 		else {
-			$lo_menus = $lo_query->all();
+			$menus = $query->all();
 		}
 
 		$this->set([
-			'menus' => $lo_menus,
-			'paginated' => $lb_paginated,
+			'menus' => $menus,
+			'paginated' => $paginated,
 			'attributes' => $this->Menus->getAttributes(),
 		]);
 	}
@@ -74,14 +74,14 @@ class MenusController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_menu = $this->Menus->newDefaultEntity();
+		$menu = $this->Menus->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_menu);
+			$this->save($menu);
 		}
 
 		$this->set([
-			'menu' => $lo_menu,
+			'menu' => $menu,
 		]);
 	}
 
@@ -97,13 +97,13 @@ class MenusController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\Menu $lo_menu
+		 * @var \Awyiss\Model\Entity\Menu $menu
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_menu = $this->Menus->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_menu) {
+		$menu = $this->Menus->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$menu) {
 			$this->Flash->error(__('record_not_found'));
 
 
@@ -111,11 +111,11 @@ class MenusController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_menu, 'edit');
+			$this->save($menu, 'edit');
 		}
 
 		$this->set([
-			'menu' => $lo_menu,
+			'menu' => $menu,
 		]);
 	}
 
@@ -132,16 +132,16 @@ class MenusController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Menu $lo_menu */
-		$lo_menu = $this->Menus->findById($id)->first();
-		if (!$lo_menu) {
+		/** @var \Awyiss\Model\Entity\Menu $menu */
+		$menu = $this->Menus->findById($id)->first();
+		if (!$menu) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Menus->delete($lo_menu)) {
+		if ($this->Menus->delete($menu)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -149,8 +149,8 @@ class MenusController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_menu->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($menu->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -167,23 +167,23 @@ class MenusController extends Controller {
 	 * @throws RedirectException
 	 */
 	protected function save(Menu $menu, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->Menus->hasAttributes()) {
-			$la_associated[] = $this->Menus->getAttributesTableName(true);
+			$associated[] = $this->Menus->getAttributesTableName(true);
 			$menu->setAccess('attributes', true);
 		}
 
 		$this->Menus->patchEntity($menu, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Menus->save($menu, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->Menus->save($menu, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -197,9 +197,9 @@ class MenusController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($menu->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($menu->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}

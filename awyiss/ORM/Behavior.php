@@ -43,13 +43,13 @@ class Behavior extends BaseBehavior {
 	public function __construct(Table $table, array $config = []) {
 		parent::__construct($table, $config);
 
-		$la_implementedEvents = $this->getConfig('implementedEvents');
-		if ($la_implementedEvents === null) {
+		$implementedEvents = $this->getConfig('implementedEvents');
+		if ($implementedEvents === null) {
 			$this->setConfig('implementedEvents', $this->defaultEvents);
 		}
 
-		$la_implementedMethods = $this->getConfig('implementedMethods');
-		if (empty($la_implementedMethods)) {
+		$implementedMethods = $this->getConfig('implementedMethods');
+		if (empty($implementedMethods)) {
 			$this->setConfig('implementedMethods', []);
 		}
 	}
@@ -62,14 +62,14 @@ class Behavior extends BaseBehavior {
 	 * @inheritDoc
 	 */
 	public function implementedEvents(): array {
-		$li_priority = $this->getConfig('priority');
-		$la_eventMap = $this->getConfig('implementedEvents', []);
+		$priority = $this->getConfig('priority');
+		$eventMap = $this->getConfig('implementedEvents', []);
 
-		if (empty($la_eventMap)) {
+		if (empty($eventMap)) {
 			return [];
 		}
 
-		return $this->table()->buildEventMap($this, $la_eventMap, $li_priority);
+		return $this->table()->buildEventMap($this, $eventMap, $priority);
 	}
 
 

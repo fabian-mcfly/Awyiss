@@ -41,10 +41,10 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFilter('data_attr', $this->htmlDataAttributes(...)),
 
 			new TwigFilter('json_decode', function (string $json): ?array {
-				$la_return = json_decode($json, true);
+				$return = json_decode($json, true);
 
 				// If the JSON is invalid, return null
-				return !is_array($la_return) ? null : $la_return;
+				return !is_array($return) ? null : $return;
 			}),
 
 			new TwigFilter('prefixNumericClass', function (string $string): string {
@@ -84,15 +84,14 @@ class AwyissExtension extends AbstractExtension {
 						throw new InvalidArgumentException('The "content" function requires a Page entity in the context.');
 					}
 
-					$la_options = ['viewVars' => $context];
-					$la_options = Hash::merge($la_options, $options);
+					$options = Hash::merge(['viewVars' => $context], $options);
 
 					try {
 						return $context['_view']->cell('Frontend/Contents', [
 							'contentArea' => $name,
 							'page' => $context['page'],
 							'view' => $context['_view'],
-							'options' => $la_options,
+							'options' => $options,
 						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
@@ -115,15 +114,14 @@ class AwyissExtension extends AbstractExtension {
 						throw new InvalidArgumentException('The "form" function requires a Page entity in the context.');
 					}
 
-					$la_options = ['viewVars' => $context, 'includeWrapper' => true];
-					$la_options = Hash::merge($la_options, $options);
+					$options = Hash::merge(['viewVars' => $context, 'includeWrapper' => true], $options);
 
 					try {
 						return $context['_view']->cell('Frontend/Form', [
 							'identifier' => $identifier,
 							'page' => $context['page'],
 							'view' => $context['_view'],
-							'options' => $la_options,
+							'options' => $options,
 						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
@@ -156,15 +154,15 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction(
 				'hashPrinter',
 				function (CollectionInterface|array $data, string $value, string $key, string $spacer = '- ', int $levelOffset = 0): array {
-					$la_data = is_array($data) ? $data : $data->toList();
+					$data = is_array($data) ? $data : $data->toList();
 
-					$la_return = [];
-					foreach ($la_data as $lx_key => $lx_item) {
-						$la_return[ $key === 'key' ? $lx_key : $lx_item[ $key ] ] = str_repeat($spacer, $lx_item['level'] - $levelOffset) . $lx_item[ $value ];
+					$return = [];
+					foreach ($data as $dataKey => $dataItem) {
+						$return[ $key === 'key' ? $dataKey : $dataItem[ $key ] ] = str_repeat($spacer, $dataItem['level'] - $levelOffset) . $dataItem[ $value ];
 					}
 
 
-					return $la_return;
+					return $return;
 				}
 			),
 
@@ -177,15 +175,14 @@ class AwyissExtension extends AbstractExtension {
 						throw new InvalidArgumentException('The "menu" function requires languageShortcode string in the context.');
 					}
 
-					$la_options = ['viewVars' => $context];
-					$la_options = Hash::merge($la_options, $options);
+					$options = Hash::merge(['viewVars' => $context], $options);
 
 					try {
 						return $context['_view']->cell('Frontend/Menu', [
 							'identifier' => $name,
 							'languageShortcode' => $context['languageShortcode'],
 							'view' => $context['_view'],
-							'options' => $la_options,
+							'options' => $options,
 						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
@@ -226,15 +223,14 @@ class AwyissExtension extends AbstractExtension {
 						throw new InvalidArgumentException('The "content" function requires a Page entity in the context.');
 					}
 
-					$la_options = ['viewVars' => $context];
-					$la_options = Hash::merge($la_options, $options);
+					$options = Hash::merge(['viewVars' => $context], $options);
 
 					try {
 						return $context['_view']->cell('Frontend/Survey', [
 							'identifier' => $identifier,
 							'page' => $context['page'],
 							'view' => $context['_view'],
-							'options' => $la_options,
+							'options' => $options,
 						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
@@ -249,14 +245,13 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction(
 				'widget',
 				function (array $context, string $name, array $options = []): ?string {
-					$la_options = ['viewVars' => $context];
-					$la_options = Hash::merge($la_options, $options);
+					$options = Hash::merge(['viewVars' => $context], $options);
 
 					try {
 						return $context['_view']->cell('Frontend/Widgets', [
 							'identifier' => $name,
 							'view' => $context['_view'],
-							'options' => $la_options,
+							'options' => $options,
 						])->render() ?: null;
 					}
 					catch (RedirectException $ex) {
@@ -271,37 +266,37 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction(
 				'wordCount',
 				function (array $context, string $contents): int {
-					$lo_dom = HTMLDocument::createFromString($contents, LIBXML_NOERROR, 'UTF-8');
+					$dom = HTMLDocument::createFromString($contents, LIBXML_NOERROR, 'UTF-8');
 
-					$ls_html = '';
+					$html = '';
 
-					$lo_body = $lo_dom->querySelector('body');
+					$body = $dom->querySelector('body');
 
 					// Remove unwanted nodes
-					$la_unwantedNodes = [
+					$unwantedNodeNames = [
 						'.Module-Breadcrumbs', 'footer', 'header', 'nav', 'template', 'style', 'script', 'nav', 'form', 'noscript',
 						'link', 'meta', 'picture', 'video', 'audio', 'img', 'input', 'select', 'textarea', 'button', 'canvas', 'iframe', 'svg',
 					];
-					foreach ($la_unwantedNodes as $ls_unwantedNode) {
-						$lo_unwantedNodes = $lo_body->querySelectorAll($ls_unwantedNode);
-						foreach ($lo_unwantedNodes as $lo_unwantedNode) {
-							$lo_unwantedNode->parentNode->removeChild($lo_unwantedNode);
+					foreach ($unwantedNodeNames as $unwantedNodeName) {
+						$unwantedNodes = $body->querySelectorAll($unwantedNodeName);
+						foreach ($unwantedNodes as $unwantedNode) {
+							$unwantedNode->parentNode->removeChild($unwantedNode);
 						}
 					}
 
-					while ($lo_body->firstChild) {
-						$ls_html .= $lo_dom->saveHTML($lo_body->firstChild);
-						$lo_body->removeChild($lo_body->firstChild);
+					while ($body->firstChild) {
+						$html .= $dom->saveHTML($body->firstChild);
+						$body->removeChild($body->firstChild);
 					}
 
-					$ls_cleanText = str_replace(['<br>', '<br/>', '<br />'], ' ', $ls_html);
-					$ls_cleanText = strip_tags($ls_cleanText);
-					$ls_cleanText = str_replace('&nbsp;', ' ', $ls_cleanText);
-					$ls_cleanText = preg_replace('/([\s\n\r\t]|\xC2\xA0|\xE2\x80\xAF)/', ' ', $ls_cleanText);
-					$ls_cleanText = preg_replace('/[ ]+/', ' ', $ls_cleanText);
+					$cleanText = str_replace(['<br>', '<br/>', '<br />'], ' ', $html);
+					$cleanText = strip_tags($cleanText);
+					$cleanText = str_replace('&nbsp;', ' ', $cleanText);
+					$cleanText = preg_replace('/([\s\n\r\t]|\xC2\xA0|\xE2\x80\xAF)/', ' ', $cleanText);
+					$cleanText = preg_replace('/[ ]+/', ' ', $cleanText);
 
-					$la_words = array_filter(explode(' ', $ls_cleanText));
-					return count($la_words);
+					$words = array_filter(explode(' ', $cleanText));
+					return count($words);
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
@@ -347,10 +342,10 @@ class AwyissExtension extends AbstractExtension {
 			}),
 
 			new TwigTest('pageRole', function ($value): bool {
-				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-				$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+				$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-				return $ls_pageRoleEnum::tryFromName($value) !== null;
+				return $pageRoleEnum::tryFromName($value) !== null;
 			}),
 
 			new TwigTest('string', function ($value): bool {
@@ -366,13 +361,13 @@ class AwyissExtension extends AbstractExtension {
 	 * @return string
 	 */
 	public static function inlineCss(string $body, string ...$cssFiles): string {
-		static $lo_inliner;
+		static $inliner;
 
-		if (!isset($lo_inliner)) {
-			$lo_inliner = new CssToInlineStyles();
+		if (!isset($inliner)) {
+			$inliner = new CssToInlineStyles();
 		}
 
-		return $lo_inliner->convert($body, implode("\n", $cssFiles));
+		return $inliner->convert($body, implode("\n", $cssFiles));
 	}
 
 
@@ -385,12 +380,12 @@ class AwyissExtension extends AbstractExtension {
 			return '';
 		}
 
-		$la_htmlParts = [];
-		foreach ($attributes as $lx_key => $lx_value) {
-			$la_htmlParts[] = sprintf('data-%s="%s"', $lx_key, htmlspecialchars($lx_value, ENT_QUOTES, 'UTF-8'));
+		$htmlParts = [];
+		foreach ($attributes as $key => $value) {
+			$htmlParts[] = sprintf('data-%s="%s"', $key, htmlspecialchars($value, ENT_QUOTES, 'UTF-8'));
 		}
 
-		return implode(' ', $la_htmlParts);
+		return implode(' ', $htmlParts);
 	}
 
 
@@ -402,44 +397,44 @@ class AwyissExtension extends AbstractExtension {
 	 * @throws \Exception
 	 */
 	public function moduleFunction(array $context, string $name, array $options = []): string {
-		static $la_modules;
+		static $modules;
 
 		if (empty($context['_view'])) {
 			throw new InvalidArgumentException('The "module" function requires a View object in the context.');
 		}
 
-		if (!isset($la_modules)) {
-			$la_modules = ModulesProvider::getModuleFiles();
+		if (!isset($modules)) {
+			$modules = ModulesProvider::getModuleFiles();
 		}
 
 		// Get the value of the data-identifier attribute
-		$ls_identifier = Inflector::variable($name);
+		$identifier = Inflector::variable($name);
 
-		if (!isset($la_modules[ $ls_identifier ])) {
+		if (!isset($modules[ $identifier ])) {
 			return '';
 		}
 
-		/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
-		$ls_moduleClass = $la_modules[ $ls_identifier ];
+		/** @var class-string<\Awyiss\Module\ModuleInterface> $moduleClass */
+		$moduleClass = $modules[ $identifier ];
 
-		$lo_mediaRenderOptions = $context['mediaRenderOptions'] ?? null;
-		if (!$lo_mediaRenderOptions && !empty($context['designSettings'])) {
-			$la_designVariables = $context['designSettings'];
+		$mediaRenderOptions = $context['mediaRenderOptions'] ?? null;
+		if (!$mediaRenderOptions && !empty($context['designSettings'])) {
+			$designVariables = $context['designSettings'];
 
-			/** @var class-string<\Awyiss\Utility\Media\MediaRenderOptions> $ls_className */
-			$ls_className = App::className('MediaRenderOptions', 'Utility/Media');
+			/** @var class-string<\Awyiss\Utility\Media\MediaRenderOptions> $className */
+			$className = App::className('MediaRenderOptions', 'Utility/Media');
 
-			$lo_mediaRenderOptions = new $ls_className(
-				baseWidth: intval($la_designVariables['pageWidth'] ?? 1920),
+			$mediaRenderOptions = new $className(
+				baseWidth: intval($designVariables['pageWidth'] ?? 1920),
 				breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
-				singleColumnBreakpoint: intval($la_designVariables['singleColumnBreakpoint'] ?? 768),
+				singleColumnBreakpoint: intval($designVariables['singleColumnBreakpoint'] ?? 768),
 			);
 		}
 
-		$lo_entity = $options['entity'] ?? null;
+		$entity = $options['entity'] ?? null;
 
-		$lo_language = $context['language'] ?? $context['currentLanguage'] ?? LocaleMiddleware::getLanguage();
+		$language = $context['language'] ?? $context['currentLanguage'] ?? LocaleMiddleware::getLanguage();
 
-		return $ls_moduleClass::render($options, $context['_view'], $lo_mediaRenderOptions, $lo_entity, $lo_language);
+		return $moduleClass::render($options, $context['_view'], $mediaRenderOptions, $entity, $language);
 	}
 }

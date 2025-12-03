@@ -155,13 +155,13 @@ class FormElementsTable extends Table {
 			return $this->availableTypes;
 		}
 
-		$la_types = [];
+		$types = [];
 
-		foreach ($this->availableTypes as $ls_type) {
-			$la_types[ $ls_type ] = __d('form_elements', 'type_' . $ls_type);
+		foreach ($this->availableTypes as $type) {
+			$types[ $type ] = __d('form_elements', 'type_' . $type);
 		}
 
-		return $la_types;
+		return $types;
 	}
 
 
@@ -196,12 +196,12 @@ class FormElementsTable extends Table {
 		// Use the column system of contents
 		$this->columnSystem = array_merge($this->columnSystem, LocalConfig::read('columnSystem', [], 'Contents'));
 
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $ls_className */
-		$ls_className = $this->columnSystem['className'];
-		$ls_className::setMaxDenominator($this->columnSystem['maxColumns']);
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $className */
+		$className = $this->columnSystem['className'];
+		$className::setMaxDenominator($this->columnSystem['maxColumns']);
 
-		$this->columnWidths = $ls_className::getColumnWidths();
-		$this->columnIndents = $ls_className::getColumnIndents();
+		$this->columnWidths = $className::getColumnWidths();
+		$this->columnIndents = $className::getColumnIndents();
 	}
 
 
@@ -389,23 +389,23 @@ class FormElementsTable extends Table {
 		]);
 
 		$rules->add(function (FormElement $entity/*, array $options*/): bool {
-			$la_availableInputTypes = $this->getAvailableTypes();
+			$availableInputTypes = $this->getAvailableTypes();
 
-			return in_array($entity->type, $la_availableInputTypes);
+			return in_array($entity->type, $availableInputTypes);
 		}, 'validInputType', [
 			'errorField' => 'type',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_input_type'),
 		]);
 
 		$rules->add(function (FormElement $entity): bool {
-			/** @var \Awyiss\Utility\Content\ColumnInterface $lo_width */
-			$lo_width = $entity->column['width'];
-			/** @var \Awyiss\Utility\Content\ColumnInterface $lo_indent */
-			$lo_indent = $entity->column['indent'];
+			/** @var \Awyiss\Utility\Content\ColumnInterface $width */
+			$width = $entity->column['width'];
+			/** @var \Awyiss\Utility\Content\ColumnInterface $indent */
+			$indent = $entity->column['indent'];
 
-			$lf_totalWidth = $lo_width->getPercentage() + ($lo_indent?->getPercentage() ?? 0);
+			$totalWidth = $width->getPercentage() + ($indent?->getPercentage() ?? 0);
 
-			if ($lf_totalWidth > 1) {
+			if ($totalWidth > 1) {
 				return false;
 			}
 

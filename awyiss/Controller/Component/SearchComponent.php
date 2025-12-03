@@ -35,23 +35,23 @@ class SearchComponent extends Component {
 	 * @return void
 	 */
 	public function beforeRender(): void {
-		$lo_controller = $this->getController();
-		$ls_action = $lo_controller->getRequest()->getParam('action');
-		$lx_autoload = $this->getConfig('autoload');
+		$controller = $this->getController();
+		$action = $controller->getRequest()->getParam('action');
+		$autoload = $this->getConfig('autoload');
 
 		//Shall we autoload the records?
 		if (
-			$lx_autoload === true ||
+			$autoload === true ||
 			(
-				is_array($lx_autoload) &&
-				in_array($ls_action, $lx_autoload)
+				is_array($autoload) &&
+				in_array($action, $autoload)
 			) ||
 			(
-				is_string($lx_autoload) &&
-				$ls_action === $lx_autoload
+				is_string($autoload) &&
+				$action === $autoload
 			)
 		) {
-			$this->setFilterVars($lo_controller->getName());
+			$this->setFilterVars($controller->getName());
 		}
 	}
 
@@ -72,47 +72,47 @@ class SearchComponent extends Component {
 	 * @return void
 	 */
 	public function setFilterVars(string $tableName, array $blocklistedColumns = []): void {
-		$lo_controller = $this->getController();
-		$lo_table = $this->getController()->fetchTable($tableName);
+		$controller = $this->getController();
+		$table = $this->getController()->fetchTable($tableName);
 
-		if (!$lo_table->hasBehavior('Search')) {
+		if (!$table->hasBehavior('Search')) {
 			return;
 		}
 
-		$lo_view = $lo_controller->viewBuilder();
+		$view = $controller->viewBuilder();
 
-		$la_filterSettings = $lo_view->getVar('_filter') ?? [];
+		$filterSettings = $view->getVar('_filter') ?? [];
 
-		if (!$la_filterSettings) {
-			$la_filterSettings = [
+		if (!$filterSettings) {
+			$filterSettings = [
 				// Unset the regex operator. Regex to the database isn't quiet secure
 				'operators' => array_filter(ComparisonOperator::cases(), fn ($operator) => $operator !== ComparisonOperator::Regexp),
 			];
 		}
 
-		$ls_name = Inflector::underscore($tableName);
+		$name = Inflector::underscore($tableName);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$la_vars = $lo_table->getFilterColumns($blocklistedColumns);
+		$vars = $table->getFilterColumns($blocklistedColumns);
 
 		// Handle post or already saved filter settings
-		if ($lo_controller->getRequest()->is('post')) {
-			$this->handlePostFilterSettings($ls_name, $tableName, $la_vars);
+		if ($controller->getRequest()->is('post')) {
+			$this->handlePostFilterSettings($name, $tableName, $vars);
 		}
 
-		$this->handleSessionFilterSettings($la_filterSettings, $tableName);
+		$this->handleSessionFilterSettings($filterSettings, $tableName);
 
 		// Set the selected columns to the default columns if they are not set
-		$la_filterSettings[ $ls_name ]['selectedColumns'] ??= [];
-		$la_filterSettings[ $ls_name ]['active'] ??= false;
+		$filterSettings[ $name ]['selectedColumns'] ??= [];
+		$filterSettings[ $name ]['active'] ??= false;
 
 		// Order the columns by the order in the selectedColumns array
-		$this->orderVars($la_vars);
+		$this->orderVars($vars);
 
 		// Set the vars in the array
-		$la_filterSettings[ $ls_name ]['columns'] = $la_vars;
+		$filterSettings[ $name ]['columns'] = $vars;
 		// Set the vars in the view
-		$lo_view->setVar('_filter', $la_filterSettings);
+		$view->setVar('_filter', $filterSettings);
 	}
 
 
@@ -122,20 +122,20 @@ class SearchComponent extends Component {
 	 * @return array
 	 */
 	protected function getDefaultSelectedColumns(array $vars, string $tableName): array {
-		$lo_table = $this->getController()->fetchTable($tableName);
+		$table = $this->getController()->fetchTable($tableName);
 
-		$la_defaultSelectedColumns = $lo_table->getBehavior('Search')->getConfig('defaultSelectedColumns');
+		$defaultSelectedColumns = $table->getBehavior('Search')->getConfig('defaultSelectedColumns');
 
-		if (is_array($la_defaultSelectedColumns)) {
-			return $la_defaultSelectedColumns;
+		if (is_array($defaultSelectedColumns)) {
+			return $defaultSelectedColumns;
 		}
 
-		$la_defaultSelectedColumns = [];
+		$defaultSelectedColumns = [];
 		if (array_key_exists('active', $vars)) {
-			$la_defaultSelectedColumns[] = 'active';
+			$defaultSelectedColumns[] = 'active';
 		}
 
-		return $la_defaultSelectedColumns;
+		return $defaultSelectedColumns;
 	}
 
 
@@ -144,7 +144,6 @@ class SearchComponent extends Component {
 	 * @return void
 	 */
 	protected function orderVars(array &$vars): void {
-		/** @noinspection PhpVariableNamingConventionInspection */
 		uksort($vars, function (string $a, string $b): int {
 			// Always put 'active' first
 			if ($a === 'active') {
@@ -166,14 +165,14 @@ class SearchComponent extends Component {
 	 * @return void
 	 */
 	protected function handlePostFilterSettings(string $name, string $tableName, array $vars): void {
-		$lo_request = $this->getController()->getRequest();
-		$la_postData = $lo_request->getData('filter.' . $name);
+		$request = $this->getController()->getRequest();
+		$postData = $request->getData('filter.' . $name);
 
-		$lo_table = $this->getController()->fetchTable($tableName);
-		$lo_sessionIdentifier = $lo_table->getBehavior('Search')->getConfig('sessionIdentifier');
+		$table = $this->getController()->fetchTable($tableName);
+		$sessionIdentifier = $table->getBehavior('Search')->getConfig('sessionIdentifier');
 
-		if ($lo_request->getData('submit_type') === 'reset') {
-			$lo_request->getSession()->delete($lo_sessionIdentifier);
+		if ($request->getData('submit_type') === 'reset') {
+			$request->getSession()->delete($sessionIdentifier);
 
 			// Redirect to the same page to prevent resubmission
 			$this->getController()->redirect([]);
@@ -181,53 +180,53 @@ class SearchComponent extends Component {
 			return;
 		}
 
-		if (!$la_postData || !is_array($la_postData)) {
+		if (!$postData || !is_array($postData)) {
 			return;
 		}
 
-		$la_settings = [
+		$settings = [
 			'operators' => [],
 			'selectedColumns' => [],
 			'values' => [],
 		];
 
-		foreach ($la_postData as $ls_column => $la_columnSettings) {
-			if (!isset($vars[ $ls_column ]) || !($la_columnSettings['active'] ?? false)) {
+		foreach ($postData as $column => $columnSettings) {
+			if (!isset($vars[ $column ]) || !($columnSettings['active'] ?? false)) {
 				continue;
 			}
 
-			if ($la_columnSettings['order'] ?? null) {
-				$la_settings['selectedColumns'][ $la_columnSettings['order'] ] = $ls_column;
+			if ($columnSettings['order'] ?? null) {
+				$settings['selectedColumns'][ $columnSettings['order'] ] = $column;
 			}
 			else {
-				$la_settings['selectedColumns'][] = $ls_column;
+				$settings['selectedColumns'][] = $column;
 			}
 
-			$ls_value = $la_columnSettings['value'] ?? null;
+			$value = $columnSettings['value'] ?? null;
 
 			if (
-				$ls_value === '' ||
+				$value === '' ||
 				(
-					$ls_value === 'all' &&
-					$vars[ $ls_column ]['type'] === 'boolean'
+					$value === 'all' &&
+					$vars[ $column ]['type'] === 'boolean'
 				)
 			) {
-				$ls_value = null;
+				$value = null;
 			}
 
-			$la_settings['operators'][ $ls_column ] = $la_columnSettings['operator'] ?? '=';
-			$la_settings['values'][ $ls_column ] = $ls_value;
+			$settings['operators'][ $column ] = $columnSettings['operator'] ?? '=';
+			$settings['values'][ $column ] = $value;
 		}
 
 		// Reset the order
-		$la_settings['selectedColumns'] = array_values($la_settings['selectedColumns']);
+		$settings['selectedColumns'] = array_values($settings['selectedColumns']);
 
-		if (!$la_settings['selectedColumns']) {
+		if (!$settings['selectedColumns']) {
 			// Delete the session data if no columns are selected
-			$lo_request->getSession()->delete($lo_sessionIdentifier);
+			$request->getSession()->delete($sessionIdentifier);
 		}
 		else {
-			$lo_request->getSession()->write($lo_sessionIdentifier, $la_settings);
+			$request->getSession()->write($sessionIdentifier, $settings);
 		}
 
 		// Redirect to the same page to prevent resubmission
@@ -241,22 +240,20 @@ class SearchComponent extends Component {
 	 * @return void
 	 */
 	protected function handleSessionFilterSettings(array &$filterSettings, string $tableName): void {
-		$lo_request = $this->getController()->getRequest();
-		$lo_table = $this->getController()->fetchTable($tableName);
+		$request = $this->getController()->getRequest();
+		$table = $this->getController()->fetchTable($tableName);
 
-		$lo_sessionIdentifier = $lo_table->getBehavior('Search')->getConfig('sessionIdentifier');
+		$sessionIdentifier = $table->getBehavior('Search')->getConfig('sessionIdentifier');
 
-		$la_sessionFilterSettings = $lo_request->getSession()->read($lo_sessionIdentifier);
+		$sessionFilterSettings = $request->getSession()->read($sessionIdentifier);
 
-		if (!$la_sessionFilterSettings) {
+		if (!$sessionFilterSettings) {
 			return;
 		}
 
-		$ls_name = Inflector::underscore($tableName);
-		/** @noinspection PhpVariableNamingConventionInspection */
-		$filterSettings[ $ls_name ] = [
+		$filterSettings[ Inflector::underscore($tableName) ] = [
 			'active' => true,
-			'selectedColumns' => $la_sessionFilterSettings['selectedColumns'],
+			'selectedColumns' => $sessionFilterSettings['selectedColumns'],
 		];
 	}
 }

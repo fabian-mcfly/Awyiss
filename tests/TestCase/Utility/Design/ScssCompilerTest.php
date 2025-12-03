@@ -22,7 +22,6 @@ use SplFileInfo;
 class ScssCompilerTest extends TestCase {
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -54,7 +53,6 @@ class ScssCompilerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::discoverRealmFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDiscoverRealmFiles(): void {
 		$files = ScssCompiler::discoverRealmFiles(Awyiss::REALM_FRONTEND);
@@ -76,7 +74,6 @@ class ScssCompilerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::discoverRealmFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDiscoverRealmFilesWithInvalidRealm(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -89,7 +86,6 @@ class ScssCompilerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::discoverFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDiscoverFiles(): void {
 		$files = ScssCompiler::discoverFiles(ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'scss');
@@ -120,7 +116,6 @@ class ScssCompilerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::discoverFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDiscoverFilesWithInvalidPath(): void {
 		$files = ScssCompiler::discoverFiles('unknown_path');
@@ -134,7 +129,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compile()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompile(): void {
 		$files = ScssCompiler::discoverFiles(ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'scss');
@@ -203,7 +197,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compile()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileWithVars(): void {
 		$files = ScssCompiler::discoverFiles(ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'scss');
@@ -275,7 +268,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compile()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileReturnsCSS(): void {
 		$files = ScssCompiler::discoverFiles(ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'scss');
@@ -319,7 +311,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compile()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileContainsColumnSystem(): void {
 		$files = ScssCompiler::discoverFiles(ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'scss');
@@ -359,7 +350,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compile()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileForUnknownPath(): void {
 		$files = ScssCompiler::discoverFiles('unknown_path');
@@ -372,7 +362,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileFolders()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileFolders(): void {
 		$files = ScssCompiler::discoverRealmFiles(Awyiss::REALM_FRONTEND);
@@ -396,7 +385,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileFolders()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileFoldersWithVars(): void {
 		$files = ScssCompiler::discoverRealmFiles(Awyiss::REALM_FRONTEND);
@@ -422,7 +410,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileFolders()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileFoldersWithInvalidValue(): void {
 		/** @noinspection PhpParamsInspection */
@@ -438,7 +425,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScss(): void {
 		$filePath = ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'css' . DS . 'test.css';
@@ -456,7 +442,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssWithVars(): void {
 		$filePath = ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'css' . DS . 'test.css';
@@ -482,7 +467,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssReturnsCSS(): void {
 		$filePath = ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'css' . DS . 'test.css';
@@ -504,7 +488,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssIncludesColumnSystem(): void {
 		$file = new SplFileInfo(ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'scss' . DS . 'test.scss');
@@ -539,7 +522,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssWithNonScssFile(): void {
 		$file = new SplFileInfo(ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'scss' . DS . 'non_scss_file.txt');
@@ -553,7 +535,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssRemovesMinifiedCssFile(): void {
 		$filePath = ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'css' . DS . 'test.min.css';
@@ -571,7 +552,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssWithNonExistingFile(): void {
 		$file = new SplFileInfo(ROOT . DS . 'tests' . DS . 'customer' . DS . 'assets' . DS . 'scss' . DS . 'non_existing_file.scss');
@@ -585,7 +565,6 @@ class ScssCompilerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssCompiler::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssNormalizesVariables(): void {
 		$vars = [

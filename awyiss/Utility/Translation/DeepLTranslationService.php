@@ -74,7 +74,7 @@ class DeepLTranslationService extends AbstractTranslationService {
 	 * @inheritDoc
 	 */
 	public function translateText(string $text, string $targetLanguage, ?string $sourceLanguage = null, array $options = []): TranslationResult|false {
-		$la_data = [
+		$data = [
 			'text' => $text,
 			'target_lang' => $targetLanguage,
 			'tag_handling' => 'html',
@@ -84,32 +84,32 @@ class DeepLTranslationService extends AbstractTranslationService {
 		];
 
 		if ($sourceLanguage !== null) {
-			$la_data['source_lang'] = $sourceLanguage;
+			$data['source_lang'] = $sourceLanguage;
 		}
 
 		try {
 			// Make API request
-			$la_response = $this->apiRequest('/translate', $la_data);
+			$response = $this->apiRequest('/translate', $data);
 		}
 		catch (Exception) {
 			return false;
 		}
 
-		if (!isset($la_response['translations'][0])) {
+		if (!isset($response['translations'][0])) {
 			return false;
 		}
 
-		$la_translation = $la_response['translations'][0];
+		$translation = $response['translations'][0];
 
 		return new TranslationResult(
 			$text,
-			$la_translation['text'],
-			$la_translation['detected_source_language'] ?? $sourceLanguage ?? '',
+			$translation['text'],
+			$translation['detected_source_language'] ?? $sourceLanguage ?? '',
 			$targetLanguage,
 			true,
 			null,
 			[
-				'formality' => $la_data['formality'],
+				'formality' => $data['formality'],
 			]
 		);
 	}
@@ -119,10 +119,10 @@ class DeepLTranslationService extends AbstractTranslationService {
 	 * @inheritDoc
 	 */
 	public function translateBatch(array $texts, string $targetLanguage, ?string $sourceLanguage = null, array $options = []): array|false {
-		$la_originalTexts = array_values($texts);
+		$originalTexts = array_values($texts);
 
-		$la_data = [
-			'text' => $la_originalTexts,
+		$data = [
+			'text' => $originalTexts,
 			'target_lang' => $targetLanguage,
 			'tag_handling' => 'html',
 			'tag_handling_version' => 'v2',
@@ -131,41 +131,41 @@ class DeepLTranslationService extends AbstractTranslationService {
 		];
 
 		if ($sourceLanguage !== null) {
-			$la_data['source_lang'] = $sourceLanguage;
+			$data['source_lang'] = $sourceLanguage;
 		}
 
 		try {
 			// Make API request
-			$la_response = $this->apiRequest('/translate', $la_data);
+			$response = $this->apiRequest('/translate', $data);
 		}
 		catch (Exception) {
 			return false;
 		}
 
-		if (!isset($la_response['translations'])) {
+		if (!isset($response['translations'])) {
 			return false;
 		}
 
-		$la_translations = [];
-		$la_keys = array_keys($texts);
+		$translations = [];
+		$keys = array_keys($texts);
 
-		foreach ($la_response['translations'] as $li_index => $la_translation) {
-			$ls_key = $la_keys[ $li_index ];
-			$ls_originalText = $la_originalTexts[ $li_index ];
-			$la_translations[ $ls_key ] = new TranslationResult(
-				$ls_originalText,
-				$la_translation['text'],
-				$la_translation['detected_source_language'] ?? $sourceLanguage ?? '',
+		foreach ($response['translations'] as $index => $translation) {
+			$key = $keys[ $index ];
+			$originalText = $originalTexts[ $index ];
+			$translations[ $key ] = new TranslationResult(
+				$originalText,
+				$translation['text'],
+				$translation['detected_source_language'] ?? $sourceLanguage ?? '',
 				$targetLanguage,
 				true,
 				null,
 				[
-					'formality' => $la_data['formality'],
+					'formality' => $data['formality'],
 				]
 			);
 		}
 
-		return $la_translations;
+		return $translations;
 	}
 
 
@@ -174,16 +174,16 @@ class DeepLTranslationService extends AbstractTranslationService {
 	 */
 	public function getUsageInfo(): ?TranslationUsageInfo {
 		try {
-			$la_response = $this->apiRequest('/usage', [], 'GET');
+			$response = $this->apiRequest('/usage', [], 'GET');
 		}
 		catch (Exception) {
 			return null;
 		}
 
-		if (isset($la_response['character_count']) && isset($la_response['character_limit'])) {
+		if (isset($response['character_count']) && isset($response['character_limit'])) {
 			return new TranslationUsageInfo(
-				used: $la_response['character_count'],
-				limit: $la_response['character_limit'],
+				used: $response['character_count'],
+				limit: $response['character_limit'],
 				unit: 'characters'
 			);
 		}
@@ -199,27 +199,26 @@ class DeepLTranslationService extends AbstractTranslationService {
 	 * @return array
 	 */
 	protected function apiRequest(string $endpoint, array $data, string $method = 'POST'): array {
-		$ls_url = rtrim($this->apiUrl, '/') . $endpoint;
+		$url = rtrim($this->apiUrl, '/') . $endpoint;
 
-		$la_data = $data;
-		$la_data['auth_key'] = $this->apiKey;
+		$data['auth_key'] = $this->apiKey;
 
-		$lo_client = new Client([
+		$client = new Client([
 			'timeout' => 30,
 			'http_errors' => false,
 		]);
 
 		if ($method === 'POST') {
-			$lo_response = $lo_client->post($ls_url, $la_data);
+			$response = $client->post($url, $data);
 		}
 		else {
-			$lo_response = $lo_client->get($ls_url, $la_data);
+			$response = $client->get($url, $data);
 		}
 
-		if (!$lo_response->isSuccess()) {
-			throw new RuntimeException(sprintf('API Error: HTTP %s - %s', $lo_response->getStatusCode(), $lo_response->getBody()));
+		if (!$response->isSuccess()) {
+			throw new RuntimeException(sprintf('API Error: HTTP %s - %s', $response->getStatusCode(), $response->getBody()));
 		}
 
-		return $lo_response->getJson();
+		return $response->getJson();
 	}
 }

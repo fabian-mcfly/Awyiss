@@ -31,7 +31,6 @@ class AuthenticationListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -42,7 +41,6 @@ class AuthenticationListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -57,7 +55,6 @@ class AuthenticationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AuthenticationListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -74,7 +71,6 @@ class AuthenticationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AuthenticationListener::authenticationAfterAuthenticate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuthenticationAfterAuthenticateSetsIdentityOnRequestingClasses(): void {
 		$mediaFoldersListener = new MediaFoldersListener();
@@ -105,7 +101,6 @@ class AuthenticationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AuthenticationListener::authenticationAfterAuthenticate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuthenticationAfterAuthenticateSetsIdentityInAuditBehaviorOfRequestingModels(): void {
 		$tableLocator = FactoryLocator::get('Table');
@@ -134,7 +129,6 @@ class AuthenticationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AuthenticationListener::authenticationRequestIdentity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuthenticationRequestIdentitySetsIdentityAsResult(): void {
 		$user = new User();
@@ -157,7 +151,6 @@ class AuthenticationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AuthenticationListener::authenticationRequestIdentity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuthenticationRequestIdentitySetsIdentityOnRequestingClassesWhenMethodSetIdentityExists(): void {
 		$user = new User();

@@ -63,10 +63,10 @@ class EnumExtension extends AbstractExtension {
 			 * @return mixed
 			 */
 			public function __call(string $name, array $arguments):	mixed {
-				$ls_enumFQN = sprintf('%s::%s', $this->enum, $name);
+				$enumFQN = sprintf('%s::%s', $this->enum, $name);
 
-				if (defined($ls_enumFQN)) {
-					return constant($ls_enumFQN);
+				if (defined($enumFQN)) {
+					return constant($enumFQN);
 				}
 
 				if (method_exists($this->enum, $name)) {

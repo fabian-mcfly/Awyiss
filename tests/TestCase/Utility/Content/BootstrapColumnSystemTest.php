@@ -28,7 +28,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidthsReturnsCorrectNumberOfColumns(): void {
 		$columnWidths = BootstrapColumnSystem::getColumnWidths();
@@ -40,7 +39,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidthsReturnsBootstrapColumnInstances(): void {
 		$columnWidths = BootstrapColumnSystem::getColumnWidths();
@@ -54,7 +52,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidthsContainsCorrectFractions(): void {
 		$columnWidths = BootstrapColumnSystem::getColumnWidths();
@@ -68,7 +65,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidthsColumnsHaveCorrectNumeratorAndDenominator(): void {
 		$columnWidths = BootstrapColumnSystem::getColumnWidths();
@@ -86,7 +82,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsExcludesFullWidthColumn(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -98,7 +93,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsReturnsCorrectNumberOfIndents(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -110,7 +104,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsContainsCorrectFractions(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -124,7 +117,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsColumnsHaveOffsetCssClassPrefix(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -139,7 +131,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsColumnsHaveCorrectNumeratorAndDenominator(): void {
 		$columnIndents = BootstrapColumnSystem::getColumnIndents();
@@ -157,7 +148,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNameReturnsBootstrap(): void {
 		$name = BootstrapColumnSystem::getName();
@@ -169,7 +159,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::getScssFilePaths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScssFilePaths(): void {
 		$filePaths = BootstrapColumnSystem::getScssFilePaths();
@@ -181,7 +170,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::setMaxDenominator()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetMaxDenominatorChangesColumnCount(): void {
 		BootstrapColumnSystem::setMaxDenominator(6);
@@ -194,7 +182,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::setMaxDenominator()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetMaxDenominatorChangesColumnFractions(): void {
 		BootstrapColumnSystem::setMaxDenominator(4);
@@ -208,7 +195,6 @@ class BootstrapColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumnSystem::setMaxDenominator()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetMaxDenominatorAffectsColumnIndents(): void {
 		BootstrapColumnSystem::setMaxDenominator(3);

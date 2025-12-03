@@ -62,7 +62,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(10, $this->mediaFoldersTable->associations()->keys());
@@ -143,7 +142,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -176,7 +174,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -202,7 +199,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -222,7 +218,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -258,7 +253,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -286,7 +280,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationLanguageShortcodeExactLength(): void {
 		// Test valid language shortcodes
@@ -324,7 +317,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -345,7 +337,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesLanguageExists(): void {
 		// Test with existing language
@@ -365,7 +356,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesLanguageNotExists(): void {
 		// Test with non-existing language
@@ -390,7 +380,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedLanguageShortcode(): void {
 		// Test that root folder (id=1) cannot have languageShortcode changed from null
@@ -415,7 +404,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedActive(): void {
 		// Test that root folder (id=1) can have other fields changed (like active, hidden, etc.)
@@ -441,7 +429,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedActiveWhenCopy(): void {
 		// Test that root folder (id=1) can have other fields changed (like active, hidden, etc.)
@@ -462,7 +449,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedHidden(): void {
 		// Test that root folder (id=1) can have other fields changed (like active, hidden, etc.)
@@ -488,7 +474,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedHiddenWhenCopy(): void {
 		// Test that root folder (id=1) can have other fields changed (like active, hidden, etc.)
@@ -510,7 +495,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedTitle(): void {
 		// Test that root folder (id=1) title cannot be changed from 'Media'
@@ -535,7 +519,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedTitleWhenCopy(): void {
 		// Test that root folder (id=1) title can be changed when copying
@@ -555,7 +538,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedParentId(): void {
 		// Test that root folder (id=1) parentId cannot be changed from null
@@ -581,7 +563,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedParentIdWhenCopy(): void {
 		// Test that root folder (id=1) parentId can be changed when copying
@@ -602,7 +583,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedPath(): void {
 		// Test that root folder (id=1) path cannot be changed from 'media'
@@ -628,7 +608,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRootUnchangedPathWhenCopy(): void {
 		// Test that root folder (id=1) path can be changed when copying
@@ -648,7 +627,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNotNestedUnderRoot(): void {
 		// Test that folders cannot have root (id=1) as parent
@@ -674,7 +652,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesAllowedParentId(): void {
 		// Test that folders can have other folders as parent (not root)
@@ -695,7 +672,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNotRootDeletion(): void {
 		// Test that root folder (id=1) cannot be deleted
@@ -715,7 +691,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesAllowNonRootDeletion(): void {
 		// Test that non-root folders can be deleted
@@ -730,7 +705,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::findActive()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindActive(): void {
 		$query = $this->mediaFoldersTable->find('active');
@@ -755,7 +729,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\MediaFolder $entity */
@@ -780,7 +753,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -816,7 +788,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehavior(): void {
 		$this->assertTrue($this->mediaFoldersTable->hasBehavior('Nest'));
@@ -832,7 +803,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::$search
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSearchBehavior(): void {
 		$this->assertTrue($this->mediaFoldersTable->hasBehavior('Search'));
@@ -846,7 +816,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->mediaFoldersTable->hasBehavior('SystemOrder'));
@@ -860,7 +829,6 @@ class MediaFoldersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaFoldersTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->mediaFoldersTable->hasBehavior('Translate'));

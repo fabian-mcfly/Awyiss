@@ -41,7 +41,6 @@ class FormSenderTest extends TestCase {
 	 * Setup test dependencies
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -73,7 +72,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::__construct()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorLoadsMissingData(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -95,7 +93,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleReplacesPlaceholdersInForm(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -131,7 +128,6 @@ class FormSenderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleSendsEmail(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -165,7 +161,6 @@ class FormSenderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleSendsConfirmationEmail(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -199,7 +194,6 @@ class FormSenderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleNotSendsConfirmationWhenSendEmailFails(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -228,7 +222,6 @@ class FormSenderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleSavesEntryWhenMailsSent(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -259,7 +252,6 @@ class FormSenderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleSavesEntryWhenNoMailToSend(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -294,7 +286,6 @@ class FormSenderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleNotSavesEntryWhenSendEmailFails(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -326,7 +317,6 @@ class FormSenderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleNotSavesEntryWhenSendConfirmationFails(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -362,7 +352,6 @@ class FormSenderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleSendsEvents(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -395,7 +384,6 @@ class FormSenderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::handle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHandleNotSendsEmailsWhenEventStopped(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -428,7 +416,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmail(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -458,7 +445,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailSendsEvents(): void {
 		$form = $this->form;
@@ -552,7 +538,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailStopsWhenBeforeSendEmailStops(): void {
 		$form = $this->form;
@@ -600,7 +585,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailStopsWhenBeforeEmailDeliverStops(): void {
 		$form = $this->form;
@@ -644,7 +628,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailAllowsModifyingBodyHtmlAndBodyPlain(): void {
 		$form = $this->form;
@@ -691,7 +674,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailAllowsModifyingBodyHtmlAndBodyPlainBeforeDeliver(): void {
 		$form = $this->form;
@@ -743,7 +725,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailStopsWhenBodyHtmlAndBodyPlainUnsetInBeforeSendEmail(): void {
 		$form = $this->form;
@@ -791,7 +772,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailStopsWhenBodyHtmlAndBodyPlainUnsetInBeforeEmailDeliver(): void {
 		$form = $this->form;
@@ -839,7 +819,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailSetsTransportProfile(): void {
 		$form = $this->form;
@@ -869,7 +848,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailSetsSubjectFromAndTo(): void {
 		$form = $this->form;
@@ -915,7 +893,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailSetsToNameFromMetaTitleAppendix(): void {
 		$form = $this->form;
@@ -959,7 +936,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailSetsCcAndBcc(): void {
 		$form = $this->form;
@@ -1017,7 +993,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailSetsSafeRealSender(): void {
 		$form = $this->form;
@@ -1064,7 +1039,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailNotSetsSafeRealSenderWhenEmpty(): void {
 		$form = $this->form;
@@ -1109,7 +1083,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailSetsEmailFormatToHtmlWhenBodyPlainIsEmpty(): void {
 		$form = $this->form;
@@ -1161,7 +1134,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailSetsEmailFormatToTextWhenBodyHtmlIsEmpty(): void {
 		$form = $this->form;
@@ -1212,7 +1184,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendEmail()
 	 * @see \Awyiss\Utility\Form\FormSender::addFormAttachments()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendEmailCallsAddFormAttachments(): void {
 		$form = $this->form;
@@ -1242,7 +1213,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmail(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -1272,7 +1242,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailSendsEvents(): void {
 		$form = $this->form;
@@ -1366,7 +1335,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailStopsWhenBeforeSendConfirmationEmailStops(): void {
 		$form = $this->form;
@@ -1414,7 +1382,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailStopsWhenBeforeEmailDeliverStops(): void {
 		$form = $this->form;
@@ -1458,7 +1425,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailAllowsModifyingBodyHtmlAndBodyPlain(): void {
 		$form = $this->form;
@@ -1506,7 +1472,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailAllowsModifyingBodyHtmlAndBodyPlainBeforeDeliver(): void {
 		$form = $this->form;
@@ -1558,7 +1523,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailStopsWhenBodyHtmlAndBodyPlainUnsetInBeforeSendConfirmationEmail(): void {
 		$form = $this->form;
@@ -1606,7 +1570,6 @@ class FormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailStopsWhenBodyHtmlAndBodyPlainUnsetInBeforeEmailDeliver(): void {
 		$form = $this->form;
@@ -1654,7 +1617,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailSetsTransportProfile(): void {
 		$form = $this->form;
@@ -1684,7 +1646,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailSetsSubjectFromAndTo(): void {
 		$form = $this->form;
@@ -1730,7 +1691,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailSetsFromNameFromMetaTitleAppendix(): void {
 		$form = $this->form;
@@ -1774,7 +1734,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailNotSetsCcAndBcc(): void {
 		$form = $this->form;
@@ -1826,7 +1785,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailSetsSafeRealSender(): void {
 		$form = $this->form;
@@ -1873,7 +1831,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailNotSetsSafeRealSenderWhenEmpty(): void {
 		$form = $this->form;
@@ -1918,7 +1875,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailSetsEmailFormatToHtmlWhenBodyPlainIsEmpty(): void {
 		$form = $this->form;
@@ -1970,7 +1926,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::sendConfirmationEmail()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendConfirmationEmailSetsEmailFormatToTextWhenBodyHtmlIsEmpty(): void {
 		$form = $this->form;
@@ -2021,7 +1976,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::saveFormEntry()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSaveFormEntry(): void {
 		$form = $this->form;
@@ -2052,7 +2006,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::saveFormEntry()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSaveFormEntrySavesCorrectData(): void {
 		$form = $this->form;
@@ -2107,7 +2060,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Form\Protection\FormProtectionInterface::modifyFormEntry()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSaveFormEntryAllowsProtectionMethodsToModifyFormEntry(): void {
 		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['dummy']);
@@ -2162,7 +2114,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::saveFormEntry()
 	 * @see \Awyiss\Form\Protection\FormProtectionInterface::modifyFormEntry()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSaveFormEntryAllowsProtectionMethodsToCancelSaving(): void {
 		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['dummy_stops_form_entry']);
@@ -2209,7 +2160,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateBodyUnwrapsDataWithinPTags(): void {
 		$form = $this->form;
@@ -2234,7 +2184,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateBodyReplacesSalutation(): void {
 		$form = $this->form;
@@ -2267,7 +2216,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateBodyReplacesSalutationConfirmation(): void {
 		$form = $this->form;
@@ -2296,7 +2244,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateBodyNotReplacesPlaceholdersInFormData(): void {
 		$form = $this->form;
@@ -2324,7 +2271,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateBodyReplacesFormFieldPlaceholders(): void {
 		$form = $this->form;
@@ -2352,7 +2298,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateBodyReplacesPageFieldPlaceholders(): void {
 		$form = $this->form;
@@ -2385,7 +2330,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateBodyCreatesHtmlBody(): void {
 		$form = $this->form;
@@ -2416,7 +2360,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateBodyCreatesPlaintextBody(): void {
 		$form = $this->form;
@@ -2447,7 +2390,6 @@ class FormSenderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormSender::replacePlaceholders()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 * @throws \Exception
 	 */
@@ -2524,7 +2466,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::addFormAttachments()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddFormAttachments(): void {
 		$form = $this->form;
@@ -2572,7 +2513,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::send()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendCallsDeliverOnMailer(): void {
 		$form = $this->form;
@@ -2596,10 +2536,10 @@ class FormSenderTest extends TestCase {
 		$sender->replacePlaceholdersInForm();
 
 		// Build the mail body
-		$ls_bodyHtml = $this->callProtectedMethod($sender, 'createBody', $form->confirmationEmailTemplate, 'html', 'confirmation');
-		$ls_bodyPlain = $this->callProtectedMethod($sender, 'createBody', $form->confirmationEmailTemplate, 'text', 'confirmation');
+		$bodyHtml = $this->callProtectedMethod($sender, 'createBody', $form->confirmationEmailTemplate, 'html', 'confirmation');
+		$bodyPlain = $this->callProtectedMethod($sender, 'createBody', $form->confirmationEmailTemplate, 'text', 'confirmation');
 
-		$this->callProtectedMethod($sender, 'send', $mailer, $ls_bodyHtml, $ls_bodyPlain);
+		$this->callProtectedMethod($sender, 'send', $mailer, $bodyHtml, $bodyPlain);
 	}
 
 
@@ -2610,7 +2550,6 @@ class FormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormSender::send()
 	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendSetsErrorsWhenDeliverFails(): void {
 		$form = $this->form;
@@ -2629,10 +2568,10 @@ class FormSenderTest extends TestCase {
 		$sender->replacePlaceholdersInForm();
 
 		// Build the mail body
-		$ls_bodyHtml = $this->callProtectedMethod($sender, 'createBody', $form->confirmationEmailTemplate, 'html', 'confirmation');
-		$ls_bodyPlain = $this->callProtectedMethod($sender, 'createBody', $form->confirmationEmailTemplate, 'text', 'confirmation');
+		$bodyHtml = $this->callProtectedMethod($sender, 'createBody', $form->confirmationEmailTemplate, 'html', 'confirmation');
+		$bodyPlain = $this->callProtectedMethod($sender, 'createBody', $form->confirmationEmailTemplate, 'text', 'confirmation');
 
-		$this->callProtectedMethod($sender, 'send', $mailer, $ls_bodyHtml, $ls_bodyPlain);
+		$this->callProtectedMethod($sender, 'send', $mailer, $bodyHtml, $bodyPlain);
 
 		$this->assertIsArray($sender->getErrors());
 		$this->assertEquals(['form::error_email_send'], $sender->getErrors());

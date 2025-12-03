@@ -11,7 +11,7 @@ use Awyiss\Authorization\Policy\AbstractGenericPolicy;
 /**
  * Interface with method signatures that
  * - provide access to an instance of AuthenticationService
- * - allows retreiving policies
+ * - allows retrieving policies
  */
 interface AuthorizationServiceInterface {
 	/**

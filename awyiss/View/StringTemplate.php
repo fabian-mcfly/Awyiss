@@ -23,8 +23,7 @@ class StringTemplate extends BaseStringTemplate {
 			throw new CakeException('String template filename cannot be an empty string');
 		}
 
-		$lo_loader = new PhpConfig();
-		$la_templates = $lo_loader->read($file);
-		$this->add($la_templates);
+		$loader = new PhpConfig();
+		$this->add($loader->read($file));
 	}
 }

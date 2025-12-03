@@ -12,7 +12,7 @@ use Exception;
 
 
 /**
- * Resolves an identity by makeing a curl-based request to a specific remote URL
+ * Resolves an identity by making a curl-based request to a specific remote URL
  */
 class CurlResolver implements ResolverInterface {
 	use InstanceConfigTrait;
@@ -22,15 +22,15 @@ class CurlResolver implements ResolverInterface {
 	/**
 	 * Request type 'get'
 	 */
-	final public const TYPE_GET = 'GET';
+	final public const string TYPE_GET = 'GET';
 	/**
 	 * Request type 'post'
 	 */
-	final public const TYPE_POST = 'POST';
+	final public const string TYPE_POST = 'POST';
 	/**
 	 * Accept content type 'application/json'
 	 */
-	final public const ACCEPT_JSON = 'application/json';
+	final public const string ACCEPT_JSON = 'application/json';
 	/**
 	 * Default configuration.
 	 * - `acceptType` The content type to use for the request
@@ -63,57 +63,52 @@ class CurlResolver implements ResolverInterface {
 	 *
 	 * @param array $credentials Find conditions.
 	 * @param string $type Condition type. Can be `AND` or `OR`.
-	 * @return \ArrayAccess|array||null
+	 * @return \ArrayAccess|array|null
 	 * @throws Exception
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function find(array $credentials, string $type = self::TYPE_AND): array|ArrayAccess|null {
-		$lx_url = $this->_config['url'] ?? null;
-		if (is_callable($lx_url)) {
-			$lx_url = $lx_url($credentials);
+		$url = $this->_config['url'] ?? null;
+		if (is_callable($url)) {
+			$url = $url($credentials);
 		}
 
-		if (empty($lx_url)) {
+		if (empty($url)) {
 			throw new Exception(__d('authenticator', 'curl_resolver_missing_url'));
 		}
 
-		$lo_curlHandle = curl_init();
+		$curlHandle = curl_init();
 
 		switch ($this->_config['requestType']) {
 			case self::TYPE_GET:
 				break;
 			case self::TYPE_POST:
-				$lx_requestData = $this->_config['requestData'];
-				if (is_callable($lx_requestData)) {
-					$lx_requestData = $lx_requestData($credentials);
+				$requestData = $this->_config['requestData'];
+				if (is_callable($requestData)) {
+					$requestData = $requestData($credentials);
 				}
 
-				curl_setopt($lo_curlHandle, CURLOPT_POST, true);
-				curl_setopt($lo_curlHandle, CURLOPT_POSTFIELDS, $lx_requestData);
+				curl_setopt($curlHandle, CURLOPT_POST, true);
+				curl_setopt($curlHandle, CURLOPT_POSTFIELDS, $requestData);
 				break;
 			default:
 				throw new Exception(__d('authenticator', 'curl_resolver_unknown_request_type'));
 		}
 
-		curl_setopt($lo_curlHandle, CURLOPT_HTTPHEADER, ['Accept: ' . $this->_config['acceptType']]);
-		curl_setopt($lo_curlHandle, CURLOPT_URL, $lx_url);
-		curl_setopt($lo_curlHandle, CURLOPT_RETURNTRANSFER, 1);
-		$lx_result = curl_exec($lo_curlHandle);
-		curl_close($lo_curlHandle);
+		curl_setopt($curlHandle, CURLOPT_HTTPHEADER, ['Accept: ' . $this->_config['acceptType']]);
+		curl_setopt($curlHandle, CURLOPT_URL, $url);
+		curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+		$result = curl_exec($curlHandle);
+		curl_close($curlHandle);
 
 		if ($this->_config['acceptType'] === self::ACCEPT_JSON) {
-			$lx_result = json_decode($lx_result, true);
+			$result = json_decode($result, true);
 		}
 
 		if (is_callable($this->_config['modifyResult'])) {
-			$lx_result = $this->_config['modifyResult']($lx_result);
+			$result = $this->_config['modifyResult']($result);
 		}
 
-		if ($lx_result) {
-			return $lx_result;
-		}
-
-
-		return null;
+		return $result ?: null;
 	}
 }

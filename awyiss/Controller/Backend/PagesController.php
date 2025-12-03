@@ -92,11 +92,11 @@ class PagesController extends Controller {
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_query = $this->Pages->find('forCurrentLanguage')->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
-		$this->Search->filterQuery($lo_query);
+		$query = $this->Pages->find('forCurrentLanguage')->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -108,7 +108,7 @@ class PagesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery()->find('mediaAssignments')
+		$query = $this->getOverviewQuery()->find('mediaAssignments')
 		->contain([
 			'PageTemplates.ContentAreas.ContentTemplates',
 		]);
@@ -121,29 +121,29 @@ class PagesController extends Controller {
 			$this->sortable = false;
 		}
 
-		$lb_paginated = $this->paginate['enabled'];
+		$paginated = $this->paginate['enabled'];
 		unset($this->paginate['enabled']);
-		if ($lb_paginated) {
-			$lo_pages = $this->paginate($lo_query);
+		if ($paginated) {
+			$pages = $this->paginate($query);
 		}
 		elseif ($this->nestable) {
-			$lo_pages = $lo_query->find('threaded');
+			$pages = $query->find('threaded');
 		}
 		else {
-			$lo_pages = $lo_query->all();
+			$pages = $query->all();
 		}
 
-		$la_pageTemplates = $this->getPageTemplates()->indexBy('id')->toArray();
+		$pageTemplates = $this->getPageTemplates()->indexBy('id')->toArray();
 
 		$this->set([
-			'pages' => $lo_pages,
+			'pages' => $pages,
 			//'localConfig' => LocalConfig::read(),
 			'contentsEnabled' => LocalConfig::read('contents.enabled'),
-			'paginated' => $lb_paginated,
+			'paginated' => $paginated,
 			'nestable' => $this->nestable,
 			'sortable' => $this->sortable,
 			'attributes' => $this->Pages->getAttributes(),
-			'pageTemplates' => $la_pageTemplates,
+			'pageTemplates' => $pageTemplates,
 			'isGenericPage' => $this->pageRole->value !== 1,
 			'pageRole' => $this->Pages->PageRoles->get($this->getPageRole()->value),
 			'pageRoleName' => Inflector::underscore($this->pageRoleName),
@@ -160,18 +160,18 @@ class PagesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_session = $this->request->getSession();
-		$lo_page = $this->Pages->newDefaultEntity([
+		$session = $this->request->getSession();
+		$page = $this->Pages->newDefaultEntity([
 			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
 			'pageRoleId' => $this->getPageRole(),
-			'parentId' => $this->forcedRootPageId ?? $lo_session->read($this->selectedParentIdSessionIdentifier),
+			'parentId' => $this->forcedRootPageId ?? $session->read($this->selectedParentIdSessionIdentifier),
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_page);
+			$this->save($page);
 		}
 
-		$this->setViewVars($lo_page);
+		$this->setViewVars($page);
 	}
 
 
@@ -180,64 +180,64 @@ class PagesController extends Controller {
 	 *
 	 * @return void
 	 * @throws \Exception
+	 * @noinspection PhpUnused
 	 */
 	public function addBatch(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_page = $this->Pages->newDefaultEntity([
+		$page = $this->Pages->newDefaultEntity([
 			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
 			'pageRoleId' => $this->getPageRole(),
 		]);
 
-		$la_requestData = $this->request->getData();
-		if ($this->request->is('post') && !empty($la_requestData['pages'])) {
-			$la_associated = [];
+		$requestData = $this->request->getData();
+		if ($this->request->is('post') && !empty($requestData['pages'])) {
+			$associated = [];
 			if ($this->Pages->hasAttributes()) {
-				$la_associated[] = $this->Pages->getAttributesTableName(true);
-				$lo_page->setAccess('attributes', true);
+				$associated[] = $this->Pages->getAttributesTableName(true);
+				$page->setAccess('attributes', true);
 			}
 
-			$la_data = [
+			$data = [
 				'page_role_id' => $this->getPageRole()->value,
 				'slug' => 'dummy',
 				'title' => 'dummy',
 			];
-			$la_data += $this->request->getData();
+			$data += $this->request->getData();
 
-			$this->Pages->patchEntity($lo_page, $la_data, [
-				'associated' => $la_associated,
+			$this->Pages->patchEntity($page, $data, [
+				'associated' => $associated,
 				'validate' => !$this->request->getData('reload_form'),
 			]);
 
 			$this->Categories->setConfig('finder', [
 				'forCurrentLanguage' => [
-					'entity' => $lo_page,
+					'entity' => $page,
 				],
 			]);
 
-			$lo_entities = $this->buildEntitiesFromIndentedRows($la_requestData['pages'], $la_requestData);
+			$entities = $this->buildEntitiesFromIndentedRows($requestData['pages'], $requestData);
 
 			if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				$lb_success = false;
+				$success = false;
 
-				if ($lo_entities->count()) {
-					$ls_pageRole = Inflector::pluralize($this->getPageRole()->name);
-					$la_entities = $lo_entities->toArray();
+				if ($entities->count()) {
+					$pageRole = Inflector::pluralize($this->getPageRole()->name);
 
-					$la_associated = ['Child' . $ls_pageRole];
+					$associated = ['Child' . $pageRole];
 					if ($this->Pages->hasAttributes()) {
-						$la_associated[] = $this->Pages->getAttributesTableName(true);
+						$associated[] = $this->Pages->getAttributesTableName(true);
 					}
 
-					if ($this->Pages->saveMany($la_entities, ['associated' => $la_associated])) {
-						$lb_success = true;
+					if ($this->Pages->saveMany($entities, ['associated' => $associated])) {
+						$success = true;
 					}
 					else {
-						$lo_page = $lo_entities->first();
+						$page = $entities->first();
 					}
 				}
 
-				if ($lb_success) {
+				if ($success) {
 					if (!$this->request->is('ajax')) {
 						$this->Flash->success(__df($this->pageRoleName, 'pages', 'add_batch_succeeded'));
 					}
@@ -247,22 +247,22 @@ class PagesController extends Controller {
 					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
 					 *
 					 */
-					$this->verifyCategorySelection($lo_page);
+					$this->verifyCategorySelection($page);
 
-					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $lo_page->languageShortcode], true), 302);
+					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $page->languageShortcode], true), 302);
 				}
 				else {
 					if (!$this->request->is('ajax')) {
 						$this->Flash->error(__df($this->pageRoleName, 'pages', 'add_batch_failed'));
-						foreach ($lo_page->getError('_general') as $ls_error) {
-							$this->Flash->error($ls_error);
+						foreach ($page->getError('_general') as $error) {
+							$this->Flash->error($error);
 						}
 					}
 				}
 			}
 		}
 
-		$this->setViewVars($lo_page);
+		$this->setViewVars($page);
 	}
 
 
@@ -276,14 +276,14 @@ class PagesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\Page $lo_page
+		 * @var \Awyiss\Model\Entity\Page $page
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_page = $this->Pages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$page = $this->Pages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 
-		if (!$lo_page) {
+		if (!$page) {
 			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
 
 
@@ -291,19 +291,19 @@ class PagesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_page, 'edit');
+			$this->save($page, 'edit');
 		}
-		elseif ($lo_page->languageShortcode != LocaleMiddleware::getLanguage()->shortcode) {
+		elseif ($page->languageShortcode != LocaleMiddleware::getLanguage()->shortcode) {
 			//Don't allow modifying a page in another language
 			throw new RedirectException(Router::url([
-				'lang' => $lo_page->languageShortcode,
-				'id' => $lo_page->id,
+				'lang' => $page->languageShortcode,
+				'id' => $page->id,
 			], true), 302);
 		}
 
-		$this->setViewVars($lo_page);
+		$this->setViewVars($page);
 
-		$this->set('isDuplicated', $lo_page->id ? $this->Pages->exists(['duplicate_of' => $lo_page->id]) : false);
+		$this->set('isDuplicated', $page->id && $this->Pages->exists(['duplicate_of' => $page->id]));
 	}
 
 
@@ -319,16 +319,16 @@ class PagesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		$lo_page = $this->Pages->findById($id)->first();
-		if (!$lo_page) {
+		/** @var \Awyiss\Model\Entity\Page $page */
+		$page = $this->Pages->findById($id)->first();
+		if (!$page) {
 			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Pages->delete($lo_page)) {
+		if ($this->Pages->delete($page)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__df($this->pageRoleName, 'pages', 'delete_succeeded'));
 			}
@@ -336,8 +336,8 @@ class PagesController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__df($this->pageRoleName, 'pages', 'delete_failed'));
-				foreach ($lo_page->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($page->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -359,25 +359,25 @@ class PagesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function preview(): Response {
-		/** @var \Awyiss\Model\Entity\Page|null $lo_page */
-		$lo_page = $this->Pages->findById($this->request->getParam('id'))->first();
+		/** @var \Awyiss\Model\Entity\Page|null $page */
+		$page = $this->Pages->findById($this->request->getParam('id'))->first();
 
-		if (!$lo_page) {
+		if (!$page) {
 			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		$lo_session = $this->request->getSession();
-		$lo_session->write('previewMode', [
+		$session = $this->request->getSession();
+		$session->write('previewMode', [
 			'enabled' => true,
-			'markInactiveElements' => $lo_session->read('previewMode.markElements', true),
+			'markInactiveElements' => $session->read('previewMode.markElements', true),
 			'inactiveElementClass' => FrontendView::getPreviewModeElementClass(),
 		]);
 
 		return $this->redirect([
-			'lang' => $lo_page->languageShortcode,
-			'slug' => $lo_page->slug,
+			'lang' => $page->languageShortcode,
+			'slug' => $page->slug,
 			'_name' => 'Frontend',
 		]);
 	}
@@ -388,18 +388,19 @@ class PagesController extends Controller {
 	 * will be updated with the new value.
 	 *
 	 * @return void
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function previewSettings(): void {
-		$lo_session = $this->request->getSession();
-		$la_previewSettings = $lo_session->read('previewMode');
+		$session = $this->request->getSession();
+		$previewSettings = $session->read('previewMode');
 
 		if ($this->request->is('post')) {
 			if ($this->request->getData('identifier')) {
-				$la_previewSettings[ $this->request->getData('identifier') ] = (bool)$this->request->getData('value');
+				$previewSettings[ $this->request->getData('identifier') ] = (bool)$this->request->getData('value');
 			}
 
-			$lo_session->write('previewMode', $la_previewSettings);
+			$session->write('previewMode', $previewSettings);
 		}
 
 		if ($this->request->accepts('application/json')) {
@@ -410,7 +411,7 @@ class PagesController extends Controller {
 		}
 
 		$this->set([
-			'previewMode' => $la_previewSettings,
+			'previewMode' => $previewSettings,
 		]);
 	}
 
@@ -419,43 +420,42 @@ class PagesController extends Controller {
 	 * Return a list of pages for the currently set languageShortcode
 	 *
 	 * @return void
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function linkList(): void {
 		// Get all page roles that can be included in the link list
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$la_pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['include_in_linklist' => true])->all()->indexBy('id')->toArray();
+		$pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['include_in_linklist' => true])->all()->indexBy('id')->toArray();
 
 		/**
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 * @uses \Awyiss\Model\Table::findActive()
 		 */
-		$lo_query = $this->Pages->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
-			'page_role_id IN' => array_keys($la_pageRoles),
+		$query = $this->Pages->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
+			'page_role_id IN' => array_keys($pageRoles),
 		]);
 
-		$lo_pagesByPageRole = $lo_query->all()->groupBy('pageRoleId');
+		$pagesByPageRole = [];
+		$baseUrl = Router::url('/', true);
+		/** @var array<int, \Awyiss\Model\Entity\Page> $pages */
+		foreach ($query->all()->groupBy('pageRoleId') as $pageRoleId => $pages) {
+			$flattenedPages = collection($pages)->nest('id', 'parentId')->listNested();
 
-		$la_pagesByPageRole = [];
-		$ls_baseUrl = Router::url('/', true);
-		/** @var array<int, \Awyiss\Model\Entity\Page> $la_pages */
-		foreach ($lo_pagesByPageRole as $li_pageRoleId => $la_pages) {
-			$lo_pages = collection($la_pages)->nest('id', 'parentId')->listNested();
-
-			$la_pages = [];
-			foreach ($lo_pages as $lo_page) {
+			$pages = [];
+			foreach ($flattenedPages as $page) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$la_pages[] = [
-					'title' => str_repeat('- ', $lo_pages->getDepth()) . $lo_page->title,
-					'slug' => $lo_page->slug,
-					'languageShortcode' => $lo_page->languageShortcode,
-					'link' => $ls_baseUrl . $lo_page->languageShortcode . '/' . $lo_page->slug,
+				$pages[] = [
+					'title' => str_repeat('- ', $flattenedPages->getDepth()) . $page->title,
+					'slug' => $page->slug,
+					'languageShortcode' => $page->languageShortcode,
+					'link' => $baseUrl . $page->languageShortcode . '/' . $page->slug,
 				];
 			}
 
-			$la_pagesByPageRole[ $li_pageRoleId ] = [
-				'pageRole' => $la_pageRoles[ $li_pageRoleId ],
-				'links' => $la_pages,
+			$pagesByPageRole[ $pageRoleId ] = [
+				'pageRole' => $pageRoles[ $pageRoleId ],
+				'links' => $pages,
 			];
 		}
 
@@ -463,7 +463,7 @@ class PagesController extends Controller {
 			$this->viewBuilder()->setOption('serialize', ['success', 'data']);
 
 			$this->set('success', true);
-			$this->set('data', $la_pagesByPageRole);
+			$this->set('data', $pagesByPageRole);
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
@@ -478,36 +478,36 @@ class PagesController extends Controller {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function save(Page $page, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->Pages->hasAttributes()) {
-			$la_associated[] = $this->Pages->getAttributesTableName(true);
+			$associated[] = $this->Pages->getAttributesTableName(true);
 			$page->setAccess('attributes', true);
 		}
 
-		$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+		$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-		$lb_hasDescendantsWithDifferentPageRole = false;
-		if (!$page->isNew() && $lb_saveAsCopy) {
-			$lb_hasDescendantsWithDifferentPageRole = $this->Pages->hasDescendantsWithDifferentPageRole($page);
+		$hasDescendantsWithDifferentPageRole = false;
+		if (!$page->isNew() && $saveAsCopy) {
+			$hasDescendantsWithDifferentPageRole = $this->Pages->hasDescendantsWithDifferentPageRole($page);
 		}
 
-		$lb_copyDescendantsWithDifferentPageRole = $this->request->getData('copy_descendants_with_different_page_role');
-		if ($lb_copyDescendantsWithDifferentPageRole !== null && $lb_hasDescendantsWithDifferentPageRole) {
-			$lb_copyDescendantsWithDifferentPageRole = (bool)$lb_copyDescendantsWithDifferentPageRole;
+		$copyDescendantsWithDifferentPageRole = $this->request->getData('copy_descendants_with_different_page_role');
+		if ($copyDescendantsWithDifferentPageRole !== null && $hasDescendantsWithDifferentPageRole) {
+			$copyDescendantsWithDifferentPageRole = (bool)$copyDescendantsWithDifferentPageRole;
 		}
 
-		$la_data = $this->request->getData();
+		$requestData = $this->request->getData();
 
-		if (empty($la_data['slug'])) {
-			$la_data['slug'] = $la_data['title'] ?? null;
+		if (empty($requestData['slug'])) {
+			$requestData['slug'] = $requestData['title'] ?? null;
 		}
 
 		if ($this->forcedRootPageId) {
-			unset($la_data['parent_id']);
+			unset($requestData['parent_id']);
 		}
 
-		$this->Pages->patchEntity($page, ['page_role_id' => $this->getPageRole()->value] + $la_data, [
-			'associated' => $la_associated,
+		$this->Pages->patchEntity($page, ['page_role_id' => $this->getPageRole()->value] + $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
@@ -521,23 +521,23 @@ class PagesController extends Controller {
 			!$this->request->getData('reload_form') && //reload_form is set when we need to reload options based on current values
 			(
 				//Only save pages if there are no descendants with different page role OR if the decision has been made
-				!$lb_hasDescendantsWithDifferentPageRole ||
-				$lb_copyDescendantsWithDifferentPageRole !== null
+				!$hasDescendantsWithDifferentPageRole ||
+				$copyDescendantsWithDifferentPageRole !== null
 			)
 		) {
 			if (
 				$this->Pages->save($page, [
-					'asCopy' => $lb_saveAsCopy,
-					'copyDescendantsWithDifferentPageRole' => $lb_copyDescendantsWithDifferentPageRole,
+					'asCopy' => $saveAsCopy,
+					'copyDescendantsWithDifferentPageRole' => $copyDescendantsWithDifferentPageRole,
 				])
 			) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__df($this->pageRoleName, 'pages', ($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__df($this->pageRoleName, 'pages', ($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				// Remember the parent id for the next entry
-				$lo_session = $this->request->getSession();
-				$lo_session->write($this->selectedParentIdSessionIdentifier, $page->parentId);
+				$session = $this->request->getSession();
+				$session->write($this->selectedParentIdSessionIdentifier, $page->parentId);
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
 					/*
@@ -558,16 +558,16 @@ class PagesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__df($this->pageRoleName, 'pages', ($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($page->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__df($this->pageRoleName, 'pages', ($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($page->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
 
 		$this->set([
-			'hasDescendantsWithDifferentPageRole' => $lb_hasDescendantsWithDifferentPageRole,
-			'copyDescendantsWithDifferentPageRole' => $lb_copyDescendantsWithDifferentPageRole,
+			'hasDescendantsWithDifferentPageRole' => $hasDescendantsWithDifferentPageRole,
+			'copyDescendantsWithDifferentPageRole' => $copyDescendantsWithDifferentPageRole,
 		]);
 	}
 
@@ -603,7 +603,7 @@ class PagesController extends Controller {
 	 */
 	protected function getThreadedPages(Page $page): CollectionInterface {
 		if (!isset($this->threadedPages)) {
-			$la_categoryQueryConditions = $this->Categories->getQueryConditions($this->Categories->getSelectedCategory($page));
+			$categoryQueryConditions = $this->Categories->getQueryConditions($this->Categories->getSelectedCategory($page));
 			/*
 			 * Remove parent_id from the conditions.
 			 * Threaded pages are used for the parent_id and duplicate_of select box.
@@ -613,13 +613,13 @@ class PagesController extends Controller {
 			 * - is disabled or
 			 * - not using the parent_id field
 			 */
-			unset($la_categoryQueryConditions['parent_id'], $la_categoryQueryConditions['parentId']);
+			unset($categoryQueryConditions['parent_id'], $categoryQueryConditions['parentId']);
 
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-			$lo_query = $this->Pages->find('forCurrentLanguage', languageShortcode: $page->languageShortcode)
-			->where($this->getOverviewWhere() + $la_categoryQueryConditions);
+			$query = $this->Pages->find('forCurrentLanguage', languageShortcode: $page->languageShortcode)
+			->where($this->getOverviewWhere() + $categoryQueryConditions);
 
-			$this->threadedPages = $this->Pages->listNested($lo_query);
+			$this->threadedPages = $this->Pages->listNested($query);
 		}
 
 		return $this->threadedPages;
@@ -649,16 +649,16 @@ class PagesController extends Controller {
 
 		$this->sortable = Inflector::variable(LocalConfig::read('systemOrder.field', 'systemOrder')) === 'systemOrder';
 
-		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
-		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
-		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
+		/** @var \Awyiss\Authorization\AuthorizationService $authorizationService */
+		$authorizationService = $this->getRequest()->getAttribute('authorization');
+		$policyClass = $authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
 
-		$this->Authorization->setScope($identifier);/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/
+		$this->Authorization->setScope($identifier);
 
 		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($identifier)));
 
 		$this->set([
-			'policyClass' => $ls_policyClass,
+			'policyClass' => $policyClass,
 		]);
 
 
@@ -672,9 +672,9 @@ class PagesController extends Controller {
 	#[NoDirectAccess]
 	public function getPageRole(): PageRoleEnumInterface {
 		if (!isset($this->pageRole)) {
-			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-			$this->pageRole = $ls_pageRoleEnum::Page;
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+			$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			$this->pageRole = $pageRoleEnum::Page;
 		}
 
 
@@ -689,36 +689,36 @@ class PagesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function render(?string $template = null, ?string $layout = null): Response {
-		$lo_viewBuilder = $this->viewBuilder();
+		$viewBuilder = $this->viewBuilder();
 
 		if ($this->getName() !== 'Pages') {
-			$ls_entitiesName = Inflector::variable($this->getName());
-			$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
-			$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
-			$ls_parentName = Inflector::variable('possibleParent ' . $this->getName());
+			$entitiesName = Inflector::variable($this->getName());
+			$entityName = Inflector::variable(Inflector::singularize($this->getName()));
+			$threadedName = Inflector::variable('threaded ' . $this->getName());
+			$parentName = Inflector::variable('possibleParent ' . $this->getName());
 
-			$lo_viewBuilder->setVars([
-				$ls_entitiesName => $lo_viewBuilder->getVar('pages'),
-				$ls_entityName => $lo_viewBuilder->getVar('page'),
-				$ls_threadedName => $lo_viewBuilder->getVar('threadedPages'),
-				$ls_parentName => $lo_viewBuilder->getVar('possibleParentPages'),
+			$viewBuilder->setVars([
+				$entitiesName => $viewBuilder->getVar('pages'),
+				$entityName => $viewBuilder->getVar('page'),
+				$threadedName => $viewBuilder->getVar('threadedPages'),
+				$parentName => $viewBuilder->getVar('possibleParentPages'),
 			]);
 		}
 
 		try {
-			$ls_contents = parent::render($template, $layout);
+			$contents = parent::render($template, $layout);
 		}
 		catch (MissingTemplateException) {
-			$la_templatePathParts = explode('/', $lo_viewBuilder->getTemplatePath());
-			array_pop($la_templatePathParts);
+			$templatePathParts = explode('/', $viewBuilder->getTemplatePath());
+			array_pop($templatePathParts);
 
-			$lo_viewBuilder->setTemplatePath(implode('/', $la_templatePathParts) . '/GenericPages');
+			$viewBuilder->setTemplatePath(implode('/', $templatePathParts) . '/GenericPages');
 
-			$ls_contents = parent::render($template, $layout);
+			$contents = parent::render($template, $layout);
 		}
 
 
-		return $ls_contents;
+		return $contents;
 	}
 
 
@@ -745,15 +745,15 @@ class PagesController extends Controller {
 			return;
 		}
 
-		$la_possibleParentIds = $threadedPages->extract('id')->toList();
+		$possibleParentIds = $threadedPages->extract('id')->toList();
 
-		if (!empty($page->parentId) && !in_array($page->parentId, $la_possibleParentIds)) {
-			$la_errors = $page->getError('parentId');
+		if (!empty($page->parentId) && !in_array($page->parentId, $possibleParentIds)) {
+			$errors = $page->getError('parentId');
 
 			$page->parentId = null;
 
-			if ($la_errors) {
-				$page->setError('parentId', $la_errors, true);
+			if ($errors) {
+				$page->setError('parentId', $errors, true);
 			}
 		}
 	}
@@ -766,38 +766,38 @@ class PagesController extends Controller {
 	protected function setViewVars(Page $page): void {
 		$this->Categories->ensurePossibleCategory($page);
 
-		$lo_threadedPages = $this->getThreadedPages($page);
+		$threadedPages = $this->getThreadedPages($page);
 
 		if ($this->nestable) {
-			$lo_possibleParentPages = $this->Pages->getPossibleParents($page, $lo_threadedPages);
-			$this->ensurePossibleParentId($page, $lo_possibleParentPages);
+			$possibleParentPages = $this->Pages->getPossibleParents($page, $threadedPages);
+			$this->ensurePossibleParentId($page, $possibleParentPages);
 		}
 		else {
-			$lo_possibleParentPages = null;
+			$possibleParentPages = null;
 		}
 
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$lo_menus = $this->fetchTable('Menus')->find('active')->all();
+		$menus = $this->fetchTable('Menus')->find('active')->all();
 
 		// Get the parent page if it exists
 		if ($page->parentId) {
-			$lo_parentRecord = $this->Pages->find('all', skipPageRoleCheck: true)->where(['id' => $page->parentId])->first();
+			$parentRecord = $this->Pages->find('all', skipPageRoleCheck: true)->where(['id' => $page->parentId])->first();
 		}
 
-		$lo_pageTemplates = $this->getPageTemplates();
-		$this->ensurePossibleTemplate($page, $lo_pageTemplates);
+		$pageTemplates = $this->getPageTemplates();
+		$this->ensurePossibleTemplate($page, $pageTemplates);
 
 		if ($page->slug) {
-			$la_parts = explode('/', $page->slug);
-			$page->slug = end($la_parts);
+			$parts = explode('/', $page->slug);
+			$page->slug = end($parts);
 		}
 
 		$this->set([
 			'page' => $page,
-			'pageTemplates' => $lo_pageTemplates,
+			'pageTemplates' => $pageTemplates,
 			'contentsEnabled' => LocalConfig::read('contents.enabled'),
-			'threadedPages' => $lo_threadedPages,
-			'possibleParentPages' => $lo_possibleParentPages,
+			'threadedPages' => $threadedPages,
+			'possibleParentPages' => $possibleParentPages,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 			//'localConfig' => LocalConfig::read(),
 			'nestable' => $this->nestable,
@@ -806,9 +806,9 @@ class PagesController extends Controller {
 			'forms' => $this->Pages->Forms->find('active')->orderByAsc('title')->all(),
 			/** @uses \Awyiss\Model\Table::findActive() */
 			'surveys' => $this->Pages->Surveys->find('active')->orderByAsc('title')->all(),
-			'menus' => $lo_menus,
+			'menus' => $menus,
 			'isGenericPage' => $this->pageRole->value !== 1,
-			'parentRecord' => $lo_parentRecord ?? null,
+			'parentRecord' => $parentRecord ?? null,
 			'pageRole' => $this->Pages->PageRoles->get($this->getPageRole()->value),
 			'pageRoleName' => Inflector::underscore($this->pageRoleName),
 		]);
@@ -825,25 +825,25 @@ class PagesController extends Controller {
 			return;
 		}
 
-		$la_categories = [];
+		$categories = [];
 
-		$ls_field = $this->Categories->getConfig('field');
-		if ($page->get($ls_field)) {
-			$la_categories[ $page->get($ls_field) ] = $ls_field;
+		$field = $this->Categories->getConfig('field');
+		if ($page->get($field)) {
+			$categories[ $page->get($field) ] = $field;
 
 			if ($this->Categories->getConfig('allowAggregation')) {
-				$la_categories += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
+				$categories += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
 			}
 		}
 		elseif ($this->Categories->getConfig('allowUnassigned')) {
-			$la_categories += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
+			$categories += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
 		}
 
 		/*
 		 * Make sure the currently selected category is still part of the page.
 		 * Otherwise the next redirect to the overview would show a site without the modified page, which could be a bit confusing.
 		 */
-		$this->Categories->verifySelection(null, $la_categories, true);
+		$this->Categories->verifySelection(null, $categories, true);
 	}
 
 
@@ -853,90 +853,89 @@ class PagesController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function buildEntitiesFromIndentedRows(string $text, array $requestData): CollectionInterface {
-		$li_currentId = 1;
-		$la_parentStack = []; //Stack to keep track of the parent at each level
-		$la_sortCounter = []; // Array to keep track of the sort order at each level
-		$lo_entities = collection([]);
+		$currentId = 1;
+		$parentStack = []; //Stack to keep track of the parent at each level
+		$sortCounter = []; // Array to keep track of the sort order at each level
+		$entities = collection([]);
 
-		$li_rootParentId = $requestData['parent_id'] ?? null;
-		$li_firstSystemOrder = $requestData['system_order'] ?? null;
+		$rootParentId = $requestData['parent_id'] ?? null;
+		$firstSystemOrder = $requestData['system_order'] ?? null;
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		unset($requestData['parent_id'], $requestData['system_order']);
 
-		$la_associated = [];
+		$associated = [];
 		if ($this->Pages->hasAttributes()) {
-			$la_associated[] = $this->Pages->getAttributesTableName(true);
+			$associated[] = $this->Pages->getAttributesTableName(true);
 		}
 
-		foreach (explode("\n", $text) as $ls_title) {
-			$ls_title = rtrim($ls_title);
-			$ls_title = ltrim($ls_title, " \n\r\v\0");
+		foreach (explode("\n", $text) as $title) {
+			$title = rtrim($title);
+			$title = ltrim($title, " \n\r\v\0");
 
-			if (empty($ls_title)) {
+			if (empty($title)) {
 				continue;
 			}
 
-			$li_level = substr_count($ls_title, "\t");
+			$level = substr_count($title, "\t");
 
 			//Update parent stack for the current level
-			$la_parentStack[ $li_level ] = $li_currentId;
+			$parentStack[ $level ] = $currentId;
 
 			//Increment or initialize sort counter for the current level
-			if (!isset($la_sortCounter[ $li_level ])) {
-				$la_sortCounter[ $li_level ] = 1;
+			if (!isset($sortCounter[ $level ])) {
+				$sortCounter[ $level ] = 1;
 			}
 			else {
-				$la_sortCounter[ $li_level ]++;
+				$sortCounter[ $level ]++;
 			}
 
 			//Reset sort counters for all deeper levels
-			foreach (array_keys($la_sortCounter) as $li_key) {
-				if ($li_key > $li_level) {
-					unset($la_sortCounter[ $li_key ]);
+			foreach (array_keys($sortCounter) as $key) {
+				if ($key > $level) {
+					unset($sortCounter[ $key ]);
 				}
 			}
 
 			//Determine the parent ID
-			$li_parentId = $li_level > 0 ? $la_parentStack[ $li_level - 1 ] : null;
+			$parentId = $level > 0 ? $parentStack[ $level - 1 ] : null;
 
-			$lo_entity = $this->Pages->newDefaultEntity();
+			$entity = $this->Pages->newDefaultEntity();
 
-			$la_data = ['page_role_id' => $this->getPageRole()->value];
-			$la_data += [
-				'tempId' => $li_currentId,
-				'title' => trim($ls_title),
-				'slug' => mb_strlen($ls_title) >= 3 ? $ls_title : 'page-' . $ls_title,
-				'level' => $li_level,
-				'parentId' => $li_level === 0 ? $li_rootParentId : null,
-				'tempParentId' => $li_level === 0 ? null : $li_parentId,
-				'systemOrder' => $la_sortCounter[ $li_level ] + ($li_level === 0 ? $li_firstSystemOrder : 0),
+			$data = ['page_role_id' => $this->getPageRole()->value];
+			$data += [
+				'tempId' => $currentId,
+				'title' => trim($title),
+				'slug' => mb_strlen($title) >= 3 ? $title : 'page-' . $title,
+				'level' => $level,
+				'parentId' => $level === 0 ? $rootParentId : null,
+				'tempParentId' => $level === 0 ? null : $parentId,
+				'systemOrder' => $sortCounter[ $level ] + ($level === 0 ? $firstSystemOrder : 0),
 			];
-			$la_data += $requestData;
+			$data += $requestData;
 
 			$this->Pages->patchEntity(
-				$lo_entity,
-				$la_data,
+				$entity,
+				$data,
 				[
 					'accessibleFields' => [
 						'attributes' => true,
 						'tempId' => true,
 						'tempParentId' => true,
 					],
-					'associated' => $la_associated,
+					'associated' => $associated,
 				]
 			);
 
 			//Add the current line to the result
-			$lo_entities = $lo_entities->append([ $lo_entity ]);
+			$entities = $entities->append([ $entity ]);
 
-			$li_currentId++;
+			$currentId++;
 		}
 
-		$ls_pageRole = Inflector::pluralize($this->getPageRole()->name);
+		$pageRole = Inflector::pluralize($this->getPageRole()->name);
 
 
-		return $lo_entities->nest('tempId', 'tempParentId', 'child' . $ls_pageRole);
+		return $entities->nest('tempId', 'tempParentId', 'child' . $pageRole);
 	}
 
 
@@ -947,24 +946,24 @@ class PagesController extends Controller {
 	 */
 	protected function ensurePossibleTemplate(Page $page, CollectionInterface $pageTemplates): void {
 		if (!$page->pageTemplateId || !$pageTemplates->firstMatch(['id' => $page->pageTemplateId])) {
-			$la_errors = $page->getError('pageTemplateId');
+			$errors = $page->getError('pageTemplateId');
 
 			$page->pageTemplate = $pageTemplates->first();
 			$page->pageTemplateId = $page->pageTemplate?->id;
 
-			if ($la_errors) {
-				$page->setError('pageTemplateId', $la_errors);
+			if ($errors) {
+				$page->setError('pageTemplateId', $errors);
 			}
 		}
 		elseif (!$page->pageTemplate) {
 			$page->pageTemplate = $pageTemplates->firstMatch(['id' => $page->pageTemplateId]);
 		}
 
-		$lo_request = $this->getRequest();
+		$request = $this->getRequest();
 		//When page_template_id is part of the request data, overwrite it since it might be outdated
-		if ($lo_request->getData('page_template_id') !== null) {
-			$lo_request = $lo_request->withData('page_template_id', $page->pageTemplateId);
-			$this->setRequest($lo_request);
+		if ($request->getData('page_template_id') !== null) {
+			$request = $request->withData('page_template_id', $page->pageTemplateId);
+			$this->setRequest($request);
 		}
 	}
 
@@ -973,10 +972,10 @@ class PagesController extends Controller {
 	 * @return void
 	 */
 	protected function isNestableWithCategoriesEnabled(): void {
-		$lo_categoriesBehavior = $this->Pages->getBehavior('Categories');
+		$categoriesBehavior = $this->Pages->getBehavior('Categories');
 		if (
-			$lo_categoriesBehavior->getConfig('enabled') &&
-			in_array($lo_categoriesBehavior->getConfig('field'), ['parent_id', 'parentId'], true)
+			$categoriesBehavior->getConfig('enabled') &&
+			in_array($categoriesBehavior->getConfig('field'), ['parent_id', 'parentId'], true)
 		) {
 			throw new RuntimeException('Cannot use nesting with categories that uses `parent_id` as the foreign key.');
 		}

@@ -69,9 +69,9 @@ class LockComponent extends Component {
 
 		$this->locksTable = $this->fetchTable('Locks');
 
-		$lo_session = $this->getController()->getRequest()->getSession();
-		if (!$lo_session->read('Backend.lockIdentifier')) {
-			$lo_session->write('Backend.lockIdentifier', Text::uuid());
+		$session = $this->getController()->getRequest()->getSession();
+		if (!$session->read('Backend.lockIdentifier')) {
+			$session->write('Backend.lockIdentifier', Text::uuid());
 		}
 	}
 
@@ -83,46 +83,46 @@ class LockComponent extends Component {
 		// Delete locks that timed out
 		$this->deleteTimedOutLocks();
 
-		$lo_controller = $this->getController();
-		$ls_action = $lo_controller->getRequest()->getParam('action');
-		$lx_autoload = $this->getConfig('autoload');
+		$controller = $this->getController();
+		$action = $controller->getRequest()->getParam('action');
+		$autoload = $this->getConfig('autoload');
 
 		//Shall we autoload the records?
 		if (
-			$lx_autoload === false ||
+			$autoload === false ||
 			(
-				$lx_autoload !== true &&
+				$autoload !== true &&
 				(
-					!is_array($lx_autoload) ||
-					!in_array($ls_action, $lx_autoload)
+					!is_array($autoload) ||
+					!in_array($action, $autoload)
 				) &&
 				(
-					!is_string($lx_autoload) ||
-					$ls_action !== $lx_autoload
+					!is_string($autoload) ||
+					$action !== $autoload
 				)
 			)
 		) {
 			return;
 		}
 
-		$li_id = (int)$lo_controller->getRequest()->getQuery($this->getConfig('urlParam'));
+		$id = (int)$controller->getRequest()->getQuery($this->getConfig('urlParam'));
 
-		if (!$li_id) {
+		if (!$id) {
 			return;
 		}
 
-		$lo_lock = $this->createLock($li_id);
+		$lock = $this->createLock($id);
 
-		if (!$lo_lock) {
+		if (!$lock) {
 			return;
 		}
 
-		$lo_controller->set('_lock', [
-			'controller' => Text::slug($lo_controller->getName()),
-			'entityId' => $li_id,
-			'lock' => $lo_lock,
-			'lockedUntil' => $lo_lock->createdOn->modify('+' . $this->getConfig('timeout') . ' seconds'),
-			'isOwnLock' => $this->isOwnLock($lo_lock),
+		$controller->set('_lock', [
+			'controller' => Text::slug($controller->getName()),
+			'entityId' => $id,
+			'lock' => $lock,
+			'lockedUntil' => $lock->createdOn->modify('+' . $this->getConfig('timeout') . ' seconds'),
+			'isOwnLock' => $this->isOwnLock($lock),
 		]);
 	}
 
@@ -146,12 +146,12 @@ class LockComponent extends Component {
 		// Delete locks that timed out
 		$this->deleteTimedOutLocks();
 
-		$lo_lock = $this->findLock($id);
+		$lock = $this->findLock($id);
 
-		if ($this->getConfig('enabled') && !$lo_lock) {
-			$lo_lock = $this->locksTable->newDefaultEntity();
+		if ($this->getConfig('enabled') && !$lock) {
+			$lock = $this->locksTable->newDefaultEntity();
 
-			$this->locksTable->patchEntity($lo_lock, [
+			$this->locksTable->patchEntity($lock, [
 				'scope' => $this->getConfig('tableName'),
 				'foreignKey' => $id,
 				'uniqueId' => $this->getController()->getRequest()->getSession()->read('Backend.lockIdentifier'),
@@ -159,23 +159,23 @@ class LockComponent extends Component {
 				'createdBy' => $this->getIdentityId(),
 			], ['accessibleFields' => ['createdOn', 'createdBy']]);
 
-			if ($this->locksTable->save($lo_lock)) {
-				return $lo_lock;
+			if ($this->locksTable->save($lock)) {
+				return $lock;
 			}
 
 			return false;
 		}
 
 		// Update the lock if it is older than the timeout
-		if ($lo_lock && $this->isOwnLock($lo_lock)) {
-			$lo_lock->set('createdOn', new DateTime());
+		if ($lock && $this->isOwnLock($lock)) {
+			$lock->set('createdOn', new DateTime());
 
-			if (!$this->locksTable->save($lo_lock)) {
+			if (!$this->locksTable->save($lock)) {
 				return false;
 			}
 		}
 
-		return $lo_lock ?? false;
+		return $lock ?? false;
 	}
 
 
@@ -189,17 +189,17 @@ class LockComponent extends Component {
 			return false;
 		}
 
-		$lo_lock = $this->findLock($id, true, $lockedUntil);
+		$lock = $this->findLock($id, true, $lockedUntil);
 
-		if (!$lo_lock) {
+		if (!$lock) {
 			return false;
 		}
 
-		if ($this->locksTable->delete($lo_lock)) {
+		if ($this->locksTable->delete($lock)) {
 			return true;
 		}
 
-		return $lo_lock;
+		return $lock;
 	}
 
 
@@ -209,9 +209,7 @@ class LockComponent extends Component {
 	 * @return ?int
 	 */
 	protected function getIdentityId(): ?int {
-		$lo_identity = $this->getIdentity();
-
-		return $lo_identity?->getIdentifier();
+		return $this->getIdentity()?->getIdentifier();
 	}
 
 
@@ -228,28 +226,28 @@ class LockComponent extends Component {
 	 * @return \Awyiss\Model\Entity\Lock|null
 	 */
 	public function findLock(int $id, ?bool $ownLock = null, ?string $createdOn = null): ?Lock {
-		$lo_controller = $this->getController();
-		$lo_session = $lo_controller->getRequest()->getSession();
+		$controller = $this->getController();
+		$session = $controller->getRequest()->getSession();
 
-		$la_where = [
+		$where = [
 			'scope' => $this->getConfig('tableName'),
 			'foreign_key' => $id,
 		];
 
 		if ($ownLock !== null) {
-			$la_where['created_by' . ($ownLock ? '' : ' !=') ] = $this->getIdentityId();
+			$where['created_by' . ($ownLock ? '' : ' !=') ] = $this->getIdentityId();
 
-			$lb_sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
-			if ($lb_sessionBased) {
-				$la_where[ 'unique_id' . ($ownLock ? '' : ' !=') ] = $lo_session->read('Backend.lockIdentifier');
+			$sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
+			if ($sessionBased) {
+				$where[ 'unique_id' . ($ownLock ? '' : ' !=') ] = $session->read('Backend.lockIdentifier');
 			}
 		}
 
 		if ($createdOn) {
-			$la_where['created_on <='] = $createdOn;
+			$where['created_on <='] = $createdOn;
 		}
 
-		return $this->locksTable->find()->where($la_where)->contain(['CreatedByUser'])->first();
+		return $this->locksTable->find()->where($where)->contain(['CreatedByUser'])->first();
 	}
 
 

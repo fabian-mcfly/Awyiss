@@ -22,16 +22,15 @@ if (!function_exists('__')) {
 			return '';
 		}
 
-		$la_args = $args;
 		if (isset($args[0]) && is_array($args[0])) {
-			$la_args = $args[0];
+			$args = $args[0];
 		}
 
-		$ls_controller = Router::getRequest()?->getParam('controller');
-		if ($ls_controller) {
-			$ls_controller = Inflector::underscore(Router::getRequest()->getParam('controller'));
+		$controller = Router::getRequest()?->getParam('controller');
+		if ($controller) {
+			$controller = Inflector::underscore(Router::getRequest()->getParam('controller'));
 
-			return __d($ls_controller, $string, $la_args);
+			return __d($controller, $string, $args);
 		}
 
 		if (
@@ -41,7 +40,7 @@ if (!function_exists('__')) {
 				'headline_overview',
 			])
 		) {
-			return I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
+			return I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $args);
 		}
 
 		return $string;
@@ -54,23 +53,23 @@ if (!function_exists('__f')) {
 	 * Returns a translated string if one is found; Otherwise, the provided fallback
 	 *
 	 * @param string $string
+	 * @param string $fallback
 	 * @param mixed ...$args
 	 * @return string The translated text.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
-	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
 	function __f(string $string, string $fallback, mixed ...$args): string {
-		$ls_string = __($string, ...$args);
+		$translation = __($string, ...$args);
 
-		if ($ls_string === $string || str_contains($ls_string, '::')) {
-			$ls_string = $fallback;
+		if ($translation === $string || str_contains($translation, '::')) {
+			$translation = $fallback;
 		}
 
-		if (str_contains($ls_string, '::')) {
-			$ls_string = $string;
+		if (str_contains($translation, '::')) {
+			$translation = $string;
 		}
 
-		return $ls_string;
+		return $translation;
 	}
 }
 
@@ -91,25 +90,24 @@ if (!function_exists('__d')) {
 			return '';
 		}
 
-		$la_args = $args;
 		if (isset($args[0]) && is_array($args[0])) {
-			$la_args = $args[0];
+			$args = $args[0];
 		}
 
-		$ls_domain = __buildDomain($domain);
-		$ls_return = I18n::getTranslator($ls_domain)->translate($string, $la_args);
+		$realmDomain = __buildDomain($domain);
+		$return = I18n::getTranslator($realmDomain)->translate($string, $args);
 
 		if (
 			(
-				!empty($ls_return) &&
-				$ls_return !== $string
+				!empty($return) &&
+				$return !== $string
 			) ||
 			$domain === 'cake'
 		) {
-			return $ls_return;
+			return $return;
 		}
 
-		$ls_return = Inflector::underscore($domain) . '::' . $string;
+		$return = Inflector::underscore($domain) . '::' . $string;
 
 		// Fallback to system domain
 		if (
@@ -120,14 +118,14 @@ if (!function_exists('__d')) {
 				'headline_overview',
 			])
 		) {
-			$ls_fallback = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
+			$fallback = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $args);
 
-			if ($ls_fallback !== $string && !empty($ls_fallback)) {
-				$ls_return = $ls_fallback;
+			if ($fallback !== $string && !empty($fallback)) {
+				return $fallback;
 			}
 		}
 
-		return $ls_return;
+		return $return;
 	}
 }
 
@@ -150,21 +148,19 @@ if (!function_exists('__df')) {
 			return '';
 		}
 
-		$la_args = $args;
 		if (isset($args[0]) && is_array($args[0])) {
-			$la_args = $args[0];
+			$args = $args[0];
 		}
 
-		$ls_domain = __buildDomain($domain);
-		$ls_return = I18n::getTranslator($ls_domain)->translate($string, $la_args);
+		$realmDomain = __buildDomain($domain);
+		$return = I18n::getTranslator($realmDomain)->translate($string, $args);
 
-		if ($ls_return === $string || empty($ls_return)) {
-			$ls_fallbackDomain = __buildDomain($fallbackDomain);
-			$ls_return = I18n::getTranslator($ls_fallbackDomain)->translate($string, $la_args);
+		if ($return === $string || empty($return)) {
+			$return = I18n::getTranslator(__buildDomain($fallbackDomain))->translate($string, $args);
 		}
 
-		if ($ls_return === $string || empty($ls_return)) {
-			$ls_return = Inflector::underscore($domain) . '::' . $string;
+		if ($return === $string || empty($return)) {
+			$return = Inflector::underscore($domain) . '::' . $string;
 
 			// Fallback to system domain
 			if (
@@ -175,16 +171,16 @@ if (!function_exists('__df')) {
 					'headline_overview',
 				])
 			) {
-				$ls_fallback = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
+				$fallback = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $args);
 
-				if ($ls_fallback !== $string && !empty($ls_fallback)) {
-					$ls_return = $ls_fallback;
+				if ($fallback !== $string && !empty($fallback)) {
+					$return = $fallback;
 				}
 			}
 		}
 
 
-		return $ls_return;
+		return $return;
 	}
 }
 
@@ -208,13 +204,12 @@ if (!function_exists('__dx')) {
 			return '';
 		}
 
-		$la_args = $args;
 		if (isset($args[0]) && is_array($args[0])) {
-			$la_args = $args[0];
+			$args = $args[0];
 		}
 
 
-		return __d($domain, $string, ['_context' => $context] + $la_args);
+		return __d($domain, $string, ['_context' => $context] + $args);
 	}
 }
 
@@ -240,13 +235,12 @@ if (!function_exists('__dfx')) {
 			return '';
 		}
 
-		$la_args = $args;
 		if (isset($args[0]) && is_array($args[0])) {
-			$la_args = $args[0];
+			$args = $args[0];
 		}
 
 
-		return __df($domain, $fallbackDomain, $string, ['_context' => $context] + $la_args);
+		return __df($domain, $fallbackDomain, $string, ['_context' => $context] + $args);
 	}
 }
 
@@ -269,23 +263,18 @@ if (!function_exists('__x')) {
 			return '';
 		}
 
-		$la_args = $args;
 		if (isset($args[0]) && is_array($args[0])) {
-			$la_args = $args[0];
+			$args = $args[0];
 		}
 
-		$ls_controller = Router::getRequest()?->getParam('controller');
-		if ($ls_controller) {
-			$ls_controller = Inflector::underscore(Router::getRequest()->getParam('controller'));
+		$controller = Router::getRequest()?->getParam('controller');
+		if ($controller) {
+			$controller = Inflector::underscore(Router::getRequest()->getParam('controller'));
 
-			$ls_return = __d($ls_controller, $string, ['_context' => $context] + $la_args);
-		}
-		else {
-			$ls_return = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, ['_context' => $context] + $la_args);
+			return __d($controller, $string, ['_context' => $context] + $args);
 		}
 
-
-		return $ls_return;
+		return I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, ['_context' => $context] + $args);
 	}
 }
 
@@ -306,16 +295,15 @@ if (!function_exists('__l')) {
 			return '';
 		}
 
-		$la_args = $args;
 		if (isset($args[0]) && is_array($args[0])) {
-			$la_args = $args[0];
+			$args = $args[0];
 		}
 
-		$ls_controller = Router::getRequest()?->getParam('controller');
-		if ($ls_controller) {
-			$ls_controller = Inflector::underscore(Router::getRequest()->getParam('controller'));
+		$controller = Router::getRequest()?->getParam('controller');
+		if ($controller) {
+			$controller = Inflector::underscore(Router::getRequest()->getParam('controller'));
 
-			return __d($ls_controller, $string, $la_args);
+			return __d($controller, $string, $args);
 		}
 
 		if (
@@ -325,7 +313,7 @@ if (!function_exists('__l')) {
 				'headline_overview',
 			])
 		) {
-			return I18n::getTranslator(Awyiss::getRealm() . '/system', $locale)->translate($string, $la_args);
+			return I18n::getTranslator(Awyiss::getRealm() . '/system', $locale)->translate($string, $args);
 		}
 
 		return $string;
@@ -350,38 +338,42 @@ if (!function_exists('__ld')) {
 			return '';
 		}
 
-		$la_args = $args;
 		if (isset($args[0]) && is_array($args[0])) {
-			$la_args = $args[0];
+			$args = $args[0];
 		}
 
-		$ls_domain = __buildDomain($domain);
-		$ls_return = I18n::getTranslator($ls_domain, $locale)->translate($string, $la_args);
+		$realmDomain = __buildDomain($domain);
+		$return = I18n::getTranslator($realmDomain, $locale)->translate($string, $args);
 
 		if (
-			(!empty($ls_return) && $ls_return !== $string) || $domain === 'cake'
+			(
+				!empty($return) &&
+				$return !== $string
+			) ||
+			$domain === 'cake'
 		) {
-			return $ls_return;
+			return $return;
 		}
 
-		$ls_return = Inflector::underscore($domain) . '::' . $string;
+		$return = Inflector::underscore($domain) . '::' . $string;
 
 		// Fallback to system domain
 		if (
-			$domain !== 'system' && !in_array($string, [
+			$domain !== 'system' &&
+			!in_array($string, [
 				'meta_title_overview',
 				'menu_title',
 				'headline_overview',
 			])
 		) {
-			$ls_fallback = I18n::getTranslator(Awyiss::getRealm() . '/system', $locale)->translate($string, $la_args);
+			$fallback = I18n::getTranslator(Awyiss::getRealm() . '/system', $locale)->translate($string, $args);
 
-			if ($ls_fallback !== $string && !empty($ls_fallback)) {
-				$ls_return = $ls_fallback;
+			if ($fallback !== $string && !empty($fallback)) {
+				return $fallback;
 			}
 		}
 
-		return $ls_return;
+		return $return;
 	}
 }
 
@@ -391,19 +383,22 @@ if (!function_exists('__ld')) {
  * @return string
  */
 function __buildDomain(string $domain): string {
+	if ($domain === 'cake') {
+		return $domain;
+	}
+
 	if (!str_contains($domain, '/')) {
 		return Awyiss::getRealm() . '/' . Inflector::underscore($domain);
 	}
 
-	$la_parts = explode('/', $domain);
-	array_walk($la_parts, function (string &$value, int $key): void {
+	$parts = explode('/', $domain);
+	array_walk($parts, function (string &$value, int $key): void {
 		if ($key === 0) {
 			return;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$value = Inflector::underscore($value);
 	});
 
-	return count($la_parts) > 1 ? implode('/', $la_parts) : $domain;
+	return count($parts) > 1 ? implode('/', $parts) : $domain;
 }

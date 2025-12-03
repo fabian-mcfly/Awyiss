@@ -77,9 +77,9 @@ class ContentTemplateElement extends Entity {
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnSpans)) {
-			/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get('Attributes');
-			static::$columnSpans = $lo_table->getColumnSpans();
+			/** @var \Awyiss\Model\Table\AttributesTable $table */
+			$table = FactoryLocator::get('Table')->get('Attributes');
+			static::$columnSpans = $table->getColumnSpans();
 		}
 
 		return [

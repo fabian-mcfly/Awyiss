@@ -86,10 +86,10 @@ class UsergroupPermissionsTable extends Table {
 		]);
 
 
-		/** @var class-string<\Awyiss\Authorization\Permission\PermissionAccess> $ls_permissionAccessEnum */
-		$ls_permissionAccessEnum = App::className('PermissionAccess', 'Authorization/Permission');
+		/** @var class-string<\Awyiss\Authorization\Permission\PermissionAccess> $permissionAccessEnum */
+		$permissionAccessEnum = App::className('PermissionAccess', 'Authorization/Permission');
 		$validator->add('access', [
-			'enum' => ['rule' => ['enum', $ls_permissionAccessEnum]],
+			'enum' => ['rule' => ['enum', $permissionAccessEnum]],
 		]);
 
 
@@ -130,10 +130,10 @@ class UsergroupPermissionsTable extends Table {
 
 		$rules->add(
 			function (UsergroupPermission $entity): bool {
-				/** @var class-string<\Awyiss\Authorization\Permission\PermissionAccess> $ls_permissionAccessEnum */
-				$ls_permissionAccessEnum = App::className('PermissionAccess', 'Authorization/Permission');
+				/** @var class-string<\Awyiss\Authorization\Permission\PermissionAccess> $permissionAccessEnum */
+				$permissionAccessEnum = App::className('PermissionAccess', 'Authorization/Permission');
 
-				return in_array($entity->access, $ls_permissionAccessEnum::cases());
+				return in_array($entity->access, $permissionAccessEnum::cases());
 			},
 			'validAccess',
 			[
@@ -153,9 +153,9 @@ class UsergroupPermissionsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Authorization\Permission\PermissionAccess> $ls_permissionAccessEnum */
-		$ls_permissionAccessEnum = App::className('PermissionAccess', 'Authorization/Permission');
-		$schema->setColumnType('access', EnumType::from($ls_permissionAccessEnum));
+		/** @var class-string<\Awyiss\Authorization\Permission\PermissionAccess> $permissionAccessEnum */
+		$permissionAccessEnum = App::className('PermissionAccess', 'Authorization/Permission');
+		$schema->setColumnType('access', EnumType::from($permissionAccessEnum));
 
 		$schema->setColumnType('settings', 'json');
 	}

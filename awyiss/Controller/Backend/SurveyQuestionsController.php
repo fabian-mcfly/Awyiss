@@ -34,10 +34,10 @@ class SurveyQuestionsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->SurveyQuestions->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->SurveyQuestions->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -49,11 +49,11 @@ class SurveyQuestionsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_surveyQuestions = $this->paginate($lo_query);
+		$query = $this->getOverviewQuery();
+		$surveyQuestions = $this->paginate($query);
 
 		$this->set([
-			'surveyQuestions' => $lo_surveyQuestions,
+			'surveyQuestions' => $surveyQuestions,
 			'attributes' => $this->SurveyQuestions->getAttributes(),
 		]);
 	}
@@ -68,14 +68,14 @@ class SurveyQuestionsController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_surveyQuestion = $this->SurveyQuestions->newDefaultEntity();
+		$surveyQuestion = $this->SurveyQuestions->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_surveyQuestion);
+			$this->save($surveyQuestion);
 		}
 
 		$this->set([
-			'surveyQuestion' => $lo_surveyQuestion,
+			'surveyQuestion' => $surveyQuestion,
 		]);
 	}
 
@@ -91,24 +91,24 @@ class SurveyQuestionsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\SurveyQuestion $lo_surveyQuestion
+		 * @var \Awyiss\Model\Entity\SurveyQuestion $surveyQuestion
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_surveyQuestion = $this->SurveyQuestions->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_surveyQuestion) {
+		$surveyQuestion = $this->SurveyQuestions->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$surveyQuestion) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_surveyQuestion, 'edit');
+			$this->save($surveyQuestion, 'edit');
 		}
 
 		$this->set([
-			'surveyQuestion' => $lo_surveyQuestion,
+			'surveyQuestion' => $surveyQuestion,
 		]);
 	}
 
@@ -125,15 +125,15 @@ class SurveyQuestionsController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var SurveyQuestion $lo_surveyQuestion */
-		$lo_surveyQuestion = $this->SurveyQuestions->findById($id)->first();
-		if (!$lo_surveyQuestion) {
+		/** @var \Awyiss\Model\Entity\SurveyQuestion $surveyQuestion */
+		$surveyQuestion = $this->SurveyQuestions->findById($id)->first();
+		if (!$surveyQuestion) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->SurveyQuestions->delete($lo_surveyQuestion)) {
+		if ($this->SurveyQuestions->delete($surveyQuestion)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -141,8 +141,8 @@ class SurveyQuestionsController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_surveyQuestion->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($surveyQuestion->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -152,41 +152,41 @@ class SurveyQuestionsController extends Controller {
 
 
 	/**
-	 * @param SurveyQuestion $surveyQuestion
+	 * @param \Awyiss\Model\Entity\SurveyQuestion $surveyQuestion
 	 * @param string $method
 	 * @return void
 	 * @throws \Cake\Http\Exception\RedirectException|\Exception
 	 * @noinspection DuplicatedCode
 	 */
 	protected function save(SurveyQuestion $surveyQuestion, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->SurveyQuestions->hasAttributes()) {
-			$la_associated[] = $this->SurveyQuestions->getAttributesTableName(true);
+			$associated[] = $this->SurveyQuestions->getAttributesTableName(true);
 			$surveyQuestion->setAccess('attributes', true);
 		}
 
-		$la_data = $this->request->getData();
+		$requestData = $this->request->getData();
 
 		if (
-			!empty($la_data['answers']) &&
+			!empty($requestData['answers']) &&
 			$this->Authorization->scopeIsAccessible('SurveyAnswers', [], 'create')
 		) {
-			$la_associated[] = 'SurveyAnswers';
+			$associated[] = 'SurveyAnswers';
 			$surveyQuestion->setAccess('surveyAnswers', true);
-			$la_data['survey_answers'] = $this->buildAnswersData($la_data['answers']);
+			$requestData['survey_answers'] = $this->buildAnswersData($requestData['answers']);
 		}
 
-		$this->SurveyQuestions->patchEntity($surveyQuestion, $la_data, [
-			'associated' => $la_associated,
+		$this->SurveyQuestions->patchEntity($surveyQuestion, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->SurveyQuestions->save($surveyQuestion, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->SurveyQuestions->save($surveyQuestion, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -200,9 +200,9 @@ class SurveyQuestionsController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($surveyQuestion->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($surveyQuestion->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -219,29 +219,27 @@ class SurveyQuestionsController extends Controller {
 			return [];
 		}
 
-		$la_languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
+		$languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
-		$lo_currentLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_FRONTEND);
+		$currentLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_FRONTEND);
 
-		$la_answers = explode(PHP_EOL, $answers);
-		$la_answers = array_map('trim', $la_answers);
-		$la_answers = array_values(array_filter($la_answers));
+		$answers = explode(PHP_EOL, $answers);
+		$answers = array_map('trim', $answers);
+		$answers = array_values(array_filter($answers));
 
-		array_walk($la_answers, function (&$value, int $key) use ($la_languages, $lo_currentLanguage) {
-			/** @noinspection PhpVariableNamingConventionInspection */
+		array_walk($answers, function (&$value, int $key) use ($languages, $currentLanguage) {
 			$value = [
 				'title' => $value,
 				'system_order' => $key + 1,
 			];
 
-			if (count($la_languages) > 1) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$value['_translations'][ $lo_currentLanguage->shortcode ] = [
+			if (count($languages) > 1) {
+				$value['_translations'][ $currentLanguage->shortcode ] = [
 					'title' => $value['title'],
 				];
 			}
 		});
 
-		return $la_answers;
+		return $answers;
 	}
 }

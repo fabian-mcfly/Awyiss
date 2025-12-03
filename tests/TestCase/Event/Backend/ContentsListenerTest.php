@@ -43,7 +43,6 @@ class ContentsListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -58,7 +57,6 @@ class ContentsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -79,7 +77,6 @@ class ContentsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentsListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEmptiesTitleTagWhenEmptyTitle(): void {
 		$entity = $this->fetchTable('Contents')->newDefaultEntity([
@@ -109,7 +106,6 @@ class ContentsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentsListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEmptiesSubtitleTagWhenEmptySubtitle(): void {
 		$entity = $this->fetchTable('Contents')->newDefaultEntity([
@@ -140,7 +136,6 @@ class ContentsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentsListener::recompileAfterClassNameSave
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRecompilesFrontendScssWhenColumnClassNameChanged(): void {
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -186,7 +181,6 @@ class ContentsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentsListener::recompileAfterMaxColumnsSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRecompilesFrontendScssWhenColumnMaxColumnsChanged(): void {
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -232,7 +226,6 @@ class ContentsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentsListener::recompileAfterClassNameDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRecompilesFrontendScssWhenColumnClassNameDeleted(): void {
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -267,7 +260,6 @@ class ContentsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentsListener::recompileAfterMaxColumnsDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRecompilesFrontendScssWhenColumnMaxColumnsDeleted(): void {
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -304,7 +296,6 @@ class ContentsListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
 	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitCreatesAutoTranslationJobWhenLanguageChanges(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
@@ -373,7 +364,6 @@ class ContentsListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
 	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotCreatesJobWhenAutoTranslateManual(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'manual');
@@ -410,7 +400,6 @@ class ContentsListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
 	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotCreatesJobWhenAutoTranslateDisabled(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'disabled');
@@ -447,7 +436,6 @@ class ContentsListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
 	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitDoesNotCreateJobWhenNoLanguageChange(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
@@ -490,7 +478,6 @@ class ContentsListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
 	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitBundlesMultipleContentsIntoOneJob(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
@@ -556,7 +543,6 @@ class ContentsListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
 	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRemovesContentsWithNoLanguageChange(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
@@ -621,7 +607,6 @@ class ContentsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
 	 * @see \Awyiss\Event\Backend\ContentsListener::detectLanguageChange()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitSkipsContentsWhenPageIdNotChanged(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');
@@ -663,7 +648,6 @@ class ContentsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentsListener::afterSaveCommit()
 	 * @see \Awyiss\Event\Backend\ContentsListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitIgnoresExceptionWhenLockSaveFails(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.mode', 'auto');

@@ -18,7 +18,6 @@ use ZipArchive;
 class WebfontDownloadTaskTest extends TestCase {
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -35,7 +34,6 @@ class WebfontDownloadTaskTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
@@ -57,7 +55,6 @@ SCSS);
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Design\WebfontDownloadTask::generateScssFile()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGenerateScssFileWithNoFonts(): void {
 		$task = new WebfontDownloadTask();
@@ -77,7 +74,6 @@ SCSS);
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Design\WebfontDownloadTask::generateScssFile()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGenerateScssFileWithMultipleVariants(): void {
 		$task = new WebfontDownloadTask();
@@ -134,7 +130,6 @@ SCSS);
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Design\WebfontDownloadTask::buildFontFaceBlock()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildFontFaceBlock(): void {
 		$task = new WebfontDownloadTask();
@@ -160,7 +155,6 @@ SCSS);
 	 * @return void;
 	 * @see \Awyiss\Queue\Task\Design\WebfontDownloadTask::getDownloadUrl()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDownloadUrl(): void {
 		$task = new WebfontDownloadTask();
@@ -177,7 +171,6 @@ SCSS);
 	/**
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Design\WebfontDownloadTask::run()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunWithNoFonts(): void {
 		$scssPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'scss' . DS . 'webfonts.scss';
@@ -198,7 +191,6 @@ SCSS);
 	/**
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Design\WebfontDownloadTask::run()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunCorrectlyBuildsFontData(): void {
 		$task = $this->getMockBuilder(WebfontDownloadTask::class)
@@ -252,7 +244,6 @@ SCSS);
 	/**
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Design\WebfontDownloadTask::run()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunDownloadsAndGeneratesScss(): void {
 		// Create a temporary zip with one font file

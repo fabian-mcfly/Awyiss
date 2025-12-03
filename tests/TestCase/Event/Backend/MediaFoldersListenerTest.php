@@ -47,7 +47,6 @@ class MediaFoldersListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -80,7 +79,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -100,7 +98,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsPathFromTitleWhenEmpty(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -120,7 +117,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveMarksPathAsCleanWhenUnchanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -161,7 +157,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSavePrependsParentPath(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -194,7 +189,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsParentsActiveDependingOnParent(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -240,7 +234,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsParentsActiveTrueWhenNoParent(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -263,7 +256,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniquePathForNewEntity(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -290,7 +282,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniquePathForExistingEntityWhenPathChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -317,7 +308,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveNotEnsuresUniquePathForExistingEntityWhenPathUnchanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -349,7 +339,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniquePathForExistingEntityWhenPathUnchangedAndLanguageChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -378,7 +367,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniquePathNeverExceedsMaxLength(): void {
 		$longPath = 'media/parent/' . str_repeat('dummyfolder', 92);
@@ -413,7 +401,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterCopyCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyCommitCopiesMediaEntities(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -482,7 +469,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterCopyCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyCommitCopiesDirectory(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -525,7 +511,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterCopyCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyCommitNotCopiesDirectoryWhenNotPrimary(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -566,7 +551,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalPathsWhenPathChangedAndConfigSettingDisabled(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_DISABLED);
@@ -626,7 +610,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalPathsWhenPathChangedAndConfigSettingFalse(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', false);
@@ -686,7 +669,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesHistoricalPathsWhenPathChangedAndConfigSettingAlways(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS);
@@ -761,7 +743,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalPathsWhenPathChangedAndConfigSettingFileNameChange(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE);
@@ -821,7 +802,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesHistoricalPathsWhenPathChangedAndConfigSettingFolderNameChange(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE);
@@ -895,7 +875,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalPathsWhenPathUnchangedAndConfigSettingFileNameChange(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE);
@@ -957,7 +936,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveRenamesDirectoryWhenPathChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1000,7 +978,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveRebuildsPathInMediaFoldersTableWhenPathChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1037,7 +1014,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveRebuildsPathInMediaTableWhenPathChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1091,7 +1067,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotRebuildsPathInMediaTableWhenPathUnchanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1147,7 +1122,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveRebuildsPathInMediaResizedImagesTableWhenPathChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1220,7 +1194,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotRebuildsPathInMediaResizedImagesTableWhenPathUnchanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1295,7 +1268,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUpdatesDescendantParentsActiveWhenActiveChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1339,7 +1311,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesParentsParentsActiveWhenActiveChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1383,7 +1354,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesParentsParentsActiveWhenActiveUnchanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1429,7 +1399,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesDescendantParentsActiveForDescendantsWithInactiveParentsWheActiveChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1489,7 +1458,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUpdatesDescendantParentsActiveWhenParentsActiveChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1533,7 +1501,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesParentsParentsActiveWhenParentsActiveChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1577,7 +1544,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesParentsParentsActiveWhenParentsActiveUnchanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1623,7 +1589,6 @@ class MediaFoldersListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesDescendantParentsActiveForDescendantsWithInactiveParentsWhenParentsActiveChanged(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1682,7 +1647,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitCreatesDirectory(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1708,7 +1672,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotCreatesDirectoryWhenIsCopy(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1732,7 +1695,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSoftDeleteRenamesPathWhenPrimary(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1752,7 +1714,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::beforeSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSoftDeleteNotRenamesPathWhenNotPrimary(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1773,7 +1734,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterDeleteCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _testAfterDeleteCommitClearsCache(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1790,7 +1750,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaFoldersListener::afterSoftDeleteCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _testAfterSoftDeleteCommitClearsCache(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1807,7 +1766,6 @@ class MediaFoldersListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createDummyFolders(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1938,7 +1896,6 @@ class MediaFoldersListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function deleteDummyFolders(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');

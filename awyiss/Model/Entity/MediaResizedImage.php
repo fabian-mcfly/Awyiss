@@ -70,28 +70,29 @@ class MediaResizedImage extends Entity {
 			return null;
 		}
 
-		$li_dotPos = strrpos($this->name, '.');
+		$dotPos = strrpos($this->name, '.');
 
-		if (!$li_dotPos) {
+		if (!$dotPos) {
 			return null;
 		}
 
 
-		return substr($this->name, $li_dotPos + 1);
+		return substr($this->name, $dotPos + 1);
 	}
 
 
 	/**
 	 * @return int|null
+	 * @noinspection PhpUnused
 	 */
 	public function _getFilemtime(): ?int {
-		$ls_path = $this->pathAbsolute;
+		$path = $this->pathAbsolute;
 
-		if (!$ls_path || !file_exists($ls_path)) {
+		if (!$path || !file_exists($path)) {
 			return null;
 		}
 
-		return filemtime($ls_path);
+		return filemtime($path);
 	}
 
 

@@ -13,7 +13,7 @@ use Cake\Utility\Text;
  * PageTemplate Entity
  *
  * @property int $id
- * @property int|null $pageRoleId
+ * @property \Awyiss\Model\Enum\PageRoleEnumInterface|int|null $pageRoleId
  * @property string|null $title
  * @property string|null $fileName
  * @property int $systemOrder
@@ -71,10 +71,10 @@ class PageTemplate extends Entity {
 			return null;
 		}
 
-		$ls_fileName = Text::slug($fileName, ['replacement' => '_']);
+		$fileName = Text::slug($fileName, ['replacement' => '_']);
 
 
-		return mb_strtolower($ls_fileName);
+		return mb_strtolower($fileName);
 	}
 
 

@@ -18,7 +18,6 @@ class ContentAreaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ContentArea::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\ContentAreasTable $table */
@@ -35,7 +34,6 @@ class ContentAreaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ContentArea::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new ContentArea();
@@ -57,7 +55,6 @@ class ContentAreaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ContentArea
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -81,7 +78,6 @@ class ContentAreaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ContentArea::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

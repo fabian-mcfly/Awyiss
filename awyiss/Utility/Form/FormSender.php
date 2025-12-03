@@ -77,13 +77,13 @@ class FormSender {
 		$this->form = $form;
 		$this->page = $page;
 
-		/** @var \Awyiss\Model\Table\FormsTable $lo_formsTable */
-		$lo_formsTable = FactoryLocator::get('Table')->get('Forms');
+		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
+		$formsTable = FactoryLocator::get('Table')->get('Forms');
 		if (!$form->emailTemplate) {
-			$lo_formsTable->loadInto($form, ['EmailTemplates']);
+			$formsTable->loadInto($form, ['EmailTemplates']);
 		}
 		if (!$form->confirmationEmailTemplate) {
-			$lo_formsTable->loadInto($form, ['ConfirmationEmailTemplates']);
+			$formsTable->loadInto($form, ['ConfirmationEmailTemplates']);
 		}
 		if (!$form->formElements) {
 			$form->loadFormOptions()->loadFormElements();
@@ -111,30 +111,30 @@ class FormSender {
 	public function handle(): bool {
 		$this->replacePlaceholdersInForm();
 
-		$lo_eventManager = EventManager::instance();
+		$eventManager = EventManager::instance();
 
 		// Dispatch a new event for the form beforeSend
-		$lo_event = new Event('FormSender.beforeSend', $this->form);
-		$lo_eventManager->dispatch($lo_event);
+		$event = new Event('FormSender.beforeSend', $this->form);
+		$eventManager->dispatch($event);
 
-		if ($lo_event->isStopped()) {
+		if ($event->isStopped()) {
 			return false;
 		}
 
-		$lb_sentEmail = null;
+		$sentEmail = null;
 		if ($this->form->sendEmail) {
-			$lb_sentEmail = $this->sendEmail();
+			$sentEmail = $this->sendEmail();
 		}
 
-		$lb_sentConfirmationEmail = null;
-		if ($lb_sentEmail !== false && $this->form->sendConfirmationEmail) {
-			$lb_sentConfirmationEmail = $this->sendConfirmationEmail();
+		$sentConfirmationEmail = null;
+		if ($sentEmail !== false && $this->form->sendConfirmationEmail) {
+			$sentConfirmationEmail = $this->sendConfirmationEmail();
 		}
 
 		// If either mail was sent and the other did not result in an error, return true.
 		if (
-			(!$this->form->sendEmail || $lb_sentEmail) &&
-			(!$this->form->sendConfirmationEmail || $lb_sentConfirmationEmail)
+			(!$this->form->sendEmail || $sentEmail) &&
+			(!$this->form->sendConfirmationEmail || $sentConfirmationEmail)
 		) {
 			return $this->saveFormEntry();
 		}
@@ -161,10 +161,10 @@ class FormSender {
 	 */
 	protected function sendEmail(): bool {
 		// Build the mail body
-		$ls_bodyHtml = $this->createBody($this->form->emailTemplate);
-		$ls_bodyPlain = $this->createBody($this->form->emailTemplate, 'text');
+		$bodyHtml = $this->createBody($this->form->emailTemplate);
+		$bodyPlain = $this->createBody($this->form->emailTemplate, 'text');
 
-		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+		if (empty($bodyPlain) && empty($bodyHtml)) {
 			return false;
 		}
 
@@ -172,82 +172,82 @@ class FormSender {
 		// If the event is stopped, do not send the email.
 		if (
 			!$this->sendEvent('FormSender.beforeSendEmail', [
-				'bodyHtml' => &$ls_bodyHtml,
-				'bodyPlain' => &$ls_bodyPlain,
+				'bodyHtml' => &$bodyHtml,
+				'bodyPlain' => &$bodyPlain,
 			])
 		) {
 			return false;
 		}
 
 		// Check again if both body parts are empty.
-		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+		if (empty($bodyPlain) && empty($bodyHtml)) {
 			return false;
 		}
 
-		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
-		$ls_className = App::className('Mailer', 'Mailer');
-		$lo_mailer = new $ls_className('form');
+		/** @var class-string<\Cake\Mailer\Mailer> $className */
+		$className = App::className('Mailer', 'Mailer');
+		$mailer = new $className('form');
 
-		$lo_mailer->setTransport($this->form->transportProfile);
+		$mailer->setTransport($this->form->transportProfile);
 
-		$lo_mailer->setSubject(html_entity_decode($this->form->subject))
+		$mailer->setSubject(html_entity_decode($this->form->subject))
 		->setFrom(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName))
 		->setTo(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix', 'Awyiss CMS')));
 
 		if ($this->form->cc) {
-			foreach ($this->form->cc as $la_cc) {
-				$lo_mailer->addCc($la_cc['email'], $la_cc['name'] ?: null);
+			foreach ($this->form->cc as $cc) {
+				$mailer->addCc($cc['email'], $cc['name'] ?: null);
 			}
 		}
 
 		if ($this->form->bcc) {
-			foreach ($this->form->bcc as $la_bcc) {
-				$lo_mailer->addBcc($la_bcc['email'], $la_bcc['name'] ?: null);
+			foreach ($this->form->bcc as $bcc) {
+				$mailer->addBcc($bcc['email'], $bcc['name'] ?: null);
 			}
 		}
 
 		$this->setSafeSender(
-			$lo_mailer,
+			$mailer,
 			$this->form->userName,
 			$this->form->userEmail,
 			$this->form->userName
 		);
 
-		$this->addFormAttachments($lo_mailer);
+		$this->addFormAttachments($mailer);
 
 		// Dispatch a new event for the form beforeEmailDeliver
 		// If the event is stopped, do not send the email.
 		if (
 			!$this->sendEvent('FormSender.beforeEmailDeliver', [
-				'bodyHtml' => &$ls_bodyHtml,
-				'bodyPlain' => &$ls_bodyPlain,
-				'mailer' => $lo_mailer,
+				'bodyHtml' => &$bodyHtml,
+				'bodyPlain' => &$bodyPlain,
+				'mailer' => $mailer,
 			])
 		) {
 			return false;
 		}
 
 		// Check again if both body parts are empty.
-		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+		if (empty($bodyPlain) && empty($bodyHtml)) {
 			return false;
 		}
 
 		// `both` should be default, so only set the format if it differs from the default.
-		if (empty($ls_bodyHtml) || empty($ls_bodyPlain)) {
-			$lo_mailer->setEmailFormat(empty($ls_bodyHtml) ? 'text' : 'html');
+		if (empty($bodyHtml) || empty($bodyPlain)) {
+			$mailer->setEmailFormat(empty($bodyHtml) ? 'text' : 'html');
 		}
 
-		$lb_sent = $this->send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain);
+		$sent = $this->send($mailer, $bodyHtml, $bodyPlain);
 
 		// Dispatch a new event for the form afterEmailDeliver
 		$this->sendEvent('FormSender.afterEmailDeliver', [
-			'bodyHtml' => $ls_bodyHtml,
-			'bodyPlain' => $ls_bodyPlain,
-			'mailer' => $lo_mailer,
-			'sent' => $lb_sent,
+			'bodyHtml' => $bodyHtml,
+			'bodyPlain' => $bodyPlain,
+			'mailer' => $mailer,
+			'sent' => $sent,
 		]);
 
-		return $lb_sent;
+		return $sent;
 	}
 
 
@@ -258,10 +258,10 @@ class FormSender {
 	 */
 	protected function sendConfirmationEmail(): bool {
 		// Build the mail body
-		$ls_bodyHtml = $this->createBody($this->form->confirmationEmailTemplate, 'html', 'confirmation');
-		$ls_bodyPlain = $this->createBody($this->form->confirmationEmailTemplate, 'text', 'confirmation');
+		$bodyHtml = $this->createBody($this->form->confirmationEmailTemplate, 'html', 'confirmation');
+		$bodyPlain = $this->createBody($this->form->confirmationEmailTemplate, 'text', 'confirmation');
 
-		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+		if (empty($bodyPlain) && empty($bodyHtml)) {
 			return false;
 		}
 
@@ -269,30 +269,30 @@ class FormSender {
 		// If the event is stopped, do not send the email.
 		if (
 			!$this->sendEvent('FormSender.beforeSendConfirmationEmail', [
-				'bodyHtml' => &$ls_bodyHtml,
-				'bodyPlain' => &$ls_bodyPlain,
+				'bodyHtml' => &$bodyHtml,
+				'bodyPlain' => &$bodyPlain,
 			])
 		) {
 			return false;
 		}
 
 		// Check again if both body parts are empty.
-		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+		if (empty($bodyPlain) && empty($bodyHtml)) {
 			return false;
 		}
 
-		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
-		$ls_className = App::className('Mailer', 'Mailer');
-		$lo_mailer = new $ls_className('form');
+		/** @var class-string<\Cake\Mailer\Mailer> $mailerClassName */
+		$mailerClassName = App::className('Mailer', 'Mailer');
+		$mailer = new $mailerClassName('form');
 
-		$lo_mailer->setTransport($this->form->transportProfile);
+		$mailer->setTransport($this->form->transportProfile);
 
-		$lo_mailer->setSubject(html_entity_decode($this->form->subjectConfirmation))
+		$mailer->setSubject(html_entity_decode($this->form->subjectConfirmation))
 		->setFrom(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')))
 		->setTo(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName));
 
 		$this->setSafeSender(
-			$lo_mailer,
+			$mailer,
 			$this->form->userName,
 			$this->form->ownerEmail,
 			$this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')
@@ -302,35 +302,35 @@ class FormSender {
 		// If the event is stopped, do not send the email.
 		if (
 			!$this->sendEvent('FormSender.beforeConfirmationEmailDeliver', [
-				'bodyHtml' => &$ls_bodyHtml,
-				'bodyPlain' => &$ls_bodyPlain,
-				'mailer' => $lo_mailer,
+				'bodyHtml' => &$bodyHtml,
+				'bodyPlain' => &$bodyPlain,
+				'mailer' => $mailer,
 			])
 		) {
 			return false;
 		}
 
 		// Check again if both body parts are empty.
-		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+		if (empty($bodyPlain) && empty($bodyHtml)) {
 			return false;
 		}
 
 		// `both` should be default, so only set the format if it differs from the default.
-		if (empty($ls_bodyHtml) || empty($ls_bodyPlain)) {
-			$lo_mailer->setEmailFormat(empty($ls_bodyHtml) ? 'text' : 'html');
+		if (empty($bodyHtml) || empty($bodyPlain)) {
+			$mailer->setEmailFormat(empty($bodyHtml) ? 'text' : 'html');
 		}
 
-		$lb_sent = $this->send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain, 'confirmation');
+		$sent = $this->send($mailer, $bodyHtml, $bodyPlain, 'confirmation');
 
 		// Dispatch a new event for the form afterConfirmationEmailDeliver
 		$this->sendEvent('FormSender.afterConfirmationEmailDeliver', [
-			'bodyHtml' => $ls_bodyHtml,
-			'bodyPlain' => $ls_bodyPlain,
-			'mailer' => $lo_mailer,
-			'sent' => $lb_sent,
+			'bodyHtml' => $bodyHtml,
+			'bodyPlain' => $bodyPlain,
+			'mailer' => $mailer,
+			'sent' => $sent,
 		]);
 
-		return $lb_sent;
+		return $sent;
 	}
 
 
@@ -340,26 +340,26 @@ class FormSender {
 	 * @return bool
 	 */
 	protected function saveFormEntry(): bool {
-		$la_formData = $this->getFormData();
-		$la_formData = array_filter($la_formData, function (mixed $key): bool {
+		$formData = $this->getFormData();
+		$formData = array_filter($formData, function (mixed $key): bool {
 			return !str_starts_with((string)$key, '_');
 		}, ARRAY_FILTER_USE_KEY);
 
 		// Remove hidden input protection field from form data
 		if (isset($this->form->getProtectionMethods()['hidden_input'])) {
-			/** @var \Awyiss\Form\Protection\HiddenInputFormProtection $lo_hiddenInputProtection */
-			$lo_hiddenInputProtection = $this->form->getProtectionMethods()['hidden_input'];
-			if ($lo_hiddenInputProtection->getFieldName()) {
-				unset($la_formData[ $lo_hiddenInputProtection->getFieldName() ]);
+			/** @var \Awyiss\Form\Protection\HiddenInputFormProtection $hiddenInputProtection */
+			$hiddenInputProtection = $this->form->getProtectionMethods()['hidden_input'];
+			if ($hiddenInputProtection->getFieldName()) {
+				unset($formData[ $hiddenInputProtection->getFieldName() ]);
 			}
 		}
 
-		$ls_ipHash = $this->createIpHash();
-		$ls_postHash = Security::hash(serialize($la_formData));
+		$ipHash = $this->createIpHash();
+		$postHash = Security::hash(serialize($formData));
 
-		$lo_formEntry = $this->formEntriesTable->newDefaultEntity();
+		$formEntry = $this->formEntriesTable->newDefaultEntity();
 
-		$la_data = [
+		$data = [
 			'formId' => $this->form->id,
 			'pageId' => $this->page?->id ?? null,
 			'languageShortcode' => $this->page?->languageShortcode ?? Router::getRequest()->getParam('languageShortcode') ?? null,
@@ -367,26 +367,26 @@ class FormSender {
 			'subjectConfirmation' => html_entity_decode($this->form->subjectConfirmation ?? ''),
 			'body' => $this->emailBody['email'] ? base64_encode(gzcompress($this->emailBody['email'])) : null,
 			'bodyConfirmation' => $this->emailBody['confirmation'] ? base64_encode(gzcompress($this->emailBody['confirmation'])) : null,
-			'data' => base64_encode(gzcompress(json_encode($la_formData))),
-			'ipHash' => $ls_ipHash,
-			'postHash' => $ls_postHash,
-			'identifier' => md5($ls_ipHash . '|' . $ls_postHash),
+			'data' => base64_encode(gzcompress(json_encode($formData))),
+			'ipHash' => $ipHash,
+			'postHash' => $postHash,
+			'identifier' => md5($ipHash . '|' . $postHash),
 		];
 
-		$this->formEntriesTable->patchEntity($lo_formEntry, $la_data);
+		$this->formEntriesTable->patchEntity($formEntry, $data);
 
-		foreach ($this->form->getProtectionMethods() as $lo_protectionMethod) {
-			$lo_formEntry = $lo_protectionMethod->modifyFormEntry($lo_formEntry);
+		foreach ($this->form->getProtectionMethods() as $protectionMethod) {
+			$formEntry = $protectionMethod->modifyFormEntry($formEntry);
 
 			// If the modify method decides to intervene, return the desired status.
-			if (is_bool($lo_formEntry)) {
-				return $lo_formEntry;
+			if (is_bool($formEntry)) {
+				return $formEntry;
 			}
 		}
 
 		// Save the form entry
-		if ($this->formEntriesTable->save($lo_formEntry, ['allowFrontendSave' => true])) {
-			$this->formEntryIdentifier = $lo_formEntry->identifier;
+		if ($this->formEntriesTable->save($formEntry, ['allowFrontendSave' => true])) {
+			$this->formEntryIdentifier = $formEntry->identifier;
 
 			return true;
 		}
@@ -410,26 +410,26 @@ class FormSender {
 	 * @return string|null
 	 */
 	protected function createBody(EmailTemplate $emailTemplate, string $type = 'html', string $for = 'email'): ?string {
-		$ls_body = $type === 'html' ? $emailTemplate->textHtml : $emailTemplate->textPlain;
+		$body = $type === 'html' ? $emailTemplate->textHtml : $emailTemplate->textPlain;
 
-		$la_formData = [
+		$formData = [
 			'subject' => $this->form->subject ?: null,
 			'salutation' => $this->form->salutation ?: null,
 		];
 
 		if ($for === 'confirmation') {
-			$la_formData = [
+			$formData = [
 				'subject' => $this->form->subjectConfirmation ?: null,
 				'salutation' => $this->form->salutationConfirmation ?: null,
 			];
 		}
 
 		// Underscored keys since replacePlaceholder() uses underscored keys.
-		$la_formData['base_url'] = Router::url('/', true);
+		$formData['base_url'] = Router::url('/', true);
 
-		$la_data = array_merge(
+		$data = array_merge(
 			$this->getFormData(),
-			$la_formData,
+			$formData,
 		);
 
 		if ($type === 'html') {
@@ -439,19 +439,19 @@ class FormSender {
 			 *
 			 * @noinspection RegExpRedundantEscape
 			 */
-			$ls_body = preg_replace_callback('/<p([^>]*)>(.*?)(\{\{\$data\}\})(.*?)<\/p>/Um', $this->unwrapDataString(...), $ls_body);
+			$body = preg_replace_callback('/<p([^>]*)>(.*?)(\{\{\$data\}\})(.*?)<\/p>/Um', $this->unwrapDataString(...), $body);
 		}
 
-		$ls_body = $this->replacePlaceholders($ls_body, $la_data, ['data']);
+		$body = $this->replacePlaceholders($body, $data, ['data']);
 
 		/**
 		 * Only after all placeholders have been replaced, replace the actual data string.
 		 *
 		 * This is done to prevent users from injecting placeholders into their form data.
 		 */
-		$la_data = ['data' => $this->createDataString($type)];
+		$data = ['data' => $this->createDataString($type)];
 
-		return $this->replacePlaceholders($ls_body, $la_data, ['data']);
+		return $this->replacePlaceholders($body, $data, ['data']);
 	}
 
 
@@ -460,14 +460,14 @@ class FormSender {
 	 * @return string
 	 */
 	protected function createDataString(string $type): string {
-		$lo_view = $this->getView();
+		$view = $this->getView();
 
-		$ls_fileName = 'data';
+		$fileName = 'data';
 		if ($type === 'text') {
-			$ls_fileName .= '_plain';
+			$fileName .= '_plain';
 		}
 
-		return $lo_view->element('email/' . $ls_fileName, $this->templateData());
+		return $view->element('email/' . $fileName, $this->templateData());
 	}
 
 
@@ -475,10 +475,10 @@ class FormSender {
 	 * @return string
 	 */
 	protected function createIpHash(): string {
-		$lo_request = Router::getRequest();
-		$ls_clientIp = $lo_request->clientIp();
+		$request = Router::getRequest();
+		$clientIp = $request->clientIp();
 
-		return Security::hash($ls_clientIp . Security::getSalt());
+		return Security::hash($clientIp . Security::getSalt());
 	}
 
 
@@ -487,8 +487,8 @@ class FormSender {
 	 */
 	protected function getView(): FrontendView {
 		if (!isset($this->view)) {
-			$ls_className = App::className('Frontend', 'View', 'View');
-			$this->view = new $ls_className();
+			$className = App::className('Frontend', 'View', 'View');
+			$this->view = new $className();
 		}
 
 		return $this->view;
@@ -508,25 +508,25 @@ class FormSender {
 	 * @return void
 	 */
 	public function replacePlaceholdersInForm(): void {
-		$la_blocklistedFields = ['active', '_translations', '_publicationData', 'mediaAssignments', 'mediaElementAssignments'];
-		$la_formFields = array_keys(array_filter($this->form->getAccessible()));
+		$blocklistedFields = ['active', '_translations', '_publicationData', 'mediaAssignments', 'mediaElementAssignments'];
+		$formFields = array_keys(array_filter($this->form->getAccessible()));
 
-		$la_formData = $this->getFormData();
+		$formData = $this->getFormData();
 		// Underscored keys since replacePlaceholder() uses underscored keys.
-		$la_formData['base_url'] = Router::url('/', true);
+		$formData['base_url'] = Router::url('/', true);
 
-		foreach ($la_formFields as $ls_field) {
+		foreach ($formFields as $field) {
 			if (
-				in_array($ls_field, $la_blocklistedFields) ||
-				!$this->form->has($ls_field) ||
-				!is_string($this->form->get($ls_field))
+				in_array($field, $blocklistedFields) ||
+				!$this->form->has($field) ||
+				!is_string($this->form->get($field))
 			) {
 				continue;
 			}
 
-			$ls_value = $this->replacePlaceholders((string)$this->form->get($ls_field), $la_formData);
+			$value = $this->replacePlaceholders((string)$this->form->get($field), $formData);
 
-			$this->form->set($ls_field, $ls_value);
+			$this->form->set($field, $value);
 		}
 	}
 
@@ -550,32 +550,30 @@ class FormSender {
 			return $string;
 		}
 
-		$ls_string = $string;
-
 		/*
 		 * Find all placeholders in the form of `{{$identifier1[ ...$additionalIdentifiers]|Alternative Text}}`
 		 * @see https://regex101.com/r/MYhhj2/1
 		 */
-		$ls_pattern = '/\{\{(?<identifiers>[^\|\}]*?)(?:\|(?<alternative>[^\}]*?))?\}\}/U';
-		preg_match_all($ls_pattern, $string, $la_matches, PREG_SET_ORDER);
-		if (!empty($la_matches)) {
-			$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacedPlaceholdersOrAlternative($match, $values, $safeList), $ls_string);
+		$pattern = '/\{\{(?<identifiers>[^\|\}]*?)(?:\|(?<alternative>[^\}]*?))?\}\}/U';
+		preg_match_all($pattern, $string, $matches, PREG_SET_ORDER);
+		if (!empty($matches)) {
+			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacedPlaceholdersOrAlternative($match, $values, $safeList), $string);
 		}
 
 		if (isset($this->page)) {
 			// Find all placeholders in the form of `$page.identifier`, with identifier in camelBacked or under_scored format
-			$ls_pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
-			$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $this->page->extract(), $safeList), $ls_string);
+			$pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
+			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $this->page->extract(), $safeList), $string);
 		}
 
 		// Find all placeholders in the form of `$form.identifier`, with identifier in camelBacked or under_scored format
-		$ls_pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
-		$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $this->form->extract(), $safeList), $ls_string);
+		$pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9_]+))/';
+		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $this->form->extract(), $safeList), $string);
 
 		// Find all placeholders in the form of `$identifier`
-		$ls_pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
+		$pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
 
-		return preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $values, $safeList), $ls_string);
+		return preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $values, $safeList), $string);
 	}
 
 
@@ -590,25 +588,25 @@ class FormSender {
 	 * @return string
 	 */
 	protected function replacePlaceholder(array $match, array $values, array $safeList = []): string {
-		$ls_identifier = $match['identifier'] ?? '';
+		$identifier = $match['identifier'] ?? '';
 
-		if (!$ls_identifier) {
+		if (!$identifier) {
 			return '';
 		}
 
-		$ls_identifier = Inflector::underscore($ls_identifier);
+		$identifier = Inflector::underscore($identifier);
 
-		$lx_value = $values[ $ls_identifier ] ?? $match[0];
+		$value = $values[ $identifier ] ?? $match[0];
 
-		if ($lx_value === '') {
+		if ($value === '') {
 			return $match[0];
 		}
 
-		if (!in_array($ls_identifier, $safeList)) {
-			$lx_value = htmlentities($lx_value, ENT_QUOTES, 'UTF-8', false);
+		if (!in_array($identifier, $safeList)) {
+			$value = htmlentities($value, ENT_QUOTES, 'UTF-8', false);
 		}
 
-		return $lx_value;
+		return $value;
 	}
 
 
@@ -626,31 +624,31 @@ class FormSender {
 	 * @return string
 	 */
 	protected function replacedPlaceholdersOrAlternative(array $match, array $values, array $safeList = []): string {
-		$ls_string = $match['identifiers'] ?? '';
-		$ls_alternative = $match['alternative'] ?? null;
+		$string = $match['identifiers'] ?? '';
+		$alternative = $match['alternative'] ?? null;
 
-		if (!$ls_string) {
-			return $ls_alternative;
+		if (!$string) {
+			return $alternative;
 		}
 
 		if (isset($this->page)) {
 			// Find all placeholders in the form of `$page.identifier`, with identifier in camelBacked or underscored format
-			$ls_pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
-			$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $this->page->extract(), $safeList), $ls_string);
+			$pattern = '/(\$page\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
+			$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $this->page->extract(), $safeList), $string);
 		}
 
 		// Find all placeholders in the form of `$form.identifier`, with identifier in camelBacked or underscored format
-		$ls_pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
-		$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $this->form->extract(), $safeList), $ls_string);
+		$pattern = '/(\$form\.(?<identifier>[a-z][a-zA-Z0-9]+))/';
+		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $this->form->extract(), $safeList), $string);
 
-		$ls_pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
-		$ls_string = preg_replace_callback($ls_pattern, fn (array $match) => $this->replacePlaceholder($match, $values, $safeList), $ls_string);
+		$pattern = '/(\$(?!page\.|form\.)(?<identifier>[A-Za-z0-9_]+))/';
+		$string = preg_replace_callback($pattern, fn (array $match) => $this->replacePlaceholder($match, $values, $safeList), $string);
 
-		if (str_contains($ls_string, '$') && $ls_alternative !== null) {
-			return $ls_alternative;
+		if (str_contains($string, '$') && $alternative !== null) {
+			return $alternative;
 		}
 
-		return $ls_string;
+		return $string;
 	}
 
 
@@ -659,18 +657,18 @@ class FormSender {
 	 * @return void
 	 */
 	protected function addFormAttachments(Mailer $mailer): void {
-		$la_formElements = $this->form->formElements->listNested()->toList();
-		foreach ($la_formElements as $lo_formElement) {
-			if ($lo_formElement->type !== 'file' || empty($this->getFormData($lo_formElement->identifier))) {
+		$formElements = $this->form->formElements->listNested()->toList();
+		foreach ($formElements as $formElement) {
+			if ($formElement->type !== 'file' || empty($this->getFormData($formElement->identifier))) {
 				continue;
 			}
 
-			$lo_file = $this->getFormData($lo_formElement->identifier);
-			if ($lo_file instanceof UploadedFile && !$lo_file->getError()) {
+			$file = $this->getFormData($formElement->identifier);
+			if ($file instanceof UploadedFile && !$file->getError()) {
 				$mailer->addAttachments([
-					$lo_file->getClientFilename() => [
-						'data' => $lo_file->getStream()->getContents(),
-						'mimetype' => $lo_file->getStream()->getMetadata('mime'),
+					$file->getClientFilename() => [
+						'data' => $file->getStream()->getContents(),
+						'mimetype' => $file->getStream()->getMetadata('mime'),
 					],
 				]);
 			}
@@ -686,27 +684,27 @@ class FormSender {
 	 * @return bool
 	 */
 	protected function send(Mailer $mailer, ?string $bodyHtml, ?string $bodyPlain, string $type = 'email'): bool {
-		$lo_template = $type === 'email' ? $this->form->emailTemplate : $this->form->confirmationEmailTemplate;
+		$template = $type === 'email' ? $this->form->emailTemplate : $this->form->confirmationEmailTemplate;
 
 		$mailer->setRenderer(new FormMailRenderer());
 		$mailer->viewBuilder()->setVars([
 			'textHtml' => $bodyHtml,
 			'textPlain' => $bodyPlain,
-			'layout' => 'email/' . $lo_template->layout,
+			'layout' => 'email/' . $template->layout,
 			'form' => $this->form,
 			'page' => $this->page,
 			'formData' => $this->getFormData(),
 		])
-		->setTemplate('Frontend/email/' . $lo_template->fileName)
-		->setLayout('email/' . str_replace('.twig', '', $lo_template->layout));
+		->setTemplate('Frontend/email/' . $template->fileName)
+		->setLayout('email/' . str_replace('.twig', '', $template->layout));
 
 		try {
-			$la_sendData = $mailer->deliver();
+			$sendData = $mailer->deliver();
 		}
 		catch (Exception $ex) {
-			$ls_message = __d('form', 'error_email_send', $ex->getMessage());
-			$this->form->setError('_general', $ls_message);
-			$this->errors[] = $ls_message;
+			$message = __d('form', 'error_email_send', $ex->getMessage());
+			$this->form->setError('_general', $message);
+			$this->errors[] = $message;
 
 			return false;
 		}
@@ -714,7 +712,7 @@ class FormSender {
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->emailBody[ $type ] = $mailer->getBodyHtml();
 
-		return !!$la_sendData;
+		return !!$sendData;
 	}
 
 
@@ -748,67 +746,67 @@ class FormSender {
 	 * @return string The restructured and cleaned HTML string with proper wrapping and placeholder integration.
 	 */
 	protected function unwrapDataString(array $matches): string {
-		$la_attributes = $matches[1]; // p tag attributes
-		$ls_beforeContent = $matches[2]; // content before {{$data}}
-		$ls_dataPlaceholder = $matches[3]; // the {{$data}} placeholder
-		$ls_afterContent = $matches[4]; // content after {{$data}}
+		$attributes = $matches[1]; // p tag attributes
+		$beforeContent = $matches[2]; // content before {{$data}}
+		$dataPlaceholder = $matches[3]; // the {{$data}} placeholder
+		$afterContent = $matches[4]; // content after {{$data}}
 
 		// If there's no other content, just return the placeholder
-		if (trim($ls_beforeContent) === '' && trim($ls_afterContent) === '') {
-			return $ls_dataPlaceholder;
+		if (trim($beforeContent) === '' && trim($afterContent) === '') {
+			return $dataPlaceholder;
 		}
 
 		// Find all opened tags that need to be closed before dataPlaceholder
-		$la_openedTags = [];
-		preg_match_all('/<([a-z0-9]+)[^>]*>/i', $ls_beforeContent, $la_openTagMatches);
-		preg_match_all('/<\/([a-z0-9]+)>/i', $ls_beforeContent, $la_closeTagMatches);
+		$openedTags = [];
+		preg_match_all('/<([a-z0-9]+)[^>]*>/i', $beforeContent, $openTagMatches);
+		preg_match_all('/<\/([a-z0-9]+)>/i', $beforeContent, $closeTagMatches);
 
 		// Count opened and closed tags
-		$la_tagCounts = [];
-		foreach ($la_openTagMatches[1] as $ls_tag) {
-			$la_tagCounts[ $ls_tag ] = isset($la_tagCounts[ $ls_tag ]) ? $la_tagCounts[ $ls_tag ] + 1 : 1;
+		$tagCounts = [];
+		foreach ($openTagMatches[1] as $tag) {
+			$tagCounts[ $tag ] = isset($tagCounts[ $tag ]) ? $tagCounts[ $tag ] + 1 : 1;
 		}
 
-		foreach ($la_closeTagMatches[1] as $ls_tag) {
-			$la_tagCounts[ $ls_tag ] = isset($la_tagCounts[ $ls_tag ]) ? $la_tagCounts[ $ls_tag ] - 1 : -1;
+		foreach ($closeTagMatches[1] as $tag) {
+			$tagCounts[ $tag ] = isset($tagCounts[ $tag ]) ? $tagCounts[ $tag ] - 1 : -1;
 		}
 
 		// Collect tags that remain open
-		foreach ($la_tagCounts as $ls_tag => $li_count) {
-			if ($li_count > 0) {
+		foreach ($tagCounts as $tag => $count) {
+			if ($count > 0) {
 				// Add tags that need to be closed, in reverse order (LIFO)
-				for ($li_i = 0; $li_i < $li_count; $li_i++) {
-					array_unshift($la_openedTags, $ls_tag);
+				for ($i = 0; $i < $count; $i++) {
+					array_unshift($openedTags, $tag);
 				}
 			}
 		}
 
 		// Build the result
-		$ls_result = '<p' . $la_attributes . '>' . $ls_beforeContent;
+		$result = '<p' . $attributes . '>' . $beforeContent;
 
 		// Close all open tags before the dataPlaceholder
-		foreach ($la_openedTags as $ls_tag) {
-			$ls_result .= '</' . $ls_tag . '>';
+		foreach ($openedTags as $tag) {
+			$result .= '</' . $tag . '>';
 		}
 
-		$ls_result .= '</p>' . $ls_dataPlaceholder . ' <p' . $la_attributes . '>';
+		$result .= '</p>' . $dataPlaceholder . ' <p' . $attributes . '>';
 
 		// Reopen all closed tags in the original order
-		foreach (array_reverse($la_openedTags) as $ls_tag) {
-			$ls_result .= '<' . $ls_tag . '>';
+		foreach (array_reverse($openedTags) as $tag) {
+			$result .= '<' . $tag . '>';
 		}
 
-		$ls_result .= $ls_afterContent . '</p>';
+		$result .= $afterContent . '</p>';
 
 		// Filter out empty tags recursively
-		$ls_previous = '';
+		$previous = '';
 		// Remove all empty tags recursively, including those with attributes (like <span class="foo"></span>)
-		while ($ls_previous !== $ls_result) {
-			$ls_previous = $ls_result;
-			$ls_result = preg_replace('/<([a-z0-9]+)(?:\s[^>]*)?><\/\1>/', '', $ls_result);
+		while ($previous !== $result) {
+			$previous = $result;
+			$result = preg_replace('/<([a-z0-9]+)(?:\s[^>]*)?><\/\1>/', '', $result);
 		}
 
-		return $ls_result;
+		return $result;
 	}
 
 
@@ -816,28 +814,28 @@ class FormSender {
 	 * @return array
 	 */
 	protected function templateData(): array {
-		$la_formData = $this->getFormData();
-		$la_formElements = $this->form->formElements->listNested()->toList();
+		$formData = $this->getFormData();
+		$formElements = $this->form->formElements->listNested()->toList();
 
-		foreach ($la_formElements as $lo_formElement) {
+		foreach ($formElements as $formElement) {
 			if (
-				isset($la_formData[ $lo_formElement->identifier ]) &&
-				in_array($lo_formElement->type, ['date', 'time', 'datetime'])
+				isset($formData[ $formElement->identifier ]) &&
+				in_array($formElement->type, ['date', 'time', 'datetime'])
 			) {
-				$lo_date = new DateTime($la_formData[ $lo_formElement->identifier ]);
+				$date = new DateTime($formData[ $formElement->identifier ]);
 
-				if ($lo_formElement->type === 'datetime') {
-					$lo_date->setTimezone(new DateTimeZone('UTC'));
+				if ($formElement->type === 'datetime') {
+					$date->setTimezone(new DateTimeZone('UTC'));
 				}
 
-				$la_formData[ $lo_formElement->identifier ] = $lo_date;
+				$formData[ $formElement->identifier ] = $date;
 			}
 		}
 
 		return [
 			'form' => $this->form,
-			'formData' => $la_formData,
-			'formElements' => $la_formElements,
+			'formData' => $formData,
+			'formElements' => $formElements,
 		];
 	}
 
@@ -848,26 +846,25 @@ class FormSender {
 	 * @return bool
 	 */
 	protected function sendEvent(string $eventName, array $data): bool {
-		$lo_eventManager = EventManager::instance();
+		$eventManager = EventManager::instance();
 
 		// Dispatch a new event for the form beforeSendEmail
-		$lo_event = new Event($eventName, $this->form, $data);
-		$lo_eventManager->dispatch($lo_event);
+		$event = new Event($eventName, $this->form, $data);
+		$eventManager->dispatch($event);
 
-		if ($lo_event->isStopped()) {
+		if ($event->isStopped()) {
 			return false;
 		}
 
-		$la_result = $lo_event->getResult();
-		if ($la_result !== null) {
-			if (!is_array($la_result)) {
-				throw new InvalidArgumentException(sprintf('Expected an array as result of the event "%s", `%s` given', $eventName, gettype($la_result)));
+		$result = $event->getResult();
+		if ($result !== null) {
+			if (!is_array($result)) {
+				throw new InvalidArgumentException(sprintf('Expected an array as result of the event "%s", `%s` given', $eventName, gettype($result)));
 			}
 
-			foreach ($la_result as $ls_key => $lx_value) {
-				if (array_key_exists($ls_key, $data)) {
-					/** @noinspection PhpVariableNamingConventionInspection */
-					$data[ $ls_key ] = $lx_value;
+			foreach ($result as $key => $value) {
+				if (array_key_exists($key, $data)) {
+					$data[ $key ] = $value;
 				}
 			}
 		}
@@ -890,10 +887,10 @@ class FormSender {
 	 * @return static
 	 */
 	protected function setSafeSender(Mailer $mailer, ?string $senderName, string $replyToMail, ?string $replyToName): static {
-		$ls_safeRealSender = $this->getFormOptions()->getSafeRealSender();
-		if ($ls_safeRealSender) {
+		$safeRealSender = $this->getFormOptions()->getSafeRealSender();
+		if ($safeRealSender) {
 			$mailer
-				->setSender($ls_safeRealSender, html_entity_decode($senderName))
+				->setSender($safeRealSender, html_entity_decode($senderName))
 				->setReplyTo(html_entity_decode($replyToMail), html_entity_decode($replyToName));
 		}
 

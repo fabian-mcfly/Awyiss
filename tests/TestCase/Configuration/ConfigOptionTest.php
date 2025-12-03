@@ -15,7 +15,6 @@ use Awyiss\Test\TestSuite\TestCase;
 class ConfigOptionTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorSetsProperties(): void {
 		$configOption = new ConfigOption(
@@ -53,7 +52,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithNamedArguments(): void {
 		$configOption = new ConfigOption(
@@ -77,7 +75,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetDefaultValue(): void {
 		$configOption = new ConfigOption('test');
@@ -88,7 +85,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetDescription(): void {
 		$configOption = new ConfigOption('test');
@@ -99,7 +95,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetIdentifier(): void {
 		$configOption = new ConfigOption('test');
@@ -110,7 +105,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetLocalizable(): void {
 		$configOption = new ConfigOption('test');
@@ -121,7 +115,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetNullable(): void {
 		$configOption = new ConfigOption('test');
@@ -134,7 +127,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetPersonalizable(): void {
 		$configOption = new ConfigOption('test');
@@ -145,7 +137,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetTitle(): void {
 		$configOption = new ConfigOption('test');
@@ -156,7 +147,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetType(): void {
 		$configOption = new ConfigOption('test');
@@ -167,7 +157,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetTypecast(): void {
 		$configOption = new ConfigOption('test');
@@ -181,7 +170,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetValidate(): void {
 		$configOption = new ConfigOption('test');
@@ -195,7 +183,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetValues(): void {
 		$configOption = new ConfigOption('test');
@@ -207,7 +194,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValue(): void {
 		$configOption = new ConfigOption('test', ConfigOptionType::Bool);
@@ -221,7 +207,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidate(): void {
 		$configOption = new ConfigOption('test', ConfigOptionType::String);
@@ -232,7 +217,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValueLocalizable(): void {
 		$configOption = new ConfigOption('test', ConfigOptionType::String, 'default', '', false);
@@ -245,7 +229,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValueNullable(): void {
 		$configOption = new ConfigOption('test', ConfigOptionType::String, 'default', '', true, false);
@@ -258,7 +241,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastConfigValue(): void {
 		$configOption = new ConfigOption('test', ConfigOptionType::Integer);
@@ -268,7 +250,6 @@ class ConfigOptionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPrintableValue(): void {
 		// Test for boolean type

@@ -30,15 +30,15 @@ class GenericPagesPolicy extends AbstractGenericPolicy {
 	 * @throws \RuntimeException
 	 */
 	protected function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissions = parent::loadPermissionOptions();
+		$permissions = parent::loadPermissionOptions();
 
 		if (Configure::read('Awyiss.' . Inflector::camelize($this->getScope()) . '.Backend.contents.enabled')) {
-			$lo_permissions->load('contents', [
+			$permissions->load('contents', [
 				'className' => SimplePermissionOption::class,
 			]);
 		}
 
 
-		return $lo_permissions;
+		return $permissions;
 	}
 }

@@ -38,7 +38,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Frontend\GeneralEventsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -52,7 +51,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Frontend\GeneralEventsListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveBlocksRegularEntitySave(): void {
 		$entity = $this->createMock(Entity::class);
@@ -70,7 +68,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Frontend\GeneralEventsListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAllowsNonAwyissEntity(): void {
 		$entity = $this->createMock(BaseEntity::class);
@@ -88,7 +85,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Frontend\GeneralEventsListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAllowsMediaResizedImageEntity(): void {
 		$entity = $this->createMock(MediaResizedImage::class);
@@ -105,7 +101,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Frontend\GeneralEventsListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAllowsWithAllowFrontendSaveOption(): void {
 		$entity = $this->createMock(Entity::class);
@@ -123,7 +118,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Frontend\GeneralEventsListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAllowsWithAllowFrontendSaveFalse(): void {
 		$entity = $this->createMock(Entity::class);

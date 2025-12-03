@@ -17,7 +17,6 @@ class FormProtectionProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\FormProtectionProvider::sanitizeIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSanitizeIdentifier(): void {
 		$result = FormProtectionProvider::sanitizeIdentifier('ipCheck');
@@ -52,7 +51,6 @@ class FormProtectionProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\FormProtectionProvider::getFormProtectionFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormProtectionFileWithKnownProtection(): void {
 		$result = FormProtectionProvider::getFormProtectionFile('ipCheck');
@@ -65,7 +63,6 @@ class FormProtectionProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\FormProtectionProvider::getFormProtectionFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormProtectionFileWithUnknownProtection(): void {
 		$result = FormProtectionProvider::getFormProtectionFile('nonExistent');
@@ -76,7 +73,6 @@ class FormProtectionProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\FormProtectionProvider::getFormProtectionFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormProtectionFileWithDifferentIdentifierFormats(): void {
 		$result1 = FormProtectionProvider::getFormProtectionFile('ipCheck');
@@ -95,7 +91,6 @@ class FormProtectionProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\FormProtectionProvider::getFormProtectionFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormProtectionFiles(): void {
 		$result = FormProtectionProvider::getFormProtectionFiles();

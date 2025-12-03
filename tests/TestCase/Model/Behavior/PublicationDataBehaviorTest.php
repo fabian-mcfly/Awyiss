@@ -39,7 +39,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	 * @return array<\Cake\Datasource\EntityInterface>|false
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::beforeSave()
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function saveTestData(): iterable|false {
 		try {
@@ -67,10 +66,10 @@ class PublicationDataBehaviorTest extends TestCase {
 					'languageShortcode' => 'de',
 					'_publicationData' => [
 						'start' => [
-							'date_time' => (new DateTime())->subHours(1),
+							'date_time' => new DateTime()->subHours(1),
 						],
 						'end' => [
-							'date_time' => (new DateTime())->addHours(1),
+							'date_time' => new DateTime()->addHours(1),
 						],
 					],
 				]),
@@ -79,7 +78,7 @@ class PublicationDataBehaviorTest extends TestCase {
 					'languageShortcode' => 'de',
 					'_publicationData' => [
 						'start' => [
-							'date_time' => (new DateTime())->addHours(1),
+							'date_time' => new DateTime()->addHours(1),
 						],
 					],
 				]),
@@ -88,7 +87,7 @@ class PublicationDataBehaviorTest extends TestCase {
 					'languageShortcode' => 'de',
 					'_publicationData' => [
 						'end' => [
-							'date_time' => (new DateTime())->subHours(1),
+							'date_time' => new DateTime()->subHours(1),
 						],
 					],
 				]),
@@ -146,7 +145,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::__construct()
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationWhenEnabled(): void {
 		$config = $this->behavior->getConfig();
@@ -173,7 +171,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationWhenDisabled(): void {
 		Configure::write('Awyiss.Employers.Backend.publicationData.enabled', false);
@@ -200,7 +197,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedWhenDisabled(): void {
 		$result = $this->saveTestData();
@@ -220,7 +216,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedWithNoDateFilters(): void {
 		$result = $this->saveTestData();
@@ -241,7 +236,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedWithDate(): void {
 		$result = $this->saveTestData();
@@ -262,7 +256,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedStartingBefore()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedStartingBefore(): void {
 		$result = $this->saveTestData();
@@ -283,7 +276,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedStartingBefore()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedStartingBeforeWithoutUndefined(): void {
 		$result = $this->saveTestData();
@@ -303,7 +295,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedStartingAfter()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedStartingAfter(): void {
 		$result = $this->saveTestData();
@@ -325,7 +316,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingBefore()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedStartingAfterWithoutUndefined(): void {
 		$result = $this->saveTestData();
@@ -345,7 +335,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingBefore()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedEndingBefore(): void {
 		$result = $this->saveTestData();
@@ -366,7 +355,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingBefore()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedEndingBeforeWithoutUndefined(): void {
 		$result = $this->saveTestData();
@@ -385,7 +373,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingAfter()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedEndingAfter(): void {
 		$result = $this->saveTestData();
@@ -407,7 +394,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingAfter()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindPublishedEndingAfterWithoutUndefined(): void {
 		$result = $this->saveTestData();
@@ -430,7 +416,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedStartingBefore()
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingAfter()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCombinedFindersStartedBeforeAndEndedAfter(): void {
 		$result = $this->saveTestData();
@@ -452,7 +437,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedStartingBefore()
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingBefore()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCombinedFindersStartedBeforeAndEndedBefore(): void {
 		$result = $this->saveTestData();
@@ -475,7 +459,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedStartingAfter()
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingBefore()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCombinedFindersStartedAfterAndEndedBefore(): void {
 		$result = $this->saveTestData();
@@ -499,7 +482,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedStartingAfter()
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingAfter()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCombinedFindersStartedAfterAndEndedAfter(): void {
 		$result = $this->saveTestData();
@@ -521,7 +503,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedStartingBefore()
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedStartingAfter()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCombinedFindersStartedBeforeAndStartedAfter(): void {
 		$result = $this->saveTestData();
@@ -542,7 +523,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingBefore()
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublishedEndingAfter()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCombinedFindersEndedBeforeAndEndedAfter(): void {
 		$result = $this->saveTestData();
@@ -561,7 +541,6 @@ class PublicationDataBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindContainsAndFormatsPublicationData(): void {
 		$result = $this->saveTestData();

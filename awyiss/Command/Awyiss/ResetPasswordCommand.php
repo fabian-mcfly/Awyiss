@@ -26,55 +26,56 @@ class ResetPasswordCommand extends Command {
 	 * @return int
 	 */
 	public function execute(Arguments $args, ConsoleIo $io): int {
-		$lo_usersTable = $this->fetchTable('Users');
-		$la_users = $lo_usersTable->find('all')->all()->indexBy('username')->toArray();
+		/** @var \Awyiss\Model\Table\UsersTable $usersTable */
+		$usersTable = $this->fetchTable('Users');
+		$users = $usersTable->find('all')->all()->indexBy('username')->toArray();
 
-		$ls_username = $io->askChoice('Please enter the username of the user you want to reset the password for', array_keys($la_users));
+		$username = $io->askChoice('Please enter the username of the user you want to reset the password for', array_keys($users));
 
-		if (!$ls_username) {
+		if (!$username) {
 			$io->out('No username provided. Using the first one found: ', 0);
-			$ls_username = key($la_users);
-			$io->info($ls_username);
+			$username = key($users);
+			$io->info($username);
 		}
 
 		// Ask for a password
 		while (true) {
-			$ls_password = $io->ask('Please enter a new password');
+			$password = $io->ask('Please enter a new password');
 
-			if (strlen($ls_password) >= 8 && strlen($ls_password) <= 100) {
+			if (strlen($password) >= 8 && strlen($password) <= 100) {
 				break;
 			}
 
 			$io->error('The password must be between 8 and 100 characters long. Please try again.');
 		}
 
-		if (!$ls_password) {
+		if (!$password) {
 			$io->out('No password provided. Creating a random one...', 0);
-			$ls_password = Security::randomString(16);
-			$io->info($ls_password);
+			$password = Security::randomString(16);
+			$io->info($password);
 		}
 
-		/** @var \Awyiss\Model\Entity\User $lo_user */
-		$lo_user = $la_users[ $ls_username ];
+		/** @var \Awyiss\Model\Entity\User $user */
+		$user = $users[ $username ];
 		// Hash the password. Happens automatically in the entity class
-		$lo_usersTable->patchEntity($lo_user, [
-			'password' => $ls_password,
-			'password_confirm' => $ls_password,
+		$usersTable->patchEntity($user, [
+			'password' => $password,
+			'password_confirm' => $password,
 		]);
 
 		$io->out('Generating password hash... ', 0);
 
-		if (!$lo_user->hasErrors()) {
+		if (!$user->hasErrors()) {
 			$io->success('Done.');
-			$io->info('Password hash: ' . $lo_user->password);
+			$io->info('Password hash: ' . $user->password);
 			$io->info('You need to set this password in the database manually. Until then, the old password is still valid.');
 
 			return static::CODE_SUCCESS;
 		}
 
 		$io->error('Failed to generate password hash.');
-		foreach ($lo_user->getErrors() as $ls_field => $la_errors) {
-			$io->error($ls_field . ': ' . implode(', ', $la_errors));
+		foreach ($user->getErrors() as $field => $errors) {
+			$io->error($field . ': ' . implode(', ', $errors));
 		}
 
 		return static::CODE_ERROR;

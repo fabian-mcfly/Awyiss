@@ -77,37 +77,37 @@ class UserConfiguration extends Entity {
 			return null;
 		}
 
-		$lo_configuration = ConfigOptionsProvider::loadConfigOptions($this->scope);
-		$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $this->identifier);
+		$configOptions = ConfigOptionsProvider::loadConfigOptions($this->scope);
+		$configOption = $configOptions?->getConfigOption(Awyiss::REALM_BACKEND, $this->identifier);
 
-		$lx_value = $this->value;
+		$value = $this->value;
 
-		if ($lo_configOption) {
-			$lx_value = $lo_configOption->typecastConfigValue($this->value);
+		if ($configOption) {
+			$value = $configOption->typecastConfigValue($this->value);
 
-			if ($lo_configOption->getType() === ConfigOptionType::ListKey) {
-				return $lo_configOption->getValues(true)[ $lx_value ] ?? $lx_value;
+			if ($configOption->getType() === ConfigOptionType::ListKey) {
+				return $configOption->getValues(true)[ $value ] ?? $value;
 			}
 
-			if ($lo_configOption->getType() === ConfigOptionType::ValueCollection) {
-				$la_values = $lo_configOption->getValues(true);
+			if ($configOption->getType() === ConfigOptionType::ValueCollection) {
+				$values = $configOption->getValues(true);
 
-				if (!is_array($lx_value)) {
-					$lx_value = $lx_value ? [$lx_value] : [];
+				if (!is_array($value)) {
+					$value = $value ? [$value] : [];
 				}
 
-				$la_values = array_intersect_key($la_values, array_flip($lx_value));
+				$values = array_intersect_key($values, array_flip($value));
 
-				return implode(', ', $la_values);
+				return implode(', ', $values);
 			}
 		}
 
 
-		return match (gettype($lx_value)) {
+		return match (gettype($value)) {
 			'NULL' => null,
-			'boolean' => $lx_value ? 'true' : 'false',
-			'array', 'object' => print_r($lx_value, true),
-			default => $lx_value,
+			'boolean' => $value ? 'true' : 'false',
+			'array', 'object' => print_r($value, true),
+			default => $value,
 		};
 	}
 
@@ -123,12 +123,12 @@ class UserConfiguration extends Entity {
 			return null;
 		}
 
-		$ls_scope = Inflector::underscore($scope);
-		$ls_scope = Inflector::singularize($ls_scope);
-		$ls_scope = Inflector::pluralize($ls_scope);
+		$scope = Inflector::underscore($scope);
+		$scope = Inflector::singularize($scope);
+		$scope = Inflector::pluralize($scope);
 
 
-		return Inflector::underscore($ls_scope);
+		return Inflector::underscore($scope);
 	}
 
 

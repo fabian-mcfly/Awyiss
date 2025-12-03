@@ -60,7 +60,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(8, $this->languagesTable->associations()->keys());
@@ -133,7 +132,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -169,7 +167,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -195,7 +192,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -215,7 +211,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -252,7 +247,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -285,7 +279,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationShortcodeExactLengthValid(): void {
 		// Test valid shortcodes
@@ -309,7 +302,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationShortcodeExactLengthInvalid(): void {
 		// Test invalid shortcodes
@@ -333,7 +325,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationRealmInList(): void {
 		// Test valid realm
@@ -360,7 +351,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -383,7 +373,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationDateTimeFormatsAllowEmpty(): void {
 		$data = [
@@ -407,7 +396,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesShortcodeUniqueForRealm(): void {
 		/** @var \Awyiss\Model\Entity\Language $entity */
@@ -428,7 +416,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesShortcodeUniqueForRealmDifferentRealms(): void {
 		/** @var \Awyiss\Model\Entity\Language $entity */
@@ -446,7 +433,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidRealm(): void {
 		// Test with valid realm
@@ -467,7 +453,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidRealm(): void {
 		// Test with invalid realm
@@ -493,7 +478,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidTimezone(): void {
 		// Test with valid timezone
@@ -514,7 +498,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidTimezone(): void {
 		// Test with invalid timezone
@@ -540,7 +523,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidLocale(): void {
 		// Test with valid locale
@@ -561,7 +543,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidLocale(): void {
 		// Test with invalid locale
@@ -587,7 +568,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNotLastLanguageInRealmCanDelete(): void {
 		// Test that non-last language can be deleted (assuming there are multiple frontend languages)
@@ -602,7 +582,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _testBuildRulesNotLastLanguageInRealmCannotDeleteLast(): void {
 		// Get the only backend language (assuming there's only one)
@@ -622,7 +601,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\Language $entity */
@@ -648,7 +626,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -686,7 +663,6 @@ class LanguagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->languagesTable->hasBehavior('SystemOrder'));
@@ -701,7 +677,6 @@ class LanguagesTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\LanguagesTable::$translate
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertFalse($this->languagesTable->hasBehavior('Translate'));

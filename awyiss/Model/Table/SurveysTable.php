@@ -96,10 +96,10 @@ class SurveysTable extends Table {
 
 
 		$validator->notEmptyString('type');
-		/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
-		$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $surveyTypeEnum */
+		$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 		$validator->add('type', [
-			'enum' => ['rule' => ['enum', $ls_surveyTypeEnum]],
+			'enum' => ['rule' => ['enum', $surveyTypeEnum]],
 		]);
 
 
@@ -136,10 +136,10 @@ class SurveysTable extends Table {
 
 
 		$validator->notEmptyString('finalAction');
-		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 		$validator->add('finalAction', [
-			'enum' => ['rule' => ['enum', $ls_surveyNextActionEnum]],
+			'enum' => ['rule' => ['enum', $surveyNextActionEnum]],
 		]);
 
 
@@ -185,10 +185,10 @@ class SurveysTable extends Table {
 
 		$rules->add(
 			function (Survey $entity): bool {
-				/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
-				$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
+				/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $surveyTypeEnum */
+				$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 
-				return in_array($entity->type, $ls_surveyTypeEnum::cases());
+				return in_array($entity->type, $surveyTypeEnum::cases());
 			},
 			'validType',
 			[
@@ -220,14 +220,14 @@ class SurveysTable extends Table {
 					return true;
 				}
 
-				/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-				$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+				/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+				$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
 				if (
 					in_array($entity->finalAction, [
-						$ls_surveyNextActionEnum::ShowForm,
-						$ls_surveyNextActionEnum::SaveAndShowForm,
-						$ls_surveyNextActionEnum::ShowFormAndSave,
+						$surveyNextActionEnum::ShowForm,
+						$surveyNextActionEnum::SaveAndShowForm,
+						$surveyNextActionEnum::ShowFormAndSave,
 					])
 				) {
 					return false;
@@ -242,12 +242,12 @@ class SurveysTable extends Table {
 				 * or if any answer has a next action that is of type "Form",
 				 * then the survey must have a formId set.
 				 */
-				return !collection($entity->surveySurveyQuestions)->some(function (SurveySurveyQuestion $question) use ($ls_surveyNextActionEnum): bool {
+				return !collection($entity->surveySurveyQuestions)->some(function (SurveySurveyQuestion $question) use ($surveyNextActionEnum): bool {
 					if (
 						in_array($question->nextAction, [
-							$ls_surveyNextActionEnum::ShowForm,
-							$ls_surveyNextActionEnum::SaveAndShowForm,
-							$ls_surveyNextActionEnum::ShowFormAndSave,
+							$surveyNextActionEnum::ShowForm,
+							$surveyNextActionEnum::SaveAndShowForm,
+							$surveyNextActionEnum::ShowFormAndSave,
 						]) &&
 						!$question->nextActionTarget
 					) {
@@ -258,11 +258,11 @@ class SurveysTable extends Table {
 						return false;
 					}
 
-					return collection($question->surveySurveyAnswers)->some(function (SurveySurveyAnswer $answer) use ($ls_surveyNextActionEnum): bool {
+					return collection($question->surveySurveyAnswers)->some(function (SurveySurveyAnswer $answer) use ($surveyNextActionEnum): bool {
 						return $answer->nextAction && in_array($answer->nextAction, [
-							$ls_surveyNextActionEnum::ShowForm,
-							$ls_surveyNextActionEnum::SaveAndShowForm,
-							$ls_surveyNextActionEnum::ShowFormAndSave,
+							$surveyNextActionEnum::ShowForm,
+							$surveyNextActionEnum::SaveAndShowForm,
+							$surveyNextActionEnum::ShowFormAndSave,
 						]) && !$answer->nextActionTarget;
 					});
 				});
@@ -289,19 +289,19 @@ class SurveysTable extends Table {
 
 		$rules->add(
 			function (Survey $entity): bool {
-				/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
-				$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
+				/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $surveyTypeEnum */
+				$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 
 				if (
-					$entity->type !== $ls_surveyTypeEnum::Linear ||
+					$entity->type !== $surveyTypeEnum::Linear ||
 					!$entity->surveySurveyQuestions
 				) {
 					return true;
 				}
 
-				$la_questionIds = array_column($entity->surveySurveyQuestions, 'surveyQuestionId');
+				$questionIds = array_column($entity->surveySurveyQuestions, 'surveyQuestionId');
 
-				return count($la_questionIds) === count(array_unique($la_questionIds));
+				return count($questionIds) === count(array_unique($questionIds));
 			},
 			'noRepeatedQuestionsInLinearSurvey',
 			[
@@ -312,29 +312,29 @@ class SurveysTable extends Table {
 
 		$rules->add(
 			function (Survey $entity): bool {
-				/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
-				$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
+				/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $surveyTypeEnum */
+				$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 
 				if (!$entity->surveySurveyQuestions) {
 					return true;
 				}
 
-				foreach ($entity->surveySurveyQuestions as $lo_question) {
+				foreach ($entity->surveySurveyQuestions as $question) {
 					// Linear surveys should not have next actions set in any question
-					if ($entity->type === $ls_surveyTypeEnum::Linear) {
+					if ($entity->type === $surveyTypeEnum::Linear) {
 						// Questions must not have next actions set in linear surveys
-						if (!empty($lo_question->nextAction)) {
+						if (!empty($question->nextAction)) {
 							return false;
 						}
 
 						// If the question has no answers, skip the next part
-						if (!$lo_question->surveySurveyAnswers) {
+						if (!$question->surveySurveyAnswers) {
 							continue;
 						}
 
-						foreach ($lo_question->surveySurveyAnswers as $lo_answer) {
+						foreach ($question->surveySurveyAnswers as $answer) {
 							// Answers must not have next actions set in linear surveys
-							if (!empty($lo_answer->nextAction)) {
+							if (!empty($answer->nextAction)) {
 								return false;
 							}
 						}
@@ -345,26 +345,26 @@ class SurveysTable extends Table {
 					// For non-linear surveys, we need to check if the next action is valid
 					if (
 						// Empty next action is not allowed
-						!$lo_question->nextAction ||
+						!$question->nextAction ||
 						// Neither is an unknown next action
-						!array_key_exists($lo_question->nextAction->value, $this->availableNextActions())
+						!array_key_exists($question->nextAction->value, $this->availableNextActions())
 					) {
 						return false;
 					}
 
 					// If the question has no answers, skip the next part
-					if (!$lo_question->surveySurveyAnswers) {
+					if (!$question->surveySurveyAnswers) {
 						continue;
 					}
 
-					foreach ($lo_question->surveySurveyAnswers as $lo_answer) {
+					foreach ($question->surveySurveyAnswers as $answer) {
 						// For answers, empty next action is allowed but
 						// unknown next action is not
 						if (
-							$lo_answer->nextAction &&
+							$answer->nextAction &&
 							(
-								!$lo_answer->nextAction instanceof BackedEnum ||
-								!array_key_exists($lo_answer->nextAction->value, $this->availableNextActions())
+								!$answer->nextAction instanceof BackedEnum ||
+								!array_key_exists($answer->nextAction->value, $this->availableNextActions())
 							)
 						) {
 							return false;
@@ -421,15 +421,15 @@ class SurveysTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-		$schema->setColumnType('final_action', EnumType::from($ls_surveyNextActionEnum));
+		$schema->setColumnType('final_action', EnumType::from($surveyNextActionEnum));
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
-		$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $surveyTypeEnum */
+		$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 
-		$schema->setColumnType('type', EnumType::from($ls_surveyTypeEnum));
+		$schema->setColumnType('type', EnumType::from($surveyTypeEnum));
 	}
 
 
@@ -437,14 +437,14 @@ class SurveysTable extends Table {
 	 * @return array
 	 */
 	public function availableFinalActions(): array {
-		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
 		return [
-			$ls_surveyNextActionEnum::SaveAndEnd->value => $ls_surveyNextActionEnum::SaveAndEnd->label(),
-			$ls_surveyNextActionEnum::ShowForm->value => $ls_surveyNextActionEnum::ShowForm->label(),
-			$ls_surveyNextActionEnum::SaveAndShowForm->value => $ls_surveyNextActionEnum::SaveAndShowForm->label(),
-			$ls_surveyNextActionEnum::ShowFormAndSave->value => $ls_surveyNextActionEnum::ShowFormAndSave->label(),
+			$surveyNextActionEnum::SaveAndEnd->value => $surveyNextActionEnum::SaveAndEnd->label(),
+			$surveyNextActionEnum::ShowForm->value => $surveyNextActionEnum::ShowForm->label(),
+			$surveyNextActionEnum::SaveAndShowForm->value => $surveyNextActionEnum::SaveAndShowForm->label(),
+			$surveyNextActionEnum::ShowFormAndSave->value => $surveyNextActionEnum::ShowFormAndSave->label(),
 		];
 	}
 
@@ -453,15 +453,15 @@ class SurveysTable extends Table {
 	 * @return array
 	 */
 	public function availableNextActions(): array {
-		$la_nextActions = [];
+		$nextActions = [];
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-		foreach ($ls_surveyNextActionEnum::cases() as $le_nextAction) {
-			$la_nextActions[ $le_nextAction->value ] = $le_nextAction->label();
+		foreach ($surveyNextActionEnum::cases() as $nextAction) {
+			$nextActions[ $nextAction->value ] = $nextAction->label();
 		}
 
-		return $la_nextActions;
+		return $nextActions;
 	}
 }

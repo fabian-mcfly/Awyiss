@@ -24,26 +24,26 @@ class MenuLoader {
 	 * @return bool
 	 */
 	public static function validateData(object $data, array $config): bool {
-		$lo_factory = null;
-		$lx_schema = $config['schema'] ?? null;
-		$ls_schemaPath = $config['schemaPath'] ?? null;
-		if ($ls_schemaPath) {
-			$lx_schema = static::loadJsonFile($ls_schemaPath);
+		$factory = null;
+		$schema = $config['schema'] ?? null;
+		$schemaPath = $config['schemaPath'] ?? null;
+		if ($schemaPath) {
+			$schema = static::loadJsonFile($schemaPath);
 
-			$lo_schemaStorage = new SchemaStorage();
-			$lo_schemaStorage->addSchema('file://' . str_replace(DS, '/', $ls_schemaPath), $lx_schema);
-			$lo_factory = new Factory($lo_schemaStorage);
+			$schemaStorage = new SchemaStorage();
+			$schemaStorage->addSchema('file://' . str_replace(DS, '/', $schemaPath), $schema);
+			$factory = new Factory($schemaStorage);
 		}
 
-		if (is_string($lx_schema)) {
-			$lx_schema = static::fromJsonString($lx_schema);
+		if (is_string($schema)) {
+			$schema = static::fromJsonString($schema);
 		}
 
 		// Validate
-		$lo_validator = new Validator($lo_factory);
-		$lo_validator->validate($data, $lx_schema);
+		$validator = new Validator($factory);
+		$validator->validate($data, $schema);
 
-		if (!$lo_validator->isValid()) {
+		if (!$validator->isValid()) {
 			return false;
 		}
 
@@ -58,30 +58,28 @@ class MenuLoader {
 	 * @return \Awyiss\Utility\Menu\Menu
 	 */
 	public static function fromObject(object $data, array $config = []): Menu {
-		$lb_validateUniqueIdentifiers = $config['validate']['uniqueIdentifiers'] ?? false;
+		$validateUniqueIdentifiers = $config['validate']['uniqueIdentifiers'] ?? false;
 
-		$la_config = $config;
-
-		if (isset($la_config['validate'])) {
-			$lb_valid = static::validateData($data, $la_config['validate']);
-			if (!$lb_valid) {
+		if (isset($config['validate'])) {
+			$valid = static::validateData($data, $config['validate']);
+			if (!$valid) {
 				throw new MenuValidationException('The data is not valid according to the specified schema');
 			}
 		}
 
 		//Validate-config is not needed inside the menu
-		unset($la_config['validate']);
+		unset($config['validate']);
 
-		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_menuClass */
-		$ls_menuClass = $la_config['menuClass'] ?? App::className('Menu', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\Menu> $menuClass */
+		$menuClass = $config['menuClass'] ?? App::className('Menu', 'Utility/Menu');
 		/** @see \Awyiss\Utility\Menu\Menu::__construct() */
-		$lo_menu = new $ls_menuClass((array)$data, $la_config, 1);
+		$menu = new $menuClass((array)$data, $config, 1);
 
-		if ($lb_validateUniqueIdentifiers) {
-			static::validateUniqueIdentifiers($lo_menu);
+		if ($validateUniqueIdentifiers) {
+			static::validateUniqueIdentifiers($menu);
 		}
 
-		return $lo_menu;
+		return $menu;
 	}
 
 
@@ -91,10 +89,10 @@ class MenuLoader {
 	 * @return \Awyiss\Utility\Menu\Menu
 	 */
 	public static function fromJsonFile(string $filePath, array $config = []): Menu {
-		$lo_data = static::loadJsonFile($filePath);
+		$data = static::loadJsonFile($filePath);
 
 
-		return static::fromObject($lo_data, $config);
+		return static::fromObject($data, $config);
 	}
 
 
@@ -104,10 +102,10 @@ class MenuLoader {
 	 * @return \Awyiss\Utility\Menu\Menu
 	 */
 	public static function fromJsonString(string $jsonString, array $config = []): Menu {
-		$lo_data = static::loadJsonString($jsonString);
+		$data = static::loadJsonString($jsonString);
 
 
-		return static::fromObject($lo_data, $config);
+		return static::fromObject($data, $config);
 	}
 
 
@@ -116,16 +114,16 @@ class MenuLoader {
 	 * @return object
 	 */
 	public static function loadJsonFile(string $filePath): object {
-		$ls_filePath = realpath($filePath);
+		$filePath = realpath($filePath);
 
-		if (!$ls_filePath || !file_exists($ls_filePath)) {
-			throw new MenuFileException(sprintf('File `%s` does not exist.', $ls_filePath));
+		if (!$filePath || !file_exists($filePath)) {
+			throw new MenuFileException(sprintf('File `%s` does not exist.', $filePath));
 		}
 
-		$ls_jsonString = file_get_contents($ls_filePath);
+		$jsonString = file_get_contents($filePath);
 
 
-		return static::loadJsonString($ls_jsonString);
+		return static::loadJsonString($jsonString);
 	}
 
 
@@ -134,13 +132,13 @@ class MenuLoader {
 	 * @return object
 	 */
 	public static function loadJsonString(string $jsonString): object {
-		$lo_data = json_decode($jsonString);
+		$data = json_decode($jsonString);
 		if (json_last_error() !== JSON_ERROR_NONE) {
 			throw new MenuValidationException('Invalid JSON string.');
 		}
 
 
-		return $lo_data;
+		return $data;
 	}
 
 
@@ -149,13 +147,13 @@ class MenuLoader {
 	 * @return void
 	 */
 	protected static function validateUniqueIdentifiers(Menu $menu): void {
-		$la_knownIdentifiers = [];
-		foreach ($menu->items() as $ls_identifier => $lo_item) {
-			if (in_array($ls_identifier, $la_knownIdentifiers)) {
-				throw new MenuDuplicateIdentifierException(sprintf('Cannot use identifier `%s` twice in `%s`', $ls_identifier, self::class));
+		$knownIdentifiers = [];
+		foreach ($menu->items() as $identifier => $item) {
+			if (in_array($identifier, $knownIdentifiers)) {
+				throw new MenuDuplicateIdentifierException(sprintf('Cannot use identifier `%s` twice in `%s`', $identifier, self::class));
 			}
 
-			$la_knownIdentifiers[] = $ls_identifier;
+			$knownIdentifiers[] = $identifier;
 		}
 	}
 }

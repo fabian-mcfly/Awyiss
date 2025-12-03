@@ -59,7 +59,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(4, $this->widgetTemplateElementsTable->associations()->keys());
@@ -99,7 +98,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::getColumnSpans()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnSpans(): void {
 		$columnSpans = $this->widgetTemplateElementsTable->getColumnSpans();
@@ -131,7 +129,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -159,7 +156,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -181,7 +177,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -200,7 +195,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -227,7 +221,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -252,7 +245,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnSpanInList(): void {
 		// Test invalid column span
@@ -273,7 +265,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyTitle(): void {
 		$data = [
@@ -294,7 +285,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesWidgetTemplateExists(): void {
 		// Test with existing widget template
@@ -329,7 +319,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->widgetTemplateElementsTable->newDefaultEntity();
@@ -356,7 +345,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -393,7 +381,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::$audit
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuditBehavior(): void {
 		$this->assertTrue($this->widgetTemplateElementsTable->hasBehavior('Audit'));
@@ -407,7 +394,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->widgetTemplateElementsTable->hasBehavior('SystemOrder'));
@@ -422,7 +408,6 @@ class WidgetTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetTemplateElementsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->widgetTemplateElementsTable->hasBehavior('Translate'));

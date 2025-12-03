@@ -24,16 +24,16 @@ class DetectAvailableCommandsCommand extends Command {
 	 * @return \Cake\Console\ConsoleOptionParser
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('retry', [
+		$parser->addOption('retry', [
 			'boolean' => true,
 			'help' => 'Retry the detection of available commands, even if the config setting exists.',
 			'short' => 'r',
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 
 	/**
@@ -59,8 +59,8 @@ class DetectAvailableCommandsCommand extends Command {
 	 */
 	protected function detectCommands(ConsoleIo $io): int {
 		$io->out('Testing ffmpg... ', 0);
-		$lb_ffmpeg = $this->testProcess(['ffmpeg', '-version']);
-		if ($lb_ffmpeg) {
+		$ffmpeg = $this->testProcess(['ffmpeg', '-version']);
+		if ($ffmpeg) {
 			$io->success('ffmpg available');
 		}
 		else {
@@ -68,39 +68,39 @@ class DetectAvailableCommandsCommand extends Command {
 		}
 
 		$io->out('Testing ImageMagick (`magick`)... ', 0);
-		$lb_imageMagick = $this->testProcess(['magick', '-version']);
-		$la_imageMagick = false;
-		if ($lb_imageMagick) {
+		$imageMagick = $this->testProcess(['magick', '-version']);
+		$imageMagickCommands = false;
+		if ($imageMagick) {
 			$io->success('magick available');
 
-			$lb_imageMagickAvif = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.avif', TMP . 'logo-awyiss.jpg'], 'Avif support', $io);
+			$imageMagickAvif = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.avif', TMP . 'logo-awyiss.jpg'], 'Avif support', $io);
 
-			$lb_imageMagickWebp = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.webp', TMP . 'logo-awyiss.jpg'], 'WebP support', $io);
+			$imageMagickWebp = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.webp', TMP . 'logo-awyiss.jpg'], 'WebP support', $io);
 
-			$lb_imageMagickPdf = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.pdf', TMP . 'logo-awyiss.jpg'], 'PDF support', $io);
+			$imageMagickPdf = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.pdf', TMP . 'logo-awyiss.jpg'], 'PDF support', $io);
 
-			$lb_imageMagickSvg = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.svg', TMP . 'logo-awyiss.jpg'], 'SVG support', $io);
+			$imageMagickSvg = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.svg', TMP . 'logo-awyiss.jpg'], 'SVG support', $io);
 
-			$lb_imageMagickDocx = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.docx', TMP . 'logo-awyiss.jpg'], 'DOCX support', $io);
+			$imageMagickDocx = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.docx', TMP . 'logo-awyiss.jpg'], 'DOCX support', $io);
 
-			$lb_imageMagickPptx = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.pptx', TMP . 'logo-awyiss.jpg'], 'PPTX support', $io);
+			$imageMagickPptx = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.pptx', TMP . 'logo-awyiss.jpg'], 'PPTX support', $io);
 
-			$lb_imageMagickPsd = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.psd', TMP . 'logo-awyiss.jpg'], 'PSD support', $io);
+			$imageMagickPsd = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.psd', TMP . 'logo-awyiss.jpg'], 'PSD support', $io);
 
-			$lb_imageMagickXlxs = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.xlsx', TMP . 'logo-awyiss.jpg'], 'XLSX support', $io);
+			$imageMagickXlxs = $this->testProcess(['magick', 'awyiss/Command/Media/TestFiles/logo-awyiss.xlsx', TMP . 'logo-awyiss.jpg'], 'XLSX support', $io);
 
-			$la_imageMagick = [
-				'avif' => $lb_imageMagickAvif,
-				'webp' => $lb_imageMagickWebp,
-				'pdf' => $lb_imageMagickPdf,
-				'svg' => $lb_imageMagickSvg,
-				'doc' => $lb_imageMagickDocx,
-				'docx' => $lb_imageMagickDocx,
-				'ppt' => $lb_imageMagickPptx,
-				'pptx' => $lb_imageMagickPptx,
-				'psd' => $lb_imageMagickPsd,
-				'xls' => $lb_imageMagickXlxs,
-				'xlsx' => $lb_imageMagickXlxs,
+			$imageMagickCommands = [
+				'avif' => $imageMagickAvif,
+				'webp' => $imageMagickWebp,
+				'pdf' => $imageMagickPdf,
+				'svg' => $imageMagickSvg,
+				'doc' => $imageMagickDocx,
+				'docx' => $imageMagickDocx,
+				'ppt' => $imageMagickPptx,
+				'pptx' => $imageMagickPptx,
+				'psd' => $imageMagickPsd,
+				'xls' => $imageMagickXlxs,
+				'xlsx' => $imageMagickXlxs,
 			];
 		}
 		else {
@@ -115,7 +115,7 @@ class DetectAvailableCommandsCommand extends Command {
 		$io->out('Writing config... ', 0);
 
 		//Remember the current config
-		$la_rememberedConfig = Configure::read();
+		$rememberedConfig = Configure::read();
 		Configure::clear();
 
 		if (file_exists(ENV_CUSTOM_CONFIG . 'awyiss.php')) {
@@ -124,8 +124,8 @@ class DetectAvailableCommandsCommand extends Command {
 
 		Configure::write([
 			'AvailableCommands' => [
-				'ffmpeg' => $lb_ffmpeg,
-				'imageMagick' => $la_imageMagick,
+				'ffmpeg' => $ffmpeg,
+				'imageMagick' => $imageMagickCommands,
 			],
 		]);
 
@@ -135,7 +135,7 @@ class DetectAvailableCommandsCommand extends Command {
 		$io->out('Done');
 
 		Configure::clear();
-		Configure::write($la_rememberedConfig);
+		Configure::write($rememberedConfig);
 
 
 		return static::CODE_SUCCESS;
@@ -153,10 +153,10 @@ class DetectAvailableCommandsCommand extends Command {
 			$io->out(sprintf('Testing %s... ', $type), 0);
 		}
 
-		$lo_process = new Process($command);
+		$process = new Process($command);
 
 		try {
-			$lo_process->mustRun();
+			$process->mustRun();
 		}
 		catch (ProcessFailedException) {
 			if ($type && $io) {

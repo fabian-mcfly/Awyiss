@@ -88,11 +88,11 @@ class ContentsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Contents->find('mediaAssignments', useMediaEntity: true)->where($this->getOverviewWhere())->contain(['ContentTemplates']);
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
-		$this->Search->filterQuery($lo_query);
+		$query = $this->Contents->find('mediaAssignments', useMediaEntity: true)->where($this->getOverviewWhere())->contain(['ContentTemplates']);
+		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -107,41 +107,42 @@ class ContentsController extends Controller {
 
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lo_contents = $lo_query->formatResults(function (Collection $result): Collection {
-			/** @var \Awyiss\Model\Entity\Content $lo_content */
-			foreach ($result as $lo_content) {
-				$lo_content->class = $lo_content->column['width']->getCssClass();
+		$contents = $query->formatResults(function (Collection $result): Collection {
+			/** @var \Awyiss\Model\Entity\Content $content */
+			foreach ($result as $content) {
+				/** @noinspection PhpUndefinedFieldInspection */
+				$content->class = $content->column['width']->getCssClass();
 
-				if ($lo_content->column['indent']) {
-					$lo_content->class .= ' ' . $lo_content->column['indent']->getCssClass();
+				if ($content->column['indent']) {
+					$content->class .= ' ' . $content->column['indent']->getCssClass();
 				}
 
-				if ($lo_content->columnRtl) {
-					$lo_content->class .= ' Column-RTL';
+				if ($content->columnRtl) {
+					$content->class .= ' Column-RTL';
 				}
 
-				if ($lo_content->columnLast) {
-					$lo_content->class .= ' Column-Last';
+				if ($content->columnLast) {
+					$content->class .= ' Column-Last';
 				}
 			}
 
 			return $result;
 		})->find('threaded')->all();
 
-		$la_contents = $lo_contents->groupBy('contentAreaId')->toArray();
+		$contents = $contents->groupBy('contentAreaId')->toArray();
 
-		$la_contentAreas = array_column($this->page->pageTemplate->contentAreas, 'label', 'id');
-		$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
-		foreach ($la_unknownContentAreas as $li_contentAreaId => $lo_contents) {
-			$la_contentAreas[ $li_contentAreaId ] = null;
+		$contentAreas = array_column($this->page->pageTemplate->contentAreas, 'label', 'id');
+		$unknownContentAreas = array_diff_key($contents, $contentAreas);
+		foreach ($unknownContentAreas as $contentAreaId => $unknownContentAreaContents) {
+			$contentAreas[ $contentAreaId ] = null;
 		}
 
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $ls_columnSystemClass */
-		$ls_columnSystemClass = $this->Contents->getColumnSystemClass();
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $columnSystemClass */
+		$columnSystemClass = $this->Contents->getColumnSystemClass();
 
-		$la_contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
+		$contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
 		array_map(function (ContentTemplate $contentTemplate) {
 			// Build an array of assigned content elements, indexed by their identifier
 			$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
@@ -149,18 +150,18 @@ class ContentsController extends Controller {
 			$contentTemplate->contentAreaIds = collection($contentTemplate->contentAreas)->filter(function ($contentArea) {
 				return $contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
 			})->extract('id')->unique()->toList();
-		}, $la_contentTemplates);
+		}, $contentTemplates);
 
 		$this->set([
-			'contents' => $la_contents,
-			'contentAreas' => $la_contentAreas,
-			'unknownContentAreas' => $la_unknownContentAreas,
+			'contents' => $contents,
+			'contentAreas' => $contentAreas,
+			'unknownContentAreas' => $unknownContentAreas,
 			'page' => $this->page,
 			'currentPageRole' => $this->Contents->getForScope(),
-			'contentTemplates' => $la_contentTemplates,
+			'contentTemplates' => $contentTemplates,
 			'columnWidths' => $this->Contents->getColumnWidths(),
 			'columnIndents' => $this->Contents->getColumnIndents(),
-			'columnSystemName' => $ls_columnSystemClass::getName(),
+			'columnSystemName' => $columnSystemClass::getName(),
 			'attributes' => $this->Contents->getAttributes(),
 		]);
 	}
@@ -173,27 +174,27 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add(): void {
-		$li_pageId = (int)$this->request->getParam('pageId');
-		$this->forPage($li_pageId, true);
+		$pageId = (int)$this->request->getParam('pageId');
+		$this->forPage($pageId, true);
 
-		if (!$li_pageId) {
+		if (!$pageId) {
 			throw new RedirectException(Router::url(['action' => 'add', 'pageId' => $this->page->id], true), 302);
 		}
 
 		$this->Authorization->ensure('create');
 
-		$lo_session = $this->request->getSession();
-		$lo_content = $this->Contents->newDefaultEntity([
+		$session = $this->request->getSession();
+		$content = $this->Contents->newDefaultEntity([
 			'pageId' => $this->page->id,
-			'contentAreaId' => $lo_session->read($this->selectedContentAreaIdSessionIdentifier),
-			'parentId' => $lo_session->read($this->selectedParentIdSessionIdentifier),
+			'contentAreaId' => $session->read($this->selectedContentAreaIdSessionIdentifier),
+			'parentId' => $session->read($this->selectedParentIdSessionIdentifier),
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_content);
+			$this->save($content);
 		}
 
-		$this->setViewVars($lo_content);
+		$this->setViewVars($content);
 	}
 
 
@@ -206,25 +207,25 @@ class ContentsController extends Controller {
 	 */
 	public function edit(int $id) {
 		/**
-		 * @var \Awyiss\Model\Entity\Content $lo_content
+		 * @var \Awyiss\Model\Entity\Content $content
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_content = $this->Contents->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_content) {
+		$content = $this->Contents->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$content) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		$this->forPage($lo_content->pageId);
+		$this->forPage($content->pageId);
 
 		$this->Authorization->ensure('update');
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_content, 'edit');
+			$this->save($content, 'edit');
 		}
 
 		if ($this->request->getParam('mode') === 'frontendEditor') {
@@ -233,11 +234,11 @@ class ContentsController extends Controller {
 			->setLayout('frontend_editor');
 		}
 
-		$this->setViewVars($lo_content);
+		$this->setViewVars($content);
 
 		/** @noinspection PhpUndefinedMethodInspection */
-		$this->set('auditDataCount', $this->Contents->countAuditData($lo_content));
-		$this->set('isDuplicated', $this->Contents->exists(['duplicate_of' => $lo_content->id]));
+		$this->set('auditDataCount', $this->Contents->countAuditData($content));
+		$this->set('isDuplicated', $this->Contents->exists(['duplicate_of' => $content->id]));
 	}
 
 
@@ -251,9 +252,9 @@ class ContentsController extends Controller {
 	public function delete(int $id): Response {
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($id)->first();
-		if (!$lo_content) {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->Contents->findById($id)->first();
+		if (!$content) {
 			$this->Flash->error(__('record_not_found'));
 
 
@@ -261,10 +262,10 @@ class ContentsController extends Controller {
 		}
 
 		//Calling this ensures access to the pageId/it's scope resp. the page role.
-		$this->forPage($lo_content->pageId);
+		$this->forPage($content->pageId);
 		$this->Authorization->ensure('delete');
 
-		if ($this->Contents->delete($lo_content)) {
+		if ($this->Contents->delete($content)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -273,14 +274,14 @@ class ContentsController extends Controller {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
 
-				foreach ($lo_content->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($content->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
 
 
-		return $this->redirect(['action' => 'overview', 'pageId' => $lo_content->pageId]);
+		return $this->redirect(['action' => 'overview', 'pageId' => $content->pageId]);
 	}
 
 
@@ -290,14 +291,15 @@ class ContentsController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 * @noinspection DuplicatedCode
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function saveColumnWidth(): void {
-		$lo_request = Router::getRequest();
+		$request = Router::getRequest();
 
-		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($lo_request->getData('id'))->first();
-		if (!$lo_content) {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->Contents->findById($request->getData('id'))->first();
+		if (!$content) {
 			if ($this->request->accepts('application/json')) {
 				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
@@ -318,29 +320,29 @@ class ContentsController extends Controller {
 		}
 
 		//Calling this ensures access to the pageId/it's scope resp. the page role.
-		$this->forPage($lo_content->pageId);
+		$this->forPage($content->pageId);
 		$this->Authorization->ensure('read');
 
-		$lo_content->set('columnWidth', $lo_request->getData('width'));
+		$content->set('columnWidth', $request->getData('width'));
 
-		$this->Contents->save($lo_content);
+		$this->Contents->save($content);
 
 		if ($this->request->accepts('application/json')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
-			$this->set('success', !$lo_content->hasErrors());
-			$this->set('message', !$lo_content->hasErrors() ? __('edit_succeeded') : __('edit_failed'));
+			$this->set('success', !$content->hasErrors());
+			$this->set('message', !$content->hasErrors() ? __('edit_succeeded') : __('edit_failed'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
 
-			if ($lo_content->hasErrors()) {
+			if ($content->hasErrors()) {
 				// Setting the response status to 422 Unprocessable Entity
 				$this->response = $this->response->withStatus(422, 'Unable to process entity');
 			}
 		}
 		else {
-			if (!$lo_content->hasErrors()) {
+			if (!$content->hasErrors()) {
 				$this->Flash->success(__('edit_succeeded'));
 			}
 			else {
@@ -358,22 +360,22 @@ class ContentsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function saveSystemOrder(): void {
-		$lo_request = Router::getRequest();
-		$lo_table = $this->Contents;
+		$request = Router::getRequest();
+		$table = $this->Contents;
 
-		$li_affectedRows = $this->_saveSystemOrder($lo_request->getData('order'), $lo_table);
+		$affectedRows = $this->_saveSystemOrder($request->getData('order'), $table);
 
 		if ($this->request->accepts('application/json')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
 			$this->set('success', true);
-			$this->set('message', $li_affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
+			$this->set('message', $affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
 		}
 		else {
-			if ($li_affectedRows) {
+			if ($affectedRows) {
 				$this->Flash->success(__d('system', 'system_order_saved'));
 			}
 			else {
@@ -391,51 +393,53 @@ class ContentsController extends Controller {
 	 * @return void
 	 * @throws \ReflectionException|\Exception
 	 * @noinspection DuplicatedCode
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function duplicateConfiguration(): void {
-		$li_pageId = (int)$this->request->getParam('pageId');
-		$this->forPage($li_pageId);
+		$pageId = (int)$this->request->getParam('pageId');
+		$this->forPage($pageId);
 
 		$this->Authorization->ensure('read');
 
-		$lo_duplicateOfPage = null;
+		$duplicateOfPage = null;
 
 		if ($this->request->is('post') && $this->request->getData('duplicate_of_page_id')) {
-			$lo_duplicateOfPage = $this->getPage((int)$this->request->getData('duplicate_of_page_id'));
+			$duplicateOfPage = $this->getPage((int)$this->request->getData('duplicate_of_page_id'));
 
-			$lo_query = $this->Contents->find()->find('mediaAssignments', useMediaEntity: true)->where(['page_id' => $lo_duplicateOfPage->id])->contain(['ContentTemplates']);
+			$query = $this->Contents->find()->find('mediaAssignments', useMediaEntity: true)->where(['page_id' => $duplicateOfPage->id])->contain(['ContentTemplates']);
 
-			$lo_contents = $lo_query->formatResults(function (Collection $result): Collection {
-				/** @var \Awyiss\Model\Entity\Content $lo_content */
-				foreach ($result as $lo_content) {
-					$lo_content->class = $lo_content->column['width']->getCssClass();
+			$contents = $query->formatResults(function (Collection $result): Collection {
+				/** @var \Awyiss\Model\Entity\Content $content */
+				foreach ($result as $content) {
+					/** @noinspection PhpUndefinedFieldInspection */
+					$content->class = $content->column['width']->getCssClass();
 
-					if ($lo_content->column['indent']) {
-						$lo_content->class .= ' ' . $lo_content->column['indent']->getCssClass();
+					if ($content->column['indent']) {
+						$content->class .= ' ' . $content->column['indent']->getCssClass();
 					}
 
-					if ($lo_content->columnRtl) {
-						$lo_content->class .= ' Column-RTL';
+					if ($content->columnRtl) {
+						$content->class .= ' Column-RTL';
 					}
 
-					if ($lo_content->columnLast) {
-						$lo_content->class .= ' Column-Last';
+					if ($content->columnLast) {
+						$content->class .= ' Column-Last';
 					}
 				}
 
 				return $result;
 			})->find('threaded')->all();
 
-			$la_contents = $lo_contents->groupBy('contentAreaId')->toArray();
+			$contents = $contents->groupBy('contentAreaId')->toArray();
 
-			$la_contentAreas = array_column($this->page->pageTemplate->contentAreas, 'label', 'id');
-			$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
-			foreach ($la_unknownContentAreas as $li_contentAreaId => $lo_contents) {
-				$la_contentAreas[ $li_contentAreaId ] = null;
+			$contentAreas = array_column($this->page->pageTemplate->contentAreas, 'label', 'id');
+			$unknownContentAreas = array_diff_key($contents, $contentAreas);
+			foreach ($unknownContentAreas as $contentAreaId => $unknownContentAreasContents) {
+				$contentAreas[ $contentAreaId ] = null;
 			}
 
-			$la_contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
+			$contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
 			array_map(function (ContentTemplate $contentTemplate) {
 				// Build an array of assigned content elements, indexed by their identifier
 				$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
@@ -443,12 +447,12 @@ class ContentsController extends Controller {
 				$contentTemplate->contentAreaIds = collection($contentTemplate->contentAreas)->filter(function ($contentArea) {
 					return $contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
 				})->extract('id')->unique()->toList();
-			}, $la_contentTemplates);
+			}, $contentTemplates);
 
 			$this->set([
-				'contents' => $la_contents,
-				'contentAreas' => $la_contentAreas,
-				'unknownContentAreas' => $la_unknownContentAreas,
+				'contents' => $contents,
+				'contentAreas' => $contentAreas,
+				'unknownContentAreas' => $unknownContentAreas,
 				'attributes' => $this->Contents->getAttributes(),
 			]);
 		}
@@ -456,7 +460,7 @@ class ContentsController extends Controller {
 		$this->set([
 			'page' => $this->page,
 			'currentPageRole' => $this->Contents->getForScope(),
-			'duplicateOfPage' => $lo_duplicateOfPage,
+			'duplicateOfPage' => $duplicateOfPage,
 			'duplicateOf' => $this->request->getData('duplicate_of'),
 			'contentTemplateId' => $this->request->getData('content_template_id'),
 		]);
@@ -471,29 +475,30 @@ class ContentsController extends Controller {
 	 * @return void
 	 * @throws \ReflectionException
 	 * @throws \Exception
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function moduleConfiguration(): void {
 		$this->Categories->disable();
 
-		/** @var array<string, class-string<\Awyiss\Module\ModuleInterface>> $la_moduleFiles */
-		$la_moduleFiles = ModulesProvider::getModuleFiles();
+		/** @var array<string, class-string<\Awyiss\Module\ModuleInterface>> $moduleFiles */
+		$moduleFiles = ModulesProvider::getModuleFiles();
 
 		// Get the title of each module
-		$la_modules = array_map(function (string $moduleClass) {
+		$modules = array_map(function (string $moduleClass) {
 			return $moduleClass::getTitle();
-		}, $la_moduleFiles);
+		}, $moduleFiles);
 
 
-		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
-		$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
+		$frontendLanguage = LocaleMiddleware::getLanguage();
+		$backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
 
 		$this->set([
 			'module_identifier' => $this->request->getData('module_identifier'),
-			'frontendLanguage' => $lo_frontendLanguage,
-			'userLanguage' => $lo_backendLanguage,
-			'modules' => $la_modules,
-			'moduleClass' => $la_moduleFiles[ $this->request->getData('module_identifier') ] ?? null,
+			'frontendLanguage' => $frontendLanguage,
+			'userLanguage' => $backendLanguage,
+			'modules' => $modules,
+			'moduleClass' => $moduleFiles[ $this->request->getData('module_identifier') ] ?? null,
 			'settings' => $this->request->getData('settings') ?? [],
 		]);
 
@@ -502,40 +507,34 @@ class ContentsController extends Controller {
 
 
 	/**
-	 * @param Content $content
+	 * @param \Awyiss\Model\Entity\Content $content
 	 * @param string $method
 	 * @return void
 	 * @throws \Exception
 	 */
 	protected function save(Content $content, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->Contents->hasAttributes()) {
-			$la_associated[] = $this->Contents->getAttributesTableName(true);
+			$associated[] = $this->Contents->getAttributesTableName(true);
 			$content->setAccess('attributes', true);
 		}
 
-		$la_data = $this->request->getData();
+		$requestData = $this->request->getData();
+		$requestData = $this->formatDataAttributes($requestData);
 
-		$la_data = $this->formatDataAttributes($la_data);
-
-		$lo_duplicateOf = null;
-		if (!empty($la_data['duplicate_of'])) {
-			/** @var \Awyiss\Model\Entity\Content $lo_duplicateOf */
-			$lo_duplicateOf = $this->Contents->findById($la_data['duplicate_of'])->first();
-			if ($lo_duplicateOf) {
-				$la_data['content_template_id'] = $lo_duplicateOf->contentTemplateId;
-			}
-			else {
-				$la_data['content_template_id'] = $this->getContentTemplates()->first()->id;
-			}
+		$duplicateOf = null;
+		if (!empty($requestData['duplicate_of'])) {
+			/** @var \Awyiss\Model\Entity\Content $duplicateOf */
+			$duplicateOf = $this->Contents->findById($requestData['duplicate_of'])->first();
+			$requestData['content_template_id'] = $duplicateOf ? $duplicateOf->contentTemplateId : $this->getContentTemplates()->first()->id;
 		}
 
-		$this->Contents->patchEntity($content, $la_data, [
-			'associated' => $la_associated,
+		$this->Contents->patchEntity($content, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
-		if ($lo_duplicateOf && $lo_duplicateOf->pageId === $content->pageId) {
+		if ($duplicateOf && $duplicateOf->pageId === $content->pageId) {
 			$content->duplicateOf = null;
 		}
 
@@ -548,18 +547,18 @@ class ContentsController extends Controller {
 
 			$this->unsetUnassignedElements($content);
 
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Contents->save($content, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->Contents->save($content, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				// Remember the parent id for the next entry
-				$lo_session = $this->request->getSession();
-				$lo_session->write($this->selectedContentAreaIdSessionIdentifier, $content->contentAreaId);
-				$lo_session->write($this->selectedPageIdSessionIdentifier, $content->pageId);
-				$lo_session->write($this->selectedParentIdSessionIdentifier, $content->parentId);
+				$session = $this->request->getSession();
+				$session->write($this->selectedContentAreaIdSessionIdentifier, $content->contentAreaId);
+				$session->write($this->selectedPageIdSessionIdentifier, $content->pageId);
+				$session->write($this->selectedParentIdSessionIdentifier, $content->parentId);
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $this->page->languageShortcode, 'pageId' => $content->pageId], true), 302);
@@ -569,9 +568,9 @@ class ContentsController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($content->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($content->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -589,18 +588,19 @@ class ContentsController extends Controller {
 
 
 	/**
+	 * @param string $method
 	 * @return void
 	 * @throws \Exception
 	 */
 	#[NoDirectAccess]
 	public function requestLock(string $method = 'update'): void {
-		$li_contentId = (int)$this->request->getData('id');
+		$contentId = (int)$this->request->getData('id');
 
 		$this->Categories->disable();
 
-		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($li_contentId)->first();
-		if (!$lo_content) {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->Contents->findById($contentId)->first();
+		if (!$content) {
 			$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['data', 'status']);
 
 			// Set the response data
@@ -612,25 +612,26 @@ class ContentsController extends Controller {
 			return;
 		}
 
-		$this->forPage($lo_content->pageId);
+		$this->forPage($content->pageId);
 
 		parent::requestLock($method);
 	}
 
 
 	/**
+	 * @param string $method
 	 * @return void
 	 * @throws \Exception
 	 */
 	#[NoDirectAccess]
 	public function releaseLock(string $method = 'update'): void {
-		$li_contentId = (int)$this->request->getData('id');
+		$contentId = (int)$this->request->getData('id');
 
 		$this->Categories->disable();
 
-		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($li_contentId)->first();
-		if (!$lo_content) {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		$content = $this->Contents->findById($contentId)->first();
+		if (!$content) {
 			$this->viewBuilder()
 				->setClassName('Json')
 				->setOption('serialize', ['data', 'status']);
@@ -644,7 +645,7 @@ class ContentsController extends Controller {
 			return;
 		}
 
-		$this->forPage($lo_content->pageId);
+		$this->forPage($content->pageId);
 
 		parent::releaseLock($method);
 	}
@@ -658,65 +659,65 @@ class ContentsController extends Controller {
 	 */
 	protected function _saveSystemOrder(array $requestData, Table $table): int {
 		// Create a flat array of all order data
-		$la_orderData = [];
-		foreach ($requestData as $la_itemsByContentAreaId) {
-			foreach ($la_itemsByContentAreaId as $li_parentId => $la_items) {
-				array_map(function (array $item) use (&$la_orderData, $li_parentId) {
-					$la_orderData[] = $item + ['parentId' => $li_parentId ?: null];
-				}, $la_items);
+		$orderData = [];
+		foreach ($requestData as $itemsByContentAreaId) {
+			foreach ($itemsByContentAreaId as $parentId => $items) {
+				array_map(function (array $item) use (&$orderData, $parentId) {
+					$orderData[] = $item + ['parentId' => $parentId ?: null];
+				}, $items);
 			}
 		}
 
 		// Get the page id of the first content
-		$lo_content = $table->findById($la_orderData[0]['id'])->first();
+		$content = $table->findById($orderData[0]['id'])->first();
 
 		// Calling this ensures access to the pageId/it's scope resp. the page role.
-		$this->forPage($lo_content->pageId);
+		$this->forPage($content->pageId);
 		$this->Authorization->ensure('read');
 
 		// Now that we have the page id, we get all current contents
-		$lo_contents = $table->find()->where([
-			'page_id' => $lo_content->pageId,
+		$contents = $table->find()->where([
+			'page_id' => $content->pageId,
 		])->all();
 
 		// And make sure that all contents in the request data are part of the current contents
-		$la_filteredOrderData = array_filter($la_orderData, function ($la_item) use ($lo_contents) {
-			return $lo_contents->firstMatch(['id' => $la_item['id']]);
+		$filteredOrderData = array_filter($orderData, function (array $item) use ($contents) {
+			return $contents->firstMatch(['id' => $item['id']]);
 		});
 
 		// If the filtered order does not match the original order, we return 0
-		if ($la_filteredOrderData !== $la_orderData) {
+		if ($filteredOrderData !== $orderData) {
 			return 0;
 		}
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$li_affectedRows = $table->updateAll(function (QueryExpression $expression) use ($la_orderData) {
-			$lo_contentAreaCase = $expression->case();
-			$lo_parentCase = $expression->case();
-			$lo_systemOrderCase = $expression->case();
+		$affectedRows = $table->updateAll(function (QueryExpression $expression) use ($orderData) {
+			$contentAreaCase = $expression->case();
+			$parentCase = $expression->case();
+			$systemOrderCase = $expression->case();
 
-			foreach ($la_orderData as $la_data) {
-				$lo_contentAreaCase->when(['id' => $la_data['id']])->then($la_data['contentAreaId'], 'integer');
-				$lo_parentCase->when(['id' => $la_data['id']])->then($la_data['parentId'], 'integer');
-				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
+			foreach ($orderData as $data) {
+				$contentAreaCase->when(['id' => $data['id']])->then($data['contentAreaId'], 'integer');
+				$parentCase->when(['id' => $data['id']])->then($data['parentId'], 'integer');
+				$systemOrderCase->when(['id' => $data['id']])->then($data['systemOrder'], 'integer');
 			}
 
 			return [
-				'content_area_id' => $lo_contentAreaCase,
-				'parent_id' => $lo_parentCase,
-				'system_order' => $lo_systemOrderCase,
+				'content_area_id' => $contentAreaCase,
+				'parent_id' => $parentCase,
+				'system_order' => $systemOrderCase,
 			];
 		}, [
-			'id IN' => array_column($la_orderData, 'id'),
+			'id IN' => array_column($orderData, 'id'),
 		]);
 
 
-		return $li_affectedRows;
+		return $affectedRows;
 	}
 
 
 	/**
-	 * @param Content $content
+	 * @param \Awyiss\Model\Entity\Content $content
 	 * @return array
 	 */
 	protected function getAssignedAttributes(Content $content): array {
@@ -736,22 +737,22 @@ class ContentsController extends Controller {
 	 */
 	protected function getContentTemplates(): CollectionInterface {
 		if (!isset($this->contentTemplates)) {
-			$li_pageTemplateId = $this->page->pageTemplateId;
+			$pageTemplateId = $this->page->pageTemplateId;
 
-			$lo_query = $this->Contents->ContentTemplates->find(
+			$query = $this->Contents->ContentTemplates->find(
 				'active',
 			)->select([
 				'id',
 				'title',
 				'active',
-			])->matching('ContentAreas', function (SelectQuery $query) use ($li_pageTemplateId) {
-				return $query->where(['ContentTemplateContentAreas.page_template_id' => $li_pageTemplateId]);
+			])->matching('ContentAreas', function (SelectQuery $query) use ($pageTemplateId) {
+				return $query->where(['ContentTemplateContentAreas.page_template_id' => $pageTemplateId]);
 			})->contain([
 				'ContentAreas',
 				'ContentTemplateElements',
 			]);
 
-			$this->contentTemplates = $lo_query->all()->indexBy('id');
+			$this->contentTemplates = $query->all()->indexBy('id');
 		}
 
 
@@ -763,7 +764,7 @@ class ContentsController extends Controller {
 	 * Returns a collection of all possible parent contents for the given content
 	 * to prevent circular references.
 	 *
-	 * @param Content $content
+	 * @param \Awyiss\Model\Entity\Content $content
 	 * @return CollectionInterface
 	 */
 	protected function getPossibleParentContents(Content $content): CollectionInterface {
@@ -772,12 +773,12 @@ class ContentsController extends Controller {
 				return new Collection([]);
 			}
 
-			$lo_query = $this->Contents->find()->find('mediaAssignments', useMediaEntity: true)->where([
+			$query = $this->Contents->find()->find('mediaAssignments', useMediaEntity: true)->where([
 				'page_id' => $content->pageId,
 				'content_area_id' => $content->contentAreaId,
 			]);
 
-			$this->threadedContents = $this->Contents->listNested($lo_query);
+			$this->threadedContents = $this->Contents->listNested($query);
 		}
 
 
@@ -813,17 +814,15 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function forPage(int $pageId, bool $allowFallback = false): Page {
-		$li_pageId = $pageId;
+		if (!$pageId && $allowFallback) {
+			$session = $this->request->getSession();
+			$pageId = $session->read($this->selectedPageIdSessionIdentifier);
 
-		if (!$li_pageId && $allowFallback) {
-			$lo_session = $this->request->getSession();
-			$li_pageId = $lo_session->read($this->selectedPageIdSessionIdentifier);
-
-			if (!$li_pageId) {
+			if (!$pageId) {
 				// Find the first page of pagerole `page`
-				$lo_pageTable = $this->fetchTable('Pages');
-				/** @var \Awyiss\Model\Entity\Page $lo_page */
-				$lo_page = $lo_pageTable->find()->select('id')->where([
+				$pageTable = $this->fetchTable('Pages');
+				/** @var \Awyiss\Model\Entity\Page $page */
+				$page = $pageTable->find()->select('id')->where([
 					'page_role_id' => 1,
 					'language_shortcode' => LocaleMiddleware::getLanguage()->shortcode,
 				])->orderBy([
@@ -833,42 +832,42 @@ class ContentsController extends Controller {
 					'Pages.parent_id' => 'ASC',
 				])->first();
 
-				$li_pageId = $lo_page?->id;
+				$pageId = $page?->id;
 			}
 		}
 
 		try {
-			$lo_page = $this->getPage($li_pageId);
+			$page = $this->getPage($pageId);
 		}
 		catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 			$this->Flash->error(__('record_not_found'));
 			throw new RedirectException(Router::url(['controller' => 'dashboard', 'action' => 'overview'], true), 404);
 		}
 
-		$this->page = $lo_page;
+		$this->page = $page;
 
-		$ls_languageShortcode = null;
+		$languageShortcode = null;
 		if ($this->request->is(['patch', 'post', 'put']) && in_array($this->request->getParam('action'), ['add', 'edit'])) {
-			$ls_languageShortcode = $this->request->getData('language_shortcode');
+			$languageShortcode = $this->request->getData('language_shortcode');
 		}
 
 		$this->Categories->setConfig([
 			'finder' => [
 				/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 				'forCurrentLanguage' => [
-					'languageShortcode' => $ls_languageShortcode,
+					'languageShortcode' => $languageShortcode,
 				],
 			],
-			'selectedCategory' => $lo_page->id,
+			'selectedCategory' => $page->id,
 		]);
 
-		$this->Contents->forPageRole($lo_page->pageRoleId);
+		$this->Contents->forPageRole($page->pageRoleId);
 
 		if (!$this->request->is(['patch', 'post', 'put']) || $this->request->getParam('action') !== 'edit') {
-			if ($lo_page->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {
+			if ($page->languageShortcode != LocaleMiddleware::getLanguage()->shortcode) {
 				throw new RedirectException(Router::url([
-					'lang' => $lo_page->languageShortcode,
-					'pageId' => $lo_page->id,
+					'lang' => $page->languageShortcode,
+					'pageId' => $page->id,
 				], true), 302);
 			}
 		}
@@ -881,12 +880,12 @@ class ContentsController extends Controller {
 		}
 
 
-		return $lo_page;
+		return $page;
 	}
 
 
 	/**
-	 * @param Content $content
+	 * @param \Awyiss\Model\Entity\Content $content
 	 * @param CollectionInterface $threadedContents
 	 * @param \Awyiss\Model\Entity\ContentTemplate|null $selectedContentTemplate
 	 * @return void
@@ -894,10 +893,10 @@ class ContentsController extends Controller {
 	 */
 	protected function ensurePossibleParentId(Content $content, CollectionInterface $threadedContents, ?ContentTemplate $selectedContentTemplate): void {
 		// Extract all possible parent ids
-		$la_possibleParentIds = $threadedContents->extract('id')->toList();
+		$possibleParentIds = $threadedContents->extract('id')->toList();
 
 		// Build an array of assigned content elements, indexed by their identifier
-		$la_assignedContentElements = $selectedContentTemplate ? collection($selectedContentTemplate->contentTemplateElements)->indexBy('identifier')->toArray() : [];
+		$assignedContentElements = $selectedContentTemplate ? collection($selectedContentTemplate->contentTemplateElements)->indexBy('identifier')->toArray() : [];
 
 		$content->setDirty('parentId', false);
 
@@ -905,16 +904,16 @@ class ContentsController extends Controller {
 		if (
 			$content->parentId &&
 			(
-				!in_array($content->parentId, $la_possibleParentIds) ||
-				!isset($la_assignedContentElements['parent_id'])
+				!in_array($content->parentId, $possibleParentIds) ||
+				!isset($assignedContentElements['parent_id'])
 			)
 		) {
 			// Remember the errors
-			$la_errors = $content->getError('parentId');
+			$errors = $content->getError('parentId');
 
 			// If the parent_id is required and there are possible parent ids, set the parent_id to the first possible parent id
-			if (($la_assignedContentElements['parent_id'] ?? null)?->required === true && $la_possibleParentIds) {
-				$content->parentId = reset($la_possibleParentIds);
+			if (($assignedContentElements['parent_id'] ?? null)?->required === true && $possibleParentIds) {
+				$content->parentId = reset($possibleParentIds);
 			}
 			// Otherwise, set the parent_id to null
 			else {
@@ -922,57 +921,57 @@ class ContentsController extends Controller {
 			}
 
 			// If there were errors, set them again
-			if ($la_errors) {
-				$content->setError('parentId', $la_errors);
+			if ($errors) {
+				$content->setError('parentId', $errors);
 			}
 
-			$lo_request = $this->getRequest();
+			$request = $this->getRequest();
 			//When parent_id is part of the request data, overwrite it since it might be outdated
-			if ($lo_request->getData('parent_id') !== null) {
-				$lo_request = $lo_request->withData('parent_id', $content->parentId);
-				$this->setRequest($lo_request);
+			if ($request->getData('parent_id') !== null) {
+				$request = $request->withData('parent_id', $content->parentId);
+				$this->setRequest($request);
 			}
 		}
 	}
 
 
 	/**
-	 * @param Content $content
+	 * @param \Awyiss\Model\Entity\Content $content
 	 * @param CollectionInterface $contentTemplates
 	 * @return void
 	 */
 	protected function ensurePossibleTemplate(Content $content, CollectionInterface $contentTemplates): void {
 		if (!$content->contentTemplateId || !$contentTemplates->firstMatch(['id' => $content->contentTemplateId])) {
-			$la_errors = $content->getError('contentTemplateId');
+			$errors = $content->getError('contentTemplateId');
 
 			$content->contentTemplate = $contentTemplates->first();
 			$content->contentTemplateId = $content->contentTemplate?->id;
 
-			if ($la_errors) {
-				$content->setError('contentTemplateId', $la_errors);
+			if ($errors) {
+				$content->setError('contentTemplateId', $errors);
 			}
 		}
 		elseif (!$content->contentTemplate) {
 			$content->contentTemplate = $contentTemplates->firstMatch(['id' => $content->contentTemplateId]);
 		}
 
-		$lo_request = $this->getRequest();
+		$request = $this->getRequest();
 		//When content_template_id is part of the request data, overwrite it since it might be outdated
-		if ($lo_request->getData('content_template_id') !== null) {
-			$lo_request = $lo_request->withData('content_template_id', $content->contentTemplateId);
-			$this->setRequest($lo_request);
+		if ($request->getData('content_template_id') !== null) {
+			$request = $request->withData('content_template_id', $content->contentTemplateId);
+			$this->setRequest($request);
 		}
 	}
 
 
 	/**
-	 * @param Content $content
+	 * @param \Awyiss\Model\Entity\Content $content
 	 * @param array $availableContentAreas
 	 * @return void
 	 */
 	protected function ensurePossibleContentArea(Content $content, array $availableContentAreas = []): void {
 		if (empty($content->contentAreaId) || !in_array($content->contentAreaId, array_column($availableContentAreas['all'], 'id'))) {
-			$la_errors = $content->getError('contentAreaId');
+			$errors = $content->getError('contentAreaId');
 
 			if (!$availableContentAreas['available']) {
 				return;
@@ -981,33 +980,33 @@ class ContentsController extends Controller {
 			$content->contentArea = reset($availableContentAreas['available']);
 			$content->contentAreaId = $content->contentArea->id;
 
-			if ($la_errors) {
-				$content->setError('contentAreaId', $la_errors);
+			if ($errors) {
+				$content->setError('contentAreaId', $errors);
 			}
 
-			$lo_request = $this->getRequest();
+			$request = $this->getRequest();
 			//When content_area_id is part of the request data, overwrite it since it might be outdated
-			if ($lo_request->getData('content_area_id') !== null) {
-				$lo_request = $lo_request->withData('content_area_id', $content->contentAreaId);
-				$this->setRequest($lo_request);
+			if ($request->getData('content_area_id') !== null) {
+				$request = $request->withData('content_area_id', $content->contentAreaId);
+				$this->setRequest($request);
 			}
 		}
 	}
 
 
 	/**
-	 * @param Content $content
+	 * @param \Awyiss\Model\Entity\Content $content
 	 * @param Page|null $page
 	 * @return array
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 */
 	protected function getContentAreas(Content $content, ?Page $page = null): array {
-		$lo_page = $page ?? $this->getPage($content->pageId);
+		$page ??= $this->getPage($content->pageId);
 
-		/** @var \Awyiss\Model\Entity\ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->contentTemplates->firstMatch(['id' => $content->contentTemplateId]);
-		if (!$lo_contentTemplate) {
+		/** @var \Awyiss\Model\Entity\ContentTemplate $contentTemplate */
+		$contentTemplate = $this->contentTemplates->firstMatch(['id' => $content->contentTemplateId]);
+		if (!$contentTemplate) {
 			return [
 				'available' => [],
 				'unavailable' => [],
@@ -1015,25 +1014,26 @@ class ContentsController extends Controller {
 			];
 		}
 
-		$la_unavailableContentAreas = $la_contentAreas = collection($lo_page->pageTemplate->contentAreas)->indexBy('id')->toArray();
+		$unavailableContentAreas = $contentAreas = collection($page->pageTemplate->contentAreas)->indexBy('id')->toArray();
 
-		$la_availableContentAreas = [];
+		$availableContentAreas = [];
 
-		foreach ($lo_contentTemplate->contentAreas ?? [] as $lo_contentArea) {
-			if ($lo_contentArea->_joinData->pageTemplateId != $lo_page->pageTemplateId) {
+		/** @var \Awyiss\Model\Entity\ContentArea $contentArea */
+		foreach ($contentTemplate->contentAreas ?? [] as $contentArea) {
+			if ($contentArea->_joinData->pageTemplateId != $page->pageTemplateId) {
 				continue;
 			}
 
-			if (isset($la_unavailableContentAreas[ $lo_contentArea->id ])) {
-				$la_availableContentAreas[ $lo_contentArea->id ] = $la_unavailableContentAreas[ $lo_contentArea->id ];
-				unset($la_unavailableContentAreas[ $lo_contentArea->id ]);
+			if (isset($unavailableContentAreas[ $contentArea->id ])) {
+				$availableContentAreas[ $contentArea->id ] = $unavailableContentAreas[ $contentArea->id ];
+				unset($unavailableContentAreas[ $contentArea->id ]);
 			}
 		}
 
 		return [
-			'available' => $la_availableContentAreas,
-			'unavailable' => $la_unavailableContentAreas,
-			'all' => $la_contentAreas,
+			'available' => $availableContentAreas,
+			'unavailable' => $unavailableContentAreas,
+			'all' => $contentAreas,
 		];
 	}
 
@@ -1043,36 +1043,36 @@ class ContentsController extends Controller {
 	 * @return void
 	 */
 	protected function unsetUnassignedElements(Content $content): void {
-		$lo_contentTemplates = $this->getContentTemplates();
-		$lo_contentTemplate = $lo_contentTemplates->firstMatch(['id' => $content->contentTemplateId]);
+		$contentTemplates = $this->getContentTemplates();
+		$contentTemplate = $contentTemplates->firstMatch(['id' => $content->contentTemplateId]);
 
 		foreach (
 			array_diff(
 				array_keys($this->Contents->ContentTemplates->getAvailableContentElements()),
-				array_column($lo_contentTemplate->contentTemplateElements ?? [], 'identifier')
-			) as $ls_element
+				array_column($contentTemplate->contentTemplateElements ?? [], 'identifier')
+			) as $element
 		) {
-			if ($ls_element === 'column_width') {
-				$la_columnWidths = $this->Contents->getColumnWidths();
+			if ($element === 'column_width') {
+				$columnWidths = $this->Contents->getColumnWidths();
 
-				$content->set($ls_element, key($la_columnWidths));
+				$content->set($element, key($columnWidths));
 
 				continue;
 			}
 
-			$content->set($ls_element);
+			$content->set($element);
 		}
 
-		$la_contentAttributes = $this->Contents->ContentTemplates->getAvailableContentAttributes(true);
-		$la_contentAttributes = array_column($la_contentAttributes, 'identifier');
+		$contentAttributes = $this->Contents->ContentTemplates->getAvailableContentAttributes(true);
+		$contentAttributes = array_column($contentAttributes, 'identifier');
 
 		foreach (
 			array_diff(
-				$la_contentAttributes,
-				$this->Contents->ContentTemplates->getAssignedContentAttributes($lo_contentTemplate)
-			) as $ls_element
+				$contentAttributes,
+				$this->Contents->ContentTemplates->getAssignedContentAttributes($contentTemplate)
+			) as $element
 		) {
-			$content->set($ls_element);
+			$content->set($element);
 		}
 	}
 
@@ -1083,46 +1083,46 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function setViewVars(Content $content): void {
-		$lo_contentTemplates = $this->getContentTemplates();
-		$this->ensurePossibleTemplate($content, $lo_contentTemplates);
+		$contentTemplates = $this->getContentTemplates();
+		$this->ensurePossibleTemplate($content, $contentTemplates);
 
-		/** @var \Awyiss\Model\Entity\ContentTemplate $lo_selectedContentTemplate */
-		$lo_selectedContentTemplate = $lo_contentTemplates->firstMatch(['id' => $content->contentTemplateId]);
+		/** @var \Awyiss\Model\Entity\ContentTemplate $selectedContentTemplate */
+		$selectedContentTemplate = $contentTemplates->firstMatch(['id' => $content->contentTemplateId]);
 
-		$la_contentAreas = $this->getContentAreas($content, $this->page);
-		$this->ensurePossibleContentArea($content, $la_contentAreas);
+		$contentAreas = $this->getContentAreas($content, $this->page);
+		$this->ensurePossibleContentArea($content, $contentAreas);
 
-		$lo_possibleParentContents = $this->getPossibleParentContents($content);
-		$this->ensurePossibleParentId($content, $lo_possibleParentContents, $lo_selectedContentTemplate);
+		$possibleParentContents = $this->getPossibleParentContents($content);
+		$this->ensurePossibleParentId($content, $possibleParentContents, $selectedContentTemplate);
 
-		$la_assignedAttributes = $this->getAssignedAttributes($content);
+		$assignedAttributes = $this->getAssignedAttributes($content);
 
-		$ls_languageShortcode = $this->request->getData('language_shortcode') ?: $this->page->languageShortcode;
+		$languageShortcode = $this->request->getData('language_shortcode') ?: $this->page->languageShortcode;
 
-		$la_contentElementsByFieldset = [];
-		if (!empty($lo_selectedContentTemplate->contentTemplateElements)) {
-			$la_contentElementsByFieldset = collection($lo_selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
+		$contentElementsByFieldset = [];
+		if (!empty($selectedContentTemplate->contentTemplateElements)) {
+			$contentElementsByFieldset = collection($selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
 
-			foreach ($la_contentElementsByFieldset as $ls_fieldset => $la_contentElements) {
-				$la_contentElementsByFieldset[ $ls_fieldset ] = collection($la_contentElements)->indexBy(function (ContentTemplateElement $entity) {
+			foreach ($contentElementsByFieldset as $fieldset => $contentElements) {
+				$contentElementsByFieldset[ $fieldset ] = collection($contentElements)->indexBy(function (ContentTemplateElement $entity) {
 					return Inflector::variable($entity->identifier);
 				})->toArray();
 			}
 		}
 
-		$la_columnWidths = $this->Contents->getColumnWidths();
-		$la_columnWidths = array_map(function (ColumnInterface $column): string {
+		$columnWidths = $this->Contents->getColumnWidths();
+		$columnWidths = array_map(function (ColumnInterface $column): string {
 			return $column->getLabel();
-		}, $la_columnWidths);
+		}, $columnWidths);
 
-		$la_columnIndents = $this->Contents->getColumnIndents();
-		$la_columnIndents = array_map(function (ColumnInterface $column): string {
+		$columnIndents = $this->Contents->getColumnIndents();
+		$columnIndents = array_map(function (ColumnInterface $column): string {
 			return $column->getLabel();
-		}, $la_columnIndents);
+		}, $columnIndents);
 
-		$la_allowedKeys = [];
+		$allowedKeys = [];
 		if ($content->duplicateOf) {
-			$la_allowedKeys = $this->Contents->getAllowedKeyForDuplicating();
+			$allowedKeys = $this->Contents->getAllowedKeyForDuplicating();
 
 			$content->duplicateOfContent = $this->Contents->findById($content->duplicateOf)->find('mediaAssignments', useMediaEntity: true)->first();
 
@@ -1135,22 +1135,22 @@ class ContentsController extends Controller {
 
 		$this->set([
 			'content' => $content,
-			'contentTemplates' => $lo_contentTemplates,
-			'possibleParentContents' => $lo_possibleParentContents,
+			'contentTemplates' => $contentTemplates,
+			'possibleParentContents' => $possibleParentContents,
 			'page' => $this->page,
-			'assignedAttributes' => $la_assignedAttributes,
-			'contentAreas' => $la_contentAreas,
-			'contentElementsByFieldset' => $la_contentElementsByFieldset,
+			'assignedAttributes' => $assignedAttributes,
+			'contentAreas' => $contentAreas,
+			'contentElementsByFieldset' => $contentElementsByFieldset,
 			'currentPageRole' => $this->Contents->getForScope(),
 			'languageRealm' => Awyiss::REALM_FRONTEND,
-			'languageShortcode' => $ls_languageShortcode,
-			'columnWidths' => $la_columnWidths,
-			'columnIndents' => $la_columnIndents,
+			'languageShortcode' => $languageShortcode,
+			'columnWidths' => $columnWidths,
+			'columnIndents' => $columnIndents,
 			/** @uses \Awyiss\Model\Table::findActive() */
 			'forms' => $this->Contents->Forms->find('active')->orderByAsc('title')->all(),
 			/** @uses \Awyiss\Model\Table::findActive() */
 			'surveys' => $this->Contents->Surveys->find('active')->orderByAsc('title')->all(),
-			'allowedKeys' => $la_allowedKeys,
+			'allowedKeys' => $allowedKeys,
 			'expertMode' => $this->request->getParam('expertMode'),
 		]);
 	}
@@ -1162,38 +1162,36 @@ class ContentsController extends Controller {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function formatDataAttributes(array $data): array {
-		$la_data = $data;
+		if (empty($data['data'])) {
+			unset($data['data']);
 
-		if (empty($la_data['data'])) {
-			unset($la_data['data']);
-
-			return $la_data;
+			return $data;
 		}
 
 
-		$la_dataSet = [];
+		$dataSet = [];
 
-		foreach ((array)$la_data['data'] as $lx_key => $lx_value) {
-			if (!is_numeric($lx_key)) {
-				if (empty($lx_value)) {
+		foreach ((array)$data['data'] as $key => $value) {
+			if (!is_numeric($key)) {
+				if (empty($value)) {
 					continue;
 				}
 
-				$la_dataSet[ $lx_key ] = $lx_value;
+				$dataSet[ $key ] = $value;
 				continue;
 			}
 
-			if (isset($lx_value['key']) && $lx_value['key'] !== '' && isset($lx_value['value']) && $lx_value['value'] !== '') {
-				$la_dataSet[ $lx_value['key'] ] = $lx_value['value'];
+			if (isset($value['key']) && $value['key'] !== '' && isset($value['value']) && $value['value'] !== '') {
+				$dataSet[ $value['key'] ] = $value['value'];
 			}
 		}
 
-		$la_data['data'] = $la_dataSet;
+		$data['data'] = $dataSet;
 
 		// Update the request data
-		$lo_request = $this->request->withData('data', $la_dataSet);
-		$this->setRequest($lo_request);
+		$request = $this->request->withData('data', $dataSet);
+		$this->setRequest($request);
 
-		return $la_data;
+		return $data;
 	}
 }

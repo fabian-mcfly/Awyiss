@@ -21,32 +21,32 @@ class FormMailRenderer extends Renderer {
 	 * @inheritDoc
 	 */
 	public function render(string $content, array $types = []): array {
-		$la_rendered = [];
-		$ls_template = $this->viewBuilder()->getTemplate();
+		$rendered = [];
+		$template = $this->viewBuilder()->getTemplate();
 
-		if (!$ls_template) {
-			foreach ($types as $ls_type) {
-				$la_rendered[ $ls_type ] = $content;
+		if (!$template) {
+			foreach ($types as $type) {
+				$rendered[ $type ] = $content;
 			}
 
-			return $la_rendered;
+			return $rendered;
 		}
 
-		$ls_className = App::className('Frontend', 'View', 'View');
-		$lo_view = $this->createView($ls_className);
+		$className = App::className('Frontend', 'View', 'View');
+		$view = $this->createView($className);
 
-		if ($lo_view->get('content') === null) {
-			$lo_view->set('content', $content);
+		if ($view->get('content') === null) {
+			$view->set('content', $content);
 		}
 
-		foreach ($types as $ls_type) {
+		foreach ($types as $type) {
 			/**
 			 * If the type is `text`, no additional rendering is done,
 			 * as the content is already plain text.
 			 */
-			$la_rendered[ $ls_type ] = $ls_type === 'text' ? $lo_view->get('textPlain') : $lo_view->render();
+			$rendered[ $type ] = $type === 'text' ? $view->get('textPlain') : $view->render();
 		}
 
-		return $la_rendered;
+		return $rendered;
 	}
 }

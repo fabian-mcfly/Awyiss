@@ -18,7 +18,6 @@ class MenuTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Menu::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\MenusTable $table */
@@ -35,7 +34,6 @@ class MenuTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Menu::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Menu();
@@ -55,7 +53,6 @@ class MenuTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Menu::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -87,7 +84,6 @@ class MenuTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Menu::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new Menu();
@@ -119,7 +115,6 @@ class MenuTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Menu
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -143,7 +138,6 @@ class MenuTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Menu::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

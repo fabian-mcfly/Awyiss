@@ -17,7 +17,7 @@ use Cake\Utility\Text;
  * Page Entity
  *
  * @property int $id
- * @property \Awyiss\Model\Enum\PageRoleEnumInterface|null $pageRoleId
+ * @property \Awyiss\Model\Enum\PageRoleEnumInterface|int|null $pageRoleId
  * @property int|null $pageTemplateId
  * @property int|null $parentId
  * @property string|null $languageShortcode
@@ -132,11 +132,11 @@ class Page extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\PagesTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getChildren($this, $options);
+		return $table->getChildren($this, $options);
 	}
 
 
@@ -149,11 +149,11 @@ class Page extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\PagesTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getNestedChildren($this, $options, $currentLevel);
+		return $table->getNestedChildren($this, $options, $currentLevel);
 	}
 
 
@@ -165,11 +165,11 @@ class Page extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {
-		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\PagesTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParent($this, $options);
+		return $table->getParent($this, $options);
 	}
 
 
@@ -182,11 +182,11 @@ class Page extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\PagesTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParents($this, $options, $currentLevel);
+		return $table->getParents($this, $options, $currentLevel);
 	}
 
 
@@ -211,13 +211,12 @@ class Page extends Entity {
 			return null;
 		}
 
-		$la_menuIds = $menuIds;
-		foreach ($la_menuIds as &$lx_menuId) {
-			$lx_menuId = (int)$lx_menuId;
+		foreach ($menuIds as &$menuId) {
+			$menuId = (int)$menuId;
 		}
 
 
-		return $la_menuIds;
+		return $menuIds;
 	}
 
 
@@ -246,15 +245,15 @@ class Page extends Entity {
 			return null;
 		}
 
-		$ls_slug = Text::slug($slug, ['preserve' => '/']);
-		$ls_slug = trim($ls_slug, '/');
+		$slug = Text::slug($slug, ['preserve' => '/']);
+		$slug = trim($slug, '/');
 
-		if (str_contains($ls_slug, '/')) {
-			$ls_slug = substr($ls_slug, strrpos($ls_slug, '/') + 1);
+		if (str_contains($slug, '/')) {
+			$slug = substr($slug, strrpos($slug, '/') + 1);
 		}
 
 
-		return mb_strtolower($ls_slug);
+		return mb_strtolower($slug);
 	}
 
 
@@ -262,13 +261,13 @@ class Page extends Entity {
 	 * @inheritDoc
 	 */
 	public function defaultValues(): array {
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-		$la_parts = explode('\\', static::class);
+		$parts = explode('\\', static::class);
 
 		return parent::defaultValues() + [
-			'pageRoleId' => $ls_pageRoleEnum::tryFromName(end($la_parts)),
+			'pageRoleId' => $pageRoleEnum::tryFromName(end($parts)),
 		];
 	}
 
@@ -284,12 +283,6 @@ class Page extends Entity {
 			return null;
 		}
 
-		foreach ($this->pageTemplate->contentAreas as $lo_contentArea) {
-			if ($lo_contentArea->contentTemplates) {
-				return true;
-			}
-		}
-
-		return false;
+		return array_any($this->pageTemplate->contentAreas, fn (ContentArea $contentArea) => $contentArea->contentTemplates);
 	}
 }

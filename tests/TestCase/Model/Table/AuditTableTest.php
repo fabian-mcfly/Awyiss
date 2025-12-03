@@ -66,7 +66,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(2, $this->auditTable->associations()->keys());
@@ -91,7 +90,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -130,7 +128,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -155,7 +152,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -177,7 +173,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -212,7 +207,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -237,7 +231,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -261,7 +254,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationTypeInList(): void {
 		// Test valid types
@@ -303,7 +295,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationDiffMaxLengthBytes(): void {
 		// Create a very large diff array that exceeds 16777215 bytes when JSON encoded
@@ -330,7 +321,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationValidDiffArray(): void {
 		// Test with valid diff array
@@ -357,7 +347,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAllowEmptyOptionalFields(): void {
 		$data = [
@@ -384,7 +373,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\Audit $entity */
@@ -409,7 +397,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -446,7 +433,6 @@ class AuditTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AuditTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaDataColumn(): void {
 		$schema = $this->auditTable->getSchema();

@@ -24,7 +24,6 @@ class OpenAITranslationServiceTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -37,7 +36,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorThrowsExceptionWhenApiKeyNotConfigured(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.openAiApiKey');
@@ -52,7 +50,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorUsesCustomModel(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.openAiModel', 'gpt-4-foobar');
@@ -87,7 +84,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::getSupportedSourceLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSupportedSourceLanguages(): void {
 		$service = new OpenAITranslationService();
@@ -107,7 +103,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::getSupportedTargetLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSupportedTargetLanguages(): void {
 		$service = new OpenAITranslationService();
@@ -124,7 +119,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::getBatchSize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetBatchSize(): void {
 		$service = new OpenAITranslationService();
@@ -136,7 +130,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextWithSuccess(): void {
 		$responseBody = json_encode([
@@ -181,7 +174,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextWithAutoDetection(): void {
 		$responseBody = json_encode([
@@ -211,7 +203,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextReturnsFalseOnApiError(): void {
 		$errorBody = json_encode([
@@ -237,7 +228,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextReturnsFalseOnMissingContent(): void {
 		$responseBody = json_encode([
@@ -265,7 +255,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextIncludesMetadata(): void {
 		$responseBody = json_encode([
@@ -304,7 +293,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchWithSuccess(): void {
 		$responseBody = json_encode([
@@ -353,7 +341,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchPreservesArrayKeys(): void {
 		$responseBody = json_encode([
@@ -389,7 +376,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchReturnsFalseOnApiError(): void {
 		$errorBody = json_encode([
@@ -413,7 +399,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchReturnsFalseOnMissingContent(): void {
 		$responseBody = json_encode([
@@ -441,7 +426,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchReturnsFalseOnInvalidJsonResponse(): void {
 		$responseBody = json_encode([
@@ -469,7 +453,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchReturnsFalseOnMismatchedArrayCount(): void {
 		$responseBody = json_encode([
@@ -501,7 +484,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchWithEmptyArray(): void {
 		$responseBody = json_encode([
@@ -530,7 +512,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::getUsageInfo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetUsageInfoReturnsNull(): void {
 		$service = new OpenAITranslationService();
@@ -544,7 +525,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityWithContentEntity(): void {
 		$responseBody = json_encode([
@@ -582,7 +562,6 @@ class OpenAITranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextHandlesModuleTags(): void {
 		$responseBody = json_encode([

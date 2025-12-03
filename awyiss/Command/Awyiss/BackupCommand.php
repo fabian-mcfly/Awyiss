@@ -39,25 +39,25 @@ class BackupCommand extends Command {
 		$this->io = $io;
 
 		// Start time
-		$lf_start = microtime(true);
+		$startTime = microtime(true);
 
 		// Get the backup directory
-		$ls_backupDir = ROOT . DS . 'backup';
+		$backupDir = ROOT . DS . 'backup';
 
 		// Check if the backup directory exists
-		if (!is_dir($ls_backupDir)) {
-			mkdir($ls_backupDir, 0755, true);
+		if (!is_dir($backupDir)) {
+			mkdir($backupDir, 0755, true);
 		}
 
 		// Get the backup file name
-		$ls_backupFile = $ls_backupDir . DS . 'backup-' . date('Y-m-d-H-i-s') . '.zip';
+		$backupFile = $backupDir . DS . 'backup-' . date('Y-m-d-H-i-s') . '.zip';
 
 		// Zip the data
-		if ($this->zipData(ROOT, $ls_backupFile)) {
-			$lf_end = microtime(true);
+		if ($this->zipData(ROOT, $backupFile)) {
+			$endTime = microtime(true);
 
 			$this->io->success('Backup created successfully.');
-			$this->io->info('Backup file `' . $ls_backupFile . '` created in ' . round($lf_end - $lf_start, 2) . ' seconds.');
+			$this->io->info('Backup file `' . $backupFile . '` created in ' . round($endTime - $startTime, 2) . ' seconds.');
 		}
 		else {
 			$this->io->error('Backup creation failed.');
@@ -77,20 +77,20 @@ class BackupCommand extends Command {
 			return false;
 		}
 
-		$lo_zip = new ZipArchive();
+		$zip = new ZipArchive();
 
-		if (!$lo_zip->open($destination, ZipArchive::CREATE)) {
+		if (!$zip->open($destination, ZipArchive::CREATE)) {
 			$this->io->error('Could not create backup file `' . $destination . '`.');
 			return false;
 		}
 
-		$this->addDatabaseBackup($lo_zip);
+		$this->addDatabaseBackup($zip);
 
-		$ls_source = realpath($source);
-		if (is_dir($ls_source)) {
+		$sourcePath = realpath($source);
+		if (is_dir($sourcePath)) {
 			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
-			$lo_directory = new RecursiveDirectoryIterator($ls_source, RecursiveDirectoryIterator::SKIP_DOTS);
-			$lo_filter = new RecursiveCallbackFilterIterator($lo_directory, function ($current, $key, $iterator) {
+			$directory = new RecursiveDirectoryIterator($sourcePath, RecursiveDirectoryIterator::SKIP_DOTS);
+			$filter = new RecursiveCallbackFilterIterator($directory, function ($current, $key, $iterator) {
 				// Skip directories starting with a dot
 				if ($current->isDir() && $current->getFilename()[0] === '.') {
 					return false;
@@ -112,31 +112,31 @@ class BackupCommand extends Command {
 				return true;
 			});
 
-			$lo_iterator = new RecursiveIteratorIterator($lo_filter);
-			foreach ($lo_iterator as $lo_file) {
-				$ls_filePath = $lo_file->getPathname();
+			$iterator = new RecursiveIteratorIterator($filter);
+			foreach ($iterator as $file) {
+				$filePath = $file->getPathname();
 
-				if (is_dir($ls_filePath)) {
-					$this->io->verbose('Adding `' . $ls_filePath . '` to the backup.');
-					$lo_zip->addEmptyDir(str_replace($ls_source . '/', '', $ls_filePath . '/'));
+				if (is_dir($filePath)) {
+					$this->io->verbose('Adding `' . $filePath . '` to the backup.');
+					$zip->addEmptyDir(str_replace($sourcePath . '/', '', $filePath . '/'));
 				}
-				elseif (is_file($ls_filePath)) {
+				elseif (is_file($filePath)) {
 					// If the file is inside the 'tmp' directory, skip it
-					if (str_starts_with($ls_filePath, ROOT . DS . 'tmp' . DS)) {
+					if (str_starts_with($filePath, ROOT . DS . 'tmp' . DS)) {
 						continue;
 					}
 
-					$this->io->verbose('Adding `' . $ls_filePath . '` to the backup.');
-					$lo_zip->addFromString(str_replace($ls_source . '/', '', $ls_filePath), file_get_contents($ls_filePath));
+					$this->io->verbose('Adding `' . $filePath . '` to the backup.');
+					$zip->addFromString(str_replace($sourcePath . '/', '', $filePath), file_get_contents($filePath));
 				}
 			}
 		}
-		elseif (is_file($ls_source)) {
-			$this->io->verbose('Adding `' . $ls_source . '` to the backup.');
-			$lo_zip->addFromString(basename($ls_source), file_get_contents($ls_source));
+		elseif (is_file($sourcePath)) {
+			$this->io->verbose('Adding `' . $sourcePath . '` to the backup.');
+			$zip->addFromString(basename($sourcePath), file_get_contents($sourcePath));
 		}
 
-		return $lo_zip->close();
+		return $zip->close();
 	}
 
 
@@ -144,31 +144,31 @@ class BackupCommand extends Command {
 	 * @param \ZipArchive $zip
 	 */
 	protected function addDatabaseBackup(ZipArchive $zip): void {
-		$la_config = Configure::read('Datasources.default');
-		$ls_database = $la_config['database'] ?? false;
-		$ls_host = $la_config['host'] ?? false;
-		$ls_username = $la_config['username'] ?? false;
-		$ls_password = $la_config['password'] ?? false;
+		$config = Configure::read('Datasources.default');
+		$database = $config['database'] ?? false;
+		$host = $config['host'] ?? false;
+		$username = $config['username'] ?? false;
+		$password = $config['password'] ?? false;
 
 		$this->io->out('Backing up database... ', 0);
 
-		if (!$ls_database || !$ls_host || !$ls_username || !$ls_password) {
+		if (!$database || !$host || !$username || !$password) {
 			$this->io->warning('Database configuration not found. Skipping database backup.');
 			return;
 		}
 
-		$la_command = [
+		$command = [
 			'mysqldump',
-			'-h' . $ls_host,
-			'-u' . $ls_username,
-			'-p' . $ls_password,
-			$ls_database,
+			'-h' . $host,
+			'-u' . $username,
+			'-p' . $password,
+			$database,
 		];
 
-		$lo_process = new Process($la_command);
+		$process = new Process($command);
 		try {
-			$lo_process->mustRun();
-			$ls_backup = $lo_process->getOutput();
+			$process->mustRun();
+			$backup = $process->getOutput();
 		}
 		catch (ProcessFailedException $ex) {
 			$this->io->error('Database backup failed.');
@@ -176,7 +176,7 @@ class BackupCommand extends Command {
 			return;
 		}
 
-		$zip->addFromString('database.sql', $ls_backup);
+		$zip->addFromString('database.sql', $backup);
 
 		$this->io->out('Database backup created successfully.');
 	}

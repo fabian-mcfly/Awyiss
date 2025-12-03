@@ -66,91 +66,89 @@ class DesignsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_design = $this->ensureIdentifier();
+		$design = $this->ensureIdentifier();
 
-		$la_designerConfig = Configure::read('Design');
+		$designerConfig = Configure::read('Design');
 
-		/** @var class-string<\Awyiss\Utility\Design\ScssVariableProvider> $ls_className */
-		$ls_scssVariableProviderClass = App::className('ScssVariableProvider', 'Utility/Design');
-		$lo_scssVariableProvider = new $ls_scssVariableProviderClass($la_designerConfig);
-		$la_internalVariables = $lo_scssVariableProvider->getNormalizedInternalVariables();
+		/** @var class-string<\Awyiss\Utility\Design\ScssVariableProvider> $scssVariableProviderClass */
+		$scssVariableProviderClass = App::className('ScssVariableProvider', 'Utility/Design');
+		$scssVariableProvider = new $scssVariableProviderClass($designerConfig);
+		$internalVariables = $scssVariableProvider->getNormalizedInternalVariables();
 
-		/** @var class-string<\Awyiss\Utility\Design\WebfontProvider> $ls_webfontProviderClass */
-		$ls_webfontProviderClass = App::className('WebfontProvider', 'Utility/Design');
-		$lo_webfontProvider = new $ls_webfontProviderClass();
-		$la_webfonts = $lo_webfontProvider->getWebfonts();
+		/** @var class-string<\Awyiss\Utility\Design\WebfontProvider> $webfontProviderClass */
+		$webfontProviderClass = App::className('WebfontProvider', 'Utility/Design');
+		$webfontProvider = new $webfontProviderClass();
+		$webfonts = $webfontProvider->getWebfonts();
 
-		$lo_preview = null;
+		$preview = null;
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			if ($this->request->getData('cancel_preview') !== null) {
 				$this->cancelPreview();
 			}
 			elseif ($this->request->getData('preview') !== null) {
-				$lo_preview = $this->savePreviewData($la_internalVariables, $la_webfonts);
+				$preview = $this->savePreviewData($internalVariables, $webfonts);
 			}
 			elseif ($this->request->getData('reset') !== null) {
 				$this->reset();
 			}
 			else {
-				$this->save($lo_design, $la_internalVariables, $la_webfonts);
+				$this->save($design, $internalVariables, $webfonts);
 			}
 		}
 
 		// If the design is a preview, save its identifier in the session
-		$lo_session = $this->request->getSession();
-		if (!$lo_design->inUse) {
-			$lo_session->write('designPreviewIdentifier', $lo_design->identifier);
+		$session = $this->request->getSession();
+		if (!$design->inUse) {
+			$session->write('designPreviewIdentifier', $design->identifier);
 		}
 		else {
-			$lo_session->delete('designPreviewIdentifier');
+			$session->delete('designPreviewIdentifier');
 		}
 
 		/**
 		 * Nest the variables that are associated with others
 		 * The associated variables will be removed from the main array.
 		 */
-		$la_variables = $this->nestVariables($la_internalVariables);
+		$variables = $this->nestVariables($internalVariables);
 
 		// Group the variables by their 'category' attribute. If a variable does not have a group, it will be placed in the 'variables' group.
-		$la_variables = array_reduce(array_keys($la_variables), function ($carry, $key) use ($la_variables) {
-			$la_item = $la_variables[ $key ];
-			$ls_group = $la_item['category'] ?? 'variables';
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$carry[ $ls_group ][ $key ] = $la_item;
+		$variables = array_reduce(array_keys($variables), function (array $carry, string $key) use ($variables): array {
+			$item = $variables[ $key ];
+			$group = $item['category'] ?? 'variables';
+			$carry[ $group ][ $key ] = $item;
 
 			return $carry;
 		}, []);
 
-		$la_fontWeights = [];
-		for ($li_i = 100; $li_i <= 900; $li_i += 100) {
-			$la_fontWeights[ $li_i ] = $li_i;
+		$fontWeights = [];
+		for ($i = 100; $i <= 900; $i += 100) {
+			$fontWeights[ $i ] = $i;
 		}
 
-		$la_fontStacks = $lo_scssVariableProvider->getConfig('fontStacks');
-		foreach ($la_fontStacks as $ls_category => $la_fonts) {
-			$la_fontStacks[ $ls_category ] = array_combine($la_fonts, $la_fonts);
+		$fontStacks = $scssVariableProvider->getConfig('fontStacks');
+		foreach ($fontStacks as $category => $fonts) {
+			$fontStacks[ $category ] = array_combine($fonts, $fonts);
 		}
 
-		$lo_webfonts = new Collection($la_webfonts);
-		$la_webfonts = $lo_webfonts->groupBy('category')->toArray();
-		foreach ($la_webfonts as $ls_category => $la_fonts) {
-			$lo_fonts = new Collection($la_fonts);
-			$la_webfonts[ $ls_category ] = $lo_fonts->indexBy('id')->toArray();
+		$webfonts = new Collection($webfonts)->groupBy('category')->toArray();
+		foreach ($webfonts as $category => $fonts) {
+			$fonts = new Collection($fonts);
+			$webfonts[ $category ] = $fonts->indexBy('id')->toArray();
 		}
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_designs = $this->paginate($lo_query);
+		$query = $this->getOverviewQuery();
+		$designs = $this->paginate($query);
 
 		$this->set([
-			'design' => $lo_design,
-			'designs' => $lo_designs,
-			'fontStacks' => $la_fontStacks,
-			'fontWeights' => $la_fontWeights,
-			'preview' => $lo_preview ,
-			'previewIdentifier' => $lo_preview?->identifier,
-			'units' => $lo_scssVariableProvider->getConfig('units'),
-			'variables' => $la_variables,
-			'webfonts' => $la_webfonts,
+			'design' => $design,
+			'designs' => $designs,
+			'fontStacks' => $fontStacks,
+			'fontWeights' => $fontWeights,
+			'preview' => $preview ,
+			'previewIdentifier' => $preview?->identifier,
+			'units' => $scssVariableProvider->getConfig('units'),
+			'variables' => $variables,
+			'webfonts' => $webfonts,
 		]);
 	}
 
@@ -159,17 +157,15 @@ class DesignsController extends Controller {
 	 * @param Design $design
 	 * @param array $internalVariables
 	 * @param array $webfonts
-	 * @param bool $includeColumnSystem
 	 * @return void
-	 * @throws \Cake\Http\Exception\RedirectException
-	 * @throws \Exception
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Cake\Http\Exception\ForbiddenException
 	 */
 	protected function save(Design $design, array $internalVariables, array $webfonts): void {
-		$la_requestData = $this->request->getData();
-		$lb_use = !empty($la_requestData['use']);
+		$requestData = $this->request->getData();
+		$use = !empty($requestData['use']);
 
-		if ($lb_use) {
+		if ($use) {
 			$this->Authorization->ensure('use');
 		}
 		else {
@@ -179,13 +175,13 @@ class DesignsController extends Controller {
 			$design->setNew(true);
 		}
 
-		$la_requestData = $this->normalizeRequestData($la_requestData, $internalVariables, $webfonts);
+		$requestData = $this->normalizeRequestData($requestData, $internalVariables, $webfonts);
 
-		if ($lb_use) {
+		if ($use) {
 			$design->inUse = true;
 		}
 		else {
-			$la_requestData['identifier'] = Security::randomString(12);
+			$requestData['identifier'] = Security::randomString(12);
 
 			$design->title = null;
 			$design->description = null;
@@ -194,41 +190,41 @@ class DesignsController extends Controller {
 
 		$design->isPreview = false;
 
-		$this->Designs->patchEntity($design, $la_requestData, [
+		$this->Designs->patchEntity($design, $requestData, [
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$design->title) {
-			/** @var \Awyiss\Model\Entity\User $lo_identity */
-			$lo_identity = $this->request->getAttribute('identity');
+			/** @var \Awyiss\Model\Entity\User $identity */
+			$identity = $this->request->getAttribute('identity');
 
-			$design->title = $lo_identity->username . ', ' . (new DateTime('now'))->format('Y-m-d H:i');
+			$design->title = $identity->username . ', ' . new DateTime('now')->format('Y-m-d H:i');
 
-			if ($lb_use) {
+			if ($use) {
 				$design->title = 'Standard (' . $design->title . ')';
 			}
 		}
 
-		$design->css = $this->generateCss($la_requestData);
+		$design->css = $this->generateCss($requestData);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Designs->save($design, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->Designs->save($design, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__('save_succeeded'));
 				}
 
-				$lo_session = $this->request->getSession();
-				$lo_session->delete('designPreviewIdentifier');
+				$session = $this->request->getSession();
+				$session->delete('designPreviewIdentifier');
 
-				throw new RedirectException(Router::url(['action' => 'overview', 'identifier' => $lb_use ? $design->identifier : null], true), 302);
+				throw new RedirectException(Router::url(['action' => 'overview', 'identifier' => $use ? $design->identifier : null], true), 302);
 			}
 
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('save_failed'));
-				foreach ($design->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($design->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -243,25 +239,24 @@ class DesignsController extends Controller {
 	 * @return array
 	 */
 	protected function nestVariables(array $variables): array {
-		$la_variables = $variables;
-		foreach ($la_variables as &$la_options) {
-			if (empty($la_options['associatedVariables'])) {
+		foreach ($variables as &$options) {
+			if (empty($options['associatedVariables'])) {
 				continue;
 			}
 
-			foreach ($la_options['associatedVariables'] as $ls_associatedVariable) {
-				if (isset($la_variables[ $ls_associatedVariable ])) {
-					$la_options['associatedVariables'][ $ls_associatedVariable ] = $la_variables[ $ls_associatedVariable ];
-					unset($la_variables[ $ls_associatedVariable ]);
+			foreach ($options['associatedVariables'] as $associatedVariable) {
+				if (isset($variables[ $associatedVariable ])) {
+					$options['associatedVariables'][ $associatedVariable ] = $variables[ $associatedVariable ];
+					unset($variables[ $associatedVariable ]);
 				}
 			}
 
-			$la_options['associatedVariables'] = array_filter($la_options['associatedVariables'], function ($options, $key) use ($la_variables) {
+			$options['associatedVariables'] = array_filter($options['associatedVariables'], function ($options, $key) use ($variables) {
 				return !is_numeric($key) && is_array($options);
 			}, ARRAY_FILTER_USE_BOTH);
 		}
 
-		return $la_variables;
+		return $variables;
 	}
 
 
@@ -272,74 +267,73 @@ class DesignsController extends Controller {
 	 * @return array
 	 */
 	protected function normalizeRequestData(array $requestData, array $internalVariables, array $webfonts): array {
-		$la_requestData = ['settings' => []];
-
-		$lo_internalVariables = new Collection($internalVariables);
+		$data = ['settings' => []];
 
 		// Create a map of the internal variables and their underscored names
-		$la_underscoredNames = array_map(fn ($key) => Inflector::underscore($key), array_keys($internalVariables));
-		$la_variableMap = array_combine($la_underscoredNames, array_keys($internalVariables));
+		$underscoredNames = array_map(fn ($key) => Inflector::underscore($key), array_keys($internalVariables));
+		$variableMap = array_combine($underscoredNames, array_keys($internalVariables));
+		$internalVariables = new Collection($internalVariables);
 
-		foreach ($requestData as $ls_key => $lx_value) {
-			if (in_array($ls_key, ['custom', 'font_variants', 'save_as_copy', 'reload_form', 'preview', 'save', 'use'])) {
+		foreach ($requestData as $key => $value) {
+			if (in_array($key, ['custom', 'font_variants', 'save_as_copy', 'reload_form', 'preview', 'save', 'use'])) {
 				continue;
 			}
 
-			if (in_array($ls_key, ['title', 'description', '_translations'])) {
-				$la_requestData[ $ls_key ] = $lx_value;
+			if (in_array($key, ['title', 'description', '_translations'])) {
+				$data[ $key ] = $value;
 				continue;
 			}
 
-			if ($lx_value === 'custom') {
-				$lx_value = $requestData['custom'][ $ls_key ] ?? '';
+			if ($value === 'custom') {
+				$value = $requestData['custom'][ $key ] ?? '';
 			}
 
-			$la_variableOptions = $lo_internalVariables->filter(function ($variableOptions, $key) use ($ls_key) {
-				return Inflector::underscore($key) === $ls_key;
+			$variableOptions = $internalVariables->filter(function ($variableOptions, $variableKey) use ($key) {
+				return Inflector::underscore($variableKey) === $key;
 			})->first();
 
-			if ($la_variableOptions && $la_variableOptions['type'] === ScssVariableType::FontName) {
-				if (isset($webfonts[ $lx_value ])) {
-					$lx_value = [
-						'font' => $webfonts[ $lx_value ],
-						'variants' => $requestData['font_variants'][ $ls_key ] ?? [],
+			if ($variableOptions && $variableOptions['type'] === ScssVariableType::FontName) {
+				if (isset($webfonts[ $value ])) {
+					$value = [
+						'font' => $webfonts[ $value ],
+						'variants' => $requestData['font_variants'][ $key ] ?? [],
 					];
 				}
 				else {
-					$lx_value = [
+					$value = [
 						'font' => [
-							'name' => $lx_value,
+							'name' => $value,
 						],
-						'variants' => $requestData['font_variants'][ $ls_key ] ?? [],
+						'variants' => $requestData['font_variants'][ $key ] ?? [],
 					];
 				}
 			}
 
 			// Don't save empty font stacks
 			if (
-				$la_variableOptions &&
-				$la_variableOptions['type'] === ScssVariableType::FontStack &&
-				empty($lx_value)
+				$variableOptions &&
+				$variableOptions['type'] === ScssVariableType::FontStack &&
+				empty($value)
 			) {
 				continue;
 			}
 
-			$ls_key = $la_variableMap[ $ls_key ] ?? $ls_key;
+			$key = $variableMap[ $key ] ?? $key;
 
-			if (str_ends_with($ls_key, '_unit')) {
-				$ls_key = substr($ls_key, 0, -5);
-				$ls_key = $la_variableMap[ $ls_key ] ?? $ls_key;
-				$ls_key .= 'Unit';
+			if (str_ends_with($key, '_unit')) {
+				$key = substr($key, 0, -5);
+				$key = $variableMap[ $key ] ?? $key;
+				$key .= 'Unit';
 			}
 
-			$la_requestData['settings'][ $ls_key ] = $lx_value;
+			$data['settings'][ $key ] = $value;
 
-			if (!empty($lx_value) && isset($la_variableOptions['forcedUnit'])) {
-				$la_requestData['settings'][ $ls_key . 'Unit' ] = $la_variableOptions['forcedUnit'];
+			if (!empty($value) && isset($variableOptions['forcedUnit'])) {
+				$data['settings'][ $key . 'Unit' ] = $variableOptions['forcedUnit'];
 			}
 		}
 
-		return $la_requestData;
+		return $data;
 	}
 
 
@@ -351,72 +345,72 @@ class DesignsController extends Controller {
 		$this->loadDesigns();
 
 		if (!$this->request->getParam('identifier') && !$this->request->getParam('preview')) {
-			/** @var \Awyiss\Model\Entity\User $lo_identity */
-			$lo_identity = $this->request->getAttribute('identity');
+			/** @var \Awyiss\Model\Entity\User $identity */
+			$identity = $this->request->getAttribute('identity');
 
 			// Check if the user has a preview design
-			$ls_identifier = $this->designs->firstMatch([
+			$identifier = $this->designs->firstMatch([
 				'isPreview' => true,
-				'createdBy' => $lo_identity->id,
+				'createdBy' => $identity->id,
 			])?->get('identifier');
 
-			if ($ls_identifier) {
+			if ($identifier) {
 				// If the user has a preview design, redirect to the overview page
 				throw new RedirectException(Router::url([
 					'action' => 'overview',
-					'preview' => $ls_identifier,
+					'preview' => $identifier,
 				], true), 302);
 			}
 
 			// If the user does not have a preview design, redirect to the first design in use
-			$ls_identifier = $this->designs->firstMatch(['inUse' => true])->get('identifier');
+			$identifier = $this->designs->firstMatch(['inUse' => true])->get('identifier');
 
 			throw new RedirectException(Router::url([
 				'action' => 'overview',
-				'identifier' => $ls_identifier,
+				'identifier' => $identifier,
 			], true), 302);
 		}
 
 		if ($this->request->getParam('preview')) {
-			$lo_design = $this->designs->firstMatch([
+			$design = $this->designs->firstMatch([
 				'identifier' => $this->request->getParam('preview'),
 				'isPreview' => true,
 			]);
 
-			if ($lo_design) {
-				return $lo_design;
+			if ($design) {
+				return $design;
 			}
 		}
 
-		$ls_identifier = $this->request->getParam('identifier');
+		$identifier = $this->request->getParam('identifier');
 
 		// Get the design by its identifier
-		/** @var \Awyiss\Model\Entity\Design $lo_design */
-		$lo_design = $this->designs->firstMatch([
-			'identifier' => $ls_identifier,
+		/** @var \Awyiss\Model\Entity\Design $design */
+		$design = $this->designs->firstMatch([
+			'identifier' => $identifier,
 		]);
 
-		if (!$lo_design) {
-			$lo_design = $this->designs->firstMatch(['inUse' => true]);
+		if (!$design) {
+			$design = $this->designs->firstMatch(['inUse' => true]);
 		}
 
-		if (!$lo_design) {
+		if (!$design) {
 			throw new Exception('Design not found');
 		}
 
-		if (!$lo_design->inUse) {
+		if (!$design->inUse) {
 			// If the design is not in use, make sure the user has the permission to load designs
 			$this->Authorization->ensure('load');
 		}
 
-		if ($ls_identifier !== $lo_design->identifier) {
+		if ($identifier !== $design->identifier) {
 			throw new RedirectException(Router::url([
 				'action' => 'overview',
-				'identifier' => $lo_design->identifier,
+				'identifier' => $design->identifier,
 			], true), 302);
 		}
 
-		return $lo_design;
+		return $design;
 	}
 
 
@@ -436,17 +430,17 @@ class DesignsController extends Controller {
 		}
 
 		if (!$this->designs->count()) {
-			$lo_design = $this->Designs->newDefaultEntity([
+			$design = $this->Designs->newDefaultEntity([
 				'identifier' => Security::randomString(12),
 				'title' => 'Standard',
 				'inUse' => true,
 			]);
 
-			if (!$this->Designs->save($lo_design)) {
+			if (!$this->Designs->save($design)) {
 				throw new Exception('Could not create a default design');
 			}
 
-			$this->designs = $this->designs->append([$lo_design])->compile();
+			$this->designs = $this->designs->append([$design])->compile();
 		}
 	}
 
@@ -458,36 +452,37 @@ class DesignsController extends Controller {
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	protected function savePreviewData(array $internalVariables, array $webfonts): ?Design {
-		$la_previewData = $this->request->getData();
-		$la_previewData = $this->normalizeRequestData($la_previewData, $internalVariables, $webfonts);
+		$previewData = $this->request->getData();
+		$previewData = $this->normalizeRequestData($previewData, $internalVariables, $webfonts);
 
-		$lo_preview = null;
+		/** @var \Awyiss\Model\Entity\Design|null $preview */
+		$preview = null;
 		if ($this->request->getData('preview')) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$lo_preview = $this->Designs->findByIdentifier($this->request->getData('preview'))->first();
+			$preview = $this->Designs->findByIdentifier($this->request->getData('preview'))->first();
 		}
 
-		if (!$lo_preview || !$lo_preview->isPreview) {
-			$lo_preview = $this->Designs->newDefaultEntity([
+		if (!$preview?->isPreview) {
+			$preview = $this->Designs->newDefaultEntity([
 				'identifier' => Security::randomString(12),
 				'inUse' => false,
 				'isPreview' => true,
 			]);
 		}
 
-		unset($la_previewData['_translations']);
+		unset($previewData['_translations']);
 
-		$this->Designs->patchEntity($lo_preview, $la_previewData, ['validate' => false]);
+		$this->Designs->patchEntity($preview, $previewData, ['validate' => false]);
 
-		/** @var \Awyiss\Model\Entity\User $lo_identity */
-		$lo_identity = $this->request->getAttribute('identity');
-		$lo_now = new DateTime('now');
-		$lo_preview->title = sprintf('Preview (%s, %s)', $lo_identity->username, $lo_now->format('Y-m-d H:i'));
+		/** @var \Awyiss\Model\Entity\User $identity */
+		$identity = $this->request->getAttribute('identity');
+		$now = new DateTime('now');
+		$preview->title = sprintf('Preview (%s, %s)', $identity->username, $now->format('Y-m-d H:i'));
 
-		$lo_preview->css = $this->generateCss($la_previewData);
+		$preview->css = $this->generateCss($previewData);
 
-		if ($this->Designs->save($lo_preview)) {
-			throw new RedirectException(Router::url(['action' => 'overview', 'preview' => $lo_preview->identifier, '#' => 'Preview'], true), 302);
+		if ($this->Designs->save($preview)) {
+			throw new RedirectException(Router::url(['action' => 'overview', 'preview' => $preview->identifier, '#' => 'Preview'], true), 302);
 		}
 
 		return null;
@@ -506,15 +501,15 @@ class DesignsController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Design $lo_design */
-		$lo_design = $this->Designs->findById($id)->first();
-		if (!$lo_design) {
+		/** @var \Awyiss\Model\Entity\Design $design */
+		$design = $this->Designs->findById($id)->first();
+		if (!$design) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Designs->delete($lo_design)) {
+		if ($this->Designs->delete($design)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -522,8 +517,8 @@ class DesignsController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_design->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($design->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -536,8 +531,8 @@ class DesignsController extends Controller {
 	 * @return void
 	 */
 	protected function reset(): void {
-		$lo_session = $this->request->getSession();
-		$lo_session->delete('designPreviewIdentifier');
+		$session = $this->request->getSession();
+		$session->delete('designPreviewIdentifier');
 
 		throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 	}
@@ -547,18 +542,21 @@ class DesignsController extends Controller {
 	 * @return void
 	 */
 	protected function cancelPreview(): void {
-		$lo_session = $this->request->getSession();
+		$session = $this->request->getSession();
 
-		$ls_identifier = $lo_session->read('designPreviewIdentifier');
-		if ($ls_identifier) {
-			/** @noinspection PhpUndefinedMethodInspection */
-			$lo_design = $this->Designs->findByIdentifier($ls_identifier)->first();
-			if ($lo_design) {
-				$this->Designs->delete($lo_design);
+		$identifier = $session->read('designPreviewIdentifier');
+		if ($identifier) {
+			/**
+			 * @var \Awyiss\Model\Entity\Design|null $design
+			 * @noinspection PhpUndefinedMethodInspection
+			 */
+			$design = $this->Designs->findByIdentifier($identifier)->first();
+			if ($design) {
+				$this->Designs->delete($design);
 			}
 		}
 
-		$lo_session->delete('designPreviewIdentifier');
+		$session->delete('designPreviewIdentifier');
 
 		throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 	}
@@ -570,34 +568,34 @@ class DesignsController extends Controller {
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	protected function generateCss(array $data): string {
-		$ls_css = '';
-		$la_realmFolders = Configure::read('App.paths.assets.Frontend');
+		$css = '';
+		$realmFolders = Configure::read('App.paths.assets.Frontend');
 
-		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_className */
-		$ls_className = App::className('ScssCompiler', 'Utility/Design');
+		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $className */
+		$className = App::className('ScssCompiler', 'Utility/Design');
 
-		/** @var class-string<\Awyiss\Utility\Design\ScssVariableProvider> $ls_className */
-		$ls_scssVariableProviderClass = App::className('ScssVariableProvider', 'Utility/Design');
-		$lo_scssVariableProvider = new $ls_scssVariableProviderClass(Configure::read('Design'));
+		/** @var class-string<\Awyiss\Utility\Design\ScssVariableProvider> $scssVariableProviderClass */
+		$scssVariableProviderClass = App::className('ScssVariableProvider', 'Utility/Design');
+		$scssVariableProvider = new $scssVariableProviderClass(Configure::read('Design'));
 
-		foreach (Configure::read('Design.previewScssFiles', []) as $ls_scssFile) {
-			foreach ($la_realmFolders as $ls_basePath) {
-				if (!str_starts_with($ls_scssFile, $ls_basePath)) {
+		foreach (Configure::read('Design.previewScssFiles', []) as $scssFile) {
+			foreach ($realmFolders as $basePath) {
+				if (!str_starts_with($scssFile, $basePath)) {
 					continue;
 				}
 
-				$lo_scssVariableProvider->setScssFiles([$ls_scssFile]);
+				$scssVariableProvider->setScssFiles([$scssFile]);
 
-				$la_internalVariables = $lo_scssVariableProvider->getInternalVariables();
-				$lb_includeColumnSystem = isset($la_internalVariables['includeColumnSystem']) && $la_internalVariables['includeColumnSystem']->getValue() === true;
+				$internalVariables = $scssVariableProvider->getInternalVariables();
+				$includeColumnSystem = isset($internalVariables['includeColumnSystem']) && $internalVariables['includeColumnSystem']->getValue() === true;
 
 				// compileScss expects SplFileInfo, not a string, so convert it
-				$ls_scssFile = new SplFileInfo($ls_scssFile);
+				$scssFile = new SplFileInfo($scssFile);
 
-				$ls_css .= $ls_className::compileScss($ls_scssFile, $ls_basePath, $data['settings'], true, $lb_includeColumnSystem) . PHP_EOL;
+				$css .= $className::compileScss($scssFile, $basePath, $data['settings'], true, $includeColumnSystem) . PHP_EOL;
 			}
 		}
 
-		return $ls_css;
+		return $css;
 	}
 }

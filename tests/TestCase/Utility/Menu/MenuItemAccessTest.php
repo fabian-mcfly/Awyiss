@@ -18,7 +18,6 @@ use stdClass;
 class MenuItemAccessTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructor(): void {
 		$access = new stdClass();
@@ -36,7 +35,6 @@ class MenuItemAccessTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithRequiredProperties(): void {
 		$access = new stdClass();
@@ -53,7 +51,6 @@ class MenuItemAccessTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithArrayIdentifier(): void {
 		$access = new stdClass();
@@ -69,7 +66,6 @@ class MenuItemAccessTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorThrowsExceptionWhenScopeIsMissing(): void {
 		$this->expectException(MenuValidationException::class);
@@ -84,7 +80,6 @@ class MenuItemAccessTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorThrowsExceptionWhenIdentifierIsMissing(): void {
 		$this->expectException(MenuValidationException::class);
@@ -99,7 +94,6 @@ class MenuItemAccessTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAdditionalData(): void {
 		$access = new stdClass();

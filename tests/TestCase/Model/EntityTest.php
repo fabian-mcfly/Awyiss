@@ -19,7 +19,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorMapsFields(): void {
 		$properties = [
@@ -56,7 +55,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorSetsPropertiesAsOriginal(): void {
 		$properties = [
@@ -84,7 +82,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::__construct()
 	 * @see \Awyiss\Model\Entity::setAccess()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorSetsAccessIfNotSet(): void {
 		$entity = new Entity([]);
@@ -114,7 +111,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::get()
 	 * @see \Awyiss\Model\Entity::mapField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetWithUnmappedField(): void {
 		$properties = [
@@ -144,7 +140,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::get()
 	 * @see \Awyiss\Model\Entity::mapField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetWithMappedField(): void {
 		$properties = [
@@ -174,7 +169,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::get()
 	 * @see \Awyiss\Model\Entity::getFromAttribute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFromAttributeEntity(): void {
 		$attributes = new Entity(['color' => 'red']);
@@ -190,7 +184,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::get()
 	 * @see \Awyiss\Model\Entity::getFromAttribute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetReturnsByReferenceForSelf(): void {
 		$entity = new Entity(['title' => 'Original']);
@@ -204,7 +197,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::get()
 	 * @see \Awyiss\Model\Entity::getFromAttribute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetReturnsByReferenceForAttribute(): void {
 		$attributes = new Entity(['color' => 'red']);
@@ -221,7 +213,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::set()
 	 * @see \Awyiss\Model\Entity::mapField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetWithUnmappedField(): void {
 		$properties = [
@@ -258,7 +249,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::set()
 	 * @see \Awyiss\Model\Entity::mapField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetWithMappedField(): void {
 		$properties = [
@@ -295,7 +285,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::set()
 	 * @see \Awyiss\Model\Entity::mapField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetWithArrayEmitsDeprecationWarning(): void {
 		$entity = new Entity();
@@ -312,7 +301,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::set()
 	 * @see \Awyiss\Model\Entity::setFromAttribute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetInAttributeEntity(): void {
 		$attributes = new Entity(['color' => 'red']);
@@ -336,7 +324,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::patch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPatchWithUnmappedFields(): void {
 		$properties = [
@@ -375,7 +362,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::patch()
 	 * @see \Awyiss\Model\Entity::mapField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPatchWithMappedFields(): void {
 		$properties = [
@@ -413,7 +399,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::patch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPatchInAttributeEntity(): void {
 		$attributes = new Entity(['color' => 'red']);
@@ -447,7 +432,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::__isset()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testIssetWithUnmappedField(): void {
@@ -464,7 +448,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::__isset()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testIssetWithMappedField(): void {
@@ -485,7 +468,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::unset()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testUnsetWithUnmappedField(): void {
@@ -504,7 +486,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::unset()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testUnsetWithMappedField(): void {
@@ -529,7 +510,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setHidden()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetHiddenFieldsWithUnmappedField(): void {
 		$entity = new Entity();
@@ -546,7 +526,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setHidden()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetHiddenFieldsWithMappedField(): void {
 		$entity = new class extends Entity {
@@ -568,7 +547,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setVirtual()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetVirtualFieldsWithUnmappedField(): void {
 		$entity = new Entity();
@@ -585,7 +563,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setVirtual()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetVirtualFieldsWithMappedField(): void {
 		$entity = new class extends Entity {
@@ -607,7 +584,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::has()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testHasWithUnmappedField(): void {
@@ -625,7 +601,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::has()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testHasWithMappedField(): void {
@@ -648,7 +623,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::hasOriginal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testHasOriginalWithUnmappedField(): void {
@@ -669,7 +643,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::hasOriginal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testHasOriginalWithMappedField(): void {
@@ -695,7 +668,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::getOriginal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testGetOriginalWithUnmappedField(): void {
@@ -717,7 +689,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::getOriginal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 */
 	public function testGetOriginalWithMappedField(): void {
@@ -743,7 +714,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extract()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractWithUnmappedField(): void {
 		$entity = new Entity([
@@ -766,7 +736,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extract()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractWithMappedField(): void {
 		$entity = new class ([
@@ -798,7 +767,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extract()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractWithMappedFieldReturnMapped(): void {
 		$entity = new class ([
@@ -830,7 +798,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extract()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractWithUnmappedFieldOnlyDirty(): void {
 		$entity = new Entity([
@@ -853,7 +820,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extract()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractWithMappedFieldOnlyDirty(): void {
 		$entity = new class ([
@@ -883,7 +849,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extract()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractWithMappedFieldOnlyDirtyReturnMapped(): void {
 		$entity = new class ([
@@ -913,7 +878,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extractOriginal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractOriginalWithUnmappedField(): void {
 		$entity = new Entity([
@@ -937,7 +901,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extractOriginal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractOriginalWithMappedField(): void {
 		$entity = new class ([
@@ -969,7 +932,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extractOriginal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractOriginalWithMappedFieldReturnMapped(): void {
 		$entity = new class ([
@@ -1001,7 +963,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extractOriginalChanged()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractOriginalChangedWithUnmappedField(): void {
 		$entity = new Entity([
@@ -1024,7 +985,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extractOriginalChanged()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractOriginalChangedWithMappedField(): void {
 		$entity = new class ([
@@ -1054,7 +1014,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extractOriginalChanged()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractOriginalChangedWithUnmappedFieldIncludingUnknownFields(): void {
 		$entity = new Entity([
@@ -1078,7 +1037,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extractOriginalChanged()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractOriginalChangedWithMappedFieldIncludingUnknownFields(): void {
 		$entity = new class ([
@@ -1110,7 +1068,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extractOriginalChanged()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractOriginalChangedWithMappedFieldIncludingUnknownFieldsReturnUnapped(): void {
 		$entity = new class ([
@@ -1142,7 +1099,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::extractOriginalChanged()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractOriginalChangedWithMappedFieldReturnMapped(): void {
 		$entity = new class ([
@@ -1172,7 +1128,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::isDirty()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsDirtyWithUnmappedField(): void {
 		$entity = new Entity([
@@ -1196,7 +1151,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::isDirty()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsDirtyWithMappedField(): void {
 		$entity = new class ([
@@ -1225,7 +1179,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setDirty()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetDirtyWithUnmappedField(): void {
 		$entity = new Entity([
@@ -1248,7 +1201,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setDirty()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetDirtyWithMappedField(): void {
 		$entity = new class ([
@@ -1278,7 +1230,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::getError()
 	 * @see \Awyiss\Model\Entity::setError()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetErrorWithUnmappedField(): void {
 		$entity = new Entity();
@@ -1302,7 +1253,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::getError()
 	 * @see \Awyiss\Model\Entity::setError()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetErrorWithMappedField(): void {
 		$entity = new class extends Entity {
@@ -1330,7 +1280,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setErrors()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetErrorsWithUnmappedField(): void {
 		$entity = new Entity();
@@ -1360,7 +1309,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setErrors()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetErrorsWithMappedField(): void {
 		$entity = new class extends Entity {
@@ -1396,7 +1344,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::getInvalidField()
 	 * @see \Awyiss\Model\Entity::setInvalidField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetInvalidFieldWithUnmappedField(): void {
 		$entity = new Entity();
@@ -1418,7 +1365,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::getInvalidField()
 	 * @see \Awyiss\Model\Entity::setInvalidField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetInvalidFieldWithMappedField(): void {
 		$entity = new class extends Entity {
@@ -1444,7 +1390,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setInvalid()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetInvalidWithUnmappedField(): void {
 		$entity = new Entity();
@@ -1474,7 +1419,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setInvalid()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetInvalidWithMappedField(): void {
 		$entity = new class extends Entity {
@@ -1509,7 +1453,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setInvalid()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetInvalidWithMappedFieldWithoutOverwrite(): void {
 		$entity = new class extends Entity {
@@ -1547,7 +1490,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::setInvalid()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetInvalidWithMappedFieldWithOverwrite(): void {
 		$entity = new class extends Entity {
@@ -1586,7 +1528,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::isAccessible()
 	 * @see \Awyiss\Model\Entity::setAccess()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleWithUnmappedField(): void {
 		$entity = new Entity();
@@ -1607,7 +1548,6 @@ class EntityTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity::isAccessible()
 	 * @see \Awyiss\Model\Entity::setAccess()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleWithMappedField(): void {
 		$entity = new class extends Entity {
@@ -1632,7 +1572,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::addFieldMapping()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddFieldMapping(): void {
 		$entity = new Entity([]);
@@ -1652,7 +1591,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::mapField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMapField(): void {
 		$entity = new class extends Entity {
@@ -1671,7 +1609,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::mapFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMapFields(): void {
 		$entity = new class extends Entity {
@@ -1692,7 +1629,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::mapFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMapFieldsMapsKeys(): void {
 		$entity = new class extends Entity {
@@ -1713,7 +1649,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::unmapField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUnmapField(): void {
 		$entity = new class extends Entity {
@@ -1732,7 +1667,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::unmapFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUnmapFields(): void {
 		$entity = new class extends Entity {
@@ -1753,7 +1687,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::unmapFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUnmapFieldsUnmapsKeys(): void {
 		$entity = new class extends Entity {
@@ -1774,7 +1707,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::defaultValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		$entity = new Entity([]);
@@ -1790,7 +1722,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::allowsAudit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAllowsAuditDefaultTrue(): void {
 		$entity = new Entity([]);
@@ -1801,7 +1732,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::allowsAudit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisableAuditPreventsAudit(): void {
 		$entity = new Entity([]);
@@ -1813,7 +1743,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::allowsAudit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnableAuditTogglesAuditFlag(): void {
 		$entity = new Entity([]);
@@ -1826,7 +1755,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::enableAudit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnableAuditWithFalse(): void {
 		$entity = new Entity([]);
@@ -1838,7 +1766,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::enableAudit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnableAuditReturnsSelf(): void {
 		$entity = new Entity([]);
@@ -1850,7 +1777,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::disableAudit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisableAuditReturnsSelf(): void {
 		$entity = new Entity([]);
@@ -1862,7 +1788,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::isPublished()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsPublishedReturnsNullWhenNoPublicationData(): void {
 		$entity = new Entity([]);
@@ -1875,7 +1800,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::isPublished()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsPublishedReturnsFalseWhenStartInFuture(): void {
 		$entity = new Entity([
@@ -1891,7 +1815,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::isPublished()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsPublishedReturnsFalseWhenEndInPast(): void {
 		$entity = new Entity([
@@ -1907,7 +1830,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::isPublished()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsPublishedReturnsTrueWithinPublicationWindow(): void {
 		$entity = new Entity([
@@ -1924,7 +1846,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWithTitle(): void {
 		$entity = new Entity(['title' => 'Test Title']);
@@ -1937,7 +1858,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWithName(): void {
 		$entity = new Entity(['name' => 'Test Name']);
@@ -1950,7 +1870,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWithIdentifier(): void {
 		$entity = new Entity(['identifier' => 'test_identifier']);
@@ -1963,7 +1882,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWithFileName(): void {
 		$entity = new Entity(['fileName' => 'test-file.jpg']);
@@ -1976,7 +1894,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelFallbackWithId(): void {
 		$entity = new Entity(['id' => 123]);
@@ -1989,7 +1906,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWithInactiveEntity(): void {
 		$entity = new Entity(['title' => 'Test Title', 'active' => 0]);
@@ -2002,7 +1918,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWithActiveEntity(): void {
 		$entity = new Entity(['title' => 'Test Title', 'active' => 1]);
@@ -2015,7 +1930,6 @@ class EntityTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWithoutSource(): void {
 		$entity = new Entity(['title' => 'Test Title']);

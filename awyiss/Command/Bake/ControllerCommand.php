@@ -37,87 +37,86 @@ class ControllerCommand extends BaseControllerCommand {
 	 * @param Arguments $args The console arguments
 	 * @param ConsoleIo $io The console io
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function bake(string $controllerName, Arguments $args, ConsoleIo $io): void {
 		$io->quiet(sprintf('Baking controller class for %s...', $controllerName));
 
-		$la_actions = [];
+		$actions = [];
 		if (!$args->getOption('no-actions') && !$args->getOption('actions')) {
-			$la_actions = ['overview', 'add', 'edit', 'delete', 'save'];
+			$actions = ['overview', 'add', 'edit', 'delete', 'save'];
 		}
 		if ($args->getOption('actions')) {
-			$la_actions = array_map('trim', explode(',', $args->getOption('actions')));
-			$la_actions = array_filter($la_actions);
+			$actions = array_map('trim', explode(',', $args->getOption('actions')));
+			$actions = array_filter($actions);
 		}
 
-		$la_helpers = $this->getHelpers($args);
-		$la_components = $this->getComponents($args);
+		$helpers = $this->getHelpers($args);
+		$components = $this->getComponents($args);
 
-		$ls_prefix = $this->getPrefix($args);
-		if ($ls_prefix) {
-			$ls_prefix = '\\' . str_replace('/', '\\', $ls_prefix);
+		$prefix = $this->getPrefix($args);
+		if ($prefix) {
+			$prefix = '\\' . str_replace('/', '\\', $prefix);
 		}
 
 		// Controllers default to importing AppController from `Awyiss`
-		$ls_baseNamespace = 'Awyiss';
-		$ls_namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
+		$baseNamespace = 'Awyiss';
+		$namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
 		if ($this->plugin) {
-			$ls_namespace = $this->_pluginNamespace($this->plugin);
+			$namespace = $this->_pluginNamespace($this->plugin);
 
 			// If the plugin has an AppController other plugin controllers
 			// should inherit from it.
-			if (class_exists($ls_namespace . '\Controller\AppController')) {
-				$ls_baseNamespace = $ls_namespace;
+			if (class_exists($namespace . '\Controller\AppController')) {
+				$baseNamespace = $namespace;
 			}
 		}
 
-		$ls_currentModelName = $controllerName;
-		$ls_plugin = $this->plugin;
-		if ($ls_plugin) {
-			$ls_plugin .= '.';
+		$currentModelName = $controllerName;
+		$plugin = $this->plugin;
+		if ($plugin) {
+			$plugin .= '.';
 		}
 
-		if ($this->getTableLocator()->exists($ls_plugin . $ls_currentModelName)) {
-			$lo_model = $this->getTableLocator()->get($ls_plugin . $ls_currentModelName);
+		if ($this->getTableLocator()->exists($plugin . $currentModelName)) {
+			$model = $this->getTableLocator()->get($plugin . $currentModelName);
 		}
 		else {
-			$lo_model = $this->getTableLocator()->get($ls_plugin . $ls_currentModelName, [
+			$model = $this->getTableLocator()->get($plugin . $currentModelName, [
 				'connectionName' => $this->connection,
 			]);
 		}
 
-		$ls_pluralName = $this->_variableName($ls_currentModelName);
-		$ls_singularName = $this->_singularName($ls_currentModelName);
-		$ls_singularHumanName = $this->_singularHumanName($controllerName);
-		$ls_pluralHumanName = $this->_variableName($controllerName);
+		$pluralName = $this->_variableName($currentModelName);
+		$singularName = $this->_singularName($currentModelName);
+		$singularHumanName = $this->_singularHumanName($controllerName);
+		$pluralHumanName = $this->_variableName($controllerName);
 
-		$ls_defaultModel = App::className($controllerName, 'Model/Table', 'Table');
-		if (!class_exists($ls_defaultModel)) {
-			$ls_defaultModel = null;
+		$defaultModel = App::className($controllerName, 'Model/Table', 'Table');
+		if (!class_exists($defaultModel)) {
+			$defaultModel = null;
 		}
-		$ls_entityClassName = $this->_entityName($lo_model->getAlias());
+		$entityClassName = $this->_entityName($model->getAlias());
 
-		$la_data = [
-			'actions' => $la_actions,
-			'components' => $la_components,
-			'currentModelName' => $ls_currentModelName,
-			'defaultModel' => $ls_defaultModel,
-			'entityClassName' => $ls_entityClassName,
-			'helpers' => $la_helpers,
-			'modelObj' => $lo_model,
-			'namespace' => $ls_namespace,
-			'baseNamespace' => $ls_baseNamespace,
-			'plugin' => $ls_plugin,
-			'pluralHumanName' => $ls_pluralHumanName,
-			'pluralName' => $ls_pluralName,
-			'prefix' => $ls_prefix,
-			'singularHumanName' => $ls_singularHumanName,
-			'singularName' => $ls_singularName,
+		$data = [
+			'actions' => $actions,
+			'components' => $components,
+			'currentModelName' => $currentModelName,
+			'defaultModel' => $defaultModel,
+			'entityClassName' => $entityClassName,
+			'helpers' => $helpers,
+			'modelObj' => $model,
+			'namespace' => $namespace,
+			'baseNamespace' => $baseNamespace,
+			'plugin' => $plugin,
+			'pluralHumanName' => $pluralHumanName,
+			'pluralName' => $pluralName,
+			'prefix' => $prefix,
+			'singularHumanName' => $singularHumanName,
+			'singularName' => $singularName,
 		];
-		$la_data['name'] = $controllerName;
+		$data['name'] = $controllerName;
 
-		$this->bakeController($controllerName, $la_data, $args, $io);
+		$this->bakeController($controllerName, $data, $args, $io);
 		$this->bakeTest($controllerName, $args, $io);
 	}
 
@@ -125,15 +124,14 @@ class ControllerCommand extends BaseControllerCommand {
 	/**
 	 * No plugin prefix for the generated template
 	 *
-	 * @param string $ls_controllerName
+	 * @param string $controllerName
 	 * @param array $data
 	 * @param \Cake\Console\Arguments $args
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bakeController(string $ls_controllerName, array $data, Arguments $args, ConsoleIo $io): void {
-		$la_data = $data + [
+	public function bakeController(string $controllerName, array $data, Arguments $args, ConsoleIo $io): void {
+		$data += [
 			'name' => null,
 			'namespace' => null,
 			'prefix' => null,
@@ -144,12 +142,12 @@ class ControllerCommand extends BaseControllerCommand {
 			'pluginPath' => null,
 		];
 
-		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('Controller/controller');
+		$contents = $this->createTemplateRenderer()->set($data)->generate('Controller/controller');
 
-		$ls_path = $this->getPath($args);
-		$ls_fileName = $ls_path . $ls_controllerName . 'Controller.php';
+		$path = $this->getPath($args);
+		$fileName = $path . $controllerName . 'Controller.php';
 
-		$io->createFile($ls_fileName, $ls_contents, $this->force);
+		$io->createFile($fileName, $contents, $this->force);
 	}
 
 
@@ -159,12 +157,11 @@ class ControllerCommand extends BaseControllerCommand {
 	 * Adds the `namespace`-option.
 	 *
 	 * @param ConsoleOptionParser $parser The console option parser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('namespace', [
+		$parser->addOption('namespace', [
 			'choices' => [
 				'Awyiss',
 				CUSTOM_NAMESPACE,
@@ -174,6 +171,6 @@ class ControllerCommand extends BaseControllerCommand {
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 }

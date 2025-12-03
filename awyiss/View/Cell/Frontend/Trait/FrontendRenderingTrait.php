@@ -28,30 +28,30 @@ trait FrontendRenderingTrait {
 	 * @noinspection DuplicatedCode
 	 */
 	public function initCellOptions(array $options): array {
-		$la_options = $options + [
+		$options += [
 			'columnWidth' => 100.00,
 			'includeWrapper' => false,
 			'viewVars' => [],
 		];
 
 		/** @noinspection DuplicatedCode */
-		if (!isset($la_options['fullWidth'])) {
-			$la_options['fullWidth'] = $this->findFullWidth($la_options);
+		if (!isset($options['fullWidth'])) {
+			$options['fullWidth'] = $this->findFullWidth($options);
 		}
 		else {
-			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
+			$options['fullWidth'] = (float)$options['fullWidth'];
 		}
 
-		$la_options['columnWidth'] = (float)$la_options['columnWidth'];
+		$options['columnWidth'] = (float)$options['columnWidth'];
 
-		if (!array_key_exists('singleColumnBreakpoint', $la_options)) {
-			$la_options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($la_options);
+		if (!array_key_exists('singleColumnBreakpoint', $options)) {
+			$options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($options);
 		}
-		elseif ($la_options['singleColumnBreakpoint'] !== null) {
-			$la_options['singleColumnBreakpoint'] = (float)$la_options['singleColumnBreakpoint'];
+		elseif ($options['singleColumnBreakpoint'] !== null) {
+			$options['singleColumnBreakpoint'] = (float)$options['singleColumnBreakpoint'];
 		}
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -63,29 +63,29 @@ trait FrontendRenderingTrait {
 	 * @return array<\Awyiss\Model\Entity\Media>
 	 */
 	protected function cacheAssignedMediaItems(CollectionInterface $entities, string $scope): array {
-		$lo_entities = $entities->listNested()->compile(false);
-		$la_entityIds = $lo_entities->extract('id')->toArray();
+		$entities = $entities->listNested()->compile(false);
+		$entityIds = $entities->extract('id')->toArray();
 
-		if (!$la_entityIds) {
+		if (!$entityIds) {
 			return [];
 		}
 
-		$lo_mediaTable = $this->fetchTable('Media');
-		$ls_scope = $scope;
-		$lo_query = $lo_mediaTable->find()->matching('MediaAssignments', function (SelectQuery $query) use ($la_entityIds, $ls_scope) {
-			return $query->where([
-				'MediaAssignments.foreign_key IN' => $la_entityIds,
-				'MediaAssignments.scope' => $ls_scope,
-			]);
-		})
-		->contain(['MediaResizedImages'])
-		->distinct('Media.id');
+		$mediaTable = $this->fetchTable('Media');
+		$query = $mediaTable->find()
+			->matching('MediaAssignments', function (SelectQuery $query) use ($entityIds, $scope) {
+				return $query->where([
+					'MediaAssignments.foreign_key IN' => $entityIds,
+					'MediaAssignments.scope' => $scope,
+				]);
+			})
+			->contain(['MediaResizedImages'])
+			->distinct('Media.id');
 
-		$la_media = $lo_query->all()->toList();
+		$media = $query->all()->toList();
 
-		ResizedImageManager::setMediaItems($la_media);
+		ResizedImageManager::setMediaItems($media);
 
-		return $la_media;
+		return $media;
 	}
 
 
@@ -137,14 +137,14 @@ trait FrontendRenderingTrait {
 	 * @throws \Exception
 	 */
 	public function parseAwyissImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
-		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
-		static $ls_imageHandlerClass;
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $imageHandlerClass */
+		static $imageHandlerClass;
 
-		if (!$ls_imageHandlerClass) {
-			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		if (!$imageHandlerClass) {
+			$imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
 		}
 
-		$ls_imageHandlerClass::replaceCustomImageTags($entity, $this->View, $mediaRenderOptions, $fields);
+		$imageHandlerClass::replaceCustomImageTags($entity, $this->View, $mediaRenderOptions, $fields);
 	}
 
 
@@ -157,52 +157,52 @@ trait FrontendRenderingTrait {
 	 * @noinspection PhpDocSignatureInspection
 	 */
 	public function parseModule(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field = 'text'): void {
-		static $la_modules;
+		static $modules;
 
 		if (!str_contains($entity->get($field) ?? '', '<module')) {
 			return;
 		}
 
-		if (!isset($la_modules)) {
-			$la_modules = ModulesProvider::getModuleFiles();
+		if (!isset($modules)) {
+			$modules = ModulesProvider::getModuleFiles();
 		}
 
-		$lo_dom = $this->getDom($entity->get($field));
+		$dom = $this->getDom($entity->get($field));
 
 		// Find all <module> tags
-		$lo_moduleTags = $lo_dom->querySelectorAll('module');
+		$moduleTags = $dom->querySelectorAll('module');
 
 		// Iterate over the <module> tags
-		/** @var \Dom\HTMLElement $lo_moduleTag */
-		foreach ($lo_moduleTags as $lo_moduleTag) {
+		/** @var \Dom\HTMLElement $moduleTag */
+		foreach ($moduleTags as $moduleTag) {
 			// Get the value of the data-identifier attribute
-			$ls_identifier = Inflector::variable($lo_moduleTag->getAttribute('data-identifier'));
+			$identifier = Inflector::variable($moduleTag->getAttribute('data-identifier'));
 
 			// Get the text content of the <module> tag
-			$la_settings = json_decode($lo_moduleTag->textContent ?? '', true);
+			$settings = json_decode($moduleTag->textContent ?? '', true);
 
-			if (!isset($la_modules[ $ls_identifier ])) {
+			if (!isset($modules[ $identifier ])) {
 				continue;
 			}
 
-			/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
-			$ls_moduleClass = $la_modules[ $ls_identifier ];
+			/** @var class-string<\Awyiss\Module\ModuleInterface> $moduleClass */
+			$moduleClass = $modules[ $identifier ];
 
 			/** @noinspection PhpParamsInspection */
-			$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->getView(), $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
+			$moduleOutput = $moduleClass::render($settings, $this->getView(), $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
 
 			// Replace the <module> tag with the rendered output
-			if (!empty($ls_moduleOutput)) {
-				$lo_moduleTag->innerHTML = $ls_moduleOutput;
-				while ($lo_moduleTag->firstChild) {
-					$lo_moduleTag->parentNode->insertBefore($lo_moduleTag->firstChild, $lo_moduleTag);
+			if (!empty($moduleOutput)) {
+				$moduleTag->innerHTML = $moduleOutput;
+				while ($moduleTag->firstChild) {
+					$moduleTag->parentNode->insertBefore($moduleTag->firstChild, $moduleTag);
 				}
 			}
 
-			$lo_moduleTag->remove();
+			$moduleTag->remove();
 		}
 
-		$entity->set($field, $this->getBody($lo_dom));
+		$entity->set($field, $this->getBody($dom));
 	}
 
 
@@ -248,17 +248,17 @@ trait FrontendRenderingTrait {
 	 * @return string|false
 	 */
 	protected function getBody(HTMLDocument $dom): string|false {
-		$ls_html = '';
+		$html = '';
 
 		// Remove the opening and closing `<body>`-tags
-		$lo_body = $dom->querySelector('body');
+		$body = $dom->querySelector('body');
 
-		while ($lo_body->firstChild) {
-			$ls_html .= $dom->saveHTML($lo_body->firstChild);
-			$lo_body->removeChild($lo_body->firstChild);
+		while ($body->firstChild) {
+			$html .= $dom->saveHTML($body->firstChild);
+			$body->removeChild($body->firstChild);
 		}
 
 		// Return the cleaned HTML
-		return $ls_html;
+		return $html;
 	}
 }

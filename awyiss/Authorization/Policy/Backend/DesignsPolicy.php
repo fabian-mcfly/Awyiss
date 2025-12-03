@@ -13,7 +13,13 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
  * Permission for the Design scope
  */
 class DesignsPolicy extends AbstractPolicy {
+	/**
+	 * @var PermissionOptionCollection
+	 */
 	protected static PermissionOptionCollection $permissionOptionCollection;
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 
 
@@ -26,29 +32,29 @@ class DesignsPolicy extends AbstractPolicy {
 	 * @throws \Exception
 	 */
 	protected static function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissionOptions = new PermissionOptionCollection(static::getScope());
+		$permissionOptions = new PermissionOptionCollection(static::getScope());
 
-		$lo_permissionOptions->load('read', [
+		$permissionOptions->load('read', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissionOptions->load('load', [
+		$permissionOptions->load('load', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissionOptions->load('save', [
+		$permissionOptions->load('save', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissionOptions->load('use', [
+		$permissionOptions->load('use', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissionOptions->load('delete', [
+		$permissionOptions->load('delete', [
 			'className' => SimplePermissionOption::class,
 		]);
 
 
-		return $lo_permissionOptions;
+		return $permissionOptions;
 	}
 }

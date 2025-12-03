@@ -35,11 +35,11 @@ class PageTemplatesController extends Controller {
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		/** @uses \Awyiss\Model\Table\PageTemplatesTable::findWithUsages() */
-		$lo_query = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas', 'PageRoles']);
-		$this->Categories->filterQuery($lo_query, null, false);
-		$this->Search->filterQuery($lo_query);
+		$query = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas', 'PageRoles']);
+		$this->Categories->filterQuery($query, null, false);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 	/**
@@ -50,22 +50,23 @@ class PageTemplatesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_pageTemplates = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		$pageTemplatesGroupdByPageRole = [];
+		if ($paginated) {
+			$pageTemplates = $this->paginate($query);
 		}
 		else {
-			$lo_pageTemplates = $this->Categories->groupResult($lo_query)->all();
-			$la_pageTemplatesGroupdByPageRole = $lo_pageTemplates->toArray();
+			$pageTemplates = $this->Categories->groupResult($query)->all();
+			$pageTemplatesGroupdByPageRole = $pageTemplates->toArray();
 		}
 
 		$this->set([
-			'pageTemplates' => $lo_pageTemplates,
-			'pageTemplatesGroupdByPageRole' => $la_pageTemplatesGroupdByPageRole ?? [],
+			'pageTemplates' => $pageTemplates,
+			'pageTemplatesGroupdByPageRole' => $pageTemplatesGroupdByPageRole,
 			'attributes' => $this->PageTemplates->getAttributes(),
-			'paginated' => $lb_paginated,
+			'paginated' => $paginated,
 		]);
 	}
 
@@ -79,24 +80,24 @@ class PageTemplatesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$li_pageRoleId = $this->request->getParam('pageRoleId') ?? $this->Categories->getSelectedCategory();
-		if (is_numeric($li_pageRoleId)) {
-			$li_pageRoleId = (int)$li_pageRoleId;
+		$pageRoleId = $this->request->getParam('pageRoleId') ?? $this->Categories->getSelectedCategory();
+		if (is_numeric($pageRoleId)) {
+			$pageRoleId = (int)$pageRoleId;
 		}
 		else {
-			$li_pageRoleId = key($this->Categories->getCategories());
+			$pageRoleId = key($this->Categories->getCategories());
 		}
 
-		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity([
+		$pageTemplate = $this->PageTemplates->newDefaultEntity([
 			'mediaElementAssignments' => [],
-			'pageRoleId' => $li_pageRoleId,
+			'pageRoleId' => $pageRoleId,
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_pageTemplate);
+			$this->save($pageTemplate);
 		}
 
-		$this->setViewVars($lo_pageTemplate);
+		$this->setViewVars($pageTemplate);
 	}
 
 
@@ -110,13 +111,13 @@ class PageTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\PageTemplate $lo_pageTemplate
+		 * @var \Awyiss\Model\Entity\PageTemplate $pageTemplate
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_pageTemplate = $this->PageTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['ContentAreas'])->first();
-		if (!$lo_pageTemplate) {
+		$pageTemplate = $this->PageTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['ContentAreas'])->first();
+		if (!$pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
 
@@ -124,10 +125,10 @@ class PageTemplatesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_pageTemplate, 'edit');
+			$this->save($pageTemplate, 'edit');
 		}
 
-		$this->setViewVars($lo_pageTemplate);
+		$this->setViewVars($pageTemplate);
 	}
 
 
@@ -143,16 +144,16 @@ class PageTemplatesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var PageTemplate $lo_pageTemplate */
-		$lo_pageTemplate = $this->PageTemplates->findById($id)->first();
-		if (!$lo_pageTemplate) {
+		/** @var PageTemplate $pageTemplate */
+		$pageTemplate = $this->PageTemplates->findById($id)->first();
+		if (!$pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->PageTemplates->delete($lo_pageTemplate)) {
+		if ($this->PageTemplates->delete($pageTemplate)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -160,8 +161,8 @@ class PageTemplatesController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_pageTemplate->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($pageTemplate->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -177,42 +178,41 @@ class PageTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function save(PageTemplate $pageTemplate, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->PageTemplates->hasAttributes()) {
-			$la_associated[] = $this->PageTemplates->getAttributesTableName(true);
+			$associated[] = $this->PageTemplates->getAttributesTableName(true);
 			$pageTemplate->setAccess('attributes', true);
 		}
 
-		$la_requestData = $this->request->getData();
+		$requestData = $this->request->getData();
 
-		if (!empty($la_requestData['content_areas'])) {
-			$la_requestData['content_areas'] = array_values(array_filter($la_requestData['content_areas'], function (array $element) {
+		if (!empty($requestData['content_areas'])) {
+			$requestData['content_areas'] = array_values(array_filter($requestData['content_areas'], function (array $element) {
 				return !empty($element['id']);
 			}));
 
-			$li_systemOrder = 1;
-			array_walk($la_requestData['content_areas'], function (array &$contentArea) use (&$li_systemOrder): void {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$contentArea['_joinData']['system_order'] = $li_systemOrder;
-				$li_systemOrder++;
+			$systemOrder = 1;
+			array_walk($requestData['content_areas'], function (array &$contentArea) use (&$systemOrder): void {
+				$contentArea['_joinData']['system_order'] = $systemOrder;
+				$systemOrder++;
 			});
 		}
 
-		if (!empty($la_requestData['content_template_content_areas'])) {
-			if (empty($la_requestData['content_areas'])) {
-				unset($la_requestData['content_template_content_areas']);
+		if (!empty($requestData['content_template_content_areas'])) {
+			if (empty($requestData['content_areas'])) {
+				unset($requestData['content_template_content_areas']);
 			}
 			else {
-				$la_contentAreaIds = array_column($la_requestData['content_areas'], 'id');
-				$la_requestData['content_template_content_areas'] = array_merge(...$la_requestData['content_template_content_areas']);
-				$la_requestData['content_template_content_areas'] = array_filter($la_requestData['content_template_content_areas'], function (array $element) use ($la_contentAreaIds) {
-					return !empty($element['content_template_id']) && in_array($element['content_area_id'], $la_contentAreaIds);
+				$contentAreaIds = array_column($requestData['content_areas'], 'id');
+				$requestData['content_template_content_areas'] = array_merge(...$requestData['content_template_content_areas']);
+				$requestData['content_template_content_areas'] = array_filter($requestData['content_template_content_areas'], function (array $element) use ($contentAreaIds) {
+					return !empty($element['content_template_id']) && in_array($element['content_area_id'], $contentAreaIds);
 				});
 			}
 		}
 
-		$this->PageTemplates->patchEntity($pageTemplate, $la_requestData, [
-			'associated' => array_merge($la_associated, [
+		$this->PageTemplates->patchEntity($pageTemplate, $requestData, [
+			'associated' => array_merge($associated, [
 				'ContentAreas' => [
 					'fields' => ['_joinData'],
 					'associated' => [
@@ -227,11 +227,11 @@ class PageTemplatesController extends Controller {
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->PageTemplates->save($pageTemplate, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->PageTemplates->save($pageTemplate, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -246,9 +246,9 @@ class PageTemplatesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($pageTemplate->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($pageTemplate->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -262,19 +262,19 @@ class PageTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(PageTemplate $pageTemplate): void {
-		$lo_query = $this->PageTemplates->ContentAreas->find();
+		$query = $this->PageTemplates->ContentAreas->find();
 
 		if ($pageTemplate->contentAreas && !$pageTemplate->isNew()) {
-			$lo_query->orderByAsc(
-				$lo_query->func()->coalesce([
+			$query->orderByAsc(
+				$query->func()->coalesce([
 					'ContentAreas_title_translation.content' => 'literal',
 					'ContentAreas.title' => 'literal',
 				])
 			);
-			$lo_query->orderByAsc('ContentAreas_title_translation.content');
-			$lo_query->orderByAsc('ContentAreas.title');
+			$query->orderByAsc('ContentAreas_title_translation.content');
+			$query->orderByAsc('ContentAreas.title');
 
-			$lo_query->contain([
+			$query->contain([
 				'ContentTemplates' => function (SelectQuery $query) use ($pageTemplate) {
 					return $query->where(['ContentTemplateContentAreas.page_template_id' => $pageTemplate->id]);
 				},
@@ -292,15 +292,15 @@ class PageTemplatesController extends Controller {
 			});
 		}
 
-		$la_contentAreas = $lo_query->all()->toArray();
+		$contentAreas = $query->all()->toArray();
 
 		/** @uses \Awyiss\Model\Table::findTranslations() */
-		$la_contentTemplates = $this->PageTemplates->ContentAreas->ContentTemplates->find('translations')->all()->toArray();
+		$contentTemplates = $this->PageTemplates->ContentAreas->ContentTemplates->find('translations')->all()->toArray();
 
 		$this->set([
 			'pageTemplate' => $pageTemplate,
-			'contentAreas' => $la_contentAreas,
-			'contentTemplates' => $la_contentTemplates,
+			'contentAreas' => $contentAreas,
+			'contentTemplates' => $contentTemplates,
 		]);
 	}
 }

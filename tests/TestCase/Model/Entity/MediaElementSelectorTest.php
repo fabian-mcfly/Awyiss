@@ -18,7 +18,6 @@ class MediaElementSelectorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElementSelector::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\MediaElementSelectorsTable $table */
@@ -35,7 +34,6 @@ class MediaElementSelectorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElementSelector::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new MediaElementSelector();
@@ -59,7 +57,6 @@ class MediaElementSelectorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElementSelector::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new MediaElementSelector();
@@ -71,7 +68,6 @@ class MediaElementSelectorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElementSelector::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualProperty(): void {
 		$entity = new MediaElementSelector(['columnSpan' => '6/12']);
@@ -88,7 +84,6 @@ class MediaElementSelectorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElementSelector::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualPropertyWithInvalidSpan(): void {
 		$entity = new MediaElementSelector(['columnSpan' => 'invalid-span']);
@@ -105,7 +100,6 @@ class MediaElementSelectorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElementSelector::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualPropertyWithNullSpan(): void {
 		$entity = new MediaElementSelector(['columnSpan' => null]);
@@ -122,7 +116,6 @@ class MediaElementSelectorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElementSelector
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -152,7 +145,6 @@ class MediaElementSelectorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElementSelector::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

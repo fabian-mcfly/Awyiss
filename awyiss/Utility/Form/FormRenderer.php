@@ -64,30 +64,30 @@ class FormRenderer {
 	 * @return \Awyiss\Model\Entity\Form|null
 	 */
 	public function getFormByIdentifier(string|int $identifier): ?Form {
-		/** @var \Awyiss\Model\Table\FormsTable $lo_formsTable */
-		$lo_formsTable = $this->fetchTable('Forms');
+		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
+		$formsTable = $this->fetchTable('Forms');
 
 		if ($this->isPreview()) {
-			$lo_query = $lo_formsTable->find('all');
+			$query = $formsTable->find('all');
 		}
 		else {
 			/**
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$lo_query = $lo_formsTable->find('active')->find('published');
+			$query = $formsTable->find('active')->find('published');
 		}
 
-		$lo_query = $lo_query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+		$query = $query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 
 		if (is_int($identifier)) {
-			$lo_query = $lo_query->where(['Forms.id' => $identifier]);
+			$query = $query->where(['Forms.id' => $identifier]);
 		}
 		else {
-			$lo_query = $lo_query->where(['Forms.identifier' => $identifier]);
+			$query = $query->where(['Forms.identifier' => $identifier]);
 		}
 
-		return $lo_query->first();
+		return $query->first();
 	}
 
 
@@ -156,34 +156,34 @@ class FormRenderer {
 			...($options['viewVars'] ?? []),
 		]);
 
-		$lo_formElements = $this->form->getFormElements();
+		$formElements = $this->form->getFormElements();
 
-		if (!$lo_formElements) {
+		if (!$formElements) {
 			return '';
 		}
 
-		$this->prepareEntities($lo_formElements, (float)($options['columnWidth'] ?? $this->View->get('columnWidth', 100.0)));
+		$this->prepareEntities($formElements, (float)($options['columnWidth'] ?? $this->View->get('columnWidth', 100.0)));
 
-		$la_formElements = $lo_formElements->listNested()->toList();
-		foreach ($la_formElements as $lo_formElement) {
-			if (!$lo_formElement->identifier) {
+		$listedFormElements = $formElements->listNested()->toList();
+		foreach ($listedFormElements as $formElement) {
+			if (!$formElement->identifier) {
 				continue;
 			}
 
-			if ($this->form->getError($lo_formElement->identifier)) {
-				$lo_formElement->cssClass .= ' FormElement-IsInvalid';
+			if ($this->form->getError($formElement->identifier)) {
+				$formElement->cssClass .= ' FormElement-IsInvalid';
 			}
 		}
 
 		// If there's at least one input of input-type `file`, set the form enctype to multipart/form-data
 		$this->form->set(
 			'enctype',
-			array_reduce($la_formElements, function (bool $multipart, FormElement $element) {
+			array_reduce($listedFormElements, function (bool $multipart, FormElement $element) {
 				return $multipart || $element->type === 'file';
 			}, false) ? 'multipart/form-data' : null
 		);
 
-		return $this->buildContents($lo_formElements->toArray());
+		return $this->buildContents($formElements->toArray());
 	}
 
 
@@ -200,13 +200,13 @@ class FormRenderer {
 	 * @return \Awyiss\Model\Entity\FormEntry|null
 	 */
 	public function loadFormEntryFromHash(string $entryHash): ?Entity {
-		/** @var \Awyiss\Model\Table\FormEntriesTable $lo_formEntriesTable */
-		$lo_formEntriesTable = $this->fetchTable('FormEntries');
+		/** @var \Awyiss\Model\Table\FormEntriesTable $formEntriesTable */
+		$formEntriesTable = $this->fetchTable('FormEntries');
 
-		/** @var \Awyiss\Model\Entity\FormEntry|null $lo_entry */
-		$lo_entry = $lo_formEntriesTable->find('all')->where(['identifier' => $entryHash])->first();
+		/** @var \Awyiss\Model\Entity\FormEntry|null $entry */
+		$entry = $formEntriesTable->find('all')->where(['identifier' => $entryHash])->first();
 
-		return $lo_entry;
+		return $entry;
 	}
 
 
@@ -249,19 +249,19 @@ class FormRenderer {
 	 * @throws \Exception
 	 */
 	public function processFormEntry(FormEntry $entry, array $options = []): static {
-		$la_formData = json_decode(gzuncompress(base64_decode($entry->data)), true);
+		$formData = json_decode(gzuncompress(base64_decode($entry->data)), true);
 
-		if (empty($la_formData)) {
+		if (empty($formData)) {
 			return $this;
 		}
 
-		$this->form?->setFormData($la_formData);
+		$this->form?->setFormData($formData);
 
-		/** @var \Awyiss\Utility\Form\FormSender $ls_formSenderClass */
-		$ls_formSenderClass = App::className('FormSender', 'Utility/Form');
+		/** @var \Awyiss\Utility\Form\FormSender $formSenderClass */
+		$formSenderClass = App::className('FormSender', 'Utility/Form');
 
-		$lo_formSender = new $ls_formSenderClass($this->form, $this->page);
-		$lo_formSender->replacePlaceholdersInForm();
+		$formSender = new $formSenderClass($this->form, $this->page);
+		$formSender->replacePlaceholdersInForm();
 
 		$this->formSent = true;
 
@@ -278,13 +278,13 @@ class FormRenderer {
 	 * @throws \Exception
 	 */
 	public function processFormEntryFromHash(string $entryHash, array $options = []): static {
-		$lo_entry = $this->loadFormEntryFromHash($entryHash);
+		$entry = $this->loadFormEntryFromHash($entryHash);
 
-		if (!$lo_entry || $lo_entry->formId !== $this->form?->id) {
+		if (!$entry || $entry->formId !== $this->form?->id) {
 			return $this;
 		}
 
-		return $this->processFormEntry($lo_entry, $options);
+		return $this->processFormEntry($entry, $options);
 	}
 
 
@@ -297,10 +297,10 @@ class FormRenderer {
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
 		/**
-		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
+		$mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
 			baseWidth: $this->View->get('fullWidth', 1920),
 			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
 			columnWidth: $entity->realColumnWidth,
@@ -310,25 +310,25 @@ class FormRenderer {
 
 		if ($entity->type === 'free_text') {
 			// Parse the custom image tags
-			$this->parseAwyissImageTags($entity, $lo_mediaRenderOptions);
+			$this->parseAwyissImageTags($entity, $mediaRenderOptions);
 
 			// Parse the module
-			$this->parseModule($entity, $lo_mediaRenderOptions);
+			$this->parseModule($entity, $mediaRenderOptions);
 		}
 
-		$ls_fullWidthMissingWarning = '';
+		$fullWidthMissingWarning = '';
 		if (!$this->View->get('fullWidth')) {
-			$ls_fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the form cell. -->';
+			$fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the form cell. -->';
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $ls_fullWidthMissingWarning . $this->View->element('form/form_elements', [
+		return $fullWidthMissingWarning . $this->View->element('form/form_elements', [
 			'form' => $this->form,
 			'formData' => $this->form->getFormData(),
 			'formElement' => $entity,
 			'formErrors' => $this->form->getErrors(),
 			'children' => $children,
-			'mediaRenderOptions' => $lo_mediaRenderOptions,
+			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
 	}
 
@@ -346,17 +346,17 @@ class FormRenderer {
 			return false;
 		}
 
-		/** @var \Awyiss\Utility\Form\FormSender $ls_formSenderClass */
-		$ls_formSenderClass = App::className('FormSender', 'Utility/Form');
+		/** @var \Awyiss\Utility\Form\FormSender $formSenderClass */
+		$formSenderClass = App::className('FormSender', 'Utility/Form');
 
-		$lo_formSender = new $ls_formSenderClass($this->form, $this->page);
-		$this->formSent = $lo_formSender->handle();
+		$formSender = new $formSenderClass($this->form, $this->page);
+		$this->formSent = $formSender->handle();
 
 		if (!$this->formSent) {
 			return false;
 		}
 
-		return $lo_formSender->getFormEntryIdentifier();
+		return $formSender->getFormEntryIdentifier();
 	}
 
 
@@ -377,38 +377,38 @@ class FormRenderer {
 			return;
 		}
 
-		$ls_responseCode = $this->sendForm();
+		$responseCode = $this->sendForm();
 
-		if ($ls_responseCode !== false) {
-			$la_url = [
-				'formEntry' => $ls_responseCode,
+		if ($responseCode !== false) {
+			$url = [
+				'formEntry' => $responseCode,
 				'#' => 'Form-' . Inflector::ucparts($this->form->identifier, false),
 			];
 
-			$lo_request = Router::getRequest();
+			$request = Router::getRequest();
 
-			if ($lo_request->getParam('_name') === 'FrontendFormAntiSpamPost') {
-				$la_url['_name'] = 'FrontendFormAntiSpamGet';
+			if ($request->getParam('_name') === 'FrontendFormAntiSpamPost') {
+				$url['_name'] = 'FrontendFormAntiSpamGet';
 			}
 			else {
-				$ls_languageShortcode = $lo_request->getParam('lang');
-				if (empty($ls_languageShortcode)) {
-					$la_url['_name'] = Awyiss::REALM_FRONTEND . 'Root';
+				$languageShortcode = $request->getParam('lang');
+				if (empty($languageShortcode)) {
+					$url['_name'] = Awyiss::REALM_FRONTEND . 'Root';
 				}
 				else {
-					$la_url['lang'] = trim($ls_languageShortcode, '/');
+					$url['lang'] = trim($languageShortcode, '/');
 
-					$ls_slug = $lo_request->getParam('slug');
-					if (empty($ls_slug)) {
-						$la_url['_name'] = Awyiss::REALM_FRONTEND . 'LanguageRoot';
+					$slug = $request->getParam('slug');
+					if (empty($slug)) {
+						$url['_name'] = Awyiss::REALM_FRONTEND . 'LanguageRoot';
 					}
 					else {
-						$la_url['slug'] = trim($ls_slug, '/');
+						$url['slug'] = trim($slug, '/');
 					}
 				}
 			}
 
-			throw new RedirectException(Router::url($la_url, true), 302);
+			throw new RedirectException(Router::url($url, true), 302);
 		}
 	}
 
@@ -417,7 +417,6 @@ class FormRenderer {
 	 * @param array $options
 	 * @return $this
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function parseTagsInForm(array $options = []): static {
 		$options['mediaRenderOptions'] ??= [];
@@ -438,10 +437,10 @@ class FormRenderer {
 		$options['mediaRenderOptions']['singleColumnBreakpoint'] ??= $options['singleColumnBreakpoint'] ?? $this->View->get('singleColumnBreakpoint');
 
 		/**
-		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
+		$mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
 			baseWidth: $options['mediaRenderOptions']['fullWidth'],
 			breakpoints: $options['mediaRenderOptions']['breakpoints'],
 			columnWidth: $options['mediaRenderOptions']['columnWidth'],
@@ -450,10 +449,10 @@ class FormRenderer {
 		);
 
 		// Parse the custom image tags
-		$this->parseAwyissImageTags($this->form, $lo_mediaRenderOptions);
+		$this->parseAwyissImageTags($this->form, $mediaRenderOptions);
 
 		// Parse the module
-		$this->parseModule($this->form, $lo_mediaRenderOptions);
+		$this->parseModule($this->form, $mediaRenderOptions);
 
 		return $this;
 	}

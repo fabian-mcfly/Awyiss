@@ -303,7 +303,6 @@ class ColumnParserTest extends TestCase {
 	 * @see \Awyiss\Migration\ColumnParser::parseFields()
 	 */
 	public function testParseFields(string $input, array $output): void {
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$result = $this->columnParser->parseFields([$input]);
 		$this->assertEquals($output, $result);
 	}
@@ -380,7 +379,6 @@ class ColumnParserTest extends TestCase {
 	 * @param array $output
 	 * @return void
 	 * @see \Awyiss\Migration\ColumnParser::getTypeAndLengthAndDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTypeAndLengthAndDefault(string $field, string $type, array $output): void {
 		$result = $this->columnParser->getTypeAndLengthAndDefault($field, $type);

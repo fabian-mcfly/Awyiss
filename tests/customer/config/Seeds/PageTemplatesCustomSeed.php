@@ -12,7 +12,7 @@ class PageTemplatesCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 2,
 				'page_role_id' => 3,
@@ -45,7 +45,7 @@ class PageTemplatesCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('page_templates');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('page_templates');
+		$table->insert($data)->save();
 	}
 }

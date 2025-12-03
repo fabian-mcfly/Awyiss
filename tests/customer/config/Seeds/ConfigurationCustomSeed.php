@@ -12,7 +12,7 @@ class ConfigurationCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 4,
 				'realm' => 'Backend',
@@ -434,7 +434,7 @@ class ConfigurationCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('configuration');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('configuration');
+		$table->insert($data)->save();
 	}
 }

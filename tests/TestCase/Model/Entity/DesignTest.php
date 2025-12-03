@@ -18,7 +18,6 @@ class DesignTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Design::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\DesignsTable $table */
@@ -35,7 +34,6 @@ class DesignTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Design::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Design();
@@ -59,7 +57,6 @@ class DesignTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Design
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -91,7 +88,6 @@ class DesignTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Design::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

@@ -65,22 +65,22 @@ class SurveySurveyAnswer extends Entity {
 	 * @return string
 	 */
 	protected function _getLabel(): string {
-		$ls_title = $this->title;
+		$title = $this->title;
 
-		$ls_inactive = '';
+		$inactive = '';
 
-		if (empty($ls_title) && isset($this->surveyAnswer)) {
-			$ls_title = $this->surveyAnswer->title;
+		if (empty($title) && isset($this->surveyAnswer)) {
+			$title = $this->surveyAnswer->title;
 
 			if (!$this->surveyAnswer->active) {
-				$ls_inactive = __d('survey_answers', 'inactive') . ' ';
+				$inactive = __d('survey_answers', 'inactive') . ' ';
 			}
 		}
 
 		if (!$this->active) {
-			$ls_inactive = __d('survey_answers', 'inactive') . ' ';
+			$inactive = __d('survey_answers', 'inactive') . ' ';
 		}
 
-		return $ls_inactive . $ls_title;
+		return $inactive . $title;
 	}
 }

@@ -18,7 +18,6 @@ class IdentityAwareTraitTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetIdentity(): void {
 		$identity = $this->getIdentity();
@@ -32,7 +31,6 @@ class IdentityAwareTraitTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetIdentity(): void {
 		$this->assertNull($this->identity);

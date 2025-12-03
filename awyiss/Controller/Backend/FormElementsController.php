@@ -76,11 +76,11 @@ class FormElementsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->FormElements->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
-		$this->Search->filterQuery($lo_query);
+		$query = $this->FormElements->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -92,41 +92,41 @@ class FormElementsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lo_formElements = $lo_query->formatResults(function (CollectionInterface $result): CollectionInterface {
-			/** @var \Awyiss\Model\Entity\FormElement $lo_formElement */
-			foreach ($result as $lo_formElement) {
-				$lo_formElement->class = $lo_formElement->column['width']->getCssClass();
+		$formElements = $query->formatResults(function (CollectionInterface $result): CollectionInterface {
+			/** @var \Awyiss\Model\Entity\FormElement $formElement */
+			foreach ($result as $formElement) {
+				/** @noinspection PhpUndefinedFieldInspection */
+				$formElement->class = $formElement->column['width']->getCssClass();
 
-				if ($lo_formElement->column['indent']) {
-					$lo_formElement->class .= ' ' . $lo_formElement->column['indent']->getCssClass();
+				if ($formElement->column['indent']) {
+					$formElement->class .= ' ' . $formElement->column['indent']->getCssClass();
 				}
 
-				if ($lo_formElement->columnRtl) {
-					$lo_formElement->class .= ' Column-RTL';
+				if ($formElement->columnRtl) {
+					$formElement->class .= ' Column-RTL';
 				}
 
-				if ($lo_formElement->columnLast) {
-					$lo_formElement->class .= ' Column-Last';
+				if ($formElement->columnLast) {
+					$formElement->class .= ' Column-Last';
 				}
 			}
 
 			return $result;
 		})->find('threaded')->all();
 
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $ls_columnSystemClass */
-		$ls_columnSystemClass = $this->FormElements->getColumnSystemClass();
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $columnSystemClass */
+		$columnSystemClass = $this->FormElements->getColumnSystemClass();
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_form = $this->fetchTable('Forms')->findById($this->Categories->getSelectedCategory())->first();
+		$form = $this->fetchTable('Forms')->findById($this->Categories->getSelectedCategory())->first();
 
 		$this->set([
-			'formElements' => $lo_formElements,
-			'form' => $lo_form,
+			'formElements' => $formElements,
+			'form' => $form,
 			'columnWidths' => $this->FormElements->getColumnWidths(),
 			'columnIndents' => $this->FormElements->getColumnIndents(),
-			'columnSystemName' => $ls_columnSystemClass::getName(),
+			'columnSystemName' => $columnSystemClass::getName(),
 			'attributes' => $this->FormElements->getAttributes(),
 		]);
 	}
@@ -141,17 +141,17 @@ class FormElementsController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_session = $this->request->getSession();
-		$lo_formElement = $this->FormElements->newDefaultEntity([
+		$session = $this->request->getSession();
+		$formElement = $this->FormElements->newDefaultEntity([
 			'formId' => $this->request->getParam('formId') ?? $this->Categories->getSelectedCategory(),
-			'parentId' => $lo_session->read($this->selectedParentIdSessionIdentifier),
+			'parentId' => $session->read($this->selectedParentIdSessionIdentifier),
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_formElement);
+			$this->save($formElement);
 		}
 
-		$this->setViewVars($lo_formElement);
+		$this->setViewVars($formElement);
 	}
 
 
@@ -166,20 +166,20 @@ class FormElementsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\FormElement $lo_formElement
+		 * @var \Awyiss\Model\Entity\FormElement $formElement
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_formElement = $this->FormElements->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_formElement) {
+		$formElement = $this->FormElements->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$formElement) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_formElement, 'edit');
+			$this->save($formElement, 'edit');
 		}
 
 		if ($this->request->getParam('mode') === 'frontendEditor') {
@@ -188,7 +188,7 @@ class FormElementsController extends Controller {
 			->setLayout('frontend_editor');
 		}
 
-		$this->setViewVars($lo_formElement);
+		$this->setViewVars($formElement);
 	}
 
 
@@ -204,22 +204,22 @@ class FormElementsController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var FormElement $lo_formElement */
-		$lo_formElement = $this->FormElements->findById($id)->first();
-		if (!$lo_formElement) {
+		/** @var \Awyiss\Model\Entity\FormElement $formElement */
+		$formElement = $this->FormElements->findById($id)->first();
+		if (!$formElement) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->FormElements->delete($lo_formElement)) {
+		if ($this->FormElements->delete($formElement)) {
 			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_formElement->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($formElement->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -234,14 +234,15 @@ class FormElementsController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 * @noinspection DuplicatedCode
+	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
 	public function saveColumnWidth(): void {
-		$lo_request = Router::getRequest();
+		$request = Router::getRequest();
 
-		/** @var \Awyiss\Model\Entity\FormElement $lo_formElement */
-		$lo_formElement = $this->FormElements->findById($lo_request->getData('id'))->first();
-		if (!$lo_formElement) {
+		/** @var \Awyiss\Model\Entity\FormElement $formElement */
+		$formElement = $this->FormElements->findById($request->getData('id'))->first();
+		if (!$formElement) {
 			if ($this->request->accepts('application/json')) {
 				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
@@ -263,26 +264,26 @@ class FormElementsController extends Controller {
 
 		$this->Authorization->ensure('read');
 
-		$lo_formElement->set('columnWidth', $lo_request->getData('width'));
+		$formElement->set('columnWidth', $request->getData('width'));
 
-		$this->FormElements->save($lo_formElement);
+		$this->FormElements->save($formElement);
 
 		if ($this->request->accepts('application/json')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
-			$this->set('success', !$lo_formElement->hasErrors());
-			$this->set('message', !$lo_formElement->hasErrors() ? __('edit_succeeded') : __('edit_failed'));
+			$this->set('success', !$formElement->hasErrors());
+			$this->set('message', !$formElement->hasErrors() ? __('edit_succeeded') : __('edit_failed'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
 
-			if ($lo_formElement->hasErrors()) {
+			if ($formElement->hasErrors()) {
 				// Setting the response status to 422 Unprocessable Entity
 				$this->response = $this->response->withStatus(422, 'Unable to process entity');
 			}
 		}
 		else {
-			if (!$lo_formElement->hasErrors()) {
+			if (!$formElement->hasErrors()) {
 				$this->Flash->success(__('edit_succeeded'));
 			}
 			else {
@@ -303,11 +304,11 @@ class FormElementsController extends Controller {
 	 */
 	protected function getPossibleParentFormElements(FormElement $formElement): CollectionInterface {
 		if (!isset($this->threadedFormElements)) {
-			$lo_query = $this->FormElements->find()->where([
+			$query = $this->FormElements->find()->where([
 				'form_id' => $formElement->formId,
 			]);
 
-			$this->threadedFormElements = $this->FormElements->listNested($lo_query);
+			$this->threadedFormElements = $this->FormElements->listNested($query);
 		}
 
 
@@ -322,31 +323,30 @@ class FormElementsController extends Controller {
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
 	protected function save(FormElement $formElement, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->FormElements->hasAttributes()) {
-			$la_associated[] = $this->FormElements->getAttributesTableName(true);
+			$associated[] = $this->FormElements->getAttributesTableName(true);
 			$formElement->setAccess('attributes', true);
 		}
 
-		$la_data = $this->request->getData();
-		$la_data = $this->formatOptions($la_data);
+		$requestData = $this->formatOptions($this->request->getData());
 
-		$this->FormElements->patchEntity($formElement, $la_data, [
-			'associated' => $la_associated,
+		$this->FormElements->patchEntity($formElement, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->FormElements->save($formElement, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->FormElements->save($formElement, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				// Remember the parent id for the next entry
-				$lo_session = $this->request->getSession();
-				$lo_session->write($this->selectedParentIdSessionIdentifier, $formElement->parentId);
+				$session = $this->request->getSession();
+				$session->write($this->selectedParentIdSessionIdentifier, $formElement->parentId);
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
 					throw new RedirectException(Router::url([
@@ -360,9 +360,9 @@ class FormElementsController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($formElement->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($formElement->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -377,15 +377,15 @@ class FormElementsController extends Controller {
 	 * @return void
 	 */
 	protected function ensurePossibleParentId(FormElement $formElement, CollectionInterface $threadedFormElements): void {
-		$la_possibleParentIds = $threadedFormElements->extract('id')->toList();
+		$possibleParentIds = $threadedFormElements->extract('id')->toList();
 
-		if (!empty($formElement->parentId) && !in_array($formElement->parentId, $la_possibleParentIds)) {
-			$la_errors = $formElement->getError('parentId');
+		if (!empty($formElement->parentId) && !in_array($formElement->parentId, $possibleParentIds)) {
+			$errors = $formElement->getError('parentId');
 
 			$formElement->set('parentId', null, ['setter' => false]);
 
-			if ($la_errors) {
-				$formElement->setError('parentId', $la_errors, true);
+			if ($errors) {
+				$formElement->setError('parentId', $errors, true);
 			}
 		}
 	}
@@ -396,26 +396,24 @@ class FormElementsController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(FormElement $formElement): void {
-		$la_columnWidths = $this->FormElements->getColumnWidths();
-		$la_columnWidths = array_map(function (ColumnInterface $column): string {
+		$columnWidths = array_map(function (ColumnInterface $column): string {
 			return $column->getLabel();
-		}, $la_columnWidths);
+		}, $this->FormElements->getColumnWidths());
 
-		$la_columnIndents = $this->FormElements->getColumnIndents();
-		$la_columnIndents = array_map(function (ColumnInterface $column): string {
+		$columnIndents = array_map(function (ColumnInterface $column): string {
 			return $column->getLabel();
-		}, $la_columnIndents);
+		}, $this->FormElements->getColumnIndents());
 
-		$lo_possibleParentFormElements = $this->getPossibleParentFormElements($formElement);
-		$this->ensurePossibleParentId($formElement, $lo_possibleParentFormElements);
+		$possibleParentFormElements = $this->getPossibleParentFormElements($formElement);
+		$this->ensurePossibleParentId($formElement, $possibleParentFormElements);
 
 		$this->set([
 			'formElement' => $formElement,
 			'availableTypes' => $this->FormElements->getAvailableTypes(true),
 			'blocklistedElements' => $this->blocklistedElements[ $formElement->type ] ?? [],
-			'columnWidths' => $la_columnWidths,
-			'columnIndents' => $la_columnIndents,
-			'possibleParentFormElements' => $lo_possibleParentFormElements,
+			'columnWidths' => $columnWidths,
+			'columnIndents' => $columnIndents,
+			'possibleParentFormElements' => $possibleParentFormElements,
 			'expertMode' => $this->request->getParam('expertMode'),
 		]);
 	}
@@ -427,61 +425,59 @@ class FormElementsController extends Controller {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function formatOptions(array $data): array {
-		$la_data = $data;
+		if (empty($data['options'])) {
+			$data['options'] = null;
 
-		if (empty($la_data['options'])) {
-			$la_data['options'] = null;
-
-			return $la_data;
+			return $data;
 		}
 
-		$la_options = [];
+		$options = [];
 
-		foreach (array_values((array)$la_data['options']) as $lx_key => $lx_value) {
-			$lb_emptyKey = empty($lx_value['key']);
-			$lb_emptyValue = empty($lx_value['value']);
+		foreach (array_values((array)$data['options']) as $key => $value) {
+			$emptyKey = empty($value['key']);
+			$emptyValue = empty($value['value']);
 
-			if (isset($lx_value['_translations'])) {
-				$lb_emptyKey = !array_filter($lx_value['_translations'], function (array $translation): bool {
+			if (isset($value['_translations'])) {
+				$emptyKey = !array_filter($value['_translations'], function (array $translation): bool {
 					return !empty($translation['key']);
 				});
-				$lb_emptyValue = !array_filter($lx_value['_translations'], function (array $translation): bool {
+				$emptyValue = !array_filter($value['_translations'], function (array $translation): bool {
 					return !empty($translation['value']);
 				});
 			}
 
-			if ($lb_emptyKey && $lb_emptyValue && $lx_key > 0) {
+			if ($emptyKey && $emptyValue && $key > 0) {
 				continue;
 			}
 
-			$la_options[] = [
-				'key' => $lx_value['key'] ?? null,
-				'value' => $lx_value['value'] ?? null,
-				'_translations' => $lx_value['_translations'] ?? [],
+			$options[] = [
+				'key' => $value['key'] ?? null,
+				'value' => $value['value'] ?? null,
+				'_translations' => $value['_translations'] ?? [],
 			];
 		}
 
-		if (count($la_options) === 1) {
+		if (count($options) === 1) {
 			// If key, value and all translations are empty, no options are set
-			$lb_emptyKey = empty($la_options[0]['key']) && !array_filter($la_options[0]['_translations'], function (array $translation): bool {
+			$emptyKey = empty($options[0]['key']) && !array_filter($options[0]['_translations'], function (array $translation): bool {
 				return !empty($translation['key']);
 			});
 
-			$lb_emptyValue = empty($la_options[0]['value']) && !array_filter($la_options[0]['_translations'], function (array $translation): bool {
+			$emptyValue = empty($options[0]['value']) && !array_filter($options[0]['_translations'], function (array $translation): bool {
 				return !empty($translation['value']);
 			});
 
-			if ($lb_emptyKey && $lb_emptyValue) {
-				$la_options = [];
+			if ($emptyKey && $emptyValue) {
+				$options = [];
 			}
 		}
 
-		$la_data['options'] = $la_options;
+		$data['options'] = $options;
 
 		// Update the request data
-		$lo_request = $this->request->withData('options', $la_options);
-		$this->setRequest($lo_request);
+		$request = $this->request->withData('options', $options);
+		$this->setRequest($request);
 
-		return $la_data;
+		return $data;
 	}
 }

@@ -38,14 +38,14 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 	 * @noinspection DuplicatedCode
 	 */
 	public function run(array $data, int $jobId): void {
-		$ls_attributesTable = 'attributes_' . $data['identifier'];
+		$attributesTableName = 'attributes_' . $data['identifier'];
 
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$tableLocator = FactoryLocator::get('Table');
 
-		/** @var \Awyiss\Model\Table $lo_attributesTable */
-		$lo_attributesTable = $lo_tableLocator->get('Attributes');
+		/** @var \Awyiss\Model\Table $attributesTable */
+		$attributesTable = $tableLocator->get('Attributes');
 		//Update all records
-		$lo_attributesTable->updateAll([
+		$attributesTable->updateAll([
 			'deleted' => true,
 			'deleted_by' => $data['identityId'],
 			'deleted_on' => DateTime::now(),
@@ -53,39 +53,39 @@ class DeleteTask extends Task/* implements AddInterface*/ {
 			'scope' => Inflector::tableize($data['identifier']),
 		]);
 
-		$lo_configuration = $lo_tableLocator->get('I18n');
-		$lo_configuration->deleteAll([
-			'model' => $ls_attributesTable,
+		$i18nTable = $tableLocator->get('I18n');
+		$i18nTable->deleteAll([
+			'model' => $attributesTableName,
 		]);
 
-		$la_commands = [];
+		$commands = [];
 
-		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
-		$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
+		$tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($attributesTableName) . 'Table.php';
+		$entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($attributesTableName) . '.php';
 
 		//Remove both the table and the entity files from the custom directory.
-		if (file_exists($ls_tableFile)) {
-			$la_commands[] = 'unlink ' . $ls_tableFile;
+		if (file_exists($tableFile)) {
+			$commands[] = 'unlink ' . $tableFile;
 		}
-		if (file_exists($ls_entityFile)) {
-			$la_commands[] = 'unlink ' . $ls_entityFile;
+		if (file_exists($entityFile)) {
+			$commands[] = 'unlink ' . $entityFile;
 		}
 
 		//Bake a `drop`-migration
-		$la_commands[] = 'bin' . DS . 'cake bake migration drop_' . $ls_attributesTable . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
+		$commands[] = 'bin' . DS . 'cake bake migration drop_' . $attributesTableName . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 		//Migrate all the newly baked migrations
-		$la_commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 
 		//Clear the database schema
-		$la_commands[] = 'bin' . DS . 'cake schema_cache clear';
+		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		// Bake the seed for the attributes table and truncate it beforehand.
-		$la_commands[] = 'bin' . DS . 'cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
 		$this->QueuedJobs->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $la_commands)) . ')',
+			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $commands)) . ')',
 			'escape' => false,
 			'log' => true,
 		], [

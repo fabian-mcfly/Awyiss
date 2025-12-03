@@ -88,9 +88,9 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	public static function getElements(array $languages): array {
-		$la_fields = ['title', 'firstname', 'lastname', 'phone', 'email', 'job_application_files_text', 'privacy_accepted', 'submit'];
+		$fields = ['title', 'firstname', 'lastname', 'phone', 'email', 'job_application_files_text', 'privacy_accepted', 'submit'];
 
-		return static::buildElements($la_fields, $languages);
+		return static::buildElements($fields, $languages);
 	}
 
 
@@ -99,9 +99,10 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addJobApplicationFilesText(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'type' => 'free_text',
 			'text' => static::$translations[ $mainLocale ]['job_application_files_text'],
 			'child_form_elements' => [
@@ -113,21 +114,22 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('job_application_files_text', $languages, false, 'text');
+			$settings['_translations'] = static::getTranslations('job_application_files_text', $languages, false, 'text');
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
 	/**
+	 * @param string $count
 	 * @param string $mainLocale
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
 	 */
 	protected static function addJobApplicationFile(string $count, string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'identifier' => 'job_application_file_' . $count,
 			'type' => 'file',
 			'title' => static::$translations[ $mainLocale ]['job_application_file'],
@@ -145,9 +147,9 @@ class JobApplicationFormTemplate extends AbstractFormTemplate {
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('job_application_file', $languages);
+			$settings['_translations'] = static::getTranslations('job_application_file', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 }

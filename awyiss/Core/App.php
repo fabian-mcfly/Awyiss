@@ -40,22 +40,22 @@ class App extends BaseApp {
 			return class_exists($class) ? $class : null;
 		}
 
-		$ls_cacheName = $class . '::' . $type . '::' . $suffix;
-		if (isset(static::$classNamesCache[ $ls_cacheName ])) {
-			return static::$classNamesCache[ $ls_cacheName ];
+		$cacheName = $class . '::' . $type . '::' . $suffix;
+		if (isset(static::$classNamesCache[ $cacheName ])) {
+			return static::$classNamesCache[ $cacheName ];
 		}
 
-		[$ls_plugin, $ls_name] = pluginSplit($class);
+		[$plugin, $name] = pluginSplit($class);
 
-		if ($ls_plugin) {
-			$ls_base = str_replace('/', '\\', rtrim($ls_plugin, '\\'));
-			$ls_fullname = '\\' . str_replace('/', '\\', $type . '\\' . $ls_name) . $suffix;
+		if ($plugin) {
+			$base = str_replace('/', '\\', rtrim($plugin, '\\'));
+			$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
 
-			if (static::_classExistsInBase($ls_fullname, $ls_base)) {
-				static::$classNamesCache[ $ls_cacheName ] = $ls_base . $ls_fullname;
+			if (static::_classExistsInBase($fullname, $base)) {
+				static::$classNamesCache[ $cacheName ] = $base . $fullname;
 
 				/** @var class-string */
-				return $ls_base . $ls_fullname;
+				return $base . $fullname;
 			}
 
 			return null;
@@ -63,32 +63,32 @@ class App extends BaseApp {
 
 
 		// No Plugin? Let's check if the class exists in the CUSTOM_NAMESPACE
-		$ls_fullname = '\\' . str_replace('/', '\\', $type . '\\' . $ls_name) . $suffix;
-		if (defined('CUSTOM_NAMESPACE') && static::_classExistsInBase($ls_fullname, CUSTOM_NAMESPACE)) {
-			static::$classNamesCache[ $ls_cacheName ] = '\\' . CUSTOM_NAMESPACE . $ls_fullname;
+		$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
+		if (defined('CUSTOM_NAMESPACE') && static::_classExistsInBase($fullname, CUSTOM_NAMESPACE)) {
+			static::$classNamesCache[ $cacheName ] = '\\' . CUSTOM_NAMESPACE . $fullname;
 
 			/** @var class-string */
-			return '\\' . CUSTOM_NAMESPACE . $ls_fullname;
+			return '\\' . CUSTOM_NAMESPACE . $fullname;
 		}
 
 
 		// No class in the CUSTOM_NAMESPACE? It should be an Awyiss-class then.
-		$ls_base = Configure::read('App.namespace');
-		$ls_fullname = '\\' . str_replace('/', '\\', $type . '\\' . $ls_name) . $suffix;
-		if (static::_classExistsInBase($ls_fullname, $ls_base)) {
-			static::$classNamesCache[ $ls_cacheName ] = '\\' . $ls_base . $ls_fullname;
+		$base = Configure::read('App.namespace');
+		$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
+		if (static::_classExistsInBase($fullname, $base)) {
+			static::$classNamesCache[ $cacheName ] = '\\' . $base . $fullname;
 
 			/** @var class-string */
-			return '\\' . $ls_base . $ls_fullname;
+			return '\\' . $base . $fullname;
 		}
 
 
 		// Neither CUSTOM_NAMESPACE, nor Awyiss-class? CakePHP it is.
-		if (static::_classExistsInBase($ls_fullname, 'Cake')) {
-			static::$classNamesCache[ $ls_cacheName ] = 'Cake' . $ls_fullname;
+		if (static::_classExistsInBase($fullname, 'Cake')) {
+			static::$classNamesCache[ $cacheName ] = 'Cake' . $fullname;
 
 			/** @var class-string */
-			return 'Cake' . $ls_fullname;
+			return 'Cake' . $fullname;
 		}
 
 		return null;
@@ -119,66 +119,65 @@ class App extends BaseApp {
 		?string $subfolders = null,
 		array $blocklistedClassNames = []
 	): array {
-		$la_paths = [];
-		$la_files = [];
+		$paths = [];
+		$files = [];
 
-		$ls_name = $name;
-		if ($ls_name !== '*') {
-			$ls_name = Inflector::camelize(Text::slug($name, '_'));
+		if ($name !== '*') {
+			$name = Inflector::camelize(Text::slug($name, '_'));
 		}
 
-		$ls_namespaceType = str_replace('/', '\\', $folder);
-		$la_folders = explode('/', $folder);
+		$namespaceType = str_replace('/', '\\', $folder);
+		$folders = explode('/', $folder);
 
-		$la_subfolders = [];
+		$subfolderNames = [];
 		if ($subfolders) {
-			$la_subfolders = explode('/', $subfolders);
-			$la_folders = array_merge($la_folders, $la_subfolders);
+			$subfolderNames = explode('/', $subfolders);
+			$folders = array_merge($folders, $subfolderNames);
 		}
 
 		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths[ '\\' . CUSTOM_NAMESPACE . '\\' . $ls_namespaceType . '\\' ] = implode(DS, [ROOT, CUSTOM_DIR, ...$la_folders, $ls_name . $suffix . '.php']);
+			$paths[ '\\' . CUSTOM_NAMESPACE . '\\' . $namespaceType . '\\' ] = implode(DS, [ROOT, CUSTOM_DIR, ...$folders, $name . $suffix . '.php']);
 		}
 
-		$la_paths[ '\Awyiss\\' . $ls_namespaceType . '\\' ] = implode(DS, [ROOT, APP_DIR, ...$la_folders, $ls_name . $suffix . '.php']);
+		$paths[ '\Awyiss\\' . $namespaceType . '\\' ] = implode(DS, [ROOT, APP_DIR, ...$folders, $name . $suffix . '.php']);
 
-		foreach ($la_paths as $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$li_offset = 0;
-				if ($la_subfolders) {
-					$li_offset = strlen($ls_filePath) - strrpos($ls_filePath, DS) + 1;
+		foreach ($paths as $namespace => $filePaths) {
+			foreach (glob($filePaths) as $filePath) {
+				$offset = 0;
+				if ($subfolderNames) {
+					$offset = strlen($filePath) - strrpos($filePath, DS) + 1;
 				}
 
-				$ls_className = substr($ls_filePath, strrpos($ls_filePath, DS, -$li_offset) + 1, -4);
-				$ls_className = str_replace(DS, '\\', $ls_className);
+				$className = substr($filePath, strrpos($filePath, DS, -$offset) + 1, -4);
+				$className = str_replace(DS, '\\', $className);
 
 				if (
-					str_starts_with($ls_className, '_') ||
-					str_starts_with($ls_className, 'Abstract') ||
-					in_array($ls_className, $blocklistedClassNames)
+					str_starts_with($className, '_') ||
+					str_starts_with($className, 'Abstract') ||
+					in_array($className, $blocklistedClassNames)
 				) {
 					continue;
 				}
 
-				$ls_fqClassName = $ls_namespace . $ls_className;
+				$fqClassName = $namespace . $className;
 
 				if (
 					$interface &&
-					!in_array($interface, class_implements($ls_fqClassName) ?: [])
+					!in_array($interface, class_implements($fqClassName) ?: [])
 				) {
-					if ($ls_name === '*') {
+					if ($name === '*') {
 						continue;
 					}
 
 					throw new RuntimeException(
-						sprintf('The provided class `%s` does not implement `%s`.', $ls_fqClassName, $interface)
+						sprintf('The provided class `%s` does not implement `%s`.', $fqClassName, $interface)
 					);
 				}
 
-				$la_files[ $ls_className ] ??= $ls_fqClassName;
+				$files[ $className ] ??= $fqClassName;
 			}
 		}
 
-		return $la_files;
+		return $files;
 	}
 }

@@ -59,7 +59,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(4, $this->contentTemplateElementsTable->associations()->keys());
@@ -98,7 +97,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::getColumnSpans()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnSpans(): void {
 		$columnSpans = $this->contentTemplateElementsTable->getColumnSpans();
@@ -130,7 +128,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -158,7 +155,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -180,7 +176,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -199,7 +194,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -226,7 +220,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -251,7 +244,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnSpanInList(): void {
 		// Test invalid column span
@@ -272,7 +264,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyTitle(): void {
 		$data = [
@@ -293,7 +284,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesContentTemplateExists(): void {
 		// Test with existing content template
@@ -328,7 +318,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->contentTemplateElementsTable->newDefaultEntity();
@@ -355,7 +344,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -392,7 +380,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::$audit
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuditBehavior(): void {
 		$this->assertTrue($this->contentTemplateElementsTable->hasBehavior('Audit'));
@@ -406,7 +393,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->contentTemplateElementsTable->hasBehavior('SystemOrder'));
@@ -421,7 +407,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->contentTemplateElementsTable->hasBehavior('Translate'));

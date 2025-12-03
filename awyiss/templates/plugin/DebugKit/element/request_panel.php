@@ -10,8 +10,8 @@
  * @var string $matchedRoute
  */
 
-if (!empty($la_data)) {
-	array_walk($la_data, function (&$value, $key) {
+if (!empty($data)) {
+	array_walk($data, function (&$value, $key) {
 		if (in_array($key, ['password', 'password_confirm', 'pass'])) {
 			$value = '****** (value hidden)';
 		}

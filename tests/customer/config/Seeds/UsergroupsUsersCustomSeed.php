@@ -12,7 +12,7 @@ class UsergroupsUsersCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'usergroup_id' => 1,
@@ -40,8 +40,8 @@ class UsergroupsUsersCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('usergroups_users');
-		$lo_table->truncate();
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('usergroups_users');
+		$table->truncate();
+		$table->insert($data)->save();
 	}
 }

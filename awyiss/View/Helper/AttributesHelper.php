@@ -94,47 +94,47 @@ class AttributesHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function allControls(string $fieldset, array $fields = [], array $options = []): string {
-		$ls_source = $this->getSource();
-		$this->initializeSource($ls_source);
+		$source = $this->getSource();
+		$this->initializeSource($source);
 
 		if (!isset(static::$attributesByFieldset)) {
-			$this->buildAttributesGroupedByFieldset($ls_source);
+			$this->buildAttributesGroupedByFieldset($source);
 		}
 
 		if (empty(static::$attributesByFieldset[ $fieldset ])) {
 			return '';
 		}
 
-		$la_attributeFields = static::$attributesByFieldset[ $fieldset ];
+		$attributeFields = static::$attributesByFieldset[ $fieldset ];
 
 		// Merge the provided fields with the fields from the attribute table
-		$la_fields = array_merge(Hash::normalize(array_keys($la_attributeFields)), Hash::normalize($fields));
+		$usedFields = array_merge(Hash::normalize(array_keys($attributeFields)), Hash::normalize($fields));
 		// Remove fields that are set to false
-		$la_fields = array_filter($la_fields, function ($value) {
+		$usedFields = array_filter($usedFields, function ($value) {
 			return $value !== false;
 		});
 
 		// If onlyProvided is set to true, only output fields that are present in the $fields-parameter
 		if (!empty($options['onlyProvided'])) {
-			$la_fields = array_intersect_key($la_fields, Hash::normalize($fields));
+			$usedFields = array_intersect_key($usedFields, Hash::normalize($fields));
 		}
 
-		if (empty($la_fields)) {
+		if (empty($usedFields)) {
 			return '';
 		}
 
-		$ls_fields = '';
+		$renderedFields = '';
 		foreach (
 			$this->prepareFields(
-				$la_fields,
+				$usedFields,
 				static::$attributesByFieldset[ $fieldset ],
-				static::$attributeOptions[ $ls_source ]
-			) as $ls_field => $la_options
+				static::$attributeOptions[ $source ]
+			) as $field => $fieldOptions
 		) {
-			$ls_fields .= $this->Form->control($ls_field, $la_options);
+			$renderedFields .= $this->Form->control($field, $fieldOptions);
 		}
 
-		return $ls_fields;
+		return $renderedFields;
 	}
 
 
@@ -146,31 +146,31 @@ class AttributesHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function control(string $fieldName, array $options = []): string {
-		$ls_source = $this->getSource();
-		$this->initializeSource($ls_source);
+		$source = $this->getSource();
+		$this->initializeSource($source);
 
 		if (!isset(static::$attributes)) {
-			$this->buildAttributes($ls_source);
+			$this->buildAttributes($source);
 		}
 
 		if (empty(static::$attributes[ $fieldName ])) {
 			return '';
 		}
 
-		$la_field = $this->prepareField(
+		$prepareField = $this->prepareField(
 			$fieldName,
 			$options,
 			static::$attributes,
-			static::$attributeOptions[ $ls_source ]
+			static::$attributeOptions[ $source ]
 		);
 
-		$ls_fieldName = key($la_field);
-		$la_options = current($la_field);
+		$realFieldName = key($prepareField);
+		$fieldOptions = current($prepareField);
 
 		/** @noinspection PhpAutovivificationOnFalseValuesInspection */
-		$la_options['templateVars']['identifier'] = 'Attributes-' . Inflector::camelize($fieldName);
+		$fieldOptions['templateVars']['identifier'] = 'Attributes-' . Inflector::camelize($fieldName);
 
-		return $this->Form->control($ls_fieldName, $la_options);
+		return $this->Form->control($realFieldName, $fieldOptions);
 	}
 
 
@@ -210,38 +210,37 @@ class AttributesHelper extends Helper {
 			return [];
 		}
 
-		$la_options = $this->buildOptions($options, $attributeFields, $fieldName);
+		$options = $this->buildOptions($options, $attributeFields, $fieldName);
 
 		/**
-		 * @var \Awyiss\Model\Entity $lo_entity
+		 * @var \Awyiss\Model\Entity $entity
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_entity = $this->getContext()->entity();
-		if (!isset($la_options['error']) && $lo_entity->hasErrors() && ($lo_entity->getError('attributes')[ $fieldName ] ?? false)) {
-			$la_options['error'] = $lo_entity->getError('attributes')[ $fieldName ];
+		$entity = $this->getContext()->entity();
+		if (!isset($options['error']) && $entity->hasErrors() && ($entity->getError('attributes')[ $fieldName ] ?? false)) {
+			$options['error'] = $entity->getError('attributes')[ $fieldName ];
 		}
 
-		$this->prepareValue($fieldName, $la_options);
+		$this->prepareValue($fieldName, $options);
 
 		if (
 			$attributeOptions &&
-			empty($la_options['options']) &&
-			in_array($la_options['type'], ['checkbox', 'multicheckbox', 'select', 'select_multiple'])
+			empty($options['options']) &&
+			in_array($options['type'], ['checkbox', 'multicheckbox', 'select', 'select_multiple'])
 		) {
-			$la_options = $attributeOptions->getAttributeOptionsAttributes($fieldName, $la_options, $this->getContext());
+			$options = $attributeOptions->getAttributeOptionsAttributes($fieldName, $options, $this->getContext());
 		}
 
-		$ls_field = $fieldName;
-		$ls_field = $this->prepareTranslationField($ls_field, $la_options);
+		$fieldName = $this->prepareTranslationField($fieldName, $options);
 
-		if (!str_starts_with($ls_field, 'attributes.')) {
-			$ls_field = 'attributes.' . $ls_field;
+		if (!str_starts_with($fieldName, 'attributes.')) {
+			$fieldName = 'attributes.' . $fieldName;
 		}
 
-		unset($la_options['realType']);
+		unset($options['realType']);
 
 
-		return [$ls_field => $la_options];
+		return [$fieldName => $options];
 	}
 
 
@@ -253,32 +252,32 @@ class AttributesHelper extends Helper {
 	 * @throws \Exception
 	 */
 	protected function prepareFields(array $fields, array $attributeFields, ?AttributeOptionsCollectionInterface $attributeOptions): array {
-		static $ls_categoryFieldName;
+		static $categoryFieldName;
 
 		// Get the category field name
-		if (!isset($ls_categoryFieldName)) {
-			$ls_categoryIdentifier = $this->getView()->get('_categoriesIdentifier');
+		if (!isset($categoryFieldName)) {
+			$categoryIdentifier = $this->getView()->get('_categoriesIdentifier');
 
-			$ls_categoryFieldName = null;
-			if ($ls_categoryIdentifier) {
-				$la_categoryOptions = $this->getView()->get('_categories', [])[ Inflector::variable(Inflector::pluralize($ls_categoryIdentifier)) ]['config'] ?? [];
-				$ls_categoryFieldName = Inflector::underscore($la_categoryOptions['field']);
+			$categoryFieldName = null;
+			if ($categoryIdentifier) {
+				$categoryOptions = $this->getView()->get('_categories', [])[ Inflector::variable(Inflector::pluralize($categoryIdentifier)) ]['config'] ?? [];
+				$categoryFieldName = Inflector::underscore($categoryOptions['field']);
 			}
 		}
 
-		$la_fields = [];
-		foreach ($fields as $ls_fieldName => $la_options) {
+		$preparedFields = [];
+		foreach ($fields as $fieldName => $fieldOptions) {
 			// If the field is the category field, skip it
-			if (Inflector::underscore($ls_fieldName) === $ls_categoryFieldName) {
+			if (Inflector::underscore($fieldName) === $categoryFieldName) {
 				continue;
 			}
 
-			$la_fields += $this->prepareField($ls_fieldName, $la_options ?? [], $attributeFields, $attributeOptions);
+			$preparedFields += $this->prepareField($fieldName, $fieldOptions ?? [], $attributeFields, $attributeOptions);
 		}
-		unset($la_options);
+		unset($fieldOptions);
 
 
-		return $la_fields;
+		return $preparedFields;
 	}
 
 
@@ -288,14 +287,13 @@ class AttributesHelper extends Helper {
 	 * @return void
 	 */
 	protected function prepareValue(string $field, mixed &$options): void {
-		$la_valOptions = [
-			'default' => $lx_options['default'] ?? null,
-			'schemaDefault' => $lx_options['schemaDefault'] ?? true,
+		$valueOptions = [
+			'default' => $options['default'] ?? null,
+			'schemaDefault' => $options['schemaDefault'] ?? true,
 		];
 
 		if (!array_key_exists('val', $options)) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$options['val'] = $this->Form->getSourceValue($field, $la_valOptions);
+			$options['val'] = $this->Form->getSourceValue($field, $valueOptions);
 		}
 
 		if (!empty($options['val'])) {
@@ -316,7 +314,6 @@ class AttributesHelper extends Helper {
 
 		// If the value is an array, but the type is not a multiple-select, convert the value to a JSON-string
 		if (!in_array($type, ['multicheckbox', 'select_multiple', 'custom_select_multiple'])) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$value = json_encode($value);
 		}
 	}
@@ -328,12 +325,12 @@ class AttributesHelper extends Helper {
 	 */
 	protected function buildAttributes(string $source): array {
 		/**
-		 * @var \Awyiss\Model\Table $lo_table
+		 * @var \Awyiss\Model\Table $table
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_table = $this->getContext()->fetchTable($source);
+		$table = $this->getContext()->fetchTable($source);
 
-		static::$attributes = array_filter($lo_table->getAttributes(), function (Attribute $attribute) {
+		static::$attributes = array_filter($table->getAttributes(), function (Attribute $attribute) {
 			return $attribute->active;
 		});
 
@@ -346,16 +343,16 @@ class AttributesHelper extends Helper {
 	 * @return void
 	 */
 	protected function buildAttributesGroupedByFieldset(string $source): void {
-		$la_attributes = $this->buildAttributes($source);
+		$attributes = $this->buildAttributes($source);
 
-		if (!$la_attributes) {
+		if (!$attributes) {
 			static::$attributesByFieldset = [];
 
 
 			return;
 		}
 
-		$la_groupedByFieldset = new Collection($la_attributes)->combine(
+		$groupedByFieldset = new Collection($attributes)->combine(
 			'identifier',
 			function (Attribute $entity) {
 				return $entity;
@@ -365,7 +362,7 @@ class AttributesHelper extends Helper {
 			}
 		)->toArray();
 
-		static::$attributesByFieldset = $la_groupedByFieldset;
+		static::$attributesByFieldset = $groupedByFieldset;
 	}
 
 
@@ -374,33 +371,33 @@ class AttributesHelper extends Helper {
 	 */
 	protected function initializeTranslate(): void {
 		/**
-		 * @var \Awyiss\Model\Table $lo_table
+		 * @var \Awyiss\Model\Table $table
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_table = $this->getContext()->fetchTable($this->getContext()->entity()->getSource());
+		$table = $this->getContext()->fetchTable($this->getContext()->entity()->getSource());
 
-		$ls_associationAlias = $lo_table->getAttributesTableName(true);
-		if (!$lo_table->hasAssociation($ls_associationAlias)) {
+		$associationAlias = $table->getAttributesTableName(true);
+		if (!$table->hasAssociation($associationAlias)) {
 			return;
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_attributesTable = $this->getContext()->fetchTable($ls_associationAlias);
-		if (!$lo_attributesTable->hasBehavior('Translate')) {
+		$attributesTable = $this->getContext()->fetchTable($associationAlias);
+		if (!$attributesTable->hasBehavior('Translate')) {
 			return;
 		}
 
-		$la_translatableAttributes = $lo_attributesTable->getBehavior('Translate')->getConfig('fields', []);
+		$translatableAttributes = $attributesTable->getBehavior('Translate')->getConfig('fields', []);
 
-		if (!$la_translatableAttributes) {
+		if (!$translatableAttributes) {
 			return;
 		}
 
-		$la_translatableAttributes = array_map(function ($field) {
+		$translatableAttributes = array_map(function ($field) {
 			return 'attributes.' . $field;
-		}, $la_translatableAttributes);
+		}, $translatableAttributes);
 
-		$this->Form->setTranslatableField($la_translatableAttributes);
+		$this->Form->setTranslatableField($translatableAttributes);
 	}
 
 
@@ -410,37 +407,31 @@ class AttributesHelper extends Helper {
 	 * @return string
 	 */
 	protected function prepareTranslationField(string $fieldName, array &$options): string {
-		$ls_field = $fieldName;
-
 		if (($options['isTranslation'] ?? false) === true) {
-			$lo_language = $options['language'] ?? null;
-			if (empty($lo_language) || !($lo_language instanceof Language)) {
-				throw new RuntimeException(sprintf('Missing language for translation of `%s`', $ls_field));
+			$language = $options['language'] ?? null;
+			if (empty($language) || !($language instanceof Language)) {
+				throw new RuntimeException(sprintf('Missing language for translation of `%s`', $fieldName));
 			}
 
 			if (in_array($options['type'], ['datetime', 'datetime-local'])) {
-				$ls_timezone = ($options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
+				$timezone = ($options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
 
-				if ($ls_timezone === 'auto') {
-					$ls_timezone = $lo_language->timezone;
+				if ($timezone === 'auto') {
+					$timezone = $language->timezone;
 				}
 
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$options['timezone'] = $ls_timezone;
+				$options['timezone'] = $timezone;
 
-				/** @noinspection PhpVariableNamingConventionInspection */
 				$options['templateVars']['additionalContent'] ??= '';
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
+				$options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $timezone . '</span>';
 			}
 
-			$ls_field = '_translations.' . $lo_language->shortcode . '.' . $ls_field;
+			$fieldName = '_translations.' . $language->shortcode . '.' . $fieldName;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		unset($options['isTranslation'], $options['language']);
 
-		return $ls_field;
+		return $fieldName;
 	}
 
 
@@ -452,33 +443,31 @@ class AttributesHelper extends Helper {
 	 * @throws \Exception
 	 */
 	protected function buildOptions(array $options, array $attributeFields, string $fieldName): array {
-		$la_options = $options;
-
-		if (!isset($la_options['type'])) {
-			$la_options['type'] = $attributeFields[ $fieldName ]->inputType;
+		if (!isset($options['type'])) {
+			$options['type'] = $attributeFields[ $fieldName ]->inputType;
 		}
 
-		$la_options = $this->normalizeOptionsByType($la_options);
+		$options = $this->normalizeOptionsByType($options);
 
-		if (!isset($la_options['label']) && isset($attributeFields[ $fieldName ])) {
-			$la_options['label'] = $attributeFields[ $fieldName ]->label;
+		if (!isset($options['label']) && isset($attributeFields[ $fieldName ])) {
+			$options['label'] = $attributeFields[ $fieldName ]->label;
 		}
 
-		$la_options = $this->setTimezoneOptions($la_options);
+		$options = $this->setTimezoneOptions($options);
 
-		if (!isset($la_options['required']) || $la_options['required'] !== false) {
+		if (!isset($options['required']) || $options['required'] !== false) {
 			if ($attributeFields[ $fieldName ]->required) {
-				$la_options['required'] = true;
+				$options['required'] = true;
 			}
 		}
 
-		/** @var \Awyiss\Utility\Content\AbstractColumn $lo_columnSpan */
-		$lo_columnSpan = $attributeFields[ $fieldName ]->column['span'];
-		if ($lo_columnSpan->getNumerator() !== 12) {
-			$la_options['columnSpan'] = $lo_columnSpan->getNumerator();
+		/** @var \Awyiss\Utility\Content\AbstractColumn $columnSpan */
+		$columnSpan = $attributeFields[ $fieldName ]->column['span'];
+		if ($columnSpan->getNumerator() !== 12) {
+			$options['columnSpan'] = $columnSpan->getNumerator();
 		}
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -487,30 +476,28 @@ class AttributesHelper extends Helper {
 	 * @return array
 	 */
 	protected function normalizeOptionsByType(array $options): array {
-		$la_options = $options;
-
-		switch ($la_options['type']) {
+		switch ($options['type']) {
 			case 'datetime':
-				$la_options['type'] = 'datetime-local';
+				$options['type'] = 'datetime-local';
 				break;
 			case 'select':
-				$la_options['empty'] ??= true;
+				$options['empty'] ??= true;
 				break;
 			case 'select_multiple':
-				$la_options['type'] = 'select';
-				$la_options['multiple'] = true;
+				$options['type'] = 'select';
+				$options['multiple'] = true;
 				break;
 			case 'texteditor':
-				$la_options['type'] = 'textarea';
-				$la_options['data-editor'] = true;
+				$options['type'] = 'textarea';
+				$options['data-editor'] = true;
 				break;
 			case 'password':
-				$la_options['placeholder'] = '******';
-				$la_options['val'] = '';
+				$options['placeholder'] = '******';
+				$options['val'] = '';
 				break;
 		}
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -521,25 +508,23 @@ class AttributesHelper extends Helper {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function setTimezoneOptions(array $options): array {
-		$la_options = $options;
-
-		if ($la_options['type'] !== 'datetime') {
-			return $la_options;
+		if ($options['type'] !== 'datetime') {
+			return $options;
 		}
 
-		$ls_timezone = ($la_options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
+		$timezone = ($options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
 
-		if ($ls_timezone === 'auto') {
-			$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
-			$ls_timezone = $lo_language->timezone;
+		if ($timezone === 'auto') {
+			$language = $options['language'] ?? LocaleMiddleware::getLanguage(null);
+			$timezone = $language->timezone;
 		}
 
-		$la_options['timezone'] = $ls_timezone;
+		$options['timezone'] = $timezone;
 
-		$la_options['templateVars']['additionalContent'] ??= '';
-		$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
+		$options['templateVars']['additionalContent'] ??= '';
+		$options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $timezone . '</span>';
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -559,9 +544,9 @@ class AttributesHelper extends Helper {
 
 		static::$initiatedSources[ $source ] = true;
 
-		/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
-		$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
-		static::$attributeOptions[ $source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($source, true);
+		/** @var AttributeOptionsProvider $attributeOptionsProvider */
+		$attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
+		static::$attributeOptions[ $source ] = $attributeOptionsProvider::getAttributeOptionsFile($source, true);
 
 		$this->initializeTranslate();
 	}
@@ -573,12 +558,12 @@ class AttributesHelper extends Helper {
 	protected function getSource(): string {
 		$this->context ??= $this->Form->context();
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ls_source = $this->getContext()?->entity()->getSource();
+		$source = $this->getContext()?->entity()->getSource();
 
-		if (!$ls_source) {
+		if (!$source) {
 			throw new RuntimeException('No form context set.');
 		}
 
-		return $ls_source;
+		return $source;
 	}
 }

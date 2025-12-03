@@ -21,6 +21,7 @@ use Cake\ORM\Query\SelectQuery;
  * @property \Awyiss\Model\Table\MediaElementsTable $MediaElements
  * @method \Awyiss\Model\Entity\MediaElement[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MediaElementsController extends Controller {
 	/**
@@ -28,10 +29,10 @@ class MediaElementsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->MediaElements->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->MediaElements->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -56,20 +57,20 @@ class MediaElementsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_mediaElements = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$mediaElements = $this->paginate($query);
 		}
 		else {
-			$lo_mediaElements = $lo_query->all();
+			$mediaElements = $query->all();
 		}
 
 		$this->set([
-			'mediaElements' => $lo_mediaElements,
+			'mediaElements' => $mediaElements,
 			'attributes' => $this->MediaElements->getAttributes(),
-			'paginated' => $lb_paginated,
+			'paginated' => $paginated,
 		]);
 	}
 
@@ -83,13 +84,13 @@ class MediaElementsController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_mediaElement = $this->MediaElements->newDefaultEntity();
+		$mediaElement = $this->MediaElements->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_mediaElement);
+			$this->save($mediaElement);
 		}
 
-		$this->setViewVars($lo_mediaElement);
+		$this->setViewVars($mediaElement);
 	}
 
 
@@ -104,10 +105,10 @@ class MediaElementsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var MediaElement $lo_mediaElement
+		 * @var \Awyiss\Model\Entity\MediaElement $mediaElement
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_mediaElement = $this->MediaElements->findById($id)->find('translations')->contain([
+		$mediaElement = $this->MediaElements->findById($id)->find('translations')->contain([
 			'MediaElementAssignments',
 			'MediaElementSelectors' => [
 				'queryBuilder' => function (SelectQuery $query) {
@@ -116,17 +117,17 @@ class MediaElementsController extends Controller {
 				},
 			],
 		])->first();
-		if (!$lo_mediaElement) {
+		if (!$mediaElement) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_mediaElement, 'edit');
+			$this->save($mediaElement, 'edit');
 		}
 
-		$this->setViewVars($lo_mediaElement);
+		$this->setViewVars($mediaElement);
 	}
 
 
@@ -142,15 +143,15 @@ class MediaElementsController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var MediaElement $lo_mediaElement */
-		$lo_mediaElement = $this->MediaElements->findById($id)->first();
-		if (!$lo_mediaElement) {
+		/** @var \Awyiss\Model\Entity\MediaElement $mediaElement */
+		$mediaElement = $this->MediaElements->findById($id)->first();
+		if (!$mediaElement) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->MediaElements->delete($lo_mediaElement)) {
+		if ($this->MediaElements->delete($mediaElement)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -158,8 +159,8 @@ class MediaElementsController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_mediaElement->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($mediaElement->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -175,44 +176,43 @@ class MediaElementsController extends Controller {
 	 * @throws \Cake\Http\Exception\RedirectException|\Exception
 	 */
 	protected function save(MediaElement $mediaElement, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->MediaElements->hasAttributes()) {
-			$la_associated[] = $this->MediaElements->getAttributesTableName(true);
+			$associated[] = $this->MediaElements->getAttributesTableName(true);
 			$mediaElement->setAccess('attributes', true);
 		}
 
-		$la_requestData = $this->request->getData();
+		$requestData = $this->request->getData();
 
-		if (!empty($la_requestData['media_element_selectors'])) {
-			$la_requestData['media_element_selectors'] = array_map(function ($element) {
-				static $li_systemOrder = 1;
+		if (!empty($requestData['media_element_selectors'])) {
+			$requestData['media_element_selectors'] = array_map(function ($element) {
+				static $systemOrder = 1;
 
 				if (empty($element['media_selector_id']) || empty($element['identifier'])) {
 					return false;
 				}
 
-				$lo_currentLanguage = LocaleMiddleware::getLanguage('Backend');
-				if (empty($element['title']) && empty($element['_translations'][ $lo_currentLanguage->shortcode ]['title'])) {
+				$currentLanguage = LocaleMiddleware::getLanguage('Backend');
+				if (empty($element['title']) && empty($element['_translations'][ $currentLanguage->shortcode ]['title'])) {
 					return false;
 				}
 
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$element['system_order'] = $li_systemOrder;
-				$li_systemOrder++;
+				$element['system_order'] = $systemOrder;
+				$systemOrder++;
 
 				return $element;
-			}, $la_requestData['media_element_selectors']);
-			$la_requestData['media_element_selectors'] = array_filter($la_requestData['media_element_selectors']);
+			}, $requestData['media_element_selectors']);
+			$requestData['media_element_selectors'] = array_filter($requestData['media_element_selectors']);
 
 			// Update the request data
-			$lo_request = $this->request->withData('media_element_selectors', $la_requestData['media_element_selectors']);
-			$this->setRequest($lo_request);
+			$request = $this->request->withData('media_element_selectors', $requestData['media_element_selectors']);
+			$this->setRequest($request);
 
-			$la_associated[] = 'MediaElementSelectors';
+			$associated[] = 'MediaElementSelectors';
 		}
 
-		if (!empty($la_requestData['media_element_assignments'])) {
-			$la_requestData['media_element_assignments'] = array_filter($la_requestData['media_element_assignments'], function ($element) {
+		if (!empty($requestData['media_element_assignments'])) {
+			$requestData['media_element_assignments'] = array_filter($requestData['media_element_assignments'], function ($element) {
 				if (empty($element['scope'])) {
 					return false;
 				}
@@ -220,22 +220,22 @@ class MediaElementsController extends Controller {
 				return true;
 			});
 
-			$this->request->withData('media_element_assignments', $la_requestData['media_element_assignments']);
+			$this->request->withData('media_element_assignments', $requestData['media_element_assignments']);
 
-			$la_associated[] = 'MediaElementAssignments';
+			$associated[] = 'MediaElementAssignments';
 		}
 
-		$this->MediaElements->patchEntity($mediaElement, $la_requestData, [
-			'associated' => $la_associated,
+		$this->MediaElements->patchEntity($mediaElement, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->MediaElements->save($mediaElement, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->MediaElements->save($mediaElement, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -249,9 +249,9 @@ class MediaElementsController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($mediaElement->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($mediaElement->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -264,20 +264,20 @@ class MediaElementsController extends Controller {
 	 * @throws \ReflectionException
 	 */
 	protected function setViewVars(MediaElement $mediaElement): void {
-		$la_mediaSelectors = $this->fetchTable('MediaSelectors')->find()->all()->indexBy('id')->toArray();
+		$mediaSelectors = $this->fetchTable('MediaSelectors')->find()->all()->indexBy('id')->toArray();
 
-		$la_columnSpans = $this->MediaElements->getColumnSpans();
-		$la_columnSpans = array_map(function (ColumnInterface $column): string {
+		$columnSpans = $this->MediaElements->getColumnSpans();
+		$columnSpans = array_map(function (ColumnInterface $column): string {
 			return $column->getLabel();
-		}, $la_columnSpans);
+		}, $columnSpans);
 
-		$la_assignableModels = $this->MediaElements->getAssignableModels(true);
+		$assignableModels = $this->MediaElements->getAssignableModels(true);
 
 		$this->set([
 			'mediaElement' => $mediaElement,
-			'mediaSelectors' => $la_mediaSelectors,
-			'assignableModels' => $la_assignableModels,
-			'columnSpans' => $la_columnSpans,
+			'mediaSelectors' => $mediaSelectors,
+			'assignableModels' => $assignableModels,
+			'columnSpans' => $columnSpans,
 		]);
 	}
 }

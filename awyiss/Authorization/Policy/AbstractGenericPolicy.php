@@ -9,6 +9,7 @@ use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 use Awyiss\Authorization\PermissionOption\SimplePermissionOption;
 use Awyiss\Configuration\ConfigOptionsProvider;
+use Exception;
 
 
 /**
@@ -68,18 +69,21 @@ abstract class AbstractGenericPolicy {
 	 *
 	 * @param string $identifier
 	 * @return PermissionOptionInterface|null
-	 * @throws \Exception
-	 * @throws \RuntimeException
 	 */
 	public function getPermissionOption(string $identifier): ?PermissionOptionInterface {
 		if (!isset($this->permissionOptionCollection)) {
-			$this->permissionOptionCollection = $this->loadPermissionOptions();
+			try {
+				$this->permissionOptionCollection = $this->loadPermissionOptions();
+			}
+			catch (Exception) {
+				return null;
+			}
 		}
 
-		$ls_identifier = AuthorizationService::sanitizeIdentifier($identifier);
+		$identifier = AuthorizationService::sanitizeIdentifier($identifier);
 
-		if ($this->permissionOptionCollection->has($ls_identifier)) {
-			return $this->permissionOptionCollection->get($ls_identifier);
+		if ($this->permissionOptionCollection->has($identifier)) {
+			return $this->permissionOptionCollection->get($identifier);
 		}
 
 
@@ -96,21 +100,21 @@ abstract class AbstractGenericPolicy {
 	 * @throws \RuntimeException
 	 */
 	protected function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissions = new PermissionOptionCollection($this->getScope());
+		$permissions = new PermissionOptionCollection($this->getScope());
 
-		$lo_permissions->add('read', SimplePermissionOption::class);
+		$permissions->add('read', SimplePermissionOption::class);
 
-		$lo_permissions->add('create', SimplePermissionOption::class);
+		$permissions->add('create', SimplePermissionOption::class);
 
-		$lo_permissions->add('update', SimplePermissionOption::class);
+		$permissions->add('update', SimplePermissionOption::class);
 
-		$lo_permissions->add('delete', SimplePermissionOption::class);
+		$permissions->add('delete', SimplePermissionOption::class);
 
 		if (ConfigOptionsProvider::getConfigOptionsFile($this->getScope()) || ConfigOptionsProvider::getConfigOptionsFile('GenericDatatables')) {
-			$lo_permissions->add('configure', SimplePermissionOption::class);
+			$permissions->add('configure', SimplePermissionOption::class);
 		}
 
 
-		return $lo_permissions;
+		return $permissions;
 	}
 }

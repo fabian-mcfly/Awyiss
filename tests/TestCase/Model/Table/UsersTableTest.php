@@ -61,7 +61,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(6, $this->usersTable->associations()->keys());
@@ -112,7 +111,6 @@ class UsersTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::findActive()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindActive(): void {
 		$user5 = $this->usersTable->newDefaultEntity();
@@ -139,11 +137,11 @@ class UsersTableTest extends TestCase {
 
 		$this->usersTable->saveMany([$user5, $user6], ['audit' => ['skip' => true]]);
 
-		$user5->lastLogin = (new DateTime())->subMinutes(5)->format('Y-m-d H:i:s');
+		$user5->lastLogin = new DateTime()->subMinutes(5)->format('Y-m-d H:i:s');
 		$user5->failedAttempts = 5;
 		$this->usersTable->save($user5, ['audit' => ['skip' => true]]);
 
-		$user6->lastLogin = (new DateTime())->subMinutes(40)->format('Y-m-d H:i:s');
+		$user6->lastLogin = new DateTime()->subMinutes(40)->format('Y-m-d H:i:s');
 		$user6->failedAttempts = 5;
 		$this->usersTable->save($user6, ['audit' => ['skip' => true]]);
 
@@ -170,7 +168,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -201,7 +198,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -227,7 +223,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -251,7 +246,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -287,7 +281,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -317,7 +310,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationPasswordTooLong(): void {
 		$data = [
@@ -337,7 +329,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationPasswordMismatch(): void {
 		$data = [
@@ -357,7 +348,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationPasswordEmptyOnUpdate(): void {
 		// Password should be allowed to be empty on update
@@ -378,7 +368,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidEmail(): void {
 		$data = [
@@ -399,7 +388,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUniqueUsername(): void {
 		$data = [
@@ -419,7 +407,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesExistingUsername(): void {
 		// Try to create another user with the same username, even if the existing user is inactive
@@ -446,7 +433,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUniqueEmail(): void {
 		// First create a user with an email
@@ -467,7 +453,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesExistingEmail(): void {
 		// Try to create another user with the same email
@@ -495,7 +480,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUpdateWithSameTitle(): void {
 		// Get an existing user
@@ -513,7 +497,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMultipleNullEmails(): void {
 		// Should allow multiple users with null emails
@@ -536,7 +519,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\User $entity */
@@ -561,7 +543,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -597,7 +578,6 @@ class UsersTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsersTable::$categories
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCategoriesBehavior(): void {
 		$this->assertTrue($this->usersTable->hasBehavior('Categories'));

@@ -59,7 +59,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(8, $this->menuEntriesTable->associations()->keys());
@@ -132,7 +131,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -164,7 +162,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -187,7 +184,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -206,7 +202,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -239,7 +234,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -266,7 +260,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -285,7 +278,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationLanguageShortcodeExactLength(): void {
 		$data = [
@@ -305,7 +297,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidMenuId(): void {
 		// Test with existing menu
@@ -324,7 +315,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidMenuId(): void {
 		// Test with non-existing menu
@@ -349,7 +339,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidLanguageShortcode(): void {
 		// Test with existing language
@@ -368,7 +357,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidLanguageShortcode(): void {
 		// Test with non-existing language
@@ -392,7 +380,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidParentId(): void {
 		// Test with existing parent menu entry
@@ -412,7 +399,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNullParentId(): void {
 		// Test with null parent (should be valid)
@@ -432,7 +418,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidParentId(): void {
 		// Test with non-existing parent menu entry
@@ -457,7 +442,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\MenuEntry $entity */
@@ -481,7 +465,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -513,7 +496,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::$categories
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCategoriesBehavior(): void {
 		$this->assertTrue($this->menuEntriesTable->hasBehavior('Categories'));
@@ -530,7 +512,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehavior(): void {
 		$this->assertTrue($this->menuEntriesTable->hasBehavior('Nest'));
@@ -545,7 +526,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->menuEntriesTable->hasBehavior('SystemOrder'));
@@ -559,7 +539,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::disableCascadeCallbacks()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisableCascadeCallbacks(): void {
 		$association = $this->menuEntriesTable->getAssociation('ChildMenuEntries');
@@ -581,7 +560,6 @@ class MenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::enableCascadeCallbacks()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnableCascadeCallbacks(): void {
 		$association = $this->menuEntriesTable->getAssociation('ChildMenuEntries');

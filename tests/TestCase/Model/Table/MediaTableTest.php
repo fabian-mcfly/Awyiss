@@ -64,7 +64,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(9, $this->mediaTable->associations()->keys());
@@ -139,7 +138,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -174,7 +172,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -205,7 +202,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -223,7 +219,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -263,7 +258,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -296,7 +290,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -319,7 +312,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAverageColorExactLength(): void {
 		// Test valid hex colors
@@ -359,7 +351,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFocusPointInListValid(): void {
 		// Test valid focus points
@@ -383,7 +374,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFocusPointInListInvalid(): void {
 		// Test invalid focus point
@@ -404,7 +394,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidMediaFolder(): void {
 		// Test with existing media folder
@@ -425,7 +414,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidMediaFolder(): void {
 		// Test with non-existing media folder
@@ -452,7 +440,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidPreview(): void {
 		$data = [
@@ -485,7 +472,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidPreview(): void {
 		$data = [
@@ -523,7 +509,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidAvif(): void {
 		$data = [
@@ -556,7 +541,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidAvif(): void {
 		$data = [
@@ -594,7 +578,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidWebp(): void {
 		$data = [
@@ -627,7 +610,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidWebp(): void {
 		$data = [
@@ -665,7 +647,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFileNameExtensionWithValidFile(): void {
 		// Create a temporary file for testing
@@ -699,7 +680,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFileNameExtensionWithNoExtension(): void {
 		// Create a temporary file for testing
@@ -740,7 +720,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFileNameExtensionWithMismatchedExtension(): void {
 		// Create a temporary file for testing
@@ -779,7 +758,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFileNameExtensionWithFileError(): void {
 		// Test with file that has upload error - should pass validation
@@ -815,7 +793,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFileNameExtensionWithNoFile(): void {
 		// Test without file - should pass validation
@@ -839,7 +816,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFileNameExtensionWithConfigureFallback(): void {
 		$tempFile = tempnam(sys_get_temp_dir(), 'test');
@@ -872,7 +848,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFileNameExtensionWithConfigureFallbackInvalid(): void {
 		$tempFile = tempnam(sys_get_temp_dir(), 'test');
@@ -914,7 +889,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUpdateMimeTypeModified(): void {
 		// Test update where mimeType is modified (should fail)
@@ -935,7 +909,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::getMaxFileSize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMaxFileSize(): void {
 		$maxFileSize = $this->mediaTable->getMaxFileSize();
@@ -952,7 +925,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::detectMimeType()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetectMimeTypeWithMatchingTypes(): void {
 		// Create a temporary file for testing
@@ -977,7 +949,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::detectMimeType()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetectMimeTypeWithMismatchedTypes(): void {
 		// Create a temporary file for testing
@@ -1001,7 +972,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::detectMimeType()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetectMimeTypeWithExtensionFallback(): void {
 		// Create a temporary file for testing
@@ -1034,7 +1004,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\Media $entity */
@@ -1064,7 +1033,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -1111,7 +1079,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::$categories
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCategoriesBehavior(): void {
 		$this->assertTrue($this->mediaTable->hasBehavior('Categories'));
@@ -1130,7 +1097,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->mediaTable->hasBehavior('SystemOrder'));
@@ -1144,7 +1110,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->mediaTable->hasBehavior('Translate'));
@@ -1161,7 +1126,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaProcessStatusColumn(): void {
 		$schema = $this->mediaTable->getSchema();
@@ -1176,7 +1140,6 @@ class MediaTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaJsonColumns(): void {
 		$schema = $this->mediaTable->getSchema();

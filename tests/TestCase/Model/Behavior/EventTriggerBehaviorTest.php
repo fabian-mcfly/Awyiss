@@ -22,7 +22,6 @@ class EventTriggerBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\EventTriggerBehavior::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$table = TableRegistry::getTableLocator()->get('Cars');
@@ -54,7 +53,6 @@ class EventTriggerBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\EventTriggerBehavior::dispatchEvent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBehaviorDispatchesScopedEvents(): void {
 		$eventsSent = [
@@ -128,7 +126,6 @@ class EventTriggerBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\EventTriggerBehavior::dispatchCreateUpdateEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBehaviorDispatchesCreateEvents(): void {
 		/** @var \Customer\Model\Table\CarsTable $table */
@@ -181,7 +178,6 @@ class EventTriggerBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\EventTriggerBehavior::dispatchCreateUpdateEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBehaviorDispatchesUpdateEvents(): void {
 		/** @var \Customer\Model\Table\CarsTable $table */
@@ -237,7 +233,6 @@ class EventTriggerBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\EventTriggerBehavior::dispatchCopyEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBehaviorDispatchesCopyEventsForCopy(): void {
 		/** @var \Customer\Model\Table\CarsTable $table */
@@ -284,7 +279,6 @@ class EventTriggerBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\EventTriggerBehavior::dispatchCopyEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBehaviorNotDispatchesCopyEventsForNoCopy(): void {
 		/** @var \Customer\Model\Table\CarsTable $table */

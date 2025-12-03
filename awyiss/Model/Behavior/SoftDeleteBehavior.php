@@ -158,10 +158,10 @@ class SoftDeleteBehavior extends Behavior {
 			return;
 		}
 
-		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'softDelete'));
+		$queryOptions = Hash::merge($this->getConfig(), Hash::get($options, 'softDelete'));
 
 		//Shall we include deleted items? Do nothing
-		if ($la_options['includeDeleted'] ?? false) {
+		if ($queryOptions['includeDeleted'] ?? false) {
 			return;
 		}
 
@@ -184,23 +184,23 @@ class SoftDeleteBehavior extends Behavior {
 			return;
 		}
 
-		$lo_options = new ArrayObject(Hash::merge($this->getConfig(), Hash::get($options, 'softDelete')));
+		$queryOptions = new ArrayObject(Hash::merge($this->getConfig(), Hash::get($options, 'softDelete')));
 
-		if ($lo_options['skip'] === true) {
+		if ($queryOptions['skip'] === true) {
 			return;
 		}
 
 		// At this point, rules have already been checked, so we can safely unset the checkRules option
 		// to not check `update`-rules in the process of saving.
-		$lo_options = $options;
-		$lo_options['checkRules'] = false;
+		$queryOptions = $options;
+		$queryOptions['checkRules'] = false;
 
 		//Stop the beforeDelete event
 		$event->stopPropagation();
 		$event->setResult(true);
 
 		//Call softDelete. If it fails, throw an exception
-		if (!$this->softDelete($entity, $lo_options, $event)) {
+		if (!$this->softDelete($entity, $queryOptions, $event)) {
 			if ($event->getResult() === false) {
 				return;
 			}
@@ -211,7 +211,7 @@ class SoftDeleteBehavior extends Behavior {
 		// Dispatch the afterSoftDeleteCommit event
 		$this->table()->dispatchEvent('Model.afterSoftDeleteCommit', [
 			'entity' => $entity,
-			'options' => $lo_options,
+			'options' => $queryOptions,
 		]);
 	}
 
@@ -225,9 +225,9 @@ class SoftDeleteBehavior extends Behavior {
 	 * @return bool
 	 */
 	public function softDelete(EntityInterface $entity, ArrayObject $options, ?EventInterface $event = null): bool {
-		$lo_table = $this->table();
+		$table = $this->table();
 
-		$lo_options = new ArrayObject(
+		$queryOptions = new ArrayObject(
 			$options->getArrayCopy() + [
 				'_cleanOnSuccess' => false,
 				'checkRules' => false,
@@ -241,13 +241,13 @@ class SoftDeleteBehavior extends Behavior {
 		 */
 		$entity->set('deleted', true);
 
-		$lo_event = $lo_table->dispatchEvent('Model.beforeSoftDelete', [
+		$newEvent = $table->dispatchEvent('Model.beforeSoftDelete', [
 			'entity' => $entity,
-			'options' => $lo_options,
+			'options' => $queryOptions,
 		]);
 
 		//If the 'Model.beforeSoftDelete' event was stopped, stop the softDelete event as well
-		if ($lo_event->isStopped() && $event) {
+		if ($newEvent->isStopped() && $event) {
 			/**
 			 * Set the `deleted`-column
 			 */
@@ -255,34 +255,34 @@ class SoftDeleteBehavior extends Behavior {
 			$entity->setDirty('deleted', false);
 
 			$event->stopPropagation();
-			$event->setResult($lo_event->getResult());
+			$event->setResult($newEvent->getResult());
 
 			return false;
 		}
 
-		$lo_schema = $this->table()->getSchema();
-		$la_primaryKeys = $lo_schema->getPrimaryKey();
+		$schema = $this->table()->getSchema();
+		$primaryKeys = $schema->getPrimaryKey();
 
 		//No primary key set? Throw an exception since we can't delete new entities
-		foreach ($la_primaryKeys as $ls_field) {
-			if (!$entity->has($ls_field)) {
-				throw new RuntimeException(sprintf('Missing property `%s` in entity `%s`.', $ls_field, $entity::class));
+		foreach ($primaryKeys as $field) {
+			if (!$entity->has($field)) {
+				throw new RuntimeException(sprintf('Missing property `%s` in entity `%s`.', $field, $entity::class));
 			}
 		}
 
 		// Traverse all associations and call a cascadeDelete for those, that are configured to cascade on delete.
-		foreach ($lo_table->associations() as $lo_association) {
-			if ($this->shouldCascadeDelete($lo_association)) {
-				$lo_association->cascadeDelete($entity, ['_primary' => false] + $lo_options->getArrayCopy());
+		foreach ($table->associations() as $association) {
+			if ($this->shouldCascadeDelete($association)) {
+				$association->cascadeDelete($entity, ['_primary' => false] + $queryOptions->getArrayCopy());
 			}
 		}
 
 		//Save the entity but skip both the authorization and the system order behavior
-		$la_options = ['checkRules' => false] + (array)$lo_options;
-		if ($lo_table->save($entity, $la_options)) {
-			$lo_table->dispatchEvent('Model.afterSoftDelete', [
+		$eventOptions = ['checkRules' => false] + (array)$queryOptions;
+		if ($table->save($entity, $eventOptions)) {
+			$table->dispatchEvent('Model.afterSoftDelete', [
 				'entity' => $entity,
-				'options' => new ArrayObject(['systemOrder' => []] + $la_options),
+				'options' => new ArrayObject(['systemOrder' => []] + $eventOptions),
 			]);
 
 			//Clean the entity because it's saved and therefore no longer dirty.
@@ -300,9 +300,7 @@ class SoftDeleteBehavior extends Behavior {
 	 * @return bool
 	 */
 	protected function shouldCascadeDelete(Association $association): bool {
-		$lo_table = $this->table();
-
-		if ($association->isOwningSide($lo_table) && $association->getDependent() && $association->getCascadeCallbacks()) {
+		if ($association->isOwningSide($this->table()) && $association->getDependent() && $association->getCascadeCallbacks()) {
 			return true;
 		}
 

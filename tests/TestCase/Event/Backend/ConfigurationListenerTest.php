@@ -42,7 +42,6 @@ class ConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -57,7 +56,6 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -78,7 +76,6 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveTypecastsValue(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity();
@@ -129,7 +126,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRecompilesFrontendScssWhenColumnClassNameChanged(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
@@ -180,7 +176,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRecompilesFrontendScssWhenColumnMaxColumnsChanged(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
@@ -231,7 +226,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotRecompilesFrontendScssWhenNotContentsScope(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
@@ -267,7 +261,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitUnnestsNestedEntriesOfScope(): void {
 		$this->createTestEmployees();
@@ -332,7 +325,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitUnnestingRebuildsSystemOrder(): void {
 		$this->createTestEmployees();
@@ -400,7 +392,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotUnnestsNestedEntriesOfScopeWhenEnabled(): void {
 		$this->createTestEmployees();
@@ -487,7 +478,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRebuildsSystemOrderWhenNewAndIdentifierSystemOrderField(): void {
 		$this->createTestEmployees();
@@ -558,7 +548,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRebuildsSystemOrderWhenNotNewAndValueChangedAndIdentifierSystemOrderField(): void {
 		$this->createTestEmployees();
@@ -633,7 +622,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotRebuildsSystemOrderWhenNotNewAndValueUnchangedAndIdentifierSystemOrderField(): void {
 		Configure::write('Awyiss.Employees.Backend.systemOrder.field', 'title');
@@ -712,7 +700,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRebuildsSystemOrderWhenNewAndIdentifierSystemOrderDirection(): void {
 		Configure::write('Awyiss.Employees.Backend.systemOrder.field', 'title');
@@ -785,7 +772,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitRebuildsSystemOrderWhenNotNewAndValueChangedAndIdentifierSystemOrderDirection(): void {
 		Configure::write('Awyiss.Employees.Backend.systemOrder.field', 'title');
@@ -862,7 +848,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotRebuildsSystemOrderWhenNotNewAndValueUnchangedAndIdentifierSystemOrderDirection(): void {
 		$this->createTestEmployees();
@@ -939,7 +924,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitCreatesCustomConfiguration(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -976,7 +960,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitClearsMediaCacheForMediaResizingFileType(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1016,7 +999,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitClearsMediaCacheForMediaResizingQuality(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1056,7 +1038,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotClearsMediaCacheForOtherConfig(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1086,7 +1067,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotClearsMediaCacheWhenNotNewAndValueNotChanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1118,7 +1098,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterSaveCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitClearsMediaCacheWhenNotNewAndValueChanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1162,7 +1141,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitRecompilesFrontendScssWhenColumnClassNameChanged(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
@@ -1213,7 +1191,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitRecompilesFrontendScssWhenColumnMaxColumnsChanged(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
@@ -1264,7 +1241,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitNotRecompilesFrontendScssWhenNotContentsScope(): void {
 		$this->listener = $this->getMockBuilder(ConfigurationListener::class)->onlyMethods([
@@ -1300,7 +1276,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitUnnestsNestedEntriesOfScope(): void {
 		$this->createTestEmployees();
@@ -1365,12 +1340,11 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitNotUnnestsNestedEntriesOfScopeWhenDefaultTrue(): void {
-		$lo_configuration = ConfigOptionsProvider::loadConfigOptions('employees');
-		$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, 'nest.enabled');
-		$lo_configOption->setDefaultValue(true);
+		$configuration = ConfigOptionsProvider::loadConfigOptions('employees');
+		$configOption = $configuration?->getConfigOption(Awyiss::REALM_BACKEND, 'nest.enabled');
+		$configOption->setDefaultValue(true);
 
 		$this->createTestEmployees();
 
@@ -1449,7 +1423,7 @@ class ConfigurationListenerTest extends TestCase {
 		], $employeesOrder);
 
 		$this->deleteTestEmployees();
-		$lo_configOption->setDefaultValue(false);
+		$configOption->setDefaultValue(false);
 	}
 
 
@@ -1457,7 +1431,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitCreatesCustomConfiguration(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1494,7 +1467,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitClearsMediaCacheForMediaResizingFileType(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1534,7 +1506,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitClearsMediaCacheForMediaResizingQuality(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1574,7 +1545,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitNotClearsMediaCacheForOtherConfig(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1604,7 +1574,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitClearsMediaCacheWhenNotNewAndValueUnchanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1646,7 +1615,6 @@ class ConfigurationListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::afterDeleteCommit()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCommitClearsMediaCacheWhenNotNewAndValueChanged(): void {
 		$entity = $this->fetchTable('Configuration')->newDefaultEntity([
@@ -1690,7 +1658,6 @@ class ConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ConfigurationListener::deleteCustomConfiguration()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeleteCustomConfigurationRemovesFiles(): void {
 		$testFile1 = ENV_CUSTOM_CONFIG . 'customer[en][en].php';
@@ -1715,7 +1682,6 @@ class ConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createTestEmployees(): void {
 		$employeesTable = $this->fetchTable('Employees');
@@ -1826,7 +1792,6 @@ class ConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function deleteTestEmployees(): void {
 		$employeesTable = $this->fetchTable('Employees');

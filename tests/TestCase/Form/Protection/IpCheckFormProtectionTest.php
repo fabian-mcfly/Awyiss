@@ -51,7 +51,6 @@ class IpCheckFormProtectionTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -77,7 +76,6 @@ class IpCheckFormProtectionTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -90,7 +88,6 @@ class IpCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\IpCheckFormProtection::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		$result = $this->ipCheckFormProtection->initialize(
@@ -107,7 +104,6 @@ class IpCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\IpCheckFormProtection::getHtml()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHtml(): void {
 		$this->ipCheckFormProtection->initialize(
@@ -131,7 +127,6 @@ class IpCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\IpCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithNoExistingEntries(): void {
 		$this->ipCheckFormProtection->initialize(
@@ -151,7 +146,6 @@ class IpCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\IpCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithExistingRecentEntry(): void {
 		$this->ipCheckFormProtection->initialize(
@@ -188,7 +182,6 @@ class IpCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\IpCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithExistingEntryAndCustomTimeout(): void {
 		$mockFormOptions = $this->createMock(FormOptions::class);
@@ -228,7 +221,6 @@ class IpCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\IpCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithExistingOldEntry(): void {
 		$this->ipCheckFormProtection->initialize(
@@ -264,7 +256,6 @@ class IpCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\IpCheckFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _testValidateDataWithDifferentIpAddress(): void {
 		$this->ipCheckFormProtection->initialize(
@@ -298,7 +289,6 @@ class IpCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\IpCheckFormProtection::modifyForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyForm(): void {
 		$this->ipCheckFormProtection->initialize(
@@ -318,7 +308,6 @@ class IpCheckFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\IpCheckFormProtection::modifyFormEntry()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyFormEntry(): void {
 		$this->ipCheckFormProtection->initialize(

@@ -31,7 +31,6 @@ class IntegerTypeTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -46,7 +45,6 @@ class IntegerTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\IntegerType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithNullValue(): void {
 		$result = $this->type->toDatabase(null, $this->driver);
@@ -57,7 +55,6 @@ class IntegerTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\IntegerType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithIntegerValue(): void {
 		$value = 42;
@@ -69,7 +66,6 @@ class IntegerTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\IntegerType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithNumericString(): void {
 		$result = $this->type->toDatabase('42', $this->driver);
@@ -80,7 +76,6 @@ class IntegerTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\IntegerType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithFloatValue(): void {
 		$result = $this->type->toDatabase(42.75, $this->driver);
@@ -91,7 +86,6 @@ class IntegerTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\IntegerType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithBooleanValues(): void {
 		// True should convert to 1
@@ -107,7 +101,6 @@ class IntegerTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\IntegerType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithNonNumericString(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -118,7 +111,6 @@ class IntegerTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\IntegerType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithIntBackedEnum(): void {
 		$enum = ProcessStatus::Fail;
@@ -131,7 +123,6 @@ class IntegerTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\IntegerType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithStringBackedEnum(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -144,7 +135,6 @@ class IntegerTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Database\Type\IntegerType::toDatabase()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToDatabaseWithInvalidObject(): void {
 		$this->expectException(InvalidArgumentException::class);

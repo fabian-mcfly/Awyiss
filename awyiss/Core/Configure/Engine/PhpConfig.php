@@ -41,32 +41,32 @@ class PhpConfig extends BasePhpConfig {
 	 * @return array
 	 */
 	public function read(string $key): array {
-		$la_paths = $this->paths;
-		$la_return = [];
+		$paths = $this->paths;
+		$return = [];
 
-		foreach ($la_paths as $ls_path) {
+		foreach ($paths as $path) {
 			/**
 			 * Set the internal path that's used by \Cake\Core\Configure\FileConfigTrait in _getFilePath()
 			 * This way we don't have to overwrite the method
 			 */
-			$this->_path = $ls_path;
+			$this->_path = $path;
 			try {
-				$ls_filePath = $this->_getFilePath($key, true);
+				$filePath = $this->_getFilePath($key, true);
 			}
 			catch (CakeException $ex) {
 				continue;
 			}
 
-			$la_fileReturn = include $ls_filePath;
-			if (!is_array($la_fileReturn)) {
+			$fileReturn = include $filePath;
+			if (!is_array($fileReturn)) {
 				throw new CakeException(sprintf('Config file "%s" did not return an array', $key . '.php'));
 			}
 
 			//Merge the retuning values of the files
-			$la_return = Hash::merge($la_return, $la_fileReturn);
+			$return = Hash::merge($return, $fileReturn);
 		}
 
-		return $la_return;
+		return $return;
 	}
 
 
@@ -80,32 +80,29 @@ class PhpConfig extends BasePhpConfig {
 	 * @throws \Brick\VarExporter\ExportException
 	 */
 	public function dump(string $key, array $data): bool {
-		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
+		$contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		ksort($data, SORT_NATURAL | SORT_FLAG_CASE);
 
-		$ls_contents .= VarExporter::export($data, VarExporter::TRAILING_COMMA_IN_ARRAY);
-		$ls_contents .= ';';
-		$ls_contents = str_replace('    ', "\t", $ls_contents);
+		$contents .= VarExporter::export($data, VarExporter::TRAILING_COMMA_IN_ARRAY);
+		$contents .= ';';
+		$contents = str_replace('    ', "\t", $contents);
 
+		$folder = ENV_CUSTOM_CONFIG;
 
-		$ls_key = $key;
-		$ls_folder = ENV_CUSTOM_CONFIG;
-
-		if (str_contains($ls_key, '.')) {
-			[$ls_folder, $ls_key] = explode('.', $ls_key);
-			$ls_folder = $this->paths[ $ls_folder ] ?? ENV_CUSTOM_CONFIG;
+		if (str_contains($key, '.')) {
+			[$folder, $key] = explode('.', $key);
+			$folder = $this->paths[ $folder ] ?? ENV_CUSTOM_CONFIG;
 		}
 
-		$ls_filePath = $ls_folder . $ls_key . $this->_extension;
+		$filePath = $folder . $key . $this->_extension;
 
-		if (!is_dir($ls_folder)) {
-			mkdir($ls_folder, 0755, true);
+		if (!is_dir($folder)) {
+			mkdir($folder, 0755, true);
 		}
 
-		if (file_put_contents($ls_filePath, $ls_contents)) {
-			chmod($ls_filePath, 0660);
+		if (file_put_contents($filePath, $contents)) {
+			chmod($filePath, 0660);
 
 
 			return true;

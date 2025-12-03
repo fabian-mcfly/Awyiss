@@ -111,16 +111,16 @@ class NestBehavior extends Behavior {
 		parent::initialize($config);
 
 		if (!$this->getConfig('alias')) {
-			$ls_alias = $this->table()->getAlias();
+			$alias = $this->table()->getAlias();
 
-			if (str_starts_with($ls_alias, 'Child')) {
-				$ls_alias = substr($ls_alias, 5);
+			if (str_starts_with($alias, 'Child')) {
+				$alias = substr($alias, 5);
 			}
-			elseif (str_starts_with($ls_alias, 'Parent')) {
-				$ls_alias = substr($ls_alias, 6);
+			elseif (str_starts_with($alias, 'Parent')) {
+				$alias = substr($alias, 6);
 			}
 
-			$this->setConfig('alias', $ls_alias);
+			$this->setConfig('alias', $alias);
 		}
 
 		$this->setConfig('implementedEvents', [
@@ -138,72 +138,72 @@ class NestBehavior extends Behavior {
 	 * @return $this
 	 */
 	protected function buildAssociations(): static {
-		$lo_table = $this->table();
-		$lo_schema = $lo_table->getSchema();
-		$ls_alias = $this->getConfig('alias');
+		$table = $this->table();
+		$schema = $table->getSchema();
+		$alias = $this->getConfig('alias');
 
 		if (
-			$lo_schema->hasColumn($this->getConfig('children.foreignKey')) &&
+			$schema->hasColumn($this->getConfig('children.foreignKey')) &&
 			(
 				!$this->getConfig('children.associationName') ||
-				!$lo_table->hasAssociation($this->getConfig('children.associationName'))
+				!$table->hasAssociation($this->getConfig('children.associationName'))
 			)
 		) {
-			$ls_associationName = $this->getConfig('children.associationName') ?: 'Child' . Inflector::camelize($ls_alias);
-			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass = $lo_table->getEntityClass();
+			$associationName = $this->getConfig('children.associationName') ?: 'Child' . Inflector::camelize($alias);
+			/** @var \Awyiss\Model\Entity $entityClass */
+			$entityClass = $table->getEntityClass();
 
-			$la_bindingKeys = (array)$this->getConfig('children.bindingKey');
-			$la_bindingKeys = array_filter($la_bindingKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
-			$la_bindingKeys = $ls_entityClass::unmapFields($la_bindingKeys);
+			$bindingKeys = (array)$this->getConfig('children.bindingKey');
+			$bindingKeys = array_filter($bindingKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
+			$bindingKeys = $entityClass::unmapFields($bindingKeys);
 
-			$la_foreignKeys = (array)$this->getConfig('children.foreignKey');
-			$la_foreignKeys = array_filter($la_foreignKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
-			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
+			$foreignKeys = (array)$this->getConfig('children.foreignKey');
+			$foreignKeys = array_filter($foreignKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
+			$foreignKeys = $entityClass::unmapFields($foreignKeys);
 
-			$lo_table->hasMany($ls_associationName, [
-				'bindingKey' => $la_bindingKeys,
+			$table->hasMany($associationName, [
+				'bindingKey' => $bindingKeys,
 				'cascadeCallbacks' => true,
-				'className' => $ls_alias,
+				'className' => $alias,
 				'dependent' => true,
-				'foreignKey' => $la_foreignKeys,
+				'foreignKey' => $foreignKeys,
 			]);
 
-			$ls_property = $lo_table->$ls_associationName->getProperty();
-			$ls_entityClass::addFieldMapping($ls_property, Inflector::variable($ls_property));
+			$property = $table->$associationName->getProperty();
+			$entityClass::addFieldMapping($property, Inflector::variable($property));
 
-			$this->setConfig('children.associationName', $ls_associationName);
+			$this->setConfig('children.associationName', $associationName);
 		}
 
 		if (
-			$lo_schema->hasColumn($this->getConfig('parent.foreignKey')) &&
+			$schema->hasColumn($this->getConfig('parent.foreignKey')) &&
 			(
 				!$this->getConfig('parent.associationName') ||
-				!$lo_table->hasAssociation($this->getConfig('parent.associationName'))
+				!$table->hasAssociation($this->getConfig('parent.associationName'))
 			)
 		) {
-			$ls_associationName = $this->getConfig('parent.associationName') ?: 'Parent' . Inflector::camelize($ls_alias);
-			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass ??= $lo_table->getEntityClass();
+			$associationName = $this->getConfig('parent.associationName') ?: 'Parent' . Inflector::camelize($alias);
+			/** @var \Awyiss\Model\Entity $entityClass */
+			$entityClass ??= $table->getEntityClass();
 
-			$la_bindingKeys = array_merge((array)$this->getConfig('parent.bindingKey'), $this->getConfig('relatedColumns'));
-			$la_bindingKeys = array_filter($la_bindingKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
-			$la_bindingKeys = $ls_entityClass::unmapFields($la_bindingKeys);
+			$bindingKeys = array_merge((array)$this->getConfig('parent.bindingKey'), $this->getConfig('relatedColumns'));
+			$bindingKeys = array_filter($bindingKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
+			$bindingKeys = $entityClass::unmapFields($bindingKeys);
 
-			$la_foreignKeys = array_merge((array)$this->getConfig('parent.foreignKey'), $this->getConfig('relatedColumns'));
-			$la_foreignKeys = array_filter($la_foreignKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
-			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
+			$foreignKeys = array_merge((array)$this->getConfig('parent.foreignKey'), $this->getConfig('relatedColumns'));
+			$foreignKeys = array_filter($foreignKeys, fn ($field) => !str_starts_with($field, 'attributes.'));
+			$foreignKeys = $entityClass::unmapFields($foreignKeys);
 
-			$lo_table->belongsTo($ls_associationName, [
-				'bindingKey' => $la_bindingKeys,
-				'className' => $ls_alias,
-				'foreignKey' => $la_foreignKeys,
+			$table->belongsTo($associationName, [
+				'bindingKey' => $bindingKeys,
+				'className' => $alias,
+				'foreignKey' => $foreignKeys,
 			]);
 
-			$ls_property = $lo_table->$ls_associationName->getProperty();
-			$ls_entityClass::addFieldMapping($ls_property, Inflector::variable($ls_property));
+			$property = $table->$associationName->getProperty();
+			$entityClass::addFieldMapping($property, Inflector::variable($property));
 
-			$this->setConfig('parent.associationName', $ls_associationName);
+			$this->setConfig('parent.associationName', $associationName);
 		}
 
 		return $this;
@@ -222,20 +222,20 @@ class NestBehavior extends Behavior {
 			return null;
 		}
 
-		$lo_association = $this->getAssociation('children');
+		$association = $this->getAssociation('children');
 
-		$lo_query = $lo_association->find();
+		$query = $association->find();
 
-		$lx_finder = $options['finder'] ?? $this->getConfig('children.finder');
-		if ($lx_finder) {
-			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
+		$finder = $options['finder'] ?? $this->getConfig('children.finder');
+		if ($finder) {
+			$query = $association->find($finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
 		}
 
-		$this->addQueryOptions($lo_query, $options);
+		$this->addQueryOptions($query, $options);
 
-		$this->addQueryConditions($lo_query, $lo_association, $entity, 'children');
+		$this->addQueryConditions($query, $association, $entity, 'children');
 
-		return $lo_query->all();
+		return $query->all();
 	}
 
 
@@ -261,29 +261,29 @@ class NestBehavior extends Behavior {
 			return $this->fetchAllNestedChildren($entity, $options);
 		}
 
-		$lo_collection = new Collection([]);
+		$collection = new Collection([]);
 
 		$entity->setVirtual(['level'], true);
 		$entity->set('level', $currentLevel);
 
-		foreach ($this->getChildren($entity, $options) as $lo_entity) {
-			$lo_collection = $lo_collection->appendItem($lo_entity);
+		foreach ($this->getChildren($entity, $options) as $child) {
+			$collection = $collection->appendItem($child);
 
-			$li_maxLevel = $options['maxLevel'] ?? $this->getConfig('children.maxLevel');
-			if (isset($li_maxLevel) && $li_maxLevel <= $currentLevel + 1) {
+			$maxLevel = $options['maxLevel'] ?? $this->getConfig('children.maxLevel');
+			if (isset($maxLevel) && $maxLevel <= $currentLevel + 1) {
 				continue;
 			}
 
-			$lo_children = $this->getNestedChildren($lo_entity, $options, $currentLevel + 1);
+			$children = $this->getNestedChildren($child, $options, $currentLevel + 1);
 
-			if (!$lo_children?->count()) {
+			if (!$children?->count()) {
 				continue;
 			}
 
-			$lo_collection = $lo_collection->append($lo_children);
+			$collection = $collection->append($children);
 		}
 
-		return $lo_collection->compile(false);
+		return $collection->compile(false);
 	}
 
 
@@ -299,20 +299,20 @@ class NestBehavior extends Behavior {
 			return null;
 		}
 
-		$lo_association = $this->getAssociation('parent');
+		$association = $this->getAssociation('parent');
 
-		$lo_query = $lo_association->find();
+		$query = $association->find();
 
-		$lx_finder = $options['finder'] ?? $this->getConfig('parent.finder');
-		if ($lx_finder) {
-			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
+		$finder = $options['finder'] ?? $this->getConfig('parent.finder');
+		if ($finder) {
+			$query = $association->find($finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
 		}
 
-		$this->addQueryOptions($lo_query, $options);
+		$this->addQueryOptions($query, $options);
 
-		$this->addQueryConditions($lo_query, $lo_association, $entity, 'parent');
+		$this->addQueryConditions($query, $association, $entity, 'parent');
 
-		return $lo_query->first();
+		return $query->first();
 	}
 
 
@@ -339,27 +339,27 @@ class NestBehavior extends Behavior {
 			return $this->fetchAllParents($entity, $options);
 		}
 
-		$lo_collection = new Collection([]);
+		$collection = new Collection([]);
 
-		$lo_entity = $this->getParent($entity, $options);
-		if (!$lo_entity) {
-			return $lo_collection->compile(false);
+		$parent = $this->getParent($entity, $options);
+		if (!$parent) {
+			return $collection->compile(false);
 		}
 
-		$lo_collection = $lo_collection->appendItem($lo_entity);
+		$collection = $collection->appendItem($parent);
 
-		$li_maxLevel = $options['maxLevel'] ?? $this->getConfig('parent.maxLevel');
-		if (isset($li_maxLevel) && $li_maxLevel <= $currentLevel + 1) {
-			return $lo_collection->compile(false);
+		$maxLevel = $options['maxLevel'] ?? $this->getConfig('parent.maxLevel');
+		if (isset($maxLevel) && $maxLevel <= $currentLevel + 1) {
+			return $collection->compile(false);
 		}
 
-		$lo_parent = $this->getParents($lo_entity, $options, $currentLevel + 1);
-		if ($lo_parent) {
-			$lo_collection = $lo_collection->append($lo_parent);
+		$parents = $this->getParents($parent, $options, $currentLevel + 1);
+		if ($parents) {
+			$collection = $collection->append($parents);
 		}
 
 
-		return $lo_collection->compile(false);
+		return $collection->compile(false);
 	}
 
 
@@ -376,21 +376,21 @@ class NestBehavior extends Behavior {
 	 */
 	public function getPossibleParents(Entity $entity, CollectionInterface $threadedEntities): CollectionInterface {
 		//We only want to find threaded elements for an existing entity (id equals not null)
-		$li_originalId = $entity->get('id');
-		if (!$li_originalId) {
+		$originalId = $entity->get('id');
+		if (!$originalId) {
 			return $threadedEntities;
 		}
 
-		$li_foundAtLevel = null;
-		$lo_threadedEntities = new Collection($threadedEntities->toList());
+		$foundAtLevel = null;
+		$threadedEntities = new Collection($threadedEntities->toList());
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$lo_possibleParents = $lo_threadedEntities->filter(function ($record) use ($li_originalId, &$li_foundAtLevel) {
-			if ($record->get('id') === $li_originalId) {
-				$li_foundAtLevel = $record->level;
+		$possibleParents = $threadedEntities->filter(function ($record) use ($originalId, &$foundAtLevel) {
+			if ($record->get('id') === $originalId) {
+				$foundAtLevel = $record->level;
 			}
-			elseif ($li_foundAtLevel === null || $record->level <= $li_foundAtLevel) {
-				$li_foundAtLevel = null;
+			elseif ($foundAtLevel === null || $record->level <= $foundAtLevel) {
+				$foundAtLevel = null;
 
 				return true;
 			}
@@ -398,7 +398,7 @@ class NestBehavior extends Behavior {
 			return false;
 		});
 
-		return $lo_possibleParents;
+		return $possibleParents;
 	}
 
 
@@ -412,17 +412,17 @@ class NestBehavior extends Behavior {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	public function listNested(SelectQuery|TreeIterator $query, string $nestingKey = 'children', string $direction = 'desc'): CollectionInterface {
-		$lo_records = $query instanceof TreeIterator ? $query : $query->find('threaded', nestingKey: $nestingKey)->all()->listNested($direction, $nestingKey);
+		$records = $query instanceof TreeIterator ? $query : $query->find('threaded', nestingKey: $nestingKey)->all()->listNested($direction, $nestingKey);
 
-		/** @var \Awyiss\Model\Entity $lo_page */
-		foreach ($lo_records as $lo_entity) {
-			$lo_entity->setVirtual(['level'], true);
+		/** @var \Awyiss\Model\Entity $entity */
+		foreach ($records as $entity) {
+			$entity->setVirtual(['level'], true);
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_entity->level = $lo_records->getDepth();
+			$entity->level = $records->getDepth();
 		}
 
 
-		return $lo_records;
+		return $records;
 	}
 
 
@@ -437,69 +437,68 @@ class NestBehavior extends Behavior {
 			return;
 		}
 
-		$ls_foreignKey = $this->getConfig('parent.foreignKey');
+		$foreignKey = $this->getConfig('parent.foreignKey');
 
-		$lo_rules = $rules;
-		$rules->add(function (EntityInterface $entity, array $options) use ($lo_rules, $ls_foreignKey): string|bool {
-			if (!$entity->get($ls_foreignKey)) {
+		$rules->add(function (EntityInterface $entity, array $options) use ($rules, $foreignKey): string|bool {
+			if (!$entity->get($foreignKey)) {
 				return true;
 			}
 
-			$lo_table = $this->table();
-			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass = $lo_table->getEntityClass();
+			$table = $this->table();
+			/** @var \Awyiss\Model\Entity $entityClass */
+			$entityClass = $table->getEntityClass();
 
-			$la_foreignKeys = array_merge((array)$ls_foreignKey, $this->getConfig('relatedColumns'));
-			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
+			$foreignKeys = array_merge((array)$foreignKey, $this->getConfig('relatedColumns'));
+			$foreignKeys = $entityClass::unmapFields($foreignKeys);
 
-			$la_attributeKeys = [];
-			foreach ($la_foreignKeys as $li_key => $ls_key) {
-				if (str_starts_with($ls_key, 'attributes.')) {
-					$la_attributeKeys[] = $ls_key;
-					unset($la_foreignKeys[ $li_key ]);
+			$attributeKeys = [];
+			foreach ($foreignKeys as $key => $keyName) {
+				if (str_starts_with($keyName, 'attributes.')) {
+					$attributeKeys[] = $keyName;
+					unset($foreignKeys[ $key ]);
 				}
 			}
 
-			$lo_association = $this->getAssociation('parent');
+			$association = $this->getAssociation('parent');
 
-			if ($la_attributeKeys) {
-				$lx_finder = $lo_association->getFinder();
-				$lo_association->setFinder([
+			if ($attributeKeys) {
+				$finder = $association->getFinder();
+				$association->setFinder([
 					'withMatchingAttributes' => [
 						'entity' => $entity,
-						'fields' => $la_attributeKeys,
+						'fields' => $attributeKeys,
 					],
 				]);
 			}
 
-			$lo_existsIn = $lo_rules->existsIn($la_foreignKeys, $lo_association, ['errorField' => '_dummy']);
+			$existsIn = $rules->existsIn($foreignKeys, $association, ['errorField' => '_dummy']);
 
 			if ($entity->isNew()) {
-				$lb_exists = $lo_existsIn($entity, $options);
+				$exists = $existsIn($entity, $options);
 			}
 			else {
-				$lo_nestedChildren = $this->getNestedChildren($entity);
+				$nestedChildren = $this->getNestedChildren($entity);
 
-				if (!$lo_nestedChildren?->count()) {
+				if (!$nestedChildren?->count()) {
 					return true;
 				}
 
-				$la_nestedChildrenIds = $lo_nestedChildren->extract($this->getConfig('parent.bindingKey'))->toArray();
+				$nestedChildrenIds = $nestedChildren->extract($this->getConfig('parent.bindingKey'))->toArray();
 
-				$lb_exists = $lo_existsIn($entity, $options) && !in_array($entity->get($ls_foreignKey), $la_nestedChildrenIds);
+				$exists = $existsIn($entity, $options) && !in_array($entity->get($foreignKey), $nestedChildrenIds);
 			}
 
-			if ($la_attributeKeys) {
-				$lo_association->setFinder($lx_finder);
+			if ($attributeKeys) {
+				$association->setFinder($finder);
 			}
 
-			if (!$lb_exists) {
+			if (!$exists) {
 				return __df($this->table()->getI18nDomain(), 'validation', 'error_valid_' . Inflector::underscore($this->getConfig('parent.foreignKey')));
 			}
 
 			return true;
-		}, 'valid' . Inflector::camelize($ls_foreignKey), [
-			'errorField' => Inflector::variable($ls_foreignKey),
+		}, 'valid' . Inflector::camelize($foreignKey), [
+			'errorField' => Inflector::variable($foreignKey),
 		]);
 	}
 
@@ -524,63 +523,63 @@ class NestBehavior extends Behavior {
 			return;
 		}
 
-		$lo_table = $this->table();
+		$table = $this->table();
 
-		$la_finders = [];
-		if ($lo_table->hasBehavior('MediaAssignment')) {
-			$la_finders['mediaAssignments'] = ['formatResult' => false];
+		$finders = [];
+		if ($table->hasBehavior('MediaAssignment')) {
+			$finders['mediaAssignments'] = ['formatResult' => false];
 		}
-		$la_finders[] = 'translations';
+		$finders[] = 'translations';
 
 		/**
-		 * @var \Awyiss\Model\Entity $lo_originalEntity
+		 * @var \Awyiss\Model\Entity $originalEntity
 		 * @noinspection PhpUndefinedFieldInspection
 		 */
-		$lo_originalEntity = $entity->originalEntity;
-		if (!$lo_originalEntity) {
-			/** @var \Awyiss\Model\Entity $lo_originalEntity */
-			$lo_originalEntity = unserialize(serialize($entity));
-			$lo_originalEntity->patch($entity->extractOriginal(), ['guard' => false]);
-			$lo_originalEntity->clean();
-			$lo_originalEntity->setNew(false);
+		$originalEntity = $entity->originalEntity;
+		if (!$originalEntity) {
+			/** @var \Awyiss\Model\Entity $originalEntity */
+			$originalEntity = unserialize(serialize($entity));
+			$originalEntity->patch($entity->extractOriginal(), ['guard' => false]);
+			$originalEntity->clean();
+			$originalEntity->setNew(false);
 		}
-		$lo_children = $this->getNestedChildren($lo_originalEntity, ['finders' => $la_finders]);
+		$children = $this->getNestedChildren($originalEntity, ['finders' => $finders]);
 
-		if (!$lo_children?->count()) {
+		if (!$children?->count()) {
 			return;
 		}
 
-		$ls_alias = $this->getConfig('alias');
+		$alias = $this->getConfig('alias');
 
-		$ls_associationName = $this->getConfig('children.associationName') ?: 'Child' . Inflector::camelize($ls_alias);
-		$lo_association = $lo_table->{$ls_associationName};
-		$lo_association->getBehavior('Nest')->setConfig('buildRules', false);
-		if ($lo_association->hasBehavior('Categories')) {
-			$lo_association->getBehavior('Categories')->setConfig('buildRules', false);
+		$associationName = $this->getConfig('children.associationName') ?: 'Child' . Inflector::camelize($alias);
+		$association = $table->{$associationName};
+		$association->getBehavior('Nest')->setConfig('buildRules', false);
+		if ($association->hasBehavior('Categories')) {
+			$association->getBehavior('Categories')->setConfig('buildRules', false);
 		}
 
-		$ls_propertyName = Inflector::variable($lo_table->$ls_associationName->getProperty());
+		$propertyName = Inflector::variable($table->$associationName->getProperty());
 		// Create a nested list of all items
-		$entity->{$ls_propertyName} = $lo_children->nest('id', 'parentId', $ls_propertyName)->toList();
+		$entity->{$propertyName} = $children->nest('id', 'parentId', $propertyName)->toList();
 
-		$la_relatedColumns = $lo_table->getBehavior('Nest')->getConfig('relatedColumns');
+		$relatedColumns = $table->getBehavior('Nest')->getConfig('relatedColumns');
 
 		// Remove all blocklisted columns from the related columns
-		$la_blocklistedColumns = $lo_table->getBehavior('Nest')->getConfig('children.blocklistedColumns');
-		if ($la_blocklistedColumns) {
-			$la_relatedColumns = array_diff($la_relatedColumns, $la_blocklistedColumns);
+		$blocklistedColumns = $table->getBehavior('Nest')->getConfig('children.blocklistedColumns');
+		if ($blocklistedColumns) {
+			$relatedColumns = array_diff($relatedColumns, $blocklistedColumns);
 		}
 
-		$la_relatedColumnValues = $entity->extract($la_relatedColumns);
+		$relatedColumnValues = $entity->extract($relatedColumns);
 
-		/** @var \Awyiss\Model\Entity $lo_child */
-		foreach ($lo_children as $lo_child) {
-			$la_primaryKeys = (array)$lo_table->getPrimaryKey();
-			$la_primaryKeyValues = $lo_child->extract($la_primaryKeys);
+		/** @var \Awyiss\Model\Entity $child */
+		foreach ($children as $child) {
+			$primaryKeys = (array)$table->getPrimaryKey();
+			$primaryKeyValues = $child->extract($primaryKeys);
 			/** @noinspection PhpUndefinedFieldInspection */
-			$lo_child->originalPrimaryKeyValues ??= $la_primaryKeyValues;
-			$lo_child->unset($la_primaryKeys);
-			$lo_child->setNew(true);
+			$child->originalPrimaryKeyValues ??= $primaryKeyValues;
+			$child->unset($primaryKeys);
+			$child->setNew(true);
 
 			/**
 			 * If the nesting has related columns, need to set them on the child entity with the
@@ -589,8 +588,8 @@ class NestBehavior extends Behavior {
 			 * Copying a widget to another identifier, ort form elements lto another page:
 			 * the new values of the entity have to be used for the copied children as well.
 			 */
-			if ($la_relatedColumns) {
-				$lo_child->patch($la_relatedColumnValues);
+			if ($relatedColumns) {
+				$child->patch($relatedColumnValues);
 			}
 		}
 	}
@@ -612,17 +611,17 @@ class NestBehavior extends Behavior {
 			return;
 		}
 
-		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'nest'));
+		$queryOptions = Hash::merge($this->getConfig(), Hash::get($options, 'nest'));
 
-		if ($la_options['skip'] === true) {
+		if ($queryOptions['skip'] === true) {
 			return;
 		}
 
-		$la_relatedColumns = $this->getConfig('relatedColumns');
+		$relatedColumns = $this->getConfig('relatedColumns');
 		// Remember the original values of the related columns
 		$this->rememberedData[ $entity->get('id') ] = array_merge(
-			$entity->extractOriginalChanged($la_relatedColumns),
-			$entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true) ?? []
+			$entity->extractOriginalChanged($relatedColumns),
+			$entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($relatedColumns), true) ?? []
 		);
 	}
 
@@ -647,10 +646,10 @@ class NestBehavior extends Behavior {
 			return;
 		}
 
-		$la_originalData = $this->rememberedData[ $entity->get('id') ];
+		$originalData = $this->rememberedData[ $entity->get('id') ];
 		unset($this->rememberedData[ $entity->get('id') ]);
 
-		$lo_originalEntity = unserialize(serialize($entity));
+		$originalEntity = unserialize(serialize($entity));
 		/**
 		 * If the entity has attributes and original data is provided, create a clone and set both,
 		 * the entity and the attribute, to a clean, "old" state.
@@ -660,76 +659,76 @@ class NestBehavior extends Behavior {
 		 * to retrieve the records of the old scope.
 		 */
 		if (
-			$la_originalData &&
-			$lo_originalEntity->get('attributes') &&
+			$originalData &&
+			$originalEntity->get('attributes') &&
 			array_filter($this->getConfig('relatedColumns'), fn ($field) => str_starts_with($field, 'attributes.'))
 		) {
-			$lo_attributes = $lo_originalEntity->get('attributes');
+			$attributes = $originalEntity->get('attributes');
 
-			$lo_originalEntity->patch($la_originalData, [
+			$originalEntity->patch($originalData, [
 				'asOriginal' => true,
 				'guard' => false,
 				'setter' => false,
 			]);
 
-			$lo_originalEntity->clean();
+			$originalEntity->clean();
 
-			if ($lo_attributes) {
-				$lo_attributes->clean();
+			if ($attributes) {
+				$attributes->clean();
 			}
 		}
 
 		// Fetch all nested children of the entity with its original data
-		$lo_children = $this->getNestedChildren($lo_originalEntity);
+		$children = $this->getNestedChildren($originalEntity);
 
-		if (!$lo_children?->count()) {
+		if (!$children?->count()) {
 			return;
 		}
 
-		$la_relatedColumns = $this->getConfig('relatedColumns');
+		$relatedColumns = $this->getConfig('relatedColumns');
 
 		// Remove all blocklisted columns from the related columns
-		$la_blocklistedColumns = $this->getConfig('children.blocklistedColumns');
-		if ($la_blocklistedColumns) {
-			$la_relatedColumns = array_diff($la_relatedColumns, $la_blocklistedColumns);
+		$blocklistedColumns = $this->getConfig('children.blocklistedColumns');
+		if ($blocklistedColumns) {
+			$relatedColumns = array_diff($relatedColumns, $blocklistedColumns);
 		}
 
-		$lo_table = $this->table();
+		$table = $this->table();
 
-		$la_ids = $lo_children->extract('id')->toList();
+		$ids = $children->extract('id')->toList();
 
 		// Extract all values of related columns in the entity
-		$la_relatedBaseColumns = array_filter($la_relatedColumns, fn ($field) => !str_starts_with($field, 'attributes.'));
-		if ($la_relatedBaseColumns) {
-			$la_data = $entity->extract($la_relatedBaseColumns);
-			$la_data = $entity::unmapFields($la_data, true);
+		$relatedBaseColumns = array_filter($relatedColumns, fn ($field) => !str_starts_with($field, 'attributes.'));
+		if ($relatedBaseColumns) {
+			$data = $entity->extract($relatedBaseColumns);
+			$data = $entity::unmapFields($data, true);
 
-			$lo_table->updateAll($la_data, ['id IN' => $la_ids]);
+			$table->updateAll($data, ['id IN' => $ids]);
 		}
 
 		// Get all related columns that are attributes
-		$la_attributeFields = $lo_table->extractAttributeFields($la_relatedColumns);
-		if (!$la_attributeFields) {
+		$attributeFields = $table->extractAttributeFields($relatedColumns);
+		if (!$attributeFields) {
 			return;
 		}
 
 		// Extract all values of related columns in the attribute
-		$la_data = $entity->get('attributes')?->extract($la_attributeFields);
-		if (!$la_data) {
+		$data = $entity->get('attributes')?->extract($attributeFields);
+		if (!$data) {
 			return;
 		}
 
 		// Unmap the keys of the attributes data
-		$la_data = $entity->get('attributes')::unmapFields($la_data, true);
+		$data = $entity->get('attributes')::unmapFields($data, true);
 
-		$lo_association = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
+		$association = $table->getAssociation($table->getAttributesTableName(true));
 
-		$ls_foreignKey = $lo_association->getForeignKey();
+		$foreignKey = $association->getForeignKey();
 
 		// Update all attributes of the children with the new values
-		$li_affectedRows = $lo_association->updateAll($la_data, [$ls_foreignKey . ' IN' => $la_ids]);
+		$affectedRows = $association->updateAll($data, [$foreignKey . ' IN' => $ids]);
 
-		if ($li_affectedRows === count($la_ids)) {
+		if ($affectedRows === count($ids)) {
 			return;
 		}
 
@@ -737,29 +736,29 @@ class NestBehavior extends Behavior {
 		 * Houston, we have a problem
 		 * Not all children have an attribute row.
 		 */
-		$la_existingIds = $lo_association->find()
-			->select($ls_foreignKey)
-			->where([$ls_foreignKey . ' IN' => $la_ids])
+		$existingIds = $association->find()
+			->select($foreignKey)
+			->where([$foreignKey . ' IN' => $ids])
 			->disableHydration()
 			->all()
-			->extract($ls_foreignKey)
+			->extract($foreignKey)
 			->toList();
 
-		$la_newIds = array_diff($la_ids, $la_existingIds);
+		$newIds = array_diff($ids, $existingIds);
 
-		$la_entities = [];
-		foreach ($la_newIds as $li_id) {
-			/** @var \Awyiss\Model\Table $lo_association */
-			$la_entities[] = $lo_association->newDefaultEntity(
-				$la_data + [
-					$ls_foreignKey => $li_id,
+		$entities = [];
+		foreach ($newIds as $id) {
+			/** @var \Awyiss\Model\Table $association */
+			$entities[] = $association->newDefaultEntity(
+				$data + [
+					$foreignKey => $id,
 				]
 			);
 		}
 
 		try {
 			//Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
-			$lo_association->saveMany($la_entities, [
+			$association->saveMany($entities, [
 				'audit' => ['skip' => true],
 				'atomic' => false,
 				'checkRules' => false,
@@ -790,34 +789,34 @@ class NestBehavior extends Behavior {
 	 */
 	protected function addQueryConditions(SelectQuery $query, Association $association, EntityInterface $entity, string $type): void {
 		if ($type === 'children') {
-			$la_bindingKeys = (array)$association->getBindingKey();
-			$la_foreignKeys = (array)$association->getForeignKey();
+			$bindingKeys = (array)$association->getBindingKey();
+			$foreignKeys = (array)$association->getForeignKey();
 		}
 		else {
-			$la_foreignKeys = (array)$association->getBindingKey();
-			$la_bindingKeys = (array)$association->getForeignKey();
+			$foreignKeys = (array)$association->getBindingKey();
+			$bindingKeys = (array)$association->getForeignKey();
 		}
 
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $association->getSource()->getEntityClass();
+		/** @var \Awyiss\Model\Entity $entityClass */
+		$entityClass = $association->getSource()->getEntityClass();
 
-		$la_skipFields = $ls_entityClass::unmapFields($options['skipFields'] ?? []);
+		$skipFields = $entityClass::unmapFields($options['skipFields'] ?? []);
 
-		foreach ($la_foreignKeys as $li_key => $ls_field) {
-			$ls_field = $ls_entityClass::unmapField($ls_field);
+		foreach ($foreignKeys as $key => $foreignKey) {
+			$foreignKey = $entityClass::unmapField($foreignKey);
 
-			if (in_array($ls_field, $la_skipFields)) {
+			if (in_array($foreignKey, $skipFields)) {
 				continue;
 			}
 
-			$lx_value = $entity->hasOriginal($la_bindingKeys[ $li_key ]) ? $entity->getOriginal($la_bindingKeys[ $li_key ]) : $entity->get($la_bindingKeys[ $li_key ]);
+			$value = $entity->hasOriginal($bindingKeys[ $key ]) ? $entity->getOriginal($bindingKeys[ $key ]) : $entity->get($bindingKeys[ $key ]);
 
-			if ($lx_value === null) {
-				$ls_field .= ' IS';
+			if ($value === null) {
+				$foreignKey .= ' IS';
 			}
 
 			$query->where([
-				$association->getAlias() . '.' . $ls_field => $lx_value,
+				$association->getAlias() . '.' . $foreignKey => $value,
 			]);
 		}
 	}
@@ -828,13 +827,13 @@ class NestBehavior extends Behavior {
 	 * @return \Cake\ORM\Association
 	 */
 	protected function getAssociation(string $type): Association {
-		$ls_associationName = $this->getConfig($type . '.associationName');
+		$associationName = $this->getConfig($type . '.associationName');
 
-		if (!$ls_associationName || !$this->table()->hasAssociation($ls_associationName)) {
+		if (!$associationName || !$this->table()->hasAssociation($associationName)) {
 			throw new RuntimeException(sprintf('Expected option for `%s.associationName` to be a valid assocation on table `%s`', $type, $this->table()->getAlias()));
 		}
 
-		return $this->table()->getAssociation($ls_associationName);
+		return $this->table()->getAssociation($associationName);
 	}
 
 
@@ -844,39 +843,39 @@ class NestBehavior extends Behavior {
 	 * @return ?CollectionInterface
 	 */
 	protected function fetchAllNestedChildren(EntityInterface $entity, array $options): ?CollectionInterface {
-		$lo_association = $this->getAssociation('children');
+		$association = $this->getAssociation('children');
 
-		$lo_query = $lo_association->find();
+		$query = $association->find();
 
-		$lx_finder = $options['finder'] ?? $this->getConfig('children.finder');
-		if ($lx_finder) {
-			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
+		$finder = $options['finder'] ?? $this->getConfig('children.finder');
+		if ($finder) {
+			$query = $association->find($finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
 		}
 
-		$this->addQueryOptions($lo_query, $options);
+		$this->addQueryOptions($query, $options);
 
-		$ls_nestingKey = Inflector::variable($this->getConfig('children.associationName'));
-		$lo_records = $this->listNested($lo_query, $ls_nestingKey);
+		$nestingKey = Inflector::variable($this->getConfig('children.associationName'));
+		$records = $this->listNested($query, $nestingKey);
 
-		$lo_records = $lo_records->compile(false);
+		$records = $records->compile(false);
 
-		$li_originalId = $entity->id;
-		$li_maxLevel = $options['maxLevel'] ?? $this->getConfig('children.maxLevel');
-		$li_foundAtLevel = null;
-		$lo_records = $lo_records->filter(function (EntityInterface $entity) use ($li_originalId, &$li_foundAtLevel, $li_maxLevel) {
+		$originalId = $entity->id;
+		$maxLevel = $options['maxLevel'] ?? $this->getConfig('children.maxLevel');
+		$foundAtLevel = null;
+		$records = $records->filter(function (EntityInterface $entity) use ($originalId, &$foundAtLevel, $maxLevel) {
 			/** @var \Awyiss\Model\Entity $entity */
-			if ($entity->get('id') === $li_originalId) {
+			if ($entity->get('id') === $originalId) {
 				/** @noinspection PhpUndefinedFieldInspection */
-				$li_foundAtLevel = $entity->level;
+				$foundAtLevel = $entity->level;
 			}
-			elseif ($li_foundAtLevel !== null) {
+			elseif ($foundAtLevel !== null) {
 				/** @noinspection PhpUndefinedFieldInspection */
-				if ($entity->level > $li_foundAtLevel) {
+				if ($entity->level > $foundAtLevel) {
 					/** @noinspection PhpUndefinedFieldInspection */
-					return !isset($li_maxLevel) || $entity->level <= $li_maxLevel;
+					return !isset($maxLevel) || $entity->level <= $maxLevel;
 				}
 
-				$li_foundAtLevel = null;
+				$foundAtLevel = null;
 			}
 
 
@@ -884,7 +883,7 @@ class NestBehavior extends Behavior {
 		});
 
 
-		return $lo_records->compile(false);
+		return $records->compile(false);
 	}
 
 
@@ -894,42 +893,42 @@ class NestBehavior extends Behavior {
 	 * @return \Cake\Collection\CollectionInterface|null
 	 */
 	protected function fetchAllParents(EntityInterface $entity, array $options): ?CollectionInterface {
-		$lo_association = $this->getAssociation('parent');
+		$association = $this->getAssociation('parent');
 
-		$lo_query = $lo_association->find();
+		$query = $association->find();
 
-		$lx_finder = $options['finder'] ?? $this->getConfig('parent.finder');
-		if ($lx_finder) {
-			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
+		$finder = $options['finder'] ?? $this->getConfig('parent.finder');
+		if ($finder) {
+			$query = $association->find($finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
 		}
 
-		$this->addQueryOptions($lo_query, $options);
+		$this->addQueryOptions($query, $options);
 
-		$ls_nestingKey = Inflector::variable($this->getConfig('parent.associationName'));
-		$lo_records = $this->listNested($lo_query, $ls_nestingKey, 'asc');
-		$lo_records = $lo_records->compile(false);
+		$nestingKey = Inflector::variable($this->getConfig('parent.associationName'));
+		$records = $this->listNested($query, $nestingKey, 'asc');
+		$records = $records->compile(false);
 
-		$li_originalId = $entity->id;
-		$li_foundParentId = null;
-		$li_maxLevel = $options['maxLevel'] ?? $this->getConfig('parent.maxLevel') ?? 0;
-		$lo_records = $lo_records->filter(function (EntityInterface $entity) use ($li_originalId, &$li_foundParentId, $li_maxLevel) {
+		$originalId = $entity->id;
+		$foundParentId = null;
+		$maxLevel = $options['maxLevel'] ?? $this->getConfig('parent.maxLevel') ?? 0;
+		$records = $records->filter(function (EntityInterface $entity) use ($originalId, &$foundParentId, $maxLevel) {
 			/** @var \Awyiss\Model\Entity $entity */
-			if ($entity->get('id') === $li_originalId) {
+			if ($entity->get('id') === $originalId) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$li_foundParentId = (int)$entity->parentId;
+				$foundParentId = (int)$entity->parentId;
 			}
-			elseif ($li_foundParentId !== null && $entity->id === $li_foundParentId) {
+			elseif ($foundParentId !== null && $entity->id === $foundParentId) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$li_foundParentId = (int)$entity->parentId;
+				$foundParentId = (int)$entity->parentId;
 
 				/** @noinspection PhpUndefinedFieldInspection */
-				return $entity->level >= $li_maxLevel;
+				return $entity->level >= $maxLevel;
 			}
 
 			return false;
 		});
 
-		return $lo_records->compile(false);
+		return $records->compile(false);
 	}
 
 
@@ -940,12 +939,12 @@ class NestBehavior extends Behavior {
 	 */
 	protected function addQueryOptions(SelectQuery $query, array $options): void {
 		if (!empty($options['finders']) && is_array($options['finders'])) {
-			foreach ($options['finders'] as $lx_finder => $lx_options) {
-				if (is_int($lx_finder)) {
-					$query->find($lx_options);
+			foreach ($options['finders'] as $finder => $finderOptions) {
+				if (is_int($finder)) {
+					$query->find($finderOptions);
 				}
 				else {
-					$query->find($lx_finder, ...$lx_options);
+					$query->find($finder, ...$finderOptions);
 				}
 			}
 		}
@@ -996,17 +995,17 @@ class NestBehavior extends Behavior {
 	 * @throws \Exception
 	 */
 	protected function unnestEntries(Event $event, Configuration $entity, bool $deleted = false): void {
-		$lb_defaultNest = false;
+		$defaultNest = false;
 		if ($deleted) {
-			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($entity->scope);
-			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
-			$lb_defaultNest = $lo_configOption?->getDefaultValue() ?? false;
+			$configOptions = ConfigOptionsProvider::loadConfigOptions($entity->scope);
+			$configOption = $configOptions?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
+			$defaultNest = $configOption?->getDefaultValue() ?? false;
 		}
 
 		if (
 			(
 				$deleted &&
-				!$lb_defaultNest
+				!$defaultNest
 			) ||
 			(
 				!$deleted &&
@@ -1014,41 +1013,41 @@ class NestBehavior extends Behavior {
 				!$entity->value
 			)
 		) {
-			$lo_table = $this->table();
-			$lo_schema = $lo_table->getSchema();
-			$ls_column = $lo_table->getBehavior('Nest')->getConfig('children.foreignKey');
+			$table = $this->table();
+			$schema = $table->getSchema();
+			$column = $table->getBehavior('Nest')->getConfig('children.foreignKey');
 
-			if (!$lo_schema->hasColumn($ls_column)) {
+			if (!$schema->hasColumn($column)) {
 				return;
 			}
 			// If the column is the same as the foreign key of the Categories behavior, we don't need to unnest the entries
-			if ($lo_table->hasBehavior('Categories')) {
-				$ls_foreignKey = $lo_table->getBehavior('Categories')->getConfig('foreignKey');
-				if ($ls_foreignKey && Inflector::underscore($ls_foreignKey) === Inflector::underscore($ls_column)) {
+			if ($table->hasBehavior('Categories')) {
+				$foreignKey = $table->getBehavior('Categories')->getConfig('foreignKey');
+				if ($foreignKey && Inflector::underscore($foreignKey) === Inflector::underscore($column)) {
 					return;
 				}
 			}
 
-			$lo_table->updateAll([
-				$ls_column => null,
+			$table->updateAll([
+				$column => null,
 			], [
-				$ls_column . ' IS NOT' => null,
+				$column . ' IS NOT' => null,
 			]);
 
-			$ls_field = LocalConfig::read([
+			$field = LocalConfig::read([
 				'systemOrder',
 				'field',
 			], 'systemOrder', $this->getConfig('alias'));
 
-			$li_direction = LocalConfig::read([
+			$direction = LocalConfig::read([
 				'systemOrder',
 				'direction',
 			], SORT_ASC, $this->getConfig('alias'));
 
-			if ($lo_table->hasBehavior('SystemOrder')) {
-				/** @var \Awyiss\Model\Entity $ls_entityClass */
-				$ls_entityClass = $lo_table->getEntityClass();
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_entityClass::unmapField($ls_field), $li_direction, $event);
+			if ($table->hasBehavior('SystemOrder')) {
+				/** @var \Awyiss\Model\Entity $entityClass */
+				$entityClass = $table->getEntityClass();
+				$table->getBehavior('SystemOrder')->rebuildSystemOrder($entityClass::unmapField($field), $direction, $event);
 			}
 		}
 	}

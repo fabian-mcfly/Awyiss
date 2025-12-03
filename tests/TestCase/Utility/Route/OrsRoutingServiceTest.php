@@ -45,7 +45,6 @@ class OrsRoutingServiceTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -91,7 +90,6 @@ class OrsRoutingServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Route\OrsRoutingService::findCoordinates()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindCoordinates(): void {
 		// Create sample response data
@@ -145,7 +143,6 @@ class OrsRoutingServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Route\OrsRoutingService::findCoordinates()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindCoordinatesMultipleResults(): void {
 		// Create sample response data with multiple addresses
@@ -233,7 +230,6 @@ class OrsRoutingServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Route\OrsRoutingService::findCoordinates()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindCoordinatesError(): void {
 		// Create mock response with error status
@@ -262,7 +258,6 @@ class OrsRoutingServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Route\OrsRoutingService::findCoordinates()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindCoordinatesEmptyFeatures(): void {
 		// Create response with empty features
@@ -292,7 +287,6 @@ class OrsRoutingServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Route\OrsRoutingService::getRoute()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetRoute(): void {
 		$start = new Address(52.5200, 13.4050, 'Berlin');
@@ -354,7 +348,6 @@ class OrsRoutingServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Route\OrsRoutingService::getRoute()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetRouteError(): void {
 		// Create start and end addresses with correct parameter order
@@ -387,7 +380,6 @@ class OrsRoutingServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Route\OrsRoutingService::getRoute()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetRouteNullResponse(): void {
 		// Create start and end addresses with correct parameter order

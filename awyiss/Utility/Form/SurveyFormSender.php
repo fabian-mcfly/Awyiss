@@ -46,14 +46,14 @@ class SurveyFormSender extends FormSender {
 	 * @return string
 	 */
 	protected function createDataString(string $type): string {
-		$lo_view = $this->getView();
+		$view = $this->getView();
 
-		$ls_fileName = 'survey_data';
+		$fileName = 'survey_data';
 		if ($type === 'text') {
-			$ls_fileName .= '_plain';
+			$fileName .= '_plain';
 		}
 
-		return $lo_view->element('email/' . $ls_fileName, $this->templateData());
+		return $view->element('email/' . $fileName, $this->templateData());
 	}
 
 
@@ -61,9 +61,9 @@ class SurveyFormSender extends FormSender {
 	 * @return array
 	 */
 	protected function templateData(): array {
-		$la_data = parent::templateData();
+		$data = parent::templateData();
 
-		$la_data += [
+		$data += [
 			'survey' => $this->survey,
 			'surveyProgress' => $this->progress,
 			'surveyCustomAnswers' => $this->customAnswers,
@@ -71,6 +71,6 @@ class SurveyFormSender extends FormSender {
 			'nextActionEnum' => $this->survey->getNextActionEnum(),
 		];
 
-		return $la_data;
+		return $data;
 	}
 }

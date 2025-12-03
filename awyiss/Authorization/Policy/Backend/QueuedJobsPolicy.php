@@ -13,7 +13,13 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
  * Permission for the Queue scope
  */
 class QueuedJobsPolicy extends AbstractPolicy {
+	/**
+	 * @var PermissionOptionCollection
+	 */
 	protected static PermissionOptionCollection $permissionOptionCollection;
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 
 
@@ -25,20 +31,20 @@ class QueuedJobsPolicy extends AbstractPolicy {
 	 * @throws \Exception
 	 */
 	protected static function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissionOptions = new PermissionOptionCollection(static::getScope());
+		$permissionOptions = new PermissionOptionCollection(static::getScope());
 
-		$lo_permissionOptions->load('read', [
+		$permissionOptions->load('read', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissionOptions->load('restartFailed', [
+		$permissionOptions->load('restartFailed', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissionOptions->load('delete', [
+		$permissionOptions->load('delete', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		return $lo_permissionOptions;
+		return $permissionOptions;
 	}
 }

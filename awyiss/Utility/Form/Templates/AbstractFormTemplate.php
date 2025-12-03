@@ -40,16 +40,16 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @return array
 	 */
 	protected static function buildElements(array $fields, array $languages): array {
-		$la_elements = [];
-		$lb_i18n = count($languages) > 1;
-		$ls_mainLocale = current($languages)->locale;
+		$elements = [];
+		$i18n = count($languages) > 1;
+		$mainLocale = current($languages)->locale;
 
 		static::buildTranslations($languages);
 
-		foreach ($fields as $ls_field) {
-			$ls_methodName = 'add' . Inflector::camelize($ls_field);
+		foreach ($fields as $field) {
+			$methodName = 'add' . Inflector::camelize($field);
 
-			$la_elements[] = static::$ls_methodName($ls_mainLocale, $lb_i18n, $languages) + [
+			$elements[] = static::$methodName($mainLocale, $i18n, $languages) + [
 				'identifier' => null,
 				'type' => 'text',
 				'titleEmail' => null,
@@ -62,11 +62,11 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 				'columnRtl' => false,
 				'cssClass' => null,
 				'required' => false,
-				'systemOrder' => count($la_elements) + 1,
+				'systemOrder' => count($elements) + 1,
 			];
 		}
 
-		return $la_elements;
+		return $elements;
 	}
 
 
@@ -75,9 +75,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addTitle(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'type' => 'select',
 			'identifier' => 'title',
 			'title' => static::$translations[ $mainLocale ]['title'],
@@ -87,10 +88,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('title', $languages);
+			$settings['_translations'] = static::getTranslations('title', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
@@ -99,19 +100,20 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addFirstname(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'identifier' => 'firstname',
 			'title' => static::$translations[ $mainLocale ]['firstname'],
 			'columnWidth' => '1/2',
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('firstname', $languages);
+			$settings['_translations'] = static::getTranslations('firstname', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
@@ -120,9 +122,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addLastname(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'identifier' => 'lastname',
 			'title' => static::$translations[ $mainLocale ]['lastname'],
 			'columnWidth' => '1/2',
@@ -130,10 +133,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('lastname', $languages);
+			$settings['_translations'] = static::getTranslations('lastname', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
@@ -142,19 +145,20 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addName(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'identifier' => 'name',
 			'title' => static::$translations[ $mainLocale ]['name'],
 			'required' => true,
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('name', $languages);
+			$settings['_translations'] = static::getTranslations('name', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 	/**
@@ -162,9 +166,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addEmail(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'identifier' => 'email',
 			'required' => true,
 			'title' => static::$translations[ $mainLocale ]['email'],
@@ -172,10 +177,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('email', $languages);
+			$settings['_translations'] = static::getTranslations('email', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
@@ -184,9 +189,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addPhone(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'type' => 'tel',
 			'identifier' => 'phone',
 			'title' => static::$translations[ $mainLocale ]['phone'],
@@ -194,10 +200,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('phone', $languages, true);
+			$settings['_translations'] = static::getTranslations('phone', $languages, true);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
@@ -208,17 +214,17 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @return array
 	 */
 	protected static function addDatetime(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'type' => 'datetime',
 			'identifier' => 'datetime',
 			'title' => static::$translations[ $mainLocale ]['datetime'],
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('datetime', $languages);
+			$settings['_translations'] = static::getTranslations('datetime', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
@@ -227,9 +233,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addMessage(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'type' => 'textarea',
 			'identifier' => 'message',
 			'title' => static::$translations[ $mainLocale ]['message'],
@@ -237,10 +244,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('message', $languages);
+			$settings['_translations'] = static::getTranslations('message', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
@@ -249,9 +256,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addPrivacyAccepted(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'type' => 'checkbox',
 			'identifier' => 'privacy_accepted',
 			'title' => static::$translations[ $mainLocale ]['privacy_accepted'],
@@ -260,10 +268,10 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('privacy_accepted', $languages);
+			$settings['_translations'] = static::getTranslations('privacy_accepted', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
@@ -272,18 +280,19 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @param bool $i18n
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
 	 * @return array
+	 * @noinspection PhpUnused
 	 */
 	protected static function addSubmit(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'type' => 'submit',
 			'title' => static::$translations[ $mainLocale ]['submit'],
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('submit', $languages);
+			$settings['_translations'] = static::getTranslations('submit', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 
 
@@ -292,30 +301,30 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @return void
 	 */
 	protected static function buildTranslations(array $languages): void {
-		$ls_currentLocale = I18n::getLocale();
+		$currentLocale = I18n::getLocale();
 
-		foreach ($languages as $lo_language) {
-			I18n::setLocale($lo_language->locale);
-			foreach (array_merge(static::$strings, ['optional_placeholder']) as $ls_string) {
-				$ls_translation = __d('forms', 'form_template_' . $ls_string);
+		foreach ($languages as $language) {
+			I18n::setLocale($language->locale);
+			foreach (array_merge(static::$strings, ['optional_placeholder']) as $string) {
+				$translation = __d('forms', 'form_template_' . $string);
 
 				if (
-					str_contains($ls_translation, '::') &&
-					isset(static::$staticTranslations[ $lo_language->shortcode ][ $ls_string ])
+					str_contains($translation, '::') &&
+					isset(static::$staticTranslations[ $language->shortcode ][ $string ])
 				) {
-					$ls_translation = static::$staticTranslations[ $lo_language->shortcode ][ $ls_string ];
+					$translation = static::$staticTranslations[ $language->shortcode ][ $string ];
 				}
 
-				if (str_contains($ls_translation, '::')) {
-					$ls_translation = null;
+				if (str_contains($translation, '::')) {
+					$translation = null;
 				}
 
-				static::$translations[ $lo_language->locale ][ $ls_string ] = $ls_translation;
+				static::$translations[ $language->locale ][ $string ] = $translation;
 			}
 		}
 
 		// Set the locale back to the original
-		I18n::setLocale($ls_currentLocale);
+		I18n::setLocale($currentLocale);
 	}
 
 
@@ -326,87 +335,89 @@ abstract class AbstractFormTemplate implements FormTemplateInterface {
 	 * @return array
 	 */
 	protected static function getOptions(string $field, array $options, array $languages): array {
-		$lb_i18n = count($languages) > 1;
-		$ls_mainLocale = current($languages)->locale;
-		$lb_isList = array_is_list($options);
+		$i18n = count($languages) > 1;
+		$mainLocale = current($languages)->locale;
+		$isList = array_is_list($options);
 
-		$la_options = [];
+		$builtOptions = [];
 
-		foreach ($options as $lx_key => $ls_value) {
-			$ls_translation = $ls_value ? static::$translations[ $ls_mainLocale ][ $field . '_' . $ls_value ] : '';
-			if ($ls_translation === null) {
-				$ls_translation = static::$translations['en_GB'][ $field . '_' . $ls_value ];
+		foreach ($options as $key => $value) {
+			$translation = $value ? static::$translations[ $mainLocale ][ $field . '_' . $value ] : '';
+			if ($translation === null) {
+				$translation = static::$translations['en_GB'][ $field . '_' . $value ];
 			}
 
-			$ls_key = $lb_isList ? null : $lx_key;
-			if ($lx_key && is_string($lx_key)) {
-				$ls_key = static::$translations[ $ls_mainLocale ][ $field . '_' . $lx_key ];
-				if ($ls_key === null) {
-					$ls_key = static::$translations['en_GB'][ $field . '_' . $lx_key ];
+			$namedKey = $isList ? null : $key;
+			if ($key && is_string($key)) {
+				$namedKey = static::$translations[ $mainLocale ][ $field . '_' . $key ];
+				if ($namedKey === null) {
+					$namedKey = static::$translations['en_GB'][ $field . '_' . $key ];
 				}
 			}
 
-			$la_option = [
-				'key' => $ls_key,
-				'value' => $ls_translation,
+			$option = [
+				'key' => $namedKey,
+				'value' => $translation,
 			];
 
-			if ($lb_i18n) {
-				$la_option['_translations'] = [];
-				foreach ($languages as $lo_language) {
-					$ls_translation = $ls_value ? static::$translations[ $lo_language->locale ][ $field . '_' . $ls_value ] : '';
-					if ($ls_translation === null) {
-						$ls_translation = static::$translations['en_GB'][ $field . '_' . $ls_value ];
+			if ($i18n) {
+				$option['_translations'] = [];
+				foreach ($languages as $language) {
+					$translation = $value ? static::$translations[ $language->locale ][ $field . '_' . $value ] : '';
+					if ($translation === null) {
+						$translation = static::$translations['en_GB'][ $field . '_' . $value ];
 					}
 
-					$ls_key = $lb_isList ? null : $lx_key;
-					if ($lx_key && is_string($lx_key)) {
-						$ls_key = static::$translations[ $lo_language->locale ][ $field . '_' . $lx_key ];
-						if ($ls_key === null) {
-							$ls_key = static::$translations['en_GB'][ $field . '_' . $lx_key ];
+					$namedKey = $isList ? null : $key;
+					if ($key && is_string($key)) {
+						$namedKey = static::$translations[ $language->locale ][ $field . '_' . $key ];
+						if ($namedKey === null) {
+							$namedKey = static::$translations['en_GB'][ $field . '_' . $key ];
 						}
 					}
 
-					$la_option['_translations'][ $lo_language->shortcode ] = [
-						'key' => $ls_key,
-						'value' => $ls_translation,
+					$option['_translations'][ $language->shortcode ] = [
+						'key' => $namedKey,
+						'value' => $translation,
 					];
 				}
 			}
 
-			$la_options[] = $la_option;
+			$builtOptions[] = $option;
 		}
 
-		 return $la_options;
+		 return $builtOptions;
 	}
 
 
 	/**
 	 * @param string $field
 	 * @param array<string, \Awyiss\Model\Entity\Language> $languages
+	 * @param bool $setOptional
+	 * @param string $property
 	 * @return array
 	 */
 	protected static function getTranslations(string $field, array $languages, bool $setOptional = false, string $property = 'title'): array {
-		$la_translations = [];
+		$translations = [];
 
-		foreach ($languages as $lo_language) {
-			$ls_translation = static::$translations[ $lo_language->locale ][ $field ];
-			if ($ls_translation === null) {
-				$ls_translation = static::$translations['en_GB'][ $field ];
+		foreach ($languages as $language) {
+			$translation = static::$translations[ $language->locale ][ $field ];
+			if ($translation === null) {
+				$translation = static::$translations['en_GB'][ $field ];
 			}
 
-			$la_translations[ $lo_language->shortcode ][ $property ] = $ls_translation;
+			$translations[ $language->shortcode ][ $property ] = $translation;
 
 			if ($setOptional) {
-				$ls_translation = static::$translations[ $lo_language->locale ]['optional_placeholder'];
-				if ($ls_translation === null) {
-					$ls_translation = static::$translations['en_GB']['optional_placeholder'];
+				$translation = static::$translations[ $language->locale ]['optional_placeholder'];
+				if ($translation === null) {
+					$translation = static::$translations['en_GB']['optional_placeholder'];
 				}
 
-				$la_translations[ $lo_language->shortcode ]['optional_placeholder'] = $ls_translation;
+				$translations[ $language->shortcode ]['optional_placeholder'] = $translation;
 			}
 		}
 
-		return $la_translations;
+		return $translations;
 	}
 }

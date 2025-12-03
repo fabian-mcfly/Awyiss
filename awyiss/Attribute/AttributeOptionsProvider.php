@@ -51,9 +51,9 @@ class AttributeOptionsProvider {
 
 		if ($returnLoaded) {
 			if (empty(static::$loadedAttributeOptions)) {
-				/** @var class-string<\Awyiss\Attribute\AttributeOptionsCollectionInterface> $ls_attributeOptionsClass */
-				foreach (static::$attributeOptions as $ls_attributeOptionsClass) {
-					static::loadAttributeOptions($ls_attributeOptionsClass);
+				/** @var class-string<\Awyiss\Attribute\AttributeOptionsCollectionInterface> $attributeOptionsClass */
+				foreach (static::$attributeOptions as $attributeOptionsClass) {
+					static::loadAttributeOptions($attributeOptionsClass);
 				}
 			}
 
@@ -74,35 +74,35 @@ class AttributeOptionsProvider {
 	 * @noinspection PhpUnused
 	 */
 	public static function loadAttributeOptions(string $scope): ?AttributeOptionsCollectionInterface {
-		$ls_scope = static::sanitizeScope($scope);
+		$sanitizedScope = static::sanitizeScope($scope);
 
-		if (array_key_exists($ls_scope, static::$loadedAttributeOptions)) {
-			return static::$loadedAttributeOptions[ $ls_scope ];
+		if (array_key_exists($sanitizedScope, static::$loadedAttributeOptions)) {
+			return static::$loadedAttributeOptions[ $sanitizedScope ];
 		}
 
 		if (class_exists($scope)) {
-			$ls_scope = static::extractScopeFromClassName($scope);
-			$ls_attributeOptionsClass = $scope;
+			$sanitizedScope = static::extractScopeFromClassName($scope);
+			$attributeOptionsClass = $scope;
 
-			if (array_key_exists($ls_scope, static::$loadedAttributeOptions)) {
-				return static::$loadedAttributeOptions[ $ls_scope ];
+			if (array_key_exists($sanitizedScope, static::$loadedAttributeOptions)) {
+				return static::$loadedAttributeOptions[ $sanitizedScope ];
 			}
 		}
 		else {
-			/** @var class-string<AttributeOptionsCollectionInterface>|null $ls_attributeOptionsClass */
-			$ls_attributeOptionsClass = static::getAttributeOptionsFile($ls_scope);
-			if (!$ls_attributeOptionsClass) {
-				static::$loadedAttributeOptions[ $ls_scope ] = null;
+			/** @var class-string<AttributeOptionsCollectionInterface>|null $attributeOptionsClass */
+			$attributeOptionsClass = static::getAttributeOptionsFile($sanitizedScope);
+			if (!$attributeOptionsClass) {
+				static::$loadedAttributeOptions[ $sanitizedScope ] = null;
 
 
 				return null;
 			}
 		}
 
-		static::$loadedAttributeOptions[ $ls_scope ] = new $ls_attributeOptionsClass();
+		static::$loadedAttributeOptions[ $sanitizedScope ] = new $attributeOptionsClass();
 
 
-		return static::$loadedAttributeOptions[ $ls_scope ];
+		return static::$loadedAttributeOptions[ $sanitizedScope ];
 	}
 
 
@@ -115,18 +115,18 @@ class AttributeOptionsProvider {
 	 * @throws \ReflectionException
 	 */
 	public static function getAttributeOptionsFile(string $scope, bool $returnLoaded = false): string|AttributeOptionsCollectionInterface|null {
-		$ls_scope = static::sanitizeScope($scope);
+		$scope = static::sanitizeScope($scope);
 
-		if (empty(static::$attributeOptions[ $ls_scope ])) {
-			static::$attributeOptions += static::findAttributeOptionsFiles($ls_scope, $returnLoaded);
+		if (empty(static::$attributeOptions[ $scope ])) {
+			static::$attributeOptions += static::findAttributeOptionsFiles($scope, $returnLoaded);
 		}
 
 		if ($returnLoaded) {
-			return static::$loadedAttributeOptions[ $ls_scope ] ?? null;
+			return static::$loadedAttributeOptions[ $scope ] ?? null;
 		}
 
 
-		return static::$attributeOptions[ $ls_scope ] ?? null;
+		return static::$attributeOptions[ $scope ] ?? null;
 	}
 
 
@@ -138,11 +138,11 @@ class AttributeOptionsProvider {
 	 * @return string
 	 */
 	public static function sanitizeScope(string $scope): string {
-		$ls_scope = Text::slug($scope, '_');
-		$ls_scope = Inflector::singularize($ls_scope);
-		$ls_scope = Inflector::pluralize($ls_scope);
+		$scope = Text::slug($scope, '_');
+		$scope = Inflector::singularize($scope);
+		$scope = Inflector::pluralize($scope);
 
-		return Inflector::camelize($ls_scope);
+		return Inflector::camelize($scope);
 	}
 
 
@@ -170,21 +170,21 @@ class AttributeOptionsProvider {
 	 * @throws \ReflectionException
 	 */
 	protected static function findAttributeOptionsFiles(string $scope, bool $load = false): array {
-		$la_classes = App::classes($scope, 'Attribute/AttributeOptions', 'AttributeOptions', AttributeOptionsCollectionInterface::class);
+		$classes = App::classes($scope, 'Attribute/AttributeOptions', 'AttributeOptions', AttributeOptionsCollectionInterface::class);
 
-		$la_attributeOptionFiles = [];
-		/** @var class-string<\Awyiss\Attribute\AttributeOptionsCollection> $ls_className */
-		foreach ($la_classes as $ls_className) {
-			$ls_scope = static::extractScopeFromClassName($ls_className);
+		$attributeOptionFiles = [];
+		/** @var class-string<\Awyiss\Attribute\AttributeOptionsCollection> $className */
+		foreach ($classes as $className) {
+			$scope = static::extractScopeFromClassName($className);
 
 			if ($load) {
-				static::loadAttributeOptions($ls_className);
+				static::loadAttributeOptions($className);
 			}
 
-			$la_attributeOptionFiles[ $ls_scope ] ??= $ls_className;
+			$attributeOptionFiles[ $scope ] ??= $className;
 		}
 
-		return $la_attributeOptionFiles;
+		return $attributeOptionFiles;
 	}
 
 
@@ -194,10 +194,10 @@ class AttributeOptionsProvider {
 	 * @return string
 	 */
 	public static function extractScopeFromClassName(string $scope, int $suffixLength = 16): string {
-		$la_parts = explode('\\', trim($scope, '\\'));
-		$ls_scope = array_pop($la_parts);
-		$ls_scope = substr($ls_scope, 0, -$suffixLength);
+		$parts = explode('\\', trim($scope, '\\'));
+		$scope = array_pop($parts);
+		$scope = substr($scope, 0, -$suffixLength);
 
-		return static::sanitizeScope($ls_scope);
+		return static::sanitizeScope($scope);
 	}
 }

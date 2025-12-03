@@ -33,7 +33,6 @@ class ContactFormTemplateTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\Templates\ContactFormTemplate::getElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetElements(): void {
 		$elements = ContactFormTemplate::getElements([
@@ -51,7 +50,6 @@ class ContactFormTemplateTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\Templates\ContactFormTemplate::getElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetElementsIncludesTranslationsnForMultipleLanguages(): void {
 		$elements = ContactFormTemplate::getElements([

@@ -79,10 +79,10 @@ class MediaElement extends Entity {
 			return null;
 		}
 
-		$ls_identifier = Text::slug($identifier, ['replacement' => '_']);
+		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
 
-		return mb_strtolower($ls_identifier);
+		return mb_strtolower($identifier);
 	}
 
 
@@ -91,9 +91,9 @@ class MediaElement extends Entity {
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnSpans)) {
-			/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get('Attributes');
-			static::$columnSpans = $lo_table->getColumnSpans();
+			/** @var \Awyiss\Model\Table\AttributesTable $table */
+			$table = FactoryLocator::get('Table')->get('Attributes');
+			static::$columnSpans = $table->getColumnSpans();
 		}
 
 		return [

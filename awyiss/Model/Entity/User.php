@@ -112,18 +112,18 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			return $this->permissionCollection;
 		}
 
-		$lo_authorizationService = Router::getRequest()->getAttribute('authorization');
+		$authorizationService = Router::getRequest()->getAttribute('authorization');
 
-		if (!$lo_authorizationService) {
+		if (!$authorizationService) {
 			throw new RuntimeException(sprintf('Could not retreive `AuthorizationService` in `%s`.', static::class));
 		}
 
-		$la_usergroups = $this->getUsergroups() ?? [];
+		$usergroups = $this->getUsergroups() ?? [];
 
 		/**
 		 * This little magic trick flattens all usergroup permissions in all usergroups into one array we can iterate.
 		 *
-		 * $la_usergroups = [
+		 * $usergroups = [
 		 *    'usergroup1' => [
 		 *        ...
 		 *        'usergroup_permissions' => [permission1.1, permission1.2, permission1.3, permission1.4],
@@ -141,7 +141,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		 *    ],
 		 * ];
 		 *
-		 * The call of array_column returns all values for 'usergroup_permissions' in all elements of $la_usergroups:
+		 * The call of array_column returns all values for 'usergroup_permissions' in all elements of $usergroups:
 		 * [[permission1.1, permission1.2, permission1.3, permission1.4], [permission2.1, permission2.2], [permission3.1, permission3.2, permission3.3]]
 		 *
 		 * Calling array_merge with ... expands each child array and then flattens all.
@@ -149,15 +149,14 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		 *
 		 * This line saves one foreach. That foreach would save the comment above, though.
 		 *
-		 * @var \Awyiss\Model\Entity\UsergroupPermission $lo_usergrousPermissions
 		 * @noinspection GrazieInspection
 		 */
-		$this->permissionCollection = new PermissionCollection($lo_authorizationService, array_merge(...array_column($la_usergroups, 'usergroup_permissions')));
+		$this->permissionCollection = new PermissionCollection($authorizationService, array_merge(...array_column($usergroups, 'usergroup_permissions')));
 
-		foreach (['read', 'create', 'update', 'delete'] as $ls_identifier) {
+		foreach (['read', 'create', 'update', 'delete'] as $identifier) {
 			$this->permissionCollection->add(Permission::createFromArray([
 				'scope' => 'user_configuration',
-				'identifier' => $ls_identifier,
+				'identifier' => $identifier,
 				'access' => PermissionAccess::Granted,
 			]));
 		}
@@ -180,9 +179,9 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 * @inheritDoc
 	 */
 	public function scopeIsAccessible(string $scope, array $additionalData = [], array|string ...$identifier): bool {
-		$lo_permissionCollection = $this->getPermissionCollection();
+		$permissionCollection = $this->getPermissionCollection();
 
-		return $lo_permissionCollection->scopeIsAccessible($scope, $additionalData, ...$identifier);
+		return $permissionCollection->scopeIsAccessible($scope, $additionalData, ...$identifier);
 	}
 
 
@@ -194,19 +193,19 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			return $this->userConfiguration;
 		}
 
-		$lo_table = FactoryLocator::get('Table')->get('UserConfiguration');
-		$lo_records = $lo_table->find()->where(['user_id' => $this->id])->all();
+		$table = FactoryLocator::get('Table')->get('UserConfiguration');
+		$records = $table->find()->where(['user_id' => $this->id])->all();
 
-		$this->userConfiguration = $lo_records->groupBy(function (UserConfiguration $entity) {
+		$this->userConfiguration = $records->groupBy(function (UserConfiguration $entity) {
 			return ConfigOptionsProvider::sanitizeScope($entity->scope);
 		})->map(function (array $records) {
 			return Hash::expand(collection($records)->indexBy(function (UserConfiguration $entity) {
-				$la_identifier = array_map(function (string $identifier) {
+				$identifiers = array_map(function (string $identifier) {
 					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
 				}, explode('.', $entity->identifier));
 
 
-				return implode('.', $la_identifier);
+				return implode('.', $identifiers);
 			})->map(function (UserConfiguration $entity) {
 				return ConfigOptionsProvider::typecastConfigValue(
 					$entity->scope,
@@ -239,10 +238,10 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			return $this->usergroups;
 		}
 
-		/** @var \Awyiss\Model\Table\UsersTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\UsersTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
-		$lo_table->loadInto($this, [
+		$table->loadInto($this, [
 			'Usergroups' => [
 				'finder' => 'active', //Only find active groups.
 				'UsergroupPermissions',
@@ -260,14 +259,14 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 * @return string
 	 */
 	protected function _getLabel(): string {
-		$ls_inactive = '';
+		$inactive = '';
 
 		if (key_exists('active', $this->_fields) && empty($this->active)) {
-			$ls_inactive = __d('users', 'inactive') . ' ';
+			$inactive = __d('users', 'inactive') . ' ';
 		}
 
 
-		return $ls_inactive . $this->username;
+		return $inactive . $this->username;
 	}
 
 
@@ -299,10 +298,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			return null;
 		}
 
-		//Automatically hash passwords when they are changed.
-		$lo_hasher = new DefaultPasswordHasher();
-
-
-		return $lo_hasher->hash($password);
+		// Automatically hash passwords when they are changed.
+		return new DefaultPasswordHasher()->hash($password);
 	}
 }

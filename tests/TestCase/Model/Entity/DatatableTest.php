@@ -18,7 +18,6 @@ class DatatableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Datatable::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\DatatablesTable $table */
@@ -35,7 +34,6 @@ class DatatableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Datatable::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Datatable();
@@ -55,7 +53,6 @@ class DatatableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Datatable::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -99,7 +96,6 @@ class DatatableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Datatable::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new Datatable();
@@ -143,7 +139,6 @@ class DatatableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Datatable
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -167,7 +162,6 @@ class DatatableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Datatable::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

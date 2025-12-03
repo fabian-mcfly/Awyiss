@@ -71,58 +71,58 @@ class InstagramFeedModule extends AbstractModule {
 		?Entity $entity = null,
 		?Language $frontendLanguage = null
 	): string {
-		$lb_credentialsSet = Configure::check('Instagram.userName') && Configure::check('Instagram.password');
+		$credentialsSet = Configure::check('Instagram.userName') && Configure::check('Instagram.password');
 
-		$ls_userName = Configure::read('Instagram.userName');
-		$li_items = $settings['items'] ?? 6;
-		$li_cacheLifetime = 60 * 60 * 24 * 365;
-		$la_media = [];
-		$ls_profileName = $settings['profileName'] ?? $ls_userName;
+		$userName = Configure::read('Instagram.userName');
+		$itemLimit = $settings['items'] ?? 6;
+		$cacheLifetime = 60 * 60 * 24 * 365;
+		$media = [];
+		$profileName = $settings['profileName'] ?? $userName;
 
-		$ls_errorMessage = null;
-		if ($lb_credentialsSet) {
+		$errorMessage = null;
+		if ($credentialsSet) {
 			try {
-				$la_media = static::fetchMedia($ls_userName, $ls_profileName, $li_items, $li_cacheLifetime);
+				$media = static::fetchMedia($userName, $profileName, $itemLimit, $cacheLifetime);
 			}
 			catch (Throwable $ex) {
-				$ls_errorMessage = $ex->getMessage();
+				$errorMessage = $ex->getMessage();
 			}
 		}
 
-		if ($la_media) {
-			$la_media = array_slice($la_media, 0, $li_items);
+		if ($media) {
+			$media = array_slice($media, 0, $itemLimit);
 
-			$la_mediaIds = array_map(function ($lo_media) {
-				return $lo_media->getId();
-			}, $la_media);
+			$mediaIds = array_map(function (Media $media) {
+				return $media->id;
+			}, $media);
 
-			/** @var \Awyiss\Model\Table\MediaTable $lo_mediaTable */
-			$lo_mediaTable = FactoryLocator::get('Table')->get('Media');
-			$la_mediaEntities = $lo_mediaTable->find('all')
-				->where(['id IN' => $la_mediaIds])
+			/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
+			$mediaTable = FactoryLocator::get('Table')->get('Media');
+			$mediaEntities = $mediaTable->find('all')
+				->where(['id IN' => $mediaIds])
 				->contain(['MediaResizedImages'])
 				->all()
 				->indexBy('id')
 				->toArray();
 
-			/** @var \Instagram\Model\Media $lo_media */
-			foreach ($la_media as $lo_media) {
-				$lo_media->mediaEntity = $la_mediaEntities[ $lo_media->getId() ] ?? null;
+			/** @var \Instagram\Model\Media $mediaItem */
+			foreach ($media as $mediaItem) {
+				$mediaItem->mediaEntity = $mediaEntities[ $mediaItem->getId() ] ?? null;
 			}
 
 			// Set the media items for the ResizedImageManager
-			ResizedImageManager::setMediaItems($la_mediaEntities);
+			ResizedImageManager::setMediaItems($mediaEntities);
 		}
 
 		return $view->element('module/instagram_feed', [
 			'entity' => $entity,
 			'frontendLanguage' => $frontendLanguage,
 			'mediaRenderOptions' => $mediaRenderOptions,
-			'credentialsSet' => $lb_credentialsSet,
-			'errorMessage' => $ls_errorMessage,
-			'items' => $li_items,
-			'media' => $la_media,
-			'profileName' => $ls_profileName,
+			'credentialsSet' => $credentialsSet,
+			'errorMessage' => $errorMessage,
+			'items' => $itemLimit,
+			'media' => $media,
+			'profileName' => $profileName,
 			'settings' => $settings,
 		]);
 	}
@@ -141,50 +141,50 @@ class InstagramFeedModule extends AbstractModule {
 	 */
 	protected static function fetchMedia(string $userName, string $profileName, int $items, int $cacheLifetime): array {
 		// Try loading the medias from the cache
-		$la_media = Cache::read('instagram_profile_' . $profileName, 'instagram');
+		$media = Cache::read('instagram_profile_' . $profileName, 'instagram');
 
-		if (!empty($la_media)) {
-			return $la_media;
+		if (!empty($media)) {
+			return $media;
 		}
 
-		$lo_cachePool = new FilesystemAdapter('Instagram', $cacheLifetime, TMP . 'instagram_profile');
+		$cachePool = new FilesystemAdapter('Instagram', $cacheLifetime, TMP . 'instagram_profile');
 
-		$lo_api = new Api($lo_cachePool);
+		$api = new Api($cachePool);
 
-		$ls_imapUserName = Configure::read('Instagram.imapUserName');
-		$ls_imapPassword = Configure::read('Instagram.imapPassword');
-		$ls_imapServer = Configure::read('Instagram.imapServer');
-		if ($ls_imapServer && $ls_imapUserName && $ls_imapPassword) {
-			$lo_imapClient = new ImapClient($ls_imapServer, $ls_imapUserName, $ls_imapPassword);
+		$imapUserName = Configure::read('Instagram.imapUserName');
+		$imapPassword = Configure::read('Instagram.imapPassword');
+		$imapServer = Configure::read('Instagram.imapServer');
+		if ($imapServer && $imapUserName && $imapPassword) {
+			$imapClient = new ImapClient($imapServer, $imapUserName, $imapPassword);
 		}
 
-		$lo_api->login($userName, Configure::read('Instagram.password'), $lo_imapClient ?? null);
-		$lo_profile = $lo_api->getProfile($profileName);
+		$api->login($userName, Configure::read('Instagram.password'), $imapClient ?? null);
+		$profile = $api->getProfile($profileName);
 
-		$la_media = $lo_profile->getMedias();
-		$li_mediaCount = count($la_media);
+		$media = $profile->getMedias();
+		$mediaCount = count($media);
 
-		while ($li_mediaCount < $items) {
-			$lo_profile = $lo_api->getMoreMedias($lo_profile);
-			$la_newMedia = $lo_profile->getMedias();
+		while ($mediaCount < $items) {
+			$profile = $api->getMoreMedias($profile);
+			$newMedia = $profile->getMedias();
 
-			if (empty($la_newMedia)) {
+			if (empty($newMedia)) {
 				break;
 			}
 
-			$la_media = array_merge($la_media, $la_newMedia);
-			$li_mediaCount = count($la_media);
+			$media = array_merge($media, $newMedia);
+			$mediaCount = count($media);
 
 			// avoid 429 Rate limit from Instagram
 			sleep(1);
 		}
 
 		// Save the files in the configured folder and create media entities
-		static::saveMedia($la_media);
+		static::saveMedia($media);
 
-		Cache::write('instagram_profile_' . $profileName, $la_media, 'instagram');
+		Cache::write('instagram_profile_' . $profileName, $media, 'instagram');
 
-		return $la_media;
+		return $media;
 	}
 
 
@@ -193,84 +193,82 @@ class InstagramFeedModule extends AbstractModule {
 	 * @return void
 	 */
 	protected static function saveMedia(array $media): void {
-		$li_mediaFolderId = Configure::read('Instagram.mediaFolderId');
-		$ls_path = 'media' . DS;
+		$mediaFolderId = Configure::read('Instagram.mediaFolderId');
+		$path = 'media' . DS;
 
-		if ($li_mediaFolderId) {
-			/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_mediaFolder */
-			$lo_mediaFoldersTable = FactoryLocator::get('Table')->get('MediaFolders');
+		if ($mediaFolderId) {
+			/** @var \Awyiss\Model\Table\MediaFoldersTable $mediaFolder */
+			$mediaFoldersTable = FactoryLocator::get('Table')->get('MediaFolders');
 			/**
-			 * @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder
+			 * @var \Awyiss\Model\Entity\MediaFolder $mediaFolder
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
-			$lo_mediaFolder = $lo_mediaFoldersTable->findById($li_mediaFolderId)->first();
+			$mediaFolder = $mediaFoldersTable->findById($mediaFolderId)->first();
 
-			if ($lo_mediaFolder) {
-				$ls_path = $lo_mediaFolder->path . DS;
+			if ($mediaFolder) {
+				$path = $mediaFolder->path . DS;
 			}
 			else {
-				$li_mediaFolderId = 1;
+				$mediaFolderId = 1;
 			}
 		}
 
-		/** @var \Awyiss\Model\Table\MediaTable $lo_mediaTable */
-		$lo_mediaTable = FactoryLocator::get('Table')->get('Media');
+		/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
+		$mediaTable = FactoryLocator::get('Table')->get('Media');
 
-		foreach ($media as $li_key => $lo_media) {
-			$ls_url = $lo_media->isVideo() && $lo_media->getVideoUrl() ? $lo_media->getVideoUrl() : $lo_media->getDisplaySrc();
+		foreach ($media as $key => $mediaItem) {
+			$url = $mediaItem->isVideo() && $mediaItem->getVideoUrl() ? $mediaItem->getVideoUrl() : $mediaItem->getDisplaySrc();
 
-			$ls_fileName = substr(str_replace('/', '-', parse_url($ls_url, PHP_URL_PATH)), 1);
-			$ls_parts = explode('.', $ls_fileName);
-			$ls_extension = end($ls_parts);
+			$fileName = substr(str_replace('/', '-', parse_url($url, PHP_URL_PATH)), 1);
+			$parts = explode('.', $fileName);
+			$extension = end($parts);
 
-			$ls_fileName = $lo_media->getShortCode() . '.' . $ls_extension;
+			$fileName = $mediaItem->getShortCode() . '.' . $extension;
 
-			$ls_content = file_get_contents($ls_url);
+			$content = file_get_contents($url);
 
-			if (!$ls_content) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				unset($media[$li_key]);
+			if (!$content) {
+				unset($media[$key]);
 				continue;
 			}
 
-			$lb_fileSaved = file_put_contents(WWW_ROOT . $ls_path . $ls_fileName, $ls_content);
+			$fileSaved = file_put_contents(WWW_ROOT . $path . $fileName, $content);
 
-			if (!$lb_fileSaved) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				unset($media[$li_key]);
+			if (!$fileSaved) {
+				unset($media[$key]);
 				continue;
 			}
 
-			$ls_mimeType = mime_content_type(WWW_ROOT . $ls_path . $ls_fileName);
-			$la_knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $ls_mimeType));
-			$ls_realExtension = current($la_knownExtensions);
-			if ($ls_realExtension === 'jpeg') {
-				$ls_realExtension = 'jpg';
+			$mimeType = mime_content_type(WWW_ROOT . $path . $fileName);
+			$knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $mimeType));
+			$realExtension = current($knownExtensions);
+			if ($realExtension === 'jpeg') {
+				$realExtension = 'jpg';
 			}
 
 			// If instagram thinks it'd be funny to give us a file with the wrong extension, we'll fix it
-			if ($ls_extension !== $ls_realExtension) {
-				$ls_newFileName = $lo_media->getShortCode() . '.' . $ls_realExtension;
-				rename(WWW_ROOT . $ls_path . $ls_fileName, WWW_ROOT . $ls_path . $ls_newFileName);
-				$ls_fileName = $ls_newFileName;
+			if ($extension !== $realExtension) {
+				$newFileName = $mediaItem->getShortCode() . '.' . $realExtension;
+				rename(WWW_ROOT . $path . $fileName, WWW_ROOT . $path . $newFileName);
+				$fileName = $newFileName;
 			}
 
-			$lo_mediaEntity = $lo_mediaTable->findOrCreate([
-				'name' => $ls_fileName,
-				'media_folder_id' => $li_mediaFolderId,
-			], function (Media $entity) use ($lo_media, $ls_fileName, $ls_path, $ls_mimeType, $li_mediaFolderId): void {
+			$mediaEntity = $mediaTable->findOrCreate([
+				'name' => $fileName,
+				'media_folder_id' => $mediaFolderId,
+			], function (Media $entity) use ($mediaItem, $fileName, $path, $mimeType, $mediaFolderId): void {
 				// Set the mime type
-				$entity->set('mimeType', $ls_mimeType);
+				$entity->set('mimeType', $mimeType);
 
 				$entity->setAccess('createdOn', true);
 
 				$entity->patch([
-					'mediaFolderId' => $li_mediaFolderId,
-					'name' => $ls_fileName,
-					'path' => $ls_path . $ls_fileName,
-					'width' => $lo_media->getWidth(),
-					'height' => $lo_media->getHeight(),
-					'createdOn' => $lo_media->getDate(),
+					'mediaFolderId' => $mediaFolderId,
+					'name' => $fileName,
+					'path' => $path . $fileName,
+					'width' => $mediaItem->getWidth(),
+					'height' => $mediaItem->getHeight(),
+					'createdOn' => $mediaItem->getDate(),
 					'preview' => $entity->isImage() ? ProcessStatus::NotRequired : ProcessStatus::Undefined,
 					'avif' => in_array($entity->mimeType, ['image/avif', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined,
 					'webp' => in_array($entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined,
@@ -282,7 +280,7 @@ class InstagramFeedModule extends AbstractModule {
 				],
 			]);
 
-			$lo_media->setId($lo_mediaEntity->id);
+			$mediaItem->setId($mediaEntity->id);
 		}
 	}
 }

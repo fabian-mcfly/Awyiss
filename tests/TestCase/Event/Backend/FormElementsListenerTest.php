@@ -35,7 +35,6 @@ class FormElementsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormElementsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -49,7 +48,6 @@ class FormElementsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormElementsListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyRenamesNestedChildrenIdentifiers(): void {
 		$formElementsTable = $this->fetchTable('FormElements');
@@ -78,7 +76,6 @@ class FormElementsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormElementsListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyNotRenamesNestedChildrenIdentifiersWhenNotPrimary(): void {
 		$formElementsTable = $this->fetchTable('FormElements');

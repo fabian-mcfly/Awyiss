@@ -94,12 +94,12 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @param array $config
 	 */
 	public function __construct(Table $table, array $config = []) {
-		$la_config = $config + [
+		$config += [
 			'referenceName' => $this->getScope($table),
 			'tableLocator' => $table->associations()->getTableLocator(),
 		];
 
-		parent::__construct($table, $la_config);
+		parent::__construct($table, $config);
 	}
 
 
@@ -113,24 +113,24 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$this->assignmentsTable = $this->getTableLocator()->get('MediaAssignments', ['allowFallbackClass' => false]);
 
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $this->_table->getEntityClass();
+		/** @var \Awyiss\Model\Entity $entityClass */
+		$entityClass = $this->_table->getEntityClass();
 
-		$la_contain = [
+		$contain = [
 			'MediaAssignments.scope' => $this->getScope($this->table()),
 		];
 
-		if ($la_contain['MediaAssignments.scope'] === 'pages') {
-			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-			$la_scope = array_map(function ($pageRole) {
+		if ($contain['MediaAssignments.scope'] === 'pages') {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+			$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			$scope = array_map(function ($pageRole) {
 				return Inflector::underscore(Inflector::pluralize($pageRole->name));
-			}, $ls_pageRoleEnum::cases());
-			$la_contain = ['MediaAssignments.scope IN' => $la_scope];
+			}, $pageRoleEnum::cases());
+			$contain = ['MediaAssignments.scope IN' => $scope];
 		}
 
 		$this->_table->hasMany('MediaAssignments', [
-			'conditions' => $la_contain,
+			'conditions' => $contain,
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'foreign_key',
@@ -139,7 +139,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			'strategy' => $this->getConfig('strategy'),
 		]);
 
-		$ls_entityClass::addFieldMapping('media_assignments', 'mediaAssignments');
+		$entityClass::addFieldMapping('media_assignments', 'mediaAssignments');
 
 		$this->setConfig('implementedEvents', [
 			'Configuration.' . $this->table()->getAlias() . '.Backend.splitIntoLanguages.afterSaveCommit' => 'resetHiddenMediaFolderLanguageAfterSave',
@@ -178,11 +178,11 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function resetHiddenMediaFolderLanguageAfterDelete(Event $event, Configuration $configuration): void {
-		$lo_configuration = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
-		$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $configuration->identifier);
-		$lb_defaultSplit = $lo_configOption?->getDefaultValue() ?? false;
+		$configOptions = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
+		$configOption = $configOptions?->getConfigOption(Awyiss::REALM_BACKEND, $configuration->identifier);
+		$defaultSplit = $configOption?->getDefaultValue() ?? false;
 
-		$this->updateHiddenFolderSettings($lb_defaultSplit);
+		$this->updateHiddenFolderSettings($defaultSplit);
 	}
 
 
@@ -236,66 +236,65 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return \Cake\Datasource\EntityInterface|array
 	 */
 	public function rebuildMediaAssignments(EntityInterface|array $entity, bool $useMediaEntity = false): EntityInterface|array {
-		$la_mediaAssignments = [];
+		$mediaAssignments = [];
 
 		if (!isset(static::$mediaElements)) {
 			$this->buildElements();
 		}
 
-		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_mediaAssignment */
-		foreach (($entity['mediaAssignments'] ?? []) as $lo_mediaAssignment) {
-			if (is_array($lo_mediaAssignment)) {
+		/** @var \Awyiss\Model\Entity\MediaAssignment $mediaAssignment */
+		foreach (($entity['mediaAssignments'] ?? []) as $mediaAssignment) {
+			if (is_array($mediaAssignment)) {
 				// Seems like the media assignments have already been rebuilt
 				return $entity;
 			}
 
-			$lo_element = static::$mediaElements[ $lo_mediaAssignment->mediaElementId ];
-			$ls_elementIdentifier = Inflector::variable($lo_element->identifier);
+			$element = static::$mediaElements[ $mediaAssignment->mediaElementId ];
+			$elementIdentifier = Inflector::variable($element->identifier);
 
-			$lo_selector = $lo_element->mediaSelectors[ $lo_mediaAssignment->mediaElementSelectorIdentifier ] ?? null;
-			$ls_identifier = Inflector::variable($lo_mediaAssignment->mediaElementSelectorIdentifier);
+			$selector = $element->mediaSelectors[ $mediaAssignment->mediaElementSelectorIdentifier ] ?? null;
+			$selectorIdentifier = Inflector::variable($mediaAssignment->mediaElementSelectorIdentifier);
 
 			// Treat inlineImgTag as a special case
-			if (!$lo_selector || $ls_elementIdentifier === 'inlineImgTag') {
-				if ($ls_elementIdentifier === 'inlineImgTag') {
-					$la_mediaAssignments[ $ls_elementIdentifier ] ??= [];
-					$la_mediaAssignments[ $ls_elementIdentifier ][ $lo_mediaAssignment->mediaId ] = $lo_mediaAssignment;
+			if (!$selector || $elementIdentifier === 'inlineImgTag') {
+				if ($elementIdentifier === 'inlineImgTag') {
+					$mediaAssignments[ $elementIdentifier ] ??= [];
+					$mediaAssignments[ $elementIdentifier ][ $mediaAssignment->mediaId ] = $mediaAssignment;
 				}
 
 				continue;
 			}
 
-			if ($lo_selector->identifier === 'multi_file') {
+			if ($selector->identifier === 'multi_file') {
 				if ($useMediaEntity) {
-					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ][] = $lo_mediaAssignment->media;
-					$la_mediaAssignments[ $ls_elementIdentifier ][ '_' . $ls_identifier ][] = $lo_mediaAssignment;
+					$mediaAssignments[ $elementIdentifier ][ $selectorIdentifier ][] = $mediaAssignment->media;
+					$mediaAssignments[ $elementIdentifier ][ '_' . $selectorIdentifier ][] = $mediaAssignment;
 				}
 				else {
-					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ][] = $lo_mediaAssignment;
+					$mediaAssignments[ $elementIdentifier ][ $selectorIdentifier ][] = $mediaAssignment;
 				}
 			}
-			elseif ($lo_selector->identifier === 'folder') {
+			elseif ($selector->identifier === 'folder') {
 				if ($useMediaEntity) {
-					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ] = $lo_mediaAssignment->mediaFolder;
-					$la_mediaAssignments[ $ls_elementIdentifier ][ '_' . $ls_identifier ] = $lo_mediaAssignment;
+					$mediaAssignments[ $elementIdentifier ][ $selectorIdentifier ] = $mediaAssignment->mediaFolder;
+					$mediaAssignments[ $elementIdentifier ][ '_' . $selectorIdentifier ] = $mediaAssignment;
 				}
 				else {
-					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ] = $lo_mediaAssignment;
+					$mediaAssignments[ $elementIdentifier ][ $selectorIdentifier ] = $mediaAssignment;
 				}
 			}
 			else {
 				if ($useMediaEntity) {
-					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ] = $lo_mediaAssignment->media;
-					$la_mediaAssignments[ $ls_elementIdentifier ][ '_' . $ls_identifier ] = $lo_mediaAssignment;
+					$mediaAssignments[ $elementIdentifier ][ $selectorIdentifier ] = $mediaAssignment->media;
+					$mediaAssignments[ $elementIdentifier ][ '_' . $selectorIdentifier ] = $mediaAssignment;
 				}
 				else {
-					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ] = $lo_mediaAssignment;
+					$mediaAssignments[ $elementIdentifier ][ $selectorIdentifier ] = $mediaAssignment;
 				}
 			}
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
-		$entity['mediaAssignments'] = $la_mediaAssignments;
+		$entity['mediaAssignments'] = $mediaAssignments;
 
 		return $entity;
 	}
@@ -306,14 +305,15 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return string
 	 */
 	protected function getScope(Table $table): string {
-		$ls_name = namespaceSplit($table::class);
-		$ls_name = substr((string)end($ls_name), 0, -5);
-		if (empty($ls_name)) {
-			$ls_name = $table->getTable() ?: $table->getAlias();
+		$name = namespaceSplit($table::class);
+		$name = substr((string)end($name), 0, -5);
+
+		if (empty($name)) {
+			$name = $table->getTable() ?: $table->getAlias();
 		}
 
 
-		return Inflector::underscore($ls_name);
+		return Inflector::underscore($name);
 	}
 
 
@@ -327,21 +327,20 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			$this->buildElements();
 		}
 
-		$lb_useMediaEntity = $useMediaEntity;
-		return $results->map(function (EntityInterface|array|null $row) use ($lb_useMediaEntity): EntityInterface|array|null {
-			$lx_row = $row;
+		return $results->map(function (EntityInterface|array|null $row) use ($useMediaEntity): EntityInterface|array|null {
+			$originalRow = $row;
 
-			if ($lx_row === null || empty($lx_row['mediaAssignments'])) {
-				return $lx_row;
+			if ($row === null || empty($row['mediaAssignments'])) {
+				return $row;
 			}
 
-			$lx_row = $this->rebuildMediaAssignments($lx_row, $lb_useMediaEntity);
+			$row = $this->rebuildMediaAssignments($row, $useMediaEntity);
 
-			if ($row instanceof EntityInterface) {
-				$row->setDirty('mediaAssignments', false);
+			if ($originalRow instanceof EntityInterface) {
+				$originalRow->setDirty('mediaAssignments', false);
 			}
 
-			return $lx_row;
+			return $row;
 		});
 	}
 
@@ -358,14 +357,14 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			return [];
 		}
 
-		$lo_identity = $this->getIdentity();
-		if (!$lo_identity || !$lo_identity->scopeIsAccessible('Media', [], 'read')) {
+		$identity = $this->getIdentity();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		if (!$identity?->scopeIsAccessible('Media', [], 'read')) {
 			return [];
 		}
 
-		$la_options = $options;
-		unset($la_options['associated']);
-		$la_options['fields'] = [
+		unset($options['associated']);
+		$options['fields'] = [
 			'id',
 			'mediaElementId',
 			'mediaElementSelectorIdentifier',
@@ -377,79 +376,81 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		];
 
 		return [
-			'media_assignments' => function (array $values, EntityInterface $entity) use ($la_options): array {
+			'media_assignments' => function (array $values, EntityInterface $entity) use ($options): array {
 				/**
-				 * @var array<string, \Awyiss\Model\Entity\MediaAssignment> $la_mediaAssignments
+				 * @var array<string, \Awyiss\Model\Entity\MediaAssignment> $mediaAssignments
 				 */
-				$la_mediaAssignments = [];
+				$mediaAssignments = [];
 
-				$la_errors = [];
-				$lo_marshaller = $this->assignmentsTable->marshaller();
+				$errors = [];
+				$marshaller = $this->assignmentsTable->marshaller();
 
-				foreach ($values as $li_mediaElementId => $la_elementsData) {
-					foreach ($la_elementsData as $ls_mediaElementSelectorIdentifier => $la_elementData) {
-						$li_systemOrder = 1;
-						$lb_isFolder = false;
+				foreach ($values as $mediaElementId => $elementsData) {
+					foreach ($elementsData as $mediaElementSelectorIdentifier => $elementData) {
+						$systemOrder = 1;
+						$isFolder = false;
 
-						$la_elementData = $this->mapKeys($la_elementData);
+						$elementData = $this->mapKeys($elementData);
 
-						if (array_is_list($la_elementData)) {
-							$la_mediaIds = $la_elementData;
+						if (array_is_list($elementData)) {
+							$mediaIds = $elementData;
 						}
-						elseif (isset($la_elementData['mediaId'])) {
-							$la_mediaIds = (array)$la_elementData['mediaId'];
+						elseif (isset($elementData['mediaId'])) {
+							$mediaIds = (array)$elementData['mediaId'];
 						}
-						elseif (!empty($la_elementData['mediaFolderId'])) {
-							$lb_isFolder = true;
-							$la_mediaIds = (array)$la_elementData['mediaFolderId'];
+						elseif (!empty($elementData['mediaFolderId'])) {
+							$isFolder = true;
+							$mediaIds = (array)$elementData['mediaFolderId'];
 						}
 						else {
 							continue;
 						}
 
-						foreach ($la_mediaIds as $li_mediaId) {
-							if (empty($li_mediaId)) {
+						foreach ($mediaIds as $mediaId) {
+							if (empty($mediaId)) {
 								continue;
 							}
 
-							/** @var \Awyiss\Model\Entity\MediaAssignment $lo_entity */
-							$lo_entity = $this->assignmentsTable->newDefaultEntity();
+							/** @var \Awyiss\Model\Entity\MediaAssignment $mediaAssignment */
+							$mediaAssignment = $this->assignmentsTable->newDefaultEntity();
 
-							if (!empty($la_elementData['id'])) {
-								$lo_entity->id = $la_elementData['id'];
+							if (!empty($elementData['id'])) {
+								$mediaAssignment->id = $elementData['id'];
 							}
 
-							$la_data['mediaElementId'] = $li_mediaElementId;
-							$la_data['mediaElementSelectorIdentifier'] = $ls_mediaElementSelectorIdentifier;
-							$la_data['mediaId'] = !$lb_isFolder ? (int)$li_mediaId : null;
-							$la_data['mediaFolderId'] = $lb_isFolder ? (int)$li_mediaId : null;
-							$la_data['scope'] = $this->getConfig('referenceName');
-							$la_data['systemOrder'] = $li_systemOrder;
+							$mediaAssignmentData = [
+								'mediaElementId' => $mediaElementId,
+								'mediaElementSelectorIdentifier' => $mediaElementSelectorIdentifier,
+								'mediaId' => !$isFolder ? (int)$mediaId : null,
+								'mediaFolderId' => $isFolder ? (int)$mediaId : null,
+								'scope' => $this->getConfig('referenceName'),
+								'systemOrder' => $systemOrder,
+							];
 
-							$lo_marshaller->merge($lo_entity, $la_data, $la_options);
+							$marshaller->merge($mediaAssignment, $mediaAssignmentData, $options);
 
-							$la_dataErrors = $lo_entity->getErrors();
-							if ($la_dataErrors) {
-								$la_errors[] = $la_dataErrors;
+							$dataErrors = $mediaAssignment->getErrors();
+							if ($dataErrors) {
+								$errors[] = $dataErrors;
 							}
-							$lo_entity->unset('createdBy');
-							$lo_entity->unset('createdOn');
+							$mediaAssignment->unset('createdBy');
+							$mediaAssignment->unset('createdOn');
 
-							$la_mediaAssignments[] = $lo_entity;
+							$mediaAssignments[] = $mediaAssignment;
 
-							$li_systemOrder++;
+							$systemOrder++;
 						}
 					}
 				}
 
 				//Set errors into the root entity, so validation errors match the original form data position.
-				if ($la_errors) {
-					$entity->setErrors(['mediaAssignments' => $la_errors]);
+				if ($errors) {
+					$entity->setErrors(['mediaAssignments' => $errors]);
 				}
 
 				$entity->setDirty('mediaAssignments');
 
-				return $la_mediaAssignments;
+				return $mediaAssignments;
 			},
 		];
 	}
@@ -461,22 +462,22 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return void
 	 */
 	protected function buildElements(): void {
-		$lo_elements = $this->fetchTable('MediaElements')->find()->contain([
+		$elements = $this->fetchTable('MediaElements')->find()->contain([
 			'MediaElementSelectors' => [
 				'MediaSelectors',
 			],
 		])->all()->indexBy('id');
 
-		static::$mediaElements = $lo_elements->each(function (MediaElement $entity): void {
-			$lo_selectors = collection($entity->mediaElementSelectors);
-			$lo_selectors = $lo_selectors->indexBy(function (MediaElementSelector $selector): string {
+		static::$mediaElements = $elements->each(function (MediaElement $entity): void {
+			$selectors = collection($entity->mediaElementSelectors);
+			$selectors = $selectors->indexBy(function (MediaElementSelector $selector): string {
 				return $selector->identifier;
 			})->map(function (MediaElementSelector $selector): MediaSelector {
 				return $selector->mediaSelector;
 			});
 
 			/** @noinspection PhpUndefinedFieldInspection */
-			$entity->mediaSelectors = $lo_selectors->toArray();
+			$entity->mediaSelectors = $selectors->toArray();
 		})->toArray();
 	}
 
@@ -499,12 +500,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			return;
 		}
 
-		$lo_identity = $this->getIdentity();
+		$identity = $this->getIdentity();
 		// If the user doesn't have access to the media scope, remove the media assignments from the entity
-		if (
-			!$lo_identity ||
-			!$lo_identity->scopeIsAccessible('Media', [], 'read')
-		) {
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		if (!$identity?->scopeIsAccessible('Media', [], 'read')) {
 			unset($entity->mediaAssignments);
 			$entity->setDirty('mediaAssignments', false);
 			return;
@@ -517,24 +516,24 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		 * This happens when no media element was assigned but
 		 * a media assignment is part of the entity/patched data.
 		 */
-		$la_mediaAssignments = $entity->get('mediaAssignments') ?: [];
-		foreach ($la_mediaAssignments as $lx_key => $lo_mediaAssignment) {
-			if (!is_numeric($lx_key) || !$lo_mediaAssignment instanceof MediaAssignment) {
-				unset($la_mediaAssignments[ $lx_key ]);
+		$mediaAssignments = $entity->get('mediaAssignments') ?: [];
+		foreach ($mediaAssignments as $key => $mediaAssignment) {
+			if (!is_numeric($key) || !$mediaAssignment instanceof MediaAssignment) {
+				unset($mediaAssignments[ $key ]);
 			}
 		}
 
-		$entity->set('mediaAssignments', $la_mediaAssignments);
+		$entity->set('mediaAssignments', $mediaAssignments);
 
 		if (($options['isCopy'] ?? false) === true) {
 			// If the entity is a copy, we need to set the media assignments as new
-			foreach ($la_mediaAssignments as $lo_mediaAssignment) {
-				if (!$lo_mediaAssignment instanceof MediaAssignment) {
+			foreach ($mediaAssignments as $mediaAssignment) {
+				if (!$mediaAssignment instanceof MediaAssignment) {
 					continue;
 				}
 
-				$lo_mediaAssignment->unset('id');
-				$lo_mediaAssignment->setNew(true);
+				$mediaAssignment->unset('id');
+				$mediaAssignment->setNew(true);
 			}
 		}
 	}
@@ -553,70 +552,70 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
-		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_existingAssignment */
-		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
+		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $mediaAssignmentsTable */
+		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		/** @var \Awyiss\Model\Entity\MediaAssignment $existingAssignment */
+		$existingAssignment = $mediaAssignmentsTable->find()->where([
 			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'foreign_key' => $entity->id,
 			'scope' => $this->getConfig('referenceName'),
 		])->contain(['MediaFolders'])->first();
 
-		if ($lo_existingAssignment) {
-			$lo_folder = $lo_existingAssignment->mediaFolder;
-			$lb_changed = false;
+		if ($existingAssignment) {
+			$folder = $existingAssignment->mediaFolder;
+			$changed = false;
 
-			if (!empty($entity->title) && $lo_folder->title !== $entity->title) {
-				$lo_folder->title = $entity->title;
-				$lb_changed = true;
+			if (!empty($entity->title) && $folder->title !== $entity->title) {
+				$folder->title = $entity->title;
+				$changed = true;
 			}
 
 			if (!empty($entity->slug)) {
-				$lo_folder->path = $entity->slug;
-				$lb_changed = true;
+				$folder->path = $entity->slug;
+				$changed = true;
 			}
 
-			if ($lb_changed) {
-				$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
-				$lo_mediaFoldersTable->save($lo_folder);
+			if ($changed) {
+				$mediaFoldersTable = $this->fetchTable('MediaFolders');
+				$mediaFoldersTable->save($folder);
 			}
 
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_mediaFoldersTable */
-		$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
-		$lo_folder = $lo_mediaFoldersTable->newDefaultEntity([
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $mediaFoldersTable */
+		$mediaFoldersTable = $this->fetchTable('MediaFolders');
+		$folder = $mediaFoldersTable->newDefaultEntity([
 			'hidden' => true,
 			'languageShortcode' => $entity->languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
 			'title' => $entity->title ?? 'HiddenFolder' . $entity->id,
 		]);
 
-		$li_parentMediaFolderId = Configure::read(implode('.', ['Awyiss', $entity->getSource(), 'Frontend', 'mediaFolders', 'parentFolderId']));
-		if ($li_parentMediaFolderId) {
-			$lo_folder->parentId = $li_parentMediaFolderId;
+		$parentMediaFolderId = Configure::read(implode('.', ['Awyiss', $entity->getSource(), 'Frontend', 'mediaFolders', 'parentFolderId']));
+		if ($parentMediaFolderId) {
+			$folder->parentId = $parentMediaFolderId;
 		}
 
 		if (!empty($entity->slug)) {
-			$lo_folder->path = $entity->slug;
+			$folder->path = $entity->slug;
 		}
 
-		if (!$lo_mediaFoldersTable->save($lo_folder, ['checkRules' => false])) {
+		if (!$mediaFoldersTable->save($folder, ['checkRules' => false])) {
 			return;
 		}
 
-		$lo_mediaFoldersTable->dispatchEvent('Model.MediaFolders.afterSaveCommit', ['entity' => $lo_folder, 'options' => $options]);
+		$mediaFoldersTable->dispatchEvent('Model.MediaFolders.afterSaveCommit', ['entity' => $folder, 'options' => $options]);
 
-		$lo_assignment = $lo_mediaAssignmentsTable->newDefaultEntity([
+		$assignment = $mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 1,
 			'mediaElementSelectorIdentifier' => 'hidden_folder',
-			'mediaFolderId' => $lo_folder->id,
+			'mediaFolderId' => $folder->id,
 			'foreignKey' => $entity->id,
 			'scope' => $this->getConfig('referenceName'),
 		]);
 
-		$lo_mediaAssignmentsTable->save($lo_assignment);
+		$mediaAssignmentsTable->save($assignment);
 	}
 
 
@@ -642,7 +641,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
 		$this->deleteHiddenFolders($entity);
 	}
 
@@ -652,49 +650,49 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function getContainConditions(SelectQuery $query): SelectQuery {
-		$la_identifiers = array_unique(Hash::extract(static::$mediaElements, '{n}.mediaElementSelectors.{n}.identifier'));
+		$identifiers = array_unique(Hash::extract(static::$mediaElements, '{n}.mediaElementSelectors.{n}.identifier'));
 
-		$lo_dialect = $query->getConnection()->getDriver()->schemaDialect();
+		$dialect = $query->getConnection()->getDriver()->schemaDialect();
 
-		$la_aliasedField = $query->aliasField('media_element_id');
-		$ls_elementField = key($la_aliasedField);
+		$aliasedField = $query->aliasField('media_element_id');
+		$elementField = key($aliasedField);
 
-		$la_aliasedField = $query->aliasField('media_element_selector_identifier');
-		$ls_selectorField = key($la_aliasedField);
+		$aliasedField = $query->aliasField('media_element_selector_identifier');
+		$selectorField = key($aliasedField);
 
 		/**
 		 * SQLite does not support FIND_IN_SET(),
 		 * so ordering using CASE WHEN is used instead
 		 */
-		if ($lo_dialect instanceof SqliteSchemaDialect) {
-			$query->orderBy(function (QueryExpression $exp) use ($ls_elementField) {
-				$li_index = 0;
+		if ($dialect instanceof SqliteSchemaDialect) {
+			$query->orderBy(function (QueryExpression $exp) use ($elementField) {
+				$index = 0;
 
-				$lo_case = $exp->case();
-				foreach (static::$mediaElements as $lo_mediaElement) {
-					$lo_case->when([$ls_elementField => $lo_mediaElement->id])->then($li_index, 'integer');
+				$case = $exp->case();
+				foreach (static::$mediaElements as $mediaElement) {
+					$case->when([$elementField => $mediaElement->id])->then($index, 'integer');
 
-					$li_index++;
+					$index++;
 				}
 
-				$lo_case->else(999, 'integer');
+				$case->else(999, 'integer');
 
-				return $lo_case;
+				return $case;
 			}, true);
 
-			$query->orderBy(function (QueryExpression $exp) use ($ls_selectorField, $la_identifiers) {
-				$li_index = 0;
+			$query->orderBy(function (QueryExpression $exp) use ($selectorField, $identifiers) {
+				$index = 0;
 
-				$lo_case = $exp->case();
-				foreach ($la_identifiers as $ls_identifier) {
-					$lo_case->when([$ls_selectorField => $ls_identifier])->then($li_index, 'integer');
+				$case = $exp->case();
+				foreach ($identifiers as $identifier) {
+					$case->when([$selectorField => $identifier])->then($index, 'integer');
 
-					$li_index++;
+					$index++;
 				}
 
-				$lo_case->else(999, 'integer');
+				$case->else(999, 'integer');
 
-				return $lo_case;
+				return $case;
 			});
 
 			return $query->contain(['Media', 'MediaFolders']);
@@ -702,14 +700,14 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		/** @noinspection PhpUndefinedMethodInspection */
 		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-			$ls_elementField => 'identifier',
+			$elementField => 'identifier',
 			implode(',', array_column(static::$mediaElements, 'id')),
 		])), true);
 
 		/** @noinspection PhpUndefinedMethodInspection */
 		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-			$ls_selectorField => 'identifier',
-			implode(',', $la_identifiers),
+			$selectorField => 'identifier',
+			implode(',', $identifiers),
 		])));
 
 		return $query->contain(['Media', 'MediaFolders']);
@@ -721,19 +719,19 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return array
 	 */
 	protected function mapKeys(array $elementData): array {
-		$la_data = [];
+		$data = [];
 
-		foreach ($elementData as $lx_key => $lx_value) {
-			if (!is_string($lx_key)) {
-				$la_data[ $lx_key ] = $lx_value;
+		foreach ($elementData as $key => $value) {
+			if (!is_string($key)) {
+				$data[ $key ] = $value;
 				continue;
 			}
 
-			$lx_key = Inflector::variable($lx_key);
-			$la_data[ $lx_key ] = $lx_value;
+			$key = Inflector::variable($key);
+			$data[ $key ] = $value;
 		}
 
-		return $la_data;
+		return $data;
 	}
 
 
@@ -742,20 +740,20 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return void
 	 */
 	protected function deleteHiddenFolders(EntityInterface $entity): void {
-		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
-		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_existingAssignment */
-		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
+		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $mediaAssignmentsTable */
+		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		/** @var \Awyiss\Model\Entity\MediaAssignment $existingAssignment */
+		$existingAssignment = $mediaAssignmentsTable->find()->where([
 			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'foreign_key' => $entity->id,
 			'scope' => $this->getConfig('referenceName'),
 		])->contain(['MediaFolders'])->first();
 
-		if ($lo_existingAssignment) {
+		if ($existingAssignment) {
 			// Delete the folder as well
-			$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
-			$lo_mediaFoldersTable->delete($lo_existingAssignment->mediaFolder);
+			$mediaFoldersTable = $this->fetchTable('MediaFolders');
+			$mediaFoldersTable->delete($existingAssignment->mediaFolder);
 		}
 	}
 
@@ -765,9 +763,9 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return void
 	 */
 	protected function updateHiddenFolderSettings(bool $splitIntoLanguages): void {
-		/** @var array<\Awyiss\Model\Entity\Configuration> $la_records */
-		$la_records = $this->table()->find()->all()->indexBy('id')->toArray();
-		$la_configurationRecords = $this->fetchTable('Configuration')->find()->where([
+		/** @var array<\Awyiss\Model\Entity\Configuration> $records */
+		$records = $this->table()->find()->all()->indexBy('id')->toArray();
+		$configurationRecords = $this->fetchTable('Configuration')->find()->where([
 			'realm' => Awyiss::REALM_FRONTEND,
 			'scope' => Inflector::underscore($this->table()->getTable()),
 			'identifier' => 'media_folders.parent_folder_id',
@@ -775,45 +773,45 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			return $configuration->languageShortcode ?? 'global';
 		})->toArray();
 
-		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
-		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		$lo_existingAssignments = $lo_mediaAssignmentsTable->find()->where([
+		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $mediaAssignmentsTable */
+		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		$existingAssignments = $mediaAssignmentsTable->find()->where([
 			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'scope' => $this->getConfig('referenceName'),
 		])->contain(['MediaFolders'])->all();
 
-		if (!$lo_existingAssignments->count()) {
+		if (!$existingAssignments->count()) {
 			return;
 		}
 
 
-		$la_mediaFolders = [];
-		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_mediaAssignment */
-		foreach ($lo_existingAssignments as $lo_mediaAssignment) {
-			$lo_folder = $lo_mediaAssignment->mediaFolder;
-			$lo_record = $la_records[ $lo_mediaAssignment->foreignKey ] ?? null;
+		$mediaFolders = [];
+		/** @var \Awyiss\Model\Entity\MediaAssignment $mediaAssignment */
+		foreach ($existingAssignments as $mediaAssignment) {
+			$folder = $mediaAssignment->mediaFolder;
+			$record = $records[ $mediaAssignment->foreignKey ] ?? null;
 
-			if (!$lo_record) {
+			if (!$record) {
 				continue;
 			}
 
-			$lo_folder->languageShortcode = $splitIntoLanguages ? $lo_record->languageShortcode : null;
+			$folder->languageShortcode = $splitIntoLanguages ? $record->languageShortcode : null;
 
-			$li_mediaFolderParentId = null;
-			if (isset($la_configurationRecords[ $lo_folder->languageShortcode ?? 'global' ])) {
-				$li_mediaFolderParentId = (int)$la_configurationRecords[ $lo_folder->languageShortcode ?? 'global' ]->value;
+			$mediaFolderParentId = null;
+			if (isset($configurationRecords[ $folder->languageShortcode ?? 'global' ])) {
+				$mediaFolderParentId = (int)$configurationRecords[ $folder->languageShortcode ?? 'global' ]->value;
 			}
 
-			$lo_folder->parentId = $li_mediaFolderParentId;
+			$folder->parentId = $mediaFolderParentId;
 
-			$la_mediaFolders[] = $lo_folder;
+			$mediaFolders[] = $folder;
 		}
 
-		if ($la_mediaFolders) {
-			$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+		if ($mediaFolders) {
+			$mediaFoldersTable = $this->fetchTable('MediaFolders');
 			try {
-				$lo_mediaFoldersTable->saveMany($la_mediaFolders, ['checkRules' => false]);
+				$mediaFoldersTable->saveMany($mediaFolders, ['checkRules' => false]);
 			}
 			catch (Exception) {
 				// Ignore errors

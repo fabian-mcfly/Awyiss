@@ -10,7 +10,7 @@ class DummyUsersSeed extends BaseSeed {
 	 * {@inheritDoc}
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
             [
                 'id' => 1,
                 'username' => 'awyiss',
@@ -85,7 +85,7 @@ class DummyUsersSeed extends BaseSeed {
             ],
         ];
 
-		$lo_table = $this->table('users');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('users');
+		$table->insert($data)->save();
 	}
 }

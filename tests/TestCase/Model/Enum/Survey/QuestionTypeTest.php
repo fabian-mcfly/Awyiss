@@ -89,7 +89,6 @@ class QuestionTypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Enum\Survey\QuestionType::label()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabel(): void {
 		$label = QuestionType::SingleChoice->label();

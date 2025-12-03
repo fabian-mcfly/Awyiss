@@ -73,7 +73,7 @@ class ConfigOption {
 
 	/**
 	 * @param string $identifier
-	 * @param \Awyiss\Configuration\ConfigOptionType|null $type
+	 * @param \Awyiss\Configuration\ConfigOptionType $type
 	 * @param mixed|null $defaultValue
 	 * @param string $description
 	 * @param bool $localizable
@@ -249,41 +249,42 @@ class ConfigOption {
 	 * @return mixed
 	 */
 	public function getPrintableValue(): mixed {
-		$lx_value = $this->defaultValue;
+		$value = $this->defaultValue;
 
-		if ($lx_value === null) {
+		if ($value === null) {
 			return null;
 		}
 
 		if ($this->getType() === ConfigOptionType::ListKey) {
-			return $this->getValues(true)[ $lx_value ] ?? $lx_value;
+			return $this->getValues(true)[ $value ] ?? $value;
 		}
 
 		if ($this->getType() === ConfigOptionType::ValueCollection) {
-			$la_values = [];
-			$la_possibleValues = $this->getValues(true);
+			$typecastValues = [];
+			$possibleValues = $this->getValues(true);
 
-			if (!is_array($lx_value)) {
-				$lx_value = json_decode($lx_value, true);
+			if (!is_array($value)) {
+				$value = json_decode($value, true);
 			}
 
-			if (!is_array($lx_value)) {
-				$lx_value = [$lx_value];
+			$values = $value;
+			if (!is_array($values)) {
+				$values = [$values];
 			}
 
-			foreach ($lx_value as $ls_key => $ls_value) {
-				if (array_key_exists($ls_value, $la_possibleValues)) {
-					$la_values[ $ls_key ] = $la_possibleValues[ $ls_value ];
+			foreach ($values as $key => $value) {
+				if (array_key_exists($value, $possibleValues)) {
+					$typecastValues[ $key ] = $possibleValues[ $value ];
 				}
 			}
 
-			return implode(', ', $la_values);
+			return implode(', ', $typecastValues);
 		}
 
 		return match ($this->type) {
-			ConfigOptionType::Bool => $lx_value ? 'true' : 'false',
-			ConfigOptionType::Json, ConfigOptionType::List, ConfigOptionType::ValueCollection => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),
-			default => $lx_value,
+			ConfigOptionType::Bool => $value ? 'true' : 'false',
+			ConfigOptionType::Json, ConfigOptionType::List, ConfigOptionType::ValueCollection => array_is_list($value) ? implode(', ', $value) : print_r($value, true),
+			default => $value,
 		};
 	}
 
@@ -416,8 +417,8 @@ class ConfigOption {
 			$this->getType() === ConfigOptionType::ListKey ||
 			$this->getType() === ConfigOptionType::ValueCollection
 		) {
-			$lx_values = $this->getValues(true, $languageShortcode);
-			if (!$lx_values) {
+			$values = $this->getValues(true, $languageShortcode);
+			if (!$values) {
 				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, $this->type->name));
 			}
 		}
@@ -429,25 +430,23 @@ class ConfigOption {
 			}
 
 
-			/** @var \BackedEnum $lx_values */
-			return (bool)$lx_values::tryFrom($value);
+			/** @var \BackedEnum $values */
+			return (bool)$values::tryFrom($value);
 		}
 
 		if ($this->getType() === ConfigOptionType::ListKey) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return array_key_exists($value, $lx_values);
+			return array_key_exists($value, $values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ValueCollection) {
-			$la_values = $value;
-			if (!is_array($la_values)) {
-				$la_values = json_decode($la_values, true);
+			$decodedValues = $value;
+			if (!is_array($decodedValues)) {
+				$decodedValues = json_decode($decodedValues, true);
 			}
 
-			// Make sure all items are keys in $lx_values
-
 			/** @noinspection PhpUndefinedVariableInspection */
-			return count($la_values) === count(array_intersect($la_values, array_keys($lx_values)));
+			return count($decodedValues) === count(array_intersect($decodedValues, array_keys($values)));
 		}
 
 
@@ -472,35 +471,28 @@ class ConfigOption {
 			$this->getType() === ConfigOptionType::ListKey ||
 			$this->getType() === ConfigOptionType::ValueCollection
 		) {
-			$lx_values = $this->getValues(true, $languageShortcode);
-			if (!is_array($lx_values) && $lx_values instanceof BackedEnum) {
+			$values = $this->getValues(true, $languageShortcode);
+			if (!is_array($values) && $values instanceof BackedEnum) {
 				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, $this->getType()->name));
 			}
 		}
 
 		if ($this->getType() === ConfigOptionType::Enum) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastEnum($value, $lx_values);
+			return $this->typecastEnum($value, $values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ListKey) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastListKey($value, $lx_values);
+			return $this->typecastListKey($value, $values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ValueCollection) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastValueCollection($value, $lx_values);
+			return $this->typecastValueCollection($value, $values);
 		}
 
-		$lx_value = $this->getType()->cast($value, $this->isNullable($languageShortcode !== null));
-
-		if ($lx_value === null) {
-			return null;
-		}
-
-
-		return $lx_value;
+		return $this->getType()->cast($value, $this->isNullable($languageShortcode !== null));
 	}
 
 
@@ -569,10 +561,10 @@ class ConfigOption {
 			return $value;
 		}
 
-		foreach ([array_keys($values), $values] as $la_values) {
-			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastListValue($value, $la_values);
-		}
+		// If the value is not a key, search for it in the values and return the corresponding key
+		$key = array_search($value, $values, true);
+
+		return $key !== false ? $key : null;
 	}
 
 
@@ -582,14 +574,13 @@ class ConfigOption {
 	 * @return mixed
 	 */
 	protected function typecastListValue(mixed $value, mixed $values): mixed {
-		/** @noinspection PhpUndefinedVariableInspection */
 		if (in_array($value, $values, true)) {
 			return $value;
 		}
 
-		$lx_key = array_search($value, $values);
+		$key = array_search($value, $values);
 
-		return $lx_key !== false ? $values[ $lx_key ] : null;
+		return $key !== false ? $values[ $key ] : null;
 	}
 
 
@@ -599,18 +590,18 @@ class ConfigOption {
 	 * @return mixed
 	 */
 	protected function typecastValueCollection(mixed $value, mixed $values): mixed {
-		$la_values = $value;
-		if (!is_array($la_values)) {
-			$la_values = $la_values ? json_decode($la_values, true) : [];
+		$typecastValues = $value;
+		if (!is_array($typecastValues)) {
+			$typecastValues = $typecastValues ? json_decode($typecastValues, true) : [];
 		}
 
-		if (!is_array($la_values)) {
-			$la_values = [$la_values];
+		if (!is_array($typecastValues)) {
+			$typecastValues = [$typecastValues];
 		}
 
 		// Remove all items that aren't keys in $values
-		$la_values = array_intersect($la_values, array_keys($values));
+		$typecastValues = array_intersect($typecastValues, array_keys($values));
 
-		return $la_values ?: null;
+		return $typecastValues ?: null;
 	}
 }

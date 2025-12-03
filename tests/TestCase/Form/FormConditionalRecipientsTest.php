@@ -52,7 +52,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructor(): void {
 		$form = new Form(['id' => 123]);
@@ -67,7 +66,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithNullPage(): void {
 		$form = new Form(['id' => 123]);
@@ -82,7 +80,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::getProcessStrategy()
 	 * @see \Awyiss\Form\FormConditionalRecipients::setProcessStrategy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetProcessStrategy(): void {
 		$this->assertSame(FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST, $this->formConditionalRecipients->getProcessStrategy());
@@ -99,7 +96,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::setProcessStrategy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProcessStrategyWithInvalidStrategy(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -112,7 +108,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::getMatchingRecipient()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMatchingRecipientWithMatchFirst(): void {
 		$conditionalRecipients = [
@@ -136,7 +131,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::getMatchingRecipient()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMatchingRecipientWithMatchLast(): void {
 		$conditionalRecipients = [
@@ -160,7 +154,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::getMatchingRecipient()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMatchingRecipientWithMatchAll(): void {
 		$conditionalRecipients = [
@@ -184,7 +177,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::getMatchingRecipient()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMatchingRecipientWithMatchAllFailure(): void {
 		$conditionalRecipients = [
@@ -208,7 +200,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::getFirstMatchingRecipient()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFirstMatchingRecipient(): void {
 		$conditionalRecipients = [
@@ -231,7 +222,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::getFirstMatchingRecipient()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFirstMatchingRecipientNoMatch(): void {
 		$conditionalRecipients = [
@@ -252,7 +242,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::getLastMatchingRecipient()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLastMatchingRecipient(): void {
 		$conditionalRecipients = [
@@ -275,7 +264,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::getAllMatchingRecipient()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAllMatchingRecipient(): void {
 		$conditionalRecipients = [
@@ -298,7 +286,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithElementIdentifier(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', 'test_value');
@@ -317,7 +304,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithMissingField(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('missing_field', '=', 'test_value');
@@ -336,7 +322,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithCurrentPageProperty(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('title', '=', 'Test Page', 'page@example.com', 'current_page');
@@ -351,7 +336,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithCurrentPageAttributes(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('custom_field', '=', 'custom_value', 'attr@example.com', 'current_page');
@@ -366,7 +350,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithCurrentPageNullPage(): void {
 		$formConditionalRecipients = new FormConditionalRecipients($this->form, null);
@@ -381,7 +364,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareEqualTo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareEqualTo(): void {
 		$this->form->formElements = new Collection([
@@ -417,7 +399,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareEqualTo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareNotEqualTo(): void {
 		$this->form->formElements = new Collection([
@@ -453,7 +434,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareGreaterThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareGreaterThan(): void {
 		$this->form->formElements = new Collection([
@@ -497,7 +477,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareGreaterThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareGreaterThanOrEqual(): void {
 		$this->form->formElements = new Collection([
@@ -557,7 +536,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareGreaterThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareGreaterThanWithDates(): void {
 		$this->form->formElements = new Collection([
@@ -601,7 +579,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareGreaterThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareGreaterThanOrEqualWithDates(): void {
 		$this->form->formElements = new Collection([
@@ -661,7 +638,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareGreaterThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareLessThan(): void {
 		$this->form->formElements = new Collection([
@@ -705,7 +681,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareGreaterThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareLessThanOrEqual(): void {
 		$this->form->formElements = new Collection([
@@ -765,7 +740,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareBetween()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareBetween(): void {
 		$this->form->formElements = new Collection([
@@ -809,7 +783,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareBetween()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareBetweenWithDates(): void {
 		$this->form->formElements = new Collection([
@@ -853,7 +826,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareBetween()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareNotBetween(): void {
 		$this->form->formElements = new Collection([
@@ -897,7 +869,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareBetween()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareNotBetweenWithDates(): void {
 		$this->form->formElements = new Collection([
@@ -941,7 +912,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareLengthEqualTo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareLengthEqualTo(): void {
 		$this->form->formElements = new Collection([
@@ -961,7 +931,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareLengthEqualTo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareLengthNotEqualTo(): void {
 		$this->form->formElements = new Collection([
@@ -981,7 +950,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareLongerThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareLongerThan(): void {
 		$this->form->formElements = new Collection([
@@ -1001,7 +969,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareLongerThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareLongerThanOrEqual(): void {
 		$this->form->formElements = new Collection([
@@ -1024,7 +991,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareLongerThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareShorterThan(): void {
 		$this->form->formElements = new Collection([
@@ -1043,7 +1009,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareLongerThan()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareShorterThanOrEqual(): void {
 		$this->form->formElements = new Collection([
@@ -1067,7 +1032,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareIn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareIn(): void {
 		$this->form->formElements = new Collection([
@@ -1087,7 +1051,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareIn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareNotIn(): void {
 		$this->form->formElements = new Collection([
@@ -1107,7 +1070,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareContains()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareContains(): void {
 		$this->form->formElements = new Collection([
@@ -1127,7 +1089,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareContains()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareNotContains(): void {
 		$this->form->formElements = new Collection([
@@ -1147,7 +1108,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareStartsWith()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareStartsWith(): void {
 		$this->form->formElements = new Collection([
@@ -1167,7 +1127,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareStartsWith()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareNotStartsWith(): void {
 		$this->form->formElements = new Collection([
@@ -1187,7 +1146,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareEndsWith()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareEndsWith(): void {
 		$this->form->formElements = new Collection([
@@ -1207,7 +1165,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareEndsWith()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareNotEndsWith(): void {
 		$this->form->formElements = new Collection([
@@ -1227,7 +1184,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::compareRegexp()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompareRegexp(): void {
 		$this->form->formElements = new Collection([
@@ -1251,7 +1207,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithMissingFormElements(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', 'test_value');
@@ -1270,7 +1225,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithMissingFormElement(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('missing_field', '=', 'test_value');
@@ -1290,7 +1244,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithCurrentPageMissingField(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('missing_field', '=', 'test_value', 'page@example.com', 'current_page');
@@ -1305,7 +1258,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithInvalidFieldType(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('test_field', '=', 'test_value', 'test@example.com', 'invalid_type');
@@ -1321,7 +1273,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithOutOfBoundsExceptionHandling(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('nonexistent_field', '=', 'test_value');
@@ -1341,7 +1292,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormConditionalRecipients::ruleMatches()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRuleMatchesWithMissingRequestDataField(): void {
 		$conditionalRecipient = $this->createConditionalRecipient('missing_field', '=', 'test_value');
@@ -1365,7 +1315,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @param string $recipient
 	 * @param string $type
 	 * @return \Awyiss\Model\Entity\FormConditionalRecipient
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createConditionalRecipient(
 		string $field,
@@ -1389,7 +1338,6 @@ class FormConditionalRecipientsTest extends TestCase {
 	 * @param string $type
 	 * @param string $identifier
 	 * @return \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createFormElement(string $type, string $identifier): FormElement {
 		$formElement = new FormElement();

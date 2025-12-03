@@ -25,15 +25,15 @@ class PaginatorHelper extends BasePaginatorHelper {
 	public function __construct(View $view, array $config = []) {
 		parent::__construct($view, $config + ['templateClass' => StringTemplate::class,]);
 
-		$la_params = $this->_View->getRequest()->getParam('parts', []);
+		$params = $this->_View->getRequest()->getParam('parts', []);
 
-		if (!empty($la_params['sort']) && !$this->getConfig('params.sort')) {
-			$this->setConfig('params.sort', $la_params['sort']);
+		if (!empty($params['sort']) && !$this->getConfig('params.sort')) {
+			$this->setConfig('params.sort', $params['sort']);
 		}
 
-		$la_params['page'] = $la_params['limit'] = $la_params['sort'] = $la_params['direction'] = false;
+		$params['page'] = $params['limit'] = $params['sort'] = $params['direction'] = false;
 
-		$this->setConfig('options.url', array_merge($this->_View->getRequest()->getParam('pass', []), $la_params));
+		$this->setConfig('options.url', array_merge($this->_View->getRequest()->getParam('pass', []), $params));
 	}
 
 
@@ -69,60 +69,59 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @return string
 	 */
 	public function sort(string $key, array|string|null $title = null, array $options = []): string {
-		$la_options = $options;
-		$la_options += ['url' => [], 'escape' => true];
+		$options += ['url' => [], 'escape' => true];
 
-		$ls_key = Inflector::underscore($key);
+		$key = Inflector::underscore($key);
 
-		$ls_title = $title ?: __($ls_key);
+		$title = $title ?: __($key);
 
-		$la_url = $la_options['url'];
-		unset($la_options['url']);
+		$url = $options['url'];
+		unset($options['url']);
 
-		$ls_sortKey = Inflector::underscore((string)$this->param('sort'));
-		$ls_alias = $this->param('alias');
-		[$ls_table, $ls_field] = explode('.', $ls_key . '.');
+		$sortKey = Inflector::underscore((string)$this->param('sort'));
+		$alias = $this->param('alias');
+		[$tableName, $field] = explode('.', $key . '.');
 
-		if (!$ls_field) {
-			$ls_field = $ls_table;
-			$ls_table = $ls_alias;
+		if (!$field) {
+			$field = $tableName;
+			$tableName = $alias;
 		}
 
-		$ls_dir = isset($la_options['direction']) ? strtolower($la_options['direction']) : 'asc';
-		unset($la_options['direction']);
+		$direction = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
+		unset($options['direction']);
 		// If the key is the current sort key, set the default direction to desc
-		if ($this->isCurrentSortKey($ls_key)) {
-			$ls_dir = 'desc';
+		if ($this->isCurrentSortKey($key)) {
+			$direction = 'desc';
 		}
 
-		$ls_template = 'sort';
+		$templateName = 'sort';
 
 		if (
-			$ls_sortKey === ($ls_table . '.' . $ls_field) ||
-			$ls_sortKey === ($ls_alias . '.' . $ls_key) ||
-			($ls_table . '.' . $ls_field) === ($ls_alias . '.' . $ls_sortKey)
+			$sortKey === ($tableName . '.' . $field) ||
+			$sortKey === ($alias . '.' . $key) ||
+			($tableName . '.' . $field) === ($alias . '.' . $sortKey)
 		) {
-			$ls_dir = $this->sortDir() === 'asc' ? 'desc' : 'asc';
-			$ls_template = $ls_dir === 'asc' ? 'sortDesc' : 'sortAsc';
+			$direction = $this->sortDir() === 'asc' ? 'desc' : 'asc';
+			$templateName = $direction === 'asc' ? 'sortDesc' : 'sortAsc';
 		}
 
-		if (is_array($title) && array_key_exists($ls_dir, $title)) {
-			$ls_title = $title[ $ls_dir ];
+		if (is_array($title) && array_key_exists($direction, $title)) {
+			$title = $title[ $direction ];
 		}
 
-		$la_paging = [
-			'sort' => $ls_key,
-			'direction' => $ls_dir,
+		$paging = [
+			'sort' => $key,
+			'direction' => $direction,
 			'page' => 1,
 		];
 
-		$la_vars = [
-			'text' => $la_options['escape'] ? h($ls_title) : $ls_title,
-			'identifier' => Inflector::camelize($ls_key),
-			'url' => $this->generateUrl($la_paging, $la_url),
+		$vars = [
+			'text' => $options['escape'] ? h($title) : $title,
+			'identifier' => Inflector::camelize($key),
+			'url' => $this->generateUrl($paging, $url),
 		];
 
-		return $this->templater()->format($ls_template, $la_vars);
+		return $this->templater()->format($templateName, $vars);
 	}
 
 
@@ -133,13 +132,13 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @return bool
 	 */
 	public function isCurrentSortKey(string $key): bool {
-		$ls_currentKey = $this->currentSortKey();
+		$currentKey = $this->currentSortKey();
 
-		if (!$ls_currentKey) {
+		if (!$currentKey) {
 			return false;
 		}
 
-		return Inflector::underscore($key) === Inflector::underscore($ls_currentKey);
+		return Inflector::underscore($key) === Inflector::underscore($currentKey);
 	}
 
 
@@ -149,22 +148,22 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @return string|null
 	 */
 	public function currentSortKey(): ?string {
-		$ls_sortKey = $this->param('sort');
-		if (!$ls_sortKey) {
-			$ls_sortKey = $this->param('sortDefault');
+		$sortKey = $this->param('sort');
+		if (!$sortKey) {
+			$sortKey = $this->param('sortDefault');
 		}
 
-		if (!$ls_sortKey) {
+		if (!$sortKey) {
 			return null;
 		}
 
 		// Return the original sort key if its aliased
-		$la_aliasFields = $this->getConfig('aliasedFields');
-		if (isset($la_aliasFields[ $ls_sortKey ])) {
-			$ls_sortKey = $la_aliasFields[ $ls_sortKey ];
+		$aliasFields = $this->getConfig('aliasedFields');
+		if (isset($aliasFields[ $sortKey ])) {
+			$sortKey = $aliasFields[ $sortKey ];
 		}
 
-		return $ls_sortKey;
+		return $sortKey;
 	}
 
 
@@ -183,57 +182,57 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @return array
 	 */
 	public function generateUrlParams(array $options = [], array $url = []): array {
-		$la_params = $this->_View->getRequest()->getParam('parts');
+		$params = $this->_View->getRequest()->getParam('parts');
 
-		foreach ($options as $lx_key => $lx_value) {
-			if (is_string($lx_key)) {
-				$lx_key = str_replace('_', '-', $lx_key);
-				$lx_key = trim($lx_key, '-');
+		foreach ($options as $key => $value) {
+			if (is_string($key)) {
+				$key = str_replace('_', '-', $key);
+				$key = trim($key, '-');
 			}
 
-			if (is_string($lx_value)) {
-				$lx_value = str_replace('_', '-', $lx_value);
-				$lx_value = trim($lx_value, '-');
+			if (is_string($value)) {
+				$value = str_replace('_', '-', $value);
+				$value = trim($value, '-');
 			}
 
-			$la_params[ $lx_key ] = $lx_value;
+			$params[ $key ] = $value;
 		}
 
-		$la_params += ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null];
-		$la_params = Hash::filter($la_params, function ($value): bool {
+		$params += ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null];
+		$params = Hash::filter($params, function ($value): bool {
 			return $value !== null;
 		});
 
-		if (isset($la_params['sortDefault']) && is_string($la_params['sortDefault'])) {
-			$la_params['sortDefault'] = str_replace('_', '-', $la_params['sortDefault']);
-			$la_params['sortDefault'] = trim($la_params['sortDefault'], '-');
+		if (isset($params['sortDefault']) && is_string($params['sortDefault'])) {
+			$params['sortDefault'] = str_replace('_', '-', $params['sortDefault']);
+			$params['sortDefault'] = trim($params['sortDefault'], '-');
 		}
 
-		if (isset($la_params['directionDefault']) && is_string($la_params['directionDefault'])) {
-			$la_params['directionDefault'] = str_replace('_', '-', $la_params['directionDefault']);
-			$la_params['directionDefault'] = trim($la_params['directionDefault'], '-');
+		if (isset($params['directionDefault']) && is_string($params['directionDefault'])) {
+			$params['directionDefault'] = str_replace('_', '-', $params['directionDefault']);
+			$params['directionDefault'] = trim($params['directionDefault'], '-');
 		}
 
 		//If the sorting-column and -direction equal their default value, set both to false, so they won't be part of the generated URI
 		if (
-			isset($la_params['sortDefault'], $la_params['directionDefault'], $la_params['sort'], $la_params['direction']) &&
-			$la_params['sort'] === $la_params['sortDefault'] &&
-			strtolower($la_params['direction']) === strtolower($la_params['directionDefault'])
+			isset($params['sortDefault'], $params['directionDefault'], $params['sort'], $params['direction']) &&
+			$params['sort'] === $params['sortDefault'] &&
+			strtolower($params['direction']) === strtolower($params['directionDefault'])
 		) {
-			$la_params['sort'] = $la_params['direction'] = false;
+			$params['sort'] = $params['direction'] = false;
 		}
 
-		unset($la_params['sortDefault'], $la_params['directionDefault']);
+		unset($params['sortDefault'], $params['directionDefault']);
 
 		//If the page parameter is empty or if it's page one, set it to false, so it won't be part of the generated URI
 		if (!empty($options['page']) && $options['page'] === 1) {
-			$la_params['page'] = false;
+			$params['page'] = false;
 		}
 
 		// Sort the parameters so that `sort`, `order`, `limit` & `page` are at the end (and in that order)
-		uksort($la_params, $this->sortUrlParams(...));
+		uksort($params, $this->sortUrlParams(...));
 
-		return $la_params;
+		return $params;
 	}
 
 
@@ -246,29 +245,29 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 */
 	protected function sortUrlParams(string $a, string $b): int {
 		// Define the order of the special keys we want to move to the end
-		$la_specialKeys = ['sort', 'direction', 'limit', 'page'];
+		$specialKeys = ['sort', 'direction', 'limit', 'page'];
 
 		// Check if $a or $b are in the special keys
-		$lb_aInSpecial = array_search($a, $la_specialKeys);
-		$lb_bInSpecial = array_search($b, $la_specialKeys);
+		$aInSpecial = array_search($a, $specialKeys);
+		$bInSpecial = array_search($b, $specialKeys);
 
 		// If both are not in special keys, return 0 (keep original order)
-		if ($lb_aInSpecial === false && $lb_bInSpecial === false) {
+		if ($aInSpecial === false && $bInSpecial === false) {
 			return 0;
 		}
 
 		// If $a is in the special keys but $b is not, $a should go after $b
-		if ($lb_aInSpecial !== false && $lb_bInSpecial === false) {
+		if ($aInSpecial !== false && $bInSpecial === false) {
 			return 1;
 		}
 
 		// If $b is in the special keys but $a is not, $b should go after $a
-		if ($lb_aInSpecial === false && $lb_bInSpecial !== false) {
+		if ($aInSpecial === false && $bInSpecial !== false) {
 			return -1;
 		}
 
 		// If both $a and $b are in the special keys, sort them by their predefined order
-		return $lb_aInSpecial - $lb_bInSpecial;
+		return $aInSpecial - $bInSpecial;
 	}
 
 
@@ -284,35 +283,35 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @return string
 	 */
 	public function limitControl(array $limits = [], ?int $default = null, array $options = []): string {
-		$la_limits = $limits ?: [
+		$limits = $limits ?: [
 			'20' => '20',
 			'50' => '50',
 			'100' => '100',
 		];
 
-		$la_limits += [$this->param('perPage') => $this->param('perPage')];
+		$limits += [$this->param('perPage') => $this->param('perPage')];
 
-		natsort($la_limits);
+		natsort($limits);
 
-		$li_defaultPerPage = $default ?? $this->paginated()->perPage();
+		$defaultPerPage = $default ?? $this->paginated()->perPage();
 
-		$ls_output = $this->Form->create(null, ['url' => ['action' => 'userConfiguration']]);
-		$ls_output .= $this->Form->hidden('identifier', ['val' => 'paginate.limit']);
-		$ls_output .= $this->Form->control(
+		$output = $this->Form->create(null, ['url' => ['action' => 'userConfiguration']]);
+		$output .= $this->Form->hidden('identifier', ['val' => 'paginate.limit']);
+		$output .= $this->Form->control(
 			'value',
 			$options + [
-				'default' => $li_defaultPerPage,
+				'default' => $defaultPerPage,
 				'empty' => false,
 				'label' => __d('pagination', 'limit_per_page'),
-				'options' => $la_limits,
+				'options' => $limits,
 				'type' => 'select',
 				'value' => $this->param('perPage'),
 			]
 		);
-		$ls_output .= $this->Form->end();
+		$output .= $this->Form->end();
 
 
-		return $ls_output;
+		return $output;
 	}
 
 
@@ -345,13 +344,13 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @return string
 	 */
 	protected function _formatNumber(StringTemplate|BaseStringTemplate $templater, array $options): string {
-		$la_vars = [
+		$vars = [
 			'page' => __d('pagination', 'page'),
 			'text' => $options['text'],
 			'url' => $this->generateUrl(['page' => $options['page']], $options['url']),
 		];
 
-		return $templater->format('number', $la_vars);
+		return $templater->format('number', $vars);
 	}
 
 
@@ -364,29 +363,29 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @return string Markup output.
 	 */
 	protected function _numbers(StringTemplate|BaseStringTemplate $templater, array $params, array $options): string {
-		$ls_out = '';
-		$ls_out .= $options['before'];
+		$output = '';
+		$output .= $options['before'];
 
-		for ($li_i = 1; $li_i <= $params['pageCount']; $li_i++) {
-			if ($li_i === $params['currentPage']) {
-				$ls_out .= $templater->format('current', [
+		for ($i = 1; $i <= $params['pageCount']; $i++) {
+			if ($i === $params['currentPage']) {
+				$output .= $templater->format('current', [
 					'page' => __d('pagination', 'page'),
 					'text' => $this->Number->format($params['currentPage']),
-					'url' => $this->generateUrl(['page' => $li_i], $options['url']),
+					'url' => $this->generateUrl(['page' => $i], $options['url']),
 				]);
 			}
 			else {
-				$la_vars = [
+				$vars = [
 					'page' => __d('pagination', 'page'),
-					'text' => $this->Number->format($li_i),
-					'url' => $this->generateUrl(['page' => $li_i], $options['url']),
+					'text' => $this->Number->format($i),
+					'url' => $this->generateUrl(['page' => $i], $options['url']),
 				];
-				$ls_out .= $templater->format('number', $la_vars);
+				$output .= $templater->format('number', $vars);
 			}
 		}
-		$ls_out .= $options['after'];
+		$output .= $options['after'];
 
-		return $ls_out;
+		return $output;
 	}
 
 

@@ -12,7 +12,7 @@ class MenuEntriesCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'menu_id' => 2,
@@ -969,7 +969,7 @@ class MenuEntriesCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('menu_entries');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('menu_entries');
+		$table->insert($data)->save();
 	}
 }

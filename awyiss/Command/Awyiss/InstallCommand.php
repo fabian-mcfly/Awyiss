@@ -63,7 +63,6 @@ class InstallCommand extends Command {
 	 * @return int
 	 * @throws \Brick\VarExporter\ExportException
 	 * @throws \Random\RandomException
-	 * @throws \ReflectionException
 	 */
 	public function execute(Arguments $args, ConsoleIo $io): int {
 		$this->filesystem = new Filesystem();
@@ -158,20 +157,20 @@ class InstallCommand extends Command {
 	 * @inheritDoc
 	 */
 	protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('rebuild-symlinks', [
+		$parser->addOption('rebuild-symlinks', [
 			'help' => 'Rebuild the symlinks for the assets. Setting this argument will skip the installation process.',
 			'boolean' => true,
 		]);
 
-		$lo_parser->addOption('dry-run', [
+		$parser->addOption('dry-run', [
 			'help' => 'Perform a dry run of the installation process. This will output the commands that would be executed without actually running them.',
 			'boolean' => true,
 			'short' => 'x',
 		]);
 
-		return $lo_parser;
+		return $parser;
 	}
 
 
@@ -255,12 +254,15 @@ class InstallCommand extends Command {
 		}
 
 		try {
-			// Get the "default" connection
-			/** @var \Cake\Database\Connection $lo_connection */
-			$lo_connection = ConnectionManager::get('default');
+			/**
+			 * Get the "default" connection
+			 *
+			 * @var \Cake\Database\Connection $connection
+			 */
+			$connection = ConnectionManager::get('default');
 
 			// Execute a simple SQL statement to check the connection
-			$lo_connection->execute('SELECT 1');
+			$connection->execute('SELECT 1');
 			$this->connectionValid = true;
 
 			$this->io->success('Connected to the database successfully.');
@@ -342,7 +344,7 @@ class InstallCommand extends Command {
 
 		$this->io->info('Trying to create symlinks using the mklink command...');
 
-		$la_commands = [
+		$commands = [
 			[
 				'cmd',
 				'/c',
@@ -370,8 +372,8 @@ class InstallCommand extends Command {
 		];
 
 		try {
-			foreach ($la_commands as $la_command) {
-				$this->runCommand($la_command);
+			foreach ($commands as $command) {
+				$this->runCommand($command);
 			}
 		}
 		catch (ProcessFailedException) {
@@ -396,21 +398,21 @@ class InstallCommand extends Command {
 	 * @return void
 	 */
 	protected function validateCustomerName(): void {
-		$la_reservedNames = ['_customer_skeleton', 'awyiss', 'docs', 'backup', 'bin', 'logs', 'tests', 'tmp', 'vendor', 'webroot'];
+		$reservedNames = ['_customer_skeleton', 'awyiss', 'docs', 'backup', 'bin', 'logs', 'tests', 'tmp', 'vendor', 'webroot'];
 
 		if (empty($this->customerName)) {
 			$this->io->abort('Invalid customer name.');
 		}
 
-		if (in_array($this->customerName, $la_reservedNames)) {
+		if (in_array($this->customerName, $reservedNames)) {
 			$this->io->abort('Invalid customer name.');
 		}
 
 		if (preg_match('/[^a-z0-9_-]/', $this->customerName)) {
-			$ls_cleanedName = preg_replace('/[^a-z0-9_-]/', '', $this->customerName);
+			$cleanedName = preg_replace('/[^a-z0-9_-]/', '', $this->customerName);
 
-			if ($this->io->askChoice('Invalid customer name. Do you want to use "' . $ls_cleanedName . '" instead?', ['y', 'n'], 'y') === 'y') {
-				$this->customerName = $ls_cleanedName;
+			if ($this->io->askChoice('Invalid customer name. Do you want to use "' . $cleanedName . '" instead?', ['y', 'n'], 'y') === 'y') {
+				$this->customerName = $cleanedName;
 			}
 			else {
 				$this->io->abort('Invalid customer name.');
@@ -431,10 +433,10 @@ class InstallCommand extends Command {
 	 * @throws ProcessFailedException if the command fails.
 	 */
 	protected function runCommand(array $command): void {
-		$lo_process = new Process($command);
+		$process = new Process($command);
 
 		try {
-			$lo_process->mustRun();
+			$process->mustRun();
 		}
 		catch (ProcessFailedException $ex) {
 			$this->io->error('The command failed. Error: ' . $ex->getMessage());
@@ -456,11 +458,11 @@ class InstallCommand extends Command {
 			return;
 		}
 
-		$lo_finder = new Finder();
-		$lo_finder->files()->in(ROOT . DS . $this->customerName)->name('.gitkeep')->ignoreDotFiles(false);
+		$finder = new Finder();
+		$finder->files()->in(ROOT . DS . $this->customerName)->name('.gitkeep')->ignoreDotFiles(false);
 
-		foreach ($lo_finder as $lo_file) {
-			$this->filesystem->remove($lo_file->getRealPath());
+		foreach ($finder as $file) {
+			$this->filesystem->remove($file->getRealPath());
 		}
 
 		$this->io->success('.gitkeep files removed successfully.');

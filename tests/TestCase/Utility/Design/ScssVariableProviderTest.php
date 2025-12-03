@@ -46,7 +46,6 @@ class ScssVariableProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructor(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -61,7 +60,6 @@ class ScssVariableProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::addScssFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddScssFiles(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -81,7 +79,6 @@ class ScssVariableProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::setScssFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetScssFiles(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -96,7 +93,6 @@ class ScssVariableProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::getInternalVariables()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetInternalVariables(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -166,7 +162,6 @@ class ScssVariableProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::getNormalizedInternalVariables()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNormalizedInternalVariables(): void {
 		$scssVariableProvider = $this->getMockBuilder(ScssVariableProvider::class)->setConstructorArgs([$this->designConfig])->onlyMethods([
@@ -271,7 +266,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeValueForBooleanExpression(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -293,7 +287,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeValueForColorExpression(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -315,7 +308,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeValueForNumberExpression(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -337,7 +329,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeValueForStringExpression(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -359,7 +350,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeValueForListExpression(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -381,7 +371,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeValueForFunctionExpression(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -403,7 +392,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeValueForVariableExpression(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -426,7 +414,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeOptionsForFontName(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -461,7 +448,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeOptionsForFontStackFallback(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -487,7 +473,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeOptionsForFontSize(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -550,7 +535,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeOptionsForFontStyle(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -580,7 +564,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeOptionsForFontWeight(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -606,7 +589,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeOptionsForLineHeight(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -669,7 +651,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeOptionsForColor(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -695,7 +676,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeOptionsForWidth(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -731,7 +711,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::normalizeValue()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMergeOptionsForMargin(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -784,7 +763,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::variableIsBlocklisted()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVariableIsBlocklistedExactMatch(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);
@@ -802,7 +780,6 @@ class ScssVariableProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssVariableProvider::variableIsBlocklisted()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVariableIsBlocklistedRegexMatch(): void {
 		$scssVariableProvider = new ScssVariableProvider($this->designConfig);

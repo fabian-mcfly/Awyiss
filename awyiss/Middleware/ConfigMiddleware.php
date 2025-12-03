@@ -26,19 +26,19 @@ class ConfigMiddleware implements MiddlewareInterface {
 	 * @throws \Exception
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		$ls_frontendLanguage = LocaleMiddleware::getLanguage()?->shortcode;
-		$ls_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)?->shortcode;
+		$frontendLanguage = LocaleMiddleware::getLanguage()?->shortcode;
+		$backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)?->shortcode;
 
-		if (!$ls_frontendLanguage) {
+		if (!$frontendLanguage) {
 			throw new Exception('No frontend language found');
 		}
 
-		if (!$ls_backendLanguage) {
+		if (!$backendLanguage) {
 			throw new Exception('No backend language found');
 		}
 
 		// Load the configuration as soon as possible
-		Awyiss::loadConfiguration($ls_frontendLanguage, $ls_backendLanguage);
+		Awyiss::loadConfiguration($frontendLanguage, $backendLanguage);
 
 		return $handler->handle($request);
 	}

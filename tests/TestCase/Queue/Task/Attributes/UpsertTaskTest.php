@@ -61,7 +61,6 @@ class UpsertTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::getTypeAndLength();
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTypeAndLengthDefault(): void {
 		$task = new UpsertTask();
@@ -78,7 +77,6 @@ class UpsertTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::getTypeAndLength();
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTypeAndLengthIntegerDecimal(): void {
 		$task = new UpsertTask();
@@ -95,7 +93,6 @@ class UpsertTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::getTypeAndLength();
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTypeAndLengthTinyint(): void {
 		$task = new UpsertTask();
@@ -112,7 +109,6 @@ class UpsertTaskTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::getTypeAndLength();
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTypeAndLengthUnknown(): void {
 		$task = new UpsertTask();
@@ -146,7 +142,6 @@ class UpsertTaskTest extends TestCase {
 	 * @param string $colString
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunWithNewAttributeOnNewAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
@@ -208,7 +203,6 @@ class UpsertTaskTest extends TestCase {
 	 * @param string $colString
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunWithNewAttributeOnExistingAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
@@ -270,7 +264,6 @@ class UpsertTaskTest extends TestCase {
 	 * @param string $colString
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunWithRenamedAttribute(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
@@ -332,7 +325,6 @@ class UpsertTaskTest extends TestCase {
 	 * @param string $colString
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunWithChangedScopeAndNewAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
@@ -401,7 +393,6 @@ class UpsertTaskTest extends TestCase {
 	 * @param string $colString
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunWithChangedScopeAndExistingAttributesTable(string $type, bool $required, ?string $defaultValue, bool $index, string $colString): void {
 		$data = [
@@ -470,7 +461,6 @@ class UpsertTaskTest extends TestCase {
 	 * @param string $colString
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunWithChangedScopeAndExistingAttributesTableForLastColumnInTable(
 		string $type,
@@ -558,7 +548,6 @@ class UpsertTaskTest extends TestCase {
 	 * @param bool $index
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunWithDeletedAttribute(string $type, bool $required, ?string $defaultValue, bool $index): void {
 		$data = [
@@ -616,7 +605,6 @@ class UpsertTaskTest extends TestCase {
 	 * @param bool $index
 	 * @return void
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::run : bool()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRunWithDeletedAttributeForLastColumnInTable(string $type, bool $required, ?string $defaultValue, bool $index): void {
 		$data = [
@@ -686,7 +674,6 @@ class UpsertTaskTest extends TestCase {
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::createJob()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateJobWithEmptyCommands(): void {
 		$task = $this->getMockBuilder(UpsertTask::class)->onlyMethods(['createJob'])->getMock();
@@ -707,7 +694,6 @@ class UpsertTaskTest extends TestCase {
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::createJob()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateJobWithNewAttribute(): void {
 		$task = new UpsertTask();
@@ -755,7 +741,6 @@ class UpsertTaskTest extends TestCase {
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::createJob()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateJobWithDeletedAttribute(): void {
 		$task = new UpsertTask();
@@ -801,7 +786,6 @@ class UpsertTaskTest extends TestCase {
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::createJob()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateJobWithPageRoleScope(): void {
 		$task = new UpsertTask();
@@ -847,7 +831,6 @@ class UpsertTaskTest extends TestCase {
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::createJob()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateJobWithBakeOldModel(): void {
 		$task = new UpsertTask();
@@ -894,7 +877,6 @@ class UpsertTaskTest extends TestCase {
 	 * @see \Awyiss\Queue\Task\Attributes\UpsertTask::createJob()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateJobWithOldPageRoleScopeAndBakeOldModel(): void {
 		$task = new UpsertTask();

@@ -28,7 +28,6 @@ class BackendMenuEntryTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \Exception
 	 */
 	protected function setUp(): void {
@@ -56,7 +55,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $table */
@@ -73,7 +71,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new BackendMenuEntry();
@@ -98,7 +95,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::_getTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testTitleCleaningViaPropertyAssignment(): void {
@@ -124,7 +120,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::_getTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTitleCleaningViaSetMethod(): void {
 		$entity = new BackendMenuEntry();
@@ -150,7 +145,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::_setAccess()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testAccessCleaningViaPropertyAssignment(): void {
@@ -176,7 +170,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::_setAccess()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessCleaningViaSetMethod(): void {
 		$entity = new BackendMenuEntry();
@@ -202,7 +195,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildren(): void {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $table */
@@ -220,7 +212,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildren(): void {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $table */
@@ -238,7 +229,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParent(): void {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $table */
@@ -256,7 +246,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithNoParent(): void {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $table */
@@ -273,7 +262,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParents(): void {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $table */
@@ -291,7 +279,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _testGetParentsWithNoParents(): void {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $table */
@@ -308,7 +295,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -342,7 +328,6 @@ class BackendMenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\BackendMenuEntry::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

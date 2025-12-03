@@ -40,7 +40,6 @@ class FormCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -74,7 +73,6 @@ class FormCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplay(): void {
 		$page = $this->fetchTable('Pages')->find()->first();
@@ -107,7 +105,6 @@ class FormCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayForUnknownForm(): void {
 		$page = $this->fetchTable('Pages')->find()->first();
@@ -125,7 +122,6 @@ class FormCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayLoadsFormEntry(): void {
 		$page = $this->getTableLocator()->get('Pages')->get(1);
@@ -153,7 +149,6 @@ class FormCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 * @noinspection HtmlRequiredAltAttribute
 	 */
@@ -183,7 +178,6 @@ class FormCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\FormCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 * @noinspection HtmlRequiredAltAttribute
 	 */
@@ -213,7 +207,6 @@ class FormCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\FormCell::parseAwyissImageTags()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlRequiredAltAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -242,7 +235,6 @@ class FormCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\FormCell::parseAwyissImageTags()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlRequiredAltAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */

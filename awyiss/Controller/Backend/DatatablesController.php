@@ -32,10 +32,10 @@ class DatatablesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Datatables->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->Datatables->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -47,11 +47,11 @@ class DatatablesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_datatables = $this->paginate($lo_query);
+		$query = $this->getOverviewQuery();
+		$datatables = $this->paginate($query);
 
 		$this->set([
-			'datatables' => $lo_datatables,
+			'datatables' => $datatables,
 			'attributes' => $this->Datatables->getAttributes(),
 		]);
 	}
@@ -66,16 +66,16 @@ class DatatablesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_datatable = $this->Datatables->newDefaultEntity([
+		$datatable = $this->Datatables->newDefaultEntity([
 			'mediaElementAssignments' => [],
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_datatable);
+			$this->save($datatable);
 		}
 
 		$this->set([
-			'datatable' => $lo_datatable,
+			'datatable' => $datatable,
 		]);
 	}
 
@@ -90,22 +90,22 @@ class DatatablesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		$lo_datatables = $this->Datatables->findAllAndCache();
-		/** @var Datatable $lo_datatable */
-		$lo_datatable = $lo_datatables->firstMatch(['id' => $id]);
+		$datatables = $this->Datatables->findAllAndCache();
+		/** @var \Awyiss\Model\Entity\Datatable $datatable */
+		$datatable = $datatables->firstMatch(['id' => $id]);
 
-		if (! $lo_datatable) {
+		if (! $datatable) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_datatable, 'edit');
+			$this->save($datatable, 'edit');
 		}
 
 		$this->set([
-			'datatable' => $lo_datatable,
+			'datatable' => $datatable,
 		]);
 	}
 
@@ -122,15 +122,15 @@ class DatatablesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Datatable $lo_datatable */
-		$lo_datatable = $this->Datatables->findById($id)->first();
-		if (! $lo_datatable) {
+		/** @var \Awyiss\Model\Entity\Datatable $datatable */
+		$datatable = $this->Datatables->findById($id)->first();
+		if (! $datatable) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Datatables->delete($lo_datatable)) {
+		if ($this->Datatables->delete($datatable)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -138,8 +138,8 @@ class DatatablesController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_datatable->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($datatable->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -155,23 +155,23 @@ class DatatablesController extends Controller {
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
 	protected function save(Datatable $datatable, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->Datatables->hasAttributes()) {
-			$la_associated[] = $this->Datatables->getAttributesTableName(true);
+			$associated[] = $this->Datatables->getAttributesTableName(true);
 			$datatable->setAccess('attributes', true);
 		}
 
 		$this->Datatables->patchEntity($datatable, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Datatables->save($datatable, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->Datatables->save($datatable, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -185,9 +185,9 @@ class DatatablesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($datatable->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($datatable->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}

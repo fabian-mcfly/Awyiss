@@ -72,7 +72,6 @@ class SurveyCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\SurveyCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testDisplay(): void {
@@ -102,7 +101,6 @@ class SurveyCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\SurveyCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testDisplayWithPostDataShowsMatchingStep(): void {
@@ -146,7 +144,6 @@ class SurveyCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\SurveyCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testDisplayWithBackPostDataShowsPreviousStep(): void {
@@ -189,7 +186,6 @@ class SurveyCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\SurveyCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 * @noinspection HtmlRequiredAltAttribute
 	 */

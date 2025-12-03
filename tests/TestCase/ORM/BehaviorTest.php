@@ -42,7 +42,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithDefaultConfiguration(): void {
 		$this->behavior = new Behavior($this->mockTable);
@@ -75,7 +74,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithCustomImplementedEvents(): void {
 		$customEvents = ['beforeSave', 'afterSave'];
@@ -93,7 +91,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithEmptyImplementedEvents(): void {
 		$config = ['implementedEvents' => []];
@@ -110,7 +107,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithNullImplementedEventsUsesDefault(): void {
 		$config = ['implementedEvents' => null];
@@ -141,7 +137,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithCustomImplementedMethods(): void {
 		$customMethods = ['customMethod1', 'customMethod2'];
@@ -159,7 +154,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithEmptyImplementedMethods(): void {
 		$config = ['implementedMethods' => []];
@@ -176,7 +170,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsReturnsEmptyArrayWhenNoEvents(): void {
 		$config = ['implementedEvents' => []];
@@ -194,7 +187,6 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::implementedEvents()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsCallsTableBuildEventMap(): void {
 		$eventMap = ['beforeSave', 'afterSave'];
@@ -229,7 +221,6 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::implementedEvents()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsWithDefaultPriority(): void {
 		$eventMap = ['beforeSave'];
@@ -256,7 +247,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::enable()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnableSuccessfullyEnablesBehavior(): void {
 		$config = ['enabled' => false];
@@ -274,7 +264,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::enable()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnableThrowsExceptionWhenEnabledKeyMissing(): void {
 		$this->behavior = new Behavior($this->mockTable);
@@ -291,7 +280,6 @@ class BehaviorTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::disable()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisableSuccessfullyDisablesBehavior(): void {
 		$config = ['enabled' => true];
@@ -326,7 +314,6 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithComplexConfiguration(): void {
 		$config = [
@@ -356,7 +343,6 @@ class BehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\ORM\Behavior::__construct()
 	 * @see \Awyiss\ORM\Behavior::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBehaviorWithCustomEvents(): void {
 		// Create an anonymous class that extends Behavior with custom defaultEvents

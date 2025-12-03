@@ -29,24 +29,24 @@ class ClearCacheCommand extends Command {
 	 * @return int
 	 */
 	public function execute(Arguments $args, ConsoleIo $io): int {
-		$ls_folderPath = CACHE . 'twig_view' . DS;
+		$folderPath = CACHE . 'twig_view' . DS;
 
 		$io->out('Emptying twig cache... ', 0);
 
-		if (!is_dir($ls_folderPath)) {
+		if (!is_dir($folderPath)) {
 			$io->success('No cache folder found');
 
 			return static::CODE_SUCCESS;
 		}
 
-		$lo_process = new Process([
+		$process = new Process([
 			'rm',
 			'-r',
-			$ls_folderPath,
+			$folderPath,
 		]);
-		$lo_process->run();
+		$process->run();
 
-		if ($lo_process->isSuccessful()) {
+		if ($process->isSuccessful()) {
 			$io->success('Succeeded');
 
 			return static::CODE_SUCCESS;

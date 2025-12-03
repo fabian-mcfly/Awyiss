@@ -25,7 +25,6 @@ class FormOptionsTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -39,7 +38,6 @@ class FormOptionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorSetsSafeRealSender(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -56,7 +54,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::getSafeRealSender()
 	 * @see \Awyiss\Form\FormOptions::setSafeRealSender()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetSafeRealSender(): void {
 		$testEmail = 'test@example.com';
@@ -74,7 +71,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithRequiredElement(): void {
 		$validator = new Validator();
@@ -98,7 +94,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithEmailElement(): void {
 		$validator = new Validator();
@@ -120,7 +115,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithDateElement(): void {
 		$validator = new Validator();
@@ -142,7 +136,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithTimeElement(): void {
 		$validator = new Validator();
@@ -164,7 +157,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithDateTimeElement(): void {
 		$validator = new Validator();
@@ -186,7 +178,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithRadioElement(): void {
 		$validator = new Validator();
@@ -208,7 +199,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithSelectElement(): void {
 		$validator = new Validator();
@@ -230,7 +220,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithSelectMultipleElement(): void {
 		$validator = new Validator();
@@ -252,7 +241,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithSingleCheckboxElement(): void {
 		$validator = new Validator();
@@ -275,7 +263,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setValidationRules()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetValidationRulesWithMultipleCheckboxElement(): void {
 		$validator = new Validator();
@@ -297,7 +284,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::modifyForm()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyForm(): void {
 		$result = $this->formOptions->modifyForm();
@@ -310,7 +296,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::modifyFormElement()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyFormElement(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -329,7 +314,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setConditionalRecipient()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetConditionalRecipientWithFirstMatchingConditionalRecipients(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -383,7 +367,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setConditionalRecipient()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetConditionalRecipientWithLastMatchingConditionalRecipients(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -437,7 +420,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setConditionalRecipient()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetConditionalRecipientWithAllMatchingConditionalRecipients(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -465,7 +447,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setConditionalRecipient()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetConditionalRecipientWithNotMatchingConditionalRecipients(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -491,7 +472,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setConditionalRecipient()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetConditionalRecipientWithNoneMatchingConditionalRecipients(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -545,7 +525,6 @@ class FormOptionsTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::setConditionalRecipient()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetConditionalRecipientWithoutConditionalRecipients(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -570,7 +549,6 @@ class FormOptionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\FormOptions::getProtectionOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetProtectionOptions(): void {
 		$result = $this->formOptions->getProtectionOptions('test_identifier');

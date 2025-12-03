@@ -47,7 +47,6 @@ class ConfigMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -61,7 +60,6 @@ class ConfigMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
@@ -74,7 +72,6 @@ class ConfigMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
@@ -98,7 +95,6 @@ class ConfigMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\ConfigMiddleware::process()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessLoadsConfiguration(): void {
 		$this->assertFalse(Configure::check('Awyiss'));
@@ -139,7 +135,6 @@ class ConfigMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\ConfigMiddleware::process()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessThrowsExceptionWithoutFrontendLanguage(): void {
 		$tableLocator = FactoryLocator::get('Table');
@@ -167,7 +162,6 @@ class ConfigMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\ConfigMiddleware::process()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessThrowsExceptionWithoutBackendLanguage(): void {
 		$tableLocator = FactoryLocator::get('Table');

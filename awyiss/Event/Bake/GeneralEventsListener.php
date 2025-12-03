@@ -40,8 +40,8 @@ class GeneralEventsListener implements EventListenerInterface {
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::deleteCustomConfiguration()
 			 */
-			$lo_eventManager = EventManager::instance();
-			$lo_eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
+			$eventManager = EventManager::instance();
+			$eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
 		}
 	}
 
@@ -54,11 +54,11 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * @noinspection PhpUnused
 	 */
 	public function beforeRenderControllerController(Event $event): void {
-		/** @var \Cake\View\View $lo_view */
-		$lo_view = $event->getSubject();
+		/** @var \Cake\View\View $view */
+		$view = $event->getSubject();
 
-		if (array_diff(['index', 'view', 'add', 'edit', 'delete'], $lo_view->get('actions')) === []) {
-			$lo_view->set('actions', ['overview', 'add', 'edit', 'delete', 'save']);
+		if (array_diff(['index', 'view', 'add', 'edit', 'delete'], $view->get('actions')) === []) {
+			$view->set('actions', ['overview', 'add', 'edit', 'delete', 'save']);
 		}
 	}
 }

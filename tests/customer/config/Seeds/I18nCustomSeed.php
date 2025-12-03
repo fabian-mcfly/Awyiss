@@ -12,7 +12,7 @@ class I18nCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'locale' => 'es',
@@ -39,8 +39,8 @@ class I18nCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('i18n');
-		$lo_table->truncate();
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('i18n');
+		$table->truncate();
+		$table->insert($data)->save();
 	}
 }

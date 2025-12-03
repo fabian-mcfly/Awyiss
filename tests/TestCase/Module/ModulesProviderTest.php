@@ -30,7 +30,6 @@ class ModulesProviderTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -68,7 +67,6 @@ class ModulesProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\ModulesProvider::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCannotBeInstantiated(): void {
 		$this->expectException(RuntimeException::class);
@@ -87,7 +85,6 @@ class ModulesProviderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\ModulesProvider::getModuleFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetModuleFilesFindsAllModules(): void {
 		$result = ModulesProvider::getModuleFiles();
@@ -123,7 +120,6 @@ class ModulesProviderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\ModulesProvider::getModuleFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetModuleFileWithExistingModule(): void {
 		$result = ModulesProvider::getModuleFile('breadcrumbs');
@@ -141,7 +137,6 @@ class ModulesProviderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\ModulesProvider::getModuleFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetModuleFileWithNonExistingModule(): void {
 		$result = ModulesProvider::getModuleFile('nonExistentModule');
@@ -155,7 +150,6 @@ class ModulesProviderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\ModulesProvider::getModuleFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetModuleFileWithIdentifierNeedingSanitization(): void {
 		$result = ModulesProvider::getModuleFile('Instagram-Feed!@#');
@@ -170,7 +164,6 @@ class ModulesProviderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\ModulesProvider::getModuleFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetModuleFilePrefersCustomModule(): void {
 		$result = ModulesProvider::getModuleFile('newsListing');
@@ -188,7 +181,6 @@ class ModulesProviderTest extends TestCase {
 	 * @param string $expected
 	 * @return void
 	 * @see \Awyiss\Module\ModulesProvider::sanitizeIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSanitizeIdentifier(string $input, string $expected): void {
 		$result = ModulesProvider::sanitizeIdentifier($input);

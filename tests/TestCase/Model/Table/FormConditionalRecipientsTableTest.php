@@ -58,7 +58,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(5, $this->formConditionalRecipientsTable->associations()->keys());
@@ -101,7 +100,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -133,7 +131,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -156,7 +153,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -176,7 +172,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -205,7 +200,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -228,7 +222,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -253,7 +246,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationTypeInList(): void {
 		// Test valid types
@@ -296,7 +288,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationOperatorEnum(): void {
 		// Test valid operators
@@ -347,7 +338,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAllowEmptyValue(): void {
 		// Test that value field allows empty string
@@ -377,7 +367,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidForm(): void {
 		// Test with existing form
@@ -400,7 +389,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidForm(): void {
 		// Test with non-existing form
@@ -427,7 +415,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->formConditionalRecipientsTable->newDefaultEntity();
@@ -449,7 +436,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -481,7 +467,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->formConditionalRecipientsTable->hasBehavior('SystemOrder'));
@@ -495,7 +480,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaEnumColumn(): void {
 		$schema = $this->formConditionalRecipientsTable->getSchema();
@@ -508,7 +492,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationCurrentPageType(): void {
 		// Test current_page type
@@ -531,7 +514,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationElementIdentifierType(): void {
 		// Test element_identifier type
@@ -554,7 +536,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationComplexOperators(): void {
 		// Test complex operators with different values
@@ -602,7 +583,6 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationRecipientEmailFormat(): void {
 		// Test various email formats for recipient

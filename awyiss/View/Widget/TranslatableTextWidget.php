@@ -46,36 +46,36 @@ class TranslatableTextWidget extends BasicWidget {
 	 * @return string HTML elements.
 	 */
 	public function render(array $data, ContextInterface $context): string {
-		$la_data = $data + $this->mergeDefaults($data, $context);
+		$data += $this->mergeDefaults($data, $context);
 
-		$la_data += ['readonly' => true];
+		$data += ['readonly' => true];
 
-		$la_data['templateVars']['controls'] = '';
-		foreach ($la_data['controls'] as $ls_control) {
-			$la_data['templateVars']['controls'] .= $ls_control;
+		$data['templateVars']['controls'] = '';
+		foreach ($data['controls'] as $control) {
+			$data['templateVars']['controls'] .= $control;
 		}
 
-		$la_data['value'] = $la_data['val'];
-		unset($la_data['val']);
-		if ($la_data['value'] === false) {
+		$data['value'] = $data['val'];
+		unset($data['val']);
+		if ($data['value'] === false) {
 			// explicitly convert to 0 to avoid empty string which is marshaled as null
-			$la_data['value'] = '0';
+			$data['value'] = '0';
 		}
 
-		$la_data['templateVars'] += [
+		$data['templateVars'] += [
 			'buttonTitle' => __d('system', 'translations_button_title'),
-			'dialogTitle' => __d('system', 'translations_dialog_title', $la_data['dialogTitle'] ?? __($la_data['name'])),
+			'dialogTitle' => __d('system', 'translations_dialog_title', $data['dialogTitle'] ?? __($data['name'])),
 			'dialogApply' => __d('system', 'translations_dialog_apply'),
 			'dialogCancel' => __d('system', 'translations_dialog_cancel'),
 		];
-		unset($la_data['dialogTitle']);
+		unset($data['dialogTitle']);
 
 		return $this->_templates->format('translatableText', [
-			'name' => $la_data['name'],
-			'input' => $la_data['input'],
-			'type' => $la_data['type'],
-			'templateVars' => $la_data['templateVars'],
-			'attrs' => $this->_templates->formatAttributes($la_data, ['name']),
+			'name' => $data['name'],
+			'input' => $data['input'],
+			'type' => $data['type'],
+			'templateVars' => $data['templateVars'],
+			'attrs' => $this->_templates->formatAttributes($data, ['name']),
 		]);
 	}
 }

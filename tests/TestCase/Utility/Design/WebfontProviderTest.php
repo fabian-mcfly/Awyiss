@@ -73,9 +73,7 @@ class WebfontProviderTest extends TestCase {
 
 
 	/**
-	 * Setup for each test
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @inheritDoc
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -96,7 +94,6 @@ class WebfontProviderTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -108,7 +105,6 @@ class WebfontProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\WebfontProvider::clearCache();
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClearCache(): void {
 		Cache::write('webfonts', 'Foobar', 'persistent');
@@ -122,7 +118,6 @@ class WebfontProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetWebfonts(): void {
 		$this->webfontProvider->clearCache();

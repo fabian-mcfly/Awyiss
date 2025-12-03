@@ -19,7 +19,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test default values from constructor
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		$options = new MediaRenderOptions();
@@ -48,7 +47,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withAllowUpscale method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithAllowUpscale(): void {
 		$options = new MediaRenderOptions();
@@ -70,7 +68,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withAspectRatio method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithAspectRatio(): void {
 		$options = new MediaRenderOptions();
@@ -96,7 +93,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withAttributes method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithAttributes(): void {
 		$options = new MediaRenderOptions();
@@ -119,7 +115,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withBackgroundColor method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithBackgroundColor(): void {
 		$options = new MediaRenderOptions();
@@ -143,7 +138,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withBaseWidth method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithBaseWidth(): void {
 		$options = new MediaRenderOptions();
@@ -165,7 +159,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withBreakpoint method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithBreakpoint(): void {
 		$options = new MediaRenderOptions();
@@ -199,7 +192,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withBreakpoints method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithBreakpoints(): void {
 		$options = new MediaRenderOptions();
@@ -236,7 +228,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withColumnWidth method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithColumnWidth(): void {
 		$options = new MediaRenderOptions();
@@ -255,7 +246,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withHeight method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithHeight(): void {
 		$options = new MediaRenderOptions();
@@ -277,7 +267,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withInclude2x method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithInclude2x(): void {
 		$options = new MediaRenderOptions();
@@ -298,7 +287,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withLazyload method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithLazyload(): void {
 		$options = new MediaRenderOptions();
@@ -320,7 +308,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withMinBreakpoint method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithMinBreakpoint(): void {
 		$options = new MediaRenderOptions();
@@ -341,7 +328,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withResizeStrategy method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithResizeStrategy(): void {
 		$options = new MediaRenderOptions();
@@ -364,7 +350,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withResponsive method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithResponsive(): void {
 		$options = new MediaRenderOptions();
@@ -386,7 +371,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withSelector method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithSelector(): void {
 		$options = new MediaRenderOptions();
@@ -407,7 +391,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withSingleColumnBreakpoint method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithSingleColumnBreakpoint(): void {
 		$options = new MediaRenderOptions();
@@ -431,7 +414,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withStrictSize method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithStrictSize(): void {
 		$options = new MediaRenderOptions();
@@ -453,7 +435,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test withWidth method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithWidth(): void {
 		$options = new MediaRenderOptions();
@@ -475,7 +456,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test with method for multiple property changes
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithMultipleChanges(): void {
 		$options = new MediaRenderOptions();
@@ -509,7 +489,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test with PRESERVE_VALUE constant
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWithPreserveValue(): void {
 		$options = new MediaRenderOptions(width: 500, height: 300);
@@ -537,7 +516,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test normalizeBreakpoint method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeBreakpoint(): void {
 		// Test with numeric value
@@ -564,7 +542,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test normalizeBreakpoints method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeBreakpoints(): void {
 		$breakpoints = [
@@ -598,7 +575,6 @@ class MediaRenderOptionsTest extends TestCase {
 	 * Test deepCopy method through attributes
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeepCopy(): void {
 		$options = new MediaRenderOptions(attributes: [

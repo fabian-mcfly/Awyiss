@@ -19,15 +19,6 @@ class SettingCollection extends ObjectRegistry {
 	 * @var array<SettingInterface>
 	 */
 	protected array $_loaded = [];
-	/*public function render (\Cake\View\View $view, ?string $prePath = null): string {
-		$ls_settings = '';
-
-		foreach ($this->_loaded as $lo_setting) {
-			$ls_settings .= $lo_setting->render($view, $prePath);
-		}
-
-		return $ls_settings;
-	}*/
 
 
 	/**
@@ -39,13 +30,13 @@ class SettingCollection extends ObjectRegistry {
 	 * @return SettingInterface
 	 */
 	protected function _create(object|string $class, string $alias, array $config): SettingInterface {
-		$lo_setting = new $class($config);
-		if (!($lo_setting instanceof SettingInterface)) {
+		$setting = new $class($config);
+		if (!($setting instanceof SettingInterface)) {
 			throw new RuntimeException(sprintf('Setting class `%s` must implement `%s`.', $class, SettingInterface::class));
 		}
 
 
-		return $lo_setting;
+		return $setting;
 	}
 
 
@@ -57,10 +48,7 @@ class SettingCollection extends ObjectRegistry {
 	 * @psalm-return class-string|null
 	 */
 	protected function _resolveClassName(string $class): ?string {
-		$ls_className = App::className($class);
-
-
-		return is_string($ls_className) ? $ls_className : null;
+		return App::className($class);
 	}
 
 

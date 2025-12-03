@@ -47,21 +47,21 @@ class TemplateCommand extends BaseTemplateCommand {
 	 * @return int|null
 	 */
 	public function execute(Arguments $args, ConsoleIo $io): ?int {
-		$li_returnCode = parent::execute($args, $io);
+		$returnCode = parent::execute($args, $io);
 
-		if ($li_returnCode === static::CODE_ERROR) {
-			return $li_returnCode;
+		if ($returnCode === static::CODE_ERROR) {
+			return $returnCode;
 		}
 
-		$la_vars = $this->_loadController($io);
+		$vars = $this->_loadController($io);
 
 		if ($args->getOption('prefix') === 'Frontend') {
 			return static::CODE_SUCCESS;
 		}
 
 		try {
-			$ls_content = $this->getContent($args, $io, 'form', $la_vars);
-			$this->bake($args, $io, 'form', $ls_content);
+			$content = $this->getContent($args, $io, 'form', $vars);
+			$this->bake($args, $io, 'form', $content);
 		}
 		catch (MissingTemplateException $ex) {
 			$io->verbose($ex->getMessage());
@@ -85,18 +85,18 @@ class TemplateCommand extends BaseTemplateCommand {
 	 * @see \Bake\Command\TemplateCommand::getTemplatePath()
 	 */
 	public function getTemplatePath(Arguments $args, ?string $container = null): string {
-		$la_paths = (array)Configure::read('App.paths.templates');
-		if (empty($la_paths)) {
+		$paths = (array)Configure::read('App.paths.templates');
+		if (empty($paths)) {
 			throw new InvalidArgumentException('Could not read template paths. ' . 'Ensure `App.paths.templates` is defined in your application configuration.');
 		}
 
-		$ls_basePath = reset($la_paths);
+		$basePath = reset($paths);
 
-		$ls_path = $this->getPath($args, $ls_basePath);
-		$ls_path .= $this->controllerName . DS;
+		$path = $this->getPath($args, $basePath);
+		$path .= $this->controllerName . DS;
 
 
-		return $ls_path;
+		return $path;
 	}
 
 
@@ -108,36 +108,35 @@ class TemplateCommand extends BaseTemplateCommand {
 	 * @return string
 	 */
 	public function getContent(Arguments $args, ConsoleIo $io, string $action, ?array $vars = null): string {
-		$la_vars = $vars;
-		if (!$la_vars) {
-			$la_vars = $this->_loadController($io);
+		if (!$vars) {
+			$vars = $this->_loadController($io);
 		}
 
-		if (empty($la_vars['primaryKey'])) {
+		if (empty($vars['primaryKey'])) {
 			$io->error('Cannot generate views for models with no primary key');
 			$this->abort();
 		}
 
 		if (in_array($action, $this->excludeHiddenActions)) {
-			$la_vars['fields'] = array_diff($la_vars['fields'], $la_vars['hidden']);
+			$vars['fields'] = array_diff($vars['fields'], $vars['hidden']);
 		}
 
-		$lo_renderer = $this->createTemplateRenderer()->set('action', $action)->set('plugin', $this->plugin)->set($la_vars);
+		$renderer = $this->createTemplateRenderer()->set('action', $action)->set('plugin', $this->plugin)->set($vars);
 
-		$li_indexColumns = 0;
+		$indexColumns = 0;
 		if ($action === 'index' && $args->getOption('index-columns') !== null) {
-			$li_indexColumns = $args->getOption('index-columns');
+			$indexColumns = $args->getOption('index-columns');
 		}
 
-		$lo_renderer->set('indexColumns', $li_indexColumns);
+		$renderer->set('indexColumns', $indexColumns);
 
 		// If the template to bake is a page template,
 		if ($args->getOption('prefix') === 'Frontend' && $args->getOption('controller') === 'page') {
-			$lo_renderer->set('action', $args->getArgument('action'));
-			$lo_renderer->set('isCategory', str_ends_with($args->getArgument('action'), 'category'));
+			$renderer->set('action', $args->getArgument('action'));
+			$renderer->set('isCategory', str_ends_with($args->getArgument('action'), 'category'));
 		}
 
-		return $lo_renderer->generate('template/' . $action);
+		return $renderer->generate('template/' . $action);
 	}
 
 
@@ -147,16 +146,16 @@ class TemplateCommand extends BaseTemplateCommand {
 	 * @inheritDoc
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$la_paths = (array)Configure::read('App.paths.templates');
-		$ls_basePath = reset($la_paths);
+		$paths = (array)Configure::read('App.paths.templates');
+		$basePath = reset($paths);
 
-		$lo_parser->addOption('folder', [
-			'help' => 'The folder to save the templates in. Defaults to the the first item in config `App.paths.templates` (`' . $ls_basePath . '`).',
+		$parser->addOption('folder', [
+			'help' => 'The folder to save the templates in. Defaults to the the first item in config `App.paths.templates` (`' . $basePath . '`).',
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 }

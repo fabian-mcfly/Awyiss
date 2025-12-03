@@ -197,7 +197,7 @@ class ContentsTable extends Table {
 		 *
 		 * @noinspection GrazieInspection
 		 */
-		$lo_subquery = $this->find()->select([
+		$subquery = $this->find()->select([
 			'latest_page_id' => 'page_id',
 			'latest_date' => $this->find()->func()->max(
 				new FunctionExpression('COALESCE', ['changed_on' => 'literal', 'created_on' => 'literal'])
@@ -214,7 +214,7 @@ class ContentsTable extends Table {
 			'changed_on',
 			'created_on',
 		])->innerJoin(
-			['latest' => $lo_subquery],
+			['latest' => $subquery],
 			function (QueryExpression $exp/*, SelectQuery $q*/) {
 				return $exp->eq('Contents.page_id', new IdentifierExpression('latest_page_id'))->eq(
 					new FunctionExpression('COALESCE', [
@@ -263,12 +263,12 @@ class ContentsTable extends Table {
 	 * @return void
 	 */
 	protected function initializeColumnSystem(): void {
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $ls_className */
-		$ls_className = $this->columnSystem['className'];
-		$ls_className::setMaxDenominator($this->columnSystem['maxColumns']);
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $className */
+		$className = $this->columnSystem['className'];
+		$className::setMaxDenominator($this->columnSystem['maxColumns']);
 
-		$this->columnWidths = $ls_className::getColumnWidths();
-		$this->columnIndents = $ls_className::getColumnIndents();
+		$this->columnWidths = $className::getColumnWidths();
+		$this->columnIndents = $className::getColumnIndents();
 	}
 
 
@@ -455,8 +455,8 @@ class ContentsTable extends Table {
 			 * @see ContentsTable::forPageRole
 			 */
 			try {
-				/** @var Page $lo_page */
-				$lo_page = $this->{$this->getPageRole()->tableAlias()}->get($entity->pageId, contain: [
+				/** @var \Awyiss\Model\Entity\Page $page */
+				$page = $this->{$this->getPageRole()->tableAlias()}->get($entity->pageId, contain: [
 					'PageTemplates',
 				]);
 			}
@@ -474,13 +474,13 @@ class ContentsTable extends Table {
 			 * This works as an existsIn-like rule
 			 */
 			try {
-				/** @var ContentTemplate $lo_contentTemplate */
-				$lo_contentTemplate = $this->ContentTemplates->get(
+				/** @var \Awyiss\Model\Entity\ContentTemplate $contentTemplate */
+				$contentTemplate = $this->ContentTemplates->get(
 					$entity->contentTemplateId,
 					contain: [
 						'ContentAreas' => [
-							'queryBuilder' => function (SelectQuery $query) use ($lo_page) {
-								return $query->where(['ContentTemplateContentAreas.page_template_id' => $lo_page->pageTemplateId]);
+							'queryBuilder' => function (SelectQuery $query) use ($page) {
+								return $query->where(['ContentTemplateContentAreas.page_template_id' => $page->pageTemplateId]);
 							},
 						],
 						'ContentTemplateElements',
@@ -498,7 +498,7 @@ class ContentsTable extends Table {
 
 
 			//Content Area not found in the content template
-			if (!in_array($entity->contentAreaId, array_column($lo_contentTemplate->contentAreas, 'id'))) {
+			if (!in_array($entity->contentAreaId, array_column($contentTemplate->contentAreas, 'id'))) {
 				$entity->setError('content_area_id', [
 					'validContentAreaId' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id'),
 				]);
@@ -508,7 +508,7 @@ class ContentsTable extends Table {
 
 
 			// Make sure that all children of the current entity can be moved to the target content area as well
-			if (!$this->childrenCanBeMoved($entity, $lo_page->pageTemplateId)) {
+			if (!$this->childrenCanBeMoved($entity, $page->pageTemplateId)) {
 				$entity->setError('content_area_id', [
 					'validContentAreaIdForChildren' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id_for_children'),
 				]);
@@ -517,37 +517,37 @@ class ContentsTable extends Table {
 			}
 
 
-			/** @var \Awyiss\Validation\Validator $lo_validator */
-			$lo_validator = new $this->_validatorClass();
-			$lo_validator->setI18nDomain($this->getI18nDomain());
+			/** @var \Awyiss\Validation\Validator $validator */
+			$validator = new $this->_validatorClass();
+			$validator->setI18nDomain($this->getI18nDomain());
 
-			$la_data = $entity->extract();
+			$data = $entity->extract();
 			if (!empty($entity->attributes)) {
-				/** @var \Awyiss\Validation\Validator $lo_attributesValidator */
-				$lo_attributesValidator = new $this->_validatorClass();
-				$lo_attributesValidator->setI18nDomain($this->getI18nDomain());
+				/** @var \Awyiss\Validation\Validator $attributesValidator */
+				$attributesValidator = new $this->_validatorClass();
+				$attributesValidator->setI18nDomain($this->getI18nDomain());
 
-				$la_data['attributes'] = $entity->attributes->extract();
+				$data['attributes'] = $entity->attributes->extract();
 			}
 
-			$this->validateInputFields($entity, $lo_validator, $lo_attributesValidator ?? null, $lo_contentTemplate);
+			$this->validateInputFields($entity, $validator, $attributesValidator ?? null, $contentTemplate);
 
 			//Validate the entity using the
-			$la_errors = $lo_validator->validate($la_data, $entity->isNew());
+			$errors = $validator->validate($data, $entity->isNew());
 
 			/** @noinspection PhpUndefinedMethodInspection */
-			$la_errors = $this->getEntityClass()::mapFields($la_errors, true);
+			$errors = $this->getEntityClass()::mapFields($errors, true);
 
-			if ($this->hasAttributes() && !empty($la_errors['attributes'])) {
+			if ($this->hasAttributes() && !empty($errors['attributes'])) {
 				/** @noinspection PhpUndefinedMethodInspection */
-				$la_errors['attributes'] = $this->getAttributesTable()->getEntityClass()::mapFields($la_errors['attributes'], true);
-				$entity->attributes->setErrors($la_errors['attributes']);
+				$errors['attributes'] = $this->getAttributesTable()->getEntityClass()::mapFields($errors['attributes'], true);
+				$entity->attributes->setErrors($errors['attributes']);
 			}
 
-			$entity->setErrors($la_errors);
+			$entity->setErrors($errors);
 
 
-			return empty($la_errors);
+			return empty($errors);
 		}, 'validContentArea');
 
 
@@ -558,14 +558,14 @@ class ContentsTable extends Table {
 
 
 		$rules->add(function (Content $entity): bool {
-			/** @var \Awyiss\Utility\Content\ColumnInterface $lo_width */
-			$lo_width = $entity->column['width'];
-			/** @var \Awyiss\Utility\Content\ColumnInterface $lo_indent */
-			$lo_indent = $entity->column['indent'];
+			/** @var \Awyiss\Utility\Content\ColumnInterface $width */
+			$width = $entity->column['width'];
+			/** @var \Awyiss\Utility\Content\ColumnInterface $indent */
+			$indent = $entity->column['indent'];
 
-			$lf_totalWidth = $lo_width->getPercentage() + ($lo_indent?->getPercentage() ?? 0);
+			$totalWidth = $width->getPercentage() + ($indent?->getPercentage() ?? 0);
 
-			if ($lf_totalWidth > 1) {
+			if ($totalWidth > 1) {
 				return false;
 			}
 
@@ -578,19 +578,19 @@ class ContentsTable extends Table {
 
 		$rules->add(
 			function (Content $entity) {
-				$lx_valid = $this->checkValidDuplicateRules($entity);
+				$valid = $this->checkValidDuplicateRules($entity);
 
-				if ($lx_valid !== true && !$entity->duplicateOf) {
+				if ($valid !== true && !$entity->duplicateOf) {
 					/**
 					 * If the entity is not a duplicate of another content but
 					 * the validation failed, set the error message to the general error field.
 					 *
 					 * Most likely, the entity itself does not have a duplicateOf field
 					 */
-					$entity->setError('_general', $lx_valid);
+					$entity->setError('_general', $valid);
 				}
 
-				return $lx_valid;
+				return $valid;
 			},
 			'validDuplicateOf',
 			[
@@ -618,28 +618,28 @@ class ContentsTable extends Table {
 				}
 
 				// compileScss requires a \SplFileInfo instance and the file needs to have the `.scss` extension
-				$ls_tempFile = tempnam(sys_get_temp_dir(), 'awyiss_scss_');
-				rename($ls_tempFile, $ls_tempFile . '.scss');
-				$ls_tempFile .= '.scss';
-				file_put_contents($ls_tempFile, '#Content { ' . $entity->css . ' }');
-				$lo_tempFile = new SplFileInfo($ls_tempFile);
+				$tempFileName = tempnam(sys_get_temp_dir(), 'awyiss_scss_');
+				rename($tempFileName, $tempFileName . '.scss');
+				$tempFileName .= '.scss';
+				file_put_contents($tempFileName, '#Content { ' . $entity->css . ' }');
+				$tempFile = new SplFileInfo($tempFileName);
 
 				ob_start();
-				/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
-				$ls_compilerClass = App::className('ScssCompiler', 'Utility/Design');
+				/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $compilerClass */
+				$compilerClass = App::className('ScssCompiler', 'Utility/Design');
 				try {
-					/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
-					$lo_designMiddleware = Router::getRequest()->getAttribute('design');
-					$ls_css = $ls_compilerClass::compileScss($lo_tempFile, ROOT . DS . CUSTOM_DIR . DS . 'asset' . DS, $lo_designMiddleware?->getDesignVariables() ?? [], true);
+					/** @var \Awyiss\Middleware\DesignMiddleware $designMiddleware */
+					$designMiddleware = Router::getRequest()->getAttribute('design');
+					$css = $compilerClass::compileScss($tempFile, ROOT . DS . CUSTOM_DIR . DS . 'asset' . DS, $designMiddleware?->getDesignVariables() ?? [], true);
 				}
 				catch (Exception | SassException) {
-					$ls_css = false;
+					$css = false;
 				}
 				ob_end_clean();
 
-				unlink($lo_tempFile->getRealPath());
+				unlink($tempFile->getRealPath());
 
-				return $ls_css !== false;
+				return $css !== false;
 			},
 			'validCss',
 			[
@@ -651,21 +651,21 @@ class ContentsTable extends Table {
 		//Ensure that a content has no linked duplicating contents when deleting it.
 		$rules->addDelete(
 			function (Content $entity): string|bool {
-				/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-				$lo_table = FactoryLocator::get('Table')->get('Contents');
+				/** @var \Awyiss\Model\Table\ContentsTable $table */
+				$table = FactoryLocator::get('Table')->get('Contents');
 
-				if ($lo_table->exists(['duplicate_of' => $entity->id])) {
+				if ($table->exists(['duplicate_of' => $entity->id])) {
 					return false;
 				}
 
 				// Get all children of the current entity
-				$la_nestedChildren = $entity->getNestedChildren()->toArray();
-				$la_childrenContentIds = array_column($la_nestedChildren, 'id');
+				$nestedChildren = $entity->getNestedChildren()->toArray();
+				$childrenContentIds = array_column($nestedChildren, 'id');
 
-				if ($la_childrenContentIds) {
-					$li_duplicatingContents = $lo_table->find()->where(['duplicate_of IN' => $la_childrenContentIds])->count();
+				if ($childrenContentIds) {
+					$duplicatingContents = $table->find()->where(['duplicate_of IN' => $childrenContentIds])->count();
 
-					if ($li_duplicatingContents) {
+					if ($duplicatingContents) {
 						return __df($this->getI18nDomain(), 'validation', 'error_no_duplicated_children');
 					}
 				}
@@ -696,18 +696,15 @@ class ContentsTable extends Table {
 			return true;
 		}
 
-		$li_contentAreaId = $entity->contentAreaId;
-		$li_pageTemplateId = $pageTemplateId;
-
 		// Get all children of the current entity
-		$lo_children = $entity->getNestedChildren([
+		$children = $entity->getNestedChildren([
 			'contain' => [
 				'ContentTemplates' => [
 					'ContentAreas' => [
-						'queryBuilder' => function (SelectQuery $query) use ($li_contentAreaId, $li_pageTemplateId) {
+						'queryBuilder' => function (SelectQuery $query) use ($entity, $pageTemplateId) {
 							return $query->where([
-								'ContentTemplateContentAreas.content_area_id' => $li_contentAreaId,
-								'ContentTemplateContentAreas.page_template_id' => $li_pageTemplateId,
+								'ContentTemplateContentAreas.content_area_id' => $entity->contentAreaId,
+								'ContentTemplateContentAreas.page_template_id' => $pageTemplateId,
 							]);
 						},
 					],
@@ -715,9 +712,9 @@ class ContentsTable extends Table {
 			],
 		]);
 
-		/** @var \Awyiss\Model\Entity\Content $lo_child */
-		foreach ($lo_children as $lo_child) {
-			if (!$lo_child->contentTemplate?->contentAreas) {
+		/** @var \Awyiss\Model\Entity\Content $child */
+		foreach ($children as $child) {
+			if (!$child->contentTemplate?->contentAreas) {
 				return false;
 			}
 		}
@@ -733,13 +730,13 @@ class ContentsTable extends Table {
 	 * @return Page
 	 */
 	public function getPage(int $pageId): Page {
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$tableLocator = FactoryLocator::get('Table');
 
-		/** @var Table $lo_pages */
-		$lo_pages = $lo_tableLocator->get('Pages');
+		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
+		$pagesTable = $tableLocator->get('Pages');
 
-		/** @var Page $lo_page */
-		$lo_page = $lo_pages->get(
+		/** @var \Awyiss\Model\Entity\Page $page */
+		$page = $pagesTable->get(
 			$pageId,
 			'mediaAssignments',
 			attributes: ['skip' => true],
@@ -783,7 +780,7 @@ class ContentsTable extends Table {
 		);
 
 
-		return $lo_page;
+		return $page;
 	}
 
 
@@ -797,10 +794,9 @@ class ContentsTable extends Table {
 	 */
 	public function forPageRole(PageRole|PageRoleEnumInterface $pageRole, bool $initializePages = true): void {
 		if ($pageRole instanceof PageRole) {
-			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$pageRole = $ls_pageRoleEnum::tryFromName($pageRole->identifier);
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+			$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			$pageRole = $pageRoleEnum::tryFromName($pageRole->identifier);
 		}
 
 		if ($initializePages) {
@@ -814,9 +810,9 @@ class ContentsTable extends Table {
 				]);
 			}
 
-			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_behavior */
-			$lo_behavior = $this->getBehavior('Categories');
-			$lo_behavior->setConfig('associationName', $pageRole->tableAlias())->resetCategories();
+			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $categoriesBehavior */
+			$categoriesBehavior = $this->getBehavior('Categories');
+			$categoriesBehavior->setConfig('associationName', $pageRole->tableAlias())->resetCategories();
 		}
 
 		$this->setPageRole($pageRole);
@@ -901,15 +897,15 @@ class ContentsTable extends Table {
 	 * @return void
 	 */
 	protected function validateInputFields(Content $entity, Validator $validator, ?Validator $attributesValidator, ContentTemplate $contentTemplate): void {
-		$la_contentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
-		$la_contentAttributes = array_column($la_contentAttributes, null, 'identifier');
+		$contentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
+		$contentAttributes = array_column($contentAttributes, null, 'identifier');
 
-		$this->validateAssignedElements($contentTemplate, $entity, $validator, $la_contentAttributes, $attributesValidator);
+		$this->validateAssignedElements($contentTemplate, $entity, $validator, $contentAttributes, $attributesValidator);
 
 		$this->validateUnassignedElements($contentTemplate, $entity, $validator);
 
 		if (isset($attributesValidator)) {
-			$this->validateUnassignedAttributes($contentTemplate, $entity, $la_contentAttributes, $attributesValidator);
+			$this->validateUnassignedAttributes($contentTemplate, $entity, $contentAttributes, $attributesValidator);
 
 			if ($attributesValidator->count()) {
 				$validator->addNested('attributes', $attributesValidator);
@@ -943,19 +939,19 @@ class ContentsTable extends Table {
 		array $contentAttributes,
 		?Validator $attributesValidator
 	): void {
-		$la_allowedKeyForDuplicating = $this->getAllowedKeyForDuplicating();
+		$allowedKeyForDuplicating = $this->getAllowedKeyForDuplicating();
 
 		//Traverse all elements that are available inside the content template
-		foreach ($contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
-			if (!str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
+		foreach ($contentTemplate->contentTemplateElements as $contentTemplateElement) {
+			if (!str_starts_with($contentTemplateElement->identifier, 'attributes.')) {
 				// If the content is a duplicate of another content, only require those fields that are allowed for this content
-				if ($entity->duplicateOf && !in_array($lo_contentTemplateElement->identifier, $la_allowedKeyForDuplicating)) {
+				if ($entity->duplicateOf && !in_array($contentTemplateElement->identifier, $allowedKeyForDuplicating)) {
 					continue;
 				}
 
-				if ($lo_contentTemplateElement->required === true) {
+				if ($contentTemplateElement->required === true) {
 					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
-					$validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
+					$validator->requirePresence($contentTemplateElement->identifier)->notEmptyString($contentTemplateElement->identifier);
 					//TODO check if notEmptyString is enough. Some fields might need notEmpty*
 				}
 
@@ -971,25 +967,25 @@ class ContentsTable extends Table {
 				continue;
 			}
 
-			$ls_identifier = substr($lo_contentTemplateElement->identifier, 11);
+			$identifier = substr($contentTemplateElement->identifier, 11);
 
-			if ($entity->attributes->getError($ls_identifier)) {
+			if ($entity->attributes->getError($identifier)) {
 				continue;
 			}
 
-			if ($lo_contentTemplateElement->required === true) {
-				$attributesValidator->requirePresence($ls_identifier);
+			if ($contentTemplateElement->required === true) {
+				$attributesValidator->requirePresence($identifier);
 
-				switch ($contentAttributes[ $ls_identifier ]['inputType']) {
+				switch ($contentAttributes[ $identifier ]['inputType']) {
 					case 'checkbox':
-						$attributesValidator->add($ls_identifier, [
+						$attributesValidator->add($identifier, [
 							'checkboxChecked' => [
 								'rule' => ['equalTo', true],
 							],
 						]);
 						break;
 					default:
-						$attributesValidator->notEmptyString($ls_identifier);
+						$attributesValidator->notEmptyString($identifier);
 				}
 			}
 		}
@@ -1004,19 +1000,19 @@ class ContentsTable extends Table {
 	 * @return void
 	 */
 	protected function validateUnassignedAttributes(ContentTemplate $contentTemplate, Content $entity, array $contentAttributes, ?Validator $attributesValidator): void {
-		$la_attributes = array_keys($contentAttributes);
+		$attributes = array_keys($contentAttributes);
 
 		foreach (
 			array_diff(
-				$la_attributes,
+				$attributes,
 				$this->ContentTemplates->getAssignedContentAttributes($contentTemplate)
-			) as $ls_element
+			) as $element
 		) {
-			if (!$entity->attributes->isDirty($ls_element)) {
+			if (!$entity->attributes->isDirty($element)) {
 				continue;
 			}
 
-			$attributesValidator->add($ls_element, 'isEmpty', [
+			$attributesValidator->add($element, 'isEmpty', [
 				'rule' => function (mixed $value): bool {
 					return empty($value) && !in_array($value, [false, '0', 0], true);
 				},
@@ -1037,36 +1033,26 @@ class ContentsTable extends Table {
 			array_diff(
 				array_keys($this->ContentTemplates->getAvailableContentElements()),
 				array_column($contentTemplate->contentTemplateElements, 'identifier')
-			) as $ls_element
+			) as $element
 		) {
-			if ($entity->getError($ls_element)) {
+			if ($entity->getError($element)) {
 				continue;
 			}
 
-			if ($ls_element === 'column_width') {
-				$la_columnWidths = $this->getColumnWidths();
+			if ($element === 'column_width') {
+				$columnWidths = $this->getColumnWidths();
 
-				$validator->add($ls_element, [
+				$validator->add($element, [
 					'equalTo' => [
-						'rule' => ['equalTo', key($la_columnWidths)],
+						'rule' => ['equalTo', key($columnWidths)],
 					],
 				]);
 
 				continue;
 			}
 
-			if ($ls_element === 'column_last') {
-				$validator->add($ls_element, [
-					'equalTo' => [
-						'rule' => ['equalTo', false],
-					],
-				]);
-
-				continue;
-			}
-
-			if ($ls_element === 'column_rtl') {
-				$validator->add($ls_element, [
+			if ($element === 'column_last') {
+				$validator->add($element, [
 					'equalTo' => [
 						'rule' => ['equalTo', false],
 					],
@@ -1075,7 +1061,17 @@ class ContentsTable extends Table {
 				continue;
 			}
 
-			$validator->add($ls_element, 'isEmpty', [
+			if ($element === 'column_rtl') {
+				$validator->add($element, [
+					'equalTo' => [
+						'rule' => ['equalTo', false],
+					],
+				]);
+
+				continue;
+			}
+
+			$validator->add($element, 'isEmpty', [
 				'rule' => function (mixed $value): bool {
 					return empty($value) && !in_array($value, [false, '0', 0], true);
 				},
@@ -1091,11 +1087,11 @@ class ContentsTable extends Table {
 	 */
 	protected function checkValidDuplicateRules(Content $entity): string|bool {
 		// Get all children of the current entity
-		$la_nestedChildren = $entity->getNestedChildren()->toArray();
-		$la_duplicatedContentIds = array_column($la_nestedChildren, 'duplicateOf');
+		$nestedChildren = $entity->getNestedChildren()->toArray();
+		$duplicatedContentIds = array_column($nestedChildren, 'duplicateOf');
 
 		// Neither the current entity nor any of its nested children are duplicates?
-		if (empty($entity->duplicateOf) && !$la_duplicatedContentIds) {
+		if (empty($entity->duplicateOf) && !$duplicatedContentIds) {
 			return true;
 		}
 
@@ -1111,36 +1107,36 @@ class ContentsTable extends Table {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicated');
 			}
 
-			/** @var \Awyiss\Model\Entity\Content $lo_duplicateOf */
-			$lo_duplicateOf = $this->findById($entity->duplicateOf)->first();
+			/** @var \Awyiss\Model\Entity\Content $duplicateOf */
+			$duplicateOf = $this->findById($entity->duplicateOf)->first();
 
 			// Disallow duplicating contents that do not exist
-			if (!$lo_duplicateOf) {
+			if (!$duplicateOf) {
 				return __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of');
 			}
 
 			// Prevents a content (current) from duplicating another content (target),
 			// if the (target) content is already duplicating another content (third).
-			if ($lo_duplicateOf->duplicateOf) {
+			if ($duplicateOf->duplicateOf) {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicating');
 			}
 
 			// Disallow duplicating contents that are on the same page
-			if ($lo_duplicateOf->pageId === $entity->pageId) {
+			if ($duplicateOf->pageId === $entity->pageId) {
 				return __df($this->getI18nDomain(), 'validation', 'error_duplicate_not_on_same_page');
 			}
 		}
 
 		// No nested children to check? Rule is valid.
-		if (!$la_duplicatedContentIds) {
+		if (!$duplicatedContentIds) {
 			return true;
 		}
 
 		// Find all contents that are duplicated by nested children of the current entity
-		$la_duplicatedContents = $this->find()->where(['id IN' => $la_duplicatedContentIds])->all()->indexBy('id')->toArray();
+		$duplicatedContents = $this->find()->where(['id IN' => $duplicatedContentIds])->all()->indexBy('id')->toArray();
 
-		/** @var \Awyiss\Model\Entity\Content $lo_duplicatedContent */
-		foreach ($la_duplicatedContents as $lo_duplicatedContent) {
+		/** @var \Awyiss\Model\Entity\Content $duplicatedContent */
+		foreach ($duplicatedContents as $duplicatedContent) {
 			/**
 			 * If any of the nested children of the current entity
 			 * is duplicating another content that is on the same page,
@@ -1150,7 +1146,7 @@ class ContentsTable extends Table {
 			 * would result in a content and its duplicated content
 			 * being on the same page.
 			 */
-			if ($lo_duplicatedContent->pageId === $entity->pageId) {
+			if ($duplicatedContent->pageId === $entity->pageId) {
 				return __df($this->getI18nDomain(), 'validation', 'error_children_not_duplicating_contents_on_same_page');
 			}
 		}

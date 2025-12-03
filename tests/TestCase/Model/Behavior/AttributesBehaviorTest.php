@@ -82,7 +82,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		$config = $this->behavior->getConfig();
@@ -120,7 +119,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeForNotAttributableClass(): void {
 		$this->table = new class (['table' => 'pages', 'alias' => 'DummyNews']) extends PagesTable {
@@ -168,7 +166,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeCreatesAssociationWithAttributesTable(): void {
 		$this->assertTrue($this->table->hasAssociation('AttributesNews'));
@@ -187,7 +184,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeNotCreatesAssociationWithAttributesTableForAttributesTable(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -201,7 +197,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeNotCreatesAssociationWithAttributesTableForForNotAttributableClass(): void {
 		$this->table = new class (['table' => 'pages', 'alias' => 'DummyNews']) extends PagesTable {
@@ -223,7 +218,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeForAttributsTable(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -263,7 +257,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$events = $this->behavior->implementedEvents();
@@ -282,7 +275,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsForAttributesTable(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -306,7 +298,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::implementedFinders()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedFinders(): void {
 		$finders = $this->behavior->implementedFinders();
@@ -323,7 +314,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::implementedFinders()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedFindersForAttributesTable(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -342,7 +332,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::implementedFinders()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedFindersForNotAttributableClass(): void {
 		$this->table = new class (['table' => 'pages', 'alias' => 'DummyNews']) extends PagesTable {
@@ -369,7 +358,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::implementedMethods()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedMethods(): void {
 		$methods = $this->behavior->implementedMethods();
@@ -388,7 +376,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::implementedMethods()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedMethodsForAttributesTable(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -411,7 +398,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::extractAttributeFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractAttributeFields(): void {
 		$fields = ['attributes.name', 'attributes.age', 'other_field'];
@@ -424,7 +410,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::extractAttributeFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtractAttributeFieldsWithBaseFields(): void {
 		$fields = ['attributes.name', 'attributes.age', 'other_field', 'Dummytable.other_field2'];
@@ -438,7 +423,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::findWithMatchingAttributes()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindWithMatchingAttributes(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -467,7 +451,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::findWithMatchingAttributes()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindWithMatchingAttributesWithNullValues(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -495,7 +478,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::getAttributesTable()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributesTable(): void {
 		$result = $this->behavior->getAttributesTable();
@@ -506,7 +488,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::getAttributesTable()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributesTableForAttributesTable(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -521,7 +502,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::getAttributesTableName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributesTableName(): void {
 		$result = $this->behavior->getAttributesTableName();
@@ -535,7 +515,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::getAttributesTableName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributesTableNameForAttributesTable(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -607,7 +586,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::getAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributes(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -635,7 +613,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::getAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributesForAttributesTable(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -663,7 +640,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalRemovesEmptyValuesFromInputList(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -696,7 +672,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalRemovesEmptyElementsFromInputKeyValueList(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -729,7 +704,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRequiresRequiredFieldsToNotBeEmpty(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -764,7 +738,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesRequiresValidValue(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -801,7 +774,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeFind()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindSetsAttributeEntity(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -857,7 +829,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeFind()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindNotSetsAttributeEntityWhenSkipped(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -901,7 +872,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeFind()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindNotSetsAttributeEntityOnAttribute(): void {
 		$table = $this->fetchTable('AttributesCars');
@@ -952,7 +922,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeFind()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindLoadsI18nWhenContainI18n(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -1000,7 +969,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyMarksAttributeEntityNew(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -1036,7 +1004,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveMarksAttributesPropertyDirtyWhenAttributesDirty(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -1081,7 +1048,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveMarksPasswordFieldsAsNotEmptyWhenEmpty(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -1121,7 +1087,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveHashesPasswordFields(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -1163,7 +1128,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveDeletesEntityRowWhenAttributeSetToFalse(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -1210,7 +1174,6 @@ class AttributesBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotDeletesEntityRowWhenAttributeSet(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
@@ -1260,7 +1223,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::_dynamicFinder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDynamicPastFinder(): void {
 		$news1 = $this->table->newDefaultEntity([
@@ -1323,7 +1285,6 @@ class AttributesBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior::_dynamicFinder()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDynamicFutureFinder(): void {
 		$news1 = $this->table->newDefaultEntity([

@@ -37,7 +37,7 @@ class CategoriesComponent extends Component {
 		'verifySelection' => true,
 	];
 	/**
-	 * @var \Cake\ORM\Table
+	 * @var \Awyiss\Model\Table
 	 */
 	protected Table $table;
 
@@ -62,8 +62,8 @@ class CategoriesComponent extends Component {
 		parent::initialize($config);
 
 		if (!$this->getConfig('uriParam')) {
-			$ls_identifier = $this->getConfig('identifier');
-			$this->setConfig('uriParam', Inflector::dasherize($ls_identifier ?? 'category'));
+			$identifier = $this->getConfig('identifier');
+			$this->setConfig('uriParam', Inflector::dasherize($identifier ?? 'category'));
 		}
 	}
 
@@ -117,26 +117,25 @@ class CategoriesComponent extends Component {
 	 * @return \Awyiss\Controller\Component\CategoriesComponent
 	 */
 	public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static {
-		$lx_key = $key;
-		if (is_string($lx_key)) {
-			if (array_key_exists($lx_key, $this->_defaultConfig)) {
-				parent::setConfig($lx_key, $value, $merge);
+		if (is_string($key)) {
+			if (array_key_exists($key, $this->_defaultConfig)) {
+				parent::setConfig($key, $value, $merge);
 
 
 				return $this;
 			}
 		}
 		else {
-			foreach ($lx_key as $ls_key => $lx_value) {
-				if (array_key_exists($ls_key, $this->_defaultConfig)) {
-					parent::setConfig($ls_key, $lx_value, $merge);
-					unset($lx_key[ $ls_key ]);
+			foreach ($key as $itemKey => $itemValue) {
+				if (array_key_exists($itemKey, $this->_defaultConfig)) {
+					parent::setConfig($itemKey, $itemValue, $merge);
+					unset($key[ $itemKey ]);
 				}
 			}
 		}
 
 		if ($this->table->hasBehavior('Categories')) {
-			$this->table->getBehavior('Categories')->setConfig($lx_key, $value, $merge);
+			$this->table->getBehavior('Categories')->setConfig($key, $value, $merge);
 		}
 
 		return $this;
@@ -153,58 +152,55 @@ class CategoriesComponent extends Component {
 			return;
 		}
 
-		$la_startupMethods = $this->getConfig('startupMethods');
+		$startupMethods = $this->getConfig('startupMethods');
 
-		if ($la_startupMethods === null) {
+		if ($startupMethods === null) {
 			return;
 		}
 
-		$ls_identifier = $this->getConfig('identifier');
-		$lo_request = $this->getController()->getRequest();
-		$lo_session = $lo_request->getSession();
+		$identifier = $this->getConfig('identifier');
+		$request = $this->getController()->getRequest();
+		$session = $request->getSession();
 
-		$ls_bindingKey = $this->getConfig('bindingKey', 'id');
+		$bindingKey = $this->getConfig('bindingKey', 'id');
 
-		//Remember an identifier that will be used to save the selected category in the session
-		$la_identifierParts = ['categories'];
+		// Remember an identifier that will be used to save the selected category in the session
+		$identifierParts = ['categories'];
 
-		$lo_schema = $this->table->getSchema();
-		if ($lo_schema->hasColumn('language_shortcode') && $this->table->getAlias() !== 'Configuration') {
-			$la_identifierParts[] = $lo_request->getParam('lang') ?? 'global';
+		$schema = $this->table->getSchema();
+		if ($schema->hasColumn('language_shortcode') && $this->table->getAlias() !== 'Configuration') {
+			$identifierParts[] = $request->getParam('lang') ?? 'global';
 		}
 
-		$la_identifierParts = array_merge($la_identifierParts, [
+		$identifierParts = array_merge($identifierParts, [
 			Inflector::underscore($this->table->getAlias()),
-			Inflector::underscore($ls_identifier),
+			Inflector::underscore($identifier),
 		]);
 
-		$ls_sessionIdentifier = implode('.', $la_identifierParts);
-
-		if (!str_ends_with($ls_sessionIdentifier, '_' . $ls_bindingKey) && $this->getConfig('useDatasource')) {
-			$ls_sessionIdentifier .= '_' . $ls_bindingKey;
+		$sessionIdentifier = implode('.', $identifierParts);
+		if (!str_ends_with($sessionIdentifier, '_' . $bindingKey) && $this->getConfig('useDatasource')) {
+			$sessionIdentifier .= '_' . $bindingKey;
 		}
 
-		$ls_action = $this->getController()->getRequest()->getParam('action');
-
-
-		if (in_array($ls_action, $la_startupMethods)) {
-			$la_categories = $this->table->getCategories();
+		$action = $this->getController()->getRequest()->getParam('action');
+		if (in_array($action, $startupMethods)) {
+			$categories = $this->table->getCategories();
 
 			//Is there a request parameter with the identifier
-			$lx_categoryId = $lo_request->getParam(Inflector::variable($this->getConfig('uriParam')));
-			if (is_numeric($lx_categoryId)) {
-				$lx_categoryId = (int)$lx_categoryId;
+			$categoryId = $request->getParam(Inflector::variable($this->getConfig('uriParam')));
+			if (is_numeric($categoryId)) {
+				$categoryId = (int)$categoryId;
 			}
 
-			if (!$lx_categoryId) {
-				$lx_categoryId = $lo_session->started() ? $lo_session->read($ls_sessionIdentifier) : null;
-				$lx_categoryId ??= $this->getConfig('selectedCategory');
+			if (!$categoryId) {
+				$categoryId = $session->started() ? $session->read($sessionIdentifier) : null;
+				$categoryId ??= $this->getConfig('selectedCategory');
 
-				if (!$lx_categoryId) {
+				if (!$categoryId) {
 					//Set the category identifier to the default value from the config
-					$lx_categoryId = $this->getConfig('defaultVal');
+					$categoryId = $this->getConfig('defaultVal');
 
-					if ($lx_categoryId === null) {
+					if ($categoryId === null) {
 						/*
 						 * If the default value is empty, set the category identifier to either
 						 * 	- the aggregationKey, if aggregation is allowed
@@ -214,13 +210,13 @@ class CategoriesComponent extends Component {
 						 * 	- the first key (identifier) of the available categories
 						 */
 						if ($this->getConfig('allowAggregation')) {
-							$lx_categoryId = $this->getConfig('aggregationKey');
+							$categoryId = $this->getConfig('aggregationKey');
 						}
 						elseif ($this->getConfig('allowUnassigned')) {
-							$lx_categoryId = $this->getConfig('unassignedKey');
+							$categoryId = $this->getConfig('unassignedKey');
 						}
 						else {
-							$lx_categoryId = array_key_first($la_categories);
+							$categoryId = array_key_first($categories);
 						}
 					}
 				}
@@ -228,25 +224,25 @@ class CategoriesComponent extends Component {
 
 			if ($this->getConfig('verifySelection')) {
 				if ($this->getConfig('allowUnassigned')) {
-					$la_categories = [$this->getConfig('unassignedKey') => $this->getConfig('unassignedKey')] + $la_categories;
+					$categories = [$this->getConfig('unassignedKey') => $this->getConfig('unassignedKey')] + $categories;
 				}
 
 				if ($this->getConfig('allowAggregation')) {
-					$la_categories = [$this->getConfig('aggregationKey') => $this->getConfig('aggregationKey')] + $la_categories;
+					$categories = [$this->getConfig('aggregationKey') => $this->getConfig('aggregationKey')] + $categories;
 				}
 
-				$lx_categoryId = $this->verifySelection($lx_categoryId, $la_categories);
+				$categoryId = $this->verifySelection($categoryId, $categories);
 			}
 
 			//Save the category identifier in the session
-			$lo_session->write($ls_sessionIdentifier, $lx_categoryId);
+			$session->write($sessionIdentifier, $categoryId);
 		}
 		else {
-			$lx_categoryId = $lo_session->read($ls_sessionIdentifier);
+			$categoryId = $session->read($sessionIdentifier);
 		}
 
 		//Add the selected category identifier to the config
-		$this->setConfig('selectedCategory', $lx_categoryId);
+		$this->setConfig('selectedCategory', $categoryId);
 	}
 
 
@@ -266,35 +262,33 @@ class CategoriesComponent extends Component {
 			return;
 		}
 
-		$lo_view = $this->getController()->viewBuilder();
+		$view = $this->getController()->viewBuilder();
 
-		$ls_identifier = Inflector::underscore($this->getConfig('identifier'));
+		$identifier = Inflector::underscore($this->getConfig('identifier'));
 
-		$la_config = $this->getConfig();
-		ksort($la_config);
-		unset($la_config['implementedEvents'], $la_config['implementedMethods']);
+		$config = $this->getConfig();
+		ksort($config);
+		unset($config['implementedEvents'], $config['implementedMethods']);
 
-		$lo_parentCategories = null;
-		$lx_includeParents = $this->getConfig('includeParentCategories');
+		$parentCategories = null;
+		$includeParents = $this->getConfig('includeParentCategories');
 		if ($this->getConfig('includeParentCategories')) {
-			$li_maxLevel = $lx_includeParents === true ? PHP_INT_MAX : (int)$lx_includeParents;
-			$this->getBehavior()->assignParentCategories($li_maxLevel);
+			$maxLevel = $includeParents === true ? PHP_INT_MAX : (int)$includeParents;
+			$this->getBehavior()->assignParentCategories($maxLevel);
 		}
 
-		$lo_categories = $this->getCategories(true);
-
-		$la_categories = [
-			'config' => $la_config,
-			'parents' => $lo_parentCategories,
-			'raw' => $lo_categories,
+		$categories = [
+			'config' => $config,
+			'parents' => $parentCategories,
+			'raw' => $this->getCategories(true),
 			'selected' => $this->getConfig('selectedCategory'),
 			'simple' => $this->getCategories(),
 		];
 
-		$ls_variableNamePlural = Inflector::variable(Inflector::pluralize($ls_identifier));
+		$variableNamePlural = Inflector::variable(Inflector::pluralize($identifier));
 
-		$lo_view->setVar('_categories', [$ls_variableNamePlural => $la_categories]);
-		$lo_view->setVar('_categoriesIdentifier', $la_config['identifier']);
+		$view->setVar('_categories', [$variableNamePlural => $categories]);
+		$view->setVar('_categoriesIdentifier', $config['identifier']);
 	}
 
 
@@ -307,34 +301,33 @@ class CategoriesComponent extends Component {
 			return;
 		}
 
-		$ls_fieldName = $this->getConfig('field');
-		$lx_selectedCategory = $entity->$ls_fieldName;
+		$fieldName = $this->getConfig('field');
+		$selectedCategory = $entity->$fieldName;
 
-		if ($lx_selectedCategory instanceof BackedEnum) {
-			$lx_selectedCategory = $lx_selectedCategory->value;
+		if ($selectedCategory instanceof BackedEnum) {
+			$selectedCategory = $selectedCategory->value;
 		}
 
-		$la_possibleCategories = array_keys($this->getCategories());
-
-		if (!in_array($lx_selectedCategory, $la_possibleCategories, true)) {
+		$possibleCategories = array_keys($this->getCategories());
+		if (!in_array($selectedCategory, $possibleCategories, true)) {
 			/** @var \Awyiss\Model\Entity $entity */
-			$lo_entity = $this->fieldIsAttribute() && $entity->attributes ? $entity->attributes : $entity;
+			$targetEntity = $this->fieldIsAttribute() && $entity->attributes ? $entity->attributes : $entity;
 
-			$la_errors = $lo_entity->getError($ls_fieldName);
+			$errors = $targetEntity->getError($fieldName);
 
-			$lo_entity->set($ls_fieldName, reset($la_possibleCategories));
+			$targetEntity->set($fieldName, reset($possibleCategories));
 
-			if ($la_errors) {
-				$lo_entity->setError($ls_fieldName, $la_errors);
+			if ($errors) {
+				$targetEntity->setError($fieldName, $errors);
 			}
 		}
 
-		$lo_request = $this->getController()->getRequest();
-		$ls_fieldName = Inflector::underscore($ls_fieldName);
+		$request = $this->getController()->getRequest();
+		$fieldName = Inflector::underscore($fieldName);
 		//When the field is part of the request data, overwrite it since it might be outdated
-		if ($lo_request->getData($ls_fieldName) !== null) {
-			$lo_request = $lo_request->withData($ls_fieldName, $entity->$ls_fieldName);
-			$this->getController()->setRequest($lo_request);
+		if ($request->getData($fieldName) !== null) {
+			$request = $request->withData($fieldName, $entity->$fieldName);
+			$this->getController()->setRequest($request);
 		}
 	}
 
@@ -432,6 +425,7 @@ class CategoriesComponent extends Component {
 	 * @param string|null $column
 	 * @param string|null $associationName
 	 * @return \Cake\ORM\Query\SelectQuery
+	 * @noinspection PhpUnused
 	 */
 	public function sortQuery(SelectQuery $query, ?string $column = null, ?string $associationName = null): SelectQuery {
 		if (!$this->getConfig('enabled')) {
@@ -458,11 +452,11 @@ class CategoriesComponent extends Component {
 			return null;
 		}
 
-		$la_categories = $categories ? array_keys($categories) : $this->getBehavior()->getValidSelectionValues();
-		$lx_verifiedSelection = $this->getBehavior()->verifySelection($categoryId, $la_categories);
+		$categories = $categories ? array_keys($categories) : $this->getBehavior()->getValidSelectionValues();
+		$verifiedSelection = $this->getBehavior()->verifySelection($categoryId, $categories);
 
 		if (
-			$lx_verifiedSelection === false &&
+			$verifiedSelection === false &&
 			(
 				$redirect === true ||
 				($this->getConfig('redirectOnInvalidSelection') && $redirect !== false)
@@ -470,12 +464,12 @@ class CategoriesComponent extends Component {
 		) {
 			throw new RedirectException(Router::url([
 				'action' => 'overview',
-				$this->getConfig('uriParam') => current($la_categories),
+				$this->getConfig('uriParam') => current($categories),
 				'_name' => $this->getController()->getRequest()->getParam('_name'),
 			], true), 302);
 		}
 
 
-		return $lx_verifiedSelection;
+		return $verifiedSelection;
 	}
 }

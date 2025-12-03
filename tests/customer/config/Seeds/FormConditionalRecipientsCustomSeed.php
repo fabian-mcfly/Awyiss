@@ -12,7 +12,7 @@ class FormConditionalRecipientsCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'form_id' => 1,
@@ -63,7 +63,7 @@ class FormConditionalRecipientsCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('form_conditional_recipients');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('form_conditional_recipients');
+		$table->insert($data)->save();
 	}
 }

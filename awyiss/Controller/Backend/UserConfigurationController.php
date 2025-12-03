@@ -57,14 +57,14 @@ class UserConfigurationController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->UserConfiguration->find()->where($this->getOverviewWhere())->orderBy([
+		$query = $this->UserConfiguration->find()->where($this->getOverviewWhere())->orderBy([
 			'identifier' => 'ASC',
 		]);
 
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
-		$this->Search->filterQuery($lo_query);
+		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -79,51 +79,52 @@ class UserConfigurationController extends Controller {
 			'scope' => '',
 		])->ensure('read');
 
-		$ls_selectedScope = $this->Categories->getSelectedCategory();
+		$selectedScope = $this->Categories->getSelectedCategory();
 
-		if (!$this->Authorization->withAdditionalData(['scope' => $ls_selectedScope])->isAccessible('read')) {
+		if (!$this->Authorization->withAdditionalData(['scope' => $selectedScope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));
 
 
 			return $this->redirect(['action' => 'overview', 'scope' => 'system']);
 		}
 
-		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($ls_selectedScope);
-		$la_configOptions = $lo_configOptions->getConfigOptions();
+		$configOptions = ConfigOptionsProvider::loadConfigOptions($selectedScope);
+		$flattenedConfigOptions = $configOptions->getConfigOptions();
 
-		$la_globalConfiguration = $this->getGlobalConfiguration($lo_configOptions);
+		$globalConfiguration = $this->getGlobalConfiguration($configOptions);
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$la_configuration = Hash::expand(
-			$lo_query->all()->groupBy(function (UserConfiguration $entity) use ($lo_configOptions) {
-				$la_identifier = array_map(function (string $identifier) {
+		$configuration = Hash::expand(
+			$query->all()->groupBy(function (UserConfiguration $entity) use ($configOptions) {
+				$identifier = array_map(function (string $identifier) {
 					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
 				}, explode('.', $entity->identifier));
 
-				$ls_path = implode('.', $la_identifier);
-				$entity->configOption = $lo_configOptions->getConfigOption('Backend', $ls_path);
+				$path = implode('.', $identifier);
+				/** @noinspection PhpUndefinedFieldInspection */
+				$entity->configOption = $configOptions->getConfigOption('Backend', $path);
 
-				return implode('.', $la_identifier);
+				return implode('.', $identifier);
 			})->toArray()
 		);
 
 		if ($this->UserConfiguration->searchIsActive()) {
-			$la_configOptions[ Awyiss::REALM_BACKEND ] = $la_configuration;
+			$flattenedConfigOptions[ Awyiss::REALM_BACKEND ] = $configuration;
 		}
 		else {
 			/**
-			 * @var string $ls_realm
-			 * @var \Awyiss\Configuration\ConfigOptionsCollection $lo_configOptions
+			 * @var string $realm
+			 * @var \Awyiss\Configuration\ConfigOptionsCollection $configOptions
 			 */
-			foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
-				$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_globalConfiguration, $la_configuration);
-				$la_configOptions[ $ls_realm ] = $this->sortConfigOptions($la_configOptions[ $ls_realm ], $ls_realm, $ls_selectedScope);
+			foreach ($flattenedConfigOptions as $realm => $configOptions) {
+				$flattenedConfigOptions[ $realm ] = Hash::merge([], $configOptions->toArray(), $globalConfiguration, $configuration);
+				$flattenedConfigOptions[ $realm ] = $this->sortConfigOptions($flattenedConfigOptions[ $realm ], $realm, $selectedScope);
 			}
-			unset($la_configOptions[ Awyiss::REALM_FRONTEND ]);
+			unset($flattenedConfigOptions[ Awyiss::REALM_FRONTEND ]);
 
-			$la_configOptions[ Awyiss::REALM_BACKEND ] = Hash::filter(
-				$la_configOptions[ Awyiss::REALM_BACKEND ],
+			$flattenedConfigOptions[ Awyiss::REALM_BACKEND ] = Hash::filter(
+				$flattenedConfigOptions[ Awyiss::REALM_BACKEND ],
 				function (array|ConfigOption|Configuration|UserConfiguration $configOptions) {
 					if (is_array($configOptions)) {
 						return !empty($configOptions);
@@ -134,8 +135,10 @@ class UserConfigurationController extends Controller {
 					}
 
 					if ($configOptions instanceof Configuration) {
+						/** @noinspection PhpUndefinedFieldInspection */
 						$configOptions->isGlobal = true;
 
+						/** @noinspection PhpUndefinedFieldInspection */
 						return $configOptions->configOption?->isPersonalizable() ?? false;
 					}
 
@@ -144,15 +147,15 @@ class UserConfigurationController extends Controller {
 			);
 
 			// Deeply clean the array and remove Configuration objects if a UserConfiguration object exists in the same array
-			$la_configOptions[ Awyiss::REALM_BACKEND ] = $this->cleanConfigurationArray($la_configOptions[ Awyiss::REALM_BACKEND ]);
+			$flattenedConfigOptions[ Awyiss::REALM_BACKEND ] = $this->cleanConfigurationArray($flattenedConfigOptions[ Awyiss::REALM_BACKEND ]);
 		}
 
 
 		$this->set([
-			'configuration' => $la_configuration,
-			'mergedConfiguration' => $la_configOptions,
-			'globalConfiguration' => $la_globalConfiguration,
-			'selectedScope' => $ls_selectedScope,
+			'configuration' => $configuration,
+			'mergedConfiguration' => $flattenedConfigOptions,
+			'globalConfiguration' => $globalConfiguration,
+			'selectedScope' => $selectedScope,
 			'attributes' => $this->UserConfiguration->getAttributes(),
 		]);
 	}
@@ -162,7 +165,6 @@ class UserConfigurationController extends Controller {
 	 * Add method
 	 *
 	 * @return void
-	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	public function add(): void {
@@ -170,18 +172,18 @@ class UserConfigurationController extends Controller {
 			'scope' => '',
 		])->ensure('create');
 
-		$lo_configuration = $this->UserConfiguration->newDefaultEntity([
+		$configuration = $this->UserConfiguration->newDefaultEntity([
 			'scope' => $this->Categories->getSelectedCategory(),
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_configuration);
+			$this->save($configuration);
 		}
 
-		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($lo_configuration->scope);
-		$la_configOptions = $lo_configOptions->getConfigOptions(Awyiss::REALM_BACKEND);
+		$configOptions = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
+		$flattenedConfigOptions = $configOptions->getConfigOptions(Awyiss::REALM_BACKEND);
 
-		$la_configOptions = Hash::filter($la_configOptions->toArray(), function (array|ConfigOption $configOptions) {
+		$flattenedConfigOptions = Hash::filter($flattenedConfigOptions->toArray(), function (array|ConfigOption $configOptions) {
 			if (is_array($configOptions)) {
 				return !empty($configOptions);
 			}
@@ -190,11 +192,12 @@ class UserConfigurationController extends Controller {
 			return $configOptions->isPersonalizable();
 		});
 
-		$lo_configuration->configOption = $lo_configuration->identifier ? $lo_configOptions->getConfigOption('Backend', $lo_configuration->identifier) : null;
+		/** @noinspection PhpUndefinedFieldInspection */
+		$configuration->configOption = $configuration->identifier ? $configOptions->getConfigOption('Backend', $configuration->identifier) : null;
 
 		$this->set([
-			'configuration' => $lo_configuration,
-			'configOptions' => $la_configOptions,
+			'configuration' => $configuration,
+			'configOptions' => $flattenedConfigOptions,
 		]);
 	}
 
@@ -212,13 +215,13 @@ class UserConfigurationController extends Controller {
 		])->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\UserConfiguration $lo_configuration
+		 * @var \Awyiss\Model\Entity\UserConfiguration $configuration
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_configuration = $this->UserConfiguration->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->where(['user_id' => $this->getIdentity()->getIdentifier()])->first();
-		if (!$lo_configuration) {
+		$configuration = $this->UserConfiguration->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->where(['user_id' => $this->getIdentity()->getIdentifier()])->first();
+		if (!$configuration) {
 			$this->Flash->error(__('record_not_found'));
 
 
@@ -226,10 +229,10 @@ class UserConfigurationController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_configuration, 'edit');
+			$this->save($configuration, 'edit');
 		}
 		else {
-			if (!$this->Authorization->withAdditionalData(['scope' => $lo_configuration->scope])->isAccessible('read')) {
+			if (!$this->Authorization->withAdditionalData(['scope' => $configuration->scope])->isAccessible('read')) {
 				$this->Flash->error(__('scope_not_accessible'));
 
 
@@ -237,10 +240,10 @@ class UserConfigurationController extends Controller {
 			}
 		}
 
-		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($lo_configuration->scope);
-		$la_configOptions = $lo_configOptions->getConfigOptions(Awyiss::REALM_BACKEND);
+		$configOptions = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
+		$flattenedConfigOptions = $configOptions->getConfigOptions(Awyiss::REALM_BACKEND);
 
-		$la_configOptions = Hash::filter($la_configOptions->toArray(), function (array|ConfigOption $configOptions) {
+		$flattenedConfigOptions = Hash::filter($flattenedConfigOptions->toArray(), function (array|ConfigOption $configOptions) {
 			if (is_array($configOptions)) {
 				return !empty($configOptions);
 			}
@@ -249,11 +252,12 @@ class UserConfigurationController extends Controller {
 			return $configOptions->isPersonalizable();
 		});
 
-		$lo_configuration->configOption = $lo_configuration->identifier ? $lo_configOptions->getConfigOption('Backend', $lo_configuration->identifier) : null;
+		/** @noinspection PhpUndefinedFieldInspection */
+		$configuration->configOption = $configuration->identifier ? $configOptions->getConfigOption('Backend', $configuration->identifier) : null;
 
 		$this->set([
-			'configuration' => $lo_configuration,
-			'configOptions' => $la_configOptions,
+			'configuration' => $configuration,
+			'configOptions' => $flattenedConfigOptions,
 		]);
 	}
 
@@ -272,16 +276,16 @@ class UserConfigurationController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Awyiss\Model\Entity\UserConfiguration $lo_configuration */
-		$lo_configuration = $this->UserConfiguration->findById($id)->first();
-		if (!$lo_configuration) {
+		/** @var \Awyiss\Model\Entity\UserConfiguration $configuration */
+		$configuration = $this->UserConfiguration->findById($id)->first();
+		if (!$configuration) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->UserConfiguration->delete($lo_configuration)) {
+		if ($this->UserConfiguration->delete($configuration)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -289,8 +293,8 @@ class UserConfigurationController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_configuration->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($configuration->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -306,21 +310,21 @@ class UserConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function save(UserConfiguration $configuration, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->UserConfiguration->hasAttributes()) {
-			$la_associated[] = $this->UserConfiguration->getAttributesTableName(true);
+			$associated[] = $this->UserConfiguration->getAttributesTableName(true);
 			$configuration->setAccess('attributes', true);
 		}
 
-		$la_data = $this->request->getData();
+		$requestData = $this->request->getData();
 
-		if (is_array($la_data['value'] ?? null)) {
-			$la_data['value'] = json_encode(array_values($la_data['value']));
+		if (is_array($requestData['value'] ?? null)) {
+			$requestData['value'] = json_encode(array_values($requestData['value']));
 		}
-		$la_data['userId'] = $this->getIdentity()->getIdentifier();
+		$requestData['userId'] = $this->getIdentity()->getIdentifier();
 
-		$this->UserConfiguration->patchEntity($configuration, $la_data, [
-			'associated' => $la_associated,
+		$this->UserConfiguration->patchEntity($configuration, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
@@ -331,11 +335,11 @@ class UserConfigurationController extends Controller {
 		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->UserConfiguration->save($configuration, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->UserConfiguration->save($configuration, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -346,9 +350,9 @@ class UserConfigurationController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($configuration->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($configuration->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -372,27 +376,27 @@ class UserConfigurationController extends Controller {
 	 * @return array
 	 */
 	protected function getGlobalConfiguration(?ConfigOptionsInterface $configOptions): array {
-		$lo_configTable = $this->fetchTable('Configuration');
-		$lo_query = $lo_configTable->find()->orderBy([
+		$configTable = $this->fetchTable('Configuration');
+		$query = $configTable->find()->orderBy([
 			'identifier' => 'ASC',
 			'language_shortcode' => 'ASC',
 		]);
 
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
 
-		$lo_configOptions = $configOptions;
-		$la_configuration = $lo_query->all()->groupBy(function (Configuration $entity) use ($lo_configOptions) {
-			$la_identifier = array_map(function (string $identifier) use ($lo_configOptions) {
+		$configuration = $query->all()->groupBy(function (Configuration $entity) use ($configOptions) {
+			$identifier = array_map(function (string $identifier) use ($configOptions) {
 				return ConfigOptionsProvider::sanitizeIdentifier($identifier);
 			}, explode('.', $entity->identifier));
 
-			$ls_path = implode('.', $la_identifier);
-			$entity->configOption = $lo_configOptions->getConfigOption('Backend', $ls_path);
+			$path = implode('.', $identifier);
+			/** @noinspection PhpUndefinedFieldInspection */
+			$entity->configOption = $configOptions->getConfigOption('Backend', $path);
 
-			return implode('.', $la_identifier);
+			return implode('.', $identifier);
 		})->toArray();
 
-		return Hash::expand($la_configuration);
+		return Hash::expand($configuration);
 	}
 
 	/**
@@ -402,21 +406,19 @@ class UserConfigurationController extends Controller {
 	 * @return array
 	 */
 	protected function cleanConfigurationArray(array $configurations): array {
-		$la_configurations = $configurations;
-
-		foreach ($la_configurations as $ls_key => $lx_configOptions) {
-			if (is_array($lx_configOptions)) {
-				if (isset($lx_configOptions[0]) && $lx_configOptions[0] instanceof Configuration && count($la_configurations[ $ls_key ]) > 1) {
-					unset($la_configurations[ $ls_key ][0]);
-					$la_configurations[ $ls_key ] = array_values($la_configurations[ $ls_key ]);
+		foreach ($configurations as $key => $configOptions) {
+			if (is_array($configOptions)) {
+				if (isset($configOptions[0]) && $configOptions[0] instanceof Configuration && count($configOptions) > 1) {
+					unset($configurations[ $key ][0]);
+					$configurations[ $key ] = array_values($configurations[ $key ]);
 				}
 				else {
-					$la_configurations[ $ls_key ] = $this->cleanConfigurationArray($lx_configOptions);
+					$configurations[ $key ] = $this->cleanConfigurationArray($configOptions);
 				}
 			}
 		}
 
-		return $la_configurations;
+		return $configurations;
 	}
 
 	/**
@@ -425,7 +427,6 @@ class UserConfigurationController extends Controller {
 	 * @param string $selectedScope
 	 * @param string|null $parentCategories
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function sortConfigOptions(
 		array $configOptions,
@@ -433,52 +434,50 @@ class UserConfigurationController extends Controller {
 		string $selectedScope,
 		?string $parentCategories = null
 	): array {
-		$ls_realm = Inflector::underscore($realm);
-
-		uksort($configOptions, function ($a, $b) use ($configOptions, $parentCategories, $ls_realm, $selectedScope) {
-			$ls_i18nKeyA = 'configuration_' . ($this->isCategory($configOptions[ $a ]) ? 'category' : 'identifier') . '_' . $ls_realm;
-			$ls_i18nKeyB = 'configuration_' . ($this->isCategory($configOptions[ $b ]) ? 'category' : 'identifier') . '_' . $ls_realm;
+		uksort($configOptions, function ($a, $b) use ($configOptions, $parentCategories, $realm, $selectedScope) {
+			$i18nKeyA = 'configuration_' . ($this->isCategory($configOptions[ $a ]) ? 'category' : 'identifier') . '_' . $realm;
+			$i18nKeyB = 'configuration_' . ($this->isCategory($configOptions[ $b ]) ? 'category' : 'identifier') . '_' . $realm;
 
 			if ($parentCategories) {
-				$ls_i18nKeyA .= '_' . $parentCategories;
-				$ls_i18nKeyB .= '_' . $parentCategories;
+				$i18nKeyA .= '_' . $parentCategories;
+				$i18nKeyB .= '_' . $parentCategories;
 			}
 
-			$ls_i18nKeyA .= '_' . Inflector::underscore($a);
-			$ls_i18nKeyB .= '_' . Inflector::underscore($b);
+			$i18nKeyA .= '_' . Inflector::underscore($a);
+			$i18nKeyB .= '_' . Inflector::underscore($b);
 
-			$ls_titleA = __df($selectedScope, 'configuration', $ls_i18nKeyA);
-			$ls_titleB = __df($selectedScope, 'configuration', $ls_i18nKeyB);
+			$titleA = __df($selectedScope, 'configuration', $i18nKeyA);
+			$titleB = __df($selectedScope, 'configuration', $i18nKeyB);
 
-			if (str_contains($ls_titleA, '::')) {
+			if (str_contains($titleA, '::')) {
 				if ($this->isPageRole($selectedScope)) {
-					$ls_titleA = __d('generic_pages', $ls_i18nKeyA);
+					$titleA = __d('generic_pages', $i18nKeyA);
 				}
 				else {
-					$ls_titleA = $a;
+					$titleA = $a;
 				}
 			}
 
-			if (str_contains($ls_titleB, '::')) {
+			if (str_contains($titleB, '::')) {
 				if ($this->isPageRole($selectedScope)) {
-					$ls_titleB = __d('generic_pages', $ls_i18nKeyB);
+					$titleB = __d('generic_pages', $i18nKeyB);
 				}
 				else {
-					$ls_titleB = $b;
+					$titleB = $b;
 				}
 			}
 
-			return strcoll(mb_strtolower($ls_titleA), mb_strtolower($ls_titleB));
+			return strcoll(mb_strtolower($titleA), mb_strtolower($titleB));
 		});
 
 		foreach ($configOptions as $key => $value) {
 			if (is_array($value) && $this->isCategory($value)) {
-				$ls_parentCategory = Inflector::underscore($key);
+				$parentCategory = Inflector::underscore($key);
 				if ($parentCategories) {
-					$ls_parentCategory = $parentCategories . '_' . $ls_parentCategory;
+					$parentCategory = $parentCategories . '_' . $parentCategory;
 				}
 
-				$configOptions[ $key ] = $this->sortConfigOptions($value, $realm, $selectedScope, $ls_parentCategory);
+				$configOptions[ $key ] = $this->sortConfigOptions($value, $realm, $selectedScope, $parentCategory);
 			}
 		}
 
@@ -498,13 +497,7 @@ class UserConfigurationController extends Controller {
 		if (is_array($value)) {
 			// If the array contains only instances of \Awyiss\Model\Entity\Configuration,
 			// and \Awyiss\Model\Entity\UserConfiguration, then it is not a category
-			foreach ($value as $lx_configItem) {
-				if (!$lx_configItem instanceof Configuration && !$lx_configItem instanceof UserConfiguration) {
-					return true;
-				}
-			}
-
-			return false;
+			return array_any($value, fn ($configItem) => !$configItem instanceof Configuration && !$configItem instanceof UserConfiguration);
 		}
 
 		return false;
@@ -516,9 +509,9 @@ class UserConfigurationController extends Controller {
 	 * @return bool
 	 */
 	protected function isPageRole(string $selectedScope): bool {
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-		return $ls_pageRoleEnum::tryFromName($selectedScope) !== null;
+		return $pageRoleEnum::tryFromName($selectedScope) !== null;
 	}
 }

@@ -84,7 +84,6 @@ class TypeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Enum\Survey\Type::label()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabel(): void {
 		$label = Type::Linear->label();

@@ -36,7 +36,6 @@ class FormRendererTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		$this->configApplication(Awyiss::class, []);
@@ -69,7 +68,6 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormByIdentifierWithIdReturnsForm(): void {
 		$renderer = new FormRenderer($this->view);
@@ -83,7 +81,6 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormByIdentifierWithStringIdentifierReturnsForm(): void {
 		$renderer = new FormRenderer($this->view);
@@ -97,7 +94,6 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormByIdentifierReturnsNullIfInactive(): void {
 		$renderer = new FormRenderer($this->view);
@@ -110,7 +106,6 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see\Awyiss\Utility\Form\FormRenderer::getFormByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormByIdentifierReturnsFormInPreviewModeIfInactive(): void {
 		// Mock the preview mode inside the FormRenderer
@@ -127,7 +122,6 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormByIdentifierReturnsNullIfNotFound(): void {
 		$renderer = new FormRenderer($this->view);
@@ -139,8 +133,8 @@ class FormRendererTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @throws \Exception
 	 * @see \Awyiss\Utility\Form\FormRenderer::initForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitFormInitializesForm(): void {
 		$renderer = new FormRenderer($this->view);
@@ -176,7 +170,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::initForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testInitFormInitializesFormWithValidIdentifier(): void {
 		$renderer = new FormRenderer($this->view);
@@ -192,7 +186,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::initForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testInitFormWithInvalidIdentifier(): void {
 		$renderer = new FormRenderer($this->view);
@@ -207,7 +201,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::initForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testInitFormWithInactiveFormReturnsNull(): void {
 		$renderer = new FormRenderer($this->view);
@@ -220,7 +214,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::initForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testInitFormWithInactiveFormInPreviewMode(): void {
 		$renderer = $this->getMockBuilder(FormRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
@@ -238,7 +232,7 @@ class FormRendererTest extends TestCase {
 	 * @param int $expectedQuestions
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::initForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	#[TestWith([false, 18])]
 	#[TestWith([true, 19])]
@@ -258,7 +252,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::initForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testInitFormSetsFormDataWhenIdentifierMatches(): void {
 		$renderer = new FormRenderer($this->view);
@@ -280,7 +274,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::initForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testInitFormNotSetsFormDataWhenIdentifierNotMatches(): void {
 		$renderer = new FormRenderer($this->view);
@@ -302,7 +296,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Customer\Form\Contact4FormOptions::modifyForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testInitFormCallsModifyFormOnFormOptions(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -321,7 +315,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Customer\Form\Contact4FormOptions::setConditionalRecipient()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testInitFormSetsConditionalRecipientOnlyWhenSubmitted(): void {
 		$renderer = new FormRenderer($this->view);
@@ -390,7 +384,7 @@ class FormRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::process()
 	 * @throws \RuntimeException
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testProcessWithNoForm(): void {
 		$renderer = new FormRenderer($this->view);
@@ -407,7 +401,7 @@ class FormRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::process()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testProcessFormNotSubmitted(): void {
 		$renderer = new FormRenderer($this->view);
@@ -424,7 +418,7 @@ class FormRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::process()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testProcessInvalidSubmission(): void {
 		$renderer = new FormRenderer($this->view);
@@ -449,7 +443,7 @@ class FormRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::process()
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendAndRedirect()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testProcessValidSubmission(): void {
 		// Mock sendAndRedirect to avoid RedirectException
@@ -475,8 +469,8 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormBodyIsEmptyForEmptyElements(): void {
 		$renderer = new FormRenderer($this->view);
@@ -495,8 +489,8 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormBody(): void {
 		$renderer = new FormRenderer($this->view);
@@ -517,8 +511,8 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormBodyRepopulatesInputs(): void {
 		$renderer = new FormRenderer($this->view);
@@ -543,8 +537,8 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormBodyErrorFields(): void {
 		$renderer = new FormRenderer($this->view);
@@ -571,8 +565,8 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormBodySetsEnctypeIfFileInputExists(): void {
 		$renderer = new FormRenderer($this->view);
@@ -595,8 +589,8 @@ class FormRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
 	 * @see \Awyiss\Utility\Form\FormRenderer::parseAwyissImageTags()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testGetFormBodyReplacesAwyissImageTagInFreeTextElement(): void {
@@ -621,8 +615,8 @@ class FormRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
 	 * @see \Awyiss\Utility\Form\FormRenderer::parseAwyissImageTags()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testGetFormBodyReplacesAwyissImageTagInFreeTextElementWithBaseWidth(): void {
@@ -653,8 +647,8 @@ class FormRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
 	 * @see \Awyiss\Utility\Form\FormRenderer::parseAwyissImageTags()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testGetFormBodyReplacesAwyissImageTagInFreeTextElementWithColumnWidth(): void {
@@ -686,9 +680,9 @@ class FormRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
 	 * @see \Awyiss\Utility\Form\FormRenderer::parseModule()
-	 * @noinspection PhpVariableNamingConventionInspection
-	 * @noinspection HtmlUnknownTarget
+	 * @throws \Exception
 	 * @throws \ReflectionException
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testGetFormBodyParsesModuleInFreeTextElement(): void {
 		// Free text in form 1 is inactive. So force preview mode
@@ -713,7 +707,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::loadFormEntryFromHash()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testLoadFormEntryFromHash(): void {
 		$renderer = new FormRenderer($this->view);
@@ -738,7 +732,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::processFormEntry()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testProcessFormEntry(): void {
 		$renderer = new FormRenderer($this->view);
@@ -775,7 +769,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::processFormEntryFromHash()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testProcessFormEntryFromHash(): void {
 		$renderer = new FormRenderer($this->view);
@@ -816,7 +810,6 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendFormWithNoForm(): void {
 		$renderer = new FormRenderer($this->view);
@@ -831,7 +824,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testSendFormWithNoSubmission(): void {
 		$renderer = new FormRenderer($this->view);
@@ -847,7 +840,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendForm()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testSendForm(): void {
 		$formData = [
@@ -887,7 +880,6 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendAndRedirect()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSendAndRedirectWithNoForm(): void {
 		$renderer = new FormRenderer($this->view);
@@ -902,7 +894,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendAndRedirect()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testSendAndRedirectWithNoSubmission(): void {
 		$renderer = new FormRenderer($this->view);
@@ -917,7 +909,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendAndRedirect()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testSendAndRedirect(): void {
 		$formData = [
@@ -947,7 +939,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendAndRedirect()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testSendAndRedirectForRouteFrontendLanguageRoot(): void {
 		$request = new ServerRequest([
@@ -991,7 +983,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendAndRedirect()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testSendAndRedirectForRouteFrontendRoot(): void {
 		$request = new ServerRequest([
@@ -1035,7 +1027,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::sendAndRedirect()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testSendAndRedirectForRouteFrontendFormAntiSpamPost(): void {
 		$request = new ServerRequest([

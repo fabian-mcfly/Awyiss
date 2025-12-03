@@ -32,10 +32,10 @@ class ContentAreasController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->ContentAreas->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->ContentAreas->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -47,11 +47,11 @@ class ContentAreasController extends Controller {
 	public function overview(): void {
 		$this->Authorization->setScope('PageTemplates')->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_contentAreas = $this->paginate($lo_query);
+		$query = $this->getOverviewQuery();
+		$contentAreas = $this->paginate($query);
 
 		$this->set([
-			'contentAreas' => $lo_contentAreas,
+			'contentAreas' => $contentAreas,
 			'attributes' => $this->ContentAreas->getAttributes(),
 		]);
 	}
@@ -66,13 +66,13 @@ class ContentAreasController extends Controller {
 	public function add(): void {
 		$this->Authorization->setScope('PageTemplates')->ensure('create');
 
-		$lo_contentArea = $this->ContentAreas->newDefaultEntity();
+		$contentArea = $this->ContentAreas->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_contentArea);
+			$this->save($contentArea);
 		}
 
-		$this->setViewVars($lo_contentArea);
+		$this->setViewVars($contentArea);
 	}
 
 
@@ -86,24 +86,24 @@ class ContentAreasController extends Controller {
 		$this->Authorization->setScope('PageTemplates')->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\ContentArea $lo_contentArea
+		 * @var \Awyiss\Model\Entity\ContentArea $contentArea
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_contentArea = $this->ContentAreas->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$contentArea = $this->ContentAreas->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 
-		if (!$lo_contentArea) {
+		if (!$contentArea) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_contentArea, 'edit');
+			$this->save($contentArea, 'edit');
 		}
 
-		$this->setViewVars($lo_contentArea);
+		$this->setViewVars($contentArea);
 	}
 
 
@@ -119,16 +119,16 @@ class ContentAreasController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var ContentArea $lo_contentArea */
-		$lo_contentArea = $this->ContentAreas->findById($id)->first();
-		if (!$lo_contentArea) {
+		/** @var \Awyiss\Model\Entity\ContentArea $contentArea */
+		$contentArea = $this->ContentAreas->findById($id)->first();
+		if (!$contentArea) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->ContentAreas->delete($lo_contentArea)) {
+		if ($this->ContentAreas->delete($contentArea)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -136,8 +136,8 @@ class ContentAreasController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_contentArea->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($contentArea->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -153,25 +153,25 @@ class ContentAreasController extends Controller {
 	 * @return void
 	 */
 	protected function save(ContentArea $contentArea, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->ContentAreas->hasAttributes()) {
-			$la_associated[] = $this->ContentAreas->getAttributesTableName(true);
+			$associated[] = $this->ContentAreas->getAttributesTableName(true);
 			$contentArea->setAccess('attributes', true);
 		}
 
-		$la_requestData = $this->request->getData() + ['content_template_elements' => []];
+		$requestData = $this->request->getData() + ['content_template_elements' => []];
 
-		$this->ContentAreas->patchEntity($contentArea, $la_requestData, [
-			'associated' => $la_associated,
+		$this->ContentAreas->patchEntity($contentArea, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->ContentAreas->save($contentArea, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->ContentAreas->save($contentArea, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -185,9 +185,9 @@ class ContentAreasController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($contentArea->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($contentArea->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -206,6 +206,7 @@ class ContentAreasController extends Controller {
 
 
 	/**
+	 * @param string $method
 	 * @return void
 	 * @throws \Exception
 	 */
@@ -218,6 +219,7 @@ class ContentAreasController extends Controller {
 
 
 	/**
+	 * @param string $method
 	 * @return void
 	 * @throws \Exception
 	 */

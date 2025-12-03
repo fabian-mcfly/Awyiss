@@ -19,7 +19,6 @@ class AssociationCollection extends BaseAssociationCollection {
 	 * elements cannot be saved as copies from the perspective of a child entity
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function saveParents(Table $table, EntityInterface $entity, array $associations, array $options = []): bool {
 		$options['asCopy'] = false;

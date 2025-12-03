@@ -44,7 +44,6 @@ class PagesListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -59,7 +58,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -108,7 +106,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyLoadsChildren(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -139,7 +136,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyLoadsChildrenOfDifferentPageRoleWhenCopyDescendantsWithDifferentPageRole(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -185,7 +181,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyPropagatesRelatedColumnChangesToNestedChildren(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -212,7 +207,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyRemovesAttributesOfNestedChildrenOfNotSamePageRole(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -243,7 +237,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyDisablesBuildRulesOnChildAssociation(): void {
 		$newsTable = $this->fetchTable('Pages');
@@ -270,7 +263,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopySkipsWhenNotPrimary(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -291,7 +283,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyWithNoChildren(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -312,7 +303,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeCopyWithoutOriginalEntity(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -331,7 +321,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsSlugFromTitleWhenEmpty(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -352,7 +341,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsParentsActiveDependingOnParent(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -395,7 +383,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsParentsActiveTrueWhenNoParent(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -418,7 +405,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniqueSlugForNewEntity(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -440,7 +426,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveNotEnsuresUniqueSlugForExistingEntityWhenPathChanged(): void {
 		$pagesTable = $this->fetchTable('News');
@@ -467,7 +452,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveNotEnsuresUniqueSlugForExistingEntityWhenPathUnchanged(): void {
 		$pagesTable = $this->fetchTable('News');
@@ -493,7 +477,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniqueSlugForExistingEntityWhenPathUnchangedAndLanguageChanged(): void {
 		$pagesTable = $this->fetchTable('News');
@@ -516,7 +499,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuringUniqueSlugNeverExceedsMaxLength(): void {
 		$longSlug = 'ueber-uns/aktuelles/branchennews/' . str_repeat('dummynews', 111);
@@ -547,7 +529,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveMarksSlugAsNotDirtyWhenUnchanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -579,7 +560,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyTransfersAttributesOfDifferentPageRoles(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -626,7 +606,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyNotTransfersAttributesOfDifferentPageRolesWhenNotPrimary(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -672,7 +651,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyNotTransfersAttributesOfDifferentPageRolesWhenNotCopyDescendantsWithDifferentPageRole(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -718,7 +696,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyCopiesContents(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -752,7 +729,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyCopiesMediaAssignmentsOfContents(): void {
 		$request = Router::getRequest();
@@ -783,7 +759,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyNotCreatesAuditForCopiedContents(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -816,7 +791,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveAddsMenuEntriesWhenSet(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -850,7 +824,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotAddsMenuEntriesWhenNotSet(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -882,7 +855,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesHistoricalSlugsWhenSlugChanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -918,7 +890,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalSlugsWhenSlugUnchanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -955,7 +926,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesHistoricalSlugsWhenLanguageShortcodeChanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -991,7 +961,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalSlugsWhenLanguageShortcodeUnchanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1029,7 +998,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUpdatesMenuEntriesWhenSlugChanged(): void {
 		$menuEntriesTable = $this->fetchTable('MenuEntries');
@@ -1088,7 +1056,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesMenuEntriesWhenSlugUnchanged(): void {
 		$menuEntriesTable = $this->fetchTable('MenuEntries');
@@ -1142,7 +1109,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUpdatesMenuEntriesWhenLanguageShortcodeChanged(): void {
 		$menuEntriesTable = $this->fetchTable('MenuEntries');
@@ -1201,7 +1167,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesMenuEntriesWhenLanguageShortcodeUnchanged(): void {
 		$menuEntriesTable = $this->fetchTable('MenuEntries');
@@ -1254,7 +1219,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUpdatesDescendantSlugsWhenSlugChanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1305,7 +1269,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesParentsSlugsWhenSlugChanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1360,7 +1323,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesDescendantSlugsWhenSlugUnchanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1408,7 +1370,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUpdatesDescendantParentsActiveWhenActiveChanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1491,7 +1452,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesParentsParentsActiveWhenActiveChanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1550,7 +1510,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesDescendantParentsActiveWhenActiveUnchanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1600,7 +1559,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUpdatesDescendantParentsActiveWhenParentsActiveChanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1683,7 +1641,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesParentsParentsActiveWhenParentsActiveChanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1742,7 +1699,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesDescendantParentsActiveWhenParentsActiveUnchanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1792,7 +1748,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesDescendantParentsActiveWhenParentsActiveForDescendantsWithInactiveParents(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1851,7 +1806,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesDescendantParentsActiveWhenParentsActiveForDescendantsWithInactiveParentsAndUpdatesSlugOfAllDescendantsWhenSlugChanged(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1914,7 +1868,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSoftDeleteDisabledCascadingOnChildContents(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1935,7 +1888,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteDisabledCascadingOnChildContents(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1956,7 +1908,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteEnabledCascadingOnChildContents(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -1980,7 +1931,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::afterDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteEnabledCascadingOnChildContents(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -2002,7 +1952,6 @@ class PagesListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createDummyPages(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -2176,7 +2125,6 @@ class PagesListenerTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function deleteDummyPages(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -2193,7 +2141,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitCreatesAutoTranslationJobWhenLanguageChanges(): void {
 		$this->listener = $this->getMockBuilder(PagesListener::class)
@@ -2268,7 +2215,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitBundlesMultiplePagesIntoOneJob(): void {
 		$this->listener = $this->getMockBuilder(PagesListener::class)
@@ -2346,7 +2292,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitGroupsPagesbyPageRole(): void {
 		$this->listener = $this->getMockBuilder(PagesListener::class)
@@ -2445,7 +2390,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotCreatesJobWhenAutoTranslateDisabled(): void {
 		$this->listener = $this->getMockBuilder(PagesListener::class)
@@ -2490,7 +2434,6 @@ class PagesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::detectLanguageChange()
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotCreatesJobWhenAutoTranslateManual(): void {
 		$this->listener = $this->getMockBuilder(PagesListener::class)
@@ -2534,7 +2477,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::detectLanguageChange()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotDetectsLanguageChangeWhenNoTransactionId(): void {
 		$this->listener = $this->getMockBuilder(PagesListener::class)
@@ -2573,7 +2515,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::detectLanguageChange()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotDetectsLanguageChangeWhenLanguageNotChanged(): void {
 		$this->listener = $this->getMockBuilder(PagesListener::class)
@@ -2614,7 +2555,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PagesListener::createAutoTranslationJobs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitIgnoresExceptionWhenLockSaveFails(): void {
 		$this->listener = $this->getMockBuilder(PagesListener::class)

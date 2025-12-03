@@ -44,43 +44,43 @@ class FormCell extends Cell {
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Form');
 
-		$la_options = $this->initCellOptions($options);
+		$options = $this->initCellOptions($options);
 
 		$this->page = $page;
 
-		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $ls_className */
-		$ls_className = App::className('FormRenderer', 'Utility/Form');
+		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $className */
+		$className = App::className('FormRenderer', 'Utility/Form');
 
-		$lo_formRenderer = new $ls_className($this->createView('Frontend'));
+		$formRenderer = new $className($this->createView('Frontend'));
 
-		$lo_formRenderer
-		->initForm(
-			$identifier,
-			$this->request->getData(),
-			$this->page
-		);
+		$formRenderer
+			->initForm(
+				$identifier,
+				$this->request->getData(),
+				$this->page
+			);
 
-		$lo_form = $lo_formRenderer->getForm();
-		if (!$lo_form) {
+		$form = $formRenderer->getForm();
+		if (!$form) {
 			return;
 		}
 
-		$lo_formRenderer->process(
+		$formRenderer->process(
 			$this->request->getParam('formEntry'),
-			$la_options
+			$options
 		);
 
 		// Set the view variables
 		$this->set([
-			'contents' => $lo_formRenderer->getFormBody($la_options),
-			'form' => $lo_form,
-			'formElements' => $lo_form->getLinearFormElements(),
-			'formElementsChecksum' => $lo_form->getFormElementsChecksum(),
+			'contents' => $formRenderer->getFormBody($options),
+			'form' => $form,
+			'formElements' => $form->getLinearFormElements(),
+			'formElementsChecksum' => $form->getFormElementsChecksum(),
 			'page' => $this->page,
-			'sent' => $lo_formRenderer->isSent(),
-			'fullWidth' => $la_options['fullWidth'],
-			'includeWrapper' => $la_options['includeWrapper'],
-			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
+			'sent' => $formRenderer->isSent(),
+			'fullWidth' => $options['fullWidth'],
+			'includeWrapper' => $options['includeWrapper'],
+			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
 		]);
 	}
 

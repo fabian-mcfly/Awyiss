@@ -33,7 +33,6 @@ class AppointmentFormTemplateTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\Templates\AppointmentFormTemplate::getElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetElements(): void {
 		$elements = AppointmentFormTemplate::getElements([
@@ -51,7 +50,6 @@ class AppointmentFormTemplateTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\Templates\AppointmentFormTemplate::getElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetElementsIncludesTranslationsnForMultipleLanguages(): void {
 		$elements = AppointmentFormTemplate::getElements([

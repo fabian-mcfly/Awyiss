@@ -35,21 +35,20 @@ class EnumCommand extends BaseBakeEnumCommand {
 	/**
 	 * Get template data.
 	 *
-	 * @param \Cake\Console\Arguments $args The arguments for the command
+	 * @param \Cake\Console\Arguments $arguments The arguments for the command
 	 * @return array
 	 * @phpstan-return array<string, mixed>
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function templateData(Arguments $args): array {
-		$la_data = parent::templateData($args);
+	public function templateData(Arguments $arguments): array {
+		$data = parent::templateData($arguments);
 
-		$ls_namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
-		$la_data['namespace'] = $ls_namespace;
+		$namespace = Inflector::camelize($arguments->getOption('namespace') ?: Configure::read('App.namespace'));
+		$data['namespace'] = $namespace;
 
-		$la_data['isPageRole'] = $args->getOption('is-pagerole');
+		$data['isPageRole'] = $arguments->getOption('is-pagerole');
 
 
-		return $la_data;
+		return $data;
 	}
 
 
@@ -59,12 +58,9 @@ class EnumCommand extends BaseBakeEnumCommand {
 	 * @param \Cake\Console\Arguments $args
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function bake(string $name, Arguments $args, ConsoleIo $io): void {
-		$ls_name = Inflector::camelize($name);
-
-		parent::bake($ls_name, $args, $io);
+		parent::bake(Inflector::camelize($name), $args, $io);
 	}
 
 
@@ -74,12 +70,11 @@ class EnumCommand extends BaseBakeEnumCommand {
 	 * @inheritDoc
 	 * @param ConsoleOptionParser $parser
 	 * @return ConsoleOptionParser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('namespace', [
+		$parser->addOption('namespace', [
 			'choices' => [
 				'Awyiss',
 				CUSTOM_NAMESPACE,
@@ -92,6 +87,6 @@ class EnumCommand extends BaseBakeEnumCommand {
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 }

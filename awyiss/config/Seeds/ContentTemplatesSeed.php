@@ -12,7 +12,7 @@ class ContentTemplatesSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'title' => 'Standard',
@@ -45,10 +45,10 @@ class ContentTemplatesSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('content_templates');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('content_templates');
+		$table->insert($data)->save();
 
-		$la_data = [
+		$data = [
 			[
 				'locale' => 'de',
 				'model' => 'content_templates',
@@ -79,7 +79,7 @@ class ContentTemplatesSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('i18n');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('i18n');
+		$table->insert($data)->save();
 	}
 }

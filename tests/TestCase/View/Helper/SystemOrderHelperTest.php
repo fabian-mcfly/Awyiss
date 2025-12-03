@@ -32,7 +32,6 @@ class SystemOrderHelperTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -72,7 +71,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithDefaultConfig(): void {
 		$entity = new News(['systemOrder' => 1]);
@@ -87,7 +85,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithCustomFieldName(): void {
 		$entity = new News(['systemOrder' => 1]);
@@ -102,7 +99,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithMissingEntity(): void {
 		$this->expectException(Error::class);
@@ -116,7 +112,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithInvalidEntity(): void {
 		$this->expectException(RuntimeException::class);
@@ -130,7 +125,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithOptions(): void {
 		$entity = new News(['systemOrder' => 2]);
@@ -154,7 +148,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithOptionsWithoutFirst(): void {
 		$entity = new News(['systemOrder' => 2]);
@@ -178,7 +171,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithCollectionAsOptions(): void {
 		$entity = new News(['systemOrder' => 2]);
@@ -201,7 +193,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithExistingEntity(): void {
 		$entity = new News(['systemOrder' => 2]);
@@ -225,7 +216,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithNewEntity(): void {
 		$entity = new News(['systemOrder' => 2]);
@@ -249,7 +239,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlForDatabaseRecords(): void {
 		$table = $this->fetchTable('MediaFolders');
@@ -274,7 +263,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlForDatabaseRecordsAndChangedSystemOrder(): void {
 		$table = $this->fetchTable('MediaFolders');
@@ -301,7 +289,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlForDatabaseRecordsAndChangedSystemOrderAndDirtyRelatedColumn(): void {
 		$table = $this->fetchTable('MediaFolders');
@@ -325,7 +312,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithIncludeFirstOption(): void {
 		$entity = new News(['systemOrder' => 2]);
@@ -347,7 +333,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithCustomTemplates(): void {
 		$entity = new News(['systemOrder' => 3]);
@@ -373,7 +358,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithDisabledOption(): void {
 		$entity = new News(['systemOrder' => 1]);
@@ -387,7 +371,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithMergedAttributes(): void {
 		$entity = new News(['systemOrder' => 1]);
@@ -408,7 +391,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithEmptyOptions(): void {
 		$entity = new News(['systemOrder' => 1]);
@@ -422,7 +404,6 @@ class SystemOrderHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\SystemOrderHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithNonArrayOptions(): void {
 		$entity = new News(['systemOrder' => 1]);

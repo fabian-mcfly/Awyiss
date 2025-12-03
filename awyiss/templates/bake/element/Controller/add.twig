@@ -8,13 +8,13 @@
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_{{ singularName }} = $this->{{ currentModelName }}->newDefaultEntity();
+		${{ singularName }} = $this->{{ currentModelName }}->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_{{ singularName }});
+			$this->save(${{ singularName }});
 		}
 
 		$this->set([
-			'{{ singularName }}' => $lo_{{ singularName }},
+			'{{ singularName }}' => ${{ singularName }},
 		]);
 	}

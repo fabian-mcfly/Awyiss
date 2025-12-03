@@ -12,7 +12,7 @@ class DatatablesCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'title' => 'Mitarbeiter',
@@ -54,8 +54,8 @@ class DatatablesCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('datatables');
-		$lo_table->truncate();
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('datatables');
+		$table->truncate();
+		$table->insert($data)->save();
 	}
 }

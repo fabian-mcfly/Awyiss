@@ -120,7 +120,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::__construct()
 	 * @see \Awyiss\Model\Table::getEventManager()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructSetsAwyissEventManager(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => '']);
@@ -133,7 +132,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Table::TABLE
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSetsTableFromConstant(): void {
 		$table = new class extends Table {
@@ -148,7 +146,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeCallsInitializeAssociations(): void {
 		$table = $this->getMockBuilder(Table::class)->disableOriginalConstructor()->onlyMethods(['initializeAssociations'])->getMock();
@@ -162,7 +159,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUsesAwyissAssociationCollection(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'contents']) extends Table {
@@ -175,7 +171,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeMergesConfigPropertiesFromConfiguration(): void {
 		Configure::write([
@@ -266,7 +261,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeMergesConfigPropertiesForPageRoleFromConfiguration(): void {
 		Configure::write([
@@ -372,7 +366,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeCallsInitializeSchema(): void {
 		$table = $this->getMockBuilder(Table::class)->disableOriginalConstructor()->onlyMethods(['initializeSchema'])->getMock();
@@ -387,7 +380,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsSearchBehaviorWithCorrectProperties(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -411,7 +403,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\AuditBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsAuditBehaviorForNonAttributesTables(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -432,7 +423,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeDoesNotAddAuditBehaviorForAttributesTables(): void {
 		$table = new class (['alias' => 'AttributesTest', 'table' => 'attributes_contents']) extends Table {
@@ -447,7 +437,6 @@ HTML;
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\SoftDeleteBehavior
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsSoftDeleteBehaviorWhenDeletedColumnExists(): void {
 		$schema = new TableSchema('pages');
@@ -479,7 +468,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeDoesNotAddSoftDeleteBehaviorWhenDeletedColumnMissing(): void {
 		$schema = new TableSchema('pages');
@@ -500,7 +488,6 @@ HTML;
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsSystemOrderBehaviorWhenSystemOrderColumnExists(): void {
 		$schema = new TableSchema('pages');
@@ -532,7 +519,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeDoesNotAddSystemOrderBehaviorWhenSystemOrderColumnMissing(): void {
 		$schema = new TableSchema('pages');
@@ -553,7 +539,6 @@ HTML;
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior
 	 * @see \Awyiss\Model\Behavior\MediaElementAssignmentBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsMediaBehaviorsForNonMediaTables(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -567,7 +552,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeDoesNotAddMediaBehaviorsForMediaTables(): void {
 		$table = new class (['alias' => 'MediaTest', 'table' => 'media']) extends Table {
@@ -581,7 +565,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeDoesNotAddMediaBehaviorsForPublicationDataTable(): void {
 		$table = new class (['alias' => 'PublicationData', 'table' => 'publication_data']) extends Table {
@@ -596,7 +579,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\NestBehav9ior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsNestBehaviorWhenNestConfigExists(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -617,7 +599,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeDoesNotAddNestBehaviorWhenNestConfigEmpty(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -635,7 +616,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\PublicationDataBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsPublicationDataBehaviorForNonPublicationDataTables(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -655,7 +635,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeDoesNotAddPublicationDataBehaviorForPublicationDataTable(): void {
 		$table = new class (['alias' => 'PublicationData', 'table' => 'publication_data']) extends Table {
@@ -669,7 +648,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\TranslateBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsTranslateBehaviorWhenTranslateFieldsExist(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -694,7 +672,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeDoesNotAddTranslateBehaviorWhenTranslateFieldsEmpty(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -712,7 +689,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAlwaysAddsAutoPrefixBehavior(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -734,7 +710,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAlwaysAddsDefaultValuesBehavior(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -755,7 +730,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\EventTriggerBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsEventTriggerBehaviorForNonAttributesTables(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -775,7 +749,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnused
 	 */
 	public function testInitializeDoesNotAddEventTriggerBehaviorForAttributesTables(): void {
@@ -791,7 +764,6 @@ HTML;
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Table::addAttributesBehavior()
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAttributesBehaviorForAttributesTables(): void {
 		$table = new class (['alias' => 'AttributesTest', 'table' => 'attributes_contents']) extends Table {
@@ -819,7 +791,6 @@ HTML;
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Table::addAttributesBehavior()
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAttributesBehaviorWithSourceTableForNonAttributesTables(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -845,7 +816,6 @@ HTML;
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Table::addAttributesBehavior()
 	 * @see \Awyiss\Model\Behavior\AttributesBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAttributesBehaviorAddsTranslatableFieldsToTranslateProperty(): void {
 		$attributes = [
@@ -905,7 +875,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
 	 * @see \Awyiss\Model\Behavior\CategoriesBehavior
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAddsCategoriesBehaviorForNonAttributesTables(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -925,7 +894,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeDoesNotAddCategoriesBehaviorForAttributesTables(): void {
 		$table = new class (['alias' => 'AttributesTest', 'table' => 'attributes_contents']) extends Table {
@@ -941,7 +909,6 @@ HTML;
 	 * @param bool $translateBehaviorExists
 	 * @return void
 	 * @see \Awyiss\Model\Table::findTranslations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTranslationsCallsBehaviorMethodWhenTranslateBehaviorExists(bool $translateBehaviorExists): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->getMock();
@@ -973,7 +940,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::find()
 	 * @see \Awyiss\Model\Table::findTranslations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindTranslationsCanBeUsedAsFinder(): void {
 		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['findTranslations'])->getMock();
@@ -987,7 +953,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::findActive()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindActiveAddsWhereConditionWhenActiveColumnExists(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
@@ -1010,7 +975,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::findActive()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindActiveThrowsExceptionWhenActiveColumnDoesNotExist(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->getMock();
@@ -1033,7 +997,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::find()
 	 * @see \Awyiss\Model\Table::findActive()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindActiveCanBeUsedAsFinder(): void {
 		$schema = new TableSchema('pages');
@@ -1056,7 +1019,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::findForCurrentLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindForCurrentLanguageUsesCurrentLanguageWhenNoParameterProvided(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
@@ -1092,7 +1054,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::findForCurrentLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindForCurrentLanguageWithSpecificLanguageAndIncludeGlobal(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
@@ -1116,7 +1077,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::findForCurrentLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindForCurrentLanguageWithSpecificLanguageAndExcludeGlobal(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
@@ -1135,7 +1095,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::findForCurrentLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindForCurrentLanguageWithFalseLanguageShortcode(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
@@ -1154,7 +1113,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::findForCurrentLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindForCurrentLanguageWithEntityOverridesLanguageShortcode(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
@@ -1181,7 +1139,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::findForCurrentLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindForCurrentLanguageWithEntityAndExcludeGlobal(): void {
 		$query = $this->getMockBuilder(SelectQuery::class)->disableOriginalConstructor()->onlyMethods(['where'])->getMock();
@@ -1202,7 +1159,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::find()
 	 * @see \Awyiss\Model\Table::findForCurrentLanguage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindForCurrentLanguageCanBeUsedAsFinder(): void {
 		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['findForCurrentLanguage'])->getMock();
@@ -1220,7 +1176,6 @@ HTML;
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetEntityClassBuildsEntityClassFromAlias(): void {
 		$table = new UsersTable();
@@ -1231,7 +1186,6 @@ HTML;
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetEntityClassPrefersCustomerClass(): void {
 		$table = new FormsTable([]);
@@ -1242,7 +1196,6 @@ HTML;
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetEntityClassReturnsSetProperty(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1259,7 +1212,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::belongsTo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBelongsToUsesCorrectClassAndSetsOptions(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
@@ -1276,7 +1228,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::belongsToMany()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBelongsToManyUsesCorrectClassAndSetsOptions(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
@@ -1298,7 +1249,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::hasOne()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasOneUsesCorrectClassAndSetsOptions(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
@@ -1315,7 +1265,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::hasMany()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasManyUsesCorrectClassAndSetsOptions(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
@@ -1336,7 +1285,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::exists()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsPassesOptionsToQuery(): void {
 		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['find'])->getMock();
@@ -1376,7 +1324,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::exists()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsPassesFinderOptionsToQuery(): void {
 		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['find', '_extractFinder'])->getMock();
@@ -1422,7 +1369,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::exists()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsReturnsTrueWhenRecordExists(): void {
 		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['find'])->getMock();
@@ -1450,7 +1396,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::exists()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistsReturnsFalseWhenNoRecordExists(): void {
 		$table = $this->getMockBuilder(Table::class)->setConstructorArgs([['alias' => 'TestTable', 'table' => 'pages']])->onlyMethods(['find'])->getMock();
@@ -1478,7 +1423,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefaultSetsI18nDomain(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1492,7 +1436,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefaultSetsStopOnFailure(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1507,7 +1450,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1523,7 +1465,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsWithCustomEvents(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1568,7 +1509,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsWithFirstClassEvents(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1603,7 +1543,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsWithCustomEventsSkipsEventsWithoutMethod(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1624,7 +1563,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsWithArray(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1700,7 +1638,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsWithArrayAndNumericKeys(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1736,7 +1673,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEventsWithArrayAndNumericKeyThrowsWhenCallableNotString(): void {
 		$this->expectException(RuntimeException::class);
@@ -1770,7 +1706,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapWithStringCallables(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1800,7 +1735,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapWithArrayCallablesAndPriority(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1834,7 +1768,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapWithGlobalPriority(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1870,7 +1803,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapWithNumericKeysCreatesModelEvents(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -1899,7 +1831,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapSkipsNonExistentMethods(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
@@ -1918,7 +1849,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapWithClosureCallables(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
@@ -1942,7 +1872,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapThrowsExceptionWhenArrayMissingCallable(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
@@ -1964,7 +1893,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapThrowsExceptionWhenNumericKeyWithNonStringCallable(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
@@ -1984,7 +1912,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapArrayPriorityOverridesGlobalPriority(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2023,7 +1950,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::buildEventMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildEventMapWithBehaviorInstance(): void {
 		$table = new Table(['alias' => 'TestTable', 'table' => 'pages']);
@@ -2056,7 +1982,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::fieldIsAttribute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldIsAttributeReturnsFalseWhenFieldInSchema(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2068,7 +1993,6 @@ HTML;
 
 			/**
 			 * @inheritDoc
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
 			public function getSchema(): TableSchema {
 				$schema = new TableSchema('pages');
@@ -2089,7 +2013,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::fieldIsAttribute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldIsAttributeReturnsFalseWhenFieldNotInSchemaAndNoAttributes(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2101,7 +2024,6 @@ HTML;
 
 			/**
 			 * @inheritDoc
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
 			public function getSchema(): TableSchema {
 				$schema = new TableSchema('pages');
@@ -2129,7 +2051,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::fieldIsAttribute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldIsAttributeReturnsTrueWhenFieldNotInSchemaAndHasAttributes(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2141,7 +2062,6 @@ HTML;
 
 			/**
 			 * @inheritDoc
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
 			public function getSchema(): TableSchema {
 				$schema = new TableSchema('pages');
@@ -2168,7 +2088,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::getI18nDomain()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetI18nDomainReturnsTableAlias(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2184,7 +2103,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::getI18nDomain()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetI18nDomainReturnsMainTableForAttributes(): void {
 		$table = new class (['alias' => 'AttributesContents', 'table' => 'attributes_contents']) extends Table {
@@ -2200,7 +2118,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::addCategoriesBehavior()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCategoriesBehaviorDisablesBuildRulesOnNestPropertyWhenNestForeignKeyEqualsCategoriesFieldName(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2232,7 +2149,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::addCategoriesBehavior()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCategoriesBehaviorNotDisablesBuildRulesOnNestPropertyWhenNestForeignKeyEqualsCategoriesFieldName(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2264,7 +2180,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::addCategoriesBehavior()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCategoriesBehaviorSetsRelatedColumnOnNestProperty(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2285,7 +2200,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::addCategoriesBehavior()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCategoriesBehaviorNotSetsRelatedColumnOnNestPropertyWhenAlreadySet(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2314,7 +2228,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::addCategoriesBehavior()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCategoriesBehaviorSetsRelatedColumnOnNestPropertyWhenNotNestParentForeignKey(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2345,7 +2258,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::addCategoriesBehavior()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCategoriesBehaviorSetsRelatedColumnOnNestPropertyWithPrefixWhenAttribute(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2373,7 +2285,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::addCategoriesBehavior()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCategoriesBehaviorSetsRelatedColumnOnSystemOrderProperty(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2393,7 +2304,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::addCategoriesBehavior()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddCategoriesBehaviorSetsRelatedColumnOnSystemOrderPropertyWithPrefixWhenAttribute(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2420,7 +2330,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::marshaller()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMarshallerReturnsInstanceOfAwyissMarshaller(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2435,7 +2344,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::save()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
@@ -2473,7 +2381,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::save()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
@@ -2512,7 +2419,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::save()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
@@ -2532,7 +2438,6 @@ HTML;
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
 			/**
 			 * @inheritDoc
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
 			public function associations(): AssociationCollection {
 				$association = new HasMany('TestAssociations', [
@@ -2582,7 +2487,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::save()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUndefinedFieldInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
@@ -2596,7 +2500,6 @@ HTML;
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
 			/**
 			 * @inheritDoc
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
 			public function associations(): AssociationCollection {
 				$association = new HasOne('TestAssociation', [
@@ -2644,7 +2547,6 @@ HTML;
 	 * @see \Awyiss\Model\Table::saveMany()
 	 * @throws \Exception
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSaveManyWithTransactionFalseThrowsExceptionOnSaveFailure(): void {
 		$mockConnection = $this->createMock(Connection::class);
@@ -2676,7 +2578,6 @@ HTML;
 	 * @see \Awyiss\Model\Table::saveMany()
 	 * @throws \Exception
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSaveManyWithTransactionTrueReturnsFalseOnSaveFailure(): void {
 		$mockConnection = $this->createMock(Connection::class);
@@ -2706,7 +2607,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::delete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeleteDispatchesAfterDeleteCommitWitoutSoftDeleteBehavior(): void {
 		/** @var \Customer\Model\Table\EmployersTable $table */
@@ -2738,7 +2638,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::delete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeleteNotDispatchesAfterDeleteCommitWithSoftDeleteBehavior(): void {
 		/** @var \Customer\Model\Table\EmployersTable $table */
@@ -2768,7 +2667,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::save()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSaveWithAssociationsDispatchesAssociationEvents(): void {
 		/** @var \Awyiss\Model\Table $table */
@@ -2806,7 +2704,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::save()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSaveWithoutAssociationsDispatchesAssociationEvents(): void {
 		/** @var \Awyiss\Model\Table $table */
@@ -2842,7 +2739,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initializeSchema()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaDoesNothingForNonAttributesTables(): void {
 		$schema = $this->createMock(TableSchemaInterface::class);
@@ -2869,7 +2765,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::initializeSchema()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaProcessesAttributesCorrectly(): void {
 		$schema = $this->createMock(TableSchemaInterface::class);
@@ -2927,7 +2822,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::beforeRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeRulesNotCleansHtmlWhenConfigNone(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -2950,7 +2844,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Model\Table::beforeRules()
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::cleanModerare()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeRulesCleansHtmlModerate(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -3035,7 +2928,6 @@ HTML,
 	 * @see \Awyiss\Model\Table::beforeRules()
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::cleanModerare()
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::cleanStrict()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeRulesCleansHtmlStrict(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -3095,7 +2987,6 @@ HTML,
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::beforeRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeRulesNotCleansHtmlWhenDeleted(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -3118,7 +3009,6 @@ HTML,
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveNotHandleImagesInHtmlConfigFalsish(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {
@@ -3152,7 +3042,6 @@ HTML,
 	 * @return void
 	 * @see \Awyiss\Model\Table::beforeSave()
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveHandlesImagesInHtmlConfigTrueish(): void {
 		$table = new class (['alias' => 'TestTable', 'table' => 'pages']) extends Table {

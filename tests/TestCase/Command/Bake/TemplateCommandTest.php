@@ -42,7 +42,6 @@ class TemplateCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContentTemplateCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS . 'content' . DS . 'standard.twig';
@@ -59,7 +58,6 @@ class TemplateCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContentTemplateWithFolderCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'subfolder' . DS . 'Frontend' . DS . 'content' . DS . 'standard.twig';
@@ -76,7 +74,6 @@ class TemplateCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEmailTemplateCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS . 'email' . DS . 'standard.twig';
@@ -93,7 +90,6 @@ class TemplateCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPageTemplateCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS . 'page' . DS . 'standard.twig';
@@ -110,7 +106,6 @@ class TemplateCommandTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidgetTemplateCommand(): void {
 		$generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS . 'widget' . DS . 'standard.twig';

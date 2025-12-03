@@ -18,14 +18,14 @@ trait PreviewTrait {
 	 * @return bool
 	 */
 	protected function isPreview(): bool {
-		static $lb_isPreview = null;
+		static $isPreview = null;
 
-		if (isset($lb_isPreview)) {
-			return $lb_isPreview;
+		if (isset($isPreview)) {
+			return $isPreview;
 		}
 
-		$lb_isPreview = !!(Router::getRequest()?->getSession()->read('previewMode.enabled', false));
+		$isPreview = !!(Router::getRequest()?->getSession()->read('previewMode.enabled', false));
 
-		return $lb_isPreview;
+		return $isPreview;
 	}
 }

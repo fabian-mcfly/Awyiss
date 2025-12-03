@@ -60,7 +60,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(8, $this->mediaElementsTable->associations()->keys());
@@ -127,7 +126,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::getColumnSpans()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnSpans(): void {
 		$columnSpans = $this->mediaElementsTable->getColumnSpans();
@@ -169,7 +167,6 @@ class MediaElementsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::getAssignableModels()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAssignableModels(string $model, bool $entityLevel, bool $modelLevel): void {
 		$models = $this->mediaElementsTable->getAssignableModels();
@@ -204,7 +201,6 @@ class MediaElementsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::getAssignableModels()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAssignableModelsWithEntities(string $model, bool $hasEntities): void {
 		$modelsWithEntities = $this->mediaElementsTable->getAssignableModels(true);
@@ -222,7 +218,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -248,7 +243,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -272,7 +266,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -290,7 +283,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -318,7 +310,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -342,7 +333,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -362,7 +352,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnSpanInList(): void {
 		$columnSpans = $this->mediaElementsTable->getColumnSpans();
@@ -385,7 +374,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnSpanNotInList(): void {
 		$data = [
@@ -405,7 +393,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUnique(): void {
 		$entity = $this->mediaElementsTable->get(1);
@@ -425,7 +412,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNotDefaultElementDeletion(): void {
 		// Test that default elements (id < 10) cannot be deleted
@@ -443,7 +429,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesAllowNonDefaultElementDeletion(): void {
 		// Test that non-default elements (id >= 10) can be deleted
@@ -459,7 +444,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\MediaElement $entity */
@@ -482,7 +466,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -514,7 +497,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->mediaElementsTable->hasBehavior('SystemOrder'));
@@ -528,7 +510,6 @@ class MediaElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->mediaElementsTable->hasBehavior('Translate'));

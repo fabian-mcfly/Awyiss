@@ -42,7 +42,6 @@ class TestCase extends BaseTestCase {
 		EventManager::instance(new EventManager(true));
 		$this->_eventManager = new EventManager(true);
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$request = new ServerRequest();
 		Router::setRequest($request);
 	}
@@ -60,7 +59,6 @@ class TestCase extends BaseTestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -79,12 +77,10 @@ class TestCase extends BaseTestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
 		// Delete all resized images created by tests (id > 27)
 		$mediaResizedImagesTable->deleteAll(['id >' => 27]);
@@ -95,7 +91,6 @@ class TestCase extends BaseTestCase {
 	 * Overridden to use $this->_appClass
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function loadRoutes(?array $appArgs = null): void {
 		$appArgs ??= [rtrim(CONFIG, DIRECTORY_SEPARATOR)];
@@ -117,7 +112,6 @@ class TestCase extends BaseTestCase {
 	/**
 	 * @param int $userId
 	 * @return \Awyiss\Model\Entity\User
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function login(int $userId = 1): User {
 		$users = FactoryLocator::get('Table')->get('Users');
@@ -139,7 +133,6 @@ class TestCase extends BaseTestCase {
 	 * @param mixed ...$args
 	 * @return mixed
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function callProtectedMethod(object|string $object, string $methodName, mixed ...$args): mixed {
 		$reflection = new ReflectionClass($object);

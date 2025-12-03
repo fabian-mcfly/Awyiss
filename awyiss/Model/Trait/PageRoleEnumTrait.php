@@ -17,15 +17,15 @@ trait PageRoleEnumTrait {
 	 * @inheritDoc
 	 */
 	public static function tryFromName(string $name): ?PageRoleEnumInterface {
-		$la_pageRoles = static::cases();
-		$ls_name = Inflector::camelize(Inflector::singularize($name));
+		$pageRoles = static::cases();
+		$name = Inflector::camelize(Inflector::singularize($name));
 
-		$li_offset = array_search($ls_name, array_column($la_pageRoles, 'name'));
-		if ($li_offset === false) {
+		$offset = array_search($name, array_column($pageRoles, 'name'));
+		if ($offset === false) {
 			return null;
 		}
 
-		return $la_pageRoles[ $li_offset ];
+		return $pageRoles[ $offset ];
 	}
 
 
@@ -33,14 +33,14 @@ trait PageRoleEnumTrait {
 	 * @inheritDoc
 	 */
 	public function label(): string {
-		$ls_headline = __d($this->name, 'headline_overview');
-		if (!str_contains($ls_headline, '::')) {
-			return $ls_headline;
+		$headline = __d($this->name, 'headline_overview');
+		if (!str_contains($headline, '::')) {
+			return $headline;
 		}
 
-		$la_pageRoles = $this->fetchPageRoles();
-		if (isset($la_pageRoles[ Inflector::underscore($this->name) ])) {
-			return $la_pageRoles[ Inflector::underscore($this->name) ]->label;
+		$pageRoles = $this->fetchPageRoles();
+		if (isset($pageRoles[ Inflector::underscore($this->name) ])) {
+			return $pageRoles[ Inflector::underscore($this->name) ]->label;
 		}
 
 		return Inflector::humanize(Inflector::underscore($this->name));
@@ -67,17 +67,17 @@ trait PageRoleEnumTrait {
 	 * @return array<\Awyiss\Model\Entity\PageRole>
 	 */
 	protected function fetchPageRoles(): array {
-		static $la_pageRoles;
+		static $pageRoles;
 
-		if (isset($la_pageRoles)) {
-			return $la_pageRoles;
+		if (isset($pageRoles)) {
+			return $pageRoles;
 		}
 
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$tableLocator = FactoryLocator::get('Table');
 
-		/** @var array<\Awyiss\Model\Entity\PageRole> $la_pageRoles */
-		$la_pageRoles = $lo_tableLocator->get('PageRoles')->find()->all()->indexBy('identifier')->toArray();
+		/** @var array<\Awyiss\Model\Entity\PageRole> $pageRoles */
+		$pageRoles = $tableLocator->get('PageRoles')->find()->all()->indexBy('identifier')->toArray();
 
-		return $la_pageRoles;
+		return $pageRoles;
 	}
 }

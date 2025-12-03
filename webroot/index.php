@@ -17,29 +17,29 @@
 
 putenv('CAKE_DISABLE_GLOBAL_FUNCS=1');
 
-$ls_dir = dirname(__DIR__);
+$dir = dirname(__DIR__);
 
-require $ls_dir . '/awyiss/I18n/functions.php';
-require $ls_dir . '/awyiss/functions.php';
+require $dir . '/awyiss/I18n/functions.php';
+require $dir . '/awyiss/functions.php';
 
 // For built-in server
 if (PHP_SAPI === 'cli-server') {
 	$_SERVER['PHP_SELF'] = '/' . basename(__FILE__);
 
-	$la_url = parse_url(urldecode($_SERVER['REQUEST_URI']));
-	$ls_file = __DIR__ . $la_url['path'];
-	if ( ! str_contains($la_url['path'], '..') && str_contains($la_url['path'], '.') && is_file($ls_file)) {
+	$url = parse_url(urldecode($_SERVER['REQUEST_URI']));
+	$file = __DIR__ . $url['path'];
+	if (! str_contains($url['path'], '..') && str_contains($url['path'], '.') && is_file($file)) {
 		return FALSE;
 	}
 }
 
-$lo_loader = require $ls_dir . '/vendor/autoload.php';
+$loader = require $dir . '/vendor/autoload.php';
 
 use Awyiss\Awyiss;
 use Cake\Http\Server;
 
 // Bind your application to the server.
-$lo_server = new Server(new Awyiss(dirname(__DIR__) . DS . 'awyiss' . DS . 'config', null, null, $lo_loader));
+$server = new Server(new Awyiss(dirname(__DIR__) . DS . 'awyiss' . DS . 'config', null, null, $loader));
 
 // Run the request/response through the application and emit the response.
-$lo_server->emit($lo_server->run());
+$server->emit($server->run());

@@ -36,7 +36,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -90,7 +89,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(8, $this->backendMenuEntriesTable->associations()->keys());
@@ -156,7 +154,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -184,7 +181,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -210,7 +206,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -228,7 +223,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -261,7 +255,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -286,7 +279,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -305,7 +297,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAllowEmptyParentId(): void {
 		$data = [
@@ -324,7 +315,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAllowEmptyInsertAfterId(): void {
 		$data = [
@@ -343,7 +333,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNullParentId(): void {
 		// Test with null parent (should be valid)
@@ -362,7 +351,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidParentIdNumeric(): void {
 		// Test with existing parent menu entry (numeric)
@@ -381,7 +369,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidParentIdString(): void {
 		// Test with existing parent menu entry (string identifier)
@@ -400,7 +387,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidParentIdNumeric(): void {
 		// Test with non-existing parent menu entry (numeric)
@@ -424,7 +410,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidParentIdString(): void {
 		// Test with non-existing parent menu entry (string identifier)
@@ -448,7 +433,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::createEntries()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateEntries(): void {
 		// Create a mock entity with title
@@ -497,7 +481,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\BackendMenuEntry $entity */
@@ -522,7 +505,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -559,7 +541,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehavior(): void {
 		$this->assertTrue($this->backendMenuEntriesTable->hasBehavior('Nest'));
@@ -574,7 +555,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->backendMenuEntriesTable->hasBehavior('SystemOrder'));
@@ -588,7 +568,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->backendMenuEntriesTable->hasBehavior('Translate'));
@@ -606,7 +585,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaAccessColumn(): void {
 		$schema = $this->backendMenuEntriesTable->getSchema();

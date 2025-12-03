@@ -56,7 +56,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(4, $this->contentTemplateContentAreasTable->associations()->keys());
@@ -89,7 +88,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -109,7 +107,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -128,7 +125,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -151,7 +147,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -174,7 +169,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationContentTemplateRequiredWithoutPageTemplate(): void {
 		// When page_template_id is empty, content_template_id is required
@@ -192,7 +186,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationPageTemplateRequiredWithoutContentTemplate(): void {
 		// When content_template_id is empty, page_template_id is required
@@ -210,7 +203,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationContentTemplateNotRequiredWithPageTemplate(): void {
 		// When page_template_id is present, content_template_id is not required
@@ -229,7 +221,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationPageTemplateNotRequiredWithContentTemplate(): void {
 		// When content_template_id is present, page_template_id is not required
@@ -248,7 +239,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesContentTemplateExistsValid(): void {
 		// Test with existing content template
@@ -267,7 +257,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesContentTemplateExistsInvalid(): void {
 		// Test with non-existing content template
@@ -291,7 +280,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesContentAreaExistsValid(): void {
 		// Test with existing content area
@@ -310,7 +298,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesContentAreaExistsInvalid(): void {
 		// Test with non-existing content area
@@ -334,7 +321,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesPageTemplateExistsValid(): void {
 		// Test with existing page template
@@ -353,7 +339,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesPageTemplateExistsInvalid(): void {
 		// Test with non-existing page template
@@ -377,7 +362,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesPageTemplateContentAreaExistsValid(): void {
 		// Test with existing page template content area combination
@@ -396,7 +380,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesPageTemplateContentAreaExistsInvalid(): void {
 		// Test with non-existing page template content area combination
@@ -420,7 +403,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->contentTemplateContentAreasTable->newDefaultEntity();
@@ -438,7 +420,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -461,7 +442,6 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::$audit
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuditBehavior(): void {
 		$this->assertTrue($this->contentTemplateContentAreasTable->hasBehavior('Audit'));

@@ -19,6 +19,7 @@ use Cake\ORM\Query\SelectQuery;
  * @property \Awyiss\Model\Table\MediaSelectorsTable $MediaSelectors
  * @method \Awyiss\Model\Entity\MediaSelector[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MediaSelectorsController extends Controller {
 	/**
@@ -34,10 +35,10 @@ class MediaSelectorsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->MediaSelectors->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->MediaSelectors->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -49,11 +50,11 @@ class MediaSelectorsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->MediaSelectors->find()->contain(['CreatedByUser', 'ChangedByUser', 'DeletedByUser']);
-		$lo_mediaSelectors = $this->paginate($lo_query);
+		$query = $this->MediaSelectors->find()->contain(['CreatedByUser', 'ChangedByUser', 'DeletedByUser']);
+		$mediaSelectors = $this->paginate($query);
 
 		$this->set([
-			'mediaSelectors' => $lo_mediaSelectors,
+			'mediaSelectors' => $mediaSelectors,
 			'attributes' => $this->MediaSelectors->getAttributes(),
 		]);
 	}
@@ -68,20 +69,14 @@ class MediaSelectorsController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_mediaSelector = $this->MediaSelectors->newDefaultEntity();
+		$mediaSelector = $this->MediaSelectors->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_mediaSelector);
+			$this->save($mediaSelector);
 		}
 
 		$this->set([
-			'mediaSelector' => $lo_mediaSelector,
-			'createdByUser' => $this->MediaSelectors->CreatedByUser->find('list', ['limit' => 200]),
-
-			'changedByUser' => $this->MediaSelectors->ChangedByUser->find('list', ['limit' => 200]),
-
-			'deletedByUser' => $this->MediaSelectors->DeletedByUser->find('list', ['limit' => 200]),
-
+			'mediaSelector' => $mediaSelector,
 		]);
 	}
 
@@ -97,28 +92,22 @@ class MediaSelectorsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var MediaSelector $lo_mediaSelector
+		 * @var \Awyiss\Model\Entity\MediaSelector $mediaSelector
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_mediaSelector = $this->MediaSelectors->findById($id)->find('translations')->first();
-		if (!$lo_mediaSelector) {
+		$mediaSelector = $this->MediaSelectors->findById($id)->find('translations')->first();
+		if (!$mediaSelector) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_mediaSelector, 'edit');
+			$this->save($mediaSelector, 'edit');
 		}
 
 		$this->set([
-			'mediaSelector' => $lo_mediaSelector,
-			'createdByUser' => $this->MediaSelectors->CreatedByUser->find('list', ['limit' => 200]),
-
-			'changedByUser' => $this->MediaSelectors->ChangedByUser->find('list', ['limit' => 200]),
-
-			'deletedByUser' => $this->MediaSelectors->DeletedByUser->find('list', ['limit' => 200]),
-
+			'mediaSelector' => $mediaSelector,
 		]);
 	}
 
@@ -135,15 +124,15 @@ class MediaSelectorsController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var MediaSelector $lo_mediaSelector */
-		$lo_mediaSelector = $this->MediaSelectors->findById($id)->first();
-		if (!$lo_mediaSelector) {
+		/** @var \Awyiss\Model\Entity\MediaSelector $mediaSelector */
+		$mediaSelector = $this->MediaSelectors->findById($id)->first();
+		if (!$mediaSelector) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->MediaSelectors->delete($lo_mediaSelector)) {
+		if ($this->MediaSelectors->delete($mediaSelector)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -151,8 +140,8 @@ class MediaSelectorsController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_mediaSelector->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($mediaSelector->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -162,29 +151,29 @@ class MediaSelectorsController extends Controller {
 
 
 	/**
-	 * @param MediaSelector $mediaSelector
+	 * @param \Awyiss\Model\Entity\MediaSelector $mediaSelector
 	 * @param string $method
 	 * @return void
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
 	protected function save(MediaSelector $mediaSelector, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->MediaSelectors->hasAttributes()) {
-			$la_associated[] = $this->MediaSelectors->getAttributesTableName(true);
+			$associated[] = $this->MediaSelectors->getAttributesTableName(true);
 			$mediaSelector->setAccess('attributes', true);
 		}
 
 		$this->MediaSelectors->patchEntity($mediaSelector, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->MediaSelectors->save($mediaSelector, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->MediaSelectors->save($mediaSelector, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -198,9 +187,9 @@ class MediaSelectorsController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($mediaSelector->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($mediaSelector->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}

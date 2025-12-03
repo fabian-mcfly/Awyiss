@@ -29,7 +29,6 @@ class LocaleHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -56,7 +55,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::languageTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLanguageTitleReturnsCorrectTitle(): void {
 		$result = $this->locale->languageTitle('en');
@@ -72,7 +70,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::languageTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLanguageTitleReturnsNullForOmittedShortcode(): void {
 		$result = $this->locale->languageTitle();
@@ -89,7 +86,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::languageTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLanguageTitleReturnsNullForInvalidShortcode(): void {
 		$result = $this->locale->languageTitle('ch');
@@ -101,7 +97,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::languageTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLanguageTitleReturnsCorrectTitleForProvidedLanguages(): void {
 		$languagesByShortcode = [
@@ -120,7 +115,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::languageTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLanguageTitleReturnsCorrectTitleForProvidedLanguagesWithFallbackToBackend(): void {
 		$languagesByShortcode = [
@@ -138,7 +132,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::languageTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLanguageTitleReturnsNullForInvalidShortcodeForProvidedLanguages(): void {
 		$languagesByShortcode = [
@@ -156,7 +149,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::languageTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLanguageTitleReturnsNullForProvidedLanguagesWithNoFallback(): void {
 		$languagesByShortcode = [
@@ -173,7 +165,6 @@ class LocaleHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlReturnsSelectInput(): void {
 		$result = $this->locale->control('language');
@@ -188,7 +179,6 @@ class LocaleHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithDifferentAttributes(): void {
 		$result = $this->locale->control('language', ['class' => 'custom-class']);
@@ -203,7 +193,6 @@ class LocaleHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithSelectedValue(): void {
 		$result = $this->locale->control('language', ['val' => 'en']);
@@ -217,7 +206,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::allLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAllLanguagesReturnsAllLanguages(): void {
 		$result = $this->locale->allLanguages();
@@ -229,16 +217,15 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::allLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAllLanguagesWithRawOption(): void {
 		$result = $this->locale->allLanguages(true);
 
 		$allLanguages = [];
 		$query = $this->fetchTable('Languages')->find('all')->where(['realm !=' => 'Dummy']);
-		foreach ($query->all() as $lo_language) {
-			if (!isset($allLanguages[ $lo_language->shortcode ])) {
-				$allLanguages[ $lo_language->shortcode ] = $lo_language;
+		foreach ($query->all() as $language) {
+			if (!isset($allLanguages[ $language->shortcode ])) {
+				$allLanguages[ $language->shortcode ] = $language;
 			}
 		}
 
@@ -249,7 +236,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::languagesForRealm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLanguagesForRealmReturnsLanguagesForSpecificRealm(): void {
 		$result = $this->locale->languagesForRealm(Awyiss::REALM_FRONTEND);
@@ -265,7 +251,6 @@ class LocaleHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\LocaleHelper::languagesForRealm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLanguagesForRealmWithRawOption(): void {
 		$result = $this->locale->languagesForRealm(Awyiss::REALM_FRONTEND, true);

@@ -150,12 +150,12 @@ class WidgetsTable extends Table {
 		// Use the column system of contents
 		$this->columnSystem = array_merge($this->columnSystem, LocalConfig::read('columnSystem', [], 'Contents'));
 
-		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $ls_className */
-		$ls_className = $this->columnSystem['className'];
-		$ls_className::setMaxDenominator($this->columnSystem['maxColumns']);
+		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $className */
+		$className = $this->columnSystem['className'];
+		$className::setMaxDenominator($this->columnSystem['maxColumns']);
 
-		$this->columnWidths = $ls_className::getColumnWidths();
-		$this->columnIndents = $ls_className::getColumnIndents();
+		$this->columnWidths = $className::getColumnWidths();
+		$this->columnIndents = $className::getColumnIndents();
 	}
 
 
@@ -316,8 +316,8 @@ class WidgetsTable extends Table {
 			 * This works as an existsIn-like rule
 			 */
 			try {
-				/** @var WidgetTemplate $lo_widgetTemplate */
-				$lo_widgetTemplate = $this->WidgetTemplates->get(
+				/** @var \Awyiss\Model\Entity\WidgetTemplate $widgetTemplate */
+				$widgetTemplate = $this->WidgetTemplates->get(
 					$entity->widgetTemplateId,
 					contain: [
 						'WidgetTemplateElements',
@@ -325,41 +325,41 @@ class WidgetsTable extends Table {
 				);
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
-				//Widget template not found
+				// Widget template not found
 				$entity->setError('widget_template_id', __df($this->getI18nDomain(), 'validation', 'error_valid_widget_template_id'));
 
 				return false;
 			}
 
 			/**
-			 * @var \Awyiss\Validation\Validator $lo_validator
+			 * @var \Awyiss\Validation\Validator $validator
 			 * @noinspection DuplicatedCode
 			 */
-			$lo_validator = new $this->_validatorClass();
-			$lo_validator->setI18nDomain($this->getI18nDomain());
+			$validator = new $this->_validatorClass();
+			$validator->setI18nDomain($this->getI18nDomain());
 
-			$la_data = $entity->extract();
+			$data = $entity->extract();
 			if ($this->hasAttributes() && !empty($entity->attributes)) {
-				/** @var \Awyiss\Validation\Validator $lo_attributesValidator */
-				$lo_attributesValidator = new $this->_validatorClass();
-				$lo_attributesValidator->setI18nDomain($this->getI18nDomain());
+				/** @var \Awyiss\Validation\Validator $attributesValidator */
+				$attributesValidator = new $this->_validatorClass();
+				$attributesValidator->setI18nDomain($this->getI18nDomain());
 
-				$la_data['attributes'] = $entity->attributes->extract();
+				$data['attributes'] = $entity->attributes->extract();
 			}
 
-			$la_errors = $this->validateInputFields($la_data, $entity, $lo_validator, $lo_attributesValidator ?? null, $lo_widgetTemplate);
+			$errors = $this->validateInputFields($data, $entity, $validator, $attributesValidator ?? null, $widgetTemplate);
 
-			$la_errors = $this->getEntityClass()::mapFields($la_errors, true);
+			$errors = $this->getEntityClass()::mapFields($errors, true);
 
-			if ($this->hasAttributes() && !empty($la_errors['attributes'])) {
-				$la_errors['attributes'] = $this->getAttributesTable()->getEntityClass()::mapFields($la_errors['attributes'], true);
-				$entity->attributes->setErrors($la_errors['attributes']);
+			if ($this->hasAttributes() && !empty($errors['attributes'])) {
+				$errors['attributes'] = $this->getAttributesTable()->getEntityClass()::mapFields($errors['attributes'], true);
+				$entity->attributes->setErrors($errors['attributes']);
 			}
 
-			$entity->setErrors($la_errors);
+			$entity->setErrors($errors);
 
 
-			return empty($la_errors);
+			return empty($errors);
 		}, 'validInputFields');
 
 
@@ -370,14 +370,14 @@ class WidgetsTable extends Table {
 
 
 		$rules->add(function (Widget $entity): bool {
-			/** @var \Awyiss\Utility\Content\ColumnInterface $lo_width */
-			$lo_width = $entity->column['width'];
-			/** @var \Awyiss\Utility\Content\ColumnInterface $lo_indent */
-			$lo_indent = $entity->column['indent'];
+			/** @var \Awyiss\Utility\Content\ColumnInterface $width */
+			$width = $entity->column['width'];
+			/** @var \Awyiss\Utility\Content\ColumnInterface $indent */
+			$indent = $entity->column['indent'];
 
-			$lf_totalWidth = $lo_width->getPercentage() + ($lo_indent?->getPercentage() ?? 0);
+			$totalWidth = $width->getPercentage() + ($indent?->getPercentage() ?? 0);
 
-			if ($lf_totalWidth > 1) {
+			if ($totalWidth > 1) {
 				return false;
 			}
 
@@ -411,17 +411,18 @@ class WidgetsTable extends Table {
 	 */
 	public function nestedByIdentifier(SelectQuery $query): CollectionInterface {
 		return $query->find('threaded')->all()->groupBy('identifier')->map(function (array $widgets): CollectionInterface {
-			$lo_widgets = (new Collection($widgets))->listNested();
+			$widgets = new Collection($widgets)->listNested();
 
-			/** @var Widget $lo_widget */
-			foreach ($lo_widgets as $lo_widget) {
-				$lo_widget->setVirtual(['level'], true);
+			/** @var \Awyiss\Model\Entity\Widget $widget */
+			foreach ($widgets as $widget) {
+				$widget->setVirtual(['level'], true);
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_widget->level = $lo_widgets->getDepth();
+				/** @noinspection PhpUndefinedFieldInspection */
+				$widget->level = $widgets->getDepth();
 			}
 
 
-			return $lo_widgets;
+			return $widgets;
 		});
 	}
 
@@ -435,14 +436,14 @@ class WidgetsTable extends Table {
 	 * @return array
 	 */
 	protected function validateInputFields(array $data, Widget $entity, Validator $validator, ?Validator $attributesValidator, WidgetTemplate $widgetTemplate): array {
-		$la_widgetAttributes = $this->WidgetTemplates->getAvailableWidgetAttributes();
+		$widgetAttributes = $this->WidgetTemplates->getAvailableWidgetAttributes();
 
-		$this->validateAssignedElements($widgetTemplate, $entity, $validator, $la_widgetAttributes, $attributesValidator);
+		$this->validateAssignedElements($widgetTemplate, $entity, $validator, $widgetAttributes, $attributesValidator);
 
 		$this->validateUnassignedElements($widgetTemplate, $entity, $validator);
 
 		if (isset($attributesValidator)) {
-			$this->validateUnassignedAttributes($widgetTemplate, $entity, $la_widgetAttributes, $attributesValidator);
+			$this->validateUnassignedAttributes($widgetTemplate, $entity, $widgetAttributes, $attributesValidator);
 
 			// If validateUnassignedAttributes() added any rules, add the attributes validator to the main validator
 			if ($attributesValidator->count()) {
@@ -472,11 +473,11 @@ class WidgetsTable extends Table {
 		?Validator $attributesValidator
 	): void {
 		//Traverse all elements that are available and assigned to the widget template
-		foreach ($widgetTemplate->widgetTemplateElements as $lo_widgetTemplateElement) {
-			if (!str_starts_with($lo_widgetTemplateElement->identifier, 'attributes.')) {
-				if ($lo_widgetTemplateElement->required === true) {
+		foreach ($widgetTemplate->widgetTemplateElements as $widgetTemplateElement) {
+			if (!str_starts_with($widgetTemplateElement->identifier, 'attributes.')) {
+				if ($widgetTemplateElement->required === true) {
 					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
-					$validator->requirePresence($lo_widgetTemplateElement->identifier)->notEmptyString($lo_widgetTemplateElement->identifier);
+					$validator->requirePresence($widgetTemplateElement->identifier)->notEmptyString($widgetTemplateElement->identifier);
 					//TODO check if notEmptyString is enough. Some fields might need notEmpty*
 				}
 
@@ -489,28 +490,28 @@ class WidgetsTable extends Table {
 			}
 
 			// Strip the 'attributes.'/'attributes_' prefix from the identifier
-			$ls_identifier = substr($lo_widgetTemplateElement->identifier, 11);
+			$identifier = substr($widgetTemplateElement->identifier, 11);
 
 			// If the field already has an error or if it's not required, skip it.
 			if (
-				$entity->attributes->getError($ls_identifier) ||
-				$lo_widgetTemplateElement->required !== true
+				$entity->attributes->getError($identifier) ||
+				$widgetTemplateElement->required !== true
 			) {
 				continue;
 			}
 
-			$attributesValidator->requirePresence($ls_identifier);
+			$attributesValidator->requirePresence($identifier);
 
-			switch ($widgetAttributes[ $ls_identifier ]['inputType']) {
+			switch ($widgetAttributes[ $identifier ]['inputType']) {
 				case 'checkbox':
-					$attributesValidator->add($ls_identifier, [
+					$attributesValidator->add($identifier, [
 						'checkboxChecked' => [
 							'rule' => ['equalTo', true],
 						],
 					]);
 					break;
 				default:
-					$attributesValidator->notEmptyString($ls_identifier);
+					$attributesValidator->notEmptyString($identifier);
 			}
 		}
 	}
@@ -529,36 +530,26 @@ class WidgetsTable extends Table {
 			array_diff(
 				array_keys($this->WidgetTemplates->getAvailableWidgetElements()),
 				array_column($widgetTemplate->widgetTemplateElements, 'identifier')
-			) as $ls_element
+			) as $element
 		) {
-			if ($entity->getError($ls_element)) {
+			if ($entity->getError($element)) {
 				continue;
 			}
 
-			if ($ls_element === 'column_width') {
-				$la_columnWidths = $this->getColumnWidths();
+			if ($element === 'column_width') {
+				$columnWidths = $this->getColumnWidths();
 
-				$validator->add($ls_element, [
+				$validator->add($element, [
 					'equalTo' => [
-						'rule' => ['equalTo', key($la_columnWidths)],
+						'rule' => ['equalTo', key($columnWidths)],
 					],
 				]);
 
 				continue;
 			}
 
-			if ($ls_element === 'column_last') {
-				$validator->add($ls_element, [
-					'equalTo' => [
-						'rule' => ['equalTo', false],
-					],
-				]);
-
-				continue;
-			}
-
-			if ($ls_element === 'column_rtl') {
-				$validator->add($ls_element, [
+			if ($element === 'column_last') {
+				$validator->add($element, [
 					'equalTo' => [
 						'rule' => ['equalTo', false],
 					],
@@ -567,7 +558,17 @@ class WidgetsTable extends Table {
 				continue;
 			}
 
-			$validator->add($ls_element, 'isEmpty', [
+			if ($element === 'column_rtl') {
+				$validator->add($element, [
+					'equalTo' => [
+						'rule' => ['equalTo', false],
+					],
+				]);
+
+				continue;
+			}
+
+			$validator->add($element, 'isEmpty', [
 				'rule' => function (mixed $value): bool {
 					return empty($value) && !in_array($value, [false, '0', 0], true);
 				},
@@ -584,20 +585,20 @@ class WidgetsTable extends Table {
 	 * @return void
 	 */
 	protected function validateUnassignedAttributes(WidgetTemplate $widgetTemplate, Widget $entity, array $widgetAttributes, ?Validator $attributesValidator): void {
-		$la_attributes = array_keys($widgetAttributes);
+		$attributes = array_keys($widgetAttributes);
 
 		// Traverse all attributes that are available but not assigned to the widget template
 		foreach (
 			array_diff(
-				$la_attributes,
+				$attributes,
 				$this->WidgetTemplates->getAssignedWidgetAttributes($widgetTemplate)
-			) as $ls_element
+			) as $element
 		) {
-			if (!$entity->attributes->isDirty($ls_element)) {
+			if (!$entity->attributes->isDirty($element)) {
 				continue;
 			}
 
-			$attributesValidator->add($ls_element, 'isEmpty', [
+			$attributesValidator->add($element, 'isEmpty', [
 				'rule' => function (mixed $value): bool {
 					return empty($value) && !in_array($value, [false, '0', 0], true);
 				},

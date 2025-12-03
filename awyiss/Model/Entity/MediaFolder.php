@@ -69,11 +69,11 @@ class MediaFolder extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getChildren($this, $options);
+		return $table->getChildren($this, $options);
 	}
 
 
@@ -86,11 +86,11 @@ class MediaFolder extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getNestedChildren($this, $options, $currentLevel);
+		return $table->getNestedChildren($this, $options, $currentLevel);
 	}
 
 
@@ -102,11 +102,11 @@ class MediaFolder extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParent($this, $options);
+		return $table->getParent($this, $options);
 	}
 
 
@@ -119,11 +119,11 @@ class MediaFolder extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParents($this, $options, $currentLevel);
+		return $table->getParents($this, $options, $currentLevel);
 	}
 
 
@@ -143,14 +143,14 @@ class MediaFolder extends Entity {
 			return $path;
 		}
 
-		$ls_path = Text::slug($path, ['preserve' => '/']);
-		$ls_path = trim($ls_path, '/');
+		$path = Text::slug($path, ['preserve' => '/']);
+		$path = trim($path, '/');
 
-		if (str_contains($ls_path, '/')) {
-			$ls_path = substr($ls_path, strrpos($ls_path, '/') + 1);
+		if (str_contains($path, '/')) {
+			$path = substr($path, strrpos($path, '/') + 1);
 		}
 
 
-		return mb_strtolower($ls_path);
+		return mb_strtolower($path);
 	}
 }

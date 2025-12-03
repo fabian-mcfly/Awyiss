@@ -13,7 +13,13 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
  * Permission for the System scope
  */
 class SystemPolicy extends AbstractPolicy {
+	/**
+	 * @var PermissionOptionCollection
+	 */
 	protected static PermissionOptionCollection $permissionOptionCollection;
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 
 
@@ -22,12 +28,12 @@ class SystemPolicy extends AbstractPolicy {
 	 * @throws \Exception
 	 */
 	protected static function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissionOptions = new PermissionOptionCollection(static::getScope());
+		$permissionOptions = new PermissionOptionCollection(static::getScope());
 
-		$lo_permissionOptions->load('analyze', [
+		$permissionOptions->load('analyze', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		return $lo_permissionOptions;
+		return $permissionOptions;
 	}
 }

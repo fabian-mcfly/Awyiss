@@ -9,7 +9,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
 /**
- * Permission for the Media Elemenets scope
+ * Permission for the Media Elements scope
  */
 class MediaElementsPolicy extends AbstractPolicy {
 	/**

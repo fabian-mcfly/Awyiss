@@ -61,7 +61,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(8, $this->pageRolesTable->associations()->keys());
@@ -133,7 +132,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::findAllAndCache()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindAllAndCache(): void {
 		$result = $this->pageRolesTable->findAllAndCache();
@@ -164,7 +162,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -192,7 +189,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -214,7 +210,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -232,7 +227,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -261,7 +255,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -282,7 +275,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyStrings(): void {
 		$data = [
@@ -301,7 +293,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidIdentifierNew(): void {
 		// Test with a valid new identifier
@@ -323,7 +314,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidIdentifierBlocklisted(): void {
 		// Test with blocklisted identifier
@@ -350,7 +340,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidIdentifierAttributesPrefix(): void {
 		// Test with attributes_ prefix (blocklisted)
@@ -377,7 +366,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidIdentifierDuplicate(): void {
 		// Test with existing identifier
@@ -404,7 +392,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUnchangedForExisting(): void {
 		// Test that identifier can't be changed for existing entities
@@ -425,7 +412,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUnchangedAllowedForCopy(): void {
 		// Test that identifier can be changed when copying
@@ -441,7 +427,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNotPageRolePageDeletion(): void {
 		// Test that 'page' role cannot be deleted
@@ -462,7 +447,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedPageTemplates(): void {
 		// Test that page role with linked page templates cannot be deleted
@@ -482,7 +466,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesSuccessForValidPageRole(): void {
 		/** @var \Awyiss\Model\Entity\PageRole $pageRole */
@@ -497,7 +480,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->pageRolesTable->newDefaultEntity();
@@ -517,7 +499,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageRolesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -543,7 +524,6 @@ class PageRolesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->pageRolesTable->hasBehavior('Translate'));

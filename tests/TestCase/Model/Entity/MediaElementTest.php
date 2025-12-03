@@ -18,7 +18,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\MediaElementsTable $table */
@@ -35,7 +34,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new MediaElement();
@@ -59,7 +57,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new MediaElement();
@@ -71,7 +68,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -103,7 +99,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new MediaElement();
@@ -135,7 +130,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualProperty(): void {
 		$entity = new MediaElement(['columnSpan' => '6/12']);
@@ -152,7 +146,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualPropertyWithInvalidSpan(): void {
 		$entity = new MediaElement(['columnSpan' => 'invalid-span']);
@@ -169,7 +162,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualPropertyWithNullSpan(): void {
 		$entity = new MediaElement(['columnSpan' => null]);
@@ -186,7 +178,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -216,7 +207,6 @@ class MediaElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaElement::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

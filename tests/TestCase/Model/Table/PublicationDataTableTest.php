@@ -56,7 +56,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(0, $this->publicationDataTable->associations()->keys());
@@ -66,7 +65,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -88,7 +86,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -108,7 +105,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$entity = $this->publicationDataTable->newDefaultEntity();
@@ -132,7 +128,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -160,7 +155,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -182,7 +176,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationBlankFields(): void {
 		$data = [
@@ -203,7 +196,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationValidDateTime(): void {
 		$data = [
@@ -224,7 +216,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _testEntityValidationInvalidDateTime(): void {
 		$data = [
@@ -246,7 +237,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNullDateTime(): void {
 		$data = [
@@ -267,7 +257,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidType(): void {
 		$data = [
@@ -296,7 +285,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidType(): void {
 		$data = [
@@ -330,7 +318,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\PublicationData $entity */
@@ -350,7 +337,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -375,7 +361,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaTypeColumn(): void {
 		$schema = $this->publicationDataTable->getSchema();
@@ -388,7 +373,6 @@ class PublicationDataTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::$audit
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuditBehaviorDisabled(): void {
 		$this->assertTrue($this->publicationDataTable->hasBehavior('Audit'));

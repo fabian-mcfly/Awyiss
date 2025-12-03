@@ -118,9 +118,8 @@ class DatatablesTable extends Table {
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$lo_rules = $rules;
 		$rules->add(
-			function (Datatable $entity, array $options) use ($lo_rules): bool|string {
+			function (Datatable $entity, array $options) use ($rules): bool|string {
 				if (
 					($options['isCopy'] ?? false) === false &&
 					$entity->hasOriginal('identifier') &&
@@ -129,8 +128,8 @@ class DatatablesTable extends Table {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unchanged');
 				}
 
-				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-				$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+				$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 				if (
 					$entity->isDirty('identifier') &&
@@ -138,18 +137,18 @@ class DatatablesTable extends Table {
 						str_starts_with($entity->identifier, 'attributes_') ||
 						in_array($entity->identifier, $this->blocklistedIdentifiers) ||
 						App::className(Inflector::camelize($entity->identifier), 'Controller/Backend', 'Controller') ||
-						$ls_pageRoleEnum::tryFromName($entity->identifier)
+						$pageRoleEnum::tryFromName($entity->identifier)
 					)
 				) {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_allowed');
 				}
 
-				$lo_isUnique = $lo_rules->isUnique(['identifier'], [
+				$isUnique = $rules->isUnique(['identifier'], [
 					'errorField' => '_dummy',
 				]);
-				$lb_isUnique = $lo_isUnique($entity, $options);
+				$isUnique = $isUnique($entity, $options);
 
-				if (!$lb_isUnique) {
+				if (!$isUnique) {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unique');
 				}
 

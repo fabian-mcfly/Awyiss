@@ -34,11 +34,11 @@ class UsersConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['username'], $la_fields['password']);
+						unset($fields['id'], $fields['username'], $fields['password']);
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],

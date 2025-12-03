@@ -47,36 +47,36 @@ class PolicyCommand extends BakeCommand {
 	 */
 	public function execute(Arguments $args, ConsoleIo $io): ?int {
 		$this->extractCommonProperties($args);
-		$ls_name = $args->getArgument('name') ?? '';
-		$ls_name = $this->_getName($ls_name);
+		$name = $args->getArgument('name') ?? '';
+		$name = $this->_getName($name);
 
-		if (empty($ls_name)) {
-			/** @var \Cake\Database\Connection $lo_connection */
-			$lo_connection = ConnectionManager::get($this->connection);
-			$lo_scanner = new TableScanner($lo_connection);
+		if (empty($name)) {
+			/** @var \Cake\Database\Connection $connection */
+			$connection = ConnectionManager::get($this->connection);
+			$scanner = new TableScanner($connection);
 			$io->out('Possible policies based on your current database:');
-			foreach ($lo_scanner->listUnskipped() as $ls_table) {
-				if (str_starts_with($ls_table, 'attributes_') || in_array($ls_table, $this->blocklistedNames)) {
+			foreach ($scanner->listUnskipped() as $tableName) {
+				if (str_starts_with($tableName, 'attributes_') || in_array($tableName, $this->blocklistedNames)) {
 					continue;
 				}
 
-				$io->out('- ' . $this->_camelize($ls_table));
+				$io->out('- ' . $this->_camelize($tableName));
 			}
 
 
 			return static::CODE_SUCCESS;
 		}
 
-		if (in_array($ls_name, $this->blocklistedNames)) {
+		if (in_array($name, $this->blocklistedNames)) {
 			$io->err('Error: Name not allowed');
 
 
 			return static::CODE_ERROR;
 		}
 
-		$ls_policy = $this->_camelize($ls_name);
+		$policyName = $this->_camelize($name);
 
-		$this->bake($ls_policy, $args, $io);
+		$this->bake($policyName, $args, $io);
 
 
 		return static::CODE_SUCCESS;
@@ -94,26 +94,26 @@ class PolicyCommand extends BakeCommand {
 	public function bake(string $policyName, Arguments $args, ConsoleIo $io): void {
 		$io->quiet(sprintf('Baking policy class for %s...', $policyName));
 
-		$ls_prefix = $this->getPrefix($args);
-		if ($ls_prefix) {
-			$ls_prefix = '\\' . str_replace('/', '\\', $ls_prefix);
+		$prefix = $this->getPrefix($args);
+		if ($prefix) {
+			$prefix = '\\' . str_replace('/', '\\', $prefix);
 		}
 
 		//Controllers default to importing AppController from `App`
-		$ls_namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
+		$namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
 
-		$la_data = [
+		$data = [
 			'name' => $policyName,
-			'namespace' => $ls_namespace,
-			'prefix' => $ls_prefix,
+			'namespace' => $namespace,
+			'prefix' => $prefix,
 		];
 
-		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('Policy/policy');
+		$contents = $this->createTemplateRenderer()->set($data)->generate('Policy/policy');
 
-		$ls_path = $this->getPath($args);
-		$ls_filePath = $ls_path . $policyName . 'Policy.php';
+		$path = $this->getPath($args);
+		$filePath = $path . $policyName . 'Policy.php';
 
-		$io->createFile($ls_filePath, $ls_contents, $this->force);
+		$io->createFile($filePath, $contents, $this->force);
 	}
 
 
@@ -124,9 +124,9 @@ class PolicyCommand extends BakeCommand {
 	 * @return ConsoleOptionParser
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = $this->_setCommonOptions($parser);
+		$parser = $this->_setCommonOptions($parser);
 
-		$lo_parser->setDescription(
+		$parser->setDescription(
 			'Bake a policy skeleton.'
 		)->addArgument('name', [
 			'help' => 'Name of the policy to bake (without the `Policy` suffix).',
@@ -142,6 +142,6 @@ class PolicyCommand extends BakeCommand {
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 }

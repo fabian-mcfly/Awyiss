@@ -56,61 +56,61 @@ class MediaElementsCell extends Cell {
 	 */
 	public function display(EntityInterface $entity): void {
 		// Get the user's identity and session
-		$lo_identity = $this->_getIdentity();
+		$identity = $this->_getIdentity();
 
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Backend/cell/MediaElements')->setTemplate('elements');
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $this->fetchTable($entity->getSource());
-		if (!$lo_table->hasBehavior('MediaElementAssignment') || !$lo_identity->scopeIsAccessible('media', [], 'read')) {
+		/** @var \Awyiss\Model\Table $table */
+		$table = $this->fetchTable($entity->getSource());
+		if (!$table->hasBehavior('MediaElementAssignment') || !$identity->scopeIsAccessible('media', [], 'read')) {
 			return;
 		}
 
-		$lo_behavior = $lo_table->getBehavior('MediaElementAssignment');
+		$mediaElementAssignmentBehavior = $table->getBehavior('MediaElementAssignment');
 
-		$lo_elements = $this->getElements();
+		$elements = $this->getElements();
 
-		$lo_assignedElements = new Collection([]);
+		$assignedElements = new Collection([]);
 
-		if ($lo_behavior->getConfig('assignable.modelLevel')) {
+		if ($mediaElementAssignmentBehavior->getConfig('assignable.modelLevel')) {
 			// Get all assigned elements on the model level
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_assignedElements = $lo_assignedElements->append($lo_table->MediaElementAssignments->find()->all());
+			$assignedElements = $assignedElements->append($table->MediaElementAssignments->find()->all());
 		}
 
 		// Get all assigned elements on the entity level of related entities
-		$lo_relatedEntityElements = $this->getRelatedEntityElements($lo_table, $entity);
-		if ($lo_relatedEntityElements->count() > 0) {
-			$lo_assignedElements = $lo_assignedElements->append($lo_relatedEntityElements);
+		$relatedEntityElements = $this->getRelatedEntityElements($table, $entity);
+		if ($relatedEntityElements->count() > 0) {
+			$assignedElements = $assignedElements->append($relatedEntityElements);
 		}
 
-		$lo_assignedElements = $lo_assignedElements->compile();
+		$assignedElements = $assignedElements->compile();
 
-		if (!$lo_assignedElements->count()) {
+		if (!$assignedElements->count()) {
 			return;
 		}
 
 		if ($entity->isDirty('mediaAssignments')) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$la_mediaIds = array_column($entity->mediaAssignments, 'mediaId');
-			if ($la_mediaIds) {
-				$la_media = $this->fetchTable('Media')->find()->where(['id IN' => $la_mediaIds])->all()->indexBy('id')->toArray();
+			$mediaIds = array_column($entity->mediaAssignments, 'mediaId');
+			if ($mediaIds) {
+				$media = $this->fetchTable('Media')->find()->where(['id IN' => $mediaIds])->all()->indexBy('id')->toArray();
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				foreach ($entity->mediaAssignments as $lo_mediaAssignment) {
-					$lo_mediaAssignment->media = $la_media[ $lo_mediaAssignment->mediaId ] ?? null;
+				foreach ($entity->mediaAssignments as $mediaAssignment) {
+					$mediaAssignment->media = $media[ $mediaAssignment->mediaId ] ?? null;
 				}
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('MediaAssignment')->rebuildMediaAssignments($entity);
+				$table->getBehavior('MediaAssignment')->rebuildMediaAssignments($entity);
 			}
 		}
 
 		$this->set([
-			'assignedElements' => $lo_assignedElements,
+			'assignedElements' => $assignedElements,
 			'autoCreateFolder' => LocalConfig::read('mediaFolders.autoCreate', false, $entity->getSource()),
-			'elements' => $lo_elements,
+			'elements' => $elements,
 			'entity' => $entity,
 			'ProcessStatus' => ProcessStatus::class,
 			'ResizeStrategy' => ResizeStrategy::class,
@@ -131,23 +131,23 @@ class MediaElementsCell extends Cell {
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Backend/cell/MediaElements')->setTemplate('element_assignments');
 
-		$lo_availableElements = $this->getElements();
-		$la_assignedElements = $entity->mediaElementAssignments ?? false;
+		$availableElements = $this->getElements();
+		$assignedElements = $entity->mediaElementAssignments ?? false;
 
-		if ($la_assignedElements === false) {
+		if ($assignedElements === false) {
 			return;
 		}
 
-		$la_assignedElementIds = array_column($la_assignedElements ?: [], 'mediaElementId');
+		$assignedElementIds = array_column($assignedElements ?: [], 'mediaElementId');
 
-		$lo_availableElements = $lo_availableElements->sortBy(function ($element) use ($la_assignedElementIds) {
-			return array_search($element->id, $la_assignedElementIds);
+		$availableElements = $availableElements->sortBy(function ($element) use ($assignedElementIds) {
+			return array_search($element->id, $assignedElementIds);
 		}, SORT_ASC);
 
 		$this->set([
 			'entity' => $entity,
-			'availableElements' => $lo_availableElements,
-			'assignedElements' => $la_assignedElements,
+			'availableElements' => $availableElements,
+			'assignedElements' => $assignedElements,
 		]);
 	}
 
@@ -182,49 +182,49 @@ class MediaElementsCell extends Cell {
 	 * @return \Cake\Collection\Collection
 	 */
 	protected function getRelatedEntityElements(Table $table, EntityInterface $entity): Collection {
-		$lo_relatedEntityElements = new Collection([]);
+		$relatedEntityElements = new Collection([]);
 
-		$la_where = [];
+		$where = [];
 
-		$la_associations = $table->associations()->getByType('BelongsTo');
-		foreach ($la_associations as $lo_association) {
-			$ls_foreignKey = $lo_association->getForeignKey();
+		$associations = $table->associations()->getByType('BelongsTo');
+		foreach ($associations as $association) {
+			$foreignKey = $association->getForeignKey();
 
-			if (is_array($ls_foreignKey)) {
-				$ls_foreignKey = array_shift($ls_foreignKey);
+			if (is_array($foreignKey)) {
+				$foreignKey = array_shift($foreignKey);
 			}
 
 			// Skip parent_id as the parent cannot provide different elements
 			// and skip if the property is empty
-			if ($ls_foreignKey === 'parent_id' || !$entity->get($ls_foreignKey)) {
+			if ($foreignKey === 'parent_id' || !$entity->get($foreignKey)) {
 				continue;
 			}
 
-			$lo_relatedEntityTable = $lo_association->getTarget();
-			if (!$lo_relatedEntityTable->hasBehavior('MediaElementAssignment')) {
+			$relatedEntityTable = $association->getTarget();
+			if (!$relatedEntityTable->hasBehavior('MediaElementAssignment')) {
 				continue;
 			}
 
-			$lo_behavior = $lo_relatedEntityTable->getBehavior('MediaElementAssignment');
+			$behavior = $relatedEntityTable->getBehavior('MediaElementAssignment');
 
-			if (!$lo_behavior->getConfig('assignable.entityLevel')) {
+			if (!$behavior->getConfig('assignable.entityLevel')) {
 				continue;
 			}
 
-			$la_where[] = [
-				'scope' => $lo_relatedEntityTable->getTable(),
-				'foreign_key' => $entity->get($ls_foreignKey),
+			$where[] = [
+				'scope' => $relatedEntityTable->getTable(),
+				'foreign_key' => $entity->get($foreignKey),
 			];
 		}
 
-		if ($la_where) {
-			$lo_table = $this->fetchTable('MediaElementAssignments');
+		if ($where) {
+			$mediaElementAssignmentsTable = $this->fetchTable('MediaElementAssignments');
 
-			$lo_relatedEntityElements = $lo_table->find()->where(['OR' => $la_where])->groupBy('media_element_id')->all();
+			$relatedEntityElements = $mediaElementAssignmentsTable->find()->where(['OR' => $where])->groupBy('media_element_id')->all();
 		}
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return $lo_relatedEntityElements->compile();
+		return $relatedEntityElements->compile();
 	}
 
 
@@ -232,18 +232,18 @@ class MediaElementsCell extends Cell {
 	 * Retrieve the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
-		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */
-		$lo_identity = $this->request->getAttribute('identity');
+		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $identity */
+		$identity = $this->request->getAttribute('identity');
 
-		if (!$lo_identity) {
+		if (!$identity) {
 			throw new RuntimeException('No identity found in the request.');
 		}
 
-		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
-			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
+		if (!($identity instanceof IdentityPermissionsInterface)) {
+			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
 		}
 
 
-		return $lo_identity;
+		return $identity;
 	}
 }

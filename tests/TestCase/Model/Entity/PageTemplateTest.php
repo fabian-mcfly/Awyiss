@@ -19,7 +19,6 @@ class PageTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageTemplate::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\PageTemplatesTable $table */
@@ -36,7 +35,6 @@ class PageTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageTemplate::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new PageTemplate();
@@ -60,7 +58,6 @@ class PageTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageTemplate::_setFileName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testFileNameCleaningViaPropertyAssignment(): void {
@@ -92,7 +89,6 @@ class PageTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageTemplate::_setFileName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFileNameCleaningViaSetMethod(): void {
 		$entity = new PageTemplate();
@@ -124,7 +120,6 @@ class PageTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageTemplate::_setPageRoleId()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testPageRoleIdCleaningViaPropertyAssignment(): void {
@@ -144,7 +139,6 @@ class PageTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageTemplate::_setPageRoleId()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPageRoleIdCleaningViaSetMethod(): void {
 		$entity = new PageTemplate();
@@ -164,7 +158,6 @@ class PageTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageTemplate::_setPageRoleId()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPageRoleIdWithEnumInterface(): void {
 		$entity = new PageTemplate();
@@ -178,7 +171,6 @@ class PageTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageTemplate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -206,7 +198,6 @@ class PageTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageTemplate::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

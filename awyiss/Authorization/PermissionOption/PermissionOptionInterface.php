@@ -24,7 +24,7 @@ interface PermissionOptionInterface {
 	/**
 	 * Return the `PermissionOptionCollection` the Permission is part of.
 	 *
-	 * This is useful to retreive the scope of the collection since it coult change and this permission would not know
+	 * This is useful to retrieve the scope of the collection since it could change and this permission would not know
 	 * about it
 	 *
 	 * @return PermissionOptionCollection

@@ -37,7 +37,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::sanitizeScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSanitizeScope(): void {
 		$result = EventListenersProvider::sanitizeScope('user_management');
@@ -72,7 +71,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::getListener()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetListener(): void {
 		$this->assertEmpty($this->_eventManager->listeners('Model.Designs.afterSave'));
@@ -94,7 +92,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::getListener()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetListenerSanitizesScope(): void {
 		$result1 = EventListenersProvider::getListener('media__folders', 'Backend');
@@ -112,7 +109,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::getListener()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetListenerPrefersCustomClasses(): void {
 		$result = EventListenersProvider::getListener('Forms', 'Backend');
@@ -124,7 +120,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::getListener()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetListenerWithNonExistentScope(): void {
 		$result1 = EventListenersProvider::getListener('TestScope', 'Backend');
@@ -142,7 +137,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::loadListener()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadListener(): void {
 		$this->assertEmpty($this->_eventManager->listeners('Model.Designs.afterSave'));
@@ -164,7 +158,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::loadListener()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadListenerSanitizesScope(): void {
 		$this->assertEmpty($this->_eventManager->listeners('Model.MediaFolders.afterSave'));
@@ -186,7 +179,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::loadListener()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadListenerPrefersCustomClasses(): void {
 		$this->assertEmpty($this->_eventManager->listeners('Model.Forms.weirdEvent'));
@@ -202,7 +194,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::loadListener()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadListenerWithNonExistentScope(): void {
 		$result = EventListenersProvider::loadListener('NonExistentScope', 'Backend');
@@ -214,7 +205,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::getListeners()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetListenersForGlobal(): void {
 		$result = EventListenersProvider::getListeners('Global');
@@ -231,7 +221,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::getListeners()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetListenersForFrontend(): void {
 		$result = EventListenersProvider::getListeners('Frontend');
@@ -245,7 +234,6 @@ class EventListenersProviderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventListenersProvider::getListeners()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetListenersForBackend(): void {
 		$result = EventListenersProvider::getListeners('Backend');

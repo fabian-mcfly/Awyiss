@@ -86,23 +86,22 @@ class MenuRenderer {
 	public function render(string $menuIdentifier = '', string $list = ''): string {
 		$this->identifier = $menuIdentifier ?: $this->menu->getConfig('identifier') ?: 'Default';
 
-		$ls_list = $list;
-		if (empty($ls_list)) {
-			$ls_list = $this->renderList();
+		if (empty($list)) {
+			$list = $this->renderList();
 		}
 
-		if (empty($ls_list)) {
+		if (empty($list)) {
 			return '';
 		}
 
-		$la_data = [
-			'list' => $ls_list,
+		$data = [
+			'list' => $list,
 			'identifier' => $this->identifier,
 			'menuConfig' => $this->menu->getConfig(),
 		];
 
 
-		return $this->format('menu', $la_data);
+		return $this->format('menu', $data);
 	}
 
 
@@ -116,32 +115,32 @@ class MenuRenderer {
 	 */
 	public function renderList(Menu|MenuItem|string|null $items = null, int $level = 1, ?int $maxLevel = null): string {
 		if (is_string($items)) {
-			$lo_items = [$this->menu->getItem($items)];
+			$items = [$this->menu->getItem($items)];
 		}
 		elseif ($items instanceof MenuItem) {
-			$lo_items = [$items];
+			$items = [$items];
 		}
 		elseif ($items instanceof Menu) {
-			$lo_items = $items->getItems();
+			$items = $items->getItems();
 		}
 		else {
-			$lo_items = $this->menu->getItems();
+			$items = $this->menu->getItems();
 		}
 
-		$li_maxLevel = $maxLevel ?? $this->getConfig('maxLevel');
+		$maxLevel = $maxLevel ?? $this->getConfig('maxLevel');
 
-		$ls_content = '';
-		foreach ($lo_items as $lo_item) {
-			$ls_content .= $this->renderItem($lo_item, $level, $li_maxLevel);
+		$content = '';
+		foreach ($items as $item) {
+			$content .= $this->renderItem($item, $level, $maxLevel);
 		}
 
-		if (empty($ls_content)) {
+		if (empty($content)) {
 			return '';
 		}
 
-		$la_data = [
-			'content' => $ls_content,
-			'items' => $lo_items,
+		$data = [
+			'content' => $content,
+			'items' => $items,
 			'level' => $level,
 			'menuConfig' => $this->menu->getConfig(),
 			'menu' => $this->menu,
@@ -152,10 +151,10 @@ class MenuRenderer {
 				$this->identifier = $this->getConfig('identifier') ?: 'Default';
 			}
 
-			$la_data['identifier'] = ' Menu-' . $this->identifier;
+			$data['identifier'] = ' Menu-' . $this->identifier;
 		}
 
-		return $this->format('list', $la_data);
+		return $this->format('list', $data);
 	}
 
 
@@ -191,56 +190,56 @@ class MenuRenderer {
 			return '';
 		}
 
-		$ls_childrenContent = '';
-		$lo_items = $item->getChildren();
-		if ($lo_items) {
-			$ls_childrenContent .= $this->renderList($lo_items, $level + 1, $maxLevel);
+		$childrenContent = '';
+		$items = $item->getChildren();
+		if ($items) {
+			$childrenContent .= $this->renderList($items, $level + 1, $maxLevel);
 		}
 
-		$lx_identifier = $item->getIdentifier() ?? $item->getTitle();
+		$identifier = $item->getIdentifier() ?? $item->getTitle();
 
 		if (!isset($this->currentRoute)) {
 			$this->currentRoute = '';
 		}
 
-		$la_data = [
+		$data = [
 			'active' => $item->isCurrentRoute($this->currentRoute) || $item->hasCurrentRoute($this->currentRoute) ? ' Active' : '',
-			'children' => $ls_childrenContent,
-			'identifier' => !is_string($lx_identifier) ? $lx_identifier : Inflector::camelize(Text::slug($lx_identifier, '_')),
+			'children' => $childrenContent,
+			'identifier' => !is_string($identifier) ? $identifier : Inflector::camelize(Text::slug($identifier, '_')),
 			'level' => $level,
 			'title' => $this->escapeTitle($item->getTitle()),
 			'item' => $item,
 		];
 
-		$lo_link = $item->getLink();
-		if ($lo_link && $item->isAccessible()) {
-			$ls_url = $lo_link->getUrl();
-			$ls_url = $this->optimizeUrl($ls_url);
+		$link = $item->getLink();
+		if ($link && $item->isAccessible()) {
+			$url = $link->getUrl();
+			$url = $this->optimizeUrl($url);
 
-			$la_data += [
-				'attributes' => $this->templates->formatAttributes($lo_link->getAttributes()),
-				'url' => $ls_url,
+			$data += [
+				'attributes' => $this->templates->formatAttributes($link->getAttributes()),
+				'url' => $url,
 			];
 
-			$ls_link = $this->format('link', $la_data);
+			$link = $this->format('link', $data);
 		}
 		else {
-			$ls_link = $this->format('noLink', $la_data);
+			$link = $this->format('noLink', $data);
 		}
 
-		$la_data = [
-			'active' => $la_data['active'],
-			'children' => $ls_childrenContent,
-			'hasSubmenu' => $ls_childrenContent !== '' ? ' HasSubmenu' : '',
-			'identifier' => $la_data['identifier'],
+		$data = [
+			'active' => $data['active'],
+			'children' => $childrenContent,
+			'hasSubmenu' => $childrenContent !== '' ? ' HasSubmenu' : '',
+			'identifier' => $data['identifier'],
 			'level' => $level,
-			'link' => $ls_link,
-			'title' => $la_data['title'],
+			'link' => $link,
+			'title' => $data['title'],
 			'item' => $item,
 		];
 
 
-		return $this->format('item', $la_data);
+		return $this->format('item', $data);
 	}
 
 
@@ -252,10 +251,10 @@ class MenuRenderer {
 	 * @return string The formatted content.
 	 */
 	protected function format(string $type, array &$data): string {
-		$lc_formatter = $this->getConfig('formatters.' . $type);
+		$formatter = $this->getConfig('formatters.' . $type);
 
-		if (is_callable($lc_formatter)) {
-			return $lc_formatter($data, $this->templates, $this->menu);
+		if (is_callable($formatter)) {
+			return $formatter($data, $this->templates, $this->menu);
 		}
 
 
@@ -272,19 +271,19 @@ class MenuRenderer {
 			return null;
 		}
 
-		$lx_escape = $this->getConfig('escapeTitle');
+		$escape = $this->getConfig('escapeTitle');
 
-		if (is_bool($lx_escape)) {
-			return $lx_escape ? h($title) : $title;
+		if (is_bool($escape)) {
+			return $escape ? h($title) : $title;
 		}
 
 		// If it's a callable, call it with the title
-		if (is_callable($lx_escape)) {
-			return $lx_escape($title);
+		if (is_callable($escape)) {
+			return $escape($title);
 		}
 
 		throw new InvalidArgumentException(
-			sprintf('The escapeTitle configuration must be a boolean or callable, `%s` given.', gettype($lx_escape))
+			sprintf('The escapeTitle configuration must be a boolean or callable, `%s` given.', gettype($escape))
 		);
 	}
 
@@ -298,27 +297,26 @@ class MenuRenderer {
 			return null;
 		}
 
-		$ls_requestTarget = Router::getRequest()?->getRequestTarget();
-		$ls_url = $url;
+		$requestTarget = Router::getRequest()?->getRequestTarget();
 
 		// If the request and the link are for the homepage, set the link to '/'
-		if ($ls_requestTarget === '/' && $ls_url === $this->currentRoute) {
-			$ls_url = Router::url('/', true);
+		if ($requestTarget === '/' && $url === $this->currentRoute) {
+			$url = Router::url('/', true);
 		}
 
 		/*
 		 * If the link is the current route and contains a '#', set the link to '#'
 		 * so that it doesn't redirect to the current route again.
 		 */
-		if (str_contains($ls_url, '#')) {
-			$la_parts = explode('#', $ls_url);
-			$la_parts[0] = '/' . trim($la_parts[0], '/');
+		if (str_contains($url, '#')) {
+			$parts = explode('#', $url);
+			$parts[0] = '/' . trim($parts[0], '/');
 
-			if ($la_parts[0] === $this->currentRoute) {
-				$ls_url = '#' . $la_parts[1];
+			if ($parts[0] === $this->currentRoute) {
+				$url = '#' . $parts[1];
 			}
 		}
 
-		return $ls_url;
+		return $url;
 	}
 }

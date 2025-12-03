@@ -40,7 +40,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAccessReturnsCorrectValue(): void {
 		$permission = new Permission('scope', 'identifier', PermissionAccess::Granted);
@@ -50,7 +49,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetIdentifierReturnsSanitizedIdentifier(): void {
 		$permission = new Permission('scope', 'Test Identifier!');
@@ -60,7 +58,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScopeReturnsSanitizedScope(): void {
 		$permission = new Permission('Test Scope!', 'identifier');
@@ -71,7 +68,6 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPolicyClassReturnsNullWhenNotSet(): void {
 		$authorizationService = $this->createMock(AuthorizationService::class);
@@ -87,7 +83,6 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPolicyClassReturnsPolicyWhenSet(): void {
 		$policy = $this->createMock(AbstractGenericPolicy::class);
@@ -104,7 +99,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetPolicyClassThrowsExceptionForInvalidPolicy(): void {
 		$this->expectException(RuntimeException::class);
@@ -115,7 +109,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
@@ -132,7 +125,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
@@ -152,7 +144,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
@@ -184,7 +175,6 @@ class PermissionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateFromArrayCreatesPermissionCorrectly(): void {
 		$data = ['scope' => 'FoobarScope', 'identifier' => 'unknown identifier', 'access' => 'access', 'settings' => ['setting1']];
@@ -200,7 +190,6 @@ class PermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateFromObjectCreatesPermissionCorrectly(): void {
 		$permissionInterface = $this->createMock(PermissionInterface::class);

@@ -10,7 +10,7 @@ class MediaElementAssignmentsSeed extends AbstractSeed {
 	 * {@inheritDoc}
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
             [
                 'id' => 1,
                 'media_element_id' => 2,
@@ -19,7 +19,7 @@ class MediaElementAssignmentsSeed extends AbstractSeed {
             ],
         ];
 
-		$lo_table = $this->table('media_element_assignments');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('media_element_assignments');
+		$table->insert($data)->save();
 	}
 }

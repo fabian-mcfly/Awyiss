@@ -138,7 +138,7 @@ class ContentTemplatesTable extends Table {
 	 * @return array
 	 */
 	public function getAssignedContentAttributes(ContentTemplate $contentTemplate): array {
-		$la_availableContentAttributes = $this->getAvailableContentAttributes();
+		$availableContentAttributes = $this->getAvailableContentAttributes();
 
 		if (!isset($contentTemplate->contentTemplateElements)) {
 			//Load ContentTemplateAreas in case the entity is missing that key
@@ -147,16 +147,16 @@ class ContentTemplatesTable extends Table {
 			]);
 		}
 
-		$la_availableContentElementIdentifiers = array_column($contentTemplate->contentTemplateElements, 'identifier');
-		$la_assignedContentAttributes = [];
-		foreach ($la_availableContentAttributes as $la_attribute) {
-			if (in_array('attributes.' . $la_attribute['identifier'], $la_availableContentElementIdentifiers)) {
-				$la_assignedContentAttributes[] = $la_attribute['identifier'];
+		$availableContentElementIdentifiers = array_column($contentTemplate->contentTemplateElements, 'identifier');
+		$assignedContentAttributes = [];
+		foreach ($availableContentAttributes as $attribute) {
+			if (in_array('attributes.' . $attribute['identifier'], $availableContentElementIdentifiers)) {
+				$assignedContentAttributes[] = $attribute['identifier'];
 			}
 		}
 
 
-		return $la_assignedContentAttributes;
+		return $assignedContentAttributes;
 	}
 
 
@@ -165,15 +165,15 @@ class ContentTemplatesTable extends Table {
 	 * @return array<int, array>
 	 */
 	public function getAvailableContentAttributes(bool $includeInactive = false): array {
-		$ls_includeInactiveKey = $includeInactive ? 'withInactive' : 'active';
+		$includeInactiveKey = $includeInactive ? 'withInactive' : 'active';
 
-		if (isset($this->availableContentAttributes [ $ls_includeInactiveKey ])) {
-			return $this->availableContentAttributes [ $ls_includeInactiveKey ];
+		if (isset($this->availableContentAttributes [ $includeInactiveKey ])) {
+			return $this->availableContentAttributes [ $includeInactiveKey ];
 		}
 
-		/** @var \Awyiss\Model\Table\AttributesTable $lo_attributesTable */
-		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableContentAttributes[ $ls_includeInactiveKey ] = $lo_attributesTable->find($includeInactive ? 'all' : 'active')
+		/** @var \Awyiss\Model\Table\AttributesTable $attributesTable */
+		$attributesTable = FactoryLocator::get('Table')->get('Attributes');
+		$this->availableContentAttributes[ $includeInactiveKey ] = $attributesTable->find($includeInactive ? 'all' : 'active')
 			->where(['scope' => 'contents'])
 			->all()
 			->indexBy('id')
@@ -192,7 +192,7 @@ class ContentTemplatesTable extends Table {
 			->toArray();
 
 
-		return $this->availableContentAttributes [ $ls_includeInactiveKey ];
+		return $this->availableContentAttributes [ $includeInactiveKey ];
 	}
 
 
@@ -283,29 +283,29 @@ class ContentTemplatesTable extends Table {
 
 
 		$rules->add(function (ContentTemplate $entity): bool {
-			$lb_valid = true;
+			$valid = true;
 
-			$la_availableAttributes = array_column($this->getAvailableContentAttributes(), 'identifier');
-			foreach (($entity->contentTemplateElements ?? []) as $lo_assignedContentElement) {
-				if (str_starts_with($lo_assignedContentElement->identifier, 'attributes.')) {
-					$ls_identifier = substr($lo_assignedContentElement->identifier, 11);
+			$availableAttributes = array_column($this->getAvailableContentAttributes(), 'identifier');
+			foreach (($entity->contentTemplateElements ?? []) as $assignedContentElement) {
+				if (str_starts_with($assignedContentElement->identifier, 'attributes.')) {
+					$identifier = substr($assignedContentElement->identifier, 11);
 
-					if (!in_array($ls_identifier, $la_availableAttributes)) {
-						$lb_valid = false;
+					if (!in_array($identifier, $availableAttributes)) {
+						$valid = false;
 						break;
 					}
 
 					continue;
 				}
 
-				if (!in_array($lo_assignedContentElement->identifier, array_keys($this->availableContentElements))) {
-					$lb_valid = false;
+				if (!in_array($assignedContentElement->identifier, array_keys($this->availableContentElements))) {
+					$valid = false;
 					break;
 				}
 			}
 
 
-			return $lb_valid;
+			return $valid;
 		}, 'validContentElements', [
 			'errorField' => 'contentTemplateElements',
 			//No domain fallback, since this is a message, specific to content templates.

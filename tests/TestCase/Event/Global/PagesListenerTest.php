@@ -33,7 +33,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Global\PagesListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -50,7 +49,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Global\PagesListener::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithPageRoleCheck(): void {
 		$tableLocator = $this->getTableLocator();
@@ -65,7 +63,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Global\PagesListener::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithoutPageRoleCheck(): void {
 		$tableLocator = $this->getTableLocator();
@@ -80,7 +77,6 @@ class PagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Global\PagesListener::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithoutPageRoleCheckOrdersByPageRoleEnumFirst(): void {
 		$tableLocator = $this->getTableLocator();

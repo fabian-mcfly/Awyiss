@@ -31,7 +31,6 @@ class ConfigurationTableTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -84,7 +83,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(5, $this->configurationTable->associations()->keys());
@@ -128,7 +126,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -156,7 +153,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -178,7 +174,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -197,7 +192,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -226,7 +220,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -255,7 +248,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationRealmInList(): void {
 		// Test valid realm
@@ -279,7 +271,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -306,7 +297,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationOptionalFields(): void {
 		$data = [
@@ -331,7 +321,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueForRealmScopeLanguage(): void {
 		$entity = $this->configurationTable->newEntity([
@@ -353,7 +342,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueForRealmScopeLanguageDuplicate(): void {
 		// Get existing configuration from seed data
@@ -376,7 +364,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueForRealmScopeLanguageDifferentLanguage(): void {
 		// Get existing configuration from seed data
@@ -395,7 +382,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidRealm(): void {
 		// Test with valid realm
@@ -415,7 +401,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidRealm(): void {
 		// Test with invalid realm
@@ -439,7 +424,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidScope(): void {
 		// Test with valid scope
@@ -459,7 +443,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidScope(): void {
 		// Test with invalid scope
@@ -483,7 +466,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInaccessibleScope(): void {
 		$user = $this->login(2); // Simulate a logged-in user with ID 2
@@ -514,7 +496,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNonExistingConfigOptionPassesValidation(): void {
 		// Non-existing config identifiers should PASS validation
@@ -534,7 +515,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidValue(): void {
 		// Test with valid value
@@ -554,7 +534,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidValue(): void {
 		// Test with invalid value
@@ -578,7 +557,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNullableConfigWithValidValue(): void {
 		// Test with valid string value for nullable config (orsApiKey)
@@ -598,7 +576,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNullableConfigWithNullValue(): void {
 		// Test with null value for nullable config (orsApiKey)
@@ -618,7 +595,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNonNullableConfigWithNullValue(): void {
 		// Test with null value for non-nullable config (htmlCleaning)
@@ -643,7 +619,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNonNullableConfigWithInvalidValue(): void {
 		// Test with null value for non-nullable config (htmlCleaning)
@@ -668,7 +643,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidValueLocalizableConfig(): void {
 		// Test with valid value for localizable config (titleAppendix)
@@ -689,7 +663,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesLanguageExistsForLocalizable(): void {
 		// Test with existing language for localizable config
@@ -710,7 +683,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesLanguageDoesNotExistForLocalizable(): void {
 		// Test with non-existing language for localizable config
@@ -737,7 +709,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesLanguageProvidedForNonLocalizable(): void {
 		// Test with language provided for non-localizable config
@@ -763,7 +734,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\Configuration $entity */
@@ -786,7 +756,6 @@ class ConfigurationTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -818,7 +787,6 @@ class ConfigurationTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildCategories()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildCategories(): void {
 		$categories = $this->configurationTable->buildCategories();
@@ -866,7 +834,6 @@ class ConfigurationTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::buildCategories()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildCategoriesWithoutAccess(): void {
 		$user = $this->login(2); // Simulate a logged-in user with ID 2
@@ -883,7 +850,6 @@ class ConfigurationTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::getScopes()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScopes(): void {
 		$scopes = $this->configurationTable->getScopes();
@@ -931,7 +897,6 @@ class ConfigurationTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ConfigurationTable::getScopes()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScopesWithoutAccess(): void {
 		$user = $this->login(2); // Simulate a logged-in user with ID 2

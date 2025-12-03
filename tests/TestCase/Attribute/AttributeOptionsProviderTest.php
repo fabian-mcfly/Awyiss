@@ -19,7 +19,6 @@ class AttributeOptionsProviderTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException
 	 * @see AttributeOptionsProvider::getAttributeOptionsFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributeOptionsFiles(): void {
 		$files = AttributeOptionsProvider::getAttributeOptionsFiles();
@@ -40,7 +39,6 @@ class AttributeOptionsProviderTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException
 	 * @see AttributeOptionsProvider::getAttributeOptionsFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributeOptionsFilesReturnLoaded(): void {
 		$files = AttributeOptionsProvider::getAttributeOptionsFiles(true);
@@ -57,7 +55,6 @@ class AttributeOptionsProviderTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException
 	 * @see AttributeOptionsProvider::loadAttributeOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadAttributeOptions(): void {
 		$attributeOptions = AttributeOptionsProvider::loadAttributeOptions('Empty');
@@ -76,7 +73,6 @@ class AttributeOptionsProviderTest extends TestCase {
 	 * @return void
 	 * @throws \ReflectionException
 	 * @see AttributeOptionsProvider::getAttributeOptionsFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributeOptionsFile(): void {
 		$file = AttributeOptionsProvider::getAttributeOptionsFile('Empty');
@@ -98,7 +94,6 @@ class AttributeOptionsProviderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see AttributeOptionsProvider::sanitizeScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSanitizeScope(): void {
 		$scope = AttributeOptionsProvider::sanitizeScope('Empty');
@@ -124,7 +119,6 @@ class AttributeOptionsProviderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see AttributeOptionsProvider::getAttributeOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSanitizeIdentifier(): void {
 		$identifier = AttributeOptionsProvider::sanitizeIdentifier('Empty');

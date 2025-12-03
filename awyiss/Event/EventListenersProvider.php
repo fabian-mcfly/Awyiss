@@ -58,18 +58,18 @@ class EventListenersProvider {
 	 * @return string|null
 	 */
 	public static function getListener(string $scope, string $realm): ?string {
-		$ls_scope = static::sanitizeScope($scope);
+		$scope = static::sanitizeScope($scope);
 
 		if (!isset(static::$eventListeners[ $realm ])) {
 			static::$eventListeners[ $realm ] = [];
 		}
 
-		if (empty(static::$eventListeners[ $realm ][ $ls_scope ])) {
-			static::$eventListeners[ $realm ] += static::findListener($ls_scope, $realm);
+		if (empty(static::$eventListeners[ $realm ][ $scope ])) {
+			static::$eventListeners[ $realm ] += static::findListener($scope, $realm);
 		}
 
 
-		return static::$eventListeners[ $realm ][ $ls_scope ] ?? null;
+		return static::$eventListeners[ $realm ][ $scope ] ?? null;
 	}
 
 
@@ -79,28 +79,28 @@ class EventListenersProvider {
 	 * @return bool
 	 */
 	public static function loadListener(string $scope, string $realm): bool {
-		$ls_scope = static::sanitizeScope($scope);
+		$scope = static::sanitizeScope($scope);
 
 		if (!isset(static::$loadedListeners[ $realm ])) {
 			static::$loadedListeners[ $realm ] = [];
 		}
 
-		if (array_key_exists($ls_scope, static::$loadedListeners[ $realm ])) {
-			return static::$loadedListeners[ $realm ][ $ls_scope ];
+		if (array_key_exists($scope, static::$loadedListeners[ $realm ])) {
+			return static::$loadedListeners[ $realm ][ $scope ];
 		}
 
-		$ls_listenerClass = static::getListener($ls_scope, $realm);
+		$listenerClass = static::getListener($scope, $realm);
 
-		if (!$ls_listenerClass) {
-			static::$loadedListeners[ $realm ][ $ls_scope ] = false;
+		if (!$listenerClass) {
+			static::$loadedListeners[ $realm ][ $scope ] = false;
 
 
 			return false;
 		}
 
-		static::$loadedListeners[ $realm ][ $ls_scope ] = true;
+		static::$loadedListeners[ $realm ][ $scope ] = true;
 
-		EventManager::instance()->on(new $ls_listenerClass());
+		EventManager::instance()->on(new $listenerClass());
 
 
 		return true;
@@ -134,18 +134,18 @@ class EventListenersProvider {
 	 * @return array
 	 */
 	protected static function findListener(string $scope, string $realm): array {
-		$la_classes = App::classes($scope, 'Event/' . $realm, 'Listener', EventListenerInterface::class);
+		$classes = App::classes($scope, 'Event/' . $realm, 'Listener', EventListenerInterface::class);
 
-		$la_listeners = [];
+		$listeners = [];
 
-		/** @var class-string<\Cake\Event\EventListenerInterface> $ls_className */
-		foreach ($la_classes as $ls_className) {
-			$ls_scope = static::extractScopeFromClassName($ls_className);
+		/** @var class-string<\Cake\Event\EventListenerInterface> $className */
+		foreach ($classes as $className) {
+			$scope = static::extractScopeFromClassName($className);
 
-			$la_listeners[ $ls_scope ] ??= $ls_className;
+			$listeners[ $scope ] ??= $className;
 		}
 
-		return $la_listeners;
+		return $listeners;
 	}
 
 
@@ -155,10 +155,10 @@ class EventListenersProvider {
 	 * @return string
 	 */
 	public static function extractScopeFromClassName(string $scope, int $suffixLength = 8): string {
-		$la_parts = explode('\\', trim($scope, '\\'));
-		$ls_scope = array_pop($la_parts);
-		$ls_scope = substr($ls_scope, 0, -$suffixLength);
+		$parts = explode('\\', trim($scope, '\\'));
+		$scope = array_pop($parts);
+		$scope = substr($scope, 0, -$suffixLength);
 
-		return static::sanitizeScope($ls_scope);
+		return static::sanitizeScope($scope);
 	}
 }

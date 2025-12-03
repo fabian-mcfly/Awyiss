@@ -12,7 +12,7 @@ class FormsCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'title' => 'Kontaktformular',
@@ -171,7 +171,7 @@ class FormsCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('forms');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('forms');
+		$table->insert($data)->save();
 	}
 }

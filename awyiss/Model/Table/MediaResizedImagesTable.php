@@ -61,29 +61,29 @@ class MediaResizedImagesTable extends Table {
 			throw new InvalidArgumentException('The format is not supported.');
 		}
 
-		$ls_baseName = $media->isImage() ? $media->cleanName : $media->name;
+		$baseName = $media->isImage() ? $media->cleanName : $media->name;
 
-		$ls_appendix = $width ? 'w' . $width : '';
-		$ls_appendix .= $height ? 'h' . $height : '';
-		$ls_appendix .= $strategy !== ResizeStrategy::Contain ? Inflector::underscore($strategy->name) : '';
+		$appendix = $width ? 'w' . $width : '';
+		$appendix .= $height ? 'h' . $height : '';
+		$appendix .= $strategy !== ResizeStrategy::Contain ? Inflector::underscore($strategy->name) : '';
 
-		$ls_name = $ls_baseName . '-[' . $ls_appendix . '].' . $format;
+		$name = $baseName . '-[' . $appendix . '].' . $format;
 
-		$ls_path = $media->path;
-		$ls_path = substr($ls_path, 0, strrpos($ls_path, DS)) . DS . '_resized' . DS . $ls_name;
+		$path = $media->path;
+		$path = substr($path, 0, strrpos($path, DS)) . DS . '_resized' . DS . $name;
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$lo_entity = $this->newDefaultEntity([
+		$entity = $this->newDefaultEntity([
 			'mediaId' => $media->id,
-			'name' => $ls_name,
-			'path' => $ls_path,
+			'name' => $name,
+			'path' => $path,
 			'width' => $width,
 			'height' => $height,
 			'media' => $media,
 			'strategy' => $strategy,
 		]);
 
-		return $lo_entity;
+		return $entity;
 	}
 
 
@@ -124,18 +124,18 @@ class MediaResizedImagesTable extends Table {
 		]);
 
 
-		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
-		$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $processStatusEnumClass */
+		$processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
 		$validator->add('status', [
-			'enum' => ['rule' => ['enum', $ls_processStatusEnumClass]],
+			'enum' => ['rule' => ['enum', $processStatusEnumClass]],
 		]);
 
 
 		$validator->notEmptyString('strategy');
-		/** @var class-string<\Awyiss\Model\Enum\ResizeStrategy> $ls_resizeStrategyEnumClass */
-		$ls_resizeStrategyEnumClass = App::className('ResizeStrategy', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\ResizeStrategy> $resizeStrategyEnumClass */
+		$resizeStrategyEnumClass = App::className('ResizeStrategy', 'Model/Enum');
 		$validator->add('strategy', [
-			'enum' => ['rule' => ['enum', $ls_resizeStrategyEnumClass]],
+			'enum' => ['rule' => ['enum', $resizeStrategyEnumClass]],
 		]);
 
 
@@ -158,14 +158,14 @@ class MediaResizedImagesTable extends Table {
 					return true;
 				}
 
-				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
-				$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $processStatusEnumClass */
+				$processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
 
 				if (is_int($entity->status)) {
-					return $ls_processStatusEnumClass::tryFrom($entity->status) !== null;
+					return $processStatusEnumClass::tryFrom($entity->status) !== null;
 				}
 
-				return in_array($entity->status, $ls_processStatusEnumClass::cases());
+				return in_array($entity->status, $processStatusEnumClass::cases());
 			},
 			'validStatus',
 			[
@@ -177,14 +177,14 @@ class MediaResizedImagesTable extends Table {
 
 		$rules->add(
 			function (MediaResizedImage $entity): bool {
-				/** @var class-string<\Awyiss\Model\Enum\ResizeStrategy> $ls_resizeStrategyEnumClass */
-				$ls_resizeStrategyEnumClass = App::className('ResizeStrategy', 'Model/Enum');
+				/** @var class-string<\Awyiss\Model\Enum\ResizeStrategy> $resizeStrategyEnumClass */
+				$resizeStrategyEnumClass = App::className('ResizeStrategy', 'Model/Enum');
 
 				if (is_int($entity->strategy)) {
-					return $ls_resizeStrategyEnumClass::tryFrom($entity->strategy) !== null;
+					return $resizeStrategyEnumClass::tryFrom($entity->strategy) !== null;
 				}
 
-				return in_array($entity->strategy, $ls_resizeStrategyEnumClass::cases());
+				return in_array($entity->strategy, $resizeStrategyEnumClass::cases());
 			},
 			'validStrategy',
 			[
@@ -203,14 +203,14 @@ class MediaResizedImagesTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
-		$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $processStatusEnumClass */
+		$processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
 
-		$schema->setColumnType('status', EnumType::from($ls_processStatusEnumClass));
+		$schema->setColumnType('status', EnumType::from($processStatusEnumClass));
 
-		/** @var class-string<\Awyiss\Model\Enum\ResizeStrategy> $ls_resizeStrategyEnumClass */
-		$ls_resizeStrategyEnumClass = App::className('ResizeStrategy', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\ResizeStrategy> $resizeStrategyEnumClass */
+		$resizeStrategyEnumClass = App::className('ResizeStrategy', 'Model/Enum');
 
-		$schema->setColumnType('strategy', EnumType::from($ls_resizeStrategyEnumClass));
+		$schema->setColumnType('strategy', EnumType::from($resizeStrategyEnumClass));
 	}
 }

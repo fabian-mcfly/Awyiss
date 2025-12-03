@@ -21,7 +21,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\PagesTable $table */
@@ -38,7 +37,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Page();
@@ -72,7 +70,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new Page();
@@ -84,7 +81,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::_setSlug()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testSlugCleaningViaPropertyAssignment(): void {
@@ -119,7 +115,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::_setSlug()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSlugCleaningViaSetMethod(): void {
 		$entity = new Page();
@@ -154,7 +149,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::_setPageRoleId()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testPageRoleIdCleaningViaPropertyAssignment(): void {
@@ -174,7 +168,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::_setPageRoleId()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPageRoleIdCleaningViaSetMethod(): void {
 		$entity = new Page();
@@ -194,7 +187,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::_setPageRoleId()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPageRoleIdWithEnumInterface(): void {
 		$entity = new Page();
@@ -208,7 +200,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::_setAddMenuEntry()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testAddMenuEntryCleaningViaPropertyAssignment(): void {
@@ -231,7 +222,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::_setAddMenuEntry()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddMenuEntryCleaningViaSetMethod(): void {
 		$entity = new Page();
@@ -254,7 +244,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::_getLink()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkVirtualPropertyWithLanguageShortcode(): void {
 		Configure::write('Route.includeLanguageShortcode', true);
@@ -279,7 +268,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::_getLink()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkVirtualPropertyWithoutLanguageShortcode(): void {
 		$reflection = new ReflectionClass(Page::class);
@@ -305,7 +293,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::hasContentTemplate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasContentTemplate(): void {
 		/** @var \Awyiss\Model\Table\PagesTable $table */
@@ -328,7 +315,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::hasContentTemplate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasContentTemplateWithNoPageTemplate(): void {
 		$entity = new Page();
@@ -342,7 +328,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::hasContentTemplate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasContentTemplateWithNoContentAreas(): void {
 		$entity = new Page();
@@ -357,7 +342,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildren(): void {
 		/** @var \Awyiss\Model\Table\PagesTable $table */
@@ -375,7 +359,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildren(): void {
 		/** @var \Awyiss\Model\Table\PagesTable $table */
@@ -393,7 +376,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParent(): void {
 		/** @var \Awyiss\Model\Table\PagesTable $table */
@@ -411,7 +393,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithNoParent(): void {
 		/** @var \Awyiss\Model\Table\PagesTable $table */
@@ -428,7 +409,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParents(): void {
 		/** @var \Awyiss\Model\Table\PagesTable $table */
@@ -446,7 +426,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWithNoParents(): void {
 		/** @var \Awyiss\Model\Table\PagesTable $table */
@@ -463,7 +442,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -515,7 +493,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
@@ -548,7 +525,6 @@ class PageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Page::defaultValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		/** @var \Awyiss\Model\Table\PagesTable $table */

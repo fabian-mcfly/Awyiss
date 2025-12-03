@@ -38,7 +38,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::getFunctions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFunctionsReturnsArrayWithEnumFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -53,7 +52,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::getFunctions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnumFunctionReturnsProxyForValidEnum(): void {
 		$functions = $this->extension->getFunctions();
@@ -69,7 +67,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::getFunctions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnumFunctionForCase(): void {
 		$functions = $this->extension->getFunctions();
@@ -86,7 +83,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::getFunctions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnumFunctionForMethod(): void {
 		$functions = $this->extension->getFunctions();
@@ -103,7 +99,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::getFunctions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnumFunctionForUnknownMethodThrowsException(): void {
 		$functions = $this->extension->getFunctions();
@@ -122,7 +117,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::getTests()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTestsReturnsArrayWithEnumTest(): void {
 		$tests = $this->extension->getTests();
@@ -137,7 +131,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::getTests()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnumTestReturnsTrueForBackedEnum(): void {
 		$tests = $this->extension->getTests();
@@ -154,7 +147,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::getTests()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnumTestReturnsFalseForNonEnum(): void {
 		$tests = $this->extension->getTests();
@@ -170,7 +162,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::createProxy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateProxyReturnsObjectForValidEnum(): void {
 		$proxy = $this->extension->createProxy(ResizeStrategy::class);
@@ -182,7 +173,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::createProxy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateProxyThrowsExceptionForInvalidEnum(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -195,7 +185,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::createProxy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProxyCanAccessEnumCases(): void {
 		$proxy = $this->extension->createProxy(ResizeStrategy::class);
@@ -209,7 +198,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::createProxy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProxyCanAccessEnumMethods(): void {
 		$proxy = $this->extension->createProxy(ResizeStrategy::class);
@@ -223,7 +211,6 @@ class EnumExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\EnumExtension::createProxy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProxyThrowsExceptionForNonExistentConstantOrMethod(): void {
 		$proxy = $this->extension->createProxy(ResizeStrategy::class);

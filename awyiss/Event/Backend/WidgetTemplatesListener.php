@@ -44,21 +44,19 @@ class WidgetTemplatesListener implements EventListenerInterface {
 			return;
 		}
 
-		$la_elements = $data['widget_template_elements'];
-		$lb_hasTitle = Hash::check($la_elements, '{n}[identifier=title]');
-		$lb_hasSubtitle = Hash::check($la_elements, '{n}[identifier=subtitle]');
+		$elements = $data['widget_template_elements'];
+		$hasTitle = Hash::check($elements, '{n}[identifier=title]');
+		$hasSubtitle = Hash::check($elements, '{n}[identifier=subtitle]');
 
 		/**
 		 * Filter out the title_tag and subtitle_tag elements when the title and subtitle are not present
-		 *
-		 * @noinspection PhpVariableNamingConventionInspection
 		 */
-		$data['widget_template_elements'] = array_filter($la_elements, function ($element) use ($lb_hasTitle, $lb_hasSubtitle) {
-			if ($element['identifier'] == 'title_tag' && !$lb_hasTitle) {
+		$data['widget_template_elements'] = array_filter($elements, function ($element) use ($hasTitle, $hasSubtitle) {
+			if ($element['identifier'] == 'title_tag' && !$hasTitle) {
 				return false;
 			}
 
-			if ($element['identifier'] == 'subtitle_tag' && !$lb_hasSubtitle) {
+			if ($element['identifier'] == 'subtitle_tag' && !$hasSubtitle) {
 				return false;
 			}
 
@@ -80,10 +78,10 @@ class WidgetTemplatesListener implements EventListenerInterface {
 	 */
 	public function beforeSave(Event $event, WidgetTemplate $entity): void {
 		if ($entity->hasOriginal('fileName') && $entity->get('fileName') != $entity->getOriginal('fileName')) {
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
-			if ($lo_queue->isQueued('widget_templates::file_changes')) {
+			if ($queuedJobsTable->isQueued('widget_templates::file_changes')) {
 				$event->stopPropagation();
 				$entity->setError('_general', __d('widget_templates', 'file_changes_in_progress'));
 			}
@@ -102,51 +100,50 @@ class WidgetTemplatesListener implements EventListenerInterface {
 	 * @noinspection DuplicatedCode, PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, WidgetTemplate $entity, ArrayObject $options): void {
-		$ls_fileName = Text::slug($entity->get('fileName'), ['replacement' => '_']);
-		$ls_fileName = trim($ls_fileName, '_');
-		$ls_extension = '.twig';
+		$fileName = Text::slug($entity->get('fileName'), ['replacement' => '_']);
+		$fileName = trim($fileName, '_');
+		$extension = '.twig';
 
-		$la_templatePaths = Configure::read('App.paths.templates');
-		$ls_folderPath = $la_templatePaths['customer'] . 'Frontend' . DS . 'widget' . DS;
+		$templatePaths = Configure::read('App.paths.templates');
+		$folderPath = $templatePaths['customer'] . 'Frontend' . DS . 'widget' . DS;
 
+		$commands = [];
 
-		$la_commands = [];
-
-		if (!file_exists($ls_folderPath)) {
-			$la_commands[] = 'mkdir -m 0755 -p ' . $ls_folderPath;
+		if (!file_exists($folderPath)) {
+			$commands[] = 'mkdir -m 0755 -p ' . $folderPath;
 		}
 
-		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
+		$filePath = $folderPath . $fileName . $extension;
 
 		if (!($options['isCopy'] ?? false) && $entity->hasOriginal('fileName') && $entity->get('fileName') != $entity->getOriginal('fileName')) {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
-			$ls_currentFileName = Text::slug($entity->getOriginal('fileName'), ['replacement' => '_']);
-			$ls_currentFilePath = $ls_folderPath . $ls_currentFileName . $ls_extension;
-			$lb_fileExists = file_exists($ls_currentFilePath);
-			if ($lb_fileExists) {
-				$la_commands[] = 'mv -f ' . $ls_currentFilePath . ' ' . $ls_filePath;
+			$currentFileName = Text::slug($entity->getOriginal('fileName'), ['replacement' => '_']);
+			$currentFilePath = $folderPath . $currentFileName . $extension;
+			$fileExists = file_exists($currentFilePath);
+			if ($fileExists) {
+				$commands[] = 'mv -f ' . $currentFilePath . ' ' . $filePath;
 			}
 		}
 		else {
-			$lb_fileExists = file_exists($ls_filePath);
+			$fileExists = file_exists($filePath);
 		}
 
 		//If the file does not exist, we create one based on a twig-template for frontend widget templates
-		if (!$lb_fileExists) {
-			$la_commands[] = 'bin' . DS . 'cake bake template widget_templates widget_template ' . $ls_fileName . ' --prefix Frontend --controller widget';
-			$la_commands[] = 'chmod 0755 ' . $ls_filePath;
+		if (!$fileExists) {
+			$commands[] = 'bin' . DS . 'cake bake template widget_templates widget_template ' . $fileName . ' --prefix Frontend --controller widget';
+			$commands[] = 'chmod 0755 ' . $filePath;
 		}
 
-		if (!empty($la_commands)) {
-			$la_data = [
-				'command' => implode(' && ', array_map('escapeshellcmd', $la_commands)),
+		if (!empty($commands)) {
+			$data = [
+				'command' => implode(' && ', array_map('escapeshellcmd', $commands)),
 				'escape' => false,
 				'log' => true,
 			];
 
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			$lo_queue->createJob('Queue.Execute', $la_data, [
+			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			$queuedJobsTable->createJob('Queue.Execute', $data, [
 				'group' => 'general',
 				'priority' => 1,
 				'reference' => 'widget_templates::file_changes',
@@ -166,25 +163,25 @@ class WidgetTemplatesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDelete(Event $event, WidgetTemplate $entity): void {
-		$ls_fileName = Text::slug($entity->get('fileName'), ['replacement' => '_']);
-		$ls_fileName = trim($ls_fileName, '_');
-		$ls_extension = '.twig';
+		$fileName = Text::slug($entity->get('fileName'), ['replacement' => '_']);
+		$fileName = trim($fileName, '_');
+		$extension = '.twig';
 
-		$la_templatePaths = Configure::read('App.paths.templates');
-		$ls_folderPath = $la_templatePaths['customer'] . 'Frontend' . DS . 'widget' . DS;
+		$templatePaths = Configure::read('App.paths.templates');
+		$folderPath = $templatePaths['customer'] . 'Frontend' . DS . 'widget' . DS;
 
-		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
+		$filePath = $folderPath . $fileName . $extension;
 
-		if (file_exists($ls_filePath)) {
-			$ls_newFilePath = $ls_filePath;
-			while (file_exists($ls_newFilePath)) {
-				$ls_newFilePath = $ls_folderPath . '_deleted-' . $ls_fileName . '-' . new DateTime()->getTimestamp() . $ls_extension;
+		if (file_exists($filePath)) {
+			$newFilePath = $filePath;
+			while (file_exists($newFilePath)) {
+				$newFilePath = $folderPath . '_deleted-' . $fileName . '-' . new DateTime()->getTimestamp() . $extension;
 			}
 
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			$lo_queue->createJob('Queue.Execute', [
-				'command' => 'mv -f ' . $ls_filePath . ' ' . $ls_newFilePath,
+			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			$queuedJobsTable->createJob('Queue.Execute', [
+				'command' => 'mv -f ' . $filePath . ' ' . $newFilePath,
 				'log' => true,
 			], [
 				'group' => 'general',

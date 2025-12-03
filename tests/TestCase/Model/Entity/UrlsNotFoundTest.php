@@ -18,7 +18,6 @@ class UrlsNotFoundTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlsNotFound::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\UrlsNotFoundTable $table */
@@ -35,7 +34,6 @@ class UrlsNotFoundTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlsNotFound::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new UrlsNotFound();
@@ -55,7 +53,6 @@ class UrlsNotFoundTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlsNotFound
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -79,7 +76,6 @@ class UrlsNotFoundTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlsNotFound::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = ['is_robot' => false];

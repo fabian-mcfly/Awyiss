@@ -93,6 +93,7 @@ class EventTriggerComponent extends Component {
 	 * Is called before output is sent to the browser.
 	 *
 	 * @param \Cake\Event\EventInterface $event
+	 * @noinspection PhpUnused
 	 */
 	public function afterFilter(EventInterface $event): void {
 		$this->dispatchEvent('afterFilter', $event);
@@ -112,14 +113,14 @@ class EventTriggerComponent extends Component {
 			return;
 		}
 
-		$lo_controller = $this->getController();
+		$controller = $this->getController();
 
-		$lo_event = new Event('Controller.' . $lo_controller->getName() . '.' . $name, $lo_controller, ($event?->getData() ?? []) + $arguments);
-		$lo_controller->getEventManager()->dispatch($lo_event);
+		$newEvent = new Event('Controller.' . $controller->getName() . '.' . $name, $controller, ($event?->getData() ?? []) + $arguments);
+		$controller->getEventManager()->dispatch($newEvent);
 
-		if ($lo_event->isStopped()) {
+		if ($newEvent->isStopped()) {
 			$event->stopPropagation();
-			$event->setResult($lo_event->getResult());
+			$event->setResult($newEvent->getResult());
 		}
 	}
 }

@@ -30,65 +30,65 @@ trait TableFieldsTrait {
 	 * @return array
 	 */
 	public function getTableFields(?string $scope = null): array {
-		static $la_tables;
+		static $tables;
 
-		if (!isset($la_tables)) {
-			$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		if (!isset($tables)) {
+			$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		}
 
-		$ls_scope = $scope ?? (method_exists($this, 'getDynamicScope') ? $this->getDynamicScope() : static::getScope());
+		$scope = $scope ?? (method_exists($this, 'getDynamicScope') ? $this->getDynamicScope() : static::getScope());
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ls_scope));
-		$la_columns = [];
+		/** @var \Awyiss\Model\Table $table */
+		$table = FactoryLocator::get('Table')->get(Inflector::camelize($scope));
+		$columns = [];
 
-		if (!in_array($lo_table->getTable(), $la_tables)) {
+		if (!in_array($table->getTable(), $tables)) {
 			return [];
 		}
 
-		foreach ($lo_table->getSchema()->columns() as $ls_column) {
-			if (in_array($ls_column, $this->blocklistedTableFields, true)) {
+		foreach ($table->getSchema()->columns() as $column) {
+			if (in_array($column, $this->blocklistedTableFields, true)) {
 				continue;
 			}
 
-			if (in_array($ls_column, ['meta_title', 'meta_description', 'robots_index', 'robots_follow'])) {
-				$la_columns[ $ls_column ] = __d('seo', $ls_column);
+			if (in_array($column, ['meta_title', 'meta_description', 'robots_index', 'robots_follow'])) {
+				$columns[ $column ] = __d('seo', $column);
 
 				continue;
 			}
 
-			if ($lo_table instanceof PagesTable && $lo_table->getAlias() !== 'Pages') {
-				$ls_title = __df(Inflector::underscore($lo_table->getAlias()), 'generic_pages', $ls_column);
+			if ($table instanceof PagesTable && $table->getAlias() !== 'Pages') {
+				$title = __df(Inflector::underscore($table->getAlias()), 'generic_pages', $column);
 
-				if (str_contains($ls_title, '::')) {
-					$ls_title = __d('system', $ls_column);
+				if (str_contains($title, '::')) {
+					$title = __d('system', $column);
 				}
 
-				$la_columns[ $ls_column ] = $ls_title;
+				$columns[ $column ] = $title;
 
 				continue;
 			}
 
-			$la_columns[ $ls_column ] = __d(Inflector::underscore($ls_scope), $ls_column);
+			$columns[ $column ] = __d(Inflector::underscore($scope), $column);
 		}
 
-		if ($lo_table->hasBehavior('Attributes')) {
-			/** @var \Awyiss\Model\Behavior\AttributesBehavior $lo_attributesBehavior */
-			$lo_attributesBehavior = $lo_table->getBehavior('Attributes');
-			foreach ($lo_attributesBehavior->getAttributes() as $lo_attribute) {
-				if (in_array('attributes.' . $lo_attribute->identifier, $this->blocklistedTableFields, true)) {
+		if ($table->hasBehavior('Attributes')) {
+			/** @var \Awyiss\Model\Behavior\AttributesBehavior $attributesBehavior */
+			$attributesBehavior = $table->getBehavior('Attributes');
+			foreach ($attributesBehavior->getAttributes() as $attribute) {
+				if (in_array('attributes.' . $attribute->identifier, $this->blocklistedTableFields, true)) {
 					continue;
 				}
 
-				if ($lo_attribute->active) {
-					$la_columns[ 'attributes.' . $lo_attribute->identifier ] = $lo_attribute->title;
+				if ($attribute->active) {
+					$columns[ 'attributes.' . $attribute->identifier ] = $attribute->title;
 				}
 			}
 		}
 
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $lo_table->getEntityClass();
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = $table->getEntityClass();
 
-		return $ls_entityClass::mapFields($la_columns);
+		return $entityClass::mapFields($columns);
 	}
 }

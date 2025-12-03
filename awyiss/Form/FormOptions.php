@@ -39,12 +39,12 @@ class FormOptions implements FormOptionsInterface {
 	 * @inheritDoc
 	 */
 	public function __construct(Form $form, ?Page $page = null) {
-		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
-		$ls_className = App::className('Mailer', 'Mailer');
-		$lo_mailer = new $ls_className('default');
+		/** @var class-string<\Cake\Mailer\Mailer> $className */
+		$className = App::className('Mailer', 'Mailer');
+		$mailer = new $className('default');
 
 		$this->form = $form;
-		$this->safeRealSender = 'noreply@' . $lo_mailer->getMessage()->getDomain();
+		$this->safeRealSender = 'noreply@' . $mailer->getMessage()->getDomain();
 		$this->page = $page;
 	}
 
@@ -57,51 +57,51 @@ class FormOptions implements FormOptionsInterface {
 			return $validator;
 		}
 
-		$lo_formElements = $this->form->formElements->listNested()->toList();
+		$formElements = $this->form->formElements->listNested()->toList();
 
-		/** @var \Awyiss\Model\Entity\FormElement $lo_formElement */
-		foreach ($lo_formElements as $lo_formElement) {
-			if ($lo_formElement->required) {
-				$this->setFieldRequired($validator, $lo_formElement);
+		/** @var \Awyiss\Model\Entity\FormElement $formElement */
+		foreach ($formElements as $formElement) {
+			if ($formElement->required) {
+				$this->setFieldRequired($validator, $formElement);
 			}
 
-			if (in_array($lo_formElement->type, ['date', 'time', 'datetime'])) {
-				$validator->add($lo_formElement->identifier, [
-					$lo_formElement->type => ['rule' => $lo_formElement->type],
+			if (in_array($formElement->type, ['date', 'time', 'datetime'])) {
+				$validator->add($formElement->identifier, [
+					$formElement->type => ['rule' => $formElement->type],
 				]);
 			}
 			elseif (
-				($lo_formElement->type === 'checkbox' && $lo_formElement->options && count($lo_formElement->options) > 1) ||
-				$lo_formElement->type === 'select_multiple'
+				($formElement->type === 'checkbox' && $formElement->options && count($formElement->options) > 1) ||
+				$formElement->type === 'select_multiple'
 			) {
-				$la_options = $lo_formElement->options;
-				$validator->add($lo_formElement->identifier, [
+				$options = $formElement->options;
+				$validator->add($formElement->identifier, [
 					'inList' => [
-						'rule' => function (mixed $value) use ($la_options): bool {
-							$la_possibleValues = array_keys($la_options);
+						'rule' => function (mixed $value) use ($options): bool {
+							$possibleValues = array_keys($options);
 
 							// If not all values are in the possible values, the value is invalid
-							return !array_diff($value, $la_possibleValues);
+							return !array_diff($value, $possibleValues);
 						},
 					],
 				]);
 			}
-			elseif (in_array($lo_formElement->type, ['checkbox', 'radio', 'select'])) {
-				$la_keys = array_keys($lo_formElement->options ?? []);
+			elseif (in_array($formElement->type, ['checkbox', 'radio', 'select'])) {
+				$keys = array_keys($formElement->options ?? []);
 
 				if (
-					in_array($lo_formElement->type, ['checkbox', 'radio']) &&
-					!$lo_formElement->required
+					in_array($formElement->type, ['checkbox', 'radio']) &&
+					!$formElement->required
 				) {
-					$la_keys[] = '';
+					$keys[] = '';
 				}
 
-				$validator->add($lo_formElement->identifier, [
-					'inList' => ['rule' => ['inList', $la_keys]],
+				$validator->add($formElement->identifier, [
+					'inList' => ['rule' => ['inList', $keys]],
 				]);
 			}
-			elseif ($lo_formElement->type === 'email') {
-				$validator->add($lo_formElement->identifier, [
+			elseif ($formElement->type === 'email') {
+				$validator->add($formElement->identifier, [
 					'email' => ['rule' => 'email'],
 				]);
 			}
@@ -133,23 +133,23 @@ class FormOptions implements FormOptionsInterface {
 	 * @inheritDoc
 	 */
 	public function setConditionalRecipient(): static {
-		/** @var \Awyiss\Model\Table\FormsTable $lo_formsTable */
-		$lo_formsTable = FactoryLocator::get('Table')->get('Forms');
-		$lo_formsTable->loadInto($this->form, ['FormConditionalRecipients']);
+		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
+		$formsTable = FactoryLocator::get('Table')->get('Forms');
+		$formsTable->loadInto($this->form, ['FormConditionalRecipients']);
 
 		if (!$this->form->formConditionalRecipients) {
 			return $this;
 		}
 
-		/** @var \Awyiss\Form\FormConditionalRecipients $ls_conditionalRecipientsClass */
-		$ls_conditionalRecipientsClass = App::className('FormConditionalRecipients', 'Form');
-		$lo_conditionalRecipients = new $ls_conditionalRecipientsClass($this->form, $this->page);
+		/** @var \Awyiss\Form\FormConditionalRecipients $conditionalRecipientsClass */
+		$conditionalRecipientsClass = App::className('FormConditionalRecipients', 'Form');
+		$conditionalRecipients = new $conditionalRecipientsClass($this->form, $this->page);
 
-		$lo_conditionalRecipients->setProcessStrategy($this->form->conditionalRecipientsStrategy);
+		$conditionalRecipients->setProcessStrategy($this->form->conditionalRecipientsStrategy);
 
-		$ls_recipient = $lo_conditionalRecipients->getMatchingRecipient($this->form->formConditionalRecipients, $this->form->getFormData());
-		if ($ls_recipient) {
-			$this->form->ownerEmail = $ls_recipient;
+		$recipient = $conditionalRecipients->getMatchingRecipient($this->form->formConditionalRecipients, $this->form->getFormData());
+		if ($recipient) {
+			$this->form->ownerEmail = $recipient;
 		}
 
 		return $this;

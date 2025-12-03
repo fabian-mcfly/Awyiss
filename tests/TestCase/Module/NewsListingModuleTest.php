@@ -51,7 +51,6 @@ class NewsListingModuleTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -79,7 +78,6 @@ class NewsListingModuleTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		FactoryLocator::drop('Table');
@@ -101,7 +99,6 @@ class NewsListingModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::getTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTitle(): void {
 		$result = NewsListingModule::getTitle();
@@ -116,7 +113,6 @@ class NewsListingModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::getFormFields()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormFieldsWithDefaults(): void {
 		// Mock the news table for getCategoriesField
@@ -160,7 +156,6 @@ class NewsListingModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::getFormFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormFieldsWithPaginationEnabled(): void {
 		$settings = ['paginate' => true];
@@ -190,7 +185,6 @@ class NewsListingModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::getFormFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormFieldsWithCustomSettings(): void {
 		$settings = [
@@ -216,7 +210,6 @@ class NewsListingModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::getFormFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormFieldsWithCategoriesEnabled(): void {
 		$settings = ['categories' => [30]];
@@ -257,7 +250,6 @@ class NewsListingModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::getCategoriesField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategoriesFieldWithNoCategoriesAvailable(): void {
 		FactoryLocator::drop('Table');
@@ -282,7 +274,6 @@ class NewsListingModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::isAvailable()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAvailable(): void {
 		$result = NewsListingModule::isAvailable();
@@ -297,7 +288,6 @@ class NewsListingModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithDefaultSettings(): void {
 		$settings = [];
@@ -346,7 +336,6 @@ class NewsListingModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithPaginationEnabled(): void {
 		$settings = [
@@ -393,7 +382,6 @@ class NewsListingModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCustomItemsAndOffset(): void {
 		$settings = [
@@ -433,7 +421,6 @@ class NewsListingModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCategoriesFilter(): void {
 		$settings = [
@@ -482,7 +469,6 @@ class NewsListingModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithNewsCategoryPageEntity(): void {
 		$settings = [];
@@ -535,7 +521,6 @@ class NewsListingModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\NewsListingModule::render()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderInPreviewMode(): void {
 		$settings = ['items' => 15];

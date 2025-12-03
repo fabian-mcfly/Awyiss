@@ -62,7 +62,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::__construct()
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialization(): void {
 		$config = $this->behavior->getConfig();
@@ -87,7 +86,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAssociations(): void {
 		$association = $this->table->getAssociation('MediaAssignments');
@@ -105,7 +103,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindMediaAssignments(): void {
 		$query = $this->table->find('mediaAssignments')->where(['identifier' => 'dummy_nested']);
@@ -134,7 +131,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindMediaAssignmentsWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -152,7 +148,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindMediaAssignmentsWithIncludeElementSelector(): void {
 		$query = $this->table->find('mediaAssignments', includeElementSelector: true)->where(['identifier' => 'dummy_nested']);
@@ -181,7 +176,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindMediaAssignmentsWithUseMediaEntity(): void {
 		$query = $this->table->find('mediaAssignments', useMediaEntity: true)->where(['identifier' => 'dummy_nested']);
@@ -214,7 +208,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindMediaAssignmentsWithUseMediaEntityForGallery(): void {
 		$query = $this->fetchTable('Contents')->find('mediaAssignments')->where(['id' => 57]);
@@ -246,7 +239,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindMediaAssignmentsWithoutFormatResult(): void {
 		$query = $this->table->find('mediaAssignments', formatResult: false)->where(['identifier' => 'dummy_nested']);
@@ -270,7 +262,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::rebuildMediaAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildMediaAssignments(): void {
 		$query = $this->table->find('mediaAssignments', formatResult: false)->where(['identifier' => 'dummy_nested']);
@@ -302,7 +293,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::rebuildMediaAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildMediaAssignmentsWithUseMediaEntity(): void {
 		$query = $this->table->find('mediaAssignments', formatResult: false)->where(['identifier' => 'dummy_nested']);
@@ -334,7 +324,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::rebuildMediaAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRebuildMediaAssignmentsWithAlreadyRebuiltAssignments(): void {
 		$widget = $this->table->newDefaultEntity([
@@ -357,7 +346,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMap(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -408,7 +396,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMapForGallery(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -466,7 +453,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMapForFolder(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -505,7 +491,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMapWithoutLogin(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -543,7 +528,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMapWhenDisabled(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -586,7 +570,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildMarshalMapWhenMediaAssignmentsDisabled(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -627,7 +610,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMarshalMediaAssignmentsSkipsEmptyMediaId(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -659,7 +641,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::buildMarshalMap()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMarshalMediaAssignmentsSetsErrors(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -696,7 +677,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::beforeSave()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSkipsWhenNoMediaAssignments(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -716,7 +696,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::beforeSave()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSkipsWhenExplicitlySkipped(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -744,7 +723,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::beforeSave()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveUnsetsMediaAssignmentsWhenNoAccess(): void {
 		$this->login(4);
@@ -774,7 +752,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::beforeSave()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveRemovesInvalidAssignments(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -810,7 +787,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::beforeSave()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveMarksAssignmentsAsNew(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -852,7 +828,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithoutAutoCreateConfig(): void {
 		$entity = $this->table->get(23);
@@ -877,7 +852,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithAutoCreateConfig(): void {
 		/** @var \Awyiss\Model\Entity\Widget $entity */
@@ -915,7 +889,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithAutoCreateConfigUsesExistingHiddenFolderAssignment(): void {
 		/** @var \Awyiss\Model\Entity\Widget $entity */
@@ -964,7 +937,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::afterDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteDeletesHiddenFolder(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -1016,7 +988,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteDeletesHiddenFolder(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -1067,7 +1038,6 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	/**
 	 * @param int $userId The user ID to log in as.
 	 * @return \Awyiss\Model\Entity\User
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function login(int $userId = 1): User {
 		$request = new ServerRequest([

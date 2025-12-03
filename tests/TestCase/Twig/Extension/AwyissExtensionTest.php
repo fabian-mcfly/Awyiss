@@ -48,7 +48,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -99,7 +98,6 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\AwyissExtension::getFilters()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFiltersReturnsCorrectFilters(): void {
 		$filters = $this->extension->getFilters();
@@ -117,7 +115,6 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\AwyissExtension::getFunctions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFunctionsReturnsCorrectFunctions(): void {
 		$functions = $this->extension->getFunctions();
@@ -165,7 +162,6 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\AwyissExtension::getTests()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTestsReturnsCorrectTests(): void {
 		$tests = $this->extension->getTests();
@@ -183,7 +179,6 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\AwyissExtension::getNodeVisitors()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNodeVisitorsReturnsExtendsNodeVisitor(): void {
 		$visitors = $this->extension->getNodeVisitors();
@@ -197,7 +192,6 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\AwyissExtension::inlineCss()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInlineCssFilter(): void {
 		$filters = $this->extension->getFilters();
@@ -213,7 +207,6 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\Extension\AwyissExtension::htmlDataAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDataAttrFilter(): void {
 		$filters = $this->extension->getFilters();
@@ -228,7 +221,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testJsonDecodeFilter(): void {
 		$filters = $this->extension->getFilters();
@@ -243,7 +235,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrefixNumericClassFilter(): void {
 		$filters = $this->extension->getFilters();
@@ -262,7 +253,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRepeatFilter(): void {
 		$filters = $this->extension->getFilters();
@@ -277,7 +267,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUcpartsFilterr(): void {
 		$filters = $this->extension->getFilters();
@@ -300,7 +289,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCombineFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -315,7 +303,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContentFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -333,7 +320,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContentFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
@@ -362,7 +348,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContentFunctionWithoutPage(): void {
 		$functions = $this->extension->getFunctions();
@@ -378,7 +363,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -403,7 +387,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
@@ -436,7 +419,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormFunctionWithoutPage(): void {
 		$functions = $this->extension->getFunctions();
@@ -452,7 +434,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetClassFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -468,7 +449,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslationFunctions(): void {
 		$functions = $this->extension->getFunctions();
@@ -486,7 +466,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHashPrinterFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -530,7 +509,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMenuFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -554,7 +532,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMenuFunctionWithoutLanguageShortcode(): void {
 		$functions = $this->extension->getFunctions();
@@ -570,7 +547,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModuleFunctionCallsModuleFunctionMethod(): void {
 		$functions = $this->extension->getFunctions();
@@ -585,7 +561,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNaturalSortFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -617,7 +592,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testStaticCallFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -647,7 +621,7 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection HtmlUnknownAnchorTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testSurveyFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -678,7 +652,7 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection HtmlRequiredAltAttribute, HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlRequiredAltAttribute, HtmlUnknownTarget
 	 */
 	public function testSurveyFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
@@ -728,7 +702,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSurveyFunctionWithoutPage(): void {
 		$functions = $this->extension->getFunctions();
@@ -744,7 +717,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidgetFunction(): void {
 		$functions = $this->extension->getFunctions();
@@ -765,7 +737,7 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection HtmlRequiredAltAttribute, HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlRequiredAltAttribute, HtmlUnknownTarget
 	 */
 	public function testWidgetFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
@@ -792,7 +764,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testArrayTest(): void {
 		$tests = $this->extension->getTests();
@@ -809,7 +780,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFileTest(): void {
 		$tests = $this->extension->getTests();
@@ -836,7 +806,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFileTestWithDirectoryTraversal(): void {
 		$tests = $this->extension->getTests();
@@ -862,7 +831,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFileTestWithDirectory(): void {
 		$tests = $this->extension->getTests();
@@ -888,7 +856,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInstanceOfTest(): void {
 		$tests = $this->extension->getTests();
@@ -904,7 +871,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNumericTest(): void {
 		$tests = $this->extension->getTests();
@@ -923,7 +889,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPageRoleTest(): void {
 		$tests = $this->extension->getTests();
@@ -937,7 +902,6 @@ class AwyissExtensionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testStringTest(): void {
 		$tests = $this->extension->getTests();

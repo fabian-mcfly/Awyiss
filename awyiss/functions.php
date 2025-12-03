@@ -23,28 +23,28 @@ use Symfony\Component\VarDumper\VarDumper;
 function nonceDump(mixed ...$vars): mixed {
 	ob_start();
 
-	$li_key = 0;
+	$key = 0;
 	if (array_key_exists(0, $vars) && count($vars) === 1) {
 		VarDumper::dump($vars[0]);
 	}
 	else {
-		foreach ($vars as $li_key => $lx_value) {
-			VarDumper::dump($lx_value, (string)(is_int($li_key) ? 1 + $li_key : $li_key));
+		foreach ($vars as $key => $value) {
+			VarDumper::dump($value, (string)(is_int($key) ? 1 + $key : $key));
 		}
 	}
 
-	$ls_output = ob_get_clean();
+	$output = ob_get_clean();
 
-	$ls_scriptNonce = Router::getRequest()?->getAttribute('cspScriptNonce');
-	$ls_styleNonce = Router::getRequest()?->getAttribute('cspStyleNonce');
+	$scriptNonce = Router::getRequest()?->getAttribute('cspScriptNonce');
+	$styleNonce = Router::getRequest()?->getAttribute('cspStyleNonce');
 	// Add nonce to the script tag
-	$ls_output = str_replace('<script>', '<script nonce="' . $ls_scriptNonce . '">', $ls_output);
-	$ls_output = str_replace('<style>', '<style nonce="' . $ls_styleNonce . '">', $ls_output);
+	$output = str_replace('<script>', '<script nonce="' . $scriptNonce . '">', $output);
+	$output = str_replace('<style>', '<style nonce="' . $styleNonce . '">', $output);
 
-	echo $ls_output;
+	echo $output;
 
 
-	return $li_key;
+	return $key;
 }
 
 
@@ -61,13 +61,13 @@ function dump(mixed ...$vars): mixed {
 		return null;
 	}
 
-	$li_key = nonceDump(...$vars);
+	$key = nonceDump(...$vars);
 	if (1 < count($vars)) {
 		return $vars;
 	}
 
 
-	return $vars[ $li_key ];
+	return $vars[ $key ];
 }
 
 

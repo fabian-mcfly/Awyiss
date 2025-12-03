@@ -43,83 +43,82 @@ class UpsertTask extends Task {
 	 * @inheritDoc
 	 */
 	public function run(array $data, int $jobId): void {
-		//$la_diff holds the entity's old values that differ from the new ones
-		$la_diff = Hash::diff($data['old'], $data['new']);
+		//$diff holds the entity's old values that differ from the new ones
+		$diff = Hash::diff($data['old'], $data['new']);
 
-		$ls_column = $data['new']['identifier'];
-		[$ls_type, $lx_length] = $this->getTypeAndLength($data['new']['type'] ?? null);
+		$column = $data['new']['identifier'];
+		[$type, $length] = $this->getTypeAndLength($data['new']['type'] ?? null);
 
 		//Type needs to be in the format of ':string?[50]', where ? marks the field as nullable and [50] sets the length.
-		$ls_column .= ':' . $ls_type;
+		$column .= ':' . $type;
 		if (empty($data['new']['required'])) {
-			$ls_column .= '?';
+			$column .= '?';
 		}
-		if (!empty($lx_length)) {
-			$ls_column .= '[' . $lx_length . ']';
+		if (!empty($length)) {
+			$column .= '[' . $length . ']';
 		}
 		if (isset($data['new']['defaultValue']) && $data['new']['defaultValue'] !== '') {
-			$ls_column .= '(' . $data['new']['defaultValue'] . ')';
+			$column .= '(' . $data['new']['defaultValue'] . ')';
 		}
 		if (!empty($data['new']['hasIndex'])) {
-			$ls_column .= ':index';
+			$column .= ':index';
 		}
 
 
 		//Force migrations for attributes to be stored in the custom directory, to not mess with the Awyiss migrations.
-		$ls_migrationsPath = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
+		$migrationsPath = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
+		$attributesTableName = 'attributes_' . $data['new']['scope'];
+		$bakeOldModel = false;
+		$commands = [];
+		$foreignKey = Inflector::singularize($data['new']['scope']);
 
-		$ls_attributesTable = 'attributes_' . $data['new']['scope'];
-		$lb_bakeOldModel = false;
-		$la_commands = [];
-		$ls_foreignKey = Inflector::singularize($data['new']['scope']);
-
-		$lb_scopeIsPageRole = false;
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-		if ($ls_foreignKey !== 'page' && $ls_pageRoleEnum::tryFromName($ls_foreignKey)) {
-			$ls_foreignKey = 'page';
-			$lb_scopeIsPageRole = true;
+		$scopeIsPageRole = false;
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		if ($foreignKey !== 'page' && $pageRoleEnum::tryFromName($foreignKey)) {
+			$foreignKey = 'page';
+			$scopeIsPageRole = true;
 		}
 
-		$ls_foreignKey .= '_id';
+		$foreignKey .= '_id';
 
-		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
-		$lb_tableExists = in_array($ls_attributesTable, $la_tables);
+		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		$tableExists = in_array($attributesTableName, $tables);
 
-		if (isset($la_diff['deleted'])) {
-			//For now, the sheer existence of the deleted key is enough since there's no undelete-method
-			if (!$lb_tableExists) {
-				//If the table does not exist, there's nothing to do.
+		if (isset($diff['deleted'])) {
+			// For now, the sheer existence of the deleted key is enough since there's no undelete-method
+			if (!$tableExists) {
+				// If the table does not exist, there's nothing to do.
 				return;
 			}
 
-			$lb_bakeOldModel = $this->buildAlterOldTableCommands($la_commands, $data, $ls_migrationsPath);
+			$bakeOldModel = $this->buildAlterOldTableCommands($commands, $data, $migrationsPath);
 		}
 		else {
-			//The scope of the attribute has changed.
-			$lb_changedScope = isset($la_diff['scope']);
-			if ($lb_changedScope) {
-				//We not only need to add the attribute to the new table, but also remove it from the old one.
-				$lb_bakeOldModel = $this->buildAlterOldTableCommands($la_commands, $data, $ls_migrationsPath);
+			// The scope of the attribute has changed.
+			$changedScope = isset($diff['scope']);
+			if ($changedScope) {
+				// We not only need to add the attribute to the new table, but also remove it from the old one.
+				$bakeOldModel = $this->buildAlterOldTableCommands($commands, $data, $migrationsPath);
 			}
 
-			//The target attributes-table does not exist
-			if (!$lb_tableExists) {
-				//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-				$la_commands[] = 'bin' . DS . 'cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11]:index ' . $ls_column . $ls_migrationsPath;
+			// The target attributes-table does not exist
+			if (!$tableExists) {
+				// Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
+				$commands[] = 'bin' . DS . 'cake bake migration create_' . $attributesTableName . ' ' . $foreignKey . ':integer[11]:index ' . $column . $migrationsPath;
 			}
 			else {
-				$this->buildAlterTableCommands($la_commands, $data, $la_diff, $lb_changedScope, $ls_column, $ls_migrationsPath);
+				$this->buildAlterTableCommands($commands, $data, $diff, $changedScope, $column, $migrationsPath);
 			}
 		}
 
 		// If the last command is "sleep 1", remove it.
-		if (end($la_commands) === 'sleep 1') {
-			array_pop($la_commands);
+		if (end($commands) === 'sleep 1') {
+			array_pop($commands);
 		}
 
-		$this->createJob($la_commands, $data, $lb_scopeIsPageRole, $lb_bakeOldModel);
+		$this->createJob($commands, $data, $scopeIsPageRole, $bakeOldModel);
 	}
 
 
@@ -135,21 +134,21 @@ class UpsertTask extends Task {
 	 * @return array
 	 */
 	protected function getTypeAndLength(?string $type): array {
-		$ls_type = $type ?: 'varchar(255)';
+		$type = $type ?: 'varchar(255)';
 
-		if (!preg_match(AttributesTable::TYPE_PATTERN, $ls_type, $la_typeMatches, PREG_UNMATCHED_AS_NULL)) {
+		if (!preg_match(AttributesTable::TYPE_PATTERN, $type, $typeMatches, PREG_UNMATCHED_AS_NULL)) {
 			return ['string', '255'];
 		}
 
-		$lo_reflector = new ReflectionClass(AdapterInterface::class);
-		$lo_collection = new Collection($lo_reflector->getConstants());
+		$reflector = new ReflectionClass(AdapterInterface::class);
+		$collection = new Collection($reflector->getConstants());
 
-		$la_validTypes = $lo_collection->filter(function ($value, $constant) {
+		$validTypes = $collection->filter(function ($value, $constant) {
 			return str_starts_with($constant, 'PHINX_TYPE_');
 		})->toArray();
 
-		if (empty($la_typeMatches[1]) || !in_array($la_typeMatches[1], $la_validTypes)) {
-			$la_typeMatches[1] = match ($la_typeMatches[1]) {
+		if (empty($typeMatches[1]) || !in_array($typeMatches[1], $validTypes)) {
+			$typeMatches[1] = match ($typeMatches[1]) {
 				'int' => 'integer',
 				'tinyint' => 'tinyinteger',
 				default => 'string',
@@ -157,7 +156,7 @@ class UpsertTask extends Task {
 		}
 
 
-		return [$la_typeMatches[1], $la_typeMatches[2] ?: null];
+		return [$typeMatches[1], $typeMatches[2] ?: null];
 	}
 
 
@@ -169,14 +168,14 @@ class UpsertTask extends Task {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function buildAlterOldTableCommands(array &$commands, array $data, string $migrationsPath): bool {
-		$ls_oldAttributesTable = 'attributes_' . $data['old']['scope'];
+		$oldAttributesTableName = 'attributes_' . $data['old']['scope'];
 
-		$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_oldAttributesTable);
+		$schema = ConnectionManager::get('default')->getSchemaCollection()->describe($oldAttributesTableName);
 
-		$ls_oldTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_oldAttributesTable) . 'Table.php';
-		$ls_oldEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_oldAttributesTable) . '.php';
+		$oldTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($oldAttributesTableName) . 'Table.php';
+		$oldEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($oldAttributesTableName) . '.php';
 
-		$lb_bakeOldModel = true;
+		$bakeOldModel = true;
 
 		/*
 		 * If there are three or fewer columns in the table, the old attributes-table is no longer required.
@@ -184,42 +183,39 @@ class UpsertTask extends Task {
 		 * Why 3, you ask?
 		 * One is the attribute that's getting changed and the other two are the `id`- and the `(parent)_id`-column.
 		 */
-		if (count($lo_schema->columns()) <= 3) {
+		if (count($schema->columns()) <= 3) {
 			//Bake a `drop`-migration
-			/** @noinspection PhpVariableNamingConventionInspection */
-				$commands[] = 'bin' . DS . 'cake bake migration drop_' . $ls_oldAttributesTable . $migrationsPath;
+			$commands[] = 'bin' . DS . 'cake bake migration drop_' . $oldAttributesTableName . $migrationsPath;
 
 			//Remove both the table and the entity files from the custom directory.
-			if (file_exists($ls_oldTableFile)) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$commands[] = 'unlink ' . $ls_oldTableFile;
+			if (file_exists($oldTableFile)) {
+				$commands[] = 'unlink ' . $oldTableFile;
 			}
-			if (file_exists($ls_oldEntityFile)) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$commands[] = 'unlink ' . $ls_oldEntityFile;
+			if (file_exists($oldEntityFile)) {
+				$commands[] = 'unlink ' . $oldEntityFile;
 			}
 
-			$lb_bakeOldModel = false;
+			$bakeOldModel = false;
 		}
 		else {
-			if (file_exists($ls_oldTableFile)) {
-				if (!is_writeable($ls_oldTableFile)) {
+			if (file_exists($oldTableFile)) {
+				if (!is_writeable($oldTableFile)) {
 					throw new QueueException(
 						sprintf(
 							'Cannot bake migration file `%s` in `%s`. Make sure the file is writeable for the cronjob user.',
-							$ls_oldTableFile,
+							$oldTableFile,
 							self::class
 						)
 					);
 				}
 			}
 
-			if (file_exists($ls_oldEntityFile)) {
-				if (!is_writeable($ls_oldEntityFile)) {
+			if (file_exists($oldEntityFile)) {
+				if (!is_writeable($oldEntityFile)) {
 					throw new QueueException(
 						sprintf(
 							'Cannot bake migration file `%s` in `%s`. Make sure the file is writeable for the cronjob user.',
-							$ls_oldEntityFile,
+							$oldEntityFile,
 							self::class
 						)
 					);
@@ -227,19 +223,17 @@ class UpsertTask extends Task {
 			}
 
 			//Bake a `remove`-migration
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$commands[] = 'bin' . DS . 'cake bake migration remove_' . ($data['old']['identifier'] ?? $data['new']['identifier']) . '_from_' . $ls_oldAttributesTable . ' ' . $data['old']['identifier'] . $migrationsPath;
+			$commands[] = 'bin' . DS . 'cake bake migration remove_' . ($data['old']['identifier'] ?? $data['new']['identifier']) . '_from_' . $oldAttributesTableName . ' ' . $data['old']['identifier'] . $migrationsPath;
 		}
 
 		/*
 		 * Sleep for one second. Otherwise, the migration that removes the column from the old table
 		 * has the same "version" as the migration that adds the column to the new table.
 		*/
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$commands[] = 'sleep 1';
 
 
-		return $lb_bakeOldModel;
+		return $bakeOldModel;
 	}
 
 
@@ -256,41 +250,36 @@ class UpsertTask extends Task {
 			return;
 		}
 
-		$ls_attributesTable = 'attributes_' . $data['new']['scope'];
+		$attributesTableName = 'attributes_' . $data['new']['scope'];
 
 		//Migrate all the newly baked migrations
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 		//Clear the database schema
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		//And bake the model
-		$ls_forPageRole = $scopeIsPageRole ? ' --for-pagerole ' . $data['new']['scope'] : null;
+		$forPageRole = $scopeIsPageRole ? ' --for-pagerole ' . $data['new']['scope'] : null;
 
 		if (empty($data['new']['deleted'])) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$commands[] = 'bin' . DS . 'cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
+			$commands[] = 'bin' . DS . 'cake bake model ' . $attributesTableName . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $forPageRole;
 		}
 
 		if ($bakeOldModel) {
 			//If the old table was changed but still exists, bake the model for the old table as well.
-			$ls_forPageRole = null;
+			$forPageRole = null;
 
-			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+			$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-			if ($ls_pageRoleEnum::tryFromName($data['old']['scope'])) {
-				$ls_forPageRole = ' --for-pagerole ' . $data['old']['scope'];
+			if ($pageRoleEnum::tryFromName($data['old']['scope'])) {
+				$forPageRole = ' --for-pagerole ' . $data['old']['scope'];
 			}
 
-			$ls_oldAttributesTable = 'attributes_' . $data['old']['scope'];
+			$oldAttributesTable = 'attributes_' . $data['old']['scope'];
 
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$commands[] = 'bin' . DS . 'cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
+			$commands[] = 'bin' . DS . 'cake bake model ' . $oldAttributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $forPageRole;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$commands[] = 'bin' . DS . 'cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
@@ -317,29 +306,29 @@ class UpsertTask extends Task {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function buildAlterTableCommands(array &$commands, array $data, array $diff, bool $changedScope, string $column, string $migrationsPath): void {
-		$ls_attributesTable = 'attributes_' . $data['new']['scope'];
+		$attributesTableName = 'attributes_' . $data['new']['scope'];
 
-		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
-		$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
+		$tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($attributesTableName) . 'Table.php';
+		$entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($attributesTableName) . '.php';
 
-		if (file_exists($ls_tableFile)) {
-			if (!is_writeable($ls_tableFile)) {
+		if (file_exists($tableFile)) {
+			if (!is_writeable($tableFile)) {
 				throw new QueueException(
 					sprintf(
 						'Cannot bake migration file `%s` in `%s`. Make sure the file is writeable for the cronjob user.',
-						$ls_tableFile,
+						$tableFile,
 						self::class
 					)
 				);
 			}
 		}
 
-		if (file_exists($ls_entityFile)) {
-			if (!is_writeable($ls_entityFile)) {
+		if (file_exists($entityFile)) {
+			if (!is_writeable($entityFile)) {
 				throw new QueueException(
 					sprintf(
 						'Cannot bake migration file `%s` in `%s`. Make sure the file is writeable for the cronjob user.',
-						$ls_entityFile,
+						$entityFile,
 						self::class
 					)
 				);
@@ -349,22 +338,19 @@ class UpsertTask extends Task {
 		//Column is renamed but only if the scope is still the same.
 		if (!$changedScope && isset($diff['identifier'])) {
 			//The scope has not changed, but the identifier has: alter the column
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$commands[] = 'bin' . DS . 'cake bake migration alter_' . $data['old']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $column . $migrationsPath;
+			$commands[] = 'bin' . DS . 'cake bake migration alter_' . $data['old']['identifier'] . '_on_' . $attributesTableName . ' ' . $column . $migrationsPath;
 		}
 		else {
-			$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_attributesTable);
-			$lb_columnExists = $lo_schema->hasColumn($data['new']['identifier']);
+			$schema = ConnectionManager::get('default')->getSchemaCollection()->describe($attributesTableName);
+			$columnExists = $schema->hasColumn($data['new']['identifier']);
 
-			if (!$lb_columnExists) {
+			if (!$columnExists) {
 				//The column does not exist in the target table? Add it.
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$commands[] = 'bin' . DS . 'cake bake migration add_' . $data['new']['identifier'] . '_to_' . $ls_attributesTable . ' ' . $column . $migrationsPath;
+				$commands[] = 'bin' . DS . 'cake bake migration add_' . $data['new']['identifier'] . '_to_' . $attributesTableName . ' ' . $column . $migrationsPath;
 			}
 			else {
 				//The column does exist in the target table? Alter it.
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$commands[] = 'bin' . DS . 'cake bake migration alter_' . $data['new']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $column . $migrationsPath;
+				$commands[] = 'bin' . DS . 'cake bake migration alter_' . $data['new']['identifier'] . '_on_' . $attributesTableName . ' ' . $column . $migrationsPath;
 			}
 		}
 	}

@@ -62,7 +62,6 @@ class MenuItemLinkTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructWithStringLink(): void {
 		$link = new MenuItemLink('https://example.com');
@@ -79,7 +78,6 @@ class MenuItemLinkTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructWithExternalLink(): void {
 		$link = new MenuItemLink('https://example.com', true);
@@ -96,7 +94,6 @@ class MenuItemLinkTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructWithControllerAction(): void {
 		$link = new MenuItemLink('Users::view');
@@ -110,7 +107,6 @@ class MenuItemLinkTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructWithControllerActionAndParams(): void {
 		$link = new MenuItemLink('Users::view::id:123');
@@ -124,7 +120,6 @@ class MenuItemLinkTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructWithObjectLink(): void {
 		$linkObject = new stdClass();
@@ -146,7 +141,6 @@ class MenuItemLinkTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructWithNestedObjectUrl(): void {
 		$linkObject = new stdClass();
@@ -164,7 +158,6 @@ class MenuItemLinkTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructForFrontend(): void {
 		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
@@ -193,7 +186,6 @@ class MenuItemLinkTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructForFrontendWithParams(): void {
 		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
@@ -222,7 +214,6 @@ class MenuItemLinkTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::getAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributes(): void {
 		$link = new MenuItemLink('https://example.com', true);
@@ -242,7 +233,6 @@ class MenuItemLinkTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::setRel()
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::getRel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetRel(): void {
 		$link = new MenuItemLink('https://example.com');
@@ -265,7 +255,6 @@ class MenuItemLinkTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::setTarget()
 	 * @see \Awyiss\Utility\Menu\MenuItemLink::getTarget()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetTarget(): void {
 		$link = new MenuItemLink('https://example.com');

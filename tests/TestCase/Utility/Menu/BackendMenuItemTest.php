@@ -54,7 +54,6 @@ class BackendMenuItemTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -100,7 +99,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithMinimalProperties(): void {
 		$menuItem = new BackendMenuItem($this->menuEntry, $this->menuConfig);
@@ -117,7 +115,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithObjectAndMinimalProperties(): void {
 		$menuEntry = new stdClass();
@@ -140,7 +137,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorUsesIdWhenIdentifierNotSet(): void {
 		$menuEntry = new stdClass();
@@ -160,7 +156,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithLink(): void {
 		$link = new stdClass();
@@ -188,7 +183,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithLinkForExistingRoute(): void {
 		$link = new stdClass();
@@ -206,7 +200,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithLinkForNonExistingRoute(): void {
 		$link = new stdClass();
@@ -226,7 +219,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::hasChildren()
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::children()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithChildren(): void {
 		$childEntry = new stdClass();
@@ -252,7 +244,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::setAccessible()
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::isAccessible()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessible(): void {
 		$menuItem = new BackendMenuItem($this->menuEntry, $this->menuConfig);
@@ -279,7 +270,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::setVisible()
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::isVisible()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsVisible(): void {
 		$menuItem = new BackendMenuItem($this->menuEntry, $this->menuConfig);
@@ -305,7 +295,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::getLabel()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabel(): void {
 		$menuItem = new BackendMenuItem($this->menuEntry, $this->menuConfig);
@@ -322,7 +311,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::isCurrentRoute()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsCurrentRoute(): void {
 		// Set up a link
@@ -363,7 +351,6 @@ class BackendMenuItemTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::isCurrentRoute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \ReflectionException
 	 */
 	public function testIsCurrentRouteWithContentsController(): void {
@@ -393,7 +380,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::isCurrentRoute()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsCurrentRouteWithFormElementsController(): void {
 		// Set up request with FormElements controller
@@ -422,7 +408,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::isCurrentRoute()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsCurrentRouteWithMenuEntriesController(): void {
 		// Set up request with MenuEntries controller
@@ -455,7 +440,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetSet()
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetUnset()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGettersAndArrayAccess(): void {
 		$menuItem = new BackendMenuItem($this->menuEntry, $this->menuConfig);
@@ -475,7 +459,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetSet()
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetUnset()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOffsetSetIsDisabled(): void {
 		$menuItem = new BackendMenuItem($this->menuEntry, $this->menuConfig);
@@ -491,7 +474,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetSet()
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::offsetUnset()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOffsetUnsetIsDisabled(): void {
 		$menuItem = new BackendMenuItem($this->menuEntry, $this->menuConfig);
@@ -507,7 +489,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::getTitle()
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::convertTitle()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testObjectTitleTranslation(): void {
 		$titleObj = new stdClass();
@@ -528,7 +509,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibility(): void {
 		// Test with link - should be visible
@@ -553,7 +533,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityNoLink(): void {
 		// Item with no link should be invisible
@@ -578,7 +557,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityWithIdentityAllowed(): void {
 		// Create menu item with access control
@@ -611,7 +589,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityWithIdentityDenied(): void {
 		// Create menu item with access control
@@ -643,7 +620,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityReset(): void {
 		$this->menuEntry->link = '/test-url';
@@ -667,7 +643,6 @@ class BackendMenuItemTest extends TestCase {
 	 * Data provider for complex hierarchy tests.
 	 *
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function complexHierarchyProvider(): array {
 		// Create a complex hierarchy with multiple branches
@@ -786,7 +761,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityComplexHierarchyDefault(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
@@ -848,7 +822,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityComplexHierarchyFullyAccessibleLeafs(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
@@ -884,7 +857,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityComplexHierarchyMixedAccessibility(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
@@ -921,7 +893,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityComplexHierarchyNoAccessibleLeafsWithLinkAndAccess(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
@@ -958,7 +929,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityComplexHierarchyNoAccessibleLeafsWithLinkAndNoAccess(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
@@ -994,7 +964,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityComplexHierarchyNoAccessibleLeafsWithoutLink(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
@@ -1029,7 +998,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::setIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetIdentityResetsVisibility(): void {
 		// Create a menu item with access control
@@ -1072,7 +1040,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityComplexHierarchyWithIdentity(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, $this->menuConfig);
@@ -1121,7 +1088,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::hasCurrentRoute()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasCurrentRoute(): void {
 		// Create parent with a child that matches a route
@@ -1165,7 +1131,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::hasCurrentRoute()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasCurrentRouteWithContentsController(): void {
 		// Set up request with Contents controller
@@ -1202,7 +1167,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::hasCurrentRoute()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasCurrentRouteWithFormElementsController(): void {
 		// Set up request with FormElements controller
@@ -1239,7 +1203,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::hasCurrentRoute()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasCurrentRouteWithMenuEntriesController(): void {
 		// Set up request with MenuEntries controller
@@ -1274,7 +1237,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::setChildren()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetChildren(): void {
 		// Create parent with multiple children
@@ -1316,7 +1278,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuItem::getLevel()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLevelPropagation(): void {
 		// Create a deeply nested structure: root -> parent -> child -> grandchild
@@ -1372,7 +1333,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @param \Awyiss\Model\Entity\BackendMenuEntry $root
 	 * @return void
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMenuClassAndMenuItemClass(BackendMenuEntry $root): void {
 		$root = new BackendMenuItem($root, [
@@ -1401,7 +1361,6 @@ class BackendMenuItemTest extends TestCase {
 	 * @param mixed $value
 	 * @return void
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setStaticProperty(string $class, string $property, mixed $value): void {
 		$reflectionClass = new ReflectionClass($class);

@@ -12,7 +12,7 @@ class FormEntriesCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'form_id' => 1,
@@ -69,7 +69,7 @@ class FormEntriesCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('form_entries');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('form_entries');
+		$table->insert($data)->save();
 	}
 }

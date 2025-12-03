@@ -17,7 +17,6 @@ class AddressTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Address::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructor(): void {
 		$address = new Address(
@@ -47,7 +46,6 @@ class AddressTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Address::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithMinimalParameters(): void {
 		$address = new Address(51.5074, -0.1278);
@@ -67,7 +65,6 @@ class AddressTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Address::fromArray()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromArrayWithValidData(): void {
 		$data = [
@@ -100,7 +97,6 @@ class AddressTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Address::fromArray()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromArrayWithAlternativeKeys(): void {
 		$data = [
@@ -125,7 +121,6 @@ class AddressTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Address::fromArray()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromArrayWithInvalidData(): void {
 		$this->assertNull(Address::fromArray(['lng' => -0.1278, 'name' => 'London'])); // Missing lat
@@ -137,7 +132,6 @@ class AddressTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Address::fromOrs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromOrs(): void {
 		$orsData = [
@@ -171,7 +165,6 @@ class AddressTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Address::fromOrs()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromOrsWithInvalidData(): void {
 		$this->assertNull(Address::fromOrs([
@@ -195,7 +188,6 @@ class AddressTest extends TestCase {
 	 * @see \Awyiss\Utility\Route\Address::setCity()
 	 * @see \Awyiss\Utility\Route\Address::setCountry()
 	 * @see \Awyiss\Utility\Route\Address::setData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetters(): void {
 		$address = new Address(0, 0);
@@ -232,7 +224,6 @@ class AddressTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Address::toArray()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToArray(): void {
 		$address = new Address(

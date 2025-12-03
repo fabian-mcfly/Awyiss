@@ -42,37 +42,37 @@ class DesignMiddleware implements MiddlewareInterface {
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		// Determine the environment the application is running in
-		$ls_configEnv = defined('CONFIG_ENV') ? CONFIG_ENV : 'production';
+		$configEnv = defined('CONFIG_ENV') ? CONFIG_ENV : 'production';
 
 		// Is autoCompile set to true in the configuration?
-		$lb_shouldCompile = Configure::read('Design.autoCompile');
+		$shouldCompile = Configure::read('Design.autoCompile');
 		// Should not compile if the CONFIG_ENV resembles a production environment
-		$lb_shouldCompile = $lb_showExceptions = $lb_shouldCompile && !in_array($ls_configEnv, ['production', 'prod', 'live']);
+		$shouldCompile = $showExceptions = $shouldCompile && !in_array($configEnv, ['production', 'prod', 'live']);
 
 		// Check if the SCSS files must be compiled
-		$lb_mustCompile = false;
+		$mustCompile = false;
 
 		// Check if the request is allowed to compile SCSS files
-		$lb_allowCompile = Configure::read('Design.allowCompile');
-		if (is_callable($lb_allowCompile)) {
-			$lb_allowCompile = $lb_allowCompile($request);
+		$allowCompile = Configure::read('Design.allowCompile');
+		if (is_callable($allowCompile)) {
+			$allowCompile = $allowCompile($request);
 		}
 
 		// Check if the request has a query parameter to compile SCSS files
-		$la_queryParams = $request->getQueryParams();
-		if ($lb_allowCompile && ($la_queryParams['compileScss'] ?? false) === 'true') {
-			$lb_mustCompile = true;
+		$queryParams = $request->getQueryParams();
+		if ($allowCompile && ($queryParams['compileScss'] ?? false) === 'true') {
+			$mustCompile = true;
 		}
 
 		// If the SCSS files need to be compiled, compile them
-		if ($lb_shouldCompile || $lb_mustCompile) {
-			$this->compileScss($lb_mustCompile, null, $lb_showExceptions);
+		if ($shouldCompile || $mustCompile) {
+			$this->compileScss($mustCompile, null, $showExceptions);
 		}
 
 		// Add the 'design' attribute to the request
-		$lo_request = $request->withAttribute('design', $this);
+		$request = $request->withAttribute('design', $this);
 
-		return $handler->handle($lo_request);
+		return $handler->handle($request);
 	}
 
 
@@ -88,15 +88,15 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	public function compileScss(bool $mustCompile = false, ?string $realm = null, bool $showExceptions = false): void {
-		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
-		$ls_compilerClass = static::getCompilerClass();
+		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $compilerClass */
+		$compilerClass = static::getCompilerClass();
 
 		// Set the exception handling for the ScssCompiler
-		$ls_compilerClass::showExceptions($showExceptions);
+		$compilerClass::showExceptions($showExceptions);
 
 		// Discover the SCSS files in the realm
 		try {
-			$la_files = $ls_compilerClass::discoverRealmFiles($realm ?? Awyiss::getRealm());
+			$files = $compilerClass::discoverRealmFiles($realm ?? Awyiss::getRealm());
 		}
 		catch (InvalidArgumentException) {
 			return;
@@ -107,26 +107,26 @@ class DesignMiddleware implements MiddlewareInterface {
 		 * filter out files that are older than the compiled CSS files.
 		 */
 		if (!$mustCompile) {
-			$la_files = $this->filterOldFiles($la_files);
+			$files = $this->filterOldFiles($files);
 		}
 
-		if (!$la_files) {
+		if (!$files) {
 			return;
 		}
 
 		try {
 			// Compile the SCSS files
-			$la_result = $ls_compilerClass::compileFolders($la_files, $this->getDesignVariables($realm ?? Awyiss::getRealm()));
+			$result = $compilerClass::compileFolders($files, $this->getDesignVariables($realm ?? Awyiss::getRealm()));
 		}
 		catch (SassException $ex) {
-			$this->resetFileTimes($la_files);
+			$this->resetFileTimes($files);
 
 			throw $ex;
 		}
 
 		// Reset the last modified times of the files if the result contains at least one `false`
-		if (in_array(false, $la_result, true)) {
-			$this->resetFileTimes($la_files);
+		if (in_array(false, $result, true)) {
+			$this->resetFileTimes($files);
 		}
 	}
 
@@ -147,16 +147,16 @@ class DesignMiddleware implements MiddlewareInterface {
 			return [];
 		}
 
-		$lo_designTable = FactoryLocator::get('Table')->get('Designs');
-		/** @var \Awyiss\Model\Entity\Design $lo_design */
-		$lo_design = $lo_designTable->find()->where(['in_use' => true])->first();
+		$designTable = FactoryLocator::get('Table')->get('Designs');
+		/** @var \Awyiss\Model\Entity\Design $design */
+		$design = $designTable->find()->where(['in_use' => true])->first();
 
-		if (!$lo_design) {
+		if (!$design) {
 			$this->designVariables[ $realm ] = [];
 			return [];
 		}
 
-		$this->designVariables[ $realm ] = $lo_design->settings ?? [];
+		$this->designVariables[ $realm ] = $design->settings ?? [];
 
 		return $this->designVariables[ $realm ];
 	}
@@ -180,29 +180,29 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @return array
 	 */
 	protected function filterOldFiles(array $files): array {
-		$la_files = [];
+		$filteredFiles = [];
 
-		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
-		$ls_compilerClass = static::getCompilerClass();
+		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $compilerClass */
+		$compilerClass = static::getCompilerClass();
 
-		/** @var \Awyiss\Utility\Design\ScssFilesCollection$lo_files */
-		foreach ($files as $ls_path => $lo_files) {
+		/** @var \Awyiss\Utility\Design\ScssFilesCollection $folderFiles */
+		foreach ($files as $path => $folderFiles) {
 			// Get a collection of css files in the sibling directory of ScssFilesCollection::$folderPath
-			$lo_cssFiles = $ls_compilerClass::discoverFiles(dirname($lo_files->getFolderPath()) . DS . 'css');
+			$cssFiles = $compilerClass::discoverFiles(dirname($folderFiles->getFolderPath()) . DS . 'css');
 
 			// If the css files are newer than the scss files, return null.
 			if (
-				$lo_cssFiles->getLastModified() &&
-				$lo_files->getLastModified() &&
-				$lo_cssFiles->getLastModified()->greaterThan($lo_files->getLastModified())
+				$cssFiles->getLastModified() &&
+				$folderFiles->getLastModified() &&
+				$cssFiles->getLastModified()->greaterThan($folderFiles->getLastModified())
 			) {
 				continue;
 			}
 
-			$la_files[ $ls_path ] = $lo_files;
+			$filteredFiles[ $path ] = $folderFiles;
 		}
 
-		return $la_files;
+		return $filteredFiles;
 	}
 
 
@@ -215,23 +215,23 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @return void
 	 */
 	protected function resetFileTimes(array $files): void {
-		foreach ($files as $ls_folderPath => $lo_files) {
+		foreach ($files as $folderPath => $folderFiles) {
 			// If the value is not an instance of ScssFilesCollection, skip it.
-			if (!$lo_files instanceof ScssFilesCollection) {
+			if (!$folderFiles instanceof ScssFilesCollection) {
 				continue;
 			}
 
-			$li_lastModified = $lo_files->getLastModified()?->subSeconds(10)->timestamp;
+			$lastModified = $folderFiles->getLastModified()?->subSeconds(10)->timestamp;
 
-			foreach ($lo_files->getMainFiles() as $lo_file) {
+			foreach ($folderFiles->getMainFiles() as $file) {
 				// Set the css file path based on the scss file
-				$ls_cssFilename = substr($lo_file->getFilename(), 0, -4) . 'css';
+				$cssFilename = substr($file->getFilename(), 0, -4) . 'css';
 
 				// Replace 'scss' with 'css' in the file path to get the css folder path
-				$ls_cssFolderPath = rtrim(str_replace($ls_folderPath . 'scss', $ls_folderPath . 'css', $lo_file->getPath()), DS) . DS;
+				$cssFolderPath = rtrim(str_replace($folderPath . 'scss', $folderPath . 'css', $file->getPath()), DS) . DS;
 
-				if (file_exists($ls_cssFolderPath . $ls_cssFilename)) {
-					touch($ls_cssFolderPath . $ls_cssFilename, $li_lastModified);
+				if (file_exists($cssFolderPath . $cssFilename)) {
+					touch($cssFolderPath . $cssFilename, $lastModified);
 				}
 			}
 		}
@@ -246,7 +246,6 @@ class DesignMiddleware implements MiddlewareInterface {
 			return static::$compilerClass;
 		}
 
-		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_className */
 		static::$compilerClass = App::className('ScssCompiler', 'Utility/Design');
 
 		return static::$compilerClass;

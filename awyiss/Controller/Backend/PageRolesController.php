@@ -32,10 +32,10 @@ class PageRolesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->PageRoles->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->PageRoles->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -47,20 +47,20 @@ class PageRolesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_pageRoles = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$pageRoles = $this->paginate($query);
 		}
 		else {
-			$lo_pageRoles = $lo_query->all();
+			$pageRoles = $query->all();
 		}
 
 		$this->set([
-			'pageRoles' => $lo_pageRoles,
+			'pageRoles' => $pageRoles,
 			'attributes' => $this->PageRoles->getAttributes(),
-			'paginated' => $lb_paginated,
+			'paginated' => $paginated,
 		]);
 	}
 
@@ -74,14 +74,14 @@ class PageRolesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_pageRole = $this->PageRoles->newDefaultEntity();
+		$pageRole = $this->PageRoles->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_pageRole);
+			$this->save($pageRole);
 		}
 
 		$this->set([
-			'pageRole' => $lo_pageRole,
+			'pageRole' => $pageRole,
 		]);
 	}
 
@@ -96,13 +96,13 @@ class PageRolesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\PageRole $lo_pageRole
+		 * @var \Awyiss\Model\Entity\PageRole $pageRole
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_pageRole = $this->PageRoles->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_pageRole) {
+		$pageRole = $this->PageRoles->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$pageRole) {
 			$this->Flash->error(__('record_not_found'));
 
 
@@ -110,11 +110,11 @@ class PageRolesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_pageRole, 'edit');
+			$this->save($pageRole, 'edit');
 		}
 
 		$this->set([
-			'pageRole' => $lo_pageRole,
+			'pageRole' => $pageRole,
 		]);
 	}
 
@@ -131,16 +131,16 @@ class PageRolesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var PageRole $lo_pageRole */
-		$lo_pageRole = $this->PageRoles->findById($id)->first();
-		if (!$lo_pageRole) {
+		/** @var \Awyiss\Model\Entity\PageRole $pageRole */
+		$pageRole = $this->PageRoles->findById($id)->first();
+		if (!$pageRole) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->PageRoles->delete($lo_pageRole)) {
+		if ($this->PageRoles->delete($pageRole)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -148,8 +148,8 @@ class PageRolesController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_pageRole->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($pageRole->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -165,23 +165,23 @@ class PageRolesController extends Controller {
 	 * @return void
 	 */
 	protected function save(PageRole $pageRole, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->PageRoles->hasAttributes()) {
-			$la_associated[] = $this->PageRoles->getAttributesTableName(true);
+			$associated[] = $this->PageRoles->getAttributesTableName(true);
 			$pageRole->setAccess('attributes', true);
 		}
 
 		$this->PageRoles->patchEntity($pageRole, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->PageRoles->save($pageRole, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->PageRoles->save($pageRole, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -195,9 +195,9 @@ class PageRolesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($pageRole->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($pageRole->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}

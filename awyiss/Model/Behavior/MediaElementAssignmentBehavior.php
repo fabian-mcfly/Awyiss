@@ -60,12 +60,12 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 	 * @param array $config
 	 */
 	public function __construct(Table $table, array $config = []) {
-		$la_config = $config + [
+		$config += [
 			'referenceName' => $this->getScope($table),
 			'tableLocator' => $table->associations()->getTableLocator(),
 		];
 
-		parent::__construct($table, $la_config);
+		parent::__construct($table, $config);
 	}
 
 
@@ -105,19 +105,19 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 			]);
 		}
 		else {
-			$lo_reflection = new ReflectionClass($this->table());
+			$reflection = new ReflectionClass($this->table());
 
-			$la_attributes = $lo_reflection->getAttributes(MediaElementAssignable::class);
+			$attributes = $reflection->getAttributes(MediaElementAssignable::class);
 
-			if (!$la_attributes) {
+			if (!$attributes) {
 				return;
 			}
 
-			$lo_attributeInstance = $la_attributes[0]->newInstance();
+			$attributeInstance = $attributes[0]->newInstance();
 
 			$this->setConfig('assignable', [
-				'entityLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL),
-				'modelLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
+				'entityLevel' => (bool)($attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL),
+				'modelLevel' => (bool)($attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
 			]);
 
 
@@ -136,10 +136,10 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 
 		$this->assignmentsTable = $this->getTableLocator()->get('MediaElementAssignments', ['allowFallbackClass' => false]);
 
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $this->table()->getEntityClass();
+		/** @var \Awyiss\Model\Entity $entityClass */
+		$entityClass = $this->table()->getEntityClass();
 
-		$ls_entityClass::addFieldMapping('media_element_assignments', 'mediaElementAssignments');
+		$entityClass::addFieldMapping('media_element_assignments', 'mediaElementAssignments');
 	}
 
 
@@ -169,14 +169,15 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 	 * @return string
 	 */
 	protected function getScope(Table $table): string {
-		$ls_name = namespaceSplit($table::class);
-		$ls_name = substr((string)end($ls_name), 0, -5);
-		if (empty($ls_name)) {
-			$ls_name = $table->getTable() ?: $table->getAlias();
+		$name = namespaceSplit($table::class);
+		$name = substr((string)end($name), 0, -5);
+
+		if (empty($name)) {
+			$name = $table->getTable() ?: $table->getAlias();
 		}
 
 
-		return Inflector::underscore($ls_name);
+		return Inflector::underscore($name);
 	}
 
 
@@ -191,53 +192,51 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 			return [];
 		}
 
-		$la_options = $options;
-		unset($la_options['associated']);
+		unset($options['associated']);
 
 		return [
-			'media_element_assignments' => function (array $values, EntityInterface $entity) use ($la_options): array {
-				/** @var array<string, \Awyiss\Model\Entity\MediaElementAssignment> $la_publicationData */
-				$la_mediaElementAssignments = [];
+			'media_element_assignments' => function (array $values, EntityInterface $entity) use ($options): array {
+				$mediaElementAssignments = [];
 
-				$la_errors = [];
-				$lo_marshaller = $this->assignmentsTable->marshaller();
+				$errors = [];
+				$marshaller = $this->assignmentsTable->marshaller();
 
-				foreach ($values as $la_data) {
-					/** @var \Awyiss\Model\Entity\MediaElementAssignment|null $lo_entity */
-					$lo_entity = null;
-					if (!empty($la_data['id'])) {
+				foreach ($values as $data) {
+					/** @var \Awyiss\Model\Entity\MediaElementAssignment|null $mediaElementAssignment */
+					$mediaElementAssignment = null;
+					if (!empty($data['id'])) {
 						// Find the existing entity, if any, in `mediaElementAssignments`
-						$lo_entity = array_filter($entity->mediaElementAssignments ?? [], fn(MediaElementAssignment $entity) => $entity->id === (int)$la_data['id'])[0] ?? null;
+						$mediaElementAssignment = array_filter($entity->mediaElementAssignments ?? [], fn(MediaElementAssignment $entity) => $entity->id === (int)$data['id'])[0] ?? null;
 					}
 
-					if (!$lo_entity) {
-						$lo_entity = $this->assignmentsTable->newEmptyEntity();
+					if (!$mediaElementAssignment) {
+						$mediaElementAssignment = $this->assignmentsTable->newEmptyEntity();
 					}
 
-					$la_data['scope'] = $this->getConfig('referenceName');
+					$data['scope'] = $this->getConfig('referenceName');
 
-					$lo_marshaller->merge($lo_entity, $la_data, $la_options);
+					$marshaller->merge($mediaElementAssignment, $data, $options);
 
-					$la_dataErrors = $lo_entity->getErrors();
-					if ($la_dataErrors) {
-						$la_errors[] = $la_dataErrors;
+					$dataErrors = $mediaElementAssignment->getErrors();
+					if ($dataErrors) {
+						$errors[] = $dataErrors;
 					}
 
-					if ($lo_entity->mediaElementId === 0) {
+					if ($mediaElementAssignment->mediaElementId === 0) {
 						continue;
 					}
 
-					$la_mediaElementAssignments[] = $lo_entity;
+					$mediaElementAssignments[] = $mediaElementAssignment;
 				}
 
 				//Set errors into the root entity, so validation errors match the original form data position.
-				if ($la_errors) {
-					$entity->setErrors(['mediaElementAssignments' => $la_errors]);
+				if ($errors) {
+					$entity->setErrors(['mediaElementAssignments' => $errors]);
 				}
 
 				$entity->setDirty('mediaElementAssignments');
 
-				return $la_mediaElementAssignments;
+				return $mediaElementAssignments;
 			},
 		];
 	}

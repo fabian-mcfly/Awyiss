@@ -73,7 +73,6 @@ class AttributesNewsTable extends Table {
 	 *
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @return \Awyiss\ORM\RulesChecker
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(function (Entity $entity, array $options) use ($rules) {
@@ -82,9 +81,9 @@ class AttributesNewsTable extends Table {
 				return true;
 			}
 
-			$lo_existsIn = $rules->existsIn(['pageId'], 'News');
+			$existsIn = $rules->existsIn(['pageId'], 'News');
 
-			return $lo_existsIn($entity, $options);
+			return $existsIn($entity, $options);
 		}, 'validPageId', ['errorField' => 'pageId']);
 
 		return $rules;

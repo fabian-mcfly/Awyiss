@@ -21,7 +21,6 @@ class AwyissTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Awyiss::console()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConsoleAddsCommands(): void {
 		$commands = $this->getMockBuilder(CommandCollection::class)->onlyMethods(['addMany'])->getMock();
@@ -61,7 +60,6 @@ class AwyissTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Awyiss::setRealm()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetRealm(): void {
 		$eventManager = $this->createMock(EventManager::class);
@@ -93,7 +91,6 @@ class AwyissTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Awyiss::getRealms()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetRealms(): void {
 		$expectedRealms = ['Frontend', 'Backend'];
@@ -104,7 +101,6 @@ class AwyissTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Awyiss::getDatabaseConfiguration()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDatabaseConfiguration(): void {
 		$frontendLanguage = 'en';
@@ -146,7 +142,6 @@ class AwyissTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Awyiss::getFileConfiguration()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFileConfiguration(): void {
 		$result = Awyiss::getFileConfiguration([]);
@@ -167,7 +162,6 @@ class AwyissTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Awyiss::loadUserConfiguration()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddUserConfiguration(): void {
 		$this->login();

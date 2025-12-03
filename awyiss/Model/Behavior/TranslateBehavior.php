@@ -35,14 +35,14 @@ class TranslateBehavior extends BaseTranslateBehavior {
 			$this->getStrategy()->setLocale($config['locale']);
 		}
 
-		foreach (LocaleMiddleware::getLanguages() as $la_languages) {
-			foreach ($la_languages as $lo_language) {
+		foreach (LocaleMiddleware::getLanguages() as $languages) {
+			foreach ($languages as $language) {
 				//If a language already exist, and it's active, do not use another one with the same shortcode.
-				if (isset($this->languages[ $lo_language->shortcode ]) && $this->languages[ $lo_language->shortcode ]->active) {
+				if (isset($this->languages[ $language->shortcode ]) && $this->languages[ $language->shortcode ]->active) {
 					continue;
 				}
 
-				$this->languages[ $lo_language->shortcode ] = $lo_language;
+				$this->languages[ $language->shortcode ] = $language;
 			}
 		}
 	}
@@ -72,27 +72,26 @@ class TranslateBehavior extends BaseTranslateBehavior {
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
-		$ls_firstLanguageShortcode = array_key_first($this->languages);
-		$ls_currentLanguageShortcode = LocaleMiddleware::getLanguage($this->getConfig('realm') ?? LocaleMiddleware::getRealm())->shortcode;
+		$firstLanguageShortcode = array_key_first($this->languages);
+		$currentLanguageShortcode = LocaleMiddleware::getLanguage($this->getConfig('realm') ?? LocaleMiddleware::getRealm())->shortcode;
 
 		if (empty($data['_translations'])) {
 			return;
 		}
 
 		// Alle Energie auf die Deflektorschilde
-		$la_forcedFields = $this->getConfig('forcedFields', ['title']);
+		$forcedFields = $this->getConfig('forcedFields', ['title']);
 
-		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = $event->getSubject()->getEntityClass();
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = $event->getSubject()->getEntityClass();
 
-		foreach ($this->getConfig('fields') as $ls_field) {
-			$ls_field = $ls_entityClass::unmapField($ls_field);
+		foreach ($this->getConfig('fields') as $field) {
+			$field = $entityClass::unmapField($field);
 
 			// Set the main entity's field to the first language's translation
-			$data[ $ls_field ] = $data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? null;
+			$data[ $field ] = $data['_translations'][ $firstLanguageShortcode ][ $field ] ?? null;
 
 			/**
 			 * If the field is empty, the current language is not the first one,
@@ -110,16 +109,16 @@ class TranslateBehavior extends BaseTranslateBehavior {
 			 * If the main language's field remains empty, it will be set to the Spanish translation again.
 			 */
 			if (
-				!$data[ $ls_field ] &&
-				$ls_firstLanguageShortcode !== $ls_currentLanguageShortcode &&
-				in_array($ls_field, $la_forcedFields)
+				!$data[ $field ] &&
+				$firstLanguageShortcode !== $currentLanguageShortcode &&
+				in_array($field, $forcedFields)
 			) {
-				$data[ $ls_field ] = $data['_translations'][ $ls_currentLanguageShortcode ][ $ls_field ] ?? null;
+				$data[ $field ] = $data['_translations'][ $currentLanguageShortcode ][ $field ] ?? null;
 			}
 
-			if ($data[ $ls_field ] === '') {
-				$data[ $ls_field ] = null;
-				$data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] = null;
+			if ($data[ $field ] === '') {
+				$data[ $field ] = null;
+				$data['_translations'][ $firstLanguageShortcode ][ $field ] = null;
 			}
 		}
 	}
@@ -129,13 +128,13 @@ class TranslateBehavior extends BaseTranslateBehavior {
 	 * @inheritDoc
 	 */
 	protected function referenceName(Table $table): string {
-		$ls_name = namespaceSplit($table::class);
-		$ls_name = substr((string)end($ls_name), 0, -5);
-		if (empty($ls_name)) {
-			$ls_name = $table->getTable() ?: $table->getAlias();
+		$name = namespaceSplit($table::class);
+		$name = substr((string)end($name), 0, -5);
+		if (empty($name)) {
+			$name = $table->getTable() ?: $table->getAlias();
 		}
 
 
-		return Inflector::underscore($ls_name);
+		return Inflector::underscore($name);
 	}
 }

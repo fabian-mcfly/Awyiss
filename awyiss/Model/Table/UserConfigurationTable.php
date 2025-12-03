@@ -66,38 +66,38 @@ class UserConfigurationTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function buildCategories(): array {
-		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
-		$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
-		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+		/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
+		$datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$datatables = $datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
 
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
+		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
+		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
 			return Inflector::pluralize($pageRole->identifier);
 		})->toArray();
 
-		$la_configScopes = [];
-		foreach ($this->getScopes() as $ls_identifier => $ls_className) {
-			$ls_identifier = Inflector::underscore($ls_identifier);
+		$configScopes = [];
+		foreach ($this->getScopes() as $identifier => $className) {
+			$identifier = Inflector::underscore($identifier);
 
-			if (isset($la_pageRoles[ $ls_identifier ])) {
-				$la_configScopes[ $ls_identifier ] = $la_pageRoles[ $ls_identifier ]->label;
-
-				continue;
-			}
-
-			if (isset($la_datatables[ $ls_identifier ])) {
-				$la_configScopes[ $ls_identifier ] = $la_datatables[ $ls_identifier ]->label;
+			if (isset($pageRoles[ $identifier ])) {
+				$configScopes[ $identifier ] = $pageRoles[ $identifier ]->label;
 
 				continue;
 			}
 
-			$la_configScopes[ $ls_identifier ] = __d($ls_identifier, 'menu_title');
+			if (isset($datatables[ $identifier ])) {
+				$configScopes[ $identifier ] = $datatables[ $identifier ]->label;
+
+				continue;
+			}
+
+			$configScopes[ $identifier ] = __d($identifier, 'menu_title');
 		}
 
-		Arrays::naturalSort($la_configScopes);
+		Arrays::naturalSort($configScopes);
 
-		return $la_configScopes;
+		return $configScopes;
 	}
 
 
@@ -212,11 +212,11 @@ class UserConfigurationTable extends Table {
 
 
 		$rules->add(function (UserConfiguration $entity/*, array $options*/): bool {
-			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($entity->scope);
-			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
+			$configOptions = ConfigOptionsProvider::loadConfigOptions($entity->scope);
+			$configOption = $configOptions?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
 
 
-			return $lo_configOption && $lo_configOption->isPersonalizable();
+			return $configOption && $configOption->isPersonalizable();
 		}, 'configOptionIsPersonalizable', [
 			'errorField' => '_general',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_config_option_is_personalizable'),
@@ -225,15 +225,15 @@ class UserConfigurationTable extends Table {
 
 		//Validate the provided value for the scope, identifier and language.
 		$rules->add(function (UserConfiguration $entity/*, array $options*/): bool|string {
-			$lb_valid = ConfigOptionsProvider::validateConfigValue(
+			$valid = ConfigOptionsProvider::validateConfigValue(
 				$entity->scope,
 				Awyiss::REALM_BACKEND,
 				$entity->identifier,
 				$entity->value
 			);
 
-			if (!$lb_valid) {
-				$lx_value = ConfigOptionsProvider::typecastConfigValue(
+			if (!$valid) {
+				$value = ConfigOptionsProvider::typecastConfigValue(
 					$entity->scope,
 					Awyiss::REALM_BACKEND,
 					$entity->identifier,
@@ -242,17 +242,17 @@ class UserConfigurationTable extends Table {
 
 				//A typecast to null cannot be valid if the initial value wasn't null.
 				//This happens when one tries to json_decode a string, for example.
-				if ($entity->value !== null && $lx_value !== null) {
-					$lb_valid = ConfigOptionsProvider::validateConfigValue(
+				if ($entity->value !== null && $value !== null) {
+					$valid = ConfigOptionsProvider::validateConfigValue(
 						$entity->scope,
 						Awyiss::REALM_BACKEND,
 						$entity->identifier,
-						$lx_value
+						$value
 					);
 				}
 			}
 
-			return $lb_valid;
+			return $valid;
 		},
 		'validValue',
 		[
@@ -289,26 +289,27 @@ class UserConfigurationTable extends Table {
 
 		$this->configScopes = [];
 
-		$lo_identity = $this->getIdentity();
+		$identity = $this->getIdentity();
 
-		foreach (ConfigOptionsProvider::getConfigOptionsFiles() as $ls_scope => $ls_className) {
+		foreach (ConfigOptionsProvider::getConfigOptionsFiles() as $scope => $className) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			if (
 				// For now, contents are always accessible since accessing them depends on page roles
-				in_array($ls_scope, ['Contents', 'System'], true) ||
+				in_array($scope, ['Contents', 'System'], true) ||
 				// Form elements are accessible if the user has access to the Forms scope
 				(
-					$ls_scope === 'FormElements' &&
-					$lo_identity?->scopeIsAccessible('Forms', [], ['read', 'create', 'update', 'configure'])
+					$scope === 'FormElements' &&
+					$identity?->scopeIsAccessible('Forms', [], ['read', 'create', 'update', 'configure'])
 				) ||
 				// Menu entries are accessible if the user has access to the Menus scope
 				(
-					$ls_scope === 'MenuEntries' &&
-					$lo_identity?->scopeIsAccessible('Menus', [], ['read', 'create', 'update', 'configure'])
+					$scope === 'MenuEntries' &&
+					$identity?->scopeIsAccessible('Menus', [], ['read', 'create', 'update', 'configure'])
 				) ||
 				// The user has access to the scope if any access is granted
-				$lo_identity?->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure'])
+				$identity?->scopeIsAccessible($scope, [], ['read', 'create', 'update', 'configure'])
 			) {
-				$this->configScopes[ $ls_scope ] = $ls_className;
+				$this->configScopes[ $scope ] = $className;
 			}
 		}
 

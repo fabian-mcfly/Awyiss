@@ -19,7 +19,6 @@ use Customer\Model\Enum\PageRole;
 class ConfigOptionsProviderTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFiles(): void {
 		$files = ConfigOptionsProvider::getConfigOptionsFiles();
@@ -43,7 +42,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFilesLoaded(): void {
 		$files = ConfigOptionsProvider::getConfigOptionsFiles(true);
@@ -67,7 +65,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFile(): void {
 		$file = ConfigOptionsProvider::getConfigOptionsFile('dummy');
@@ -86,7 +83,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFileLoaded(): void {
 		$file = ConfigOptionsProvider::getConfigOptionsFile('dummy', true);
@@ -105,7 +101,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigOptionsFileNotFound(): void {
 		$file = ConfigOptionsProvider::getConfigOptionsFile('notfound');
@@ -118,7 +113,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadConfigOptions(): void {
 		$options = ConfigOptionsProvider::loadConfigOptions('dummy');
@@ -137,7 +131,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadConfigOptionsNotFound(): void {
 		$options = ConfigOptionsProvider::loadConfigOptions('notfound');
@@ -147,7 +140,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValue(): void {
 		$value = ConfigOptionsProvider::validateConfigValue('dummy', 'Backend', 'paginate.enabled', true);
@@ -166,7 +158,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValueNotFound(): void {
 		$value = ConfigOptionsProvider::validateConfigValue('notfound', 'Backend', 'paginate.enabled', 'unknown');
@@ -176,7 +167,6 @@ class ConfigOptionsProviderTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypecastConfigValue(): void {
 		$value = ConfigOptionsProvider::typecastConfigValue('dummy', 'Backend', 'paginate.enabled', 'true');
@@ -197,7 +187,6 @@ class ConfigOptionsProviderTest extends TestCase {
 	 * Test the sanitizeScope method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSanitizeScope(): void {
 		$scope = ConfigOptionsProvider::sanitizeScope('Empty');
@@ -218,7 +207,6 @@ class ConfigOptionsProviderTest extends TestCase {
 	 * Test the sanitizeIdentifier method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSanitizeIdentifier(): void {
 		$identifier = ConfigOptionsProvider::sanitizeIdentifier('Empty');

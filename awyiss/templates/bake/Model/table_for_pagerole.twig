@@ -124,7 +124,6 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	 *
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @return \Awyiss\ORM\RulesChecker
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 {% for field, rule in rulesChecker %}
@@ -140,9 +139,9 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 				return true;
 			}
 
-			$lo_existsIn = $rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }});
+			$existsIn = $rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }});
 
-			return $lo_existsIn($entity, $options);
+			return $existsIn($entity, $options);
 		}, 'valid{{ rule.fields[0]|camelize }}', ['errorField' => '{{ rule.fields[0]|variable }}']);
 {% endif %}
 {% endfor %}

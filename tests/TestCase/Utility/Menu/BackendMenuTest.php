@@ -37,7 +37,6 @@ class BackendMenuTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructWithArray(): void {
 		$menuData = [
@@ -60,7 +59,6 @@ class BackendMenuTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructWithObject(): void {
 		$menuData = (object)[
@@ -83,7 +81,6 @@ class BackendMenuTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructWithLevel(): void {
 		$menuData = (object)[
@@ -102,7 +99,6 @@ class BackendMenuTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::getItem()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetItem(): void {
 		$menu = new BackendMenu([
@@ -136,7 +132,6 @@ class BackendMenuTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::getItems()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetItems(): void {
 		$menu = new BackendMenu([
@@ -157,7 +152,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::appendEntries()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAppendEntries(): void {
 		$menu = new BackendMenu([
@@ -182,7 +176,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::appendEntries()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAppendEntriesForNonexistentIdentifierAppendsToSystem(): void {
 		$menu = new BackendMenu([
@@ -207,7 +200,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::appendEntries()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAppendEntriesWithEmptyEntries(): void {
 		$menu = new BackendMenu([
@@ -227,7 +219,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::insertEntriesAfter()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInsertEntriesAfter(): void {
 		$menu = new BackendMenu([
@@ -254,7 +245,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::insertEntriesAfter()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInsertEntriesAfterWithNullIdentifier(): void {
 		$menu = new BackendMenu([
@@ -282,7 +272,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::insertEntriesAfter()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInsertEntriesAfterWithNonexistentIdentifier(): void {
 		$menu = new BackendMenu([
@@ -310,7 +299,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::insertEntriesAfter()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInsertEntriesAfterWithDeepIdentifier(): void {
 		$menu = new BackendMenu([
@@ -344,7 +332,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::extend()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtendWithAppendTo(): void {
 		$menu = new BackendMenu([
@@ -371,7 +358,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::extend()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtendWithAppendToWithNonexistentIdentifier(): void {
 		$menu = new BackendMenu([
@@ -400,7 +386,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::extend()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtendWithInsertAfter(): void {
 		$menu = new BackendMenu([
@@ -431,7 +416,6 @@ class BackendMenuTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::extend()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtendWithInsertAfterWithNonexistentIdentifier(): void {
 		$menu = new BackendMenu([
@@ -458,7 +442,6 @@ class BackendMenuTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMenuClassAndMenuItemClass(): void {
 		$menu = new BackendMenu([
@@ -495,7 +478,6 @@ class BackendMenuTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\BackendMenu::setIdentity()
 	 * @throws \ReflectionException
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetIdentity(): void {
 		$menu = new BackendMenu([
@@ -528,7 +510,6 @@ class BackendMenuTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::determineVisibility()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testDetermineVisibility(): void {
@@ -561,7 +542,6 @@ class BackendMenuTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::items()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testItemsGenerator(): void {
 		$menu = new BackendMenu([
@@ -607,7 +587,6 @@ class BackendMenuTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::items()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testItemsGeneratorWithMaxLevel(): void {
 		$menu = new BackendMenu([
@@ -654,7 +633,6 @@ class BackendMenuTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenu::toArray()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToArray(): void {
 		$menu = new BackendMenu([

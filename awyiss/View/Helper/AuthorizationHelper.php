@@ -65,15 +65,15 @@ class AuthorizationHelper extends Helper {
 	 * @return \Awyiss\Authorization\IdentityPermissionsInterface
 	 */
 	public function getIdentity(): IdentityPermissionsInterface {
-		$lo_identity = $this->getConfig('identity');
+		$identity = $this->getConfig('identity');
 
-		if (!$lo_identity) {
-			$lo_identity = $this->_getIdentity();
-			$this->setConfig('identity', $lo_identity);
+		if (!$identity) {
+			$identity = $this->_getIdentity();
+			$this->setConfig('identity', $identity);
 		}
 
 
-		return $lo_identity;
+		return $identity;
 	}
 
 
@@ -110,15 +110,15 @@ class AuthorizationHelper extends Helper {
 	 * @return string
 	 */
 	public function getScope(): string {
-		$ls_scope = $this->getConfig('scope');
+		$scope = $this->getConfig('scope');
 
-		if (!$ls_scope) {
-			$ls_scope = Inflector::underscore($this->getView()->getName());
-			$this->setConfig('scope', $ls_scope);
+		if (!$scope) {
+			$scope = Inflector::underscore($this->getView()->getName());
+			$this->setConfig('scope', $scope);
 		}
 
 
-		return $ls_scope;
+		return $scope;
 	}
 
 
@@ -129,11 +129,11 @@ class AuthorizationHelper extends Helper {
 	 * @return $this
 	 */
 	public function setScope(string $scope): static {
-		$ls_scope = Inflector::underscore($scope);
-		$ls_scope = Inflector::singularize($ls_scope);
-		$ls_scope = Inflector::pluralize($ls_scope);
+		$scope = Inflector::underscore($scope);
+		$scope = Inflector::singularize($scope);
+		$scope = Inflector::pluralize($scope);
 
-		$this->setConfig('scope', $ls_scope);
+		$this->setConfig('scope', $scope);
 
 
 		return $this;
@@ -180,11 +180,11 @@ class AuthorizationHelper extends Helper {
 	 */
 	public function scopeIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): ?bool {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
-		$lo_identity = $this->getIdentity();
+		$identity = $this->getIdentity();
 
-		$la_additionalData = $additionalData ?: $this->getConfig('additionalData');
+		$additionalData = $additionalData ?: $this->getConfig('additionalData');
 
-		return $lo_identity->scopeIsAccessible($scope, $la_additionalData, ...$identifier);
+		return $identity->scopeIsAccessible($scope, $additionalData, ...$identifier);
 	}
 
 
@@ -194,24 +194,24 @@ class AuthorizationHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function anyIsAccessible(array ...$actions): bool {
-		foreach ($actions as $la_action) {
+		foreach ($actions as $action) {
 			if (
-				!is_array($la_action) ||
-				!isset($la_action['scope']) ||
-				!isset($la_action['identifier'])
+				!is_array($action) ||
+				!isset($action['scope']) ||
+				!isset($action['identifier'])
 			) {
 				throw new InvalidArgumentException('Invalid action provided. Must be an array with keys `scope` and `identifier`.');
 			}
 
-			if (!is_array($la_action['identifier'])) {
-				$la_action['identifier'] = [$la_action['identifier']];
+			if (!is_array($action['identifier'])) {
+				$action['identifier'] = [$action['identifier']];
 			}
 
-			if (!is_array($la_action['additionalData'] ?? null)) {
-				$la_action['additionalData'] = isset($la_action['additionalData']) ? [$la_action['additionalData']] : [];
+			if (!is_array($action['additionalData'] ?? null)) {
+				$action['additionalData'] = isset($action['additionalData']) ? [$action['additionalData']] : [];
 			}
 
-			if ($this->scopeIsAccessible($la_action['scope'], $la_action['additionalData'], ...$la_action['identifier'])) {
+			if ($this->scopeIsAccessible($action['scope'], $action['additionalData'], ...$action['identifier'])) {
 				return true;
 			}
 		}
@@ -233,15 +233,14 @@ class AuthorizationHelper extends Helper {
 	 * @return string
 	 */
 	public function permissionOptions(PermissionOptionInterface $permission, ?Entity $entity = null, ?string $fileName = null, ?string $subDir = null): string {
-		$ls_subDir = 'authorization' . DS . 'permission_option';
+		$elementPath = 'authorization' . DS . 'permission_option';
 		if (!empty($subDir)) {
-			$ls_subDir = trim($subDir, DS) . DS . $ls_subDir;
+			$elementPath = trim($subDir, DS) . DS . $elementPath;
 		}
 
-		$ls_fileName = $fileName;
-		if (empty($ls_fileName)) {
-			$ls_fileName = $permission->getType();
-			$ls_fileName .= '_' . ($permission->getConfig('preferredInput')?->value ?? 'radio');
+		if (empty($fileName)) {
+			$fileName = $permission->getType();
+			$fileName .= '_' . ($permission->getConfig('preferredInput')?->value ?? 'radio');
 		}
 
 		//This should never happen, but you never know.
@@ -249,7 +248,7 @@ class AuthorizationHelper extends Helper {
 			throw new RuntimeException(sprintf('Permission `%s` requires an identifier to be representable.', $permission::class));
 		}
 
-		$la_viewData = [
+		$viewData = [
 			'permission' => $permission,
 			'entity' => $entity,
 			'scope' => Inflector::underscore($permission->getPermissionOptionCollection()->getScope()),
@@ -258,7 +257,7 @@ class AuthorizationHelper extends Helper {
 		];
 
 
-		return $this->getView()->element($ls_subDir . DS . $ls_fileName, $la_viewData);
+		return $this->getView()->element($elementPath . DS . $fileName, $viewData);
 	}
 
 
@@ -266,18 +265,18 @@ class AuthorizationHelper extends Helper {
 	 * Retrieve the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
-		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */
-		$lo_identity = $this->getView()->getRequest()->getAttribute('identity');
+		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $identity */
+		$identity = $this->getView()->getRequest()->getAttribute('identity');
 
-		if (!$lo_identity) {
+		if (!$identity) {
 			throw new RuntimeException('No identity found in the request.');
 		}
 
-		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
-			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
+		if (!($identity instanceof IdentityPermissionsInterface)) {
+			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
 		}
 
 
-		return $lo_identity;
+		return $identity;
 	}
 }

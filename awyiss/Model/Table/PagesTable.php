@@ -91,12 +91,12 @@ class PagesTable extends Table {
 	 */
 	public function initialize(array $config): void {
 		if (!isset($this->pageRole)) {
-			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+			$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-			$la_parts = explode('\\', static::class);
+			$parts = explode('\\', static::class);
 
-			$this->pageRole = $ls_pageRoleEnum::tryFromName(substr(end($la_parts), 0, -5));
+			$this->pageRole = $pageRoleEnum::tryFromName(substr(end($parts), 0, -5));
 		}
 
 		parent::initialize($config);
@@ -271,10 +271,10 @@ class PagesTable extends Table {
 
 
 		$validator->notEmptyString('pageRoleId');
-		/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PageRole> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		$validator->add('pageRoleId', [
-			'enum' => ['rule' => ['enum', $ls_pageRoleEnum]],
+			'enum' => ['rule' => ['enum', $pageRoleEnum]],
 		]);
 
 
@@ -336,8 +336,7 @@ class PagesTable extends Table {
 	 * @noinspection DuplicatedCode
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole->name));
-
+		$pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole->name));
 
 		$rules->add(
 			$rules->existsIn('languageShortcode', 'Languages'),
@@ -351,14 +350,14 @@ class PagesTable extends Table {
 
 		$rules->add(
 			function (Page $entity): bool {
-				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-				$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+				$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 				if (is_int($entity->pageRoleId)) {
-					return $ls_pageRoleEnum::tryFrom($entity->pageRoleId) !== null;
+					return $pageRoleEnum::tryFrom($entity->pageRoleId) !== null;
 				}
 
-				return in_array($entity->pageRoleId, $ls_pageRoleEnum::cases());
+				return in_array($entity->pageRoleId, $pageRoleEnum::cases());
 			},
 			'validPageRoleId',
 			[
@@ -399,20 +398,20 @@ class PagesTable extends Table {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicated');
 			}
 
-			/** @var \Awyiss\Model\Entity\Page $lo_duplicateOf */
-			$lo_duplicateOf = $this->find('all', skipPageRoleCheck: true)->where([
+			/** @var \Awyiss\Model\Entity\Page $duplicateOf */
+			$duplicateOf = $this->find('all', skipPageRoleCheck: true)->where([
 				'id' => $entity->duplicateOf,
 				'page_role_id' => $entity->pageRoleId,
 			])->first();
 
 			// Disallow duplicating pages that do not exist
-			if (!$lo_duplicateOf) {
+			if (!$duplicateOf) {
 				return __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of');
 			}
 
 			// Prevents a page (current) from duplicating another page (target),
 			// if the (target) page is already duplicating another page (third).
-			if ($lo_duplicateOf->duplicateOf) {
+			if ($duplicateOf->duplicateOf) {
 				return __df($this->getI18nDomain(), 'validation', 'error_not_duplicating_duplicating');
 			}
 
@@ -425,30 +424,30 @@ class PagesTable extends Table {
 		//Ensure that a page has no linked duplicating pages when deleting it.
 		$rules->addDelete(
 			function (Page $entity): bool {
-				/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
-				$lo_pagesTable = FactoryLocator::get('Table')->get('Pages');
+				/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
+				$pagesTable = FactoryLocator::get('Table')->get('Pages');
 
-				if ($lo_pagesTable->exists(['duplicate_of' => $entity->id], ['skipPageRoleCheck' => true])) {
+				if ($pagesTable->exists(['duplicate_of' => $entity->id], ['skipPageRoleCheck' => true])) {
 					// If the page is duplicated by another page, we cannot delete it.
 					return false;
 				}
 
-				$la_nestedChildren = $this->getNestedPages($entity)?->toArray();
+				$nestedChildren = $this->getNestedPages($entity)?->toArray();
 
 				// No nested children? Allow deletion.
-				if (!$la_nestedChildren) {
+				if (!$nestedChildren) {
 					return true;
 				}
 
-				$la_nestedChildrenIds = array_values(array_map(fn (Page $entity) => $entity->id, $la_nestedChildren));
+				$nestedChildrenIds = array_values(array_map(fn (Page $entity) => $entity->id, $nestedChildren));
 
 				// If any of the nested pages is duplicated by another page, we cannot delete it.
-				return !$lo_pagesTable->find('all', skipPageRoleCheck: true)->where([
-					'duplicate_of IN' => $la_nestedChildrenIds,
-					'id NOT IN' => $la_nestedChildrenIds,
+				return !$pagesTable->find('all', skipPageRoleCheck: true)->where([
+					'duplicate_of IN' => $nestedChildrenIds,
+					'id NOT IN' => $nestedChildrenIds,
 				])->count();
 			},
-			'noDuplicating' . $ls_pageRole,
+			'noDuplicating' . $pageRole,
 			[
 				'errorField' => '_general',
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_duplicating_pages'),
@@ -457,39 +456,39 @@ class PagesTable extends Table {
 
 
 		$rules->addDelete(function (Page $entity/*, array $options = []*/): string|bool {
-			/** @var \Awyiss\Model\Table\ContentsTable $lo_contentsTable */
-			$lo_contentsTable = FactoryLocator::get('Table')->get('Contents');
+			/** @var \Awyiss\Model\Table\ContentsTable $contentsTable */
+			$contentsTable = FactoryLocator::get('Table')->get('Contents');
 
 			// Get all contents of the current page
-			$la_contents = $lo_contentsTable->find()->where(['page_id' => $entity->id])->all()->indexBy('id')->toArray();
+			$contents = $contentsTable->find()->where(['page_id' => $entity->id])->all()->indexBy('id')->toArray();
 
-			if ($la_contents) {
+			if ($contents) {
 				// Find contents that duplicate the current page's contents
-				if ($lo_contentsTable->find()->where(['duplicate_of IN' => array_keys($la_contents)])->count()) {
+				if ($contentsTable->find()->where(['duplicate_of IN' => array_keys($contents)])->count()) {
 					return false;
 				}
 			}
 
-			$la_nestedChildren = $this->getNestedPages($entity)?->toArray();
+			$nestedChildren = $this->getNestedPages($entity)?->toArray();
 
-			if (!$la_nestedChildren) {
+			if (!$nestedChildren) {
 				return true;
 			}
 
-			$la_nestedChildrenIds = array_values(array_map(fn (Page $entity) => $entity->id, $la_nestedChildren));
+			$nestedChildrenIds = array_values(array_map(fn (Page $entity) => $entity->id, $nestedChildren));
 
 			// Get all contents of all nested children
-			$la_contents = $lo_contentsTable->find()->where(['page_id IN' => $la_nestedChildrenIds])->all()->indexBy('id')->toArray();
-			if (!$la_contents) {
+			$contents = $contentsTable->find()->where(['page_id IN' => $nestedChildrenIds])->all()->indexBy('id')->toArray();
+			if (!$contents) {
 				return true;
 			}
 
 			// If any of the nested pages has a content that is duplicated by other contents,
 			// we cannot delete the current page. Except if the duplicating contents
 			// are also contents of the nested pages.
-			return !$lo_contentsTable->find()->where([
-				'duplicate_of IN' => array_keys($la_contents),
-				'page_id NOT IN' => $la_nestedChildrenIds,
+			return !$contentsTable->find()->where([
+				'duplicate_of IN' => array_keys($contents),
+				'page_id NOT IN' => $nestedChildrenIds,
 			])->count();
 		}, 'noDuplicatedContents', [
 			'errorField' => '_general',
@@ -513,11 +512,11 @@ class PagesTable extends Table {
 	 * @return void
 	 */
 	protected function buildPagesAssociations(): void {
-		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole->name));
+		$pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole->name));
 
-		$this->hasMany('Duplicating' . $ls_pageRole, [
+		$this->hasMany('Duplicating' . $pageRole, [
 			'bindingKey' => 'duplicate_of',
-			'className' => $ls_pageRole,
+			'className' => $pageRole,
 			'foreignKey' => 'id',
 			'propertyName' => 'duplicated_by',
 		]);
@@ -525,7 +524,7 @@ class PagesTable extends Table {
 		// Singular DuplicateOf<Page/News/Product>
 		$this->belongsTo('DuplicateOf' . Inflector::camelize($this->pageRole->name), [
 			'bindingKey' => 'id',
-			'className' => $ls_pageRole,
+			'className' => $pageRole,
 			'foreignKey' => 'duplicate_of',
 			'propertyName' => 'duplicate',
 		]);
@@ -538,10 +537,10 @@ class PagesTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PageRole> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-		$schema->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));
+		$schema->setColumnType('page_role_id', EnumType::from($pageRoleEnum));
 	}
 
 
@@ -550,7 +549,7 @@ class PagesTable extends Table {
 	 * @return \Cake\Collection\CollectionInterface|null
 	 */
 	public function getNestedPages(Page $page): ?CollectionInterface {
-		$lo_children = $this->getNestedChildren($page, [
+		$children = $this->getNestedChildren($page, [
 			'forceEnable' => true,
 			'finder' => [
 				'all' => [
@@ -562,12 +561,12 @@ class PagesTable extends Table {
 			],
 		]);
 
-		if (!$lo_children?->count()) {
+		if (!$children?->count()) {
 			return null;
 		}
 
 
-		return $lo_children;
+		return $children;
 	}
 
 
@@ -576,16 +575,16 @@ class PagesTable extends Table {
 	 * @return bool
 	 */
 	public function hasDescendantsWithDifferentPageRole(Page $page): bool {
-		$lo_children = $this->getNestedPages($page);
+		$children = $this->getNestedPages($page);
 
-		if (!$lo_children) {
+		if (!$children) {
 			return false;
 		}
 
-		$la_pageRoles = array_unique($lo_children->extract('pageRoleId')->toList(), SORT_REGULAR);
-		$la_pageRoles = array_filter($la_pageRoles, fn (PageRoleEnumInterface $pageRole) => $pageRole != $page->pageRoleId);
+		$pageRoles = array_unique($children->extract('pageRoleId')->toList(), SORT_REGULAR);
+		$pageRoles = array_filter($pageRoles, fn (PageRoleEnumInterface $pageRole) => $pageRole != $page->pageRoleId);
 
-		return (bool)$la_pageRoles;
+		return (bool)$pageRoles;
 	}
 
 

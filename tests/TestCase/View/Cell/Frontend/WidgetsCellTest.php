@@ -88,7 +88,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::initCellOptions()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitCellOptions() {
 		$options = $this->callProtectedMethod($this->cell, 'initCellOptions', []);
@@ -107,7 +106,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::initCellOptions()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitCellOptionsWithCustomOptions() {
 		$options = $this->callProtectedMethod($this->cell, 'initCellOptions', [
@@ -130,7 +128,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::initCellOptions()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindFullWidthIfNotSet() {
 		$this->cell = $this->getMockBuilder(WidgetsCell::class)->disableOriginalConstructor()->onlyMethods(['findFullWidth'])->getMock();
@@ -153,7 +150,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::initCellOptions()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNotFindFullWidthIfSet() {
 		$this->cell = $this->getMockBuilder(WidgetsCell::class)->disableOriginalConstructor()->onlyMethods(['findFullWidth'])->getMock();
@@ -178,7 +174,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::initCellOptions()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindSingleColumnBreakpointIfNotSet() {
 		$this->cell = $this->getMockBuilder(WidgetsCell::class)->disableOriginalConstructor()->onlyMethods(['findSingleColumnBreakpoint'])->getMock();
@@ -201,7 +196,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::initCellOptions()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNotFindSingleColumnBreakpointIfSet() {
 		$this->cell = $this->getMockBuilder(WidgetsCell::class)->disableOriginalConstructor()->onlyMethods(['findSingleColumnBreakpoint'])->getMock();
@@ -242,7 +236,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::getThreadedWidgets()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetThreadedWidgets(string $identifier, int $expectedCount): void {
 		$widgets = $this->callProtectedMethod($this->cell, 'getThreadedWidgets', $identifier);
@@ -273,7 +266,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::getThreadedWidgets()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetThreadedWidgetsReturnsEmptyCollectionForUnknownIdentifier(): void {
 		$widgets = $this->callProtectedMethod($this->cell, 'getThreadedWidgets', 'unknown_dentifier');
@@ -287,7 +279,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::getThreadedWidgets()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetThreadedWidgetsContainsInactiveElementsWhenPreviewIsEnabled(): void {
 		/** @var \Cake\Collection\CollectionInterface $widgets */
@@ -303,7 +294,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::getThreadedWidgets()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetThreadedWidgetsNotContainsInactiveElementsWhenPreviewIsDisabled(): void {
 		/** @var \Cake\Collection\CollectionInterface $widgets */
@@ -319,7 +309,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::getThreadedWidgets()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetThreadedWidgetsContainsUnpublishedElementsWhenPreviewIsEnabled(): void {
 		/** @var \Cake\Collection\CollectionInterface $widgets */
@@ -335,7 +324,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::getThreadedWidgets()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetThreadedWidgetsNotContainsUnpublishedElementsWhenPreviewIsDisabled(): void {
 		/** @var \Cake\Collection\CollectionInterface $widgets */
@@ -351,7 +339,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::cacheAssignedMediaItems()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCacheAssignedMediaItems(): void {
 		ResizedImageManager::clear();
@@ -375,7 +362,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::cacheAssignedMediaItems()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCacheAssignedMediaItemsIncludingInactiveItemsInPreviewMode(): void {
 		ResizedImageManager::clear();
@@ -403,7 +389,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::findFullWidth()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindFullWidth(): void {
 		$fullWidth = $this->callProtectedMethod($this->cell, 'findFullWidth', [
@@ -445,7 +430,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::findSingleColumnBreakpoint()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindSingleColumnBreakpoint(): void {
 		$singleColumnBreakpoint = $this->callProtectedMethod($this->cell, 'findSingleColumnBreakpoint', [
@@ -487,7 +471,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::prepareEntities()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrepareEntitiesSetsLevel(): void {
 		$widgets = $this->callProtectedMethod($this->cell, 'getThreadedWidgets', 'dummy_nested');
@@ -527,7 +510,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::prepareEntities()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrepareEntitiesSetsParentWidgets(): void {
 		$widgets = $this->callProtectedMethod($this->cell, 'getThreadedWidgets', 'dummy_nested', true);
@@ -563,7 +545,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::prepareEntities()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrepareEntitiesSetCssClasses(): void {
 		$widgets = $this->callProtectedMethod($this->cell, 'getThreadedWidgets', 'dummy_nested');
@@ -582,7 +563,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::prepareEntities()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrepareEntitiesSetCssClassesForInactiveElements(): void {
 		$widgets = $this->callProtectedMethod($this->cell, 'getThreadedWidgets', 'dummy_nested', true);
@@ -604,7 +584,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::prepareEntities()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrepareEntitiesSetsRealColumnWidth(): void {
 		$widgets = $this->callProtectedMethod($this->cell, 'getThreadedWidgets', 'dummy_nested', true);
@@ -626,7 +605,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::prepareEntities()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrepareEntitiesSetsRealColumnWidthWithDifferentBaseWidth(): void {
 		$widgets = $this->callProtectedMethod($this->cell, 'getThreadedWidgets', 'dummy_nested', true);
@@ -648,7 +626,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::prepareEntities()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrepareEntitiesSetsTemplate(): void {
 		$widgets = $this->callProtectedMethod($this->cell, 'getThreadedWidgets', 'dummy_nested', true);
@@ -667,7 +644,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::setViewVars()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetViewVars(): void {
 		/** @var \Cake\View\View $view */
@@ -698,7 +674,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::buildContents()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildContentsWithNestedAndInactiveContents(): void {
 		$options = $this->cell->initCellOptions([
@@ -723,7 +698,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::buildContents()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildContentsWithSingleRow(): void {
 		$options = $this->cell->initCellOptions([
@@ -748,7 +722,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::buildContents()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildContentsWithMultiRow(): void {
 		$options = $this->cell->initCellOptions([
@@ -773,7 +746,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::buildContents()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildContentsWithRowOverflow(): void {
 		$options = $this->cell->initCellOptions([
@@ -798,7 +770,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::buildContents()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidgetSpecificTemplate(): void {
 		$options = $this->cell->initCellOptions([
@@ -821,7 +792,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::buildContents()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidgetsCanSetContentRowClass(): void {
 		$options = $this->cell->initCellOptions([
@@ -844,7 +814,6 @@ class WidgetsCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseAwyissImageTags()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlRequiredAltAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -870,7 +839,6 @@ class WidgetsCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseAwyissImageTags()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlRequiredAltAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -899,7 +867,6 @@ class WidgetsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseModuleReplacesModuleTagsWithRenderedOutput() {
 		$entity = new Widget();
@@ -918,7 +885,6 @@ class WidgetsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseModuleIgnoresNonModuleTags() {
 		$entity = new Widget();
@@ -937,7 +903,6 @@ class WidgetsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseModuleHandlesMissingModulesGracefully() {
 		$entity = new Widget();
@@ -956,7 +921,6 @@ class WidgetsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseModuleRemovesModuleTagsWithEmptyOutput() {
 		$entity = new Widget();
@@ -975,7 +939,6 @@ class WidgetsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseModuleHandlesMalformedHtmlGracefully() {
 		$entity = new Widget();
@@ -993,7 +956,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::renderElement()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderElement(): void {
 		/** @var \Cake\Collection\Collection $widgets */
@@ -1013,7 +975,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::renderElement()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderElementAddsFullWidthMissingInfo(): void {
 		/** @var \Cake\Collection\Collection $widgets */
@@ -1032,7 +993,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::renderElement()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderElementNotAddsFullWidthMissingInfoWhenSet(): void {
 		/** @var \Cake\Collection\Collection $widgets */
@@ -1061,7 +1021,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::renderElement()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderElementRendersParsesModule() {
 		/** @var \Cake\Collection\Collection $widgets */
@@ -1081,7 +1040,6 @@ class WidgetsCellTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::renderContentRow()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderContentRow(): void {
 		$output = $this->callProtectedMethod($this->cell, 'renderContentRow', 'Lorem ipsum');
@@ -1095,7 +1053,6 @@ class WidgetsCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplay(): void {
 		$output = (string)$this->cell('Frontend/Widgets', [
@@ -1116,7 +1073,6 @@ class WidgetsCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithColumnWidth(): void {
 		$output = (string)$this->cell('Frontend/Widgets', [

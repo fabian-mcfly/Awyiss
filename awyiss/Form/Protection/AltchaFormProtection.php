@@ -89,33 +89,33 @@ class AltchaFormProtection implements FormProtectionInterface {
 	 */
 	public function getHtml(string $templatePosition): ?string {
 		if ($templatePosition === static::POSITION_BEFORE) {
-			/** @var \Awyiss\View\Helper\AssetHelper $lo_assetHelper */
-			$lo_assetHelper = $this->view->helpers()->get('Asset');
-			$lo_assetHelper->add('Frontend/Captcha/altcha.i18n.js', ['realm' => 'Backend', 'type' => 'module']);
+			/** @var \Awyiss\View\Helper\AssetHelper $assetHelper */
+			$assetHelper = $this->view->helpers()->get('Asset');
+			$assetHelper->add('Frontend/Captcha/altcha.i18n.js', ['realm' => 'Backend', 'type' => 'module']);
 		}
 
 		if ($templatePosition === static::POSITION_BEFORE_SUBMIT) {
-			/** @var \Cake\View\Helper\HtmlHelper $lo_helper */
-			$lo_helper = $this->view->helpers()->get('Html');
+			/** @var \Cake\View\Helper\HtmlHelper $htmlHelper */
+			$htmlHelper = $this->view->helpers()->get('Html');
 
 			if (empty($this->options['htmlAttributes']['challengejson'])) {
-				$lo_altcha = new Altcha($this->options['securityKey'] ?? Security::getSalt());
+				$altcha = new Altcha($this->options['securityKey'] ?? Security::getSalt());
 
 				// Create a new challenge
-				$lo_options = new ChallengeOptions(
+				$options = new ChallengeOptions(
 					expires: new DateTimeImmutable()->add(new DateInterval('PT20M')),
 					maxNumber: $this->options['maxNumber'] ?? 200_000,
 				);
 
-				$this->options['htmlAttributes']['challengejson'] = $lo_altcha->createChallenge($lo_options);
+				$this->options['htmlAttributes']['challengejson'] = $altcha->createChallenge($options);
 			}
 			if (!is_string($this->options['htmlAttributes']['challengejson'])) {
 				$this->options['htmlAttributes']['challengejson'] = json_encode($this->options['htmlAttributes']['challengejson']);
 			}
 
-			$ls_attributes = $lo_helper->templater()->formatAttributes($this->options['htmlAttributes']);
+			$formattedAttributes = $htmlHelper->templater()->formatAttributes($this->options['htmlAttributes']);
 
-			return '<altcha-widget ' . sprintf('%s', $ls_attributes) . '></altcha-widget>';
+			return '<altcha-widget ' . sprintf('%s', $formattedAttributes) . '></altcha-widget>';
 		}
 
 		return null;
@@ -126,14 +126,14 @@ class AltchaFormProtection implements FormProtectionInterface {
 	 * @inheritDoc
 	 */
 	public function validateData(array $data): string|true {
-		$ls_fieldName = $this->defaultOptions['htmlAttributes']['name'];
+		$fieldName = $this->defaultOptions['htmlAttributes']['name'];
 
-		if (empty($data[ $ls_fieldName ])) {
+		if (empty($data[ $fieldName ])) {
 			return __d('form', 'altcha_error');
 		}
 
-		$lo_altcha = new Altcha($this->options['securityKey'] ?? Security::getSalt());
-		if (!$lo_altcha->verifySolution($data[ $ls_fieldName ])) {
+		$altcha = new Altcha($this->options['securityKey'] ?? Security::getSalt());
+		if (!$altcha->verifySolution($data[ $fieldName ])) {
 			return __d('form', 'altcha_error');
 		}
 

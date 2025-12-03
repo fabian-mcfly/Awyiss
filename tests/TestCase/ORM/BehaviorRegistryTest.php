@@ -17,7 +17,6 @@ use Awyiss\Test\TestSuite\TestCase;
 class BehaviorRegistryTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassNamePrefersCustomerClass(): void {
 		$table = new Table([

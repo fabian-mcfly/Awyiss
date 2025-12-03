@@ -21,30 +21,30 @@ trait EntityAttributesTrait {
 			throw new InvalidArgumentException('Cannot get an empty field');
 		}
 
-		$lx_value = null;
+		$value = null;
 
 		if (isset($this->_fields[ $field ])) {
-			$lx_value = &$this->_fields[ $field ];
+			$value = &$this->_fields[ $field ];
 		}
 
-		$ls_method = static::_accessor($field, 'get');
-		if ($ls_method) {
-			$lx_value = $this->{$ls_method}($lx_value);
+		$method = static::_accessor($field, 'get');
+		if ($method) {
+			$value = $this->{$method}($value);
 		}
 
 		//Return a value if found or if an accessor exists.
-		if (!is_null($lx_value) || $ls_method || $field === '_translations') {
-			return $lx_value;
+		if (!is_null($value) || $method || $field === '_translations') {
+			return $value;
 		}
 
 		/**
 		 * @noinspection PhpUnnecessaryLocalVariableInspection Does this sound _unnecessary_ to you?
 		 *    Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
 		 */
-		$lx_value = &$this->getFromAttribute($field);
+		$value = &$this->getFromAttribute($field);
 
 
-		return $lx_value;
+		return $value;
 	}
 
 
@@ -55,29 +55,28 @@ trait EntityAttributesTrait {
 	 * @return mixed
 	 */
 	public function &getFromAttribute(string $field): mixed {
-		$lx_value = null;
+		$value = null;
 
 		// No attributes field = no value to fetch from there
 		if (empty($this->_fields['attributes']) || !($this->_fields['attributes'] instanceof Entity)) {
-			return $lx_value;
+			return $value;
 		}
 
-		/** @var \Cake\Datasource\EntityInterface $lo_attributesEntity */
-		$lo_attributesEntity = $this->_fields['attributes'];
+		/** @var \Cake\Datasource\EntityInterface $attributesEntity */
+		$attributesEntity = $this->_fields['attributes'];
 
-		$ls_field = $field;
-		if (str_starts_with($ls_field, 'attributes.')) {
-			$ls_field = substr($ls_field, 11);
+		if (str_starts_with($field, 'attributes.')) {
+			$field = substr($field, 11);
 		}
 
 		/**
 		 * @noinspection PhpUnnecessaryLocalVariableInspection Does this sound _unnecessary_ to you?
 		 *    Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
 		 */
-		$lx_value = &$lo_attributesEntity->get($ls_field);
+		$value = &$attributesEntity->get($field);
 
 
-		return $lx_value;
+		return $value;
 	}
 
 
@@ -119,11 +118,11 @@ trait EntityAttributesTrait {
 			return parent::set($field, $value, $options);
 		}
 
-		/** @var \Awyiss\Model\Entity $lo_attributes */
-		$lo_attributes = $this->_fields['attributes'];
+		/** @var \Awyiss\Model\Entity $attributes */
+		$attributes = $this->_fields['attributes'];
 
 		// Set the value in the attributes field
-		$lo_attributes->set($field, $value, $options);
+		$attributes->set($field, $value, $options);
 
 		return $this;
 	}
@@ -137,23 +136,22 @@ trait EntityAttributesTrait {
 	 */
 	public function patch(array $values, array $options = []): EntityInterface {
 		if (($this->_fields['attributes'] ?? null) instanceof Entity) {
-			/** @var \Awyiss\Model\Entity $lo_attributes */
-			$lo_attributes = $this->_fields['attributes'];
+			/** @var \Awyiss\Model\Entity $attributes */
+			$attributes = $this->_fields['attributes'];
 
-			$la_attributeFields = [];
-			foreach ($values as $ls_field => $lx_value) {
-				if (in_array($ls_field, ['_locale', '_translations'])) {
+			$attributeFields = [];
+			foreach ($values as $field => $value) {
+				if (in_array($field, ['_locale', '_translations'])) {
 					continue;
 				}
 
-				if ($lo_attributes->has($ls_field)) {
-					$la_attributeFields[ $ls_field ] = $lx_value;
-					/** @noinspection PhpVariableNamingConventionInspection */
-					unset($values[ $ls_field ]);
+				if ($attributes->has($field)) {
+					$attributeFields[ $field ] = $value;
+					unset($values[ $field ]);
 				}
 			}
 
-			$lo_attributes->patch($la_attributeFields, $options);
+			$attributes->patch($attributeFields, $options);
 		}
 
 

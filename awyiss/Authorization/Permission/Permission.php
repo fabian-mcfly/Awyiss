@@ -21,7 +21,7 @@ class Permission {
 	/**
 	 * Default permission
 	 */
-	public const DEFAULT_PERMISSION = false;
+	public const ?bool DEFAULT_PERMISSION = false;
 
 
 	/**
@@ -161,38 +161,37 @@ class Permission {
 
 
 	/**
-	 * Retreives the PermissionOption from the currently set policy class
+	 * Retrieves the PermissionOption from the currently set policy class
 	 * and checks the access
 	 *
 	 * @param array $additionalData
 	 * @param PermissionCollection $permissionCollection
 	 * @return bool|null
-	 * @throws \Exception
 	 */
 	public function isAccessible(array $additionalData, PermissionCollection $permissionCollection): ?bool {
-		$lx_policyClass = $this->getPolicyClass();
+		$policyClass = $this->getPolicyClass();
 
-		if (!$lx_policyClass) {
+		if (!$policyClass) {
 			return static::DEFAULT_PERMISSION;
 		}
 
 		//Get the Permission from the policy class provided.
-		if ($lx_policyClass instanceof AbstractGenericPolicy) {
-			//If the $lx_policyClass is an instance of AbstractGenericPolicy, getPermission is a public, non-static method
-			$lo_permissionOption = $lx_policyClass->getPermissionOption($this->getIdentifier());
+		if ($policyClass instanceof AbstractGenericPolicy) {
+			//If the $policyClass is an instance of AbstractGenericPolicy, getPermission is a public, non-static method
+			$permissionOption = $policyClass->getPermissionOption($this->getIdentifier());
 		}
 		else {
-			//If the $lx_policyClass is a string or implements the PolicyInterface, getPermission is a static method
-			/** @var \Awyiss\Authorization\Policy\PolicyInterface $lx_policyClass */
-			$lo_permissionOption = $lx_policyClass::getPermissionOption($this->getIdentifier());
+			//If the $policyClass is a string or implements the PolicyInterface, getPermission is a static method
+			/** @var \Awyiss\Authorization\Policy\PolicyInterface $policyClass */
+			$permissionOption = $policyClass::getPermissionOption($this->getIdentifier());
 		}
 
-		if (!$lo_permissionOption) {
+		if (!$permissionOption) {
 			return static::DEFAULT_PERMISSION;
 		}
 
 
-		return $lo_permissionOption->isAccessible($this->getAccess(), $this->getSettings(), $additionalData, $permissionCollection);
+		return $permissionOption->isAccessible($this->getAccess(), $this->getSettings(), $additionalData, $permissionCollection);
 	}
 
 

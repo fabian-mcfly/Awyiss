@@ -52,11 +52,11 @@ class WidgetsConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id']);
+						unset($fields['id']);
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],

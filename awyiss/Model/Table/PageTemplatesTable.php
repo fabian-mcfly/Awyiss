@@ -122,10 +122,10 @@ class PageTemplatesTable extends Table {
 
 
 		$validator->notEmptyString('pageRoleId');
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		$validator->add('pageRoleId', [
-			'enum' => ['rule' => ['enum', $ls_pageRoleEnum]],
+			'enum' => ['rule' => ['enum', $pageRoleEnum]],
 		]);
 
 
@@ -183,8 +183,7 @@ class PageTemplatesTable extends Table {
 		);
 
 
-		$lo_rules = $rules;
-		$rules->addUpdate(function (PageTemplate $entity, array $options) use ($lo_rules): bool {
+		$rules->addUpdate(function (PageTemplate $entity, array $options) use ($rules): bool {
 			if (
 				($options['isCopy'] ?? false) === true ||
 				!$entity->hasOriginal('pageRoleId') ||
@@ -193,13 +192,13 @@ class PageTemplatesTable extends Table {
 				return true;
 			}
 
-			$lo_linkedTo = $lo_rules->isNotLinkedTo(
+			$linkedTo = $rules->isNotLinkedTo(
 				'Pages',
 				'pageRoleId',
 				__df($this->getI18nDomain(), 'validation', 'error_no_linked_pages')
 			);
 
-			return $lo_linkedTo($entity, $options);
+			return $linkedTo($entity, $options);
 		}, 'noLinkedPageTemplates');
 
 
@@ -223,9 +222,9 @@ class PageTemplatesTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-		$schema->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));
+		$schema->setColumnType('page_role_id', EnumType::from($pageRoleEnum));
 	}
 }

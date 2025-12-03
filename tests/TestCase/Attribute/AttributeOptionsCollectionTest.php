@@ -20,7 +20,6 @@ class AttributeOptionsCollectionTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Attribute\AttributeOptionsCollection::add()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAttributeOptions(): void {
 		$attributeOptions = new EmptyAttributeOptions();
@@ -66,7 +65,6 @@ class AttributeOptionsCollectionTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Attribute\AttributeOptionsCollection::getAttributeOption()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributeOption(): void {
 		$attributeOptions = new EmptyAttributeOptions();
@@ -96,7 +94,6 @@ class AttributeOptionsCollectionTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Attribute\AttributeOptionsCollection::getAttributeOptionsAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAttributeOptionsAttributes(): void {
 		$attributeOptions = new EmptyAttributeOptions();

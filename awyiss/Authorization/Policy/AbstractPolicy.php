@@ -7,6 +7,7 @@ namespace Awyiss\Authorization\Policy;
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
+use Exception;
 
 
 /**
@@ -23,8 +24,8 @@ abstract class AbstractPolicy implements PolicyInterface {
 	 */
 	public static function getScope(): string {
 		if (!isset(static::$scope)) {
-			$la_parts = explode('\\', static::class);
-			static::$scope = array_pop($la_parts);
+			$parts = explode('\\', static::class);
+			static::$scope = array_pop($parts);
 			static::$scope = substr(static::$scope, 0, -6);
 			static::$scope = AuthorizationService::sanitizeScope(static::$scope);
 		}
@@ -50,17 +51,21 @@ abstract class AbstractPolicy implements PolicyInterface {
 
 	/**
 	 * @inheritDoc
-	 * @throws \Exception
 	 */
 	public static function getPermissionOption(string $identifier): ?PermissionOptionInterface {
 		if (!isset(static::$permissionOptionCollection)) {
-			static::$permissionOptionCollection = static::loadPermissionOptions();
+			try {
+				static::$permissionOptionCollection = static::loadPermissionOptions();
+			}
+			catch (Exception) {
+				return null;
+			}
 		}
 
-		$ls_identifier = AuthorizationService::sanitizeIdentifier($identifier);
+		$identifier = AuthorizationService::sanitizeIdentifier($identifier);
 
-		if (static::$permissionOptionCollection->has($ls_identifier)) {
-			return static::$permissionOptionCollection->get($ls_identifier);
+		if (static::$permissionOptionCollection->has($identifier)) {
+			return static::$permissionOptionCollection->get($identifier);
 		}
 
 

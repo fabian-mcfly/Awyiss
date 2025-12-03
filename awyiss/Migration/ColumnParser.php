@@ -49,52 +49,52 @@ class ColumnParser extends BaseColumnParser {
 	 * @inheritDoc
 	 */
 	public function parseFields(array $arguments): array {
-		$la_fields = [];
-		$la_arguments = $this->validArguments($arguments);
-		foreach ($la_arguments as $ls_field) {
-			preg_match($this->regexpParseColumn, $ls_field, $la_matches);
-			$ls_field = $la_matches[1];
-			$ls_type = Hash::get($la_matches, 2, '');
-			$ls_indexType = Hash::get($la_matches, 3);
+		$fields = [];
+		$arguments = $this->validArguments($arguments);
+		foreach ($arguments as $field) {
+			preg_match($this->regexpParseColumn, $field, $matches);
+			$field = $matches[1];
+			$type = Hash::get($matches, 2, '');
+			$indexType = Hash::get($matches, 3);
 
-			$lb_typeIsPk = in_array($ls_type, ['primary', 'primary_key'], true);
-			$lb_isPrimaryKey = false;
-			if ($lb_typeIsPk || in_array($ls_indexType, ['primary', 'primary_key'], true)) {
-				$lb_isPrimaryKey = true;
+			$typeIsPk = in_array($type, ['primary', 'primary_key'], true);
+			$isPrimaryKey = false;
+			if ($typeIsPk || in_array($indexType, ['primary', 'primary_key'], true)) {
+				$isPrimaryKey = true;
 
-				if ($lb_typeIsPk) {
-					$ls_type = 'primary';
+				if ($typeIsPk) {
+					$type = 'primary';
 				}
 			}
 
-			$lb_nullable = (bool)strpos($ls_type, '?');
-			$ls_type = $lb_nullable ? str_replace('?', '', $ls_type) : $ls_type;
+			$nullable = (bool)strpos($type, '?');
+			$type = $nullable ? str_replace('?', '', $type) : $type;
 
-			[$ls_type, $lx_length, $lx_default] = $this->getTypeAndLengthAndDefault($ls_field, $ls_type);
-			$la_fields[ $ls_field ] = [
-				'columnType' => $ls_type,
+			[$type, $length, $default] = $this->getTypeAndLengthAndDefault($field, $type);
+			$fields[ $field ] = [
+				'columnType' => $type,
 				'options' => [
-					'null' => $lb_nullable,
-					'default' => $lx_default,
+					'null' => $nullable,
+					'default' => $default,
 				],
 			];
 
-			if (!empty($lx_length)) {
-				if (is_array($lx_length)) {
-					[$la_fields[ $ls_field ]['options']['precision'], $la_fields[ $ls_field ]['options']['scale']] = $lx_length;
+			if (!empty($length)) {
+				if (is_array($length)) {
+					[$fields[ $field ]['options']['precision'], $fields[ $field ]['options']['scale']] = $length;
 				}
 				else {
-					$la_fields[ $ls_field ]['options']['limit'] = $lx_length;
+					$fields[ $field ]['options']['limit'] = $length;
 				}
 			}
 
-			if ($lb_isPrimaryKey === true && $ls_type === 'integer') {
-				$la_fields[ $ls_field ]['options']['autoIncrement'] = true;
+			if ($isPrimaryKey === true && $type === 'integer') {
+				$fields[ $field ]['options']['autoIncrement'] = true;
 			}
 		}
 
 
-		return $la_fields;
+		return $fields;
 	}
 
 
@@ -104,23 +104,22 @@ class ColumnParser extends BaseColumnParser {
 	 * @return array
 	 */
 	public function getTypeAndLengthAndDefault(string $field, string $type): array {
-		$lx_default = null;
+		$default = null;
 
-		if ($type && preg_match($this->regexpParseField, $type, $la_matches)) {
-			if (str_contains($la_matches[2], ',')) {
-				$la_matches[2] = explode(',', $la_matches[2]);
+		if ($type && preg_match($this->regexpParseField, $type, $matches)) {
+			if (str_contains($matches[2], ',')) {
+				$matches[2] = explode(',', $matches[2]);
 			}
 
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$type = $la_matches[1];
-			$li_length = $la_matches[2] ?? null ?: null;
-			$lx_default = $la_matches[3] ?? null;
+			$type = $matches[1];
+			$length = $matches[2] ?? null ?: null;
+			$default = $matches[3] ?? null;
 		}
 
-		/** @var string $ls_fieldType */
-		$ls_fieldType = $this->getType($field, $type);
-		$li_length ??= $this->getLength($ls_fieldType);
+		/** @var string $fieldType */
+		$fieldType = $this->getType($field, $type);
+		$length ??= $this->getLength($fieldType);
 
-		return [$ls_fieldType, $li_length, $lx_default];
+		return [$fieldType, $length, $default];
 	}
 }

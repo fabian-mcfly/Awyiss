@@ -6,23 +6,23 @@
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
 	protected function save({{ entityClassName }} ${{ singularName }}, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->{{ currentModelName }}->hasAttributes()) {
-			$la_associated[] = $this->{{ currentModelName }}->getAttributesTableName(true);
+			$associated[] = $this->{{ currentModelName }}->getAttributesTableName(true);
 			${{ singularName }}->setAccess('attributes', true);
 		}
 
 		$this->{{ currentModelName }}->patchEntity(${{ singularName }}, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->{{ currentModelName }}->save(${{ singularName }}, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->{{ currentModelName }}->save(${{ singularName }}, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -36,9 +36,9 @@
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach (${{ singularName }}->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach (${{ singularName }}->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}

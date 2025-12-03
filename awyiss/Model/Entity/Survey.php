@@ -174,11 +174,11 @@ class Survey extends Entity {
 		}
 
 		// Remove all progress data after the given identifier
-		$la_progress = array_keys($this->progressData);
-		$li_index = array_search($identifier, $la_progress, true);
-		$la_progress = array_slice($this->progressData, 0, $li_index);
+		$progress = array_keys($this->progressData);
+		$index = array_search($identifier, $progress, true);
+		$progress = array_slice($this->progressData, 0, $index);
 
-		$this->setProgress($la_progress);
+		$this->setProgress($progress);
 
 		return $this;
 	}
@@ -194,18 +194,18 @@ class Survey extends Entity {
 			return $this;
 		}
 
-		/** @var \Awyiss\Model\Table\SurveySurveyQuestionsTable $lo_questionsTable */
-		$lo_questionsTable = $this->fetchTable('SurveySurveyQuestions');
+		/** @var \Awyiss\Model\Table\SurveySurveyQuestionsTable $questionsTable */
+		$questionsTable = $this->fetchTable('SurveySurveyQuestions');
 
 		if ($this->isPreview) {
-			$lo_query = $lo_questionsTable->find('all');
+			$query = $questionsTable->find('all');
 		}
 		else {
 			/** @uses \Awyiss\Model\Table::findActive() */
-			$lo_query = $lo_questionsTable->find('active');
+			$query = $questionsTable->find('active');
 		}
 
-		$lo_query->contain([
+		$query->contain([
 			'SurveyQuestions' => [
 				'queryBuilder' => function (SelectQuery $query): SelectQuery {
 					$query->find($this->isPreview ? 'all' : 'active');
@@ -223,17 +223,17 @@ class Survey extends Entity {
 			],
 		]);
 
-		$lo_questions = $lo_query->where([
+		$questions = $query->where([
 			'survey_id' => $this->id,
 		])->all()->compile();
 
-		if (!$lo_questions->count()) {
+		if (!$questions->count()) {
 			$this->questions = collection([]);
 
 			return $this;
 		}
 
-		$lo_questions->each(function (SurveySurveyQuestion $question): void {
+		$questions->each(function (SurveySurveyQuestion $question): void {
 			// Order the surveySurveyAnswers by their id
 			$question->surveySurveyAnswers = array_column(
 				$question->surveySurveyAnswers,
@@ -242,7 +242,7 @@ class Survey extends Entity {
 			);
 		});
 
-		$this->questions = $lo_questions;
+		$this->questions = $questions;
 
 		$this->questionsByIdentifier = array_column(
 			$this->questions->toArray(),
@@ -313,70 +313,69 @@ class Survey extends Entity {
 	 * @return \Awyiss\Model\Entity\SurveySurveyQuestion|(\Awyiss\Model\Enum\Survey\NextAction|\BackedEnum)|null
 	 */
 	public function getNextAction(?SurveySurveyQuestion $question = null, array|string|int|null $answer = null): SurveySurveyQuestion|BackedEnum|false|null {
-		$lo_action = $question ?? $this->getCurrentAction();
-		$lx_answer = $answer ?? null;
+		$action = $question ?? $this->getCurrentAction();
 
-		if ($lx_answer === null && $lo_action instanceof SurveySurveyQuestion) {
-			$lx_answer = $this->progressData[ $lo_action->identifier ] ?? null;
+		if ($answer === null && $action instanceof SurveySurveyQuestion) {
+			$answer = $this->progressData[ $action->identifier ] ?? null;
 		}
 
-		if (!$lo_action) {
+		if (!$action) {
 			// If no action is given, we cannot determine the next action.
 			return false;
 		}
 
 		// In case the current action is a NextAction enum,
 		// return false as there's no next action.
-		if ($lo_action instanceof BackedEnum) {
+		if ($action instanceof BackedEnum) {
 			return false;
 		}
 
 		// For all question types except single choice,
 		// the next action is evaluated based on the question itself.
-		if ($lo_action->surveyQuestion->type !== $this->getQuestionTypeEnum()::SingleChoice) {
-			return $this->evaluateNextAction($lo_action);
+		if ($action->surveyQuestion->type !== $this->getQuestionTypeEnum()::SingleChoice) {
+			return $this->evaluateNextAction($action);
 		}
 
 		// Find the answer for the given question.
-		$lo_answer = $lx_answer ? ($lo_action->surveySurveyAnswers[ $lx_answer ] ?? null) : null;
+		$surveyAnswer = $answer ? ($action->surveySurveyAnswers[ $answer ] ?? null) : null;
 
 		// If no answer is given yet, all answers can define the next action.
-		if (!$lo_answer) {
-			if ($lo_action->allowCustomAnswer) {
+		if (!$surveyAnswer) {
+			if ($action->allowCustomAnswer) {
 				// If the question allows a custom answer, return the next action based on the question itself.
-				return $this->evaluateNextAction($lo_action);
+				return $this->evaluateNextAction($action);
 			}
 
-			$la_nextActions = [];
-			foreach ($lo_action->surveySurveyAnswers as $lo_answer) {
-				$lx_nextQuestion = $this->evaluateNextAction($lo_action, $lo_answer);
+			$nextActions = [];
+			foreach ($action->surveySurveyAnswers as $surveySurveyAnswer) {
+				$nextQuestion = $this->evaluateNextAction($action, $surveySurveyAnswer);
 
-				if ($lx_nextQuestion instanceof SurveySurveyQuestion) {
+				if ($nextQuestion instanceof SurveySurveyQuestion) {
 					// If the next action is a specific question, return that question.
-					return $lx_nextQuestion;
+					return $nextQuestion;
 				}
 
-				if ($lx_nextQuestion instanceof BackedEnum) {
+				if ($nextQuestion instanceof BackedEnum) {
 					// If the next action is a specific action, return that action.
-					return $lx_nextQuestion;
+					return $nextQuestion;
 				}
 
-				$la_nextActions[] = $lx_nextQuestion;
+				$nextActions[] = $nextQuestion;
 			}
 
 			// If the next actions array only contains false, return false.
 			// Any null value means that an answer does not define a next action,
 			// so the question defines the next action.
-			if (count(array_filter($la_nextActions, fn ($x) => $x !== false)) === 0) {
+			if (count(array_filter($nextActions, fn ($x) => $x !== false)) === 0) {
 				return false;
 			}
 		}
-		elseif ($lo_answer->nextAction) {
+		elseif ($surveyAnswer->nextAction) {
 			// If the given answer has a next action, evaluate it
-			return $this->evaluateNextAction($lo_action, $lo_action->surveySurveyAnswers[ $lx_answer ]);
+			return $this->evaluateNextAction($action, $action->surveySurveyAnswers[ $answer ]);
 		}
 
-		return $this->evaluateNextAction($lo_action);
+		return $this->evaluateNextAction($action);
 	}
 
 
@@ -396,57 +395,57 @@ class Survey extends Entity {
 	 * @return \Awyiss\Model\Entity\Form|null
 	 */
 	public function getForm(?SurveySurveyQuestion $question = null, ?SurveySurveyAnswer $answer = null): ?Form {
-		$lo_formsTable = $this->fetchTable('Forms');
+		$formsTable = $this->fetchTable('Forms');
 
-		$la_progress = array_keys($this->progressData);
-		$ls_lastIdentifier = array_pop($la_progress);
+		$progress = array_keys($this->progressData);
+		$lastIdentifier = array_pop($progress);
 
-		$lo_question = $question ?? ($ls_lastIdentifier ? $this->questionsByIdentifier[ $ls_lastIdentifier ] : null);
+		$question ??= ($lastIdentifier ? $this->questionsByIdentifier[ $lastIdentifier ] : null);
 		// Should not happen, except in tests, but better safe than sorry.
-		if (!$lo_question) {
+		if (!$question) {
 			return null;
 		}
 
-		$lx_answer = $answer ?? $this->progressData[ $lo_question->identifier ] ?? null;
+		$givenAnswer = $answer ?? $this->progressData[ $question->identifier ] ?? null;
 
 		if (
-			$lx_answer &&
+			$givenAnswer &&
 			(
 				$answer instanceof SurveySurveyAnswer ||
-				isset($lo_question->surveySurveyAnswers[ $lx_answer ])
+				isset($question->surveySurveyAnswers[ $givenAnswer ])
 			)
 		) {
-			$lo_answer = $answer instanceof SurveySurveyAnswer ? $answer : $lo_question->surveySurveyAnswers[ $lx_answer ];
+			$surveySurveyAnswer = $answer instanceof SurveySurveyAnswer ? $answer : $question->surveySurveyAnswers[ $givenAnswer ];
 
 			// Check if the selected answer has a next action that requires a form.
 			if (
-				in_array($lo_answer->nextAction, [
+				in_array($surveySurveyAnswer->nextAction, [
 					$this->getNextActionEnum()::ShowForm,
 					$this->getNextActionEnum()::SaveAndShowForm,
 					$this->getNextActionEnum()::ShowFormAndSave,
 				])
 			) {
-				$lo_query = $lo_formsTable->findById((int)($lo_answer->nextActionTarget ?? $this->formId));
+				$query = $formsTable->findById((int)($surveySurveyAnswer->nextActionTarget ?? $this->formId));
 
-				$lo_query->find($this->isPreview ? 'all' : 'active');
+				$query->find($this->isPreview ? 'all' : 'active');
 
-				return $lo_query->first();
+				return $query->first();
 			}
 		}
 
 		// Check if the question has a next action that is a form.
 		if (
-			in_array($lo_question->nextAction, [
+			in_array($question->nextAction, [
 				$this->getNextActionEnum()::ShowForm,
 				$this->getNextActionEnum()::SaveAndShowForm,
 				$this->getNextActionEnum()::ShowFormAndSave,
 			])
 		) {
-			$lo_query = $lo_formsTable->findById((int)($lo_question->nextActionTarget ?? $this->formId));
+			$query = $formsTable->findById((int)($question->nextActionTarget ?? $this->formId));
 
-			$lo_query->find($this->isPreview ? 'all' : 'active');
+			$query->find($this->isPreview ? 'all' : 'active');
 
-			return $lo_query->first();
+			return $query->first();
 		}
 
 		// If the final action is to show a form, return the form.
@@ -457,11 +456,11 @@ class Survey extends Entity {
 				$this->getNextActionEnum()::ShowFormAndSave,
 			])
 		) {
-			$lo_query = $lo_formsTable->findById($this->formId);
+			$query = $formsTable->findById($this->formId);
 
-			$lo_query->find($this->isPreview ? 'all' : 'active');
+			$query->find($this->isPreview ? 'all' : 'active');
 
-			return $lo_query->first();
+			return $query->first();
 		}
 
 		return null;
@@ -494,42 +493,42 @@ class Survey extends Entity {
 	 * @noinspection PhpDocSignatureInspection
 	 */
 	protected function evaluateNextAction(SurveySurveyQuestion $question, ?SurveySurveyAnswer $answer = null): SurveySurveyQuestion|BackedEnum|false|null {
-		$lo_entity = $answer ?? $question;
+		$entity = $answer ?? $question;
 
-		if ($lo_entity->nextAction === $this->getNextActionEnum()::Abort) {
+		if ($entity->nextAction === $this->getNextActionEnum()::Abort) {
 			return false;
 		}
 
 		// Any action that doesn't lead to a next question will return null.
 		if (
-			in_array($lo_entity->nextAction, [
+			in_array($entity->nextAction, [
 				$this->getNextActionEnum()::SaveAndEnd,
 				$this->getNextActionEnum()::ShowForm,
 				$this->getNextActionEnum()::SaveAndShowForm,
 				$this->getNextActionEnum()::ShowFormAndSave,
 			])
 		) {
-			return $lo_entity->nextAction;
+			return $entity->nextAction;
 		}
 
-		$lb_tryNext = false;
-		if ($lo_entity->nextAction === $this->getNextActionEnum()::SpecificQuestion) {
-			if (isset($this->questionsByIdentifier[ $lo_entity->nextActionTarget ])) {
-				return $this->questionsByIdentifier[ $lo_entity->nextActionTarget ];
+		$tryNext = false;
+		if ($entity->nextAction === $this->getNextActionEnum()::SpecificQuestion) {
+			if (isset($this->questionsByIdentifier[ $entity->nextActionTarget ])) {
+				return $this->questionsByIdentifier[ $entity->nextActionTarget ];
 			}
 
 			// If the next action is a specific question, but that question does not exist,
 			// we try to continue with the next question in the survey.
-			$lb_tryNext = true;
+			$tryNext = true;
 		}
 
 		// If the next action is the next question, return the next question in the survey.
-		if ($lb_tryNext || $lo_entity->nextAction === $this->getNextActionEnum()::NextQuestion) {
-			$la_questions = $this->questions->toArray();
-			$li_currentIndex = array_search($question, $la_questions, true);
+		if ($tryNext || $entity->nextAction === $this->getNextActionEnum()::NextQuestion) {
+			$questions = $this->questions->toArray();
+			$currentIndex = array_search($question, $questions, true);
 
-			if (isset($la_questions[ $li_currentIndex + 1 ])) {
-				return $la_questions[ $li_currentIndex + 1 ];
+			if (isset($questions[ $currentIndex + 1 ])) {
+				return $questions[ $currentIndex + 1 ];
 			}
 
 			// Get the next action from the survey
@@ -561,53 +560,52 @@ class Survey extends Entity {
 		$this->customAnswers = [];
 		$this->currentAction = null;
 
-		$la_customData = $progressData['custom'] ?? [];
-		/** @noinspection PhpVariableNamingConventionInspection */
+		$customData = $progressData['custom'] ?? [];
 		unset($progressData['custom'], $progressData['action'], $progressData['last_action']);
 
-		foreach ($progressData as $ls_identifier => $lx_answer) {
-			$lo_question = $this->questionsByIdentifier[ $ls_identifier ] ?? null;
+		foreach ($progressData as $identifier => $answer) {
+			$question = $this->questionsByIdentifier[ $identifier ] ?? null;
 
-			if (!$lo_question) {
+			if (!$question) {
 				break;
 			}
 
-			$lx_answer = match ($lo_question->surveyQuestion->type) {
-				$this->getQuestionTypeEnum()::SingleChoice => $lx_answer !== 'custom' ? (int)$lx_answer : $lx_answer,
+			$answer = match ($question->surveyQuestion->type) {
+				$this->getQuestionTypeEnum()::SingleChoice => $answer !== 'custom' ? (int)$answer : $answer,
 				$this->getQuestionTypeEnum()::MultiChoice => array_map(function (mixed $answer) {
 					return $answer !== 'custom' ? (int)$answer : $answer;
-				}, (array)$lx_answer),
+				}, (array)$answer),
 				$this->getQuestionTypeEnum()::InfoText => null,
-				default => $lx_answer,
+				default => $answer,
 			};
 
-			if (!$this->validateProgress($ls_identifier, $lx_answer, $this->currentAction)) {
+			if (!$this->validateProgress($identifier, $answer, $this->currentAction)) {
 				break;
 			}
 
 			if (
-				$lx_answer === 'custom' &&
+				$answer === 'custom' &&
 				(
-					$lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::SingleChoice ||
-					$lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::FreeText
+					$question->surveyQuestion->type === $this->getQuestionTypeEnum()::SingleChoice ||
+					$question->surveyQuestion->type === $this->getQuestionTypeEnum()::FreeText
 				) &&
-				isset($la_customData[ $ls_identifier ])
+				isset($customData[ $identifier ])
 			) {
-				$this->customAnswers[ $ls_identifier ] = $la_customData[ $ls_identifier ];
+				$this->customAnswers[ $identifier ] = $customData[ $identifier ];
 			}
 
 			if (
-				$lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::MultiChoice &&
-				in_array('custom', $lx_answer) &&
-				isset($la_customData[ $ls_identifier ])
+				$question->surveyQuestion->type === $this->getQuestionTypeEnum()::MultiChoice &&
+				in_array('custom', $answer) &&
+				isset($customData[ $identifier ])
 			) {
 				// If the multi-choice question has a custom answer,
 				// we store it in the custom answers array.
-				$this->customAnswers[ $ls_identifier ] = $la_customData[ $ls_identifier ];
+				$this->customAnswers[ $identifier ] = $customData[ $identifier ];
 			}
 
-			$this->currentAction = $lo_question;
-			$this->progressData[ $ls_identifier ] = $lx_answer;
+			$this->currentAction = $question;
+			$this->progressData[ $identifier ] = $answer;
 		}
 
 		if ($this->progressData) {
@@ -629,7 +627,7 @@ class Survey extends Entity {
 			return false;
 		}
 
-		$lo_question = $this->questionsByIdentifier[ $identifier ];
+		$question = $this->questionsByIdentifier[ $identifier ];
 
 		if (!$previousQuestion) {
 			// If no previous question is given, the identifier must be the first question in the survey.
@@ -639,49 +637,49 @@ class Survey extends Entity {
 		}
 		else {
 			// Get the next question from the perspective of the previous question
-			$lo_followUpQuestion = $this->getNextAction($previousQuestion, $this->progressData[ $lo_question->identifier ] ?? null);
+			$followUpQuestion = $this->getNextAction($previousQuestion, $this->progressData[ $question->identifier ] ?? null);
 
 			// If the follow-up question for the previous question with the given answer
 			// is not the current question, return false.
-			if (!$lo_followUpQuestion || $lo_followUpQuestion !== $lo_question) {
+			if (!$followUpQuestion || $followUpQuestion !== $question) {
 				return false;
 			}
 		}
 
-		$lo_question = $this->questionsByIdentifier[ $identifier ];
+		$question = $this->questionsByIdentifier[ $identifier ];
 
-		if ($lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::InfoText) {
+		if ($question->surveyQuestion->type === $this->getQuestionTypeEnum()::InfoText) {
 			// Info text questions do not require an answer.
 			return true;
 		}
 
-		if ($lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::FreeText) {
+		if ($question->surveyQuestion->type === $this->getQuestionTypeEnum()::FreeText) {
 			// Free text questions require an answer that is not empty.
 			return !empty($answer);
 		}
 
-		if ($lo_question->surveyQuestion->type === $this->getQuestionTypeEnum()::MultiChoice) {
+		if ($question->surveyQuestion->type === $this->getQuestionTypeEnum()::MultiChoice) {
 			// Multi-choice questions require an answer that is an array of selected options
 			// and all selected options must be valid answers.
 			if (!is_array($answer) || empty($answer)) {
 				return false;
 			}
 
-			$la_possibleAnswers = array_keys($lo_question->surveySurveyAnswers);
-			if ($lo_question->allowCustomAnswer) {
-				$la_possibleAnswers[] = 'custom';
+			$possibleAnswers = array_keys($question->surveySurveyAnswers);
+			if ($question->allowCustomAnswer) {
+				$possibleAnswers[] = 'custom';
 			}
 
-			return empty(array_diff($answer, $la_possibleAnswers));
+			return empty(array_diff($answer, $possibleAnswers));
 		}
 
 		// If the single choice question allows a custom answer,
 		// the answer can be null.
-		if ($lo_question->allowCustomAnswer && $answer === 'custom') {
+		if ($question->allowCustomAnswer && $answer === 'custom') {
 			return true;
 		}
 
-		return array_key_exists($answer, $lo_question->surveySurveyAnswers);
+		return array_key_exists($answer, $question->surveySurveyAnswers);
 	}
 
 
@@ -692,31 +690,30 @@ class Survey extends Entity {
 	 * @return bool
 	 */
 	public function hasCycle(?array $graph = null): bool {
-		$la_visited = [];
-		$la_stack = [];
+		$visited = [];
+		$stack = [];
 
 		if (!$this->surveySurveyQuestions) {
 			return false;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$graph ??= $this->buildQuestionsGraph();
 
-		$la_questionsByIdentifier = array_column(
+		$questionsByIdentifier = array_column(
 			$this->surveySurveyQuestions,
 			null,
 			'identifier'
 		);
 
-		foreach (array_keys($graph) as $ls_node) {
-			$ls_node = (string)$ls_node;
-			if ($this->detectCycle($ls_node, $graph, $la_visited, $la_stack)) {
+		foreach (array_keys($graph) as $node) {
+			$node = (string)$node;
+			if ($this->detectCycle($node, $graph, $visited, $stack)) {
 				// Find the question that has the node as nextActionTarget
-				$lo_question = collection($la_questionsByIdentifier)
-					->filter(function (SurveySurveyQuestion $entity) use ($ls_node): bool {
+				$question = collection($questionsByIdentifier)
+					->filter(function (SurveySurveyQuestion $entity) use ($node): bool {
 						if (
 							$entity->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
-							$entity->nextActionTarget === $ls_node
+							$entity->nextActionTarget === $node
 						) {
 							return true;
 						}
@@ -726,18 +723,18 @@ class Survey extends Entity {
 						}
 
 						return collection($entity->surveySurveyAnswers)
-							->some(function (SurveySurveyAnswer $answer) use ($ls_node): bool {
+							->some(function (SurveySurveyAnswer $answer) use ($node): bool {
 								return $answer->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
-									$answer->nextActionTarget === $ls_node;
+									$answer->nextActionTarget === $node;
 							});
 					})
 					->first();
 
-				if (!$lo_question) {
-					$lo_question = $la_questionsByIdentifier[ $ls_node ];
+				if (!$question) {
+					$question = $questionsByIdentifier[ $node ];
 				}
 
-				$lo_question->setError(
+				$question->setError(
 					'nextActionTarget',
 					__df('surveys', 'validation', 'error_no_circular_references')
 				);
@@ -768,17 +765,14 @@ class Survey extends Entity {
 			return false;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$visited[ $node ] = $stack[ $node ] = true;
 
-		foreach ($graph[ $node ] ?? [] as $ls_nextNode) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			if ($this->detectCycle($ls_nextNode, $graph, $visited, $stack)) {
+		foreach ($graph[ $node ] ?? [] as $nextNode) {
+			if ($this->detectCycle($nextNode, $graph, $visited, $stack)) {
 				return true;
 			}
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		unset($stack[ $node ]);
 
 		return false;
@@ -792,19 +786,19 @@ class Survey extends Entity {
 	 * @return array<string, array<string>>
 	 */
 	public function buildQuestionsGraph(): array {
-		$la_questionsGraph = [];
+		$questionsGraph = [];
 
-		$la_questionsByIdentifier = array_column($this->surveySurveyQuestions, null, 'identifier');
+		$questionsByIdentifier = array_column($this->surveySurveyQuestions, null, 'identifier');
 
-		foreach ($this->surveySurveyQuestions as $li_key => $lo_question) {
-			$la_questionsGraph[ $lo_question->identifier ] = [];
+		foreach ($this->surveySurveyQuestions as $key => $question) {
+			$questionsGraph[ $question->identifier ] = [];
 
-			if ($lo_question->surveySurveyAnswers) {
-				$la_questionsGraph[ $lo_question->identifier ] = $this->buildAnswersGraph(
-					$lo_question->surveySurveyAnswers,
+			if ($question->surveySurveyAnswers) {
+				$questionsGraph[ $question->identifier ] = $this->buildAnswersGraph(
+					$question->surveySurveyAnswers,
 					$this->surveySurveyQuestions,
-					$li_key,
-					$la_questionsByIdentifier
+					$key,
+					$questionsByIdentifier
 				);
 
 				/**
@@ -813,34 +807,34 @@ class Survey extends Entity {
 				 * - any answer has no next action specified
 				 * the action of the question will be used to determine the next step.
 				 */
-				$lb_inheritingAnswer = $lo_question->allowCustomAnswer || collection($lo_question->surveySurveyAnswers)
+				$inheritingAnswer = $question->allowCustomAnswer || collection($question->surveySurveyAnswers)
 					->some(function (SurveySurveyAnswer $answer): bool {
 						return empty($answer->nextAction);
 					});
 
 				// If no answer inherits the next action, the action of the question is never used.
-				if (!$lb_inheritingAnswer) {
+				if (!$inheritingAnswer) {
 					continue;
 				}
 			}
 
 			// If the next action is the next question and a next question exists, add that to the graph.
 			if (
-				$lo_question->nextAction === $this->getNextActionEnum()::NextQuestion &&
-				isset($this->surveySurveyQuestions[ $li_key + 1 ])
+				$question->nextAction === $this->getNextActionEnum()::NextQuestion &&
+				isset($this->surveySurveyQuestions[ $key + 1 ])
 			) {
-				$la_questionsGraph[ $lo_question->identifier ][] = $this->surveySurveyQuestions[ $li_key + 1 ]->identifier;
+				$questionsGraph[ $question->identifier ][] = $this->surveySurveyQuestions[ $key + 1 ]->identifier;
 			}
 			// If the next action is a specific question, add that to the graph.
 			elseif (
-				$lo_question->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
-				isset($la_questionsByIdentifier[ $lo_question->nextActionTarget ])
+				$question->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
+				isset($questionsByIdentifier[ $question->nextActionTarget ])
 			) {
-				$la_questionsGraph[ $lo_question->identifier ][] = $la_questionsByIdentifier[ $lo_question->nextActionTarget ]->identifier;
+				$questionsGraph[ $question->identifier ][] = $questionsByIdentifier[ $question->nextActionTarget ]->identifier;
 			}
 		}
 
-		return $la_questionsGraph;
+		return $questionsGraph;
 	}
 
 
@@ -859,26 +853,26 @@ class Survey extends Entity {
 		int $currentQuestionKey,
 		array $questionsByIdentifier
 	): array {
-		$la_answersGraph = [];
+		$answersGraph = [];
 
-		foreach ($answers as $lo_answer) {
+		foreach ($answers as $answer) {
 			// If the next action is the next question and a next question exists, add that to the graph.
 			if (
-				$lo_answer->nextAction === $this->getNextActionEnum()::NextQuestion &&
+				$answer->nextAction === $this->getNextActionEnum()::NextQuestion &&
 				isset($questions[ $currentQuestionKey + 1 ])
 			) {
-				$la_answersGraph[] = $questions[ $currentQuestionKey + 1 ]->identifier;
+				$answersGraph[] = $questions[ $currentQuestionKey + 1 ]->identifier;
 			}
 			// If the next action is a specific question, add that to the graph.
 			elseif (
-				$lo_answer->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
-				isset($questionsByIdentifier[ $lo_answer->nextActionTarget ])
+				$answer->nextAction === $this->getNextActionEnum()::SpecificQuestion &&
+				isset($questionsByIdentifier[ $answer->nextActionTarget ])
 			) {
-				$la_answersGraph[] = $questionsByIdentifier[ $lo_answer->nextActionTarget ]->identifier;
+				$answersGraph[] = $questionsByIdentifier[ $answer->nextActionTarget ]->identifier;
 			}
 		}
 
-		return $la_answersGraph;
+		return $answersGraph;
 	}
 
 
@@ -893,17 +887,17 @@ class Survey extends Entity {
 	 * @return array<int, array<int, int>>
 	 */
 	public function buildResultsArray(): array {
-		$la_results = [];
+		$results = [];
 
 		$this->loadQuestions();
 
-		$lo_first = $this->questions->first();
+		$first = $this->questions->first();
 
-		if ($lo_first) {
-			$this->traverseResultsPaths($lo_first, [], $la_results);
+		if ($first) {
+			$this->traverseResultsPaths($first, [], $results);
 		}
 
-		return $la_results;
+		return $results;
 	}
 
 
@@ -912,36 +906,35 @@ class Survey extends Entity {
 	 * @return string
 	 */
 	public function buildResultPath(?array $path = null): string {
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$path ??= $this->progressData;
 
-		$ls_result = '';
+		$result = '';
 
-		foreach ($path as $ls_questionId => $lx_answer) {
-			if ($ls_result) {
-				$ls_result .= '-';
+		foreach ($path as $questionId => $answer) {
+			if ($result) {
+				$result .= '-';
 			}
 
-			$ls_result .= $ls_questionId . ':';
-			if (is_array($lx_answer)) {
+			$result .= $questionId . ':';
+			if (is_array($answer)) {
 				// If the answer is an array, join the values with a comma
-				$ls_result .= implode(',', array_map(
+				$result .= implode(',', array_map(
 					fn ($answer) => $answer ?? 'null',
-					$lx_answer
+					$answer
 				));
 			}
-			elseif ($lx_answer === null) {
+			elseif ($answer === null) {
 				// Skip null answers. Those are usually InfoText questions and have no
 				// influence on the result.
 				continue;
 			}
 			else {
 				// Otherwise, just append the answer value
-				$ls_result .= $lx_answer;
+				$result .= $answer;
 			}
 		}
 
-		return $ls_result;
+		return $result;
 	}
 
 
@@ -956,27 +949,25 @@ class Survey extends Entity {
 	 * @return void
 	 */
 	protected function traverseResultsPaths(SurveySurveyQuestion $question, array $path, array &$results): void {
-		$ls_type = $question->surveyQuestion->type;
-		$la_answers = $question->surveySurveyAnswers ?? [];
+		$type = $question->surveyQuestion->type;
+		$answers = $question->surveySurveyAnswers ?? [];
 
 		// Handle MultiChoice questions: generate all non-empty combinations of answers
-		if ($ls_type === $this->getQuestionTypeEnum()::MultiChoice) {
-			$la_answerIds = array_keys($la_answers);
-			$la_combinations = $this->getNonEmptyCombinations($la_answerIds, $question->allowCustomAnswer);
+		if ($type === $this->getQuestionTypeEnum()::MultiChoice) {
+			$answerIds = array_keys($answers);
+			$combinations = $this->getNonEmptyCombinations($answerIds, $question->allowCustomAnswer);
 
-			$lo_next = $this->getNextAction($question);
+			$next = $this->getNextAction($question);
 
-			foreach ($la_combinations as $la_combo) {
-				$la_newPath = $path;
-				$la_newPath[ $question->identifier ] = $la_combo;
+			foreach ($combinations as $combo) {
+				$newPath = $path;
+				$newPath[ $question->identifier ] = $combo;
 
-				if ($lo_next instanceof SurveySurveyQuestion) {
-					/** @noinspection PhpVariableNamingConventionInspection */
-					$this->traverseResultsPaths($lo_next, $la_newPath, $results);
+				if ($next instanceof SurveySurveyQuestion) {
+					$this->traverseResultsPaths($next, $newPath, $results);
 				}
 				else {
-					/** @noinspection PhpVariableNamingConventionInspection */
-					$results[] = $la_newPath;
+					$results[] = $newPath;
 				}
 			}
 
@@ -984,61 +975,55 @@ class Survey extends Entity {
 		}
 
 		// Handle SingleChoice questions: iterate over all possible answers
-		if ($ls_type === $this->getQuestionTypeEnum()::SingleChoice) {
-			foreach ($la_answers as $li_answerId => $lo_answer) {
-				$la_newPath = $path;
-				$la_newPath[ $question->identifier ] = $li_answerId;
-				$lo_next = $this->getNextAction($question, $li_answerId);
+		if ($type === $this->getQuestionTypeEnum()::SingleChoice) {
+			foreach ($answers as $answerId => $answer) {
+				$newPath = $path;
+				$newPath[ $question->identifier ] = $answerId;
+				$next = $this->getNextAction($question, $answerId);
 
-				if ($lo_next instanceof SurveySurveyQuestion) {
-					/** @noinspection PhpVariableNamingConventionInspection */
-					$this->traverseResultsPaths($lo_next, $la_newPath, $results);
+				if ($next instanceof SurveySurveyQuestion) {
+					$this->traverseResultsPaths($next, $newPath, $results);
 				}
 				else {
-					/** @noinspection PhpVariableNamingConventionInspection */
-					$results[] = $la_newPath;
+					$results[] = $newPath;
 				}
 			}
 
 			// Handle custom answer if allowed
 			if ($question->allowCustomAnswer) {
-				$la_newPath = $path;
-				$la_newPath[ $question->identifier ] = 'custom';
+				$newPath = $path;
+				$newPath[ $question->identifier ] = 'custom';
 				/** @noinspection PhpRedundantOptionalArgumentInspection */
-				$lo_next = $this->getNextAction($question, null);
+				$next = $this->getNextAction($question, null);
 
-				if ($lo_next instanceof SurveySurveyQuestion) {
-					/** @noinspection PhpVariableNamingConventionInspection */
-					$this->traverseResultsPaths($lo_next, $la_newPath, $results);
+				if ($next instanceof SurveySurveyQuestion) {
+					$this->traverseResultsPaths($next, $newPath, $results);
 					return;
 				}
 
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$results[] = $la_newPath;
+				$results[] = $newPath;
 			}
 
 			return;
 		}
 
 		// Handle InfoText with null, FreeText with 'custom' as answer
-		$la_newPath = $path;
-		$la_newPath[ $question->identifier ] = $ls_type === $this->getQuestionTypeEnum()::FreeText ? 'custom' : null;
+		$newPath = $path;
+		$newPath[ $question->identifier ] = $type === $this->getQuestionTypeEnum()::FreeText ? 'custom' : null;
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
-		$lo_next = $this->getNextAction($question, null);
+		$next = $this->getNextAction($question, null);
 
-		if ($lo_next instanceof SurveySurveyQuestion) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$this->traverseResultsPaths($lo_next, $la_newPath, $results);
+		if ($next instanceof SurveySurveyQuestion) {
+			$this->traverseResultsPaths($next, $newPath, $results);
 			return;
 		}
 
 		// Remove last entry if this is an InfoText question
-		if ($ls_type === $this->getQuestionTypeEnum()::InfoText) {
-			unset($la_newPath[ $question->identifier ]);
+		if ($type === $this->getQuestionTypeEnum()::InfoText) {
+			unset($newPath[ $question->identifier ]);
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
-		$results[] = $la_newPath;
+		$results[] = $newPath;
 	}
 
 
@@ -1050,36 +1035,34 @@ class Survey extends Entity {
 	 * @return array
 	 */
 	protected function getNonEmptyCombinations(array $values, bool $withCustomAnswer = false): array {
-		$la_result = [];
+		$result = [];
 
 		if ($withCustomAnswer) {
 			/**
 			 * Include a custom answer option
-			 *
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
 			$values[] = 'custom'; // Custom answer represented as 'custom'
 		}
 
-		$li_count = count($values);
-		$li_combinations = (1 << $li_count);
+		$count = count($values);
+		$combinations = (1 << $count);
 
-		for ($li_i = 1; $li_i < $li_combinations; $li_i++) {
-			$la_combo = [];
+		for ($i = 1; $i < $combinations; $i++) {
+			$combo = [];
 
-			for ($li_j = 0; $li_j < $li_count; $li_j++) {
-				if ($li_i & (1 << $li_j)) {
-					$la_combo[] = $values[ $li_j ];
+			for ($j = 0; $j < $count; $j++) {
+				if ($i & (1 << $j)) {
+					$combo[] = $values[ $j ];
 				}
 			}
 
-			$la_result[] = $la_combo;
+			$result[] = $combo;
 		}
 
 		// Add one entry where the answer is an asterisk, representing "any answer"
-		$la_result[] = ['*'];
+		$result[] = ['*'];
 
-		return $la_result;
+		return $result;
 	}
 
 
@@ -1119,8 +1102,8 @@ class Survey extends Entity {
 			return null;
 		}
 
-		$ls_identifier = Text::slug($identifier, ['replacement' => '_']);
+		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
-		return mb_strtolower($ls_identifier);
+		return mb_strtolower($identifier);
 	}
 }

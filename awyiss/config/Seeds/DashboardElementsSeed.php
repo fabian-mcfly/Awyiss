@@ -12,7 +12,7 @@ class DashboardElementsSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'scope' => 'form_entries',
@@ -47,10 +47,10 @@ class DashboardElementsSeed extends AbstractSeed {
 			]
 		];
 
-		$lo_table = $this->table('dashboard_elements');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('dashboard_elements');
+		$table->insert($data)->save();
 
-		$la_data = [
+		$data = [
 			[
 				'locale' => 'de',
 				'model' => 'dashboard_elements',
@@ -81,7 +81,7 @@ class DashboardElementsSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('i18n');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('i18n');
+		$table->insert($data)->save();
 	}
 }

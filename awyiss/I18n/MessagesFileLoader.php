@@ -24,38 +24,38 @@ class MessagesFileLoader extends BaseMessagesFileLoader {
 	 * @inheritDoc
 	 */
 	public function __invoke(): Package|false {
-		$la_folders = $this->translationsFolders();
-		$ls_extension = $this->_extension;
+		$folders = $this->translationsFolders();
+		$extension = $this->_extension;
 
-		$ls_fileName = $this->_name;
-		$ls_subfolder = null;
-		$li_strpos = strpos($ls_fileName, DS);
-		if ($li_strpos !== false) {
-			$ls_subfolder = substr($ls_fileName, 0, $li_strpos + 1);
-			$ls_fileName = substr($ls_fileName, $li_strpos + 1);
+		$fileName = $this->_name;
+		$subfolder = null;
+		$strpos = strpos($fileName, DS);
+		if ($strpos !== false) {
+			$subfolder = substr($fileName, 0, $strpos + 1);
+			$fileName = substr($fileName, $strpos + 1);
 		}
 
-		$ls_parserName = ucfirst($ls_extension);
-		$ls_parserClass = App::className($ls_parserName, 'I18n\Parser', 'FileParser');
+		$parserName = ucfirst($extension);
+		$parserClass = App::className($parserName, 'I18n\Parser', 'FileParser');
 
-		if (!$ls_parserClass) {
-			throw new RuntimeException(sprintf('Could not find class %s', "{$ls_parserName}FileParser"));
+		if (!$parserClass) {
+			throw new RuntimeException(sprintf('Could not find class %s', "{$parserName}FileParser"));
 		}
 
-		$lo_package = new Package('default');
-		$lo_parser = new $ls_parserClass();
+		$package = new Package('default');
+		$parser = new $parserClass();
 
-		foreach ($la_folders as $ls_folder) {
-			$ls_path = $ls_folder . $ls_subfolder . $ls_fileName . '.' . $ls_extension;
-			if (is_file($ls_path)) {
-				$la_messages = $lo_parser->parse($ls_path);
-				if ($la_messages) {
-					$lo_package->addMessages($la_messages);
+		foreach ($folders as $folder) {
+			$path = $folder . $subfolder . $fileName . '.' . $extension;
+			if (is_file($path)) {
+				$messages = $parser->parse($path);
+				if ($messages) {
+					$package->addMessages($messages);
 				}
 			}
 		}
 
-		return $lo_package;
+		return $package;
 	}
 
 
@@ -72,36 +72,36 @@ class MessagesFileLoader extends BaseMessagesFileLoader {
 	 * @inheritDoc
 	 */
 	public function translationsFolders(): array {
-		$la_locale = Locale::parseLocale($this->_locale) + ['region' => null];
+		$locale = Locale::parseLocale($this->_locale) + ['region' => null];
 
-		$la_folders = [
-			$la_locale['language'],
+		$folders = [
+			$locale['language'],
 			// gettext compatible paths, see https://www.php.net/manual/en/function.gettext.php
-			$la_locale['language'] . DIRECTORY_SEPARATOR . 'LC_MESSAGES',
+			$locale['language'] . DIRECTORY_SEPARATOR . 'LC_MESSAGES',
 		];
-		if ($la_locale['region']) {
-			$ls_languageRegion = implode('_', [$la_locale['language'], $la_locale['region']]);
-			$la_folders[] = $ls_languageRegion;
+		if ($locale['region']) {
+			$languageRegion = implode('_', [$locale['language'], $locale['region']]);
+			$folders[] = $languageRegion;
 			// gettext compatible paths, see https://www.php.net/manual/en/function.gettext.php
-			$la_folders[] = $ls_languageRegion . DIRECTORY_SEPARATOR . 'LC_MESSAGES';
+			$folders[] = $languageRegion . DIRECTORY_SEPARATOR . 'LC_MESSAGES';
 		}
 
-		$la_searchPaths = [];
+		$searchPaths = [];
 
-		$la_localePaths = App::path('locales');
-		if (!$la_localePaths && defined('ROOT')) {
-			$la_localePaths[] = ROOT . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
+		$localePaths = App::path('locales');
+		if (!$localePaths && defined('ROOT')) {
+			$localePaths[] = ROOT . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
 		}
 		if ($this->_plugin && Plugin::isLoaded($this->_plugin)) {
-			$la_localePaths[] = App::path('locales', $this->_plugin)[0];
+			$localePaths[] = App::path('locales', $this->_plugin)[0];
 		}
 
-		foreach (array_reverse($la_localePaths) as $ls_path) {
-			foreach ($la_folders as $ls_folder) {
-				$la_searchPaths[] = $ls_path . $ls_folder . DIRECTORY_SEPARATOR;
+		foreach (array_reverse($localePaths) as $path) {
+			foreach ($folders as $folder) {
+				$searchPaths[] = $path . $folder . DIRECTORY_SEPARATOR;
 			}
 		}
 
-		return $la_searchPaths;
+		return $searchPaths;
 	}
 }

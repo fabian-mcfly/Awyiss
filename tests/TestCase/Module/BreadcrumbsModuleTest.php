@@ -64,7 +64,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -88,7 +87,6 @@ class BreadcrumbsModuleTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		FactoryLocator::drop('Table');
@@ -110,7 +108,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::getTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTitle(): void {
 		$result = BreadcrumbsModule::getTitle();
@@ -125,7 +122,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::getFormFields()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormFieldsWithDefaults(): void {
 		// Mock the query chain for getHomepageOptions
@@ -164,7 +160,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::getFormFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormFieldsWithCustomSettings(): void {
 		$settings = [
@@ -189,7 +184,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithDefaultSettings(): void {
 		$settings = [];
@@ -235,7 +229,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCustomHomepageId(): void {
 		$settings = [
@@ -298,7 +291,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderInPreviewMode(): void {
 		$settings = [];
@@ -341,7 +333,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::getHomepageOptions()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHomepageOptions(): void {
 		// Use the real table locator in this test
@@ -417,7 +408,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithEmptyPath(): void {
 		$settings = ['includeHomepage' => true];
@@ -460,7 +450,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderExcludingHomepageAndCurrentPage(): void {
 		$settings = [
@@ -505,7 +494,6 @@ class BreadcrumbsModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\BreadcrumbsModule::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRender(): void {
 		// Use the real table locator in this test

@@ -34,7 +34,6 @@ class UserConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -60,7 +59,6 @@ class UserConfigurationListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -75,7 +73,6 @@ class UserConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UserConfigurationListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -91,7 +88,6 @@ class UserConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UserConfigurationListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveTypecastsValue(): void {
 		$entity = $this->fetchTable('UserConfiguration')->newDefaultEntity();
@@ -152,7 +148,6 @@ class UserConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UserConfigurationListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsCurrentUserId(): void {
 		$entity = $this->fetchTable('UserConfiguration')->newDefaultEntity([
@@ -174,7 +169,6 @@ class UserConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UserConfigurationListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCallsResetConfiguration(): void {
 		$this->user->expects($this->once())->method('resetConfiguration');
@@ -186,7 +180,6 @@ class UserConfigurationListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UserConfigurationListener::afterDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteCallsResetConfiguration(): void {
 		$this->user->expects($this->once())->method('resetConfiguration');

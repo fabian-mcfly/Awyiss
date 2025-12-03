@@ -35,11 +35,11 @@ class FormsConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title']);
+						unset($fields['id'], $fields['title']);
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],
@@ -73,15 +73,15 @@ class FormsConfigOptions extends AbstractConfigOptions {
 					nullable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_protectionMethod = FormProtectionProvider::getFormProtectionFiles();
+						$protectionMethods = FormProtectionProvider::getFormProtectionFiles();
 
-						foreach ($la_protectionMethod as $ls_identifier => $ls_class) {
-							$la_protectionMethods[ $ls_identifier ] = __d('forms', 'protection_method_' . Inflector::underscore($ls_identifier));
+						foreach ($protectionMethods as $identifier => $class) {
+							$protectionMethods[ $identifier ] = __d('forms', 'protection_method_' . Inflector::underscore($identifier));
 						}
 
-						asort($la_protectionMethods);
+						asort($protectionMethods);
 
-						return $la_protectionMethods;
+						return $protectionMethods;
 					},
 				),
 			],

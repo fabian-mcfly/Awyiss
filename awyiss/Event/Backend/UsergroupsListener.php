@@ -40,21 +40,19 @@ class UsergroupsListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Usergroup $entity
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function afterSave(Event $event, Usergroup $entity): void {
-		$lo_usersTable = $this->fetchTable('Users');
+		$usersTable = $this->fetchTable('Users');
 
-		$lo_entity = $entity;
-		$lo_query = $lo_usersTable->find()->matching('Usergroups', function (SelectQuery $query) use ($lo_entity) {
+		$query = $usersTable->find()->matching('Usergroups', function (SelectQuery $query) use ($entity) {
 			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-			return $query->find('withDeleted')->where(['Usergroups.id' => $lo_entity->id]);
+			return $query->find('withDeleted')->where(['Usergroups.id' => $entity->id]);
 		});
 
-		$lo_users = $lo_query->all();
+		$users = $query->all();
 
-		/** @var \Awyiss\Model\Entity\User $lo_currentUser */
-		$lo_currentUser = $this->getIdentity();
+		/** @var \Awyiss\Model\Entity\User $currentUser */
+		$currentUser = $this->getIdentity();
 
 		/*
 		 * No users found in this group means the group was saved without
@@ -63,28 +61,28 @@ class UsergroupsListener implements EventListenerInterface {
 		 * and we need to unset the usergroups and permission collection
 		 * for the current user in case they were in this group before.
 		 */
-		if (!$lo_users->count()) {
-			$lo_currentUser->unset('usergroups');
-			$lo_currentUser->unsetPermissionCollection();
+		if (!$users->count()) {
+			$currentUser->unset('usergroups');
+			$currentUser->unsetPermissionCollection();
 
 			//No records found? The item is alone in its scope.
 			return;
 		}
 
-		$lo_now = DateTime::now();
+		$now = DateTime::now();
 		// Decrease the system order of all records
-		$lo_users = $lo_users->compile()->each(function (User $user) use ($entity, $lo_now, $lo_currentUser): void {
-			$user->changedOn = $lo_now;
+		$users = $users->compile()->each(function (User $user) use ($entity, $now, $currentUser): void {
+			$user->changedOn = $now;
 
-			if ($user->id === $lo_currentUser->id) {
-				$lo_currentUser->unset('usergroups');
-				$lo_currentUser->unsetPermissionCollection();
+			if ($user->id === $currentUser->id) {
+				$currentUser->unset('usergroups');
+				$currentUser->unsetPermissionCollection();
 			}
 		});
 
 		try {
 			// Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
-			$lo_usersTable->saveMany($lo_users, [
+			$usersTable->saveMany($users, [
 				'audit' => ['skip' => true],
 				'atomic' => false,
 				'checkRules' => false,

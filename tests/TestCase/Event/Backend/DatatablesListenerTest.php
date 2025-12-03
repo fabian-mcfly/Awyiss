@@ -38,7 +38,6 @@ class DatatablesListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -53,7 +52,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -71,7 +69,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithNoAttributesTable(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -99,7 +96,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithAttributesTableButNoQueuedJob(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -127,7 +123,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithAttributesTableAndQueuedJob(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -159,7 +154,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesBackendMenuEntries(): void {
 		Configure::write('Awyiss.Datatables.Backend.autoCreateMenuEntries', true);
@@ -197,7 +191,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesBackendMenuEntriesWhenConfigFalse(): void {
 		Configure::write('Awyiss.Datatables.Backend.autoCreateMenuEntries', false);
@@ -222,7 +215,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesBackendMenuEntriesWhenExistingEntity(): void {
 		Configure::write('Awyiss.Datatables.Backend.autoCreateMenuEntries', true);
@@ -248,7 +240,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitBakesMigrationAndModelForNewEntity(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -307,7 +298,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotBakesMigrationAndModelForExistingEntity(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -333,7 +323,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitDispatchesDeleteCustomConfigEventWhenNew(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -358,7 +347,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotDispatchesDeleteCustomConfigEventWhenNotNew(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -384,7 +372,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCleansUpBackendMenuEntries(): void {
 		Configure::write('Awyiss.Datatables.Backend.autoCreateMenuEntries', true);
@@ -421,7 +408,6 @@ class DatatablesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCleansUpConfiguration(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -467,7 +453,6 @@ class DatatablesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCleansUpI18n(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -519,7 +504,6 @@ class DatatablesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCleansUpUsergroupPermissions(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -567,7 +551,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSoftDeleteCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCommitQueuesDropCommands(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -609,7 +592,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSoftDeleteCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCommitQueueUnlinksModelFilesIfExists(): void {
 		$datatableTable = $this->fetchTable('Datatables');
@@ -664,7 +646,6 @@ class DatatablesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DatatablesListener::afterSoftDeleteCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCommitWithAttributesTableQueuesAttributesDelete(): void {
 		$datatableTable = $this->fetchTable('Datatables');

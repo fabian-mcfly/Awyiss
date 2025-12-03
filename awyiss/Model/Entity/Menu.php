@@ -55,9 +55,9 @@ class Menu extends Entity {
 			return null;
 		}
 
-		$ls_identifier = Text::slug($identifier, ['replacement' => '_']);
+		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
 
-		return mb_strtolower($ls_identifier);
+		return mb_strtolower($identifier);
 	}
 }

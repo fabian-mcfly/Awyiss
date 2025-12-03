@@ -55,7 +55,6 @@ class LocaleMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
@@ -73,7 +72,6 @@ class LocaleMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessSetsRealm(): void {
 		$this->get('/backend/zu/users/overview/foo:bar/baz:qux');
@@ -91,7 +89,6 @@ class LocaleMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessSetsLocaleAttribute(): void {
 		$this->get('/zu/users/overview/foo:bar/baz:qux');
@@ -105,7 +102,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::useLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUseLanguageInFrontendRealm(): void {
 		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
@@ -145,7 +141,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::useLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUseLanguageInBackendRealm(): void {
 		Awyiss::setRealm(Awyiss::REALM_BACKEND);
@@ -185,7 +180,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::useLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUseLanguageUsesRealmTimezoneFromConfig(): void {
 		Awyiss::setRealm(Awyiss::REALM_BACKEND);
@@ -220,7 +214,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::useLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testUseLanguageSetsLocaleInTranslateBehavior(): void {
@@ -282,7 +275,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::useLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testUseLanguageSetsLocaleInTranslateBehaviorForFrontendRealm(): void {
@@ -344,7 +336,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::useLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUseLanguageAddsTranslateBehaviorToLanguagesTable(): void {
 		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
@@ -375,7 +366,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLanguageForFrontendRealm(): void {
 		$this->loadRoutes();
@@ -416,7 +406,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLanguageForFrontendRealmFallback(): void {
 		$this->loadRoutes();
@@ -455,7 +444,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLanguageForBackendRealm(): void {
 		$this->loadRoutes();
@@ -489,7 +477,6 @@ class LocaleMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getLanguage()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLanguageForBackendRealmFallback(): void {
 		$this->loadRoutes();
@@ -527,7 +514,6 @@ class LocaleMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLanguages(): void {
 		$languages = LocaleMiddleware::getLanguages();
@@ -551,7 +537,6 @@ class LocaleMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLanguagesWithRealm(): void {
 		$languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
@@ -584,7 +569,6 @@ class LocaleMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getDefaultLanguage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDefaultLanguage(): void {
 		$language = LocaleMiddleware::getDefaultLanguage(Awyiss::REALM_FRONTEND);
@@ -602,7 +586,6 @@ class LocaleMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getDefaultLanguage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDefaultLanguageIgnoresInactiveLanguages(): void {
 		$table = $this->fetchTable('Languages');
@@ -648,7 +631,6 @@ class LocaleMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getSessionIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSessionIdentifier(): void {
 		$identifier = LocaleMiddleware::getSessionIdentifier(Awyiss::REALM_FRONTEND);
@@ -665,7 +647,6 @@ class LocaleMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getLanguageByShortcode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLanguageByShortcode(): void {
 		LocaleMiddleware::setRealm(Awyiss::REALM_FRONTEND);
@@ -709,7 +690,6 @@ class LocaleMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\LocaleMiddleware::getLanguagesByShortcode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLanguagesByShortcode(): void {
 		$languages = LocaleMiddleware::getLanguagesByShortcode('en');

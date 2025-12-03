@@ -21,6 +21,7 @@ use Cake\View\ViewBuilder;
  * and `ensurePossibleSystemOrder()` to make sure the set `system_order` is valid.
  *
  * @method \Awyiss\Controller\AppController getController()
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class SystemOrderComponent extends Component {
 	/**
@@ -64,46 +65,46 @@ class SystemOrderComponent extends Component {
 	 * @return void
 	 */
 	public function beforeRender(): void {
-		$lo_controller = $this->getController();
-		$lo_view = $lo_controller->viewBuilder();
+		$controller = $this->getController();
+		$view = $controller->viewBuilder();
 
 		if (!$this->getConfig('tableName') || Inflector::variable($this->getConfig('field', 'systemOrder')) !== 'systemOrder') {
 			return;
 		}
 
-		/** @var \Cake\ORM\Table $lo_table */
-		$lo_table = $lo_controller->{$this->getConfig('tableName')} ?? null;
+		/** @var \Cake\ORM\Table $table */
+		$table = $controller->{$this->getConfig('tableName')} ?? null;
 
 		//Do nothing when no table's set or when the behavior is disabled
-		if (!$lo_table || !$lo_table->hasBehavior('SystemOrder') || !$lo_table->getBehavior('SystemOrder')->getConfig('enabled')) {
+		if (!$table || !$table->hasBehavior('SystemOrder') || !$table->getBehavior('SystemOrder')->getConfig('enabled')) {
 			return;
 		}
 
-		$lo_records = $this->getConfig('records');
+		$records = $this->getConfig('records');
 
-		if (!$lo_records) {
-			$lo_records = $this->autoloadRecords($lo_controller, $lo_view);
+		if (!$records) {
+			$records = $this->autoloadRecords($controller, $view);
 		}
 
 		//Set view vars if they don't already exist
-		if (!$lo_view->getVar('systemOrderRecords')) {
-			$lo_view->setVar('systemOrderRecords', $lo_records);
+		if (!$view->getVar('systemOrderRecords')) {
+			$view->setVar('systemOrderRecords', $records);
 		}
 
 		//Set view vars if they don't already exist
-		if (!$lo_view->getVar('systemOrderRelatedColumns')) {
-			$la_relatedColumns = $this->getConfig('relatedColumns');
-			if (!$la_relatedColumns) {
+		if (!$view->getVar('systemOrderRelatedColumns')) {
+			$relatedColumns = $this->getConfig('relatedColumns');
+			if (!$relatedColumns) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$la_relatedColumns = $lo_table->getSystemOrderRelatedColumns();
+				$relatedColumns = $table->getSystemOrderRelatedColumns();
 			}
 
-			$lo_view->setVar('systemOrderRelatedColumns', $la_relatedColumns);
+			$view->setVar('systemOrderRelatedColumns', $relatedColumns);
 		}
 
 		//Set view vars if they don't already exist
-		if (!$lo_view->getVar('systemOrderField')) {
-			$lo_view->setVar('systemOrderField', $this->getConfig('field'));
+		if (!$view->getVar('systemOrderField')) {
+			$view->setVar('systemOrderField', $this->getConfig('field'));
 		}
 	}
 
@@ -114,36 +115,36 @@ class SystemOrderComponent extends Component {
 	 * @return \Cake\Datasource\ResultSetInterface|null
 	 */
 	protected function autoloadRecords(AppController $controller, ViewBuilder $view): ?ResultSetInterface {
-		$ls_action = $controller->getRequest()->getParam('action');
-		$lx_autoload = $this->getConfig('autoload');
+		$action = $controller->getRequest()->getParam('action');
+		$autoload = $this->getConfig('autoload');
 
 		//Shall we autoload the records?
-		if ($lx_autoload !== true && (!is_array($lx_autoload) || !in_array($ls_action, $lx_autoload)) && (!is_string($lx_autoload) || $ls_action !== $lx_autoload)) {
+		if ($autoload !== true && (!is_array($autoload) || !in_array($action, $autoload)) && (!is_string($autoload) || $action !== $autoload)) {
 			return null;
 		}
 
-		$ls_varName = $this->getConfig('entityName');
-		$lo_entity = $view->getVar($ls_varName);
+		$varName = $this->getConfig('entityName');
+		$entity = $view->getVar($varName);
 
-		if (!$lo_entity) {
+		if (!$entity) {
 			return null;
 		}
 
 		//Get the records from the database
-		$lo_records = $this->getRecords($lo_entity);
+		$records = $this->getRecords($entity);
 
 		//Make sure the system_order property of the found entity is a legit one
-		$this->ensurePossibleSystemOrder($lo_entity);
+		$this->ensurePossibleSystemOrder($entity);
 
-		$lo_request = $controller->getRequest();
+		$request = $controller->getRequest();
 		//When system_order is part of the request data, overwrite it since it might be outdated
-		if ($lo_request->getData('system_order')) {
-			$lo_request = $lo_request->withData('system_order', $lo_entity->systemOrder);
-			$controller->setRequest($lo_request);
+		if ($request->getData('system_order')) {
+			$request = $request->withData('system_order', $entity->systemOrder);
+			$controller->setRequest($request);
 		}
 
 
-		return $lo_records;
+		return $records;
 	}
 
 
@@ -156,29 +157,29 @@ class SystemOrderComponent extends Component {
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions() method
 	 */
 	public function getRecords(EntityInterface $entity): ?ResultSetInterface {
-		$lo_controller = $this->getController();
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $lo_controller->{$this->getConfig('tableName')};
+		$controller = $this->getController();
+		/** @var \Awyiss\Model\Table $table */
+		$table = $controller->{$this->getConfig('tableName')};
 
-		if (!$lo_table) {
+		if (!$table) {
 			return null;
 		}
 
-		if (!$lo_table->hasBehavior('SystemOrder') || !$lo_table->getBehavior('SystemOrder')->getConfig('enabled')) {
+		if (!$table->hasBehavior('SystemOrder') || !$table->getBehavior('SystemOrder')->getConfig('enabled')) {
 			return null;
 		}
 
-		$lo_query = $lo_table->addSystemOrderQueryConditions($lo_table->find(), $entity);
-		if ($lo_table->hasBehavior('MediaAssignment')) {
-			$lo_query->find('mediaAssignments', useMediaEntity: true);
+		$query = $table->addSystemOrderQueryConditions($table->find(), $entity);
+		if ($table->hasBehavior('MediaAssignment')) {
+			$query->find('mediaAssignments', useMediaEntity: true);
 		}
 
-		$lo_systemOrderRecords = $lo_query->all();
+		$systemOrderRecords = $query->all();
 
-		$this->setConfig('records', $lo_systemOrderRecords);
+		$this->setConfig('records', $systemOrderRecords);
 
 
-		return $lo_systemOrderRecords;
+		return $systemOrderRecords;
 	}
 
 
@@ -202,37 +203,37 @@ class SystemOrderComponent extends Component {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $this->getController()->{$this->getConfig('tableName')};
-		$lo_records = $records ?? $this->getConfig('records') ?? $this->getRecords($entity);
+		/** @var \Awyiss\Model\Table $table */
+		$table = $this->getController()->{$this->getConfig('tableName')};
+		$records ??= $this->getConfig('records') ?? $this->getRecords($entity);
 
-		$li_highestSystemOrder = $lo_records->max('systemOrder')?->systemOrder ?? 0;
+		$highestSystemOrder = $records->max('systemOrder')?->systemOrder ?? 0;
 
-		$la_requestData = $this->getController()->getRequest()->getData();
-		$li_systemOrder = $entity->get('systemOrder');
+		$requestData = $this->getController()->getRequest()->getData();
+		$systemOrder = $entity->get('systemOrder');
 
-		if ($la_requestData['reload_form'] ?? false) {
-			if ($lo_table->hasDirtySystemOrderRelatedColumns($entity)) {
-				unset($la_requestData['system_order']);
+		if ($requestData['reload_form'] ?? false) {
+			if ($table->hasDirtySystemOrderRelatedColumns($entity)) {
+				unset($requestData['system_order']);
 				$entity->set('systemOrder');
 			}
 			else {
-				$la_requestData['system_order'] = $entity->hasOriginal('systemOrder') ? $entity->getOriginal('systemOrder') : $entity->get('systemOrder');
+				$requestData['system_order'] = $entity->hasOriginal('systemOrder') ? $entity->getOriginal('systemOrder') : $entity->get('systemOrder');
 			}
 		}
 
-		if (isset($la_requestData['system_order'])) {
-			$li_systemOrder = $la_requestData['system_order'];
+		if (isset($requestData['system_order'])) {
+			$systemOrder = $requestData['system_order'];
 		}
 		elseif (!$entity->systemOrder || $entity->isNew()) {
-			$li_systemOrder = $li_highestSystemOrder + 1;
+			$systemOrder = $highestSystemOrder + 1;
 		}
 
 		if (!$entity->systemOrder || $entity->isNew()) {
-			$entity->set('systemOrder', min($li_systemOrder, $li_highestSystemOrder + 1));
+			$entity->set('systemOrder', min($systemOrder, $highestSystemOrder + 1));
 		}
-		elseif ($entity->systemOrder > $li_highestSystemOrder) {
-			$entity->set('systemOrder', min($li_systemOrder, $li_highestSystemOrder));
+		elseif ($entity->systemOrder > $highestSystemOrder) {
+			$entity->set('systemOrder', min($systemOrder, $highestSystemOrder));
 		}
 	}
 }

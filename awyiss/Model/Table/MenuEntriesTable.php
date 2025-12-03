@@ -189,8 +189,8 @@ class MenuEntriesTable extends Table {
 	 * @return void
 	 */
 	public function disableCascadeCallbacks(): void {
-		$ls_associationName = $this->getBehavior('Nest')->getConfig('children.associationName');
-		$this->{$ls_associationName}->setDependent(false)->setCascadeCallbacks(false);
+		$associationName = $this->getBehavior('Nest')->getConfig('children.associationName');
+		$this->{$associationName}->setDependent(false)->setCascadeCallbacks(false);
 	}
 
 
@@ -198,7 +198,7 @@ class MenuEntriesTable extends Table {
 	 * @return void
 	 */
 	public function enableCascadeCallbacks(): void {
-		$ls_associationName = $this->getBehavior('Nest')->getConfig('children.associationName');
-		$this->{$ls_associationName}->setDependent(true)->setCascadeCallbacks(true);
+		$associationName = $this->getBehavior('Nest')->getConfig('children.associationName');
+		$this->{$associationName}->setDependent(true)->setCascadeCallbacks(true);
 	}
 }

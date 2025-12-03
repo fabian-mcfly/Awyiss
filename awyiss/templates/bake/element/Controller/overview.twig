@@ -8,11 +8,11 @@
 		$this->Authorization->ensure('read');
 
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_{{ pluralName }} = $this->paginate($lo_query);
+		$query = $this->getOverviewQuery();
+		${{ pluralName }} = $this->paginate($query);
 
 		$this->set([
-			'{{ pluralName }}' => $lo_{{ pluralName }},
+			'{{ pluralName }}' => ${{ pluralName }},
 			'attributes' => $this->{{ currentModelName }}->getAttributes(),
 		]);
 	}

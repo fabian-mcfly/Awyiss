@@ -60,7 +60,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(12, $this->surveySurveyQuestionsTable->associations()->keys());
@@ -154,7 +153,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -187,7 +185,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -216,7 +213,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -236,7 +232,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -280,7 +275,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -319,7 +313,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyRequiredFields(): void {
 		$data = [
@@ -342,7 +335,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationBlankFields(): void {
 		$data = [
@@ -374,7 +366,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationOptionalFields(): void {
 		$data = [
@@ -400,7 +391,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUniqueIdentifierPerSurvey(): void {
 		// 8524de5e exists for survey 1, but is allowed for survey 2
@@ -422,7 +412,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNonUniqueIdentifierPerSurvey(): void {
 		// 8524de5e exists for survey 1
@@ -451,7 +440,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidSurveyId(): void {
 		$data = [
@@ -472,7 +460,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidSurveyId(): void {
 		$data = [
@@ -499,7 +486,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidSurveyQuestionId(): void {
 		$data = [
@@ -520,7 +506,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidSurveyQuestionId(): void {
 		$data = [
@@ -547,7 +532,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidNextAction(): void {
 		$data = [
@@ -579,7 +563,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesEmptyNextAction(): void {
 		$data = [
@@ -601,7 +584,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidNextAction(): void {
 		$data = [
@@ -638,7 +620,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\SurveySurveyQuestion $entity */
@@ -667,7 +648,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -710,7 +690,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaNextActionColumn(): void {
 		$schema = $this->surveySurveyQuestionsTable->getSchema();
@@ -723,7 +702,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->surveySurveyQuestionsTable->hasBehavior('SystemOrder'));
@@ -737,7 +715,6 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->surveySurveyQuestionsTable->hasBehavior('Translate'));

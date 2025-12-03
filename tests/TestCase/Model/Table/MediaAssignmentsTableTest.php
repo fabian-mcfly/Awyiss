@@ -56,7 +56,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(8, $this->mediaAssignmentsTable->associations()->keys());
@@ -130,7 +129,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -154,7 +152,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccessWithMedia(): void {
 		$data = [
@@ -176,7 +173,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccessWithMediaFolder(): void {
 		$data = [
@@ -198,7 +194,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -222,7 +217,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMediaOrMediaFolderRequired(): void {
 		// Test that mediaId is required when mediaFolderId is empty
@@ -245,7 +239,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -276,7 +269,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -307,7 +299,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -328,7 +319,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationForeignKeyAllowEmpty(): void {
 		$data = [
@@ -350,7 +340,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaElementExists(): void {
 		// Test with existing media element
@@ -371,7 +360,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaElementNotExists(): void {
 		// Test with non-existing media element
@@ -397,7 +385,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaExists(): void {
 		// Test with existing media
@@ -418,7 +405,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaNotExists(): void {
 		// Test with non-existing media
@@ -444,7 +430,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaExistsWithNullValue(): void {
 		// Test with null media (should pass when mediaFolderId is provided)
@@ -466,7 +451,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaFolderExists(): void {
 		// Test with existing media
@@ -487,7 +471,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaFolderNotExists(): void {
 		// Test with non-existing media
@@ -513,7 +496,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaFolderExistsWithNullValue(): void {
 		// Test with null media (should pass when mediaFolderId is provided)
@@ -535,7 +517,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\MediaAssignment $entity */
@@ -558,7 +539,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -590,7 +570,6 @@ class MediaAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaAssignmentsTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->mediaAssignmentsTable->hasBehavior('SystemOrder'));

@@ -37,7 +37,6 @@ class SystemConfigOptionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Configuration\ConfigOptions\SystemConfigOptions::initializeConfigOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());

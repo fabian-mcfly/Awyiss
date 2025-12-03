@@ -115,30 +115,30 @@ class SurveyRenderer {
 	 * @return \Awyiss\Model\Entity\Survey|null
 	 */
 	public function getSurveyByIdentifier(string|int $identifier): ?Survey {
-		/** @var \Awyiss\Model\Table\SurveysTable $lo_surveysTable */
-		$lo_surveysTable = $this->fetchTable('Surveys');
+		/** @var \Awyiss\Model\Table\SurveysTable $surveysTable */
+		$surveysTable = $this->fetchTable('Surveys');
 
 		if ($this->isPreview()) {
-			$lo_query = $lo_surveysTable->find('all');
+			$query = $surveysTable->find('all');
 		}
 		else {
 			/**
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$lo_query = $lo_surveysTable->find('active')->find('published');
+			$query = $surveysTable->find('active')->find('published');
 		}
 
 		if (is_int($identifier)) {
-			$lo_query = $lo_query->where(['Surveys.id' => $identifier]);
+			$query = $query->where(['Surveys.id' => $identifier]);
 		}
 		else {
-			$lo_query = $lo_query->where(['Surveys.identifier' => $identifier]);
+			$query = $query->where(['Surveys.identifier' => $identifier]);
 		}
 
-		$lo_query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+		$query->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 
-		return $lo_query->first();
+		return $query->first();
 	}
 
 
@@ -209,14 +209,14 @@ class SurveyRenderer {
 			 * @see \Awyiss\Model\Enum\Survey\NextAction::ShowForm
 			 * @see \Awyiss\Model\Enum\Survey\NextAction::ShowFormAndSave
 			 */
-			$lo_formRenderer = $this->getFormRenderer();
-			$lo_entry = $lo_formRenderer->loadFormEntryFromHash($formEntryHash);
+			$formRenderer = $this->getFormRenderer();
+			$entry = $formRenderer->loadFormEntryFromHash($formEntryHash);
 
-			if ($lo_entry) {
-				$la_formData = json_decode(gzuncompress(base64_decode($lo_entry->data)), true);
+			if ($entry) {
+				$formData = json_decode(gzuncompress(base64_decode($entry->data)), true);
 
-				if (isset($la_formData['survey'][ $this->survey->identifier ])) {
-					$this->processSurveyFromData($la_formData['survey'][ $this->survey->identifier ]);
+				if (isset($formData['survey'][ $this->survey->identifier ])) {
+					$this->processSurveyFromData($formData['survey'][ $this->survey->identifier ]);
 				}
 			}
 		}
@@ -254,24 +254,24 @@ class SurveyRenderer {
 			return $this;
 		}
 
-		$lo_entry = $this->loadSurveyEntryFromHash($entryHash, $this->survey->id);
+		$entry = $this->loadSurveyEntryFromHash($entryHash, $this->survey->id);
 
-		if (!$lo_entry) {
+		if (!$entry) {
 			return $this;
 		}
 
 		$this->surveyEntryHash = $entryHash;
 
-		$la_surveyData = json_decode(gzuncompress(base64_decode($lo_entry->data)), true);
+		$surveyData = json_decode(gzuncompress(base64_decode($entry->data)), true);
 
-		if (empty($la_surveyData)) {
+		if (empty($surveyData)) {
 			return $this;
 		}
 
-		$la_progress = $la_surveyData['progress'];
-		$la_progress['custom'] = $la_surveyData['customAnswers'] ?? [];
+		$progress = $surveyData['progress'];
+		$progress['custom'] = $surveyData['customAnswers'] ?? [];
 
-		$this->survey->setProgress($la_progress);
+		$this->survey->setProgress($progress);
 		$this->currentAction = $this->survey->getCurrentAction();
 
 		$this->savedEntry = true;
@@ -290,12 +290,12 @@ class SurveyRenderer {
 			return $this;
 		}
 
-		$lo_formRenderer = $this->getFormRenderer();
+		$formRenderer = $this->getFormRenderer();
 
-		if (!$lo_formRenderer->isSent()) {
-			$lo_formRenderer->processFormEntryFromHash($formEntryHash);
+		if (!$formRenderer->isSent()) {
+			$formRenderer->processFormEntryFromHash($formEntryHash);
 
-			$this->formSent = $lo_formRenderer->isSent();
+			$this->formSent = $formRenderer->isSent();
 		}
 
 		return $this;
@@ -308,18 +308,18 @@ class SurveyRenderer {
 	 * @return \Awyiss\Model\Entity\SurveyEntry|null
 	 */
 	protected function loadSurveyEntryFromHash(string $entryHash, int $surveyId): ?SurveyEntry {
-		/** @var \Awyiss\Model\Table\SurveyEntriesTable $lo_surveyEntriesTable */
-		$lo_surveyEntriesTable = $this->fetchTable('SurveyEntries');
+		/** @var \Awyiss\Model\Table\SurveyEntriesTable $surveyEntriesTable */
+		$surveyEntriesTable = $this->fetchTable('SurveyEntries');
 
-		$ls_surveyEntryHash = $entryHash;
+		$surveyEntryHash = $entryHash;
 
-		/** @var \Awyiss\Model\Entity\SurveyEntry|null $lo_entry */
-		$lo_entry = $lo_surveyEntriesTable->find('all')->where([
-			'identifier' => $ls_surveyEntryHash,
+		/** @var \Awyiss\Model\Entity\SurveyEntry|null $entry */
+		$entry = $surveyEntriesTable->find('all')->where([
+			'identifier' => $surveyEntryHash,
 			'survey_id' => $surveyId,
 		])->first();
 
-		return $lo_entry;
+		return $entry;
 	}
 
 
@@ -341,24 +341,24 @@ class SurveyRenderer {
 		$this->loadResultsClass();
 
 		/**
-		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
+		$mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
 			baseWidth: $this->View->get('fullWidth', 1920),
 			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
 			columnWidth: $options['columnWidth'] ?? 100.00,
 			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
 		);
 
-		$ls_currentQuestion = '';
-		$lb_hasNextAction = false;
+		$currentQuestion = '';
+		$hasNextAction = false;
 		if ($this->currentAction instanceof SurveySurveyQuestion) {
-			$ls_currentQuestion = $this->renderQuestion($lo_mediaRenderOptions);
+			$currentQuestion = $this->renderQuestion($mediaRenderOptions);
 
 			// Regular questions (single choice, multi choice, free user input) always have a next action.
 			// Other question types need to have a specific next action defined.
-			$lb_hasNextAction = in_array($this->currentAction->surveyQuestion->type, [
+			$hasNextAction = in_array($this->currentAction->surveyQuestion->type, [
 				$this->survey->getQuestionTypeEnum()::SingleChoice,
 				$this->survey->getQuestionTypeEnum()::MultiChoice,
 				$this->survey->getQuestionTypeEnum()::FreeText,
@@ -380,36 +380,36 @@ class SurveyRenderer {
 			return $this->renderForm($options);
 		}
 
-		$lo_mediaRenderOptions = $lo_mediaRenderOptions->withSelector('#Survey-' . Inflector::ucparts($this->survey->identifier));
+		$mediaRenderOptions = $mediaRenderOptions->withSelector('#Survey-' . Inflector::ucparts($this->survey->identifier));
 
 		// Parse the module
-		$this->parseAwyissImageTags($this->survey, $lo_mediaRenderOptions, [
+		$this->parseAwyissImageTags($this->survey, $mediaRenderOptions, [
 			'successMessage',
 			'failureMessage',
 		]);
 
 		// Parse the module
-		$this->parseModule($this->survey, $lo_mediaRenderOptions, 'failureMessage');
+		$this->parseModule($this->survey, $mediaRenderOptions, 'failureMessage');
 
-		$ls_successMessage = null;
+		$successMessage = null;
 		if (
 			$this->savedEntry && in_array($this->currentAction, [
 				$this->survey->getNextActionEnum()::SaveAndEnd,
 				$this->survey->getNextActionEnum()::SaveAndShowForm,
 			])
 		) {
-			$this->parseModule($this->survey, $lo_mediaRenderOptions, 'successMessage');
-			$ls_successMessage = $this->results?->getFinalResult($this->survey->successMessage, $lo_mediaRenderOptions) ?? $this->survey->successMessage;
+			$this->parseModule($this->survey, $mediaRenderOptions, 'successMessage');
+			$successMessage = $this->results?->getFinalResult($this->survey->successMessage, $mediaRenderOptions) ?? $this->survey->successMessage;
 		}
 
 		return $this->getView()->element('survey/survey', [
 			'survey' => $this->survey,
-			'currentQuestion' => $ls_currentQuestion,
+			'currentQuestion' => $currentQuestion,
 			'currentAction' => $this->currentAction,
-			'hasNextAction' => $lb_hasNextAction,
+			'hasNextAction' => $hasNextAction,
 			'customAnswers' => $this->survey->getCustomAnswers(),
 			'progress' => $this->survey->getProgress(),
-			'successMessage' => $ls_successMessage,
+			'successMessage' => $successMessage,
 			'questionTypeEnum' => $this->survey->getQuestionTypeEnum(),
 			'nextActionEnum' => $this->survey->getNextActionEnum(),
 			'savedEntry' => $this->savedEntry,
@@ -430,10 +430,10 @@ class SurveyRenderer {
 	 */
 	protected function getFormRenderer(): ?FormRenderer {
 		if (!isset($this->formRenderer)) {
-			/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $ls_className */
-			$ls_className = App::className('FormRenderer', 'Utility/Form');
+			/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $className */
+			$className = App::className('FormRenderer', 'Utility/Form');
 
-			$this->formRenderer = new $ls_className($this->getView());
+			$this->formRenderer = new $className($this->getView());
 		}
 
 		return $this->formRenderer;
@@ -447,7 +447,7 @@ class SurveyRenderer {
 	 * @throws \Exception
 	 */
 	protected function processForm(): bool {
-		$lo_form = null;
+		$form = null;
 
 		if (
 			(
@@ -465,30 +465,30 @@ class SurveyRenderer {
 				])
 			)
 		) {
-			$lo_form = $this->survey->getForm();
+			$form = $this->survey->getForm();
 		}
 
-		if (!$lo_form) {
+		if (!$form) {
 			return false;
 		}
 
 		$this->getFormRenderer()->initForm(
-			$lo_form,
+			$form,
 			$this->requestData,
 			$this->page
 		);
 
-		if (!$lo_form->isSubmitted()) {
+		if (!$form->isSubmitted()) {
 			return true;
 		}
 
-		$lo_form->validate();
+		$form->validate();
 
 		// Validate the form using the form's and form options' validator
-		if ($lo_form->isValid()) {
-			$ls_formEntryHash = $this->sendForm();
+		if ($form->isValid()) {
+			$formEntryHash = $this->sendForm();
 
-			if (!$ls_formEntryHash) {
+			if (!$formEntryHash) {
 				return true;
 			}
 
@@ -498,14 +498,14 @@ class SurveyRenderer {
 					$this->survey->getNextActionEnum()::ShowForm,
 				])
 			) {
-				$this->redirect($this->surveyEntryHash, $ls_formEntryHash);
+				$this->redirect($this->surveyEntryHash, $formEntryHash);
 			}
 
 			if ($this->currentAction === $this->survey->getNextActionEnum()::ShowFormAndSave) {
-				$ls_surveyEntryHash = $this->saveEntry();
+				$surveyEntryHash = $this->saveEntry();
 
-				if ($ls_surveyEntryHash) {
-					$this->redirect($ls_surveyEntryHash, $ls_formEntryHash);
+				if ($surveyEntryHash) {
+					$this->redirect($surveyEntryHash, $formEntryHash);
 				}
 			}
 
@@ -522,15 +522,15 @@ class SurveyRenderer {
 	 * @throws \ReflectionException
 	 */
 	protected function renderForm(array $options): string {
-		$lo_formRenderer = $this->getFormRenderer();
-		$la_formElements = $lo_formRenderer->getForm()->getFormElements()->listNested()->filter(function (FormElement $element): bool {
+		$formRenderer = $this->getFormRenderer();
+		$formElements = $formRenderer->getForm()->getFormElements()->listNested()->filter(function (FormElement $element): bool {
 			return !empty($element->identifier);
 		})->indexBy('identifier')->toArray();
 
 		return $this->getView()->element('survey/form', [
-			'form' => $lo_formRenderer->getForm(),
-			'formBody' => $lo_formRenderer->getFormBody($options),
-			'formElements' => $la_formElements,
+			'form' => $formRenderer->getForm(),
+			'formBody' => $formRenderer->getFormBody($options),
+			'formElements' => $formElements,
 			'formSent' => $this->formSent,
 			'survey' => $this->survey,
 			'currentAction' => $this->currentAction,
@@ -549,13 +549,13 @@ class SurveyRenderer {
 	 * @return void
 	 */
 	protected function saveEntryAndRedirect(): void {
-		$ls_entryIdentifier = $this->saveEntry();
+		$entryIdentifier = $this->saveEntry();
 
-		if (!$ls_entryIdentifier) {
+		if (!$entryIdentifier) {
 			return;
 		}
 
-		$this->redirect($ls_entryIdentifier);
+		$this->redirect($entryIdentifier);
 	}
 
 
@@ -567,27 +567,27 @@ class SurveyRenderer {
 			throw new RuntimeException('No survey was initialized.');
 		}
 
-		$ls_ipHash = $this->createIpHash();
-		$la_surveyData = $this->getSurveyData();
-		$ls_postHash = Security::hash(serialize($la_surveyData));
+		$ipHash = $this->createIpHash();
+		$surveyData = $this->getSurveyData();
+		$postHash = Security::hash(serialize($surveyData));
 
-		$lo_surveyEntry = $this->surveyEntriesTable->newDefaultEntity();
+		$surveyEntry = $this->surveyEntriesTable->newDefaultEntity();
 
-		$la_data = [
+		$data = [
 			'survey_id' => $this->survey->id,
 			'page_id' => $this->page?->id ?? null,
-			'data' => base64_encode(gzcompress(json_encode($la_surveyData))),
-			'ip_hash' => $ls_ipHash,
-			'post_hash' => $ls_postHash,
-			'identifier' => md5($ls_ipHash . '|' . $ls_postHash),
+			'data' => base64_encode(gzcompress(json_encode($surveyData))),
+			'ip_hash' => $ipHash,
+			'post_hash' => $postHash,
+			'identifier' => md5($ipHash . '|' . $postHash),
 		];
 
-		$this->surveyEntriesTable->patchEntity($lo_surveyEntry, $la_data);
+		$this->surveyEntriesTable->patchEntity($surveyEntry, $data);
 
 		// Save the survey entry
-		if ($this->surveyEntriesTable->save($lo_surveyEntry, ['allowFrontendSave' => true])) {
+		if ($this->surveyEntriesTable->save($surveyEntry, ['allowFrontendSave' => true])) {
 			$this->savedEntry = true;
-			return $lo_surveyEntry->identifier;
+			return $surveyEntry->identifier;
 		}
 
 		return $this->savedEntry = false;
@@ -598,62 +598,62 @@ class SurveyRenderer {
 	 * @return mixed
 	 */
 	protected function getSurveyData(): array {
-		$la_progressData = $this->survey->getProgress();
-		$la_customAnswers = $this->survey->getCustomAnswers();
-		/** @var array<string, SurveySurveyQuestion> $la_questionsByIdentifier */
-		$la_questionsByIdentifier = array_column($this->survey->getQuestions()->toArray(), null, 'identifier');
+		$progressData = $this->survey->getProgress();
+		$customAnswers = $this->survey->getCustomAnswers();
+		/** @var array<string, SurveySurveyQuestion> $questionsByIdentifier */
+		$questionsByIdentifier = array_column($this->survey->getQuestions()->toArray(), null, 'identifier');
 
-		$la_userData = [
-			'progress' => $la_progressData,
-			'customAnswers' => $la_customAnswers,
+		$userData = [
+			'progress' => $progressData,
+			'customAnswers' => $customAnswers,
 			'readable' => [],
 		];
-		foreach ($la_progressData as $ls_identifier => $lx_answer) {
-			$lo_question = $la_questionsByIdentifier[ $ls_identifier ] ?? null;
+		foreach ($progressData as $questionIdentifier => $answerIds) {
+			$question = $questionsByIdentifier[ $questionIdentifier ] ?? null;
 
-			if (!$lo_question) {
+			if (!$question) {
 				// This should never happen, but just in case
 				continue;
 			}
 
-			$ls_answer = '';
-			$la_answers = [];
-			if (is_array($lx_answer)) {
-				if (count($lx_answer) === 1) {
-					$ls_answer = reset($lx_answer);
+			$readableAnswer = '';
+			$readableAnswers = [];
+			if (is_array($answerIds)) {
+				if (count($answerIds) === 1) {
+					$readableAnswer = reset($answerIds);
 				}
 				else {
-					foreach ($lx_answer as $li_answerId) {
-						if ($li_answerId === 'custom') {
-							$la_answers[] = $la_customAnswers[ $ls_identifier ] ?? '';
+					foreach ($answerIds as $answerId) {
+						if ($answerId === 'custom') {
+							$readableAnswers[] = $customAnswers[ $questionIdentifier ] ?? '';
 							continue;
 						}
 
-						$la_answers[] = $lo_question->surveySurveyAnswers[ (int)$li_answerId ]->surveyAnswer->label;
+						$readableAnswers[] = $question->surveySurveyAnswers[ (int)$answerId ]->surveyAnswer->label;
 					}
 				}
 			}
-			elseif (isset($la_customAnswers[ $ls_identifier ])) {
-				$ls_answer = $la_customAnswers[ $ls_identifier ];
+			elseif (isset($customAnswers[ $questionIdentifier ])) {
+				$readableAnswer = $customAnswers[ $questionIdentifier ];
 			}
-			elseif ($lo_question->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::FreeText) {
-				$ls_answer = $lx_answer;
-				$lx_answer = null;
+			elseif ($question->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::FreeText) {
+				$readableAnswer = $answerIds;
+				$answerIds = null;
 			}
 			else {
 				// Single-choice or free-text answers are stored as strings
-				$ls_answer = $lo_question->surveySurveyAnswers[ $lx_answer ]->surveyAnswer->label ?? '';
+				$readableAnswer = $question->surveySurveyAnswers[ $answerIds ]->surveyAnswer->label ?? '';
 			}
 
-			$la_userData['readable'][] = [
-				'question_id' => $lo_question->id,
-				'answer_id' => $lx_answer,
-				'question' => $lo_question->surveyQuestion->label,
-				'answer' => $la_answers ?: $ls_answer ?: null,
+			$userData['readable'][] = [
+				'question_id' => $question->id,
+				'answer_id' => $answerIds,
+				'question' => $question->surveyQuestion->label,
+				'answer' => $readableAnswers ?: $readableAnswer ?: null,
 			];
 		}
 
-		return $la_userData;
+		return $userData;
 	}
 
 
@@ -661,19 +661,18 @@ class SurveyRenderer {
 	 * @return $this
 	 */
 	protected function loadResultsClass(): static {
-		/** @var class-string<\Awyiss\Survey\SurveyResultsInterface> $ls_className */
-		$ls_className = App::className(Inflector::camelize($this->survey->identifier), 'Survey', 'SurveyResults');
+		/** @var class-string<\Awyiss\Survey\SurveyResultsInterface> $className */
+		$className = App::className(Inflector::camelize($this->survey->identifier), 'Survey', 'SurveyResults');
 
-		if (!$ls_className) {
+		if (!$className) {
 			return $this;
 		}
 
-		if (!is_subclass_of($ls_className, SurveyResultsInterface::class)) {
-			throw new RuntimeException(sprintf('The survey results class "%s" must extend "%s".', $ls_className, SurveyResultsInterface::class));
+		if (!is_subclass_of($className, SurveyResultsInterface::class)) {
+			throw new RuntimeException(sprintf('The survey results class "%s" must extend "%s".', $className, SurveyResultsInterface::class));
 		}
 
-		/** @var \Awyiss\Survey\SurveyResultsInterface $lo_results */
-		$this->results = new $ls_className(
+		$this->results = new $className(
 			$this->survey,
 			$this->View,
 			$this->survey->getProgress(),
@@ -688,10 +687,10 @@ class SurveyRenderer {
 	 * @return string
 	 */
 	protected function createIpHash(): string {
-		$lo_request = Router::getRequest();
-		$ls_clientIp = $lo_request->clientIp();
+		$request = Router::getRequest();
+		$clientIp = $request->clientIp();
 
-		return Security::hash($ls_clientIp . Security::getSalt());
+		return Security::hash($clientIp . Security::getSalt());
 	}
 
 
@@ -702,31 +701,31 @@ class SurveyRenderer {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function redirect(?string $surveyEntryIdentifier = null, ?string $formEntryIdentifier = null): void {
-		$la_url = [
+		$url = [
 			'surveyEntry' => $surveyEntryIdentifier,
 			'formEntry' => $formEntryIdentifier,
 			'#' => 'Survey-' . Inflector::ucparts($this->survey->identifier, false),
 		];
 
-		$lo_request = Router::getRequest();
+		$request = Router::getRequest();
 
-		$ls_languageShortcode = $lo_request->getParam('lang');
-		if (empty($ls_languageShortcode)) {
-			$la_url['_name'] = Awyiss::REALM_FRONTEND . 'Root';
+		$languageShortcode = $request->getParam('lang');
+		if (empty($languageShortcode)) {
+			$url['_name'] = Awyiss::REALM_FRONTEND . 'Root';
 		}
 		else {
-			$la_url['lang'] = trim($ls_languageShortcode, '/');
+			$url['lang'] = trim($languageShortcode, '/');
 
-			$ls_slug = $lo_request->getParam('slug');
-			if (empty($ls_slug)) {
-				$la_url['_name'] = Awyiss::REALM_FRONTEND . 'LanguageRoot';
+			$slug = $request->getParam('slug');
+			if (empty($slug)) {
+				$url['_name'] = Awyiss::REALM_FRONTEND . 'LanguageRoot';
 			}
 			else {
-				$la_url['slug'] = trim($ls_slug, '/');
+				$url['slug'] = trim($slug, '/');
 			}
 		}
 
-		throw new RedirectException(Router::url($la_url, true), 302);
+		throw new RedirectException(Router::url($url, true), 302);
 	}
 
 
@@ -734,24 +733,24 @@ class SurveyRenderer {
 	 * @return string|false
 	 */
 	protected function sendForm(): string|false {
-		/** @var \Awyiss\Utility\Form\SurveyFormSender $ls_formSenderClass */
-		$ls_formSenderClass = App::className('Survey', 'Utility/Form', 'FormSender');
+		/** @var \Awyiss\Utility\Form\SurveyFormSender $formSenderClass */
+		$formSenderClass = App::className('Survey', 'Utility/Form', 'FormSender');
 
-		$lo_formSender = new $ls_formSenderClass($this->getFormRenderer()->getForm(), $this->page);
+		$formSender = new $formSenderClass($this->getFormRenderer()->getForm(), $this->page);
 
-		$lo_formSender->setSurveyProgress(
+		$formSender->setSurveyProgress(
 			$this->survey,
 			$this->survey->getProgress(),
 			$this->survey->getCustomAnswers(),
 		);
 
-		$this->formSent = $lo_formSender->handle();
+		$this->formSent = $formSender->handle();
 
 		if (!$this->formSent) {
 			return false;
 		}
 
-		return $lo_formSender->getFormEntryIdentifier();
+		return $formSender->getFormEntryIdentifier();
 	}
 
 
@@ -761,44 +760,44 @@ class SurveyRenderer {
 	 * @throws \Exception
 	 */
 	protected function renderQuestion(MediaRenderOptions $mediaRenderOptions): string {
-		static $ls_templatePath;
+		static $templatePath;
 
-		if (!isset($ls_templatePath)) {
-			$ls_templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);
+		if (!isset($templatePath)) {
+			$templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);
 		}
 
-		$ls_fileName = 'Question' . $this->currentAction->identifier;
+		$fileName = 'Question' . $this->currentAction->identifier;
 
-		$ls_filePath = implode(DS, [
-			$ls_templatePath,
+		$filePath = implode(DS, [
+			$templatePath,
 			'Frontend',
 			'element',
 			'survey',
-			$ls_fileName . '.twig',
+			$fileName . '.twig',
 		]);
 
-		$ls_element = $this->currentAction->surveyQuestion->type->value;
-		if (file_exists($ls_filePath)) {
-			$ls_element = $ls_fileName;
+		$element = $this->currentAction->surveyQuestion->type->value;
+		if (file_exists($filePath)) {
+			$element = $fileName;
 		}
 
-		$lo_mediaRenderOptions = $mediaRenderOptions->withSelector('#SurveyQuestion-' . Inflector::ucparts($this->currentAction->identifier));
+		$mediaRenderOptions = $mediaRenderOptions->withSelector('#SurveyQuestion-' . Inflector::ucparts($this->currentAction->identifier));
 
 		// Parse the module
-		$this->parseAwyissImageTags($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
+		$this->parseAwyissImageTags($this->currentAction->surveyQuestion, $mediaRenderOptions);
 
-		$ls_result = null;
+		$result = null;
 		if ($this->currentAction->surveyQuestion->type === $this->survey->getQuestionTypeEnum()::InfoText && !$this->survey->hasNextAction()) {
-			$ls_result = $this->results?->getStepResult($this->currentAction->identifier, $lo_mediaRenderOptions);
+			$result = $this->results?->getStepResult($this->currentAction->identifier, $mediaRenderOptions);
 		}
 
 		// Parse the module
-		$this->parseModule($this->currentAction->surveyQuestion, $lo_mediaRenderOptions);
+		$this->parseModule($this->currentAction->surveyQuestion, $mediaRenderOptions);
 
-		return $this->getView()->element('survey/' . $ls_element, [
+		return $this->getView()->element('survey/' . $element, [
 			'survey' => $this->survey,
 			'question' => $this->currentAction,
-			'result' => $ls_result,
+			'result' => $result,
 		]);
 	}
 }

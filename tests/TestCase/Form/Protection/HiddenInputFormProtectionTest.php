@@ -62,7 +62,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		$result = $this->hiddenInputFormProtection->initialize(
@@ -79,7 +78,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::getHtml()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHtml(): void {
 		$this->hiddenInputFormProtection->initialize(
@@ -90,10 +88,10 @@ class HiddenInputFormProtectionTest extends TestCase {
 		);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ls_nonce = $this->view->helpers()->get('Asset')->getStyleNonce();
+		$nonce = $this->view->helpers()->get('Asset')->getStyleNonce();
 
 		$result = $this->hiddenInputFormProtection->getHtml('before');
-		$this->assertStringContainsString('<style nonce="' . $ls_nonce . '">', $result);
+		$this->assertStringContainsString('<style nonce="' . $nonce . '">', $result);
 		$this->assertStringContainsString('{ position:absolute; visibility:hidden; }</style><input type="email" name="email_confirmation" value=""', $result);
 
 		$result = $this->hiddenInputFormProtection->getHtml('before_submit');
@@ -107,7 +105,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::getFieldName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHtmlWithConflictingFormElements(): void {
 		$conflictingFormElements = [
@@ -131,7 +128,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::getFieldName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHtmlWithAllAlternativesConflicting(): void {
 		$conflictingFormElements = [
@@ -157,7 +153,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::getFieldName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHtmlWithCustomElementNameConflicting(): void {
 		$mockFormOptions = $this->createMock(FormOptions::class);
@@ -178,7 +173,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithEmptyHiddenField(): void {
 		$this->hiddenInputFormProtection->initialize(
@@ -202,7 +196,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithMissingHiddenField(): void {
 		$this->hiddenInputFormProtection->initialize(
@@ -225,7 +218,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithFilledHiddenField(): void {
 		$this->hiddenInputFormProtection->initialize(
@@ -250,7 +242,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithCustomFieldName(): void {
 		$mockFormOptions = $this->createMock(FormOptions::class);
@@ -279,7 +270,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithWhitespaceValue(): void {
 		$this->hiddenInputFormProtection->initialize(
@@ -304,7 +294,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::modifyForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyForm(): void {
 		$this->hiddenInputFormProtection->initialize(
@@ -324,7 +313,6 @@ class HiddenInputFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\HiddenInputFormProtection::modifyFormEntry()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyFormEntry(): void {
 		$this->hiddenInputFormProtection->initialize(

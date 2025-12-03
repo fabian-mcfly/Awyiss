@@ -40,7 +40,6 @@ class EmailTemplatesListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -57,7 +56,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -73,7 +71,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithNewEntity(): void {
 		$entity = new EmailTemplate([
@@ -92,7 +89,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithNoFileNameChange(): void {
 		$entity = new EmailTemplate([
@@ -112,7 +108,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithSameFileName(): void {
 		$entity = new EmailTemplate([
@@ -136,7 +131,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithFileNameChangeAndNoQueuedJob(): void {
 		$entity = new EmailTemplate([
@@ -166,7 +160,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithFileNameChangeAndQueuedJob(): void {
 		$entity = new EmailTemplate([
@@ -200,7 +193,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithNewEntity(): void {
 		$entity = new EmailTemplate([
@@ -243,7 +235,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithNewEntityAndExistingFolder(): void {
 		$entity = new EmailTemplate([
@@ -290,7 +281,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithNewEntityAndExistingFile(): void {
 		$entity = new EmailTemplate([
@@ -325,7 +315,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndFileNameChange(): void {
 		$entity = new EmailTemplate([
@@ -371,7 +360,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndFileNameChangeAndExistingOldFile(): void {
 		$entity = new EmailTemplate([
@@ -420,7 +408,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithCopyOption(): void {
 		$entity = new EmailTemplate([
@@ -466,7 +453,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithSpecialCharactersInFileName(): void {
 		$entity = new EmailTemplate([
@@ -509,7 +495,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::afterSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteWithExistingFile(): void {
 		$entity = new EmailTemplate([
@@ -555,7 +540,6 @@ class EmailTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\EmailTemplatesListener::afterSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteWithoutExistingFile(): void {
 		$entity = new EmailTemplate([

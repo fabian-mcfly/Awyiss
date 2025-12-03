@@ -23,7 +23,6 @@ use ReflectionClass;
 class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -36,7 +35,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::getBatchSize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetBatchSizeReturnsDefaultValue(): void {
 		$service = $this->createConcreteService();
@@ -48,7 +46,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityWithContentEntity(): void {
 		$contentsTable = $this->fetchTable('Contents');
@@ -83,7 +80,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityWithPageEntity(): void {
 		$pagesTable = $this->fetchTable('Pages');
@@ -118,7 +114,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityWithSpecificFields(): void {
 		$contentsTable = $this->fetchTable('Contents');
@@ -156,7 +151,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityReturnsEntityWhenAllFieldsEmpty(): void {
 		$contentsTable = $this->fetchTable('Contents');
@@ -183,7 +177,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityReturnsFalseWhenTranslateBatchFails(): void {
 		$contentsTable = $this->fetchTable('Contents');
@@ -205,7 +198,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntitySkipsFailedTranslations(): void {
 		$contentsTable = $this->fetchTable('Contents');
@@ -258,7 +250,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityWithAttributeFields(): void {
 		$contentsTable = $this->fetchTable('Contents');
@@ -298,7 +289,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::getTranslatableFields()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTranslatableFieldsForContent(): void {
 		$service = $this->createConcreteService();
@@ -320,7 +310,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::getTranslatableFields()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTranslatableFieldsForPage(): void {
 		$service = $this->createConcreteService();
@@ -342,7 +331,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::getTranslatableFields()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTranslatableFieldsForUnsupportedEntity(): void {
 		$service = $this->createConcreteService();
@@ -361,7 +349,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::getContentTranslatableFields()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetContentTranslatableFieldsUsesCaching(): void {
 		$service = $this->createConcreteService();
@@ -387,7 +374,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::getPageRoleTranslatableFields()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPageRoleTranslatableFieldsUsesCaching(): void {
 		$service = $this->createConcreteService();
@@ -417,7 +403,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::getContentTranslatableFields()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetContentTranslatableFieldsIncludesTextAttributes(): void {
 		$service = $this->createConcreteService();
@@ -450,7 +435,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::getPageRoleTranslatableFields()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPageRoleTranslatableFieldsIncludesTextAttributes(): void {
 		$service = $this->createConcreteService();
@@ -479,7 +463,6 @@ class AbstractTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\AbstractTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityFiltersEmptyFields(): void {
 		$contentsTable = $this->fetchTable('Contents');
@@ -577,7 +560,6 @@ class AbstractTranslationServiceTest extends TestCase {
 			 * @param string|null $sourceLanguage
 			 * @param array $options
 			 * @return array|false
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
 			public function translateBatch(array $texts, string $targetLanguage, ?string $sourceLanguage = null, array $options = []): array|false {
 				if (isset($this->methodOverrides['translateBatch'])) {

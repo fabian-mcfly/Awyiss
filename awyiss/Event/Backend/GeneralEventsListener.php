@@ -48,22 +48,22 @@ class GeneralEventsListener implements EventListenerInterface {
 		}
 
 		// If configuration is not for a generic datatable or value is true, do nothing as we cannot move entries to a specific language
-		$lo_configuration = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
+		$configOptions = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
 		if (
-			!$lo_configuration instanceof GenericDatatablesConfigOptions ||
+			!$configOptions instanceof GenericDatatablesConfigOptions ||
 			(bool)$configuration->value === true
 		) {
 			return;
 		}
 
 		try {
-			$lo_table = $this->fetchTable($configuration->scope);
+			$table = $this->fetchTable($configuration->scope);
 		}
 		catch (MissingTableClassException | DatabaseException) {
 			return;
 		}
 
-		$lo_table->updateAll([
+		$table->updateAll([
 			'language_shortcode' => null,
 		], [
 			'language_shortcode IS NOT' => null,
@@ -86,31 +86,31 @@ class GeneralEventsListener implements EventListenerInterface {
 			return;
 		}
 
-		$lo_configuration = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
-		if (!$lo_configuration instanceof GenericDatatablesConfigOptions) {
+		$configOptions = ConfigOptionsProvider::loadConfigOptions($configuration->scope);
+		if (!$configOptions instanceof GenericDatatablesConfigOptions) {
 			return;
 		}
 
-		$lo_configOption = $lo_configuration->getConfigOption(Awyiss::REALM_BACKEND, $configuration->identifier);
-		if (!$lo_configOption) {
+		$configOption = $configOptions->getConfigOption(Awyiss::REALM_BACKEND, $configuration->identifier);
+		if (!$configOption) {
 			return;
 		}
 
-		$lb_defaultSplit = $lo_configOption->getDefaultValue() ?? false;
+		$defaultSplit = $configOption->getDefaultValue() ?? false;
 
 		// If default is true, do nothing as we cannot move entries to a specific language
-		if ($lb_defaultSplit) {
+		if ($defaultSplit) {
 			return;
 		}
 
 		try {
-			$lo_table = $this->fetchTable($configuration->scope);
+			$table = $this->fetchTable($configuration->scope);
 		}
 		catch (MissingTableClassException | DatabaseException) {
 			return;
 		}
 
-		$lo_table->updateAll([
+		$table->updateAll([
 			'language_shortcode' => null,
 		], [
 			'language_shortcode IS NOT' => null,

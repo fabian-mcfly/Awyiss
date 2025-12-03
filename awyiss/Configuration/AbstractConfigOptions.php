@@ -25,8 +25,8 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 * Set the scope and initialize the config options
 	 */
 	public function __construct() {
-		foreach (Awyiss::getRealms() as $ls_realm) {
-			$this->realms[ $ls_realm ] = new ConfigOptionsCollection();
+		foreach (Awyiss::getRealms() as $realm) {
+			$this->realms[ $realm ] = new ConfigOptionsCollection();
 		}
 
 		$this->initializeConfigOptions();
@@ -76,22 +76,22 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 * @inheritDoc
 	 */
 	public function getConfigOption(string $realm, string|array $path): ?ConfigOption {
-		$la_configOptions = $this->getConfigOptions($realm);
+		$configOptions = $this->getConfigOptions($realm);
 
-		if (empty($la_configOptions)) {
+		if (empty($configOptions)) {
 			return null;
 		}
 
-		$la_path = $this->sanitizePath($path);
+		$path = $this->sanitizePath($path);
 
-		$lo_configOption = Hash::get($la_configOptions, $la_path);
+		$configOption = Hash::get($configOptions, $path);
 
-		if ($lo_configOption instanceof ConfigOptionsCollection) {
+		if ($configOption instanceof ConfigOptionsCollection) {
 			throw new InvalidArgumentException(sprintf('Expected a path to a config option. Found `%s` instead.`', ConfigOptionsCollection::class));
 		}
 
 
-		return $lo_configOption;
+		return $configOption;
 	}
 
 
@@ -100,15 +100,15 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 * @return array
 	 */
 	public function sanitizePath(array|string $path): array {
-		$la_identifierPath = $path;
+		$identifierPath = $path;
 		if (!is_array($path)) {
-			$la_identifierPath = explode('.', $path);
+			$identifierPath = explode('.', $path);
 		}
 
 
 		return array_map(function ($pathFragment) {
 			return ConfigOptionsProvider::sanitizeIdentifier($pathFragment);
-		}, $la_identifierPath);
+		}, $identifierPath);
 	}
 
 
@@ -123,13 +123,13 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		bool $fallbackValidity = true
 	): bool|string {
 		try {
-			$lo_configOption = $this->getConfigOption($realm, $path);
+			$configOption = $this->getConfigOption($realm, $path);
 		}
 		catch (InvalidArgumentException) {
 			return false;
 		}
 
-		if (!($lo_configOption instanceof ConfigOption)) {
+		if (!$configOption instanceof ConfigOption) {
 			/*
 			 * If there is no config option for the given identifier, we cannot define what's valid and what's not
 			 * This means that we need to return the default validity that the call can specify (default: true)
@@ -140,7 +140,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		}
 
 
-		return $lo_configOption->validateConfigValue($value, $languageShortcode);
+		return $configOption->validateConfigValue($value, $languageShortcode);
 	}
 
 
@@ -154,18 +154,18 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		?string $languageShortcode = null,
 	): mixed {
 		try {
-			$lo_configOption = $this->getConfigOption($realm, $path);
+			$configOption = $this->getConfigOption($realm, $path);
 		}
 		catch (InvalidArgumentException) {
 			return null;
 		}
 
-		if (!($lo_configOption instanceof ConfigOption)) {
+		if (!($configOption instanceof ConfigOption)) {
 			return $value;
 		}
 
 
-		return $lo_configOption->typecastConfigValue($value, $languageShortcode);
+		return $configOption->typecastConfigValue($value, $languageShortcode);
 	}
 
 
@@ -173,10 +173,10 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 * @inheritDoc
 	 */
 	public static function getScope(): string {
-		$la_parts = explode('\\', trim(static::class, '\\'));
-		$ls_scope = array_pop($la_parts);
-		$ls_scope = substr($ls_scope, 0, -13);
+		$parts = explode('\\', trim(static::class, '\\'));
+		$scope = array_pop($parts);
+		$scope = substr($scope, 0, -13);
 
-		return ConfigOptionsProvider::sanitizeScope($ls_scope);
+		return ConfigOptionsProvider::sanitizeScope($scope);
 	}
 }

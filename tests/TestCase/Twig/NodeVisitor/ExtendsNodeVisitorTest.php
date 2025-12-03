@@ -48,7 +48,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeWithModuleNodeWithoutParentReturnsUnchanged(): void {
 		$source = new Source('', '@Frontend/test.twig');
@@ -64,7 +63,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeWithNonConstantParentReturnsUnchanged(): void {
 		$source = new Source('', '@Frontend/test.twig');
@@ -81,7 +79,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeWithCustomerTemplatePathReturnsUnchanged(): void {
 		$customerTemplatePath = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'test.twig';
@@ -99,7 +96,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeReplacesParentWhenFrontendExtendsItself(): void {
 		$source = new Source('', '@Frontend/layout/base.twig');
@@ -120,7 +116,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeReplacesParentWhenBackendExtendsItself(): void {
 		$source = new Source('', '@Backend/admin/base.twig');
@@ -141,7 +136,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeDoesNotReplaceWhenExtendingDifferentTemplate(): void {
 		$source = new Source('', '@Frontend/page/detail.twig');
@@ -161,7 +155,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeDoesNotReplaceWhenExtendingAwyissTemplate(): void {
 		$source = new Source('', '@Frontend/layout/base.twig');
@@ -181,7 +174,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodePreservesTemplateLineNumber(): void {
 		$lineNumber = 5;
@@ -199,7 +191,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeHandlesNestedDirectories(): void {
 		$source = new Source('', '@Frontend/admin/user/edit.twig');
@@ -217,7 +208,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeHandlesTemplateWithoutExtension(): void {
 		$source = new Source('', '@Backend/base');
@@ -235,7 +225,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _testEnterNodeWithDifferentNamespaces(): void {
 		$source = new Source('', '@CustomNamespace/test.twig');
@@ -255,7 +244,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor::enterNode()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEnterNodeCaseInsensitiveNamespaceCheck(): void {
 		// Test that namespace comparison is case-sensitive (should not match)
@@ -278,7 +266,6 @@ class ExtendsNodeVisitorTest extends TestCase {
 	 * @throws \Twig\Error\LoaderError
 	 * @throws \Twig\Error\RuntimeError
 	 * @throws \Twig\Error\SyntaxError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExistingTemplate(): void {
 		// Create a filesystem loader pointing to your actual template directories

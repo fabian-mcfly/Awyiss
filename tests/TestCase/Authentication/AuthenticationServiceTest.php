@@ -43,7 +43,6 @@ class AuthenticationServiceTest extends TestCase {
 	 * Test that the authenticators method returns an instance of AuthenticatorCollection
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifiersReturnsIdentifierCollection(): void {
 		$service = new AuthenticationService();
@@ -57,7 +56,6 @@ class AuthenticationServiceTest extends TestCase {
 	 * Tests that the `unauthenticatedRedirect` config value is set correctly
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \Exception
 	 */
 	public function testUnauthenticatdRedirectUrlReturnsCorrectUrl(): void {
@@ -81,7 +79,6 @@ class AuthenticationServiceTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadAuthenticators(): void {
 		$service = new AuthenticationService();
@@ -94,7 +91,6 @@ class AuthenticationServiceTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLogin(): void {
 		$service = new AuthenticationService();
@@ -145,7 +141,6 @@ class AuthenticationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLoginRedirect(): void {
 		$service = new AuthenticationService();

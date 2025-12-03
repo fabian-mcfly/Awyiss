@@ -22,7 +22,6 @@ class SurveyHelperTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -40,7 +39,6 @@ class SurveyHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithSameActiveStatus(): void {
 		// Create survey survey question entities
@@ -86,7 +84,6 @@ class SurveyHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithActiveStatus(): void {
 		// Create survey survey question entities
@@ -135,7 +132,6 @@ class SurveyHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithNoNextQuestion(): void {
 		// Create survey survey question entities
@@ -180,7 +176,6 @@ class SurveyHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithEmptyArray(): void {
 		$result = $this->helper->realNextQuestion([], 'q1');
@@ -192,7 +187,6 @@ class SurveyHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithInvalidIdentifier(): void {
 		// Create survey survey question entities
@@ -238,7 +232,6 @@ class SurveyHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\SurveyHelper::realNextQuestion()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRealNextQuestionWithMultipleQuestionsWithSameActiveStatus(): void {
 		// Create survey survey question entities

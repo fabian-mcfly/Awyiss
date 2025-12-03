@@ -36,21 +36,21 @@ abstract class AppController extends Controller {
 		}
 
 		$this->response = $this->response->withStatus($status);
-		$lo_event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $this->response]);
-		$lx_result = $lo_event->getResult();
-		if ($lx_result instanceof Response) {
-			return $this->response = $lx_result;
+		$event = $this->dispatchEvent('Controller.beforeRedirect', [$url, $this->response]);
+		$result = $event->getResult();
+		if ($result instanceof Response) {
+			return $this->response = $result;
 		}
-		if ($lo_event->isStopped()) {
+		if ($event->isStopped()) {
 			return null;
 		}
-		$lo_response = $this->response;
 
-		if (!$lo_response->getHeaderLine('Location')) {
-			$lo_response = $lo_response->withLocation(Router::url($url, true));
+		$response = $this->response;
+		if (!$response->getHeaderLine('Location')) {
+			$response = $response->withLocation(Router::url($url, true));
 		}
 
 
-		return $this->response = $lo_response;
+		return $this->response = $response;
 	}
 }

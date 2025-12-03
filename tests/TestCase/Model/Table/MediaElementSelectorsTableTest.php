@@ -59,7 +59,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(5, $this->mediaElementSelectorsTable->associations()->keys());
@@ -109,7 +108,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::getColumnSpans()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnSpans(): void {
 		$columnSpans = $this->mediaElementSelectorsTable->getColumnSpans();
@@ -141,7 +139,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -167,7 +164,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -189,7 +185,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -207,7 +202,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -234,7 +228,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -259,7 +252,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -280,7 +272,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnSpanInList(): void {
 		$columnSpans = $this->mediaElementSelectorsTable->getColumnSpans();
@@ -303,7 +294,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnSpanNotInList(): void {
 		$data = [
@@ -323,7 +313,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaElementExists(): void {
 		// Test with existing media element
@@ -342,7 +331,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaElementNotExists(): void {
 		// Test with non-existing media element
@@ -365,7 +353,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaSelectorExists(): void {
 		// Test with existing media selector
@@ -384,7 +371,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaSelectorNotExists(): void {
 		// Test with non-existing media selector
@@ -407,7 +393,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueForMediaElement(): void {
 		/** @var \Awyiss\Model\Entity\MediaElementSelector $entity */
@@ -427,7 +412,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\MediaElementSelector $entity */
@@ -450,7 +434,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -483,7 +466,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::$audit
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuditBehavior(): void {
 		$this->assertTrue($this->mediaElementSelectorsTable->hasBehavior('Audit'));
@@ -498,7 +480,6 @@ class MediaElementSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementSelectorsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->mediaElementSelectorsTable->hasBehavior('Translate'));

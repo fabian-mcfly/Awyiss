@@ -27,7 +27,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::className()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassNameWithExistingClass(): void {
 		$result = App::className('ServerRequest', 'Http');
@@ -47,7 +46,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::className()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassNameWithNonExistingClass(): void {
 		$result = App::className('NonExistingClass', 'Http');
@@ -64,7 +62,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::classes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassesWithExistingClasses(): void {
 		$result = App::classes('NewsListing', 'Module', 'Module');
@@ -82,7 +79,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::classes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassesWithExistingClassesChecksForInterface(): void {
 		$this->expectException(RuntimeException::class);
@@ -94,7 +90,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::classes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassesWithNonExistingClasses(): void {
 		$result = App::classes('NonExistingClass', 'Module', 'Module');
@@ -108,7 +103,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::classes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassesWithExistingClassesWithPlaceholder(): void {
 		$result = App::classes('*', 'Module', 'Module');
@@ -138,7 +132,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::classes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassesWithExistingClassesWithPlaceholderChecksForInterface(): void {
 		$result = App::classes('*', 'Module', '', ModuleInterface::class);
@@ -156,7 +149,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::classes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassesWithExistingClassesExcludeBlocklisted(): void {
 		$result = App::classes(
@@ -185,7 +177,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::classes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassesWithExistingClassesExcludeUnderscoredAndAbstractClasses(): void {
 		$result = App::classes('*', 'Authorization/Policy/Backend', 'Policy');
@@ -197,7 +188,6 @@ class AppTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\App::classes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testClassesWithExistingClassesAndSubfolders(): void {
 		$result = App::classes('*', 'Command', 'Command');

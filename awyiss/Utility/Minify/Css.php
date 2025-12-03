@@ -18,8 +18,8 @@ class Css extends BaseCSS {
 	 * vendor/matthiasmullie/minify/src/CSS.php
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection RegExpRedundantEscape
+	 * @noinspection PhpMissingReturnTypeInspection
 	 */
 	protected function stripWhitespace($content) {
 		// remove leading & trailing whitespace

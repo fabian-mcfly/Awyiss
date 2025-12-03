@@ -53,21 +53,21 @@ class WeinkonfiguratorSurveyResults implements SurveyResultsInterface {
 	 * @inheritDoc
 	 */
 	public function getStepResult(string $identifier, MediaRenderOptions $mediaRenderOptions): ?string {
-		$ls_currentPath = $this->survey->buildResultPath();
-		$la_result = $this->paths[ $ls_currentPath ] ?? null;
+		$currentPath = $this->survey->buildResultPath();
+		$result = $this->paths[ $currentPath ] ?? null;
 
-		if (!$la_result) {
+		if (!$result) {
 			return null;
 		}
 
-		$lo_winesTable = FactoryLocator::get('Table')->get('Wines');
+		$winesTable = FactoryLocator::get('Table')->get('Wines');
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$lo_wines = $lo_winesTable->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)->find('active')->where(
-			['AttributesWines.identifier IN' => $la_result]
+		$wines = $winesTable->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true)->find('active')->where(
+			['AttributesWines.identifier IN' => $result]
 		)->all();
 
 		return $this->view->element('survey/results/weinkonfigurator', [
-			'wines' => $lo_wines,
+			'wines' => $wines,
 			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
 	}

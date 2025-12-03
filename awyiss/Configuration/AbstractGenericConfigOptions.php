@@ -29,8 +29,8 @@ abstract class AbstractGenericConfigOptions extends AbstractConfigOptions {
 	public function __construct(string $scope) {
 		$this->dynamicScope = ConfigOptionsProvider::sanitizeScope($scope);
 
-		foreach (Awyiss::getRealms() as $ls_realm) {
-			$this->realms[ $ls_realm ] = new ConfigOptionsCollection();
+		foreach (Awyiss::getRealms() as $realm) {
+			$this->realms[ $realm ] = new ConfigOptionsCollection();
 		}
 
 		$this->initializeConfigOptions();

@@ -131,11 +131,11 @@ class ContentTemplateContentAreasTable extends Table {
 
 
 		$rules->add(function (ContentTemplateContentArea $entity/*, array $options*/): bool {
-			/** @var \Awyiss\Model\Table\PageTemplateContentAreasTable $lo_pageTemplateContentAreasTable */
-			$lo_pageTemplateContentAreasTable = FactoryLocator::get('Table')->get('PageTemplateContentAreas');
+			/** @var \Awyiss\Model\Table\PageTemplateContentAreasTable $pageTemplateContentAreasTable */
+			$pageTemplateContentAreasTable = FactoryLocator::get('Table')->get('PageTemplateContentAreas');
 
 
-			return (bool)$lo_pageTemplateContentAreasTable->find()->where([
+			return (bool)$pageTemplateContentAreasTable->find()->where([
 				'page_template_id' => $entity->pageTemplateId,
 				'content_area_id' => $entity->contentAreaId,
 			])->first();

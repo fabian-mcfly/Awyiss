@@ -96,34 +96,34 @@ class CategoriesBehavior extends Behavior {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$lo_table = $this->table();
+		$table = $this->table();
 
 		if ($this->getConfig('associationName')) {
-			$ls_associationName = $this->getConfig('associationName');
-			if (!$lo_table->hasAssociation($ls_associationName)) {
-				$lo_table->belongsTo($ls_associationName, [
+			$associationName = $this->getConfig('associationName');
+			if (!$table->hasAssociation($associationName)) {
+				$table->belongsTo($associationName, [
 					'bindingKey' => $this->getConfig('bindingKey', 'id'),
 					'joinType' => 'INNER',
 					'foreignKey' => $this->getConfig('foreignKey'),
 				]);
 			}
 
-			$lo_association = $lo_table->getAssociation($ls_associationName);
+			$association = $table->getAssociation($associationName);
 
 			if (!$this->getConfig('foreignKey')) {
-				$this->setConfig('foreignKey', $lo_association->getForeignKey());
+				$this->setConfig('foreignKey', $association->getForeignKey());
 			}
 
 			if (!$this->getConfig('field')) {
-				/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-				$ls_entityClass = $lo_table->getEntityClass();
+				/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+				$entityClass = $table->getEntityClass();
 
-				$this->setConfig('field', $ls_entityClass::mapField($lo_association->getForeignKey()));
+				$this->setConfig('field', $entityClass::mapField($association->getForeignKey()));
 			}
 		}
 
 		if (!$this->getConfig('identifier')) {
-			throw new RuntimeException(sprintf('`%s` is missing the identifier attribute for table `%s`', static::class, $lo_table->getAlias()));
+			throw new RuntimeException(sprintf('`%s` is missing the identifier attribute for table `%s`', static::class, $table->getAlias()));
 		}
 
 		if (!$this->getConfig('field')) {
@@ -150,28 +150,28 @@ class CategoriesBehavior extends Behavior {
 		}
 
 		if (!$this->getConfig('useDatasource')) {
-			$lo_table = $this->table();
+			$table = $this->table();
 
-			if (method_exists($lo_table, 'buildCategories')) {
-				$la_categories = $lo_table->buildCategories();
+			if (method_exists($table, 'buildCategories')) {
+				$categories = $table->buildCategories();
 			}
 			else {
-				$la_categories = $this->getConfig('categories');
+				$categories = $this->getConfig('categories');
 			}
 
-			if (!is_array($la_categories)) {
+			if (!is_array($categories)) {
 				throw new RuntimeException(
 					sprintf(
 						'You need to provide categories or a `buildCategories`-method when using `useDatasource = false` in `%s` for table `%s`.',
 						static::class,
-						$lo_table->getAlias()
+						$table->getAlias()
 					)
 				);
 			}
 
 			$this->categories = [
-				'raw' => $la_categories['raw'] ?? null,
-				'simple' => $la_categories['simple'] ?? $la_categories,
+				'raw' => $categories['raw'] ?? null,
+				'simple' => $categories['simple'] ?? $categories,
 			];
 
 			//Delete the config setting from the config
@@ -224,18 +224,18 @@ class CategoriesBehavior extends Behavior {
 			return $query;
 		}
 
-		$lx_selectedCategory = $selectedCategory ?? $this->getConfig('selectedCategory');
+		$selectedCategory ??= $this->getConfig('selectedCategory');
 
 		//Get the first possible value in case there's no selection
-		if ($lx_selectedCategory === null) {
-			$la_validValues = $this->getValidSelectionValues();
-			$lx_selectedCategory = current($la_validValues);
+		if ($selectedCategory === null) {
+			$validValues = $this->getValidSelectionValues();
+			$selectedCategory = current($validValues);
 		}
 
 		//If we shall not use the datasource, apply the query conditions and return
 		if (!$this->getConfig('useDatasource')) {
 			//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
-			if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
+			if (!$selectedCategory || $selectedCategory === $this->getConfig('aggregationKey')) {
 				return $sortAggregation ? $this->sortQuery($query) : $query;
 			}
 
@@ -243,38 +243,38 @@ class CategoriesBehavior extends Behavior {
 			return $query->where($this->getQueryConditions($selectedCategory));
 		}
 
-		$ls_associationName = $this->getConfig('associationName');
-		if (!$ls_associationName || !$query->getRepository()->hasAssociation($ls_associationName)) {
+		$associationName = $this->getConfig('associationName');
+		if (!$associationName || !$query->getRepository()->hasAssociation($associationName)) {
 			throw new RuntimeException(sprintf('Cannot filter query without an association in `%s` for table `%s`.', static::class, $this->table()->getAlias()));
 		}
 
-		$lo_association = $query->getRepository()->getAssociation($ls_associationName);
+		$association = $query->getRepository()->getAssociation($associationName);
 
-		//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
-		if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
+		// When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
+		if (!$selectedCategory || $selectedCategory === $this->getConfig('aggregationKey')) {
 			return $sortAggregation ? $this->sortQuery($query) : $query;
 		}
 
-		if ($lo_association instanceof HasMany || $lo_association instanceof BelongsToMany) {
-			if ($lx_selectedCategory == $this->getConfig('unassignedKey')) {
+		if ($association instanceof HasMany || $association instanceof BelongsToMany) {
+			if ($selectedCategory == $this->getConfig('unassignedKey')) {
 				/*
 				 * Find records with no associated category when the selected category equals the config key "unassignedKey".
 				 * This allows finding entities whose categories are missing or that never had a category
 				 */
-				$lo_junction = $lo_association->junction();
-				$ls_column = $lo_junction->getPrimaryKey() . ' IS';
-				$query->leftJoinWith($ls_associationName)->where([$lo_junction->getAlias() . '.' . $ls_column => null]);
+				$junction = $association->junction();
+				$column = $junction->getPrimaryKey() . ' IS';
+				$query->leftJoinWith($associationName)->where([$junction->getAlias() . '.' . $column => null]);
 
 
 				return $query;
 			}
 
-			//Find records whose category matches the selectedCategory
-			$query->matching($ls_associationName, function (SelectQuery $query) use ($lo_association, $lx_selectedCategory) {
-				$lo_junction = $lo_association->junction();
-				$ls_column = $lo_junction->getAssociation($lo_association->getName())->getForeignKey();
+			// Find records whose category matches the selectedCategory
+			$query->matching($associationName, function (SelectQuery $query) use ($association, $selectedCategory) {
+				$junction = $association->junction();
+				$column = $junction->getAssociation($association->getName())->getForeignKey();
 
-				$query->where([$lo_junction->getAlias() . '.' . $ls_column => $lx_selectedCategory]);
+				$query->where([$junction->getAlias() . '.' . $column => $selectedCategory]);
 
 
 				return $query;
@@ -282,7 +282,7 @@ class CategoriesBehavior extends Behavior {
 		}
 		else {
 			//With a belongsTo-association, the categorization is realized by a simple "column = value"-limitation
-			$query->where($this->getQueryConditions($lx_selectedCategory));
+			$query->where($this->getQueryConditions($selectedCategory));
 		}
 
 
@@ -299,59 +299,59 @@ class CategoriesBehavior extends Behavior {
 			return [];
 		}
 
-		$lx_selectedCategory = $selectedCategory ?? $this->getConfig('selectedCategory');
+		$selectedCategory ??= $this->getConfig('selectedCategory');
 
 		//Get the first possible value in case there's no selection
-		if ($lx_selectedCategory === null) {
-			$la_validValues = $this->getValidSelectionValues();
-			$lx_selectedCategory = current($la_validValues);
+		if ($selectedCategory === null) {
+			$validValues = $this->getValidSelectionValues();
+			$selectedCategory = current($validValues);
 		}
 
-		if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
+		if (!$selectedCategory || $selectedCategory === $this->getConfig('aggregationKey')) {
 			return [];
 		}
 
 		if ($this->getConfig('useDatasource')) {
-			$ls_associationName = $this->getConfig('associationName');
-			$lo_association = $this->table()->getAssociation($ls_associationName);
+			$associationName = $this->getConfig('associationName');
+			$association = $this->table()->getAssociation($associationName);
 
-			if ($lo_association instanceof HasMany || $lo_association instanceof BelongsToMany) {
+			if ($association instanceof HasMany || $association instanceof BelongsToMany) {
 				return [];
 			}
 		}
 
-		$ls_column = $this->getConfig('field') ?: $this->getConfig('identifier');
+		$column = $this->getConfig('field') ?: $this->getConfig('identifier');
 
-		$lo_table = $this->table();
-		$lb_isAttribute = $this->fieldIsAttribute();
-		if ($lb_isAttribute) {
-			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass = $lo_table->getAttributesTable()->getEntityClass();
-			$ls_column = $ls_entityClass::unmapField($ls_column);
-			$ls_column = $lo_table->getAttributesTableName(true) . '.' . $ls_column;
+		$table = $this->table();
+		$isAttribute = $this->fieldIsAttribute();
+		if ($isAttribute) {
+			/** @var \Awyiss\Model\Entity $entityClass */
+			$entityClass = $table->getAttributesTable()->getEntityClass();
+			$column = $entityClass::unmapField($column);
+			$column = $table->getAttributesTableName(true) . '.' . $column;
 		}
 		else {
-			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass = $lo_table->getEntityClass();
-			$ls_column = $ls_entityClass::unmapField($ls_column);
+			/** @var \Awyiss\Model\Entity $entityClass */
+			$entityClass = $table->getEntityClass();
+			$column = $entityClass::unmapField($column);
 		}
 
-		if ($lx_selectedCategory == $this->getConfig('unassignedKey')) {
+		if ($selectedCategory == $this->getConfig('unassignedKey')) {
 			if (!$this->getCategories()) {
-				return [$ls_column . ' IS' => null];
+				return [$column . ' IS' => null];
 			}
 
 			return [
 				'OR' => [
-					$ls_column . ' IS' => null,
-					$ls_column . ' NOT IN' => array_keys($this->getCategories()),
+					$column . ' IS' => null,
+					$column . ' NOT IN' => array_keys($this->getCategories()),
 				],
 			];
 		}
 
 
 		return [
-			$ls_column => $lx_selectedCategory,
+			$column => $selectedCategory,
 		];
 	}
 
@@ -371,10 +371,10 @@ class CategoriesBehavior extends Behavior {
 			return $query;
 		}
 
-		$ls_column = $column;
+		$realColumn = $column;
 		if ($this->getConfig('useDatasource')) {
-			$ls_associationName = $associationName ?? $this->getConfig('associationName');
-			if (!$ls_associationName) {
+			$realAssociationName = $associationName ?? $this->getConfig('associationName');
+			if (!$realAssociationName) {
 				throw new InvalidArgumentException(
 					sprintf(
 						'Cannot filter query without an association in `%s` for table `%s`.',
@@ -384,45 +384,45 @@ class CategoriesBehavior extends Behavior {
 				);
 			}
 
-			if (empty($ls_column)) {
-				$lo_association = $query->getRepository()->getAssociation($ls_associationName);
+			if (empty($realColumn)) {
+				$association = $query->getRepository()->getAssociation($realAssociationName);
 
-				$ls_column = $lo_association->getForeignKey();
-				if (is_array($ls_column)) {
-					$ls_column = reset($ls_column);
+				$realColumn = $association->getForeignKey();
+				if (is_array($realColumn)) {
+					$realColumn = reset($realColumn);
 				}
 			}
 
-			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass = $query->getRepository()->getEntityClass();
+			/** @var \Awyiss\Model\Entity $entityClass */
+			$entityClass = $query->getRepository()->getEntityClass();
 		}
 		else {
-			if (empty($ls_column)) {
-				$ls_column = $this->getConfig('identifier');
+			if (empty($realColumn)) {
+				$realColumn = $this->getConfig('identifier');
 			}
 
-			$ls_entityClass = $this->table()->getEntityClass();
+			$entityClass = $this->table()->getEntityClass();
 		}
 
-		$ls_column = $ls_entityClass::mapField($ls_column);
+		$realColumn = $entityClass::mapField($realColumn);
 
 		if ($sortByAssociation) {
 			$this->sortQuery($query, $column, $associationName);
 		}
 
-		return $query->formatResults(function (CollectionInterface $collection) use ($ls_column) {
-			return $collection->groupBy(function (EntityInterface $entity) use ($ls_column) {
-				$lx_value = $entity->get($ls_column);
+		return $query->formatResults(function (CollectionInterface $collection) use ($realColumn) {
+			return $collection->groupBy(function (EntityInterface $entity) use ($realColumn) {
+				$value = $entity->get($realColumn);
 
-				if ($lx_value instanceof BackedEnum) {
-					$lx_value = $lx_value->value;
+				if ($value instanceof BackedEnum) {
+					$value = $value->value;
 				}
 
-				if ($lx_value === null) {
-					$lx_value = $this->getConfig('unassignedKey');
+				if ($value === null) {
+					$value = $this->getConfig('unassignedKey');
 				}
 
-				return $lx_value;
+				return $value;
 			});
 		});
 	}
@@ -441,10 +441,10 @@ class CategoriesBehavior extends Behavior {
 			return $this->getConfig('selectedCategory');
 		}
 
-		$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('field') : $this->getConfig('identifier');
+		$field = $this->getConfig('useDatasource') ? $this->getConfig('field') : $this->getConfig('identifier');
 
 
-		return $entity->get($ls_field);
+		return $entity->get($field);
 	}
 
 
@@ -459,16 +459,15 @@ class CategoriesBehavior extends Behavior {
 			return $query;
 		}
 
-		$la_categories = $this->getCategories();
-		if (empty($la_categories)) {
+		$categories = $this->getCategories();
+		if (empty($categories)) {
 			return $query;
 		}
 
-		$ls_column = $column;
 		if ($this->getConfig('useDatasource')) {
-			$ls_associationName = $associationName ?? $this->getConfig('associationName');
+			$associationName ??= $this->getConfig('associationName');
 
-			if (!$ls_associationName) {
+			if (!$associationName) {
 				throw new RuntimeException(
 					sprintf(
 						'Cannot filter query without an association in `%s` for table `%s`.',
@@ -478,40 +477,42 @@ class CategoriesBehavior extends Behavior {
 				);
 			}
 
-			$lo_association = $query->getRepository()->getAssociation($ls_associationName);
+			$association = $query->getRepository()->getAssociation($associationName);
 
-			if ($lo_association instanceof BelongsToMany) {
+			if ($association instanceof BelongsToMany) {
 				return $query;
 			}
 
-			if (empty($ls_column)) {
-				$ls_column = $lo_association->getForeignKey();
-				if (is_array($ls_column)) {
-					$ls_column = reset($ls_column);
+			if (empty($column)) {
+				$column = $association->getForeignKey();
+				if (is_array($column)) {
+					$column = reset($column);
 				}
 			}
 
-			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass = $lo_association->getSource()->getEntityClass();
+			/** @var \Awyiss\Model\Entity $entityClass */
+			$entityClass = $association->getSource()->getEntityClass();
 		}
 		else {
-			$ls_entityClass = $this->table()->getEntityClass();
+			$entityClass = $this->table()->getEntityClass();
 
-			if (empty($ls_column)) {
-				$ls_column = $this->getConfig('identifier');
+			if (empty($column)) {
+				$column = $this->getConfig('identifier');
 			}
 		}
 
-		$la_categoryIdentifiers = array_keys($la_categories);
+		$categoryIdentifiers = array_keys($categories);
 
-		$ls_column = $ls_entityClass::unmapField($ls_column);
+		$column = $entityClass::unmapField($column);
 
 		//Remember existing orders
-		$lo_order = $query->clause('order');
+		$order = $query->clause('order');
 
-		$ls_prefixedColumn = $query->getRepository()->getAlias() . '.' . $ls_column;
-		if ($query->getRepository()->fieldIsAttribute($ls_column)) {
-			$ls_prefixedColumn = $query->getRepository()->getAttributesTableName(true) . '.' . $ls_column;
+		$prefixedColumn = $query->getRepository()->getAlias() . '.' . $column;
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		if ($query->getRepository()->fieldIsAttribute($column)) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$prefixedColumn = $query->getRepository()->getAttributesTableName(true) . '.' . $column;
 		}
 
 		// If the table has a SystemOrder behavior, use the sort field to sort the records
@@ -519,32 +520,32 @@ class CategoriesBehavior extends Behavior {
 			$this->sortQueryBySystemOrderField($query);
 		}
 
-		$lo_dialect = $query->getConnection()->getDriver()->schemaDialect();
+		$dialect = $query->getConnection()->getDriver()->schemaDialect();
 		/**
 		 * SQLite does not support FIND_IN_SET(),
 		 * so ordering using CASE WHEN is used instead
 		 */
-		if ($lo_dialect instanceof SqliteSchemaDialect) {
-			$query->orderBy(function ($exp) use ($ls_prefixedColumn, $la_categoryIdentifiers) {
-				$li_index = 0;
+		if ($dialect instanceof SqliteSchemaDialect) {
+			$query->orderBy(function ($exp) use ($prefixedColumn, $categoryIdentifiers) {
+				$index = 0;
 
-				$lo_case = $exp->case();
-				foreach ($la_categoryIdentifiers as $ls_categoryIdentifier) {
-					$lo_case->when([$ls_prefixedColumn => $ls_categoryIdentifier])->then($li_index, 'integer');
+				$case = $exp->case();
+				foreach ($categoryIdentifiers as $categoryIdentifier) {
+					$case->when([$prefixedColumn => $categoryIdentifier])->then($index, 'integer');
 
-					$li_index++;
+					$index++;
 				}
 
-				$lo_case->else(999, 'integer');
+				$case->else(999, 'integer');
 
-				return $lo_case;
+				return $case;
 			});
 		}
 		else {
 			/** @noinspection PhpUndefinedMethodInspection */
 			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-				$ls_prefixedColumn => 'identifier',
-				implode(',', $la_categoryIdentifiers),
+				$prefixedColumn => 'identifier',
+				implode(',', $categoryIdentifiers),
 			])), true);
 		}
 
@@ -552,13 +553,12 @@ class CategoriesBehavior extends Behavior {
 		 * Set the order by-clause but reset existing order-clauses, so records will be sorted
 		 * by the system_order of category first and then in the desired order.
 		 */
-		if (!empty($lo_order)) {
-			dd($lo_order, __FILE__, __LINE__);
+		if (!empty($order)) {
+			dd($order, __FILE__, __LINE__);
 			/** @noinspection PhpUnreachableStatementInspection */
-			$lo_query = $query;
 			//Re-add remembered orders
-			$lo_order->traverse(function ($clause) use ($lo_query): void {
-				$lo_query->orderBy($clause);
+			$order->traverse(function ($clause) use ($query): void {
+				$query->orderBy($clause);
 			});
 		}
 
@@ -571,18 +571,18 @@ class CategoriesBehavior extends Behavior {
 	 * @return array
 	 */
 	public function getValidSelectionValues(): array {
-		$la_validSelectionValues = array_keys($this->getCategories());
+		$validSelectionValues = array_keys($this->getCategories());
 
 		if ($this->getConfig('allowUnassigned')) {
-			array_unshift($la_validSelectionValues, $this->getConfig('unassignedKey'));
+			array_unshift($validSelectionValues, $this->getConfig('unassignedKey'));
 		}
 
 		if ($this->getConfig('allowAggregation')) {
-			array_unshift($la_validSelectionValues, $this->getConfig('aggregationKey'));
+			array_unshift($validSelectionValues, $this->getConfig('aggregationKey'));
 		}
 
 
-		return $la_validSelectionValues;
+		return $validSelectionValues;
 	}
 
 
@@ -592,16 +592,16 @@ class CategoriesBehavior extends Behavior {
 	 * @return mixed
 	 */
 	public function verifySelection(mixed $categoryId = null, ?array $validSelectionValues = null): mixed {
-		$lx_categoryId = $categoryId ?: $this->getConfig('selectedCategory');
-		if (is_string($lx_categoryId)) {
-			$lx_categoryId = Inflector::underscore($lx_categoryId);
+		$categoryId = $categoryId ?: $this->getConfig('selectedCategory');
+		if (is_string($categoryId)) {
+			$categoryId = Inflector::underscore($categoryId);
 		}
 
-		$la_validSelectionValues = $validSelectionValues ?? $this->getValidSelectionValues();
-		$la_validSelectionValues = array_map(fn ($value) => is_string($value) ? Inflector::underscore($value) : $value, $la_validSelectionValues);
+		$validSelectionValues ??= $this->getValidSelectionValues();
+		$validSelectionValues = array_map(fn ($value) => is_string($value) ? Inflector::underscore($value) : $value, $validSelectionValues);
 
-		if (in_array($lx_categoryId, $la_validSelectionValues)) {
-			return $lx_categoryId;
+		if (in_array($categoryId, $validSelectionValues)) {
+			return $categoryId;
 		}
 
 		return false;
@@ -615,46 +615,46 @@ class CategoriesBehavior extends Behavior {
 	public function getParentCategories(bool $includeCurrentCategories = false): ?CollectionInterface {
 		if (isset($this->parentCategories)) {
 			if ($includeCurrentCategories) {
-				$lo_categories = $this->parentCategories->append($this->getCategories(true));
+				$categories = $this->parentCategories->append($this->getCategories(true));
 
-				return $lo_categories->indexBy('id')->compile();
+				return $categories->indexBy('id')->compile();
 			}
 
 			return $this->parentCategories;
 		}
 
-		$lo_table = $this->table();
+		$table = $this->table();
 
-		$ls_associationName = $this->getConfig('associationName');
+		$associationName = $this->getConfig('associationName');
 
 		if (
-			empty($ls_associationName) ||
-			!$lo_table->hasAssociation($ls_associationName) ||
-			!$lo_table->getAssociation($ls_associationName)->hasBehavior('Categories')
+			empty($associationName) ||
+			!$table->hasAssociation($associationName) ||
+			!$table->getAssociation($associationName)->hasBehavior('Categories')
 		) {
 			$this->parentCategories = null;
 
 			return null;
 		}
 
-		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_behavior */
-		$lo_behavior = $lo_table->getAssociation($ls_associationName)->getBehavior('Categories');
+		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $categoriesBehavior */
+		$categoriesBehavior = $table->getAssociation($associationName)->getBehavior('Categories');
 
 		if (
-			!$lo_behavior->getConfig('enabled') ||
-			!$lo_behavior->getConfig('useDatasource')
+			!$categoriesBehavior->getConfig('enabled') ||
+			!$categoriesBehavior->getConfig('useDatasource')
 		) {
 			$this->parentCategories = null;
 
 			return null;
 		}
 
-		$this->parentCategories = $lo_behavior->getCategories(true);
+		$this->parentCategories = $categoriesBehavior->getCategories(true);
 
 		if ($includeCurrentCategories) {
-			$lo_categories = $this->parentCategories->append($this->getCategories(true));
+			$categories = $this->parentCategories->append($this->getCategories(true));
 
-			return $lo_categories->indexBy('id')->compile();
+			return $categories->indexBy('id')->compile();
 		}
 
 		return $this->parentCategories;
@@ -666,41 +666,41 @@ class CategoriesBehavior extends Behavior {
 	 * @return void
 	 */
 	public function assignParentCategories(int $maxLevel = PHP_INT_MAX): void {
-		$lo_parentCategories = $this->getParentCategories(true);
-		if (!$lo_parentCategories) {
+		$parentCategories = $this->getParentCategories(true);
+		if (!$parentCategories) {
 			return;
 		}
 
-		$lo_parentCategories = $lo_parentCategories->nest('id', 'parentId')->listNested();
+		$parentCategories = $parentCategories->nest('id', 'parentId')->listNested();
 
-		$lo_table = $this->table();
+		$table = $this->table();
 
-		$ls_associationName = $this->getConfig('associationName');
-		$lo_association = $lo_table->getAssociation($ls_associationName);
-		$ls_entityClass = $lo_association->getEntityClass();
+		$associationName = $this->getConfig('associationName');
+		$association = $table->getAssociation($associationName);
+		$entityClass = $association->getEntityClass();
 
-		//Keep track of the current path
-		$la_currentPath = [];
+		// Keep track of the current path
+		$currentPath = [];
 
-		/** @var \Awyiss\Model\Entity $lo_entity */
-		foreach ($lo_parentCategories as $lo_entity) {
+		/** @var \Awyiss\Model\Entity $entity */
+		foreach ($parentCategories as $entity) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$li_currentDepth = $lo_parentCategories->getDepth();
+			$currentDepth = $parentCategories->getDepth();
 
 			//Adjust the current path to reflect the current depth
-			$la_currentPath = array_slice($la_currentPath, 0, $li_currentDepth);
+			$currentPath = array_slice($currentPath, 0, $currentDepth);
 
 			//Check if the entity is an instance of the special class
-			if ($lo_entity instanceof $ls_entityClass) {
-				$li_parentsCount = min($maxLevel, $li_currentDepth);
+			if ($entity instanceof $entityClass) {
+				$parentsCount = min($maxLevel, $currentDepth);
 				/** @noinspection PhpUndefinedFieldInspection */
-				$lo_entity->_parents = array_values(array_slice($la_currentPath, -$li_parentsCount, $li_parentsCount, true));
-				$lo_entity->setVirtual(['_parents'], true);
+				$entity->_parents = array_values(array_slice($currentPath, -$parentsCount, $parentsCount, true));
+				$entity->setVirtual(['_parents'], true);
 
 				continue;
 			}
 
-			$la_currentPath[ $li_currentDepth ] = $lo_entity;
+			$currentPath[ $currentDepth ] = $entity;
 		}
 	}
 
@@ -709,11 +709,11 @@ class CategoriesBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function buildCategories(): void {
-		$lo_table = $this->table();
+		$table = $this->table();
 
-		$ls_associationName = $this->getConfig('associationName');
-		//No matching association? Do nothing.
-		if (!$ls_associationName || !$lo_table->hasAssociation($ls_associationName)) {
+		$associationName = $this->getConfig('associationName');
+		// No matching association? Do nothing.
+		if (!$associationName || !$table->hasAssociation($associationName)) {
 			throw new RuntimeException(
 				sprintf(
 					'Cannot build categories without an association in `%s` for table `%s`.',
@@ -723,35 +723,35 @@ class CategoriesBehavior extends Behavior {
 			);
 		}
 
-		$lo_association = $lo_table->getAssociation($ls_associationName);
+		$association = $table->getAssociation($associationName);
 
-		$lo_query = $lo_association->find($this->getConfig('finder'))->where($this->getConfig('queryConditions'));
+		$query = $association->find($this->getConfig('finder'))->where($this->getConfig('queryConditions'));
 
 		// Include parent categories in the query
-		$lo_parentCategories = $this->getConfig('includeParentCategories') ? $this->getParentCategories() : null;
-		if ($lo_parentCategories?->count()) {
-			$la_parentCategorieIds = $lo_parentCategories->extract('id')->toList();
+		$parentCategories = $this->getConfig('includeParentCategories') ? $this->getParentCategories() : null;
+		if ($parentCategories?->count()) {
+			$parentCategorieIds = $parentCategories->extract('id')->toList();
 
-			$ls_field = $this->getConfig('foreignKey');
-			$ls_field = $lo_association->aliasField($ls_field);
+			$field = $this->getConfig('foreignKey');
+			$field = $association->aliasField($field);
 
-			$lo_dialect = $lo_query->getConnection()->getDriver()->schemaDialect();
+			$dialect = $query->getConnection()->getDriver()->schemaDialect();
 			/**
 			 * SQLite does not support FIND_IN_SET(),
 			 * so ordering using CASE WHEN is used instead
 			 */
-			if ($lo_dialect instanceof SqliteSchemaDialect) {
-				$lo_query->orderBy(function ($exp) use ($ls_field, $la_parentCategorieIds) {
-					$li_index = 0;
+			if ($dialect instanceof SqliteSchemaDialect) {
+				$query->orderBy(function ($exp) use ($field, $parentCategorieIds) {
+					$index = 0;
 
-					$lo_case = $exp->case();
-					foreach ($la_parentCategorieIds as $ls_parentCategoryId) {
-						$lo_case->when([$ls_field => $ls_parentCategoryId])->then($li_index, 'integer');
+					$case = $exp->case();
+					foreach ($parentCategorieIds as $parentCategoryId) {
+						$case->when([$field => $parentCategoryId])->then($index, 'integer');
 
-						$li_index++;
+						$index++;
 					}
 
-					return $lo_case;
+					return $case;
 				});
 			}
 			else {
@@ -760,29 +760,30 @@ class CategoriesBehavior extends Behavior {
 				 *
 				 * @noinspection PhpUndefinedMethodInspection
 				 */
-				$lo_query->orderByAsc($lo_query->newExpr($lo_query->func()->FIND_IN_SET([
-					$ls_field => 'identifier',
-					implode(',', $la_parentCategorieIds),
+				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+					$field => 'identifier',
+					implode(',', $parentCategorieIds),
 				])), true);
 			}
 		}
 
 		if ($this->getConfig('threaded')) {
-			$lo_categories = $lo_association->getTarget()->listNested($lo_query);
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$categories = $association->getTarget()->listNested($query);
 
 			//Create an array, based on a printer set in the config. Default is [id => label]
-			$ls_bindingKey = $this->getConfig('bindingKey', 'id');
-			$la_categories = $lo_categories->printer(...$this->getConfig('threaded.printer', ['label', $ls_bindingKey, '– ']))->toArray();
+			$bindingKey = $this->getConfig('bindingKey', 'id');
+			$simpleCategories = $categories->printer(...$this->getConfig('threaded.printer', ['label', $bindingKey, '– ']))->toArray();
 		}
 		else {
-			$lo_categories = $lo_query->all();
+			$categories = $query->all();
 			//Create an array, based on a combinator set in the config. Default is [id => label]
-			$la_categories = $lo_categories->combine(...$this->getConfig('combinator'))->toArray();
+			$simpleCategories = $categories->combine(...$this->getConfig('combinator'))->toArray();
 		}
 
 		$this->categories = [
-			'raw' => $lo_categories,
-			'simple' => $la_categories,
+			'raw' => $categories,
+			'simple' => $simpleCategories,
 		];
 	}
 
@@ -798,40 +799,40 @@ class CategoriesBehavior extends Behavior {
 			return;
 		}
 
-		$ls_fieldName = Inflector::camelize($this->getConfig('field'));
-		$ls_ruleName = 'valid' . $ls_fieldName;
+		$fieldName = Inflector::camelize($this->getConfig('field'));
+		$ruleName = 'valid' . $fieldName;
 
-		$lo_table = $this->table();
-		$rules->add(function (EntityInterface $entity, array $options) use ($lo_table): bool {
-			$la_categories = $this->getCategories();
-			$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('field') : $this->getConfig('identifier');
+		$table = $this->table();
+		$rules->add(function (EntityInterface $entity, array $options) use ($table): bool {
+			$categories = $this->getCategories();
+			$field = $this->getConfig('useDatasource') ? $this->getConfig('field') : $this->getConfig('identifier');
 
-			$lx_value = $entity->get($ls_field);
+			$value = $entity->get($field);
 
 			if ($this->getConfig('useDatasource')) {
-				$lo_association = $lo_table->getAssociation($this->getConfig('associationName'));
-				if ($lo_association instanceof BelongsToMany) {
-					if (!empty($lx_value)) {
-						$la_possibleValues = Hash::extract($lx_value, '{n}.' . $lo_association->getBindingKey());
+				$association = $table->getAssociation($this->getConfig('associationName'));
+				if ($association instanceof BelongsToMany) {
+					if (!empty($value)) {
+						$possibleValues = Hash::extract($value, '{n}.' . $association->getBindingKey());
 
-						return empty(array_diff($la_possibleValues, array_keys($la_categories)));
+						return empty(array_diff($possibleValues, array_keys($categories)));
 					}
 
 					return true;
 				}
 			}
 
-			if ($lx_value instanceof BackedEnum) {
-				$lx_value = $lx_value->value;
+			if ($value instanceof BackedEnum) {
+				$value = $value->value;
 			}
 
-			return array_key_exists($lx_value, $la_categories);
-		}, $ls_ruleName, [
-			'errorField' => Inflector::underscore($ls_fieldName),
+			return array_key_exists($value, $categories);
+		}, $ruleName, [
+			'errorField' => Inflector::underscore($fieldName),
 			'message' => __df(
-				$lo_table->getI18nDomain(),
+				$table->getI18nDomain(),
 				'validation',
-				'error_valid_' . Inflector::underscore($ls_fieldName)
+				'error_valid_' . Inflector::underscore($fieldName)
 			),
 		]);
 	}
@@ -846,35 +847,35 @@ class CategoriesBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function sortQueryBySystemOrderField(SelectQuery $query): void {
-		$lo_table = $query->getRepository();
+		$table = $query->getRepository();
 
-		/** @var \Awyiss\Model\Behavior\SystemOrderBehavior $lo_behavior */
-		$lo_behavior = $lo_table->getBehavior('SystemOrder');
-		$ls_field = $lo_behavior->getConfig('field');
-		if (in_array($ls_field, ['system_order', 'systemOrder'])) {
+		/** @var \Awyiss\Model\Behavior\SystemOrderBehavior $systemOrderBehavior */
+		$systemOrderBehavior = $table->getBehavior('SystemOrder');
+		$field = $systemOrderBehavior->getConfig('field');
+		if (in_array($field, ['system_order', 'systemOrder'])) {
 			return;
 		}
 
-		$ls_direction = $lo_behavior->getConfig('direction');
+		$direction = $systemOrderBehavior->getConfig('direction');
 
-		if (str_starts_with($ls_field, 'attributes.')) {
+		if (str_starts_with($field, 'attributes.')) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$ls_fieldType = $lo_table->getAttributesTable()->getSchema()->getColumnType(substr($ls_field, 11));
+			$fieldType = $table->getAttributesTable()->getSchema()->getColumnType(substr($field, 11));
 		}
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		elseif ($lo_table->fieldIsAttribute($ls_field)) {
+		elseif ($table->fieldIsAttribute($field)) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$ls_fieldType = $lo_table->getAttributesTable()->getSchema()->getColumnType($ls_field);
+			$fieldType = $table->getAttributesTable()->getSchema()->getColumnType($field);
 		}
 		else {
-			$ls_fieldType = $lo_table->getSchema()->getColumnType($ls_field);
+			$fieldType = $table->getSchema()->getColumnType($field);
 		}
 
-		 $query->formatResults(function (CollectionInterface $collection) use ($ls_field, $ls_direction, $ls_fieldType) {
+		 $query->formatResults(function (CollectionInterface $collection) use ($field, $direction, $fieldType) {
 			 return $collection->sortBy(
-				 $ls_field,
-				 $ls_direction,
-				 in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
+				 $field,
+				 $direction,
+				 in_array($fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
 			 );
 		 });
 	}

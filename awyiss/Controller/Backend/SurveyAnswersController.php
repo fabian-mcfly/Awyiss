@@ -32,11 +32,11 @@ class SurveyAnswersController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->SurveyAnswers->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_query);
-		$this->Search->filterQuery($lo_query);
+		$query = $this->SurveyAnswers->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($query);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -48,15 +48,14 @@ class SurveyAnswersController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_surveyAnswers = $lo_query->all();
+		$query = $this->getOverviewQuery();
+		$surveyAnswers = $query->all();
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_question = $this->fetchTable('SurveyQuestions')->findById($this->Categories->getSelectedCategory())->first();
+		$question = $this->fetchTable('SurveyQuestions')->findById($this->Categories->getSelectedCategory())->first();
 
 		$this->set([
-			'surveyAnswers' => $lo_surveyAnswers,
-			'surveyQuestion' => $lo_question,
+			'surveyAnswers' => $surveyAnswers,
+			'surveyQuestion' => $question,
 			'disabledSurveyQuestions' => $this->SurveyAnswers->getDisabledQuestions(),
 			'attributes' => $this->SurveyAnswers->getAttributes(),
 		]);
@@ -72,13 +71,13 @@ class SurveyAnswersController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_surveyAnswer = $this->SurveyAnswers->newDefaultEntity();
+		$surveyAnswer = $this->SurveyAnswers->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_surveyAnswer);
+			$this->save($surveyAnswer);
 		}
 
-		$this->setViewVars($lo_surveyAnswer);
+		$this->setViewVars($surveyAnswer);
 	}
 
 
@@ -93,23 +92,23 @@ class SurveyAnswersController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\SurveyAnswer $lo_surveyAnswer
+		 * @var \Awyiss\Model\Entity\SurveyAnswer $surveyAnswer
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_surveyAnswer = $this->SurveyAnswers->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_surveyAnswer) {
+		$surveyAnswer = $this->SurveyAnswers->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$surveyAnswer) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_surveyAnswer, 'edit');
+			$this->save($surveyAnswer, 'edit');
 		}
 
-		$this->setViewVars($lo_surveyAnswer);
+		$this->setViewVars($surveyAnswer);
 	}
 
 
@@ -125,15 +124,15 @@ class SurveyAnswersController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var SurveyAnswer $lo_surveyAnswer */
-		$lo_surveyAnswer = $this->SurveyAnswers->findById($id)->first();
-		if (!$lo_surveyAnswer) {
+		/** @var \Awyiss\Model\Entity\SurveyAnswer $surveyAnswer */
+		$surveyAnswer = $this->SurveyAnswers->findById($id)->first();
+		if (!$surveyAnswer) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->SurveyAnswers->delete($lo_surveyAnswer)) {
+		if ($this->SurveyAnswers->delete($surveyAnswer)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -141,8 +140,8 @@ class SurveyAnswersController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_surveyAnswer->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($surveyAnswer->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -158,25 +157,23 @@ class SurveyAnswersController extends Controller {
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
 	protected function save(SurveyAnswer $surveyAnswer, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->SurveyAnswers->hasAttributes()) {
-			$la_associated[] = $this->SurveyAnswers->getAttributesTableName(true);
+			$associated[] = $this->SurveyAnswers->getAttributesTableName(true);
 			$surveyAnswer->setAccess('attributes', true);
 		}
 
-		$la_data = $this->request->getData();
-
-		$this->SurveyAnswers->patchEntity($surveyAnswer, $la_data, [
-			'associated' => $la_associated,
+		$this->SurveyAnswers->patchEntity($surveyAnswer, $this->request->getData(), [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->SurveyAnswers->save($surveyAnswer, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->SurveyAnswers->save($surveyAnswer, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -190,9 +187,9 @@ class SurveyAnswersController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($surveyAnswer->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($surveyAnswer->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}

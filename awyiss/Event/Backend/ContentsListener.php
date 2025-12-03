@@ -159,13 +159,13 @@ class ContentsListener implements EventListenerInterface {
 		}
 
 		try {
-			/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
-			$lo_designMiddleware = Router::getRequest()->getAttribute('design');
-			$lo_designMiddleware->resetDesignVariables();
-			$lo_designMiddleware->compileScss(true, Awyiss::REALM_FRONTEND);
+			/** @var \Awyiss\Middleware\DesignMiddleware $designMiddleware */
+			$designMiddleware = Router::getRequest()->getAttribute('design');
+			$designMiddleware->resetDesignVariables();
+			$designMiddleware->compileScss(true, Awyiss::REALM_FRONTEND);
 
-			$lo_designMiddleware->resetDesignVariables();
-			$lo_designMiddleware->compileScss(true, Awyiss::REALM_BACKEND);
+			$designMiddleware->resetDesignVariables();
+			$designMiddleware->compileScss(true, Awyiss::REALM_BACKEND);
 		}
 		catch (SassException) {
 			// Ignore SCSS compilation errors here
@@ -189,8 +189,8 @@ class ContentsListener implements EventListenerInterface {
 			return;
 		}
 
-		$ls_transactionId = $options['transactionId'];
-		$this->checkedTransactions[ $ls_transactionId ] ??= [
+		$transactionId = $options['transactionId'];
+		$this->checkedTransactions[ $transactionId ] ??= [
 			'languageChanged' => null,
 			'sourceLanguage' => null,
 			'targetLanguage' => null,
@@ -198,38 +198,38 @@ class ContentsListener implements EventListenerInterface {
 		];
 
 		if (
-			$this->checkedTransactions[ $ls_transactionId ]['languageChanged'] === null &&
+			$this->checkedTransactions[ $transactionId ]['languageChanged'] === null &&
 			$entity->hasOriginal('pageId') &&
 			$entity->getOriginal('pageId') !== $entity->pageId
 		) {
-			$li_oldPageId = $entity->getOriginal('pageId');
-			$li_newPageId = $entity->pageId;
+			$oldPageId = $entity->getOriginal('pageId');
+			$newPageId = $entity->pageId;
 
-			if (!isset($this->pagesCache[ $li_newPageId ]) || !isset($this->pagesCache[ $li_oldPageId ])) {
-				/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
-				$lo_pagesTable = FactoryLocator::get('Table')->get('Pages');
-				/** @var array<\Awyiss\Model\Entity\Page> $la_pages */
-				$la_pages = $lo_pagesTable->find('all', skipPageRoleCheck: true)->select(['id', 'language_shortcode'])->where([
-					'id IN' => [$li_oldPageId, $li_newPageId],
+			if (!isset($this->pagesCache[ $newPageId ]) || !isset($this->pagesCache[ $oldPageId ])) {
+				/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
+				$pagesTable = FactoryLocator::get('Table')->get('Pages');
+				/** @var array<\Awyiss\Model\Entity\Page> $pages */
+				$pages = $pagesTable->find('all', skipPageRoleCheck: true)->select(['id', 'language_shortcode'])->where([
+					'id IN' => [$oldPageId, $newPageId],
 				])->all()->indexBy('id')->toArray();
 
-				$this->pagesCache[ $li_oldPageId ] = $la_pages[ $li_oldPageId ] ?? null;
-				$this->pagesCache[ $li_newPageId ] = $la_pages[ $li_newPageId ] ?? null;
+				$this->pagesCache[ $oldPageId ] = $pages[ $oldPageId ] ?? null;
+				$this->pagesCache[ $newPageId ] = $pages[ $newPageId ] ?? null;
 			}
 
 			// Cannot determine language change if one of the pages does not exist
-			if (!isset($this->pagesCache[ $li_newPageId ]) || !isset($this->pagesCache[ $li_oldPageId ])) {
-				$this->checkedTransactions[ $ls_transactionId ]['languageChanged'] = false;
+			if (!isset($this->pagesCache[ $newPageId ]) || !isset($this->pagesCache[ $oldPageId ])) {
+				$this->checkedTransactions[ $transactionId ]['languageChanged'] = false;
 				return;
 			}
 
-			$this->checkedTransactions[ $ls_transactionId ]['languageChanged'] = $this->pagesCache[ $li_oldPageId ]->languageShortcode !== $this->pagesCache[ $li_newPageId ]->languageShortcode;
-			$this->checkedTransactions[ $ls_transactionId ]['sourceLanguage'] = $this->pagesCache[ $li_oldPageId ]->languageShortcode;
-			$this->checkedTransactions[ $ls_transactionId ]['targetLanguage'] = $this->pagesCache[ $li_newPageId ]->languageShortcode;
+			$this->checkedTransactions[ $transactionId ]['languageChanged'] = $this->pagesCache[ $oldPageId ]->languageShortcode !== $this->pagesCache[ $newPageId ]->languageShortcode;
+			$this->checkedTransactions[ $transactionId ]['sourceLanguage'] = $this->pagesCache[ $oldPageId ]->languageShortcode;
+			$this->checkedTransactions[ $transactionId ]['targetLanguage'] = $this->pagesCache[ $newPageId ]->languageShortcode;
 		}
 
-		if ($this->checkedTransactions[ $ls_transactionId ]['languageChanged'] === true) {
-			$this->checkedTransactions[ $ls_transactionId ]['contentIds'][] = $entity->id;
+		if ($this->checkedTransactions[ $transactionId ]['languageChanged'] === true) {
+			$this->checkedTransactions[ $transactionId ]['contentIds'][] = $entity->id;
 		}
 	}
 
@@ -243,39 +243,39 @@ class ContentsListener implements EventListenerInterface {
 		}
 
 		// Bundle all transactions with the same source and target languages into one job
-		$la_jobsData = $this->bundleAutoTranslateJobData();
+		$jobsData = $this->bundleAutoTranslateJobData();
 		$this->checkedTransactions = [];
 
-		if (!$la_jobsData) {
+		if (!$jobsData) {
 			return;
 		}
 
-		foreach ($la_jobsData as $la_jobData) {
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			$lo_queue->createJob('AutoTranslate', $la_jobData, [
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+		foreach ($jobsData as $jobData) {
+			$queuedJobsTable->createJob('AutoTranslate', $jobData, [
 				'group' => 'general',
 				'priority' => 1,
 				'reference' => 'system::auto_translation',
 			]);
 
-			/** @var \Awyiss\Model\Table\LocksTable $lo_locksTable */
-			$lo_locksTable = FactoryLocator::get('Table')->get('Locks');
-			$la_locks = [];
-			$ld_dateTimeNow = new DateTime()->addHours(1);
+			/** @var \Awyiss\Model\Table\LocksTable $locksTable */
+			$locksTable = FactoryLocator::get('Table')->get('Locks');
+			$locks = [];
+			$dateTimeNow = new DateTime()->addHours(1);
 
-			foreach ($la_jobData['ids'] as $li_contentId) {
-				$la_locks[] = $lo_locksTable->newDefaultEntity([
+			foreach ($jobData['ids'] as $contentId) {
+				$locks[] = $locksTable->newDefaultEntity([
 					'scope' => 'contents',
-					'foreignKey' => $li_contentId,
+					'foreignKey' => $contentId,
 					'uniqueId' => 'autoTranslate',
-					'createdOn' => $ld_dateTimeNow,
+					'createdOn' => $dateTimeNow,
 					'createdBy' => 0,
 				]);
 			}
 
 			try {
-				$lo_locksTable->saveMany($la_locks, [
+				$locksTable->saveMany($locks, [
 					'checkRules' => false,
 				]);
 			}
@@ -295,25 +295,25 @@ class ContentsListener implements EventListenerInterface {
 	 * @return array|null
 	 */
 	protected function bundleAutoTranslateJobData(): ?array {
-		$la_jobData = [];
+		$jobData = [];
 
-		foreach ($this->checkedTransactions as $la_transactionData) {
-			if ($la_transactionData['languageChanged'] !== true) {
+		foreach ($this->checkedTransactions as $transactionData) {
+			if ($transactionData['languageChanged'] !== true) {
 				continue;
 			}
 
-			$ls_key = $la_transactionData['sourceLanguage'] . '->' . $la_transactionData['targetLanguage'];
+			$key = $transactionData['sourceLanguage'] . '->' . $transactionData['targetLanguage'];
 
-			$la_jobData[ $ls_key ] ??= [
-				'sourceLanguage' => $la_transactionData['sourceLanguage'],
-				'targetLanguage' => $la_transactionData['targetLanguage'],
+			$jobData[ $key ] ??= [
+				'sourceLanguage' => $transactionData['sourceLanguage'],
+				'targetLanguage' => $transactionData['targetLanguage'],
 				'type' => 'content',
 				'ids' => [],
 			];
 
-			$la_jobData[ $ls_key ]['ids'] = array_merge($la_jobData[ $ls_key ]['ids'], $la_transactionData['contentIds']);
+			$jobData[ $key ]['ids'] = array_merge($jobData[ $key ]['ids'], $transactionData['contentIds']);
 		}
 
-		return $la_jobData ?: null;
+		return $jobData ?: null;
 	}
 }

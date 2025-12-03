@@ -39,7 +39,6 @@ class ResizeStrategyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Enum\ResizeStrategy::normalize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeWithEnumInstance(): void {
 		$strategy = ResizeStrategy::Contain;
@@ -53,7 +52,6 @@ class ResizeStrategyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Enum\ResizeStrategy::normalize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeWithInteger(): void {
 		$this->assertEquals(ResizeStrategy::Contain, ResizeStrategy::normalize(1));
@@ -66,7 +64,6 @@ class ResizeStrategyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Enum\ResizeStrategy::normalize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeWithStringCaseNames(): void {
 		$this->assertEquals(ResizeStrategy::Contain, ResizeStrategy::normalize('contain'));
@@ -79,7 +76,6 @@ class ResizeStrategyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Enum\ResizeStrategy::normalize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeWithStringExactCaseNames(): void {
 		$this->assertEquals(ResizeStrategy::Contain, ResizeStrategy::normalize('Contain'));

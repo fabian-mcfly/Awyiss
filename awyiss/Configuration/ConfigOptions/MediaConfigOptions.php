@@ -69,21 +69,20 @@ class MediaConfigOptions extends AbstractConfigOptions {
 						return null;
 					}
 
-					$la_values = $values;
-
-					if (!is_array($la_values)) {
-						$la_values = json_decode($la_values, true);
+					$cleanValues = $values;
+					if (!is_array($cleanValues)) {
+						$cleanValues = json_decode($cleanValues, true);
 					}
 
-					if (!is_array($la_values)) {
-						$la_values = [$values];
+					if (!is_array($cleanValues)) {
+						$cleanValues = [$values];
 					}
 
-					$la_values = array_filter(array_map('intval', $la_values));
+					$cleanValues = array_filter(array_map('intval', $cleanValues));
 
-					rsort($la_values);
+					rsort($cleanValues);
 
-					return $la_values ?: null;
+					return $cleanValues ?: null;
 				}
 			),
 			'resizing' => [
@@ -94,17 +93,17 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					nullable: false,
 					type: ConfigOptionType::ListKey,
 					values: function (): array {
-						$la_drivers = [];
+						$drivers = [];
 
 						if (extension_loaded('Imagick')) {
-							$la_drivers['imagick'] = __d(Inflector::underscore(static::$scope), 'driver_imagick');
+							$drivers['imagick'] = __d(Inflector::underscore(static::$scope), 'driver_imagick');
 						}
 
 						if (extension_loaded('gd')) {
-							$la_drivers['gd'] = __d(Inflector::underscore(static::$scope), 'driver_gd');
+							$drivers['gd'] = __d(Inflector::underscore(static::$scope), 'driver_gd');
 						}
 
-						return $la_drivers;
+						return $drivers;
 					}
 				),
 				new ConfigOption(
@@ -164,13 +163,13 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					personalizable: true,
 					type: ConfigOptionType::ValueCollection,
 					values: function () {
-						$la_fields = $this->getTableFields();
+						$fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title']);
+						unset($fields['id'], $fields['title']);
 
-						$la_fields['usageCount'] = __d('media', 'usage_count');
+						$fields['usageCount'] = __d('media', 'usage_count');
 
-						return $la_fields;
+						return $fields;
 					},
 				),
 			],

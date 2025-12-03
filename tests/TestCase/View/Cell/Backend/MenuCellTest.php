@@ -38,7 +38,6 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function setUp(): void {
@@ -48,7 +47,7 @@ class MenuCellTest extends TestCase {
 
 		$this->loadRoutes();
 
-		$this->request = (new ServerRequest([
+		$this->request = new ServerRequest([
 			'url' => '/backend/xy/dummy/overview/',
 			'params' => [
 				'lang' => 'xy',
@@ -60,7 +59,7 @@ class MenuCellTest extends TestCase {
 				'pass' => [],
 				'plugin' => null,
 			],
-		]))->withAttribute('authorization', new AuthorizationService('Backend'));
+		])->withAttribute('authorization', new AuthorizationService('Backend'));
 
 		Router::setRequest($this->request);
 
@@ -70,7 +69,6 @@ class MenuCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
@@ -94,7 +92,6 @@ class MenuCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithAuthorizedUser(): void {
 		$user = $this->login();
@@ -117,7 +114,6 @@ class MenuCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithUnauthorizedUser(): void {
 		$user = $this->login(2);
@@ -137,7 +133,6 @@ class MenuCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithAccessDeniedUser(): void {
 		$user = $this->login(3);
@@ -157,7 +152,6 @@ class MenuCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplaySavesMenuStructureToSession(): void {
 		$session = $this->request->getSession();
@@ -180,19 +174,18 @@ class MenuCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayReloadsWhenMenuIsOutdated(): void {
 		$session = $this->request->getSession();
 		$session->write('Backend.menu.de', json_encode([
-			'time' => (new DateTime())->subMinutes(20)->format('Y-m-d H:i:s'),
+			'time' => new DateTime()->subMinutes(20)->format('Y-m-d H:i:s'),
 			'menuData' => [],
 		]));
 
 		$table = $this->fetchTable('BackendMenuEntries');
 		$entity = $table->newEntity([
 			'title' => 'foobar',
-			'created_on' => (new DateTime())->subMinutes(10),
+			'created_on' => new DateTime()->subMinutes(10),
 		]);
 		$table->save($entity);
 
@@ -214,17 +207,16 @@ class MenuCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayReloadsWhenUserIsOutdated(): void {
 		$session = $this->request->getSession();
 		$session->write('Backend.menu.de', json_encode([
-			'time' => (new DateTime())->subMinutes(20)->format('Y-m-d H:i:s'),
+			'time' => new DateTime()->subMinutes(20)->format('Y-m-d H:i:s'),
 			'menuData' => [],
 		]));
 
 		$user = $this->login();
-		$user->changedOn = (new DateTime())->subMinutes(10);
+		$user->changedOn = new DateTime()->subMinutes(10);
 		$this->request = $this->request->withAttribute('identity', $user);
 		Router::setRequest($this->request);
 
@@ -242,7 +234,6 @@ class MenuCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithActiveItem(): void {
 		$user = $this->login();
@@ -282,7 +273,6 @@ class MenuCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MenuCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithActiveItemForCurrentController(): void {
 		$user = $this->login();

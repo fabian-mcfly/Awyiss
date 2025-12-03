@@ -20,7 +20,6 @@ use Cake\Http\ServerRequest;
 class LocalConfigTest extends TestCase {
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -47,7 +46,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::read()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testReadWithStringPath(): void {
 		Configure::write('Awyiss.TestController.Backend.test.key', 'test-value');
@@ -60,7 +58,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::read()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testReadWithArrayPath(): void {
 		Configure::write('Awyiss.TestController.Backend.test.key', 'test-value');
@@ -73,7 +70,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::read()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testReadWithNullPath(): void {
 		Configure::write('Awyiss.TestController.Backend', [
@@ -94,7 +90,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::read()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testReadWithCustomScope(): void {
 		Configure::write('Awyiss.CustomScope.Backend.test.key', 'custom-value');
@@ -107,7 +102,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::read()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testReadWithDefaultValue(): void {
 		$result = LocalConfig::read('non.existent.key', 'default-value');
@@ -118,7 +112,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::write()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWriteWithStringConfig(): void {
 		LocalConfig::write('test.key', 'new-value');
@@ -131,7 +124,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::write()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWriteWithArrayConfig(): void {
 		LocalConfig::write([
@@ -149,7 +141,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::write()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWriteWithCustomScope(): void {
 		LocalConfig::write('test.key', 'custom-scope-value', 'CustomScope');
@@ -162,7 +153,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::stringify()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testStringify(): void {
 		$result = LocalConfig::stringify(['one', 'two', 'three']);
@@ -179,7 +169,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::read() and \Awyiss\Core\LocalConfig::write()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testReadWriteIntegration(): void {
 		LocalConfig::write('integration.test', 'integration-value');
@@ -197,7 +186,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::read() and \Awyiss\Core\LocalConfig::write()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDifferentRealmAndController(): void {
 		Awyiss::setRealm('Frontend');
@@ -221,7 +209,6 @@ class LocalConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Core\LocalConfig::write()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWriteWithNestedArrays(): void {
 		LocalConfig::write('nested', [

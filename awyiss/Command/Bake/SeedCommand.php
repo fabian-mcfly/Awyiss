@@ -26,19 +26,19 @@ class SeedCommand extends BaseBakeSeedCommand {
 	 * @return ConsoleOptionParser
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($parser);
+		$parser = parent::buildOptionParser($parser);
 
-		$lo_parser->addOption('folder', [
+		$parser->addOption('folder', [
 			'help' => 'The folder to save the migration in.',
 		]);
 
-		$lo_parser->addOption('truncate', [
+		$parser->addOption('truncate', [
 			'boolean' => true,
 			'help' => 'Add the truncate command in the seed.',
 		]);
 
 
-		return $lo_parser;
+		return $parser;
 	}
 
 

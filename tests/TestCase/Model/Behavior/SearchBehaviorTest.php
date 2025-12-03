@@ -45,7 +45,6 @@ class SearchBehaviorTest extends TestCase {
 
 		// Set up a mock session
 		$this->session = new Session();
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$request = new ServerRequest([
 			'url' => '/test',
 			'session' => $this->session,
@@ -63,7 +62,6 @@ class SearchBehaviorTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		$this->table->deleteAll([]);
@@ -86,7 +84,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialization(): void {
 		$config = $this->behavior->getConfig();
@@ -108,7 +105,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationWithSessionData(): void {
 		// Set session data first
@@ -141,10 +137,8 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationWithoutSession(): void {
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$request = new ServerRequest([
 			'url' => '/test',
 		]);
@@ -169,7 +163,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getFilterColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFilterColumns(): void {
 		$columns = $this->table->getFilterColumns();
@@ -230,7 +223,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getFilterColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFilterColumnsWithBlocklistedColumns(): void {
 		$columns = $this->table->getFilterColumns(['title', 'system_order']);
@@ -251,7 +243,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getFilterColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFilterColumnsWithSelectedOperatorsAndValues(): void {
 		// Set session data with operators and values
@@ -270,7 +261,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getFilterColumns()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFilterColumnsWithSelectedOperatorsAndValuesForAttributes(): void {
 		$table = TableRegistry::getTableLocator()->get('Contents');
@@ -292,7 +282,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::isActive()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsActiveWithoutValues(): void {
 		$this->assertFalse($this->table->searchIsActive());
@@ -302,7 +291,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::isActive()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsActiveWithValues(): void {
 		$this->session->write('_filter.Employers', [
@@ -316,7 +304,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::isActive()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsActiveWithEmptyValues(): void {
 		$this->session->write('_filter.Employers', [
@@ -330,7 +317,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesForLanguageShortcode(): void {
 		$values = $this->table->getPossibleFieldValues('language_shortcode');
@@ -347,7 +333,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesForCreatedBy(): void {
 		$values = $this->table->getPossibleFieldValues('created_by');
@@ -364,7 +349,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesForChangedBy(): void {
 		$values = $this->table->getPossibleFieldValues('changed_by');
@@ -381,7 +365,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesForUnknownColumn(): void {
 		$values = $this->table->getPossibleFieldValues('unknown_column');
@@ -393,7 +376,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::getPossibleFieldValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesForEnum(): void {
 		$table = TableRegistry::getTableLocator()->get('SurveyQuestions');
@@ -412,7 +394,6 @@ class SearchBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::normalizeColumnType()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNormalizeColumnType(): void {
 		$this->assertSame('text', $this->table->normalizeColumnType('char'));
@@ -432,7 +413,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addEqualsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithEqualsOperator(): void {
 		$result = $this->table->saveMany([
@@ -461,7 +441,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addEqualsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithEqualsOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -491,7 +470,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addEqualsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotEqualsOperator(): void {
 		$result = $this->table->saveMany([
@@ -521,7 +499,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addEqualsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotEqualsOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -551,7 +528,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addGreaterThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithGreaterThanOperator(): void {
 		$result = $this->table->saveMany([
@@ -579,7 +555,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addGreaterThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithGreaterThanOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -607,7 +582,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addGreaterThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithGreaterThanOrEqualOperator(): void {
 		$result = $this->table->saveMany([
@@ -636,7 +610,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addGreaterThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithGreaterThanOrEqualOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -667,7 +640,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addGreaterThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLessThanOperator(): void {
 		$result = $this->table->saveMany([
@@ -695,7 +667,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addGreaterThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLessThanOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -726,7 +697,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addGreaterThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLessThanOrEqualOperator(): void {
 		$result = $this->table->saveMany([
@@ -755,7 +725,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addGreaterThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLessThanOrEqualOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -786,7 +755,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addBetweenCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithBetweenOperator(): void {
 		$result = $this->table->saveMany([
@@ -817,7 +785,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addBetweenCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithBetweenOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -849,7 +816,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addBetweenCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithBetweenOperatorStringValue(): void {
 		$result = $this->table->saveMany([
@@ -880,7 +846,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addBetweenCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithBetweenOperatorInvalidValue(): void {
 		$result = $this->table->saveMany([
@@ -908,7 +873,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addBetweenCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotBetweenOperator(): void {
 		$result = $this->table->saveMany([
@@ -939,7 +903,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addBetweenCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotBetweenOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -973,7 +936,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addBetweenCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotBetweenOperatorStringValue(): void {
 		$result = $this->table->saveMany([
@@ -1004,7 +966,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addBetweenCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotBetweenOperatorInvalidValue(): void {
 		$result = $this->table->saveMany([
@@ -1032,7 +993,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLengthEqualToCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLengthEqualToOperator(): void {
 		$result = $this->table->saveMany([
@@ -1061,7 +1021,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLengthEqualToCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLengthEqualToOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -1091,7 +1050,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLengthEqualToCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLengthNotEqualToOperator(): void {
 		$result = $this->table->saveMany([
@@ -1122,7 +1080,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLengthEqualToCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLengthNotEqualToOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -1152,7 +1109,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLongerThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithShorterThanOperator(): void {
 		$result = $this->table->saveMany([
@@ -1183,7 +1139,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLongerThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithShorterThanOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -1211,7 +1166,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLongerThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithShorterThanOrEqualOperator(): void {
 		$result = $this->table->saveMany([
@@ -1242,7 +1196,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLongerThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithShorterThanOrEqualOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -1272,7 +1225,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLongerThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLongerThanOperator(): void {
 		$result = $this->table->saveMany([
@@ -1301,7 +1253,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLongerThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLongerThanOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -1331,7 +1282,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLongerThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLongerThanOrEqualOperator(): void {
 		$result = $this->table->saveMany([
@@ -1361,7 +1311,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addLongerThanCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithLongerThanOrEqualOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -1393,7 +1342,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addInCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithInOperator(): void {
 		$result = $this->table->saveMany([
@@ -1423,7 +1371,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addInCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithInOperatorStringValue(): void {
 		$result = $this->table->saveMany([
@@ -1453,7 +1400,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addInCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithInOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -1483,7 +1429,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addInCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotInOperator(): void {
 		$result = $this->table->saveMany([
@@ -1513,7 +1458,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addInCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotInOperatorStringValue(): void {
 		$result = $this->table->saveMany([
@@ -1543,7 +1487,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addInCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotInOperatorAndNullValues(): void {
 		$result = $this->table->saveMany([
@@ -1573,7 +1516,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addContainsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithContainsOperator(): void {
 		$result = $this->table->saveMany([
@@ -1602,7 +1544,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addContainsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotContainsOperator(): void {
 		$result = $this->table->saveMany([
@@ -1633,7 +1574,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addContainsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithStartsWithOperator(): void {
 		$result = $this->table->saveMany([
@@ -1662,7 +1602,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addContainsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotStartsWithOperator(): void {
 		$result = $this->table->saveMany([
@@ -1693,7 +1632,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addContainsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithEndsWithOperator(): void {
 		$result = $this->table->saveMany([
@@ -1721,7 +1659,6 @@ class SearchBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::filterQuery()
 	 * @see \Awyiss\Model\Behavior\SearchBehavior::addContainsCondition()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterQueryWithNotEndsWithOperator(): void {
 		$result = $this->table->saveMany([

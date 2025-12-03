@@ -11,7 +11,7 @@ use Cake\Log\Engine\FileLog;
 use Queue\Generator\Task\QueuedJobTask;
 
 
-$la_assetPaths = [
+$assetPaths = [
 	Awyiss::REALM_FRONTEND => [],
 	Awyiss::REALM_BACKEND => [
 		'awyiss' => ROOT . DS . APP_DIR . DS . 'assets' . DS,
@@ -20,10 +20,10 @@ $la_assetPaths = [
 
 // Add the customer assets paths and make sure they are sorted; customer first
 if (defined('CUSTOM_DIR')) {
-	$la_assetPaths[ Awyiss::REALM_FRONTEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
-	krsort($la_assetPaths[ Awyiss::REALM_FRONTEND ]);
-	$la_assetPaths[ Awyiss::REALM_BACKEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'awyiss' . DS;
-	krsort($la_assetPaths[ Awyiss::REALM_BACKEND ]);
+	$assetPaths[ Awyiss::REALM_FRONTEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
+	krsort($assetPaths[ Awyiss::REALM_FRONTEND ]);
+	$assetPaths[ Awyiss::REALM_BACKEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'awyiss' . DS;
+	krsort($assetPaths[ Awyiss::REALM_BACKEND ]);
 }
 
 return [
@@ -36,7 +36,7 @@ return [
 		'fullBaseUrl' => false,
 		'namespace' => 'Awyiss',
 		'paths' => [
-			'assets' => $la_assetPaths,
+			'assets' => $assetPaths,
 			'locales' => [
 				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'locales' . DS : null,
 				'awyiss' => ROOT . DS . APP_DIR . DS . 'locales' . DS,

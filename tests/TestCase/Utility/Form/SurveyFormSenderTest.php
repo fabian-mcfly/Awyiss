@@ -23,7 +23,6 @@ class SurveyFormSenderTest extends TestCase {
 	 * Setup test dependencies
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -52,8 +51,8 @@ class SurveyFormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\SurveyFormSender::setSurveyProgress()
 	 * @see \Awyiss\Utility\Form\SurveyFormSender::createDataString()
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateDataStringHtml(): void {
 		$renderer = new SurveyRenderer(new FrontendView());
@@ -126,8 +125,8 @@ class SurveyFormSenderTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\SurveyFormSender::setSurveyProgress()
 	 * @see \Awyiss\Utility\Form\SurveyFormSender::createDataString()
 	 * @see \Awyiss\Utility\Form\FormSender::createBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateDataStringPlaintext(): void {
 		$renderer = new SurveyRenderer(new FrontendView());
@@ -189,8 +188,8 @@ class SurveyFormSenderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Form\SurveyFormSender::setSurveyProgress()
 	 * @see \Awyiss\Utility\Form\SurveyFormSender::templateData()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTemplateDataSetsSurveyData(): void {
 		/** @var \Awyiss\Model\Entity\Survey $survey */

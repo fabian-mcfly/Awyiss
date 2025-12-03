@@ -17,7 +17,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithAllParameters(): void {
 		$result = new TranslationResult(
@@ -43,7 +42,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithMinimalParameters(): void {
 		$result = new TranslationResult(
@@ -66,7 +64,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithFailedTranslation(): void {
 		$result = new TranslationResult(
@@ -92,7 +89,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getOriginalText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetOriginalText(): void {
 		$result = new TranslationResult(
@@ -109,7 +105,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getTranslatedText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTranslatedText(): void {
 		$result = new TranslationResult(
@@ -126,7 +121,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getDetectedSourceLanguage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDetectedSourceLanguage(): void {
 		$result = new TranslationResult(
@@ -143,7 +137,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getTargetLanguage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTargetLanguage(): void {
 		$result = new TranslationResult(
@@ -160,7 +153,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::isSuccess()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsSuccessReturnsTrueByDefault(): void {
 		$result = new TranslationResult(
@@ -177,7 +169,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::isSuccess()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsSuccessReturnsFalseWhenSetExplicitly(): void {
 		$result = new TranslationResult(
@@ -195,7 +186,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getErrorMessage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetErrorMessageReturnsNullByDefault(): void {
 		$result = new TranslationResult(
@@ -212,7 +202,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getErrorMessage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetErrorMessageReturnsSetMessage(): void {
 		$result = new TranslationResult(
@@ -231,7 +220,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getMetadata()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMetadataReturnsEmptyArrayByDefault(): void {
 		$result = new TranslationResult(
@@ -248,7 +236,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getMetadata()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMetadataReturnsSetMetadata(): void {
 		$metadata = [
@@ -273,7 +260,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getMetadataValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMetadataValueReturnsExistingValue(): void {
 		$result = new TranslationResult(
@@ -295,7 +281,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getMetadataValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMetadataValueReturnsNullForNonExistentKey(): void {
 		$result = new TranslationResult(
@@ -313,7 +298,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getMetadataValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMetadataValueReturnsDefaultForNonExistentKey(): void {
 		$result = new TranslationResult(
@@ -333,7 +317,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult::getMetadataValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetMetadataValueWithComplexDataTypes(): void {
 		$result = new TranslationResult(
@@ -359,7 +342,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslationResultWithEmptyStrings(): void {
 		$result = new TranslationResult(
@@ -378,7 +360,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslationResultWithMultilineText(): void {
 		$originalText = "Line 1\nLine 2\nLine 3";
@@ -399,7 +380,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslationResultWithSpecialCharacters(): void {
 		$originalText = 'Special chars: <>&"\'@#$%^&*()';
@@ -420,7 +400,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslationResultWithUnicodeCharacters(): void {
 		$originalText = 'Unicode: 你好世界 🌍 café';
@@ -441,7 +420,6 @@ class TranslationResultTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\TranslationResult
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslationResultWithLongText(): void {
 		$originalText = str_repeat('This is a long text. ', 100);

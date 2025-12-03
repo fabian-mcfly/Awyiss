@@ -15,7 +15,6 @@ use Awyiss\Test\TestSuite\TestCase;
 class GenericDatatablesPolicyTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScope(): void {
 		$policy = new GenericDatatablesPolicy('TestScope');
@@ -27,7 +26,6 @@ class GenericDatatablesPolicyTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPermissionOptions(): void {
 		$policy = new GenericDatatablesPolicy('TestScope');
@@ -43,7 +41,6 @@ class GenericDatatablesPolicyTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPermissionOption(): void {
 		$policy = new GenericDatatablesPolicy('TestScope');

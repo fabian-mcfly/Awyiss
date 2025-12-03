@@ -20,7 +20,6 @@ class InputListWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputListWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -50,7 +49,6 @@ class InputListWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputListWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -83,7 +81,6 @@ class InputListWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputListWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -115,7 +112,6 @@ class InputListWidgetTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputListWidget::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -142,7 +138,6 @@ class InputListWidgetTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputListWidget::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -168,7 +163,6 @@ class InputListWidgetTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputListWidget::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -199,7 +193,6 @@ class InputListWidgetTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputListWidget::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */

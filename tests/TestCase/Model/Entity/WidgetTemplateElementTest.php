@@ -19,7 +19,6 @@ class WidgetTemplateElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplateElement::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\WidgetTemplateElementsTable $table */
@@ -36,7 +35,6 @@ class WidgetTemplateElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplateElement::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new WidgetTemplateElement();
@@ -60,7 +58,6 @@ class WidgetTemplateElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplateElement::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new WidgetTemplateElement();
@@ -72,7 +69,6 @@ class WidgetTemplateElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplateElement::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -100,7 +96,6 @@ class WidgetTemplateElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplateElement::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new WidgetTemplateElement();
@@ -128,7 +123,6 @@ class WidgetTemplateElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplateElement::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualProperty(): void {
 		$entity = new WidgetTemplateElement(['columnSpan' => '4/12']);
@@ -145,7 +139,6 @@ class WidgetTemplateElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplateElement::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualPropertyWithInvalidSpan(): void {
 		$entity = new WidgetTemplateElement(['columnSpan' => 'invalid-span']);
@@ -163,7 +156,6 @@ class WidgetTemplateElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplateElement::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

@@ -65,7 +65,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMediaElementAssignableAttribute(): void {
 		$reflection = new ReflectionClass(ContentTemplatesTable::class);
@@ -85,7 +84,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(11, $this->contentTemplatesTable->associations()->keys());
@@ -170,7 +168,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::findWithUsages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindWithUsages(): void {
 		$query = $this->contentTemplatesTable->find('withUsages');
@@ -201,7 +198,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::getAvailableContentElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableContentElements(): void {
 		$elements = $this->contentTemplatesTable->getAvailableContentElements();
@@ -253,7 +249,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::getAvailableFieldsets()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableFieldsets(): void {
 		$fieldsets = $this->contentTemplatesTable->getAvailableFieldsets();
@@ -274,7 +269,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::getAssignedContentAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAssignedContentAttributes(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $contentTemplate */
@@ -297,7 +291,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::getAssignedContentAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAssignedContentAttributesWithMissingElements(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $contentTemplate */
@@ -316,7 +309,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::getAvailableContentAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableContentAttributes(): void {
 		$attributes = $this->contentTemplatesTable->getAvailableContentAttributes();
@@ -340,7 +332,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::getAvailableContentAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableContentAttributesIncludeInactive(): void {
 		$activeOnly = $this->contentTemplatesTable->getAvailableContentAttributes();
@@ -357,7 +348,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -384,7 +374,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -405,7 +394,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -423,7 +411,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -450,7 +437,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -471,7 +457,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -490,7 +475,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotEmptyString(): void {
 		$data = [
@@ -509,7 +493,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFileNameAscii(): void {
 		$data = [
@@ -528,7 +511,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesFileNameUniqueValid(): void {
 		$data = [
@@ -546,7 +528,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesFileNameUniqueInvalid(): void {
 		$data = [
@@ -568,7 +549,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidContentElementsValid(): void {
 		$data = [
@@ -597,7 +577,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidContentElementsInvalidElement(): void {
 		$data = [
@@ -627,7 +606,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidContentElementsInvalidAttribute(): void {
 		$data = [
@@ -657,7 +635,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedContentsValid(): void {
 		$data = [
@@ -677,7 +654,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedContentsInvalid(): void {
 		$contentTemplate = $this->contentTemplatesTable->get(1); // Content Template that has linked contents
@@ -694,7 +670,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->contentTemplatesTable->newDefaultEntity();
@@ -715,7 +690,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -745,7 +719,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->contentTemplatesTable->hasBehavior('SystemOrder'));
@@ -760,7 +733,6 @@ class ContentTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->contentTemplatesTable->hasBehavior('Translate'));

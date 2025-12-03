@@ -39,11 +39,11 @@ class FormsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Forms->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
-		$lo_query->contain(['EmailTemplates']);
+		$query = $this->Forms->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
+		$query->contain(['EmailTemplates']);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -55,11 +55,11 @@ class FormsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_forms = $this->paginate($lo_query);
+		$query = $this->getOverviewQuery();
+		$forms = $this->paginate($query);
 
 		$this->set([
-			'forms' => $lo_forms,
+			'forms' => $forms,
 			'attributes' => $this->Forms->getAttributes(),
 		]);
 	}
@@ -74,13 +74,13 @@ class FormsController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_form = $this->Forms->newDefaultEntity();
+		$form = $this->Forms->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_form);
+			$this->save($form);
 		}
 
-		$this->setViewVars($lo_form);
+		$this->setViewVars($form);
 	}
 
 
@@ -95,28 +95,28 @@ class FormsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\Form $lo_form
+		 * @var \Awyiss\Model\Entity\Form $form
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_form = $this->Forms->findById($id)
+		$form = $this->Forms->findById($id)
 			->find('translations')
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
 			->contain(['FormConditionalRecipients'])
 			->first();
-		if (!$lo_form) {
+		if (!$form) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_form, 'edit');
+			$this->save($form, 'edit');
 		}
 
-		$this->setViewVars($lo_form);
+		$this->setViewVars($form);
 	}
 
 
@@ -132,15 +132,15 @@ class FormsController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Form $lo_form */
-		$lo_form = $this->Forms->findById($id)->first();
-		if (!$lo_form) {
+		/** @var \Awyiss\Model\Entity\Form $form */
+		$form = $this->Forms->findById($id)->first();
+		if (!$form) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Forms->delete($lo_form)) {
+		if ($this->Forms->delete($form)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -148,8 +148,8 @@ class FormsController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_form->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($form->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -165,23 +165,23 @@ class FormsController extends Controller {
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
 	protected function save(Form $form, string $method = 'add'): void {
-		$la_associated = [
+		$associated = [
 			'FormConditionalRecipients',
 		];
 		if ($this->Forms->hasAttributes()) {
-			$la_associated[] = $this->Forms->getAttributesTableName(true);
+			$associated[] = $this->Forms->getAttributesTableName(true);
 			$form->setAccess('attributes', true);
 		}
 
-		$la_data = $this->request->getData();
-		$la_data = $this->formatCcBcc($la_data, 'cc');
-		$la_data = $this->formatCcBcc($la_data, 'bcc');
-		$la_data = $this->formatConditionalRecipients($la_data);
+		$requestData = $this->request->getData();
+		$requestData = $this->formatCcBcc($requestData, 'cc');
+		$requestData = $this->formatCcBcc($requestData, 'bcc');
+		$requestData = $this->formatConditionalRecipients($requestData);
 
-		if (isset($la_data['form_template'])) {
+		if (isset($requestData['form_template'])) {
 			$form->setAccess('formElements', true);
-			$la_data = $this->buildElementsFromTemplate($la_data['form_template'], $la_data);
-			$la_associated['FormElements'] = [
+			$requestData = $this->buildElementsFromTemplate($requestData['form_template'], $requestData);
+			$associated['FormElements'] = [
 				'accessibleFields' => ['childFormElements' => true],
 				'associated' => [
 					'ChildFormElements' => [
@@ -192,18 +192,18 @@ class FormsController extends Controller {
 			];
 		}
 
-		$this->Forms->patchEntity($form, $la_data, [
-			'associated' => $la_associated,
+		$this->Forms->patchEntity($form, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Forms->save($form, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->Forms->save($form, ['asCopy' => $saveAsCopy])) {
 				/** @noinspection DuplicatedCode */
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -217,9 +217,9 @@ class FormsController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($form->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($form->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -232,35 +232,33 @@ class FormsController extends Controller {
 	 * @return array
 	 */
 	protected function formatCcBcc(array $data, string $key): array {
-		$la_data = $data;
+		if (empty($data[ $key ])) {
+			unset($data[ $key ]);
 
-		if (empty($la_data[ $key ])) {
-			unset($la_data[ $key ]);
-
-			return $la_data;
+			return $data;
 		}
 
-		$la_options = [];
+		$options = [];
 
 		/** @noinspection PhpRedundantArrayCallInForeachIteratedValueInspection */
-		foreach (array_values((array)$la_data[ $key ]) as $lx_value) {
-			if (empty($lx_value['email'])) {
+		foreach (array_values((array)$data[ $key ]) as $value) {
+			if (empty($value['email'])) {
 				continue;
 			}
 
-			$la_options[] = [
-				'email' => $lx_value['email'],
-				'name' => $lx_value['name'] ?? '',
+			$options[] = [
+				'email' => $value['email'],
+				'name' => $value['name'] ?? '',
 			];
 		}
 
-		$la_data[ $key ] = $la_options;
+		$data[ $key ] = $options;
 
 		// Update the request data
-		$lo_request = $this->request->withData($key, $la_options);
-		$this->setRequest($lo_request);
+		$request = $this->request->withData($key, $options);
+		$this->setRequest($request);
 
-		return $la_data;
+		return $data;
 	}
 
 
@@ -273,72 +271,72 @@ class FormsController extends Controller {
 			return $data;
 		}
 
-		$la_data = $data;
-		$li_systemOrder = 1;
-		foreach ($la_data['form_conditional_recipients'] as $ls_key => &$la_conditionalRecipient) {
-			if (empty($la_conditionalRecipient['type'])) {
-				unset($la_data['form_conditional_recipients'][ $ls_key ]);
+		$systemOrder = 1;
+		foreach ($data['form_conditional_recipients'] as $key => &$conditionalRecipient) {
+			if (empty($conditionalRecipient['type'])) {
+				unset($data['form_conditional_recipients'][ $key ]);
 				continue;
 			}
 
-			$la_conditionalRecipient['system_order'] = $li_systemOrder;
-			$li_systemOrder++;
+			$conditionalRecipient['system_order'] = $systemOrder;
+			$systemOrder++;
 		}
-		unset($la_conditionalRecipient);
+		unset($conditionalRecipient);
 
 		// Update the request data
-		$lo_request = $this->request->withData('form_conditional_recipients', $la_data['form_conditional_recipients']);
-		$this->setRequest($lo_request);
+		$request = $this->request->withData('form_conditional_recipients', $data['form_conditional_recipients']);
+		$this->setRequest($request);
 
-		return $la_data;
+		return $data;
 	}
 
 
 	/**
 	 * @param \Awyiss\Model\Entity\Form $form
 	 * @return void
+	 * @throws \Exception
 	 */
 	protected function setViewVars(Form $form): void {
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$lo_emailTemplates = $this->fetchTable('EmailTemplates')->find('active')->orderByAsc('title');
+		$emailTemplates = $this->fetchTable('EmailTemplates')->find('active')->orderByAsc('title');
 
-		$la_formConditionalRecipientTypes = [
+		$formConditionalRecipientTypes = [
 			'element_identifier',
 			'current_page',
 		];
-		$la_formConditionalRecipientOperators = ComparisonOperator::cases();
+		$formConditionalRecipientOperators = ComparisonOperator::cases();
 
 		$this->Forms->loadInto($form, ['FormElements' => ['finder' => 'threaded']]);
 		if ($form->formElements) {
-			$la_formElements = collection($form->formElements)->listNested()->toList();
+			$formElements = collection($form->formElements)->listNested()->toList();
 			$form->formElements = [];
 
-			foreach ($la_formElements as $lo_formElement) {
-				if (!in_array($lo_formElement->type, ['fieldset', 'hidden', 'free_text', 'submit'])) {
-					$form->formElements[] = $lo_formElement;
+			foreach ($formElements as $formElement) {
+				if (!in_array($formElement->type, ['fieldset', 'hidden', 'free_text', 'submit'])) {
+					$form->formElements[] = $formElement;
 				}
 			}
 		}
 
-		$la_pageProperties = $this->fetchTable('Pages')->getSchema()->columns();
-		$la_pageProperties = array_combine($la_pageProperties, $la_pageProperties);
-		$la_pageProperties = array_diff($la_pageProperties, ['meta_title', 'meta_description', 'robots_follow', 'robots_index', 'deleted', 'created_by', 'created_on', 'changed_by', 'changed_on', 'deleted_by', 'deleted_on']);
-		foreach ($la_pageProperties as $ls_value) {
-			$la_pageProperties[ $ls_value ] = __d('pages', $ls_value) . ' (' . $ls_value . ')';
+		$pageProperties = $this->fetchTable('Pages')->getSchema()->columns();
+		$pageProperties = array_combine($pageProperties, $pageProperties);
+		$pageProperties = array_diff($pageProperties, ['meta_title', 'meta_description', 'robots_follow', 'robots_index', 'deleted', 'created_by', 'created_on', 'changed_by', 'changed_on', 'deleted_by', 'deleted_on']);
+		foreach ($pageProperties as $value) {
+			$pageProperties[ $value ] = __d('pages', $value) . ' (' . $value . ')';
 		}
 
-		/** @var array<\Awyiss\Model\Entity\PageRole> $la_pageRoles */
-		$la_pageRoles = $this->fetchTable('PageRoles')->find()->all()->indexBy(function (PageRole $pageRole) {
+		/** @var array<\Awyiss\Model\Entity\PageRole> $pageRoles */
+		$pageRoles = $this->fetchTable('PageRoles')->find()->all()->indexBy(function (PageRole $pageRole) {
 			return Inflector::pluralize($pageRole->identifier);
 		})->toArray();
 
-		$la_attributes = $this->fetchTable('Attributes')->find()->where(['scope IN' => array_keys($la_pageRoles)])->toArray();
-		/** @var \Awyiss\Model\Entity\Attribute $lo_attribute */
-		foreach ($la_attributes as $lo_attribute) {
-			$la_pageProperties[$la_pageRoles[ $lo_attribute->scope ]->title ][ $lo_attribute->identifier ] = $lo_attribute->label . ' (' . $lo_attribute->identifier . ')';
+		$attributes = $this->fetchTable('Attributes')->find()->where(['scope IN' => array_keys($pageRoles)])->toArray();
+		/** @var \Awyiss\Model\Entity\Attribute $attribute */
+		foreach ($attributes as $attribute) {
+			$pageProperties[$pageRoles[ $attribute->scope ]->title ][ $attribute->identifier ] = $attribute->label . ' (' . $attribute->identifier . ')';
 		}
 
-		$la_conditionalRecipientsStrategies = [
+		$conditionalRecipientsStrategies = [
 			FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
 			FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST,
 			FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL,
@@ -346,11 +344,11 @@ class FormsController extends Controller {
 
 		$this->set([
 			'form' => $form,
-			'emailTemplates' => $lo_emailTemplates,
-			'formConditionalRecipientTypes' => $la_formConditionalRecipientTypes,
-			'formConditionalRecipientOperators' => $la_formConditionalRecipientOperators,
-			'pageProperties' => $la_pageProperties,
-			'conditionalRecipientsStrategies' => $la_conditionalRecipientsStrategies,
+			'emailTemplates' => $emailTemplates,
+			'formConditionalRecipientTypes' => $formConditionalRecipientTypes,
+			'formConditionalRecipientOperators' => $formConditionalRecipientOperators,
+			'pageProperties' => $pageProperties,
+			'conditionalRecipientsStrategies' => $conditionalRecipientsStrategies,
 			'formTemplates' => $form->isNew() ? $this->Forms->getFormTemplates() : [],
 			'transportProfiles' => $this->Forms->getTransportProfiles(),
 		]);
@@ -363,17 +361,17 @@ class FormsController extends Controller {
 	 * @return array
 	 */
 	protected function buildElementsFromTemplate(string $formTemplate, array $data): array {
-		/** @var class-string<\Awyiss\Utility\Form\Templates\FormTemplateInterface>|null $ls_class */
-		$ls_class = App::className($formTemplate, 'Utility\Form\Templates');
+		/** @var class-string<\Awyiss\Utility\Form\Templates\FormTemplateInterface>|null $class */
+		$class = App::className($formTemplate, 'Utility\Form\Templates');
 
-		if (!$ls_class) {
+		if (!$class) {
 			return $data;
 		}
 
-		$la_formElements = $ls_class::getElements(LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND));
+		$formElements = $class::getElements(LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND));
 
 		return array_merge($data, [
-			'form_elements' => $la_formElements,
+			'form_elements' => $formElements,
 		]);
 	}
 }

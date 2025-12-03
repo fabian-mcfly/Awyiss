@@ -37,42 +37,39 @@ class ConfigurationPolicy extends AbstractPolicy {
 	 * @param array $additionalData
 	 * @param PermissionCollection $permissionCollection
 	 * @return bool|null
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public static function callback(?bool $accessible, mixed $access, mixed $settings, array $additionalData, PermissionCollection $permissionCollection): ?bool {
-		$lb_accessible = $accessible;
-		//Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
-		if (!$lb_accessible) {
-			return $lb_accessible;
+		// Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
+		if (!$accessible) {
+			return $accessible;
 		}
 
 		if (!array_key_exists('scope', $additionalData)) {
 			throw new RuntimeException(sprintf('CallbackPermission in `%s` requires additional data (`scope`)', static::class));
 		}
 
-		$ls_scope = $additionalData['scope'];
-		if (!$ls_scope) {
-			return $lb_accessible;
+		if (!$additionalData['scope']) {
+			return $accessible;
 		}
 
-		$ls_scope = Inflector::underscore($ls_scope);
+		$scope = Inflector::underscore($additionalData['scope']);
 
-		if (strtolower($ls_scope) !== 'system') {
+		if (strtolower($scope) !== 'system') {
 			// Form elements are accessible if the user has access to the Forms scope
-			if ($ls_scope === 'form_elements') {
-				$ls_scope = 'forms';
+			if ($scope === 'form_elements') {
+				$scope = 'forms';
 			}
 			// Menu entries are accessible if the user has access to the Menus scope
-			elseif ($ls_scope === 'menu_entries') {
-				$ls_scope = 'menus';
+			elseif ($scope === 'menu_entries') {
+				$scope = 'menus';
 			}
 
-			$lb_accessible = $permissionCollection->scopeIsAccessible($ls_scope, [], 'configure');
+			$accessible = $permissionCollection->scopeIsAccessible($scope, [], 'configure');
 		}
 
 
-		return $lb_accessible;
+		return $accessible;
 	}
 
 
@@ -83,7 +80,6 @@ class ConfigurationPolicy extends AbstractPolicy {
 	 * @param array $additionalData
 	 * @param PermissionCollection $permissionCollection
 	 * @return bool|null
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public static function callbackForEntity(
@@ -93,31 +89,30 @@ class ConfigurationPolicy extends AbstractPolicy {
 		array $additionalData,
 		PermissionCollection $permissionCollection
 	): ?bool {
-		$lb_accessible = $accessible;
-		//Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
-		if (!$lb_accessible) {
-			return $lb_accessible;
+		// Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
+		if (!$accessible) {
+			return $accessible;
 		}
 
-		$lo_entity = $additionalData['subject'] ?? null;
-		if (empty($lo_entity) || !($lo_entity instanceof Configuration)) {
+		$entity = $additionalData['subject'] ?? null;
+		if (!$entity instanceof Configuration) {
 			throw new RuntimeException(
 				sprintf(
 					'Callback `callbackForEntity` in `%s` requires a subject of type `%s`. `%s` given.',
 					static::class,
 					Configuration::class,
-					is_object($lo_entity) ? get_class($lo_entity) : gettype($lo_entity)
+					is_object($entity) ? get_class($entity) : gettype($entity)
 				)
 			);
 		}
 
-		$ls_scope = $lo_entity->scope;
-		if (strtolower($ls_scope) !== 'system') {
-			$lb_accessible = $permissionCollection->scopeIsAccessible($ls_scope, [], 'configure');
+		$scope = strtolower($entity->scope);
+		if ($scope !== 'system') {
+			$accessible = $permissionCollection->scopeIsAccessible($scope, [], 'configure');
 		}
 
 
-		return $lb_accessible;
+		return $accessible;
 	}
 
 
@@ -142,37 +137,36 @@ class ConfigurationPolicy extends AbstractPolicy {
 			return $accessible;
 		}
 
-		$lo_query = $additionalData['subject'] ?? null;
-		if (empty($lo_query) || !($lo_query instanceof SelectQuery)) {
+		$query = $additionalData['subject'] ?? null;
+		if (!$query instanceof SelectQuery) {
 			throw new RuntimeException(
 				sprintf(
 					'Callback `callbackForFind` in `%s` requires a subject of type `%s`. `%s` given.',
 					static::class,
 					SelectQuery::class,
-					is_object($lo_query) ? get_class($lo_query) : gettype($lo_query)
+					is_object($query) ? get_class($query) : gettype($query)
 				)
 			);
 		}
 
-		$lo_permissionCollection = $permissionCollection;
-		//Apply a mapReduce call that'll remove all entities from the query, except those that are re-added using the `emit()`-method
-		$lo_query->mapReduce(function (Configuration|array $entity, int $key, MapReduce $mapReduce) use ($lo_permissionCollection): void {
+		// Apply a mapReduce call that'll remove all entities from the query, except those that are re-added using the `emit()`-method
+		$query->mapReduce(function (Configuration|array $entity, int $key, MapReduce $mapReduce) use ($permissionCollection): void {
 			if (!$entity instanceof Configuration || strtolower($entity->scope) === 'system') {
 				$mapReduce->emit($entity);
 
 				return;
 			}
 
-			static $la_checkedScopes = [];
+			static $checkedScopes = [];
 
-			$ls_scope = AuthorizationService::sanitizeScope($entity->scope);
+			$scope = AuthorizationService::sanitizeScope($entity->scope);
 
-			if (!array_key_exists($ls_scope, $la_checkedScopes)) {
-				$la_checkedScopes[ $ls_scope ] = $lo_permissionCollection->scopeIsAccessible($entity->scope, [], 'configure');
+			if (!array_key_exists($scope, $checkedScopes)) {
+				$checkedScopes[ $scope ] = $permissionCollection->scopeIsAccessible($entity->scope, [], 'configure');
 			}
 
 			//If the scope is accessible, append it to the final list of results
-			if ($la_checkedScopes[ $ls_scope ]) {
+			if ($checkedScopes[ $scope ]) {
 				$mapReduce->emit($entity);
 			}
 		});
@@ -190,9 +184,9 @@ class ConfigurationPolicy extends AbstractPolicy {
 	 * @throws \Exception
 	 */
 	protected static function loadPermissionOptions(): PermissionOptionCollection {
-		$lo_permissions = new PermissionOptionCollection(static::getScope());
+		$permissions = new PermissionOptionCollection(static::getScope());
 
-		$la_callbacks = [
+		$callbacks = [
 			'general' => static::callback(...),
 			'Entity.create' => static::callbackForEntity(...),
 			'Entity.update' => static::callbackForEntity(...),
@@ -201,27 +195,27 @@ class ConfigurationPolicy extends AbstractPolicy {
 			'Model.beforeDelete' => static::callbackForEntity(...),
 		];
 
-		$lo_permissions->load('read', [
+		$permissions->load('read', [
 			'className' => CallbackPermissionOption::class,
-			'callbacks' => $la_callbacks,
+			'callbacks' => $callbacks,
 		]);
 
-		$lo_permissions->load('create', [
+		$permissions->load('create', [
 			'className' => CallbackPermissionOption::class,
-			'callbacks' => $la_callbacks,
+			'callbacks' => $callbacks,
 		]);
 
-		$lo_permissions->load('update', [
+		$permissions->load('update', [
 			'className' => CallbackPermissionOption::class,
-			'callbacks' => $la_callbacks,
+			'callbacks' => $callbacks,
 		]);
 
-		$lo_permissions->load('delete', [
+		$permissions->load('delete', [
 			'className' => CallbackPermissionOption::class,
-			'callbacks' => $la_callbacks,
+			'callbacks' => $callbacks,
 		]);
 
 
-		return $lo_permissions;
+		return $permissions;
 	}
 }

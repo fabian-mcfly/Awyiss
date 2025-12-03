@@ -1,6 +1,18 @@
 <profile version="1.0">
   <option name="myName" value="Awyiss" />
+  <inspection_tool class="CssUnknownProperty" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="myCustomPropertiesEnabled" value="true" />
+    <option name="myIgnoreVendorSpecificProperties" value="false" />
+    <option name="myCustomPropertiesList">
+      <value>
+        <list size="1">
+          <item index="0" class="java.lang.String" itemvalue="transition-behavior" />
+        </list>
+      </value>
+    </option>
+  </inspection_tool>
   <inspection_tool class="NonBlockStatementBodyJS" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="NpmUsedModulesInstalled" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
   <inspection_tool class="PhpComplexClassInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
   <inspection_tool class="PhpFeatureEnvyLocalInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
   <inspection_tool class="PhpLongTypeFormInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
@@ -10,6 +22,7 @@
     <option name="CHECK_CLASS_CONSTANT" value="true" />
   </inspection_tool>
   <inspection_tool class="PhpMissingVisibilityInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+  <inspection_tool class="PhpNamedArgumentsWithChangedOrderInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
   <inspection_tool class="PhpNewClassMissingParameterListInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
   <inspection_tool class="PhpNonCanonicalElementsOrderInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
   <inspection_tool class="PhpRedundantDocCommentInspection" enabled="false" level="INFORMATION" enabled_by_default="false" />
@@ -20,9 +33,14 @@
     <option name="MAGIC_METHOD" value="false" />
   </inspection_tool>
   <inspection_tool class="PhpVariableNamingConventionInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="WARNING_ATTRIBUTES">
-    <option name="m_regex" value="([al][a-z])?_[a-z][A-Za-z\d]*|ex" />
+    <option name="m_regex" value="[a-z][A-Za-z\d]*" />
     <option name="m_minLength" value="1" />
     <option name="m_maxLength" value="40" />
   </inspection_tool>
   <inspection_tool class="SassScssResolvedByNameOnly" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+  <inspection_tool class="SpellCheckingInspection" enabled="true" level="TYPO" enabled_by_default="true">
+    <option name="processCode" value="false" />
+    <option name="processLiterals" value="false" />
+    <option name="processComments" value="true" />
+  </inspection_tool>
 </profile>

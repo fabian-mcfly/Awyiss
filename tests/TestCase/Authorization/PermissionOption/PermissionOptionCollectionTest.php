@@ -18,7 +18,6 @@ class PermissionOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorAndGetScope(): void {
 		$scope = 'TestScope';
@@ -31,7 +30,6 @@ class PermissionOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithConfig(): void {
 		$config = [
@@ -48,7 +46,6 @@ class PermissionOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAdd(): void {
 		$collection = new PermissionOptionCollection('TestScope');
@@ -68,7 +65,6 @@ class PermissionOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoad(): void {
 		$collection = new PermissionOptionCollection('TestScope');
@@ -82,7 +78,6 @@ class PermissionOptionCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadThrowsExceptionForMissingClassName(): void {
 		$this->expectException(RuntimeException::class);

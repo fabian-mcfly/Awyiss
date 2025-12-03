@@ -56,7 +56,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(3, $this->pageTemplateContentAreasTable->associations()->keys());
@@ -82,7 +81,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -102,7 +100,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -121,7 +118,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -144,7 +140,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -167,7 +162,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesPageTemplateExistsValid(): void {
 		// Test with existing page template
@@ -186,7 +180,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesPageTemplateExistsInvalid(): void {
 		// Test with non-existing page template
@@ -210,7 +203,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesContentAreaExistsValid(): void {
 		// Test with existing content area
@@ -229,7 +221,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesContentAreaExistsInvalid(): void {
 		// Test with non-existing content area
@@ -253,7 +244,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->pageTemplateContentAreasTable->newDefaultEntity();
@@ -271,7 +261,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -294,7 +283,6 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::$audit
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuditBehavior(): void {
 		$this->assertTrue($this->pageTemplateContentAreasTable->hasBehavior('Audit'));

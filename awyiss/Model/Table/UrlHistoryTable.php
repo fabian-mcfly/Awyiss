@@ -137,13 +137,12 @@ class UrlHistoryTable extends Table {
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$lo_rules = $rules;
-		$rules->add(function (UrlHistory $entity, array $options) use ($lo_rules) {
-			$lo_tableLocator = FactoryLocator::get('Table');
+		$rules->add(function (UrlHistory $entity, array $options) use ($rules) {
+			$tableLocator = FactoryLocator::get('Table');
 			if ($entity->scope === 'pages') {
-				/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-				$lo_table = $lo_tableLocator->get('Pages');
-				$lo_existsIn = $lo_rules->existsIn(['foreignKey'], $lo_table, [
+				/** @var \Awyiss\Model\Table\PagesTable $table */
+				$table = $tableLocator->get('Pages');
+				$existsIn = $rules->existsIn(['foreignKey'], $table, [
 					'finder' => [
 						'all' => [
 							'skipPageRoleCheck' => true,
@@ -151,15 +150,15 @@ class UrlHistoryTable extends Table {
 					],
 				]);
 
-				return $lo_existsIn($entity, $options);
+				return $existsIn($entity, $options);
 			}
 
 			if ($entity->scope === 'media') {
-				/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-				$lo_table = $lo_tableLocator->get('Media');
-				$lo_existsIn = $lo_rules->existsIn(['foreignKey'], $lo_table);
+				/** @var \Awyiss\Model\Table\MediaTable $table */
+				$table = $tableLocator->get('Media');
+				$existsIn = $rules->existsIn(['foreignKey'], $table);
 
-				return $lo_existsIn($entity, $options);
+				return $existsIn($entity, $options);
 			}
 
 			return empty($entity->foreignKey);
@@ -168,7 +167,7 @@ class UrlHistoryTable extends Table {
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_foreign_key'),
 		]);
 
-		$rules->add(function (UrlHistory $entity/*, array $options*/) use ($lo_rules) {
+		$rules->add(function (UrlHistory $entity/*, array $options*/) use ($rules) {
 			if (!empty($entity->scope)) {
 				return empty($entity->target);
 			}

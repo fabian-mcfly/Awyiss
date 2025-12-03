@@ -33,7 +33,6 @@ class CallbackFormTemplateTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\Templates\CallbackFormTemplate::getElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetElements(): void {
 		$elements = CallbackFormTemplate::getElements([
@@ -51,7 +50,6 @@ class CallbackFormTemplateTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\Templates\CallbackFormTemplate::getElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetElementsIncludesTranslationsnForMultipleLanguages(): void {
 		$elements = CallbackFormTemplate::getElements([

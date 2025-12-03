@@ -49,7 +49,6 @@ class RoutePlannerModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\RoutePlannerModule::getTitle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTitle(): void {
 		$result = RoutePlannerModule::getTitle();
@@ -63,7 +62,6 @@ class RoutePlannerModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\RoutePlannerModule::isAvailable()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAvailable(): void {
 		$result = RoutePlannerModule::isAvailable();
@@ -77,7 +75,6 @@ class RoutePlannerModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\RoutePlannerModule::getFormFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormFieldsWithDefaults(): void {
 		$result = RoutePlannerModule::getFormFields($this->mockBackendView);
@@ -149,7 +146,6 @@ class RoutePlannerModuleTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Module\RoutePlannerModule::getFormFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormFieldsWithCustomSettings(): void {
 		$settings = [
@@ -178,7 +174,6 @@ class RoutePlannerModuleTest extends TestCase {
 	 * @param string $mode Transportation mode to test
 	 * @return void
 	 * @see \Awyiss\Module\RoutePlannerModule::getFormFields()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormFieldsWithDifferentTransportationModes(string $mode): void {
 		$settings = ['transportationMode' => $mode];

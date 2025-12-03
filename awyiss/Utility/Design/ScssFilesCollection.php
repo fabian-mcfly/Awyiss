@@ -55,9 +55,9 @@ class ScssFilesCollection {
 
 		// Create a new Time object with the file modification time and compare it with the current lastModified time.
 		// If it's later, update lastModified.
-		$lo_fileMTime = new DateTime('@' . $file->getMTime());
-		if (!$this->lastModified || $lo_fileMTime->greaterThan($this->lastModified)) {
-			$this->lastModified = $lo_fileMTime;
+		$fileMTime = new DateTime('@' . $file->getMTime());
+		if (!$this->lastModified || $fileMTime->greaterThan($this->lastModified)) {
+			$this->lastModified = $fileMTime;
 		}
 	}
 

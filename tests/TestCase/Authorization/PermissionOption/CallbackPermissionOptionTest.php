@@ -18,7 +18,6 @@ class CallbackPermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorInitializesCallbacksCorrectly(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -45,7 +44,6 @@ class CallbackPermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetCallback(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -63,7 +61,6 @@ class CallbackPermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetCallbacks(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -87,7 +84,6 @@ class CallbackPermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleWithCallback(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -112,7 +108,6 @@ class CallbackPermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleNotWithCallback(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);
@@ -137,7 +132,6 @@ class CallbackPermissionOptionTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleWithoutCallback(): void {
 		$permissionOptionCollection = $this->createMock(PermissionOptionCollection::class);

@@ -20,7 +20,6 @@ class UsergroupPermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\UsergroupPermissionsTable $table */
@@ -37,7 +36,6 @@ class UsergroupPermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new UsergroupPermission();
@@ -59,7 +57,6 @@ class UsergroupPermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UsergroupPermission
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementsInterface(): void {
 		$entity = new UsergroupPermission();
@@ -71,7 +68,6 @@ class UsergroupPermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testScopeCleaningViaPropertyAssignment(): void {
@@ -97,7 +93,6 @@ class UsergroupPermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeCleaningViaSetMethod(): void {
 		$entity = new UsergroupPermission();
@@ -123,7 +118,6 @@ class UsergroupPermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -149,7 +143,6 @@ class UsergroupPermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new UsergroupPermission();
@@ -175,7 +168,6 @@ class UsergroupPermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UsergroupPermission
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -201,7 +193,6 @@ class UsergroupPermissionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

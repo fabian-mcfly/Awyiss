@@ -34,7 +34,7 @@ trait IdentityAwareTrait {
 
 
 	/**
-	 * @return \Awyiss\Authorization\IdentityPermissionsInterface|null
+	 * @return \Authentication\IdentityInterface|null
 	 */
 	#[NoDirectAccess]
 	public function getIdentity(): ?IdentityInterface {
@@ -42,19 +42,19 @@ trait IdentityAwareTrait {
 			return $this->identity;
 		}
 
-		$lo_event = $this->dispatchEvent('Authentication.requestIdentity', [], $this);
+		$event = $this->dispatchEvent('Authentication.requestIdentity', [], $this);
 
 		//Maybe the event handler has found a policy.
 		//This is my Last Resort!
-		$this->identity = $lo_event->getResult();
+		$this->identity = $event->getResult();
 
 		return $this->identity;
 	}
 
 
 	/**
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $identity
-	 * @noinspection PhpAttributeCanBeAddedToOverriddenMemberInspection
+	 * @param \Authentication\IdentityInterface|null $identity
+	 * @return \Awyiss\Authentication\IdentityAwareTrait
 	 */
 	#[NoDirectAccess]
 	public function setIdentity(?IdentityInterface $identity): static {

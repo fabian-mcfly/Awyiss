@@ -56,13 +56,13 @@ class ModulesProvider {
 	 * @return class-string<\Awyiss\Module\ModuleInterface>|null
 	 */
 	public static function getModuleFile(string $identifier): ?string {
-		$ls_identifier = static::sanitizeIdentifier($identifier);
+		$identifier = static::sanitizeIdentifier($identifier);
 
-		if (!isset(static::$modules[ $ls_identifier ])) {
-			static::findModuleFile($ls_identifier);
+		if (!isset(static::$modules[ $identifier ])) {
+			static::findModuleFile($identifier);
 		}
 
-		return static::$modules[ $ls_identifier ] ?? null;
+		return static::$modules[ $identifier ] ?? null;
 	}
 
 
@@ -89,21 +89,21 @@ class ModulesProvider {
 	 * @return void
 	 */
 	protected static function findModuleFile(string $identifier): void {
-		$la_modules = App::classes($identifier, 'Module', 'Module', ModuleInterface::class);
+		$modules = App::classes($identifier, 'Module', 'Module', ModuleInterface::class);
 
-		/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
-		foreach ($la_modules as $ls_moduleClass) {
-			if (!$ls_moduleClass::isAvailable()) {
+		/** @var class-string<\Awyiss\Module\ModuleInterface> $moduleClass */
+		foreach ($modules as $moduleClass) {
+			if (!$moduleClass::isAvailable()) {
 				continue;
 			}
 
-			$ls_identifier = static::extractIdentifierFromClassName($ls_moduleClass);
+			$identifier = static::extractIdentifierFromClassName($moduleClass);
 
-			if (isset(static::$modules[ $ls_identifier ])) {
+			if (isset(static::$modules[ $identifier ])) {
 				continue;
 			}
 
-			static::$modules[ $ls_identifier ] = $ls_moduleClass;
+			static::$modules[ $identifier ] = $moduleClass;
 		}
 	}
 
@@ -114,10 +114,10 @@ class ModulesProvider {
 	 * @return string
 	 */
 	public static function extractIdentifierFromClassName(string $identifier, int $suffixLength = 6): string {
-		$la_parts = explode('\\', trim($identifier, '\\'));
-		$ls_identifier = array_pop($la_parts);
-		$ls_identifier = substr($ls_identifier, 0, -$suffixLength);
+		$parts = explode('\\', trim($identifier, '\\'));
+		$identifier = array_pop($parts);
+		$identifier = substr($identifier, 0, -$suffixLength);
 
-		return static::sanitizeIdentifier($ls_identifier);
+		return static::sanitizeIdentifier($identifier);
 	}
 }

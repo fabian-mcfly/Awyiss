@@ -45,7 +45,6 @@ class SeedCommandTest extends TestCase {
 	 * Make sure the folder-option works as expected.
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSeedCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Seeds' . DS . 'DummyUsersSeed.php';
@@ -64,7 +63,6 @@ class SeedCommandTest extends TestCase {
 	 * Make sure the truncate-statement is added to the seed.
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPolicyTruncateCommand(): void {
 		$this->generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Seeds' . DS . 'DummyUsersTruncatingSeed.php';

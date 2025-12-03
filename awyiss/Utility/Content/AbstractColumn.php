@@ -112,14 +112,14 @@ abstract class AbstractColumn implements ColumnInterface,  JsonSerializable {
 	 * @inheritDoc
 	 */
 	public function getPercentage(?int $decimalPoints = null): float {
-		$lf_percentage = $this->numerator / $this->denominator;
+		$percentage = $this->numerator / $this->denominator;
 
 		if ($decimalPoints !== null) {
-			return round($lf_percentage, $decimalPoints);
+			return round($percentage, $decimalPoints);
 		}
 
 
-		return $lf_percentage;
+		return $percentage;
 	}
 
 

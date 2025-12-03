@@ -60,13 +60,13 @@ class PageRole extends Entity {
 			return null;
 		}
 
-		$ls_identifier = preg_replace('/\d/', '', $identifier);
+		$identifier = preg_replace('/\d/', '', $identifier);
 
-		$ls_identifier = Text::slug($ls_identifier, ['replacement' => '_']);
+		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
-		$ls_identifier = Inflector::singularize($ls_identifier);
+		$identifier = Inflector::singularize($identifier);
 
 
-		return strtolower($ls_identifier);
+		return strtolower($identifier);
 	}
 }

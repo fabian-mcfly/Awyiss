@@ -157,9 +157,8 @@ class PageRolesTable extends Table {
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$lo_rules = $rules;
 		$rules->add(
-			function (PageRole $entity, array $options) use ($lo_rules): bool|string {
+			function (PageRole $entity, array $options) use ($rules): bool|string {
 				if (
 					($options['isCopy'] ?? false) === false &&
 					$entity->hasOriginal('identifier') &&
@@ -168,30 +167,30 @@ class PageRolesTable extends Table {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unchanged');
 				}
 
-				$ls_pluralIdentifier = Inflector::pluralize($entity->identifier);
+				$pluralIdentifier = Inflector::pluralize($entity->identifier);
 
-				/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
-				$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
-				$lo_datatables = $lo_datatablesTable->findAllAndCache();
+				/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
+				$datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+				$datatables = $datatablesTable->findAllAndCache();
 
 				if (
 					$entity->isDirty('identifier') &&
 					(
 						str_starts_with($entity->identifier, 'attributes_') ||
 						in_array($entity->identifier, $this->blocklistedIdentifiers) ||
-						App::className(Inflector::camelize($ls_pluralIdentifier), 'Controller/Backend', 'Controller') ||
-						$lo_datatables->firstMatch(['active' => true, 'identifier' => $ls_pluralIdentifier])
+						App::className(Inflector::camelize($pluralIdentifier), 'Controller/Backend', 'Controller') ||
+						$datatables->firstMatch(['active' => true, 'identifier' => $pluralIdentifier])
 					)
 				) {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_allowed');
 				}
 
-				$lo_isUnique = $lo_rules->isUnique(['identifier'], [
+				$isUnique = $rules->isUnique(['identifier'], [
 					'errorField' => '_dummy',
 				]);
-				$lb_isUnique = $lo_isUnique($entity, $options);
+				$isUnique = $isUnique($entity, $options);
 
-				if (!$lb_isUnique) {
+				if (!$isUnique) {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unique');
 				}
 

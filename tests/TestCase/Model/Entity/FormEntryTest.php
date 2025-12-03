@@ -18,7 +18,6 @@ class FormEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormEntry::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\FormEntriesTable $table */
@@ -35,7 +34,6 @@ class FormEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormEntry::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new FormEntry();
@@ -63,7 +61,6 @@ class FormEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormEntry
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -105,7 +102,6 @@ class FormEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormEntry::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

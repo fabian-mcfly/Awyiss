@@ -43,7 +43,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialization(): void {
 		$config = $this->behavior->getConfig();
@@ -56,7 +55,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializationWhenDisabled(): void {
 		$table = new class ([
@@ -81,7 +79,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWhenDisabled(): void {
 		$this->behavior->setConfig('enabled', false);
@@ -97,7 +94,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithSimpleCondition(): void {
 		$query = $this->table->find()->where(['title' => 'Test']);
@@ -110,7 +106,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithMultipleConditions(): void {
 		$query = $this->table->find()->where([
@@ -129,7 +124,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithAlreadyPrefixedCondition(): void {
 		$query = $this->table->find()->where(['Contents.title' => 'Test']);
@@ -144,7 +138,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithForeignTableCondition(): void {
 		$query = $this->table->find()->where(['OtherTable.field' => 'Test']);
@@ -158,7 +151,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithAndConditions(): void {
 		$query = $this->table->find()->where([
@@ -177,7 +169,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithOrConditions(): void {
 		$query = $this->table->find()->where([
@@ -197,7 +188,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithLikeCondition(): void {
 		$query = $this->table->find()->where(['title LIKE' => '%Test%']);
@@ -210,7 +200,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithIsNullCondition(): void {
 		$query = $this->table->find()->where(['title IS' => null]);
@@ -223,7 +212,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithNotCondition(): void {
 		$query = $this->table->find()->where(['NOT' => ['title' => 'Test']]);
@@ -236,7 +224,6 @@ class AutoPrefixBehaviorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Behavior\AutoPrefixBehavior::beforeFind()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeFindWithComparisonOperators(): void {
 		$query = $this->table->find()->where([

@@ -30,7 +30,6 @@ class UrlHistoryListener implements EventListenerInterface {
 	 * @param ArrayObject $data
 	 * @param ArrayObject $options
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options): void {

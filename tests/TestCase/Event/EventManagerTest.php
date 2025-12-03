@@ -19,7 +19,6 @@ class EventManagerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventManager::dispatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDispatchWithEventObject(): void {
 		$event = new Event('Test.event', null, ['test' => 'data']);
@@ -35,7 +34,6 @@ class EventManagerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventManager::dispatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDispatchWithEventString(): void {
 		$result = $this->_eventManager->dispatch('Test.event');
@@ -49,7 +47,6 @@ class EventManagerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventManager::dispatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDispatchPreservesEventData(): void {
 		$originalData = ['key' => 'value', 'number' => 42];
@@ -64,7 +61,6 @@ class EventManagerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventManager::lazyLoadListeners()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLazyLoadListenersWithSimpleScope(): void {
 		$this->assertEmpty($this->_eventManager->listeners('Model.Designs.afterSave'));
@@ -78,7 +74,6 @@ class EventManagerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventManager::lazyLoadListeners()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLazyLoadListenersWithGeneralScope(): void {
 		$this->assertEmpty($this->_eventManager->listeners('Model.Designs.afterSave'));
@@ -92,7 +87,6 @@ class EventManagerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventManager::lazyLoadListeners()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLazyLoadListenersWithPageRole(): void {
 		$this->assertEmpty($this->_eventManager->listeners('Model.Pages.afterSave'));
@@ -108,7 +102,6 @@ class EventManagerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventManager::lazyLoadListeners()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLazyLoadListenersWithPageRoleFallback(): void {
 		$this->assertEmpty($this->_eventManager->listeners('Model.Pages.afterSave'));
@@ -124,7 +117,6 @@ class EventManagerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventManager::lazyLoadListeners()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLazyLoadListenersForDifferentRealm(): void {
 		Awyiss::setRealm(Awyiss::REALM_FRONTEND);
@@ -142,7 +134,6 @@ class EventManagerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\EventManager::lazyLoadListeners()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLazyLoadListenersWithoutRealm(): void {
 		Awyiss::setRealm(null);

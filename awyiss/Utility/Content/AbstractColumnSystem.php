@@ -50,21 +50,21 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 	 * @inheritDoc
 	 */
 	public static function getColumnIndents(): array {
-		$la_blocklistedFractions = [
+		$blocklistedFractions = [
 			'1/1',
 		];
 
-		$la_indents = array_diff_key(static::getColumnWidths(), array_flip($la_blocklistedFractions));
+		$indents = array_diff_key(static::getColumnWidths(), array_flip($blocklistedFractions));
 
-		foreach ($la_indents as $ls_key => $lo_column) {
-			$lo_column = clone $lo_column;
-			$lo_column->setCssClassPrefix('ColumnIndent');
+		foreach ($indents as $key => $column) {
+			$column = clone $column;
+			$column->setCssClassPrefix('ColumnIndent');
 
-			$la_indents[ $ls_key ] = $lo_column;
+			$indents[ $key ] = $column;
 		}
 
 
-		return $la_indents;
+		return $indents;
 	}
 
 
@@ -94,34 +94,34 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 	 * @return array
 	 */
 	protected static function buildUniqueFractions(int $minDenominator, int $maxDenominator): array {
-		$la_fractions = [];
+		$fractions = [];
 
 		//Generate all possible fractions
-		for ($li_denominator = $minDenominator; $li_denominator <= $maxDenominator; $li_denominator++) {
-			for ($li_numerator = 1; $li_numerator <= $li_denominator; $li_numerator++) {
-				$li_gcd = static::gcd($li_numerator, $li_denominator);
+		for ($denominator = $minDenominator; $denominator <= $maxDenominator; $denominator++) {
+			for ($numerator = 1; $numerator <= $denominator; $numerator++) {
+				$gcd = static::gcd($numerator, $denominator);
 
-				$li_simplifiedNumerator = $li_numerator / $li_gcd;
-				$li_simplifiedDenominator = $li_denominator / $li_gcd;
+				$simplifiedNumerator = $numerator / $gcd;
+				$simplifiedDenominator = $denominator / $gcd;
 
-				$ls_fraction = $li_simplifiedNumerator . '/' . $li_simplifiedDenominator;
+				$fraction = $simplifiedNumerator . '/' . $simplifiedDenominator;
 
 				// Avoid adding duplicates
-				if (!array_key_exists($ls_fraction, $la_fractions)) {
+				if (!array_key_exists($fraction, $fractions)) {
 					/**
 					 * @see \Awyiss\Utility\Content\AwyissColumn::__construct()
 					 */
-					$la_fractions[ $ls_fraction ] = new static::$columnClassName(
-						numerator: $li_simplifiedNumerator,
-						denominator: $li_simplifiedDenominator,
+					$fractions[ $fraction ] = new static::$columnClassName(
+						numerator: $simplifiedNumerator,
+						denominator: $simplifiedDenominator,
 					);
 				}
 			}
 		}
 
-		static::sortFractions($la_fractions);
+		static::sortFractions($fractions);
 
-		return $la_fractions;
+		return $fractions;
 	}
 
 
@@ -135,22 +135,16 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 	 * @return int The GCD of the two numbers.
 	 */
 	protected static function gcd(int $firstNumber, int $secondNumber): int {
-		$li_firstNumber = $firstNumber;
-		$li_secondNumber = $secondNumber;
-
-		//Continue the loop until $li_secondNumber is zero.
-		while ($li_secondNumber != 0) {
-			//Temporary variable to hold $li_secondNumber.
-			$li_temp = $li_secondNumber;
-			//Set $li_secondNumber to the remainder of $li_firstNumber divided by $li_secondNumber.
-			$li_secondNumber = $li_firstNumber % $li_secondNumber;
-			//Set $li_firstNumber to the previously stored $li_secondNumber (stored in $temp).
-			$li_firstNumber = $li_temp;
+		// Continue the loop until $secondNumber is zero.
+		while ($secondNumber != 0) {
+			$temp = $secondNumber;
+			$secondNumber = $firstNumber % $secondNumber;
+			$firstNumber = $temp;
 		}
 
 
-		//When $li_secondNumber is zero, $li_firstNumber contains the GCD of the original two numbers.
-		return $li_firstNumber;
+		//When $secondNumber is zero, $firstNumber contains the GCD of the original two numbers.
+		return $firstNumber;
 	}
 
 
@@ -161,7 +155,6 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 	 * @return void
 	 */
 	protected static function sortFractions(array &$fractions): void {
-		/** @noinspection PhpVariableNamingConventionInspection */
 		uasort($fractions, function (ColumnInterface $a, ColumnInterface $b) {
 			// Check if either fraction is [1, 1] and adjust ordering
 			if ($a->getNumerator() / $a->getDenominator() === 1) {

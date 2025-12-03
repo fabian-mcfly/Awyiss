@@ -28,14 +28,14 @@ class IntegrityCheckCommand extends Command {
 	/**
 	 * @param \Cake\Console\Arguments $args
 	 * @param \Cake\Console\ConsoleIo $io
-	 * @return void
+	 * @return int
 	 * @throws \ReflectionException
 	 */
 	public function execute(Arguments $args, ConsoleIo $io): int {
-		$ls_command = $args->getArgument('command');
-		$ls_path = $args->getArgument('path');
+		$command = $args->getArgument('command');
+		$path = $args->getArgument('path');
 
-		if (in_array($ls_command, ['add', 'remove']) && empty($ls_path)) {
+		if (in_array($command, ['add', 'remove']) && empty($path)) {
 			$io->error('The "path" argument is required for "add" and "remove" commands.');
 
 
@@ -50,15 +50,15 @@ class IntegrityCheckCommand extends Command {
 			Configure::load('file_hashes');
 		}
 
-		switch ($ls_command) {
+		switch ($command) {
 			case 'add':
-				$this->addFile($io, $ls_path);
+				$this->addFile($io, $path);
 				break;
 			case 'remove':
-				$this->removeFile($io, $ls_path);
+				$this->removeFile($io, $path);
 				break;
 			case 'check':
-				$this->checkFiles($io, $ls_path, $args->getOption('reportOnlyModified'), $args->getOption('interactive'));
+				$this->checkFiles($io, $path, $args->getOption('reportOnlyModified'), $args->getOption('interactive'));
 				break;
 			default:
 				$io->error('Invalid command. Use "add", "remove", or "check".');
@@ -114,9 +114,9 @@ class IntegrityCheckCommand extends Command {
 	 * @throws \ReflectionException
 	 */
 	protected function addFile(ConsoleIo $io, string $path): void {
-		$ls_fullPath = $this->sanitizePath($path);
+		$fullPath = $this->sanitizePath($path);
 
-		if (!$ls_fullPath) {
+		if (!$fullPath) {
 			$io->error(sprintf('File does not exist: %s', $path));
 
 
@@ -124,10 +124,10 @@ class IntegrityCheckCommand extends Command {
 		}
 
 		if (str_contains($path, '::')) {
-			[$ls_className, $ls_method] = explode('::', $path, 2);
+			[$className, $method] = explode('::', $path, 2);
 
 			try {
-				$ls_hash = $this->getMethodHash($ls_className, $ls_method);
+				$hash = $this->getMethodHash($className, $method);
 			}
 			catch (ReflectionException $ex) {
 				$io->error(sprintf('Error processing method `%s`', $ex->getMessage()));
@@ -136,24 +136,24 @@ class IntegrityCheckCommand extends Command {
 				return;
 			}
 
-			$ls_key = $ls_className . '::' . $ls_method;
+			$key = $className . '::' . $method;
 		}
 		else {
-			$ls_hash = md5_file($ls_fullPath);
-			$ls_key = substr($ls_fullPath, strlen(ROOT . DS));
+			$hash = md5_file($fullPath);
+			$key = substr($fullPath, strlen(ROOT . DS));
 		}
 
-		$la_config = Configure::read('FileHashes', []);
+		$config = Configure::read('FileHashes', []);
 
-		$la_config[ $ls_key ] = $ls_hash;
+		$config[ $key ] = $hash;
 
-		ksort($la_config);
+		ksort($config);
 
-		Configure::write('FileHashes', $la_config);
-		$ls_fileName = $this->forCustomer ? CUSTOM_NAMESPACE . '.custom_file_hashes' : 'Awyiss.file_hashes';
-		Configure::dump($ls_fileName, 'default', ['FileHashes']);
+		Configure::write('FileHashes', $config);
+		$fileName = $this->forCustomer ? CUSTOM_NAMESPACE . '.custom_file_hashes' : 'Awyiss.file_hashes';
+		Configure::dump($fileName, 'default', ['FileHashes']);
 
-		$io->success(sprintf('Added: %s with hash `%s`', $ls_key, $ls_hash));
+		$io->success(sprintf('Added: %s with hash `%s`', $key, $hash));
 	}
 
 
@@ -164,39 +164,39 @@ class IntegrityCheckCommand extends Command {
 	 * @throws \ReflectionException
 	 */
 	protected function removeFile(ConsoleIo $io, string $path): void {
-		$ls_fullPath = $this->sanitizePath($path);
+		$fullPath = $this->sanitizePath($path);
 
-		if (!$ls_fullPath) {
+		if (!$fullPath) {
 			$io->error(sprintf('File does not exist `%s`', $path));
 
 
 			return;
 		}
 
-		$la_config = Configure::read('FileHashes', []);
+		$config = Configure::read('FileHashes', []);
 
 		if (str_contains($path, '::')) {
-			[$ls_className, $ls_method] = explode('::', $path, 2);
-			$ls_key = $ls_className . '::' . $ls_method;
+			[$className, $method] = explode('::', $path, 2);
+			$key = $className . '::' . $method;
 		}
 		else {
-			$ls_key = substr($ls_fullPath, strlen(ROOT . DS));
+			$key = substr($fullPath, strlen(ROOT . DS));
 		}
 
-		if (!isset($la_config[ $ls_key ])) {
+		if (!isset($config[ $key ])) {
 			$io->error(sprintf('Identifier not found `%s`', $path));
 
 
 			return;
 		}
 
-		unset($la_config[ $ls_key ]);
+		unset($config[ $key ]);
 
-		ksort($la_config);
+		ksort($config);
 
-		Configure::write('FileHashes', $la_config);
-		$ls_fileName = $this->forCustomer ? CUSTOM_NAMESPACE . '.custom_file_hashes' : 'Awyiss.file_hashes';
-		Configure::dump($ls_fileName, 'default', ['FileHashes']);
+		Configure::write('FileHashes', $config);
+		$fileName = $this->forCustomer ? CUSTOM_NAMESPACE . '.custom_file_hashes' : 'Awyiss.file_hashes';
+		Configure::dump($fileName, 'default', ['FileHashes']);
 
 		$io->success(sprintf('Removed `%s`', $path));
 	}
@@ -211,12 +211,12 @@ class IntegrityCheckCommand extends Command {
 	 * @throws \ReflectionException
 	 */
 	protected function checkFiles(ConsoleIo $io, ?string $path = null, bool $reportOnlyModified = false, bool $interactive = false): void {
-		$la_files = $la_config = Configure::read('FileHashes', []);
+		$files = $config = Configure::read('FileHashes', []);
 
 		if ($path) {
-			$ls_fullPath = $this->sanitizePath($path);
+			$fullPath = $this->sanitizePath($path);
 
-			if (!$ls_fullPath) {
+			if (!$fullPath) {
 				$io->error(sprintf('File does not exist `%s`', $path));
 
 
@@ -224,36 +224,36 @@ class IntegrityCheckCommand extends Command {
 			}
 
 			if (str_contains($path, '::')) {
-				[$ls_className, $ls_method] = explode('::', $path, 2);
-				$ls_key = $ls_className . '::' . $ls_method;
+				[$className, $method] = explode('::', $path, 2);
+				$key = $className . '::' . $method;
 			}
 			else {
-				$ls_key = substr($ls_fullPath, strlen(ROOT . DS));
+				$key = substr($fullPath, strlen(ROOT . DS));
 			}
 
-			if (!isset($la_config[ $ls_key ])) {
+			if (!isset($config[ $key ])) {
 				$io->error(sprintf('Identifier not found `%s`', $path));
 
 
 				return;
 			}
 
-			$la_files = [$ls_key => $la_config[ $ls_key ]];
+			$files = [$key => $config[ $key ]];
 		}
 
-		$la_results = [
+		$results = [
 			'unchanged' => 0,
 			'changed' => 0,
 		];
 
-		$lb_forceUpdate = false;
-		$la_updatedData = [];
-		foreach ($la_files as $ls_file => $ls_storedHash) {
-			if (str_contains($ls_file, '::')) {
-				[$ls_className, $ls_method] = explode('::', $ls_file, 2);
+		$forceUpdate = false;
+		$updatedData = [];
+		foreach ($files as $file => $storedHash) {
+			if (str_contains($file, '::')) {
+				[$className, $method] = explode('::', $file, 2);
 
 				try {
-					$ls_currentHash = $this->getMethodHash($ls_className, $ls_method);
+					$currentHash = $this->getMethodHash($className, $method);
 				}
 				catch (ReflectionException $ex) {
 					$io->error(sprintf('Error processing method `%s`', $ex->getMessage()));
@@ -261,72 +261,72 @@ class IntegrityCheckCommand extends Command {
 				}
 			}
 			else {
-				$ls_fullPath = ROOT . DS . $ls_file;
+				$fullPath = ROOT . DS . $file;
 
-				if (file_exists($ls_fullPath)) {
-					$ls_currentHash = md5_file($ls_fullPath);
+				if (file_exists($fullPath)) {
+					$currentHash = md5_file($fullPath);
 				}
 				else {
-					$io->error(sprintf('File not found `%s`', $ls_fullPath));
+					$io->error(sprintf('File not found `%s`', $fullPath));
 					continue;
 				}
 			}
 
 			if (!$reportOnlyModified) {
-				$io->out(sprintf('Checking %s `%s`... ', str_contains($ls_file, '::') ? 'method' : 'file', $ls_file), 0);
+				$io->out(sprintf('Checking %s `%s`... ', str_contains($file, '::') ? 'method' : 'file', $file), 0);
 
-				if ($ls_currentHash === $ls_storedHash) {
-					$la_results['unchanged']++;
+				if ($currentHash === $storedHash) {
+					$results['unchanged']++;
 					$io->success('unchanged');
 				}
 				else {
-					$la_results['changed']++;
+					$results['changed']++;
 					$io->error('changed');
 				}
 			}
 			else {
-				if ($ls_currentHash === $ls_storedHash) {
-					$la_results['unchanged']++;
+				if ($currentHash === $storedHash) {
+					$results['unchanged']++;
 				}
 				else {
-					$la_results['changed']++;
-					$io->error(sprintf('%s `%s` was modified', str_contains($ls_file, '::') ? 'Method' : 'File', $ls_file));
+					$results['changed']++;
+					$io->error(sprintf('%s `%s` was modified', str_contains($file, '::') ? 'Method' : 'File', $file));
 				}
 			}
 
-			if ($ls_currentHash !== $ls_storedHash) {
+			if ($currentHash !== $storedHash) {
 				$this->askForUpdate(
 					$io,
-					$ls_file,
-					$ls_currentHash,
-					$la_updatedData,
+					$file,
+					$currentHash,
+					$updatedData,
 					$interactive,
-					$lb_forceUpdate
+					$forceUpdate
 				);
 			}
 		}
 
-		if ($la_updatedData) {
-			$la_config = $la_updatedData + $la_config;
+		if ($updatedData) {
+			$config = $updatedData + $config;
 
-			ksort($la_config);
+			ksort($config);
 
-			Configure::write('FileHashes', $la_config);
-			$ls_fileName = $this->forCustomer ? CUSTOM_NAMESPACE . '.custom_file_hashes' : 'Awyiss.file_hashes';
-			Configure::dump($ls_fileName, 'default', ['FileHashes']);
+			Configure::write('FileHashes', $config);
+			$fileName = $this->forCustomer ? CUSTOM_NAMESPACE . '.custom_file_hashes' : 'Awyiss.file_hashes';
+			Configure::dump($fileName, 'default', ['FileHashes']);
 		}
 
-		if (!$reportOnlyModified || $la_results['changed']) {
+		if (!$reportOnlyModified || $results['changed']) {
 			$io->hr();
 		}
 
-		$io->out(sprintf('Finished checking %d files. ', count($la_files)), 0);
+		$io->out(sprintf('Finished checking %d files. ', count($files)), 0);
 
-		$io->success(sprintf('%d files unchanged.', $la_results['unchanged']), $la_results['changed'] ? 0 : 1);
+		$io->success(sprintf('%d files unchanged.', $results['unchanged']), $results['changed'] ? 0 : 1);
 
-		if ($la_results['changed']) {
+		if ($results['changed']) {
 			$io->out(' | ', 0);
-			$io->error(sprintf('%d files changed. ', $la_results['changed']));
+			$io->error(sprintf('%d files changed. ', $results['changed']));
 		}
 	}
 
@@ -338,19 +338,19 @@ class IntegrityCheckCommand extends Command {
 	 * @throws \ReflectionException
 	 */
 	protected function getMethodHash(string $className, string $method): string {
-		$lo_reflection = new ReflectionClass($className);
-		if (!$lo_reflection->hasMethod($method)) {
+		$reflection = new ReflectionClass($className);
+		if (!$reflection->hasMethod($method)) {
 			throw new ReflectionException(sprintf('Method `%s` not found in `%s`', $method, $className));
 		}
 
-		$ls_fileCode = file($lo_reflection->getFileName());
+		$fileCode = file($reflection->getFileName());
 
-		$lx_method = $lo_reflection->getMethod($method);
+		$method = $reflection->getMethod($method);
 
-		$ls_methodContent = implode('', array_slice($ls_fileCode, $lx_method->getStartLine() - 1, $lx_method->getEndLine() - $lx_method->getStartLine() + 1));
+		$methodContent = implode('', array_slice($fileCode, $method->getStartLine() - 1, $method->getEndLine() - $method->getStartLine() + 1));
 
 
-		return md5($ls_methodContent);
+		return md5($methodContent);
 	}
 
 
@@ -361,24 +361,24 @@ class IntegrityCheckCommand extends Command {
 	 */
 	protected function sanitizePath(string $path): string|false {
 		if (str_starts_with($path, '\\')) {
-			$ls_className = $path;
-			if (str_contains($ls_className, '::')) {
-				[$ls_className] = explode('::', $ls_className, 2);
+			$className = $path;
+			if (str_contains($className, '::')) {
+				[$className] = explode('::', $className, 2);
 			}
 
-			$lo_reflector = new ReflectionClass($ls_className);
-			$ls_fullPath = $lo_reflector->getFileName();
+			$reflection = new ReflectionClass($className);
+			$fullPath = $reflection->getFileName();
 		}
 		else {
-			$ls_fullPath = realpath(ROOT . DS . $path);
+			$fullPath = realpath(ROOT . DS . $path);
 
-			if (!$ls_fullPath || !str_starts_with($ls_fullPath, ROOT . DS) || !is_file($ls_fullPath)) {
+			if (!$fullPath || !str_starts_with($fullPath, ROOT . DS) || !is_file($fullPath)) {
 				return false;
 			}
 		}
 
 
-		return $ls_fullPath;
+		return $fullPath;
 	}
 
 
@@ -392,27 +392,25 @@ class IntegrityCheckCommand extends Command {
 	 * @return void
 	 */
 	protected function askForUpdate(ConsoleIo $io, string $file, mixed $currentHash, array &$updatedData, bool $interactive, bool &$forceUpdate): void {
-		$lb_update = $forceUpdate;
+		$update = $forceUpdate;
 		if ($interactive && !$forceUpdate) {
-			$ls_key = $io->askChoice('Update hash?', ['y', 'n', 'a', 'q'], 'n');
-			$ls_key = strtolower($ls_key);
+			$key = $io->askChoice('Update hash?', ['y', 'n', 'a', 'q'], 'n');
+			$key = strtolower($key);
 
-			if ($ls_key === 'q') {
+			if ($key === 'q') {
 				$io->error('Quitting.', 2);
 				throw new StopException('Not creating file. Quitting.');
 			}
 
-			if ($ls_key === 'a') {
-				/** @noinspection PhpVariableNamingConventionInspection */
+			if ($key === 'a') {
 				$forceUpdate = true;
-				$ls_key = 'y';
+				$key = 'y';
 			}
 
-			$lb_update = $ls_key === 'y';
+			$update = $key === 'y';
 		}
 
-		if ($lb_update) {
-			/** @noinspection PhpVariableNamingConventionInspection */
+		if ($update) {
 			$updatedData[ $file ] = $currentHash;
 		}
 	}

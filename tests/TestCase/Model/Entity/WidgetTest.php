@@ -19,7 +19,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\WidgetsTable $table */
@@ -36,7 +35,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Widget();
@@ -73,7 +71,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new Widget();
@@ -85,7 +82,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_setColumnLast()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testColumnLastCleaningViaPropertyAssignment(): void {
@@ -105,7 +101,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_setColumnLast()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnLastCleaningViaSetMethod(): void {
 		$entity = new Widget();
@@ -125,7 +120,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_setColumnRtl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testColumnRtlCleaningViaPropertyAssignment(): void {
@@ -145,7 +139,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_setColumnRtl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnRtlCleaningViaSetMethod(): void {
 		$entity = new Widget();
@@ -165,7 +158,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_setData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testDataCleaningViaPropertyAssignment(): void {
@@ -185,7 +177,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_setData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDataCleaningViaSetMethod(): void {
 		$entity = new Widget();
@@ -205,7 +196,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualProperty(): void {
 		$entity = new Widget(['columnWidth' => '2/5', 'columnIndent' => '3/5']);
@@ -225,7 +215,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualPropertyWithInvalidWidthAndIndent(): void {
 		$entity = new Widget(['columnWidth' => 'invalid-width', 'columnIndent' => 'invalid-indent']);
@@ -244,7 +233,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithTitle(): void {
 		$entity = new Widget(['title' => 'Test Widget Title']);
@@ -258,7 +246,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithSubtitle(): void {
 		$entity = new Widget(['subtitle' => 'Test Widget Subtitle']);
@@ -272,7 +259,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithText(): void {
 		$entity = new Widget(['text' => '<p>Test Widget Text</p>']);
@@ -286,7 +272,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithCssClass(): void {
 		$entity = new Widget(['cssClass' => 'test-class']);
@@ -300,7 +285,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyFallbackToDefault(): void {
 		$entity = new Widget();
@@ -315,7 +299,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithInactiveWidget(): void {
 		$entity = new Widget(['title' => 'Test Widget', 'active' => false]);
@@ -330,7 +313,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyPriorityOrder(): void {
 		$entity = new Widget([
@@ -349,7 +331,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildren(): void {
 		/** @var \Awyiss\Model\Table\WidgetsTable $table */
@@ -367,7 +348,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildren(): void {
 		/** @var \Awyiss\Model\Table\WidgetsTable $table */
@@ -385,7 +365,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParent(): void {
 		/** @var \Awyiss\Model\Table\WidgetsTable $table */
@@ -403,7 +382,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithNoParent(): void {
 		/** @var \Awyiss\Model\Table\WidgetsTable $table */
@@ -420,7 +398,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParents(): void {
 		/** @var \Awyiss\Model\Table\WidgetsTable $table */
@@ -438,7 +415,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWithNoParents(): void {
 		/** @var \Awyiss\Model\Table\WidgetsTable $table */
@@ -455,7 +431,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -511,7 +486,6 @@ class WidgetTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Widget::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

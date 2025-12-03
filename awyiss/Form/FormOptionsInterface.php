@@ -96,7 +96,7 @@ interface FormOptionsInterface {
 	/**
 	 * Indicates whether the real sender should be used as the sender (= empty value),
 	 * or if the site owner's email should be used as the sender (= safe email address).
-	 * This should ensure that no mailserver denies the email
+	 * This should ensure that no mail server denies the email
 	 * due to the sender not having the same origin as the site.
 	 *
 	 * @return string|null

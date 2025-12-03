@@ -20,7 +20,6 @@ use Twig\Markup;
 class AppViewTest extends TestCase {
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -33,7 +32,6 @@ class AppViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\AppView::initialize()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		$view = new AppView($this->createMock(ServerRequest::class), $this->createMock(Response::class));
@@ -49,7 +47,6 @@ class AppViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\AppView::cell()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCell(): void {
 		$view = $this->getMockBuilder(AppView::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
@@ -67,7 +64,6 @@ class AppViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\AppView::cell()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCellUnknownCellThrowsException(): void {
 		$view = $this->getMockBuilder(AppView::class)->disableOriginalConstructor()->onlyMethods([])->getMock();
@@ -85,7 +81,6 @@ class AppViewTest extends TestCase {
 	 * @see \Awyiss\View\AppView::loadHelpers()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadHelpers(): void {
 		$twig = $this->createMock(Environment::class);

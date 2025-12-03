@@ -23,26 +23,26 @@ trait TableNamesTrait {
 			return static::$tableNames;
 		}
 
-		$la_classes = App::classes('*', 'Model/Table', 'Table', null, null, ['GenericDatatablesTable']);
+		$classes = App::classes('*', 'Model/Table', 'Table', null, null, ['GenericDatatablesTable']);
 
 		//Traverse both namespaces
-		foreach ($la_classes as $ls_tableName => $ls_className) {
-			$ls_tableName = substr($ls_tableName, 0, -5);
+		foreach ($classes as $tableName => $className) {
+			$tableName = substr($tableName, 0, -5);
 
-			static::$tableNames[ $ls_tableName ] ??= $ls_tableName;
+			static::$tableNames[ $tableName ] ??= $tableName;
 		}
 
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		// Get all page roles because we want them to have attributes too
-		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
-			$ls_identifier = Inflector::pluralize(Inflector::camelize($le_pageRole->name));
+		foreach ($pageRoleEnum::cases() as $pageRole) {
+			$identifier = Inflector::pluralize(Inflector::camelize($pageRole->name));
 
-			if ($ls_identifier === 'Pages' || isset(static::$tableNames[ $ls_identifier ])) {
+			if ($identifier === 'Pages' || isset(static::$tableNames[ $identifier ])) {
 				continue;
 			}
 
-			static::$tableNames[ $ls_identifier ] = $ls_identifier;
+			static::$tableNames[ $identifier ] = $identifier;
 		}
 
 		ksort(static::$tableNames);

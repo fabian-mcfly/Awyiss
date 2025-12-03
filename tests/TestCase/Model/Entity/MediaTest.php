@@ -36,7 +36,6 @@ class MediaTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function tearDown(): void {
 		// Clean up temporary database records first
@@ -74,7 +73,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $table */
@@ -91,7 +89,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Media();
@@ -124,7 +121,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new Media();
@@ -168,7 +164,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::isAudio()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAudioMethod(): void {
 		$audioEntity = new Media(['mimeType' => 'audio/mpeg']);
@@ -188,7 +183,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getIsAudio()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAudioVirtualProperty(): void {
 		$entity = new Media(['mimeType' => 'audio/mpeg']);
@@ -214,7 +208,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::isImage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsImageMethod(): void {
 		$imageEntity = new Media(['mimeType' => 'image/jpeg']);
@@ -234,7 +227,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getIsImage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsImageVirtualProperty(): void {
 		$entity = new Media(['mimeType' => 'image/avif']);
@@ -263,7 +255,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::isVideo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsVideoMethod(): void {
 		$videoEntity = new Media(['mimeType' => 'video/mp4']);
@@ -283,7 +274,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getIsVideo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsVideoVirtualProperty(): void {
 		$entity = new Media(['mimeType' => 'video/mp4']);
@@ -306,7 +296,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::originalIsImage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalIsImageMethod(): void {
 		$entity = new Media();
@@ -335,7 +324,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getCleanName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanNameVirtualProperty(): void {
 		$entity = new Media(['name' => 'logo-awyiss.jpg']);
@@ -355,7 +343,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalCleanName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalCleanNameVirtualProperty(): void {
 		$entity = new Media();
@@ -375,7 +362,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getExtension()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtensionVirtualProperty(): void {
 		$entity = new Media(['name' => 'logo-awyiss.jpg']);
@@ -395,7 +381,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalExtension()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalExtensionVirtualProperty(): void {
 		$entity = new Media();
@@ -415,7 +400,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPathAbsoluteVirtualProperty(): void {
 		$entity = new Media(['path' => 'media/images/test.jpg']);
@@ -431,7 +415,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalPathAbsoluteVirtualProperty(): void {
 		$entity = new Media();
@@ -453,7 +436,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getPreviewName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPreviewNameVirtualProperty(): void {
 		// Non-image file should have preview name
@@ -472,7 +454,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalPreviewName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalPreviewNameVirtualProperty(): void {
 		$entity = new Media();
@@ -494,7 +475,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getAvifName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAvifNameVirtualProperty(): void {
 		$entity = new Media(['name' => 'logo-awyiss.jpg']);
@@ -508,7 +488,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalAvifName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalAvifNameVirtualProperty(): void {
 		$entity = new Media();
@@ -528,7 +507,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getWebpName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWebpNameVirtualProperty(): void {
 		$entity = new Media(['name' => 'logo-awyiss.jpg']);
@@ -542,7 +520,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalWebpName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalWebpNameVirtualProperty(): void {
 		$entity = new Media();
@@ -562,7 +539,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getAvifPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAvifPathVirtualProperty(): void {
 		$entity = new Media([
@@ -588,7 +564,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalAvifPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalAvifPathVirtualProperty(): void {
 		$entity = new Media();
@@ -621,7 +596,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getAvifPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAvifPathAbsoluteVirtualProperty(): void {
 		$entity = new Media([
@@ -645,7 +619,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalAvifPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalAvifPathAbsoluteVirtualProperty(): void {
 		$entity = new Media();
@@ -676,7 +649,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getWebpPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWebpPathVirtualProperty(): void {
 		$entity = new Media([
@@ -702,7 +674,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalWebpPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalWebpPathVirtualProperty(): void {
 		$entity = new Media();
@@ -735,7 +706,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getWebpPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWebpPathAbsoluteVirtualProperty(): void {
 		$entity = new Media([
@@ -759,7 +729,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalWebpPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalWebpPathAbsoluteVirtualProperty(): void {
 		$entity = new Media();
@@ -790,7 +759,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::findAlternatives()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindAlternativesWithActualData(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $table */
@@ -808,7 +776,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::findAlternatives()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindAlternativesWithNoName(): void {
 		$entity = new Media(['name' => null]);
@@ -821,7 +788,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -867,7 +833,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
@@ -893,7 +858,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_setName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testNameCleaningViaPropertyAssignment(): void {
@@ -933,7 +897,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_setName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNameCleaningViaSetMethod(): void {
 		$entity = new Media();
@@ -973,7 +936,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getPreviewPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPreviewPathVirtualProperty(): void {
 		$entity = new Media([
@@ -999,7 +961,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalPreviewPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalPreviewPathVirtualProperty(): void {
 		$entity = new Media();
@@ -1032,7 +993,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getPreviewPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPreviewPathAbsoluteVirtualProperty(): void {
 		$entity = new Media([
@@ -1056,7 +1016,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_getOriginalPreviewPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOriginalPreviewPathAbsoluteVirtualProperty(): void {
 		$entity = new Media();
@@ -1090,7 +1049,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::_setAverageColor()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAverageColorSetter(): void {
 		$entity = new Media();
@@ -1120,7 +1078,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::moveConvertedFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMoveConvertedFiles(): void {
 		$tempDir = 'media' . DS . 'test_' . uniqid('moveConvertedFiles') . DS;
@@ -1181,7 +1138,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::moveConvertedFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMoveConvertedFilesDeletesWhenTargetIsNull(): void {
 		$tempDir = 'media' . DS . 'test_' . uniqid('move_converted_files_null') . DS;
@@ -1238,7 +1194,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::deleteConvertedFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeleteConvertedFiles(): void {
 		$tempDir = 'media' . DS . 'test_' . uniqid('del_converted_files') . DS;
@@ -1304,7 +1259,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::moveResizedFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMoveResizedFiles(): void {
 		$tempDir = 'media' . DS . 'test_' . uniqid('move_resized_files') . DS;
@@ -1430,7 +1384,6 @@ class MediaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Media::deleteResizedFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDeleteResizedFiles(): void {
 		usleep(500);

@@ -166,7 +166,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithValidData(): void {
 		$data = json_decode(json_encode([
@@ -198,7 +197,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithInvalidData(): void {
 		$data = json_decode(json_encode([
@@ -227,7 +225,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithSchemaPath(): void {
 		$data = json_decode(json_encode([
@@ -261,7 +258,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithoutClasses(): void {
 		$data = json_decode(json_encode([
@@ -284,7 +280,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithClasses(): void {
 		$data = json_decode(json_encode([
@@ -311,7 +306,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithSchemaValidation(): void {
 		$data = json_decode(json_encode([
@@ -348,7 +342,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithSchemaValidationFailure(): void {
 		$data = json_decode(json_encode([
@@ -375,7 +368,6 @@ class MenuLoaderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromObject()
 	 * @see \Awyiss\Utility\Menu\MenuLoader::validateUniqueIdentifiers()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromObjectWithUniqueIdentifiersValidation(): void {
 		$data = json_decode(json_encode([
@@ -426,7 +418,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromJsonFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromJsonFile(): void {
 		// Create a temporary JSON file
@@ -464,7 +455,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::fromJsonString()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFromJsonString(): void {
 		$jsonString = json_encode([
@@ -499,7 +489,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::loadJsonFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadJsonFile(): void {
 		// Create a temporary JSON file
@@ -532,7 +521,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::loadJsonString()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadJsonString(): void {
 		$result = MenuLoader::loadJsonString('{"property":"value"}');
@@ -547,7 +535,6 @@ class MenuLoaderTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuLoader::loadJsonString()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadJsonStringWithInvalidJson(): void {
 		$this->expectException(MenuValidationException::class);
