@@ -681,8 +681,8 @@ class ContentsController extends Controller {
 		])->all();
 
 		// And make sure that all contents in the request data are part of the current contents
-		$filteredOrderData = array_filter($orderData, function ($la_item) use ($contents) {
-			return $contents->firstMatch(['id' => $la_item['id']]);
+		$filteredOrderData = array_filter($orderData, function (array $item) use ($contents) {
+			return $contents->firstMatch(['id' => $item['id']]);
 		});
 
 		// If the filtered order does not match the original order, we return 0

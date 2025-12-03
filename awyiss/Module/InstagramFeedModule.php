@@ -92,8 +92,8 @@ class InstagramFeedModule extends AbstractModule {
 		if ($media) {
 			$media = array_slice($media, 0, $itemLimit);
 
-			$mediaIds = array_map(function ($lo_media) {
-				return $lo_media->getId();
+			$mediaIds = array_map(function (Media $media) {
+				return $media->id;
 			}, $media);
 
 			/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
@@ -200,7 +200,7 @@ class InstagramFeedModule extends AbstractModule {
 			/** @var \Awyiss\Model\Table\MediaFoldersTable $mediaFolder */
 			$mediaFoldersTable = FactoryLocator::get('Table')->get('MediaFolders');
 			/**
-			 * @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder
+			 * @var \Awyiss\Model\Entity\MediaFolder $mediaFolder
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
 			$mediaFolder = $mediaFoldersTable->findById($mediaFolderId)->first();

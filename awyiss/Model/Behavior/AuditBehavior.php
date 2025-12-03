@@ -613,7 +613,6 @@ class AuditBehavior extends Behavior {
 
 			$sourceTable->getBehavior('MediaAssignment')->rebuildMediaAssignments($clonedEntity);
 
-			/** @var \Awyiss\Model\Entity $lo_mediaAssignment */
 			foreach ($clonedEntity->get('mediaAssignments') as $elementIdentifier => $elementAssignments) {
 				$oldData = $this->buildMediaAssignment(
 					$oldData,

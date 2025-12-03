@@ -135,7 +135,7 @@ class ScssCompiler {
 			return null;
 		}
 
-		/** @var class-string<\Awyiss\Utility\Design\ScssVariableProvider> $ls_className */
+		/** @var class-string<\Awyiss\Utility\Design\ScssVariableProvider> $className */
 		$scssVariableProviderClass = App::className('ScssVariableProvider', 'Utility/Design');
 		$scssVariableProvider = new $scssVariableProviderClass(Configure::read('Design'));
 

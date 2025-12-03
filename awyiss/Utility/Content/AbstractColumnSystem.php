@@ -135,18 +135,15 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 	 * @return int The GCD of the two numbers.
 	 */
 	protected static function gcd(int $firstNumber, int $secondNumber): int {
-		//Continue the loop until $li_secondNumber is zero.
+		// Continue the loop until $secondNumber is zero.
 		while ($secondNumber != 0) {
-			//Temporary variable to hold $li_secondNumber.
 			$temp = $secondNumber;
-			//Set $li_secondNumber to the remainder of $li_firstNumber divided by $li_secondNumber.
 			$secondNumber = $firstNumber % $secondNumber;
-			//Set $li_firstNumber to the previously stored $li_secondNumber (stored in $temp).
 			$firstNumber = $temp;
 		}
 
 
-		//When $li_secondNumber is zero, $li_firstNumber contains the GCD of the original two numbers.
+		//When $secondNumber is zero, $firstNumber contains the GCD of the original two numbers.
 		return $firstNumber;
 	}
 

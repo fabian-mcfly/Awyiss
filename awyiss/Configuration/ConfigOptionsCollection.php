@@ -60,7 +60,7 @@ class ConfigOptionsCollection extends ArrayIterator {
 		//Traverse the provided array
 		$configOptions = $configOption;
 		foreach ($configOptions as $key => $configOption) {
-			//If the key is a string, add a new sub-collection with that given identifier, containing everything in $lx_configOption
+			//If the key is a string, add a new sub-collection with that given identifier, containing everything in $configOption
 			if (is_string($key)) {
 				$collection = new ConfigOptionsCollection($key);
 				$collection->add($configOption);

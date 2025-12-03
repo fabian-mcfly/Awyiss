@@ -43,7 +43,7 @@ class UpsertTask extends Task {
 	 * @inheritDoc
 	 */
 	public function run(array $data, int $jobId): void {
-		//$la_diff holds the entity's old values that differ from the new ones
+		//$diff holds the entity's old values that differ from the new ones
 		$diff = Hash::diff($data['old'], $data['new']);
 
 		$column = $data['new']['identifier'];

@@ -672,7 +672,6 @@ class SurveyRenderer {
 			throw new RuntimeException(sprintf('The survey results class "%s" must extend "%s".', $className, SurveyResultsInterface::class));
 		}
 
-		/** @var \Awyiss\Survey\SurveyResultsInterface $lo_results */
 		$this->results = new $className(
 			$this->survey,
 			$this->View,

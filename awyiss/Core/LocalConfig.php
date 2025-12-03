@@ -53,7 +53,6 @@ class LocalConfig extends Configure {
 	 * @param mixed|null $value
 	 * @param string|null $scope
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public static function write(array|string $config, mixed $value = null, ?string $scope = null): void {
 		$scope ??= Router::getRequest()->getParam('controller');

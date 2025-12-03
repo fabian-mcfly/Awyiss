@@ -414,7 +414,7 @@ class NestBehavior extends Behavior {
 	public function listNested(SelectQuery|TreeIterator $query, string $nestingKey = 'children', string $direction = 'desc'): CollectionInterface {
 		$records = $query instanceof TreeIterator ? $query : $query->find('threaded', nestingKey: $nestingKey)->all()->listNested($direction, $nestingKey);
 
-		/** @var \Awyiss\Model\Entity $lo_page */
+		/** @var \Awyiss\Model\Entity $entity */
 		foreach ($records as $entity) {
 			$entity->setVirtual(['level'], true);
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */

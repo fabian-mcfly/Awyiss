@@ -438,7 +438,7 @@ class PagesController extends Controller {
 
 		$pagesByPageRole = [];
 		$baseUrl = Router::url('/', true);
-		/** @var array<int, \Awyiss\Model\Entity\Page> $la_pages */
+		/** @var array<int, \Awyiss\Model\Entity\Page> $pages */
 		foreach ($query->all()->groupBy('pageRoleId') as $pageRoleId => $pages) {
 			$flattenedPages = collection($pages)->nest('id', 'parentId')->listNested();
 

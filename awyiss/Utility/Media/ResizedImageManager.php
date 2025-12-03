@@ -130,7 +130,7 @@ class ResizedImageManager {
 			static::$mediaItems = [];
 		}
 
-		/** @var \Awyiss\Model\Entity\Media|int $lo_mediaItem */
+		/** @var \Awyiss\Model\Entity\Media|int $mediaItem */
 		foreach ($mediaItems as $mediaItem) {
 			if ($mediaItem instanceof Media) {
 				static::$mediaItems[ $mediaItem->id ] = $mediaItem;
@@ -411,19 +411,19 @@ class ResizedImageManager {
 
 	/**
 	 * @param \Awyiss\Model\Entity\Media $media
-	 * @param int|null $li_width
-	 * @param int|null $li_height
+	 * @param int|null $width
+	 * @param int|null $height
 	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $strategy
 	 * @param string $format
 	 * @return \Awyiss\Model\Entity\MediaResizedImage
 	 */
-	protected static function newMediaResizedImage(Media $media, ?int $li_width, ?int $li_height, ResizeStrategy|string|int $strategy, string $format): MediaResizedImage {
+	protected static function newMediaResizedImage(Media $media, ?int $width, ?int $height, ResizeStrategy|string|int $strategy, string $format): MediaResizedImage {
 		if (!isset(static::$mediaResizedImagesTable)) {
 			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 			static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
 		}
 
-		return static::$mediaResizedImagesTable->newEntityFromMedia($media, $li_width, $li_height, ResizeStrategy::normalize($strategy), $format);
+		return static::$mediaResizedImagesTable->newEntityFromMedia($media, $width, $height, ResizeStrategy::normalize($strategy), $format);
 	}
 
 

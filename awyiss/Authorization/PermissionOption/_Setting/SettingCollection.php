@@ -19,15 +19,6 @@ class SettingCollection extends ObjectRegistry {
 	 * @var array<SettingInterface>
 	 */
 	protected array $_loaded = [];
-	/*public function render (\Cake\View\View $view, ?string $prePath = null): string {
-		$ls_settings = '';
-
-		foreach ($this->_loaded as $lo_setting) {
-			$ls_settings .= $lo_setting->render($view, $prePath);
-		}
-
-		return $ls_settings;
-	}*/
 
 
 	/**

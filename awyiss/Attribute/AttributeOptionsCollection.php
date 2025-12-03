@@ -83,7 +83,6 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	public function getAttributeOption(string $identifier): ?AttributeOption {
 		$identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
-		/** @var AttributeOption $lo_attributeOptions */
 		return Hash::get($this, $identifier);
 	}
 

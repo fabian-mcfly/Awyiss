@@ -12,8 +12,10 @@ use Awyiss\Core\App;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
+use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\Audit;
 use Awyiss\Model\Entity\Content;
+use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
@@ -115,7 +117,7 @@ class AuditController extends Controller {
 		$associations = $this->getAssociations($table, $historyFields);
 
 		if ($associations) {
-			$table->loadInto($entity, array_values(array_map(fn($lo_association) => $lo_association->getName(), $associations)));
+			$table->loadInto($entity, array_values(array_map(fn(Association $association) => $association->getName(), $associations)));
 		}
 
 		$isPageRole = false;
@@ -173,14 +175,14 @@ class AuditController extends Controller {
 			$languages = LocaleMiddleware::getLanguages($realm);
 
 			// Filter out inactive languages
-			$languages = array_filter($languages, fn($lo_language) => $lo_language->active);
+			$languages = array_filter($languages, fn(Language $language) => $language->active);
 		}
 
 		$translatableAttributes = [];
 		if ($table->hasAttributes()) {
 			// Get all identifiers of translatable attributes
 			$translatableAttributes = array_column($attributes, null, 'identifier');
-			$translatableAttributes = array_keys(array_filter($translatableAttributes, fn($lo_attribute) => $lo_attribute->translatable));
+			$translatableAttributes = array_keys(array_filter($translatableAttributes, fn(Attribute $attribute) => $attribute->translatable));
 		}
 
 		$this->set([

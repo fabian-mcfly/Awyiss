@@ -73,7 +73,7 @@ class AutoTranslateTask extends Task {
 	 * @throws \Exception
 	 */
 	protected function translateContents(string $sourceLanguage, string $targetLanguage, array $ids): void {
-		/** @var class-string<\Awyiss\Utility\Translation\TranslationServiceInterface>|null $ls_translationServiceClass */
+		/** @var class-string<\Awyiss\Utility\Translation\TranslationServiceInterface>|null $translationServiceClass */
 		$translationService = $this->getTranslationService($sourceLanguage, $targetLanguage);
 
 		$batchSize = $translationService->getBatchSize();

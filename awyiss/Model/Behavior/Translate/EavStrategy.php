@@ -139,8 +139,8 @@ class EavStrategy extends BaseEavStrategy {
 		$entity->set('_locale', $locale, ['setter' => false]);
 		$entity->setDirty('_locale', false);
 		/* With those lines, the main language would not find its way in the db
-		foreach ($la_fields as $ls_field) {
-			$entity->setDirty($ls_field, false);
+		foreach ($fields as $field) {
+			$entity->setDirty($field, false);
 		}*/
 	}
 
@@ -309,7 +309,7 @@ class EavStrategy extends BaseEavStrategy {
 		$modifiedValues = [];
 		/** @noinspection PhpLoopCanBeConvertedToArrayMapInspection */
 		foreach ($preExistentValues as $field => $translation) {
-			//$lo_translation->set('content', $values[ $ls_field ]);
+			//$translation->set('content', $values[ $field ]);
 			$modifiedValues[ $field ] = $translation;
 		}
 

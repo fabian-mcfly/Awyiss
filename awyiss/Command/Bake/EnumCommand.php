@@ -35,18 +35,17 @@ class EnumCommand extends BaseBakeEnumCommand {
 	/**
 	 * Get template data.
 	 *
-	 * @param \Cake\Console\Arguments $args The arguments for the command
+	 * @param \Cake\Console\Arguments $arguments The arguments for the command
 	 * @return array
 	 * @phpstan-return array<string, mixed>
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function templateData(Arguments $args): array {
-		$data = parent::templateData($args);
+	public function templateData(Arguments $arguments): array {
+		$data = parent::templateData($arguments);
 
-		$namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
+		$namespace = Inflector::camelize($arguments->getOption('namespace') ?: Configure::read('App.namespace'));
 		$data['namespace'] = $namespace;
 
-		$data['isPageRole'] = $args->getOption('is-pagerole');
+		$data['isPageRole'] = $arguments->getOption('is-pagerole');
 
 
 		return $data;
@@ -59,7 +58,6 @@ class EnumCommand extends BaseBakeEnumCommand {
 	 * @param \Cake\Console\Arguments $args
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function bake(string $name, Arguments $args, ConsoleIo $io): void {
 		parent::bake(Inflector::camelize($name), $args, $io);
@@ -72,7 +70,6 @@ class EnumCommand extends BaseBakeEnumCommand {
 	 * @inheritDoc
 	 * @param ConsoleOptionParser $parser
 	 * @return ConsoleOptionParser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
 		$parser = parent::buildOptionParser($parser);

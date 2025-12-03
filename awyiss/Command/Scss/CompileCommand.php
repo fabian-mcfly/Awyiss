@@ -112,7 +112,6 @@ class CompileCommand extends Command {
 			return $this->compilerClass;
 		}
 
-		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_className */
 		$this->compilerClass = App::className('ScssCompiler', 'Utility/Design');
 
 		return $this->compilerClass;

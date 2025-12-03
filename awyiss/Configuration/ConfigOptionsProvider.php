@@ -131,7 +131,7 @@ class ConfigOptionsProvider {
 				return static::$loadedConfigOptions[ $scope ];
 			}
 
-			/** @var \Awyiss\Model\Enum\PageRoleEnumInterface|class-string<\Awyiss\Configuration\ConfigOptionsInterface>|null $ls_configurationClass */
+			/** @var \Awyiss\Model\Enum\PageRoleEnumInterface|class-string<\Awyiss\Configuration\ConfigOptionsInterface>|null $configurationClass */
 			$configurationClass = static::getConfigOptionsFile($scope);
 
 			if (!$configurationClass) {

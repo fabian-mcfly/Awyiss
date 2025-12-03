@@ -246,7 +246,6 @@ class DesignMiddleware implements MiddlewareInterface {
 			return static::$compilerClass;
 		}
 
-		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_className */
 		static::$compilerClass = App::className('ScssCompiler', 'Utility/Design');
 
 		return static::$compilerClass;

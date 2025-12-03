@@ -121,7 +121,7 @@ class AttributesBehavior extends Behavior {
 		$this->hasAttributes = true;
 		$this->table()->hasOne($identifier, [
 			'cascadeCallbacks' => true,
-			//'className' => $ls_attributesClass,
+			//'className' => $attributesClass,
 			'dependent' => true,
 			'foreignKey' => $this->getConfig('foreignKey'),
 			'propertyName' => 'attributes',

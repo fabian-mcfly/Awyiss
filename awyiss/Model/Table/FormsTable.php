@@ -454,9 +454,8 @@ class FormsTable extends Table {
 	public function getFormTemplates(): array {
 		$classes = App::classes('*', 'Utility/Form/Templates', 'FormTemplate', FormTemplateInterface::class);
 
-		/** @var class-string<\Awyiss\Utility\Form\Templates\FormTemplateInterface> $ls_className */
-		$templates = array_map(function ($ls_className) {
-			return $ls_className::getTitle();
+		$templates = array_map(function (string $className) {
+			return $className::getTitle();
 		}, $classes);
 
 		Arrays::naturalSort($templates);

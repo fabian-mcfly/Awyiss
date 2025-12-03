@@ -641,7 +641,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
 		$this->deleteHiddenFolders($entity);
 	}
 

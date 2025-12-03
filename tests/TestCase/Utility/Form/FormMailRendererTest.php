@@ -47,7 +47,7 @@ class FormMailRendererTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormMailRenderer::render();
 	 */
 	public function testRenderWithoutTemplate(): void {
-		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
+		/** @var class-string<\Cake\Mailer\Mailer> $className */
 		$className = App::className('Mailer', 'Mailer');
 		/** @var \Cake\Mailer\Mailer $mailer */
 		$mailer = new $className('form');
@@ -79,7 +79,7 @@ class FormMailRendererTest extends TestCase {
 	 * @see \Awyiss\Utility\Form\FormMailRenderer::render();
 	 */
 	public function testRenderWithTemplate(): void {
-		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
+		/** @var class-string<\Cake\Mailer\Mailer> $className */
 		$className = App::className('Mailer', 'Mailer');
 		$mailer = new $className('form');
 

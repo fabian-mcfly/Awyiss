@@ -45,11 +45,9 @@ class PermissionCollection {
 				$this->add($permission);
 			}
 			elseif ($permission instanceof PermissionInterface) {
-				//$this->add($lx_permission);
 				$this->add(Permission::createFromObject($permission));
 			}
 			elseif (is_array($permission)) {
-				//$this->add(...$lx_permission);
 				$this->add(Permission::createFromArray($permission));
 			}
 			else {

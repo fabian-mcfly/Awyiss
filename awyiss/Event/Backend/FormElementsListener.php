@@ -40,7 +40,7 @@ class FormElementsListener implements EventListenerInterface {
 		// Transform the children into a flat list
 		$children = collection($entity->childFormElements)->listNested('desc', 'childFormElements');
 
-		/** @var \Awyiss\Model\Entity\FormElement $lo_childFormElement */
+		/** @var \Awyiss\Model\Entity\FormElement $childFormElement */
 		foreach ($children as $childFormElement) {
 			if (in_array($childFormElement->type, ['free_text', 'submit'])) {
 				continue;

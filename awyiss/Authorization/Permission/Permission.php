@@ -177,11 +177,11 @@ class Permission {
 
 		//Get the Permission from the policy class provided.
 		if ($policyClass instanceof AbstractGenericPolicy) {
-			//If the $lx_policyClass is an instance of AbstractGenericPolicy, getPermission is a public, non-static method
+			//If the $policyClass is an instance of AbstractGenericPolicy, getPermission is a public, non-static method
 			$permissionOption = $policyClass->getPermissionOption($this->getIdentifier());
 		}
 		else {
-			//If the $lx_policyClass is a string or implements the PolicyInterface, getPermission is a static method
+			//If the $policyClass is a string or implements the PolicyInterface, getPermission is a static method
 			/** @var \Awyiss\Authorization\Policy\PolicyInterface $policyClass */
 			$permissionOption = $policyClass::getPermissionOption($this->getIdentifier());
 		}

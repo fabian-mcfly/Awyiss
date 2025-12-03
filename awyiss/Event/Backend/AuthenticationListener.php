@@ -82,7 +82,7 @@ class AuthenticationListener implements EventListenerInterface {
 	 */
 	public function authenticationRequestIdentity(Event $event): void {
 		try {
-			/** @var \Awyiss\Model\Table $lo_model */
+			/** @var \Awyiss\Model\Table $class */
 			$class = $event->getSubject();
 		}
 		catch (CakeException) {

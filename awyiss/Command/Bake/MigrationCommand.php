@@ -39,7 +39,6 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 	 * @inheritDoc
 	 * @param Arguments $arguments
 	 * @return array
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function templateData(Arguments $arguments): array {
 		$className = $this->_name;
@@ -126,17 +125,15 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 
 	/**
 	 * {@inheritDoc}
-	 *
 	 * Re-implemented `\Migrations\Command\BakeSimpleMigrationCommand::bake()` because it's not possible to call a parent's parent.
 	 *
 	 * @param string $name
-	 * @param Arguments $arguments
+	 * @param Arguments $args
 	 * @param ConsoleIo $io
 	 * @return void
 	 * @see \Migrations\Command\BakeSimpleMigrationCommand::bake()
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bake(string $name, Arguments $arguments, ConsoleIo $io): void {
+	public function bake(string $name, Arguments $args, ConsoleIo $io): void {
 		EventManager::instance()->on('Bake.initialize', function (Event $event): void {
 			$event->getSubject()->loadHelper('Migrations.Migration');
 		});
@@ -146,21 +143,21 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 		[, $table] = $this->detectAction($this->_name);
 
 		$this->io = $io;
-		$this->args = $arguments;
+		$this->args = $args;
 		if ($this->isReservedKeyword($name)) {
 			$prefix = $io->ask('Reserved keywords cannot be used for class names. What prefix would you like to use? Defaults to `Migration`.', 'Migration');
 			$this->_name = $prefix . ucfirst($name);
 		}
 
-		$this->pathFragment .= DS . $arguments->getOption('source');
+		$this->pathFragment .= DS . $args->getOption('source');
 
-		$path = $this->getPath($arguments);
+		$path = $this->getPath($args);
 
 		//If migration(s) with the same name already exist(s)
 		$migrationWithSameName = glob($path . '*_' . $this->_name . '.php');
 		if ($migrationWithSameName) {
 			//Shell the migration be overwritten?
-			if ($arguments->getOption('force')) {
+			if ($args->getOption('force')) {
 				//If so, delete all existing migrations
 				$io->info(sprintf('A migration with the name `%s` already exists, it will be deleted.', $this->_name));
 				foreach ($migrationWithSameName as $migration) {
@@ -189,7 +186,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 
 		$renderer = new TemplateRenderer($this->theme);
 		$renderer->set('name', $this->_name);
-		$renderer->set($this->templateData($arguments));
+		$renderer->set($this->templateData($args));
 
 		/*
 		 * Manually set the remembered name of the table as a view variable, since versionizing a migration will
@@ -202,7 +199,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 		$contents = $renderer->generate($this->template());
 
 		$filePath = $path . $this->fileName($this->_name);
-		$this->createFile($filePath, $contents, $arguments, $io);
+		$this->createFile($filePath, $contents, $args, $io);
 
 		$emptyFile = $path . '.gitkeep';
 		$this->deleteEmptyFile($emptyFile, $io);
@@ -216,7 +213,6 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 	 *
 	 * @param ConsoleOptionParser $parser
 	 * @return ConsoleOptionParser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
 		$parser = parent::buildOptionParser($parser);

@@ -150,7 +150,6 @@ class SystemOrderBehavior extends Behavior {
 		], SORT_ASC, $this->table()->getAlias());
 
 
-		/** @var \Awyiss\Model\Table $lo_table */
 		$this->rebuildSystemOrder($configuration->value, $direction, $event);
 	}
 

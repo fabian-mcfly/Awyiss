@@ -111,13 +111,12 @@ class PermissionOptionCollection extends ObjectRegistry {
 	/**
 	 * Creates a Permission instance.
 	 *
-	 * @param class-string<PermissionOptionInterface> $class Permission class.
+	 * @param object|class-string<PermissionOptionInterface> $class Permission class.
 	 * @param string $alias Permission alias.
 	 * @param array $config Config array.
 	 * @return PermissionOptionInterface
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _create($class, string $alias, array $config): PermissionOptionInterface {
+	protected function _create(object|string $class, string $alias, array $config): PermissionOptionInterface {
 		$permission = new $class($config, $this);
 
 		if (!$permission instanceof PermissionOptionInterface) {
@@ -135,7 +134,6 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 * @param string $class Class name to be resolved.
 	 * @return string|null
 	 * @psalm-return class-string|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _resolveClassName(string $class): ?string {
 		return App::className($class);
@@ -147,7 +145,6 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 * @param string|null $plugin Class plugin.
 	 * @return void
 	 * @throws Exception
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _throwMissingClassError(string $class, ?string $plugin): void {
 		throw new Exception(sprintf('Permission class `%s` was not found.', $class));

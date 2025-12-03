@@ -196,7 +196,6 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 
 		return [
 			'media_element_assignments' => function (array $values, EntityInterface $entity) use ($options): array {
-				/** @var array<string, \Awyiss\Model\Entity\MediaElementAssignment> $la_publicationData */
 				$mediaElementAssignments = [];
 
 				$errors = [];

@@ -37,7 +37,6 @@ class ControllerCommand extends BaseControllerCommand {
 	 * @param Arguments $args The console arguments
 	 * @param ConsoleIo $io The console io
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function bake(string $controllerName, Arguments $args, ConsoleIo $io): void {
 		$io->quiet(sprintf('Baking controller class for %s...', $controllerName));
@@ -125,14 +124,13 @@ class ControllerCommand extends BaseControllerCommand {
 	/**
 	 * No plugin prefix for the generated template
 	 *
-	 * @param string $ls_controllerName
+	 * @param string $controllerName
 	 * @param array $data
 	 * @param \Cake\Console\Arguments $args
 	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bakeController(string $ls_controllerName, array $data, Arguments $args, ConsoleIo $io): void {
+	public function bakeController(string $controllerName, array $data, Arguments $args, ConsoleIo $io): void {
 		$data += [
 			'name' => null,
 			'namespace' => null,
@@ -147,7 +145,7 @@ class ControllerCommand extends BaseControllerCommand {
 		$contents = $this->createTemplateRenderer()->set($data)->generate('Controller/controller');
 
 		$path = $this->getPath($args);
-		$fileName = $path . $ls_controllerName . 'Controller.php';
+		$fileName = $path . $controllerName . 'Controller.php';
 
 		$io->createFile($fileName, $contents, $this->force);
 	}
@@ -159,7 +157,6 @@ class ControllerCommand extends BaseControllerCommand {
 	 * Adds the `namespace`-option.
 	 *
 	 * @param ConsoleOptionParser $parser The console option parser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
 		$parser = parent::buildOptionParser($parser);

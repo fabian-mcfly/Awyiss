@@ -149,7 +149,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		 *
 		 * This line saves one foreach. That foreach would save the comment above, though.
 		 *
-		 * @var \Awyiss\Model\Entity\UsergroupPermission $lo_usergrousPermissions
 		 * @noinspection GrazieInspection
 		 */
 		$this->permissionCollection = new PermissionCollection($authorizationService, array_merge(...array_column($usergroups, 'usergroup_permissions')));
