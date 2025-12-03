@@ -16,44 +16,44 @@ class UsergroupPermissionsCustomSeed extends AbstractSeed {
 	 * @throws \ReflectionException
 	 */
 	public function run(): void {
-		$la_data = [];
+		$data = [];
 
 		// Get all available policies from the AuthorizationService
-		$lo_authorizationService = new AuthorizationService(Awyiss::REALM_BACKEND);
-		$la_policies = $lo_authorizationService->getPolicies();
-		unset($la_policies['user_configuration']);
+		$authorizationService = new AuthorizationService(Awyiss::REALM_BACKEND);
+		$policies = $authorizationService->getPolicies();
+		unset($policies['user_configuration']);
 
-		ksort($la_policies);
+		ksort($policies);
 
 		/**
-		 * @var class-string<\Awyiss\Authorization\Policy\PolicyInterface> $ls_policyClass
+		 * @var class-string<\Awyiss\Authorization\Policy\PolicyInterface> $policyClass
 		 */
-		foreach ($la_policies as $ls_policyScope => $ls_policyClass) {
-			$lx_permissions = is_object($ls_policyClass) ? $ls_policyClass->getPermissionOptions() : $ls_policyClass::getPermissionOptions();
+		foreach ($policies as $policyScope => $policyClass) {
+			$permissions = is_object($policyClass) ? $policyClass->getPermissionOptions() : $policyClass::getPermissionOptions();
 
-			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $lo_permission */
-			foreach ($lx_permissions as $lo_permission) {
-				$ls_identifier = $lo_permission->getConfig('identifier');
-				$ls_identifier = Inflector::underscore($ls_identifier);
+			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $permission */
+			foreach ($permissions as $permission) {
+				$identifier = $permission->getConfig('identifier');
+				$identifier = Inflector::underscore($identifier);
 
-				$la_data[] = [
+				$data[] = [
 					'usergroup_id' => 1,
-					'scope' => $ls_policyScope,
-					'identifier' => $ls_identifier,
+					'scope' => $policyScope,
+					'identifier' => $identifier,
 					'access' => 1,
 				];
 
-				$la_data[] = [
+				$data[] = [
 					'usergroup_id' => 3,
-					'scope' => $ls_policyScope,
-					'identifier' => $ls_identifier,
+					'scope' => $policyScope,
+					'identifier' => $identifier,
 					'access' => 0,
 				];
 			}
 		}
 
-		$lo_table = $this->table('usergroup_permissions');
-		$lo_table->truncate();
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('usergroup_permissions');
+		$table->truncate();
+		$table->insert($data)->save();
 	}
 }

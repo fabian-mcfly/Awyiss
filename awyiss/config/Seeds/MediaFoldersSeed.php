@@ -12,7 +12,7 @@ class MediaFoldersSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'parent_id' => null,
@@ -32,7 +32,7 @@ class MediaFoldersSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('media_folders');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('media_folders');
+		$table->insert($data)->save();
 	}
 }

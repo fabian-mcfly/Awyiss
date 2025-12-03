@@ -12,7 +12,7 @@ class MediaResizedImagesCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'media_id' => 4,
@@ -339,8 +339,8 @@ class MediaResizedImagesCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('media_resized_images');
-		$lo_table->truncate();
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('media_resized_images');
+		$table->truncate();
+		$table->insert($data)->save();
 	}
 }

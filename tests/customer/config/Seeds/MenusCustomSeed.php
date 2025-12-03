@@ -12,7 +12,7 @@ class MenusCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'title' => 'Hauptmenü',
@@ -67,7 +67,7 @@ class MenusCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('menus');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('menus');
+		$table->insert($data)->save();
 	}
 }

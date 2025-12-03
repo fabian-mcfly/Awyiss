@@ -12,7 +12,7 @@ class PagesCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'page_role_id' => 1,
@@ -1135,7 +1135,7 @@ class PagesCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('pages');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('pages');
+		$table->insert($data)->save();
 	}
 }

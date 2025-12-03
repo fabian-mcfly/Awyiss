@@ -12,7 +12,7 @@ class PublicationDataCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'scope' => 'widgets',
@@ -71,8 +71,8 @@ class PublicationDataCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('publication_data');
-		$lo_table->truncate();
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('publication_data');
+		$table->truncate();
+		$table->insert($data)->save();
 	}
 }

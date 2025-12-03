@@ -12,7 +12,7 @@ class WidgetsCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 4,
 				'identifier' => 'dummy_nested',
@@ -623,7 +623,7 @@ class WidgetsCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('widgets');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('widgets');
+		$table->insert($data)->save();
 	}
 }

@@ -12,7 +12,7 @@ class PageRolesSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'identifier' => 'page',
@@ -30,10 +30,10 @@ class PageRolesSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('page_roles');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('page_roles');
+		$table->insert($data)->save();
 
-		$la_data = [
+		$data = [
 			[
 				'locale' => 'de',
 				'model' => 'page_roles',
@@ -50,7 +50,7 @@ class PageRolesSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('i18n');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('i18n');
+		$table->insert($data)->save();
 	}
 }

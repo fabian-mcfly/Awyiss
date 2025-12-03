@@ -30,8 +30,8 @@ class Initial extends AbstractMigration {
 	public function up(): void {
 		$this->initInitialMigrations();
 
-		foreach ($this->migrations as $lo_migration) {
-			$lo_migration->up();
+		foreach ($this->migrations as $migration) {
+			$migration->up();
 		}
 	}
 
@@ -45,8 +45,8 @@ class Initial extends AbstractMigration {
 	public function down(): void {
 		$this->initInitialMigrations();
 
-		foreach (array_reverse($this->migrations) as $lo_migration) {
-			$lo_migration->down();
+		foreach (array_reverse($this->migrations) as $migration) {
+			$migration->down();
 		}
 	}
 
@@ -59,16 +59,16 @@ class Initial extends AbstractMigration {
 	 * @return void
 	 */
 	protected function initInitialMigrations(): void {
-		$la_files = glob(__DIR__ . '/Initial/*.php');
-		foreach ($la_files as $ls_file) {
-			require_once $ls_file;
+		$files = glob(__DIR__ . '/Initial/*.php');
+		foreach ($files as $file) {
+			require_once $file;
 
-			$ls_class = basename($ls_file, '.php');
+			$className = basename($file, '.php');
 
-			if (!isset($this->migrations[ $ls_class ]) && class_exists($ls_class)) {
-				$lo_class = new $ls_class($this);
+			if (!isset($this->migrations[ $className ]) && class_exists($className)) {
+				$classInstance = new $className($this);
 
-				$this->migrations[ $ls_class ] = $lo_class;
+				$this->migrations[ $className ] = $classInstance;
 			}
 		}
 	}

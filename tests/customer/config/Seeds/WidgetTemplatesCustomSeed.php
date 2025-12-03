@@ -12,7 +12,7 @@ class WidgetTemplatesCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 2,
 				'title' => 'Dummy',
@@ -30,7 +30,7 @@ class WidgetTemplatesCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('widget_templates');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('widget_templates');
+		$table->insert($data)->save();
 	}
 }

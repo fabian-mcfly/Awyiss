@@ -12,7 +12,7 @@ class UsergroupsCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'title' => 'all access',
@@ -63,8 +63,8 @@ class UsergroupsCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('usergroups');
-		$lo_table->truncate();
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('usergroups');
+		$table->truncate();
+		$table->insert($data)->save();
 	}
 }

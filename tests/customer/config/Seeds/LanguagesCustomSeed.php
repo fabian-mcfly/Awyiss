@@ -12,7 +12,7 @@ class LanguagesCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 100,
 				'realm' => 'Frontend',
@@ -66,7 +66,7 @@ class LanguagesCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('languages');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('languages');
+		$table->insert($data)->save();
 	}
 }

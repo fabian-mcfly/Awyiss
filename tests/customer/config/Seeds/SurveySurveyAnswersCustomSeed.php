@@ -12,7 +12,7 @@ class SurveySurveyAnswersCustomSeed extends BaseSeed {
 	 * {@inheritDoc}
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 4,
 				'survey_answer_id' => 1,
@@ -281,7 +281,7 @@ class SurveySurveyAnswersCustomSeed extends BaseSeed {
 			],
 		];
 
-		$lo_table = $this->table('survey_survey_answers');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('survey_survey_answers');
+		$table->insert($data)->save();
 	}
 }

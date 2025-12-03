@@ -10,7 +10,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
 	 * {@inheritDoc}
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
             [
                 'id' => 1,
                 'media_element_id' => 1,
@@ -83,11 +83,11 @@ class MediaElementSelectorsSeed extends AbstractSeed {
             ],
         ];
 
-		$lo_table = $this->table('media_element_selectors');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('media_element_selectors');
+		$table->insert($data)->save();
 
 
-		$la_data = [
+		$data = [
 			[
 				'locale' => 'de',
 				'model' => 'media_element_selectors',
@@ -160,7 +160,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('i18n');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('i18n');
+		$table->insert($data)->save();
 	}
 }

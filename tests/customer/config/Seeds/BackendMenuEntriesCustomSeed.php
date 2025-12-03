@@ -12,7 +12,7 @@ class BackendMenuEntriesCustomSeed extends BaseSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'parent_id' => 'media',
@@ -141,8 +141,8 @@ class BackendMenuEntriesCustomSeed extends BaseSeed {
 			],
 		];
 
-		$lo_table = $this->table('backend_menu_entries');
-		$lo_table->truncate();
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('backend_menu_entries');
+		$table->truncate();
+		$table->insert($data)->save();
 	}
 }

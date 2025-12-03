@@ -12,7 +12,7 @@ class UserConfigurationCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 2,
 				'user_id' => 1,
@@ -246,7 +246,7 @@ class UserConfigurationCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('user_configuration');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('user_configuration');
+		$table->insert($data)->save();
 	}
 }

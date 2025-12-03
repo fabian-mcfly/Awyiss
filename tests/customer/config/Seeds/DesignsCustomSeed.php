@@ -12,7 +12,7 @@ class DesignsCustomSeed extends AbstractSeed {
 	 * @inheritDoc
 	 */
 	public function run(): void {
-		$la_data = [
+		$data = [
 			[
 				'id' => 1,
 				'identifier' => '35105eae51b2',
@@ -49,7 +49,7 @@ class DesignsCustomSeed extends AbstractSeed {
 			],
 		];
 
-		$lo_table = $this->table('designs');
-		$lo_table->insert($la_data)->save();
+		$table = $this->table('designs');
+		$table->insert($data)->save();
 	}
 }
