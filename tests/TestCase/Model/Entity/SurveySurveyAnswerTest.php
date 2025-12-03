@@ -20,7 +20,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\SurveySurveyAnswersTable $table */
@@ -37,7 +36,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new SurveySurveyAnswer();
@@ -63,7 +61,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new SurveySurveyAnswer();
@@ -75,7 +72,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -109,7 +105,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
@@ -131,7 +126,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithTitle(): void {
 		$entity = new SurveySurveyAnswer(['title' => 'Test Answer', 'active' => true]);
@@ -143,7 +137,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithTitleInactive(): void {
 		$entity = new SurveySurveyAnswer(['title' => 'Test Answer', 'active' => false]);
@@ -155,7 +148,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithSurveyAnswer(): void {
 		$surveyAnswer = new SurveyAnswer([
@@ -175,7 +167,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithInactiveSurveyAnswer(): void {
 		$surveyAnswer = new SurveyAnswer([
@@ -196,7 +187,6 @@ class SurveySurveyAnswerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveySurveyAnswer::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithInactiveEntity(): void {
 		$entity = new SurveySurveyAnswer([

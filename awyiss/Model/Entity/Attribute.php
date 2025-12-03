@@ -80,11 +80,11 @@ class Attribute extends Entity {
 	 * @inheritDoc
 	 */
 	public function defaultValues(): array {
-		/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		/** @var \Awyiss\Model\Table\AttributesTable $table */
+		$table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $this->defaultValues + ['fieldset' => $lo_table->getAvailableFieldsets()[0]];
+		return $this->defaultValues + ['fieldset' => $table->getAvailableFieldsets()[0]];
 	}
 
 
@@ -93,9 +93,9 @@ class Attribute extends Entity {
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnSpans)) {
-			/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get('Attributes');
-			static::$columnSpans = $lo_table->getColumnSpans();
+			/** @var \Awyiss\Model\Table\AttributesTable $table */
+			$table = FactoryLocator::get('Table')->get('Attributes');
+			static::$columnSpans = $table->getColumnSpans();
 		}
 
 		return [

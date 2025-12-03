@@ -19,7 +19,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\AttributesTable $table */
@@ -36,7 +35,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Attribute();
@@ -66,7 +64,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new Attribute();
@@ -78,7 +75,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -107,7 +103,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new Attribute();
@@ -136,7 +131,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testScopeCleaningViaPropertyAssignment(): void {
@@ -165,7 +159,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeCleaningViaSetMethod(): void {
 		$entity = new Attribute();
@@ -194,7 +187,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualProperty(): void {
 		$entity = new Attribute(['columnSpan' => '4/12']);
@@ -210,7 +202,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualPropertyWithInvalidSpan(): void {
 		$entity = new Attribute(['columnSpan' => 'invalid-span']);
@@ -227,7 +218,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::defaultValues()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		/** @var \Awyiss\Model\Table\AttributesTable $table */
@@ -243,7 +233,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -287,7 +276,6 @@ class AttributeTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Attribute::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

@@ -18,7 +18,6 @@ class UsergroupTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Usergroup::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\UsergroupsTable $table */
@@ -35,7 +34,6 @@ class UsergroupTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Usergroup::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Usergroup();
@@ -56,7 +54,6 @@ class UsergroupTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Usergroup
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -78,7 +75,6 @@ class UsergroupTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Usergroup::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

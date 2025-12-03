@@ -136,11 +136,11 @@ class Content extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('Contents');
+		/** @var \Awyiss\Model\Table\ContentsTable $table */
+		$table = FactoryLocator::get('Table')->get('Contents');
 
 
-		return $lo_table->getChildren($this, $options);
+		return $table->getChildren($this, $options);
 	}
 
 
@@ -153,11 +153,11 @@ class Content extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('Contents');
+		/** @var \Awyiss\Model\Table\ContentsTable $table */
+		$table = FactoryLocator::get('Table')->get('Contents');
 
 
-		return $lo_table->getNestedChildren($this, $options, $currentLevel);
+		return $table->getNestedChildren($this, $options, $currentLevel);
 	}
 
 
@@ -169,11 +169,11 @@ class Content extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('Contents');
+		/** @var \Awyiss\Model\Table\ContentsTable $table */
+		$table = FactoryLocator::get('Table')->get('Contents');
 
 
-		return $lo_table->getParent($this, $options);
+		return $table->getParent($this, $options);
 	}
 
 
@@ -186,11 +186,11 @@ class Content extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('Contents');
+		/** @var \Awyiss\Model\Table\ContentsTable $table */
+		$table = FactoryLocator::get('Table')->get('Contents');
 
 
-		return $lo_table->getParents($this, $options, $currentLevel);
+		return $table->getParents($this, $options, $currentLevel);
 	}
 
 
@@ -199,10 +199,10 @@ class Content extends Entity {
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnWidths)) {
-			/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get('Contents');
-			static::$columnWidths = $lo_table->getColumnWidths();
-			static::$columnIndents = $lo_table->getColumnIndents();
+			/** @var \Awyiss\Model\Table\ContentsTable $table */
+			$table = FactoryLocator::get('Table')->get('Contents');
+			static::$columnWidths = $table->getColumnWidths();
+			static::$columnIndents = $table->getColumnIndents();
 		}
 
 		return [

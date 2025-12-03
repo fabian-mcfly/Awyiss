@@ -110,11 +110,11 @@ class FormElement extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getChildren()
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\FormElementsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('FormElements');
+		/** @var \Awyiss\Model\Table\FormElementsTable $table */
+		$table = FactoryLocator::get('Table')->get('FormElements');
 
 
-		return $lo_table->getChildren($this, $options);
+		return $table->getChildren($this, $options);
 	}
 
 
@@ -127,11 +127,11 @@ class FormElement extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getNestedChildren()
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\FormElementsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('FormElements');
+		/** @var \Awyiss\Model\Table\FormElementsTable $table */
+		$table = FactoryLocator::get('Table')->get('FormElements');
 
 
-		return $lo_table->getNestedChildren($this, $options, $currentLevel);
+		return $table->getNestedChildren($this, $options, $currentLevel);
 	}
 
 
@@ -143,11 +143,11 @@ class FormElement extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {
-		/** @var \Awyiss\Model\Table\FormElementsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('FormElements');
+		/** @var \Awyiss\Model\Table\FormElementsTable $table */
+		$table = FactoryLocator::get('Table')->get('FormElements');
 
 
-		return $lo_table->getParent($this, $options);
+		return $table->getParent($this, $options);
 	}
 
 
@@ -160,11 +160,11 @@ class FormElement extends Entity {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParents()
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\FormElementsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('FormElements');
+		/** @var \Awyiss\Model\Table\FormElementsTable $table */
+		$table = FactoryLocator::get('Table')->get('FormElements');
 
 
-		return $lo_table->getParents($this, $options, $currentLevel);
+		return $table->getParents($this, $options, $currentLevel);
 	}
 
 
@@ -179,33 +179,33 @@ class FormElement extends Entity {
 			return [];
 		}
 
-		$la_options = [];
-		foreach ($options as $li_key => $la_option) {
-			if ($languageShortcode && isset($la_option['_translations'][ $languageShortcode ])) {
-				$ls_value = $la_option['_translations'][ $languageShortcode ]['value'];
-				$ls_key = $la_option['_translations'][ $languageShortcode ]['key'];
+		$parsedOptions = [];
+		foreach ($options as $key => $option) {
+			if ($languageShortcode && isset($option['_translations'][ $languageShortcode ])) {
+				$optionValue = $option['_translations'][ $languageShortcode ]['value'];
+				$optionKey = $option['_translations'][ $languageShortcode ]['key'];
 			}
 			else {
-				$ls_key = $la_option['key'];
-				$ls_value = $la_option['value'];
+				$optionKey = $option['key'];
+				$optionValue = $option['value'];
 			}
 
-			if (empty($ls_key)) {
-				$ls_key = $ls_value;
+			if (empty($optionKey)) {
+				$optionKey = $optionValue;
 			}
-			elseif (empty($ls_value)) {
-				$ls_value = $ls_key;
+			elseif (empty($optionValue)) {
+				$optionValue = $optionKey;
 			}
 
 			// If both, key and value are empty, skip this option if the element is not the first one
-			if (($li_key !== 0 || in_array($type, ['checkbox', 'radio'])) && empty($ls_key) && empty($ls_value)) {
+			if (($key !== 0 || in_array($type, ['checkbox', 'radio'])) && empty($optionKey) && empty($optionValue)) {
 				continue;
 			}
 
-			$la_options[ $ls_key ] = $ls_value;
+			$parsedOptions[ $optionKey ] = $optionValue;
 		}
 
-		return $la_options;
+		return $parsedOptions;
 	}
 
 
@@ -214,10 +214,10 @@ class FormElement extends Entity {
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnWidths)) {
-			/** @var \Awyiss\Model\Table\FormElementsTable $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get('FormElements');
-			static::$columnWidths = $lo_table->getColumnWidths();
-			static::$columnIndents = $lo_table->getColumnIndents();
+			/** @var \Awyiss\Model\Table\FormElementsTable $table */
+			$table = FactoryLocator::get('Table')->get('FormElements');
+			static::$columnWidths = $table->getColumnWidths();
+			static::$columnIndents = $table->getColumnIndents();
 		}
 
 		return [
@@ -269,9 +269,9 @@ class FormElement extends Entity {
 			return null;
 		}
 
-		$ls_identifier = Text::slug($identifier, ['replacement' => '_']);
+		$identifier = Text::slug($identifier, ['replacement' => '_']);
 
-		return mb_strtolower($ls_identifier);
+		return mb_strtolower($identifier);
 	}
 
 
@@ -297,23 +297,21 @@ class FormElement extends Entity {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function cleanTitle(string $title): string {
-		$ls_title = $title;
-
 		// If there is a <module> tag in the title, replace it with the module identifier (data-identifier attribute)
-		if (str_contains($ls_title, '<module')) {
-			$ls_title = preg_replace('/<module[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/module>/', 'Module: <em>$1</em>', $ls_title);
+		if (str_contains($title, '<module')) {
+			$title = preg_replace('/<module[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/module>/', 'Module: <em>$1</em>', $title);
 		}
 
-		$ls_title = trim(strip_tags(html_entity_decode(str_replace(['&nbsp;', '<br>'], ' ', (string)$ls_title))));
+		$title = trim(strip_tags(html_entity_decode(str_replace(['&nbsp;', '<br>'], ' ', (string)$title))));
 
 		// Multiline titles should only show the first line
-		if (str_contains($ls_title, PHP_EOL)) {
-			$ls_title = substr($ls_title, 0, strpos($ls_title, PHP_EOL));
+		if (str_contains($title, PHP_EOL)) {
+			$title = substr($title, 0, strpos($title, PHP_EOL));
 		}
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$ls_title = mb_strlen($ls_title) > 100 ? mb_substr($ls_title, 0, 100) . '...' : $ls_title;
+		$title = mb_strlen($title) > 100 ? mb_substr($title, 0, 100) . '...' : $title;
 
-		return $ls_title;
+		return $title;
 	}
 }

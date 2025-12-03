@@ -208,24 +208,24 @@ class Media extends Entity {
 	 * @return array|null Returns an array of alternative media records if found, or null otherwise.
 	 */
 	public function findAlternatives(): ?array {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('Media');
+		/** @var \Awyiss\Model\Table\MediaTable $table */
+		$table = FactoryLocator::get('Table')->get('Media');
 
-		$ls_name = $this->cleanName;
-		if (!$ls_name) {
+		$name = $this->cleanName;
+		if (!$name) {
 			return null;
 		}
 
 		// Find files with the same name but different extension or -xx pattern
-		$la_results = $lo_table->find()->where([
+		$results = $table->find()->where([
 			'id !=' => $this->id,
 			'OR' => [
-				['name LIKE' => $ls_name . '.%'],
-				['name LIKE' => $ls_name . '-__.%'],
+				['name LIKE' => $name . '.%'],
+				['name LIKE' => $name . '-__.%'],
 			],
 		])->all()->toArray();
 
-		return $la_results ?: null;
+		return $results ?: null;
 	}
 
 
@@ -233,48 +233,48 @@ class Media extends Entity {
 	 * @return void
 	 */
 	public function moveConvertedFiles(): void {
-		$ls_sourceFile = $this->originalAvifPathAbsolute;
-		if ($ls_sourceFile && is_file($ls_sourceFile)) {
-			$ls_targetFile = $this->avifPathAbsolute;
-			if ($ls_targetFile) {
-				if (!is_dir(dirname($ls_targetFile))) {
-					mkdir(dirname($ls_targetFile), 0755, true);
+		$sourceFile = $this->originalAvifPathAbsolute;
+		if ($sourceFile && is_file($sourceFile)) {
+			$targetFile = $this->avifPathAbsolute;
+			if ($targetFile) {
+				if (!is_dir(dirname($targetFile))) {
+					mkdir(dirname($targetFile), 0755, true);
 				}
 
-				rename($ls_sourceFile, $ls_targetFile);
+				rename($sourceFile, $targetFile);
 			}
 			else {
-				unlink($ls_sourceFile);
+				unlink($sourceFile);
 			}
 		}
 
-		$ls_sourceFile = $this->originalWebpPathAbsolute;
-		if ($ls_sourceFile && is_file($ls_sourceFile)) {
-			$ls_targetFile = $this->webpPathAbsolute;
-			if ($ls_targetFile) {
-				if (!is_dir(dirname($ls_targetFile))) {
-					mkdir(dirname($ls_targetFile), 0755, true);
+		$sourceFile = $this->originalWebpPathAbsolute;
+		if ($sourceFile && is_file($sourceFile)) {
+			$targetFile = $this->webpPathAbsolute;
+			if ($targetFile) {
+				if (!is_dir(dirname($targetFile))) {
+					mkdir(dirname($targetFile), 0755, true);
 				}
 
-				rename($ls_sourceFile, $ls_targetFile);
+				rename($sourceFile, $targetFile);
 			}
 			else {
-				unlink($ls_sourceFile);
+				unlink($sourceFile);
 			}
 		}
 
-		$ls_sourceFile = $this->originalPreviewPathAbsolute;
-		if ($ls_sourceFile && is_file($ls_sourceFile)) {
-			$ls_targetFile = $this->previewPathAbsolute;
-			if ($ls_targetFile) {
-				if (!is_dir(dirname($ls_targetFile))) {
-					mkdir(dirname($ls_targetFile), 0755, true);
+		$sourceFile = $this->originalPreviewPathAbsolute;
+		if ($sourceFile && is_file($sourceFile)) {
+			$targetFile = $this->previewPathAbsolute;
+			if ($targetFile) {
+				if (!is_dir(dirname($targetFile))) {
+					mkdir(dirname($targetFile), 0755, true);
 				}
 
-				rename($ls_sourceFile, $ls_targetFile);
+				rename($sourceFile, $targetFile);
 			}
 			else {
-				unlink($ls_sourceFile);
+				unlink($sourceFile);
 			}
 		}
 	}
@@ -284,20 +284,20 @@ class Media extends Entity {
 	 * @return void
 	 */
 	public function moveResizedFiles(): void {
-		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('MediaResizedImages');
-		$lo_query = $lo_table->updateQuery();
+		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $table */
+		$table = FactoryLocator::get('Table')->get('MediaResizedImages');
+		$query = $table->updateQuery();
 
-		$ls_fileName = $this->name;
-		$ls_fileName = substr($ls_fileName, 0, strrpos($ls_fileName, '.'));
-		$ls_directory = substr($this->path, 0, strrpos($this->path, DS)) . DS . '_resized' . DS;
-		$ls_directory .= $ls_fileName;
+		$fileName = $this->name;
+		$fileName = substr($fileName, 0, strrpos($fileName, '.'));
+		$directory = substr($this->path, 0, strrpos($this->path, DS)) . DS . '_resized' . DS;
+		$directory .= $fileName;
 
-		$ls_originalName = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
-		$ls_originalName = substr($ls_originalName, 0, strrpos($ls_originalName, '.'));
+		$originalName = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
+		$originalName = substr($originalName, 0, strrpos($originalName, '.'));
 
-		$ls_originalDirectory = substr($this->getOriginal('path'), 0, strrpos($this->getOriginal('path'), DS)) . DS . '_resized' . DS;
-		$ls_originalDirectory .= $ls_originalName;
+		$originalDirectory = substr($this->getOriginal('path'), 0, strrpos($this->getOriginal('path'), DS)) . DS . '_resized' . DS;
+		$originalDirectory .= $originalName;
 
 		/**
 		 * UPDATE media_resized_images SET
@@ -308,20 +308,20 @@ class Media extends Entity {
 		 * @noinspection PhpUndefinedMethodInspection
 		 * @noinspection SpellCheckingInspection
 		 */
-		$lo_query->update('media_resized_images')->set('name', $lo_query->newExpr($lo_query->func()->concat([
-			$ls_fileName,
-			$lo_query->func()->substr([
+		$query->update('media_resized_images')->set('name', $query->newExpr($query->func()->concat([
+			$fileName,
+			$query->func()->substr([
 				'name' => 'identifier',
-				mb_strlen($ls_originalName) + 1,
+				mb_strlen($originalName) + 1,
 			], [
 				null,
 				'integer',
 			]),
-		])))->set('path', $lo_query->newExpr($lo_query->func()->concat([
-			$ls_directory,
-			$lo_query->func()->substr([
+		])))->set('path', $query->newExpr($query->func()->concat([
+			$directory,
+			$query->func()->substr([
 				'path' => 'identifier',
-				mb_strlen($ls_originalDirectory) + 1,
+				mb_strlen($originalDirectory) + 1,
 			], [
 				null,
 				'integer',
@@ -329,34 +329,34 @@ class Media extends Entity {
 		])))->where(['media_id' => $this->id])->execute();
 
 		if ($this->isImage()) {
-			$ls_baseName = $this->originalCleanName ?? $this->cleanName;
+			$baseName = $this->originalCleanName ?? $this->cleanName;
 		}
 		else {
-			$ls_baseName = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
+			$baseName = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
 		}
 
-		$ls_globFileName = $ls_baseName . '-\[*\].*';
+		$globFileName = $baseName . '-\[*\].*';
 
-		$ls_path = $this->getOriginal('path');
-		$ls_path = substr($ls_path, 0, strrpos($ls_path, DS)) . DS . '_resized' . DS;
+		$path = $this->getOriginal('path');
+		$path = substr($path, 0, strrpos($path, DS)) . DS . '_resized' . DS;
 
-		$la_resizedFiles = glob(WWW_ROOT . $ls_path . $ls_globFileName);
-		if (!is_array($la_resizedFiles) || empty($la_resizedFiles)) {
+		$resizedFiles = glob(WWW_ROOT . $path . $globFileName);
+		if (!is_array($resizedFiles) || empty($resizedFiles)) {
 			return;
 		}
 
-		$ls_targetPath = $this->path;
-		$ls_targetPath = WWW_ROOT . substr($ls_targetPath, 0, strrpos($ls_targetPath, DS)) . DS . '_resized' . DS;
+		$targetPath = $this->path;
+		$targetPath = WWW_ROOT . substr($targetPath, 0, strrpos($targetPath, DS)) . DS . '_resized' . DS;
 
-		foreach ($la_resizedFiles as $ls_filePath) {
-			$ls_targetFileName = $ls_fileName . substr(basename($ls_filePath), strlen($ls_originalName));
-			$ls_targetFilePath = $ls_targetPath . $ls_targetFileName;
+		foreach ($resizedFiles as $filePath) {
+			$targetFileName = $fileName . substr(basename($filePath), strlen($originalName));
+			$targetFilePath = $targetPath . $targetFileName;
 
-			if (!is_dir($ls_targetPath)) {
-				mkdir($ls_targetPath, 0755, true);
+			if (!is_dir($targetPath)) {
+				mkdir($targetPath, 0755, true);
 			}
 
-			rename($ls_filePath, $ls_targetFilePath);
+			rename($filePath, $targetFilePath);
 		}
 	}
 
@@ -365,34 +365,34 @@ class Media extends Entity {
 	 * @return void
 	 */
 	public function deleteConvertedFiles(): void {
-		$ls_filePath = $this->previewPathAbsolute;
-		if ($ls_filePath && is_file($ls_filePath)) {
-			unlink($ls_filePath);
+		$filePath = $this->previewPathAbsolute;
+		if ($filePath && is_file($filePath)) {
+			unlink($filePath);
 		}
 
-		$ls_filePath = $this->originalPreviewPathAbsolute;
-		if ($ls_filePath && is_file($ls_filePath)) {
-			unlink($ls_filePath);
+		$filePath = $this->originalPreviewPathAbsolute;
+		if ($filePath && is_file($filePath)) {
+			unlink($filePath);
 		}
 
-		$ls_filePath = $this->avifPathAbsolute;
-		if ($ls_filePath && is_file($ls_filePath)) {
-			unlink($ls_filePath);
+		$filePath = $this->avifPathAbsolute;
+		if ($filePath && is_file($filePath)) {
+			unlink($filePath);
 		}
 
-		$ls_filePath = $this->originalAvifPathAbsolute;
-		if ($ls_filePath && is_file($ls_filePath)) {
-			unlink($ls_filePath);
+		$filePath = $this->originalAvifPathAbsolute;
+		if ($filePath && is_file($filePath)) {
+			unlink($filePath);
 		}
 
-		$ls_filePath = $this->webpPathAbsolute;
-		if ($ls_filePath && is_file($ls_filePath)) {
-			unlink($ls_filePath);
+		$filePath = $this->webpPathAbsolute;
+		if ($filePath && is_file($filePath)) {
+			unlink($filePath);
 		}
 
-		$ls_filePath = $this->originalWebpPathAbsolute;
-		if ($ls_filePath && is_file($ls_filePath)) {
-			unlink($ls_filePath);
+		$filePath = $this->originalWebpPathAbsolute;
+		if ($filePath && is_file($filePath)) {
+			unlink($filePath);
 		}
 	}
 
@@ -401,22 +401,22 @@ class Media extends Entity {
 	 * @return void
 	 */
 	public function deleteResizedFiles(): void {
-		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('MediaResizedImages');
-		$lo_table->deleteAll([
+		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $table */
+		$table = FactoryLocator::get('Table')->get('MediaResizedImages');
+		$table->deleteAll([
 			'media_id' => $this->id,
 		]);
 
-		$ls_baseName = $this->isImage() ? $this->cleanName : $this->name;
+		$baseName = $this->isImage() ? $this->cleanName : $this->name;
 
-		$ls_name = $ls_baseName . '-\[*\].*';
+		$name = $baseName . '-\[*\].*';
 
-		$ls_path = $this->path;
-		$ls_path = substr($ls_path, 0, strrpos($ls_path, DS)) . DS . '_resized' . DS . $ls_name;
+		$path = $this->path;
+		$path = substr($path, 0, strrpos($path, DS)) . DS . '_resized' . DS . $name;
 
-		$la_resizedFiles = glob(WWW_ROOT . $ls_path);
-		if (is_array($la_resizedFiles) && !empty($la_resizedFiles)) {
-			array_map('unlink', $la_resizedFiles);
+		$resizedFiles = glob(WWW_ROOT . $path);
+		if (is_array($resizedFiles) && !empty($resizedFiles)) {
+			array_map('unlink', $resizedFiles);
 		}
 	}
 
@@ -453,14 +453,14 @@ class Media extends Entity {
 			return null;
 		}
 
-		$li_dotPos = strrpos($this->name, '.');
+		$dotPos = strrpos($this->name, '.');
 
-		if (!$li_dotPos) {
+		if (!$dotPos) {
 			return $this->name;
 		}
 
 
-		return substr($this->name, 0, $li_dotPos);
+		return substr($this->name, 0, $dotPos);
 	}
 
 
@@ -472,14 +472,14 @@ class Media extends Entity {
 			return null;
 		}
 
-		$li_dotPos = strrpos($this->getOriginal('name'), '.');
+		$dotPos = strrpos($this->getOriginal('name'), '.');
 
-		if (!$li_dotPos) {
+		if (!$dotPos) {
 			return $this->getOriginal('name');
 		}
 
 
-		return substr($this->getOriginal('name'), 0, $li_dotPos);
+		return substr($this->getOriginal('name'), 0, $dotPos);
 	}
 
 
@@ -491,14 +491,14 @@ class Media extends Entity {
 			return null;
 		}
 
-		$li_dotPos = strrpos($this->name, '.');
+		$dotPos = strrpos($this->name, '.');
 
-		if (!$li_dotPos) {
+		if (!$dotPos) {
 			return null;
 		}
 
 
-		return substr($this->name, $li_dotPos + 1);
+		return substr($this->name, $dotPos + 1);
 	}
 
 
@@ -510,14 +510,14 @@ class Media extends Entity {
 			return null;
 		}
 
-		$li_dotPos = strrpos($this->getOriginal('name'), '.');
+		$dotPos = strrpos($this->getOriginal('name'), '.');
 
-		if (!$li_dotPos) {
+		if (!$dotPos) {
 			return null;
 		}
 
 
-		return substr($this->getOriginal('name'), $li_dotPos + 1);
+		return substr($this->getOriginal('name'), $dotPos + 1);
 	}
 
 
@@ -577,11 +577,11 @@ class Media extends Entity {
 			return null;
 		}
 
-		$ls_previewPath = substr($this->path, 0, -strlen($this->name));
-		$ls_previewPath .= '_' . $this->extension . '_preview';
+		$previewPath = substr($this->path, 0, -strlen($this->name));
+		$previewPath .= '_' . $this->extension . '_preview';
 
 
-		return $ls_previewPath . DS . $this->previewName;
+		return $previewPath . DS . $this->previewName;
 	}
 
 
@@ -593,12 +593,12 @@ class Media extends Entity {
 			return null;
 		}
 
-		$ls_name = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
-		$ls_previewPath = substr($this->getOriginal('path'), 0, -strlen($ls_name));
-		$ls_previewPath .= '_' . ($this->originalExtension ?? $this->extension) . '_preview';
+		$name = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
+		$previewPath = substr($this->getOriginal('path'), 0, -strlen($name));
+		$previewPath .= '_' . ($this->originalExtension ?? $this->extension) . '_preview';
 
 
-		return $ls_previewPath . DS . ($this->originalPreviewName ?? $this->previewName);
+		return $previewPath . DS . ($this->originalPreviewName ?? $this->previewName);
 	}
 
 
@@ -658,11 +658,11 @@ class Media extends Entity {
 			return null;
 		}
 
-		$ls_avifPath = substr($this->path, 0, -strlen($this->name));
-		$ls_avifPath .= '_avif';
+		$avifPath = substr($this->path, 0, -strlen($this->name));
+		$avifPath .= '_avif';
 
 
-		return $ls_avifPath . DS . $this->avifName;
+		return $avifPath . DS . $this->avifName;
 	}
 
 
@@ -680,11 +680,11 @@ class Media extends Entity {
 			return null;
 		}
 
-		$ls_name = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
-		$ls_avifPath = substr($this->getOriginal('path'), 0, -strlen($ls_name));
-		$ls_avifPath .= '_avif';
+		$name = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
+		$avifPath = substr($this->getOriginal('path'), 0, -strlen($name));
+		$avifPath .= '_avif';
 
-		return $ls_avifPath . DS . ($this->originalAvifName ?? $this->avifName);
+		return $avifPath . DS . ($this->originalAvifName ?? $this->avifName);
 	}
 
 
@@ -692,13 +692,13 @@ class Media extends Entity {
 	 * @return string|null
 	 */
 	protected function _getAvifPathAbsolute(): ?string {
-		$ls_avifPath = $this->avifPath;
+		$avifPath = $this->avifPath;
 
-		if (!$ls_avifPath) {
+		if (!$avifPath) {
 			return null;
 		}
 
-		return WWW_ROOT . str_replace('/', DS, $ls_avifPath);
+		return WWW_ROOT . str_replace('/', DS, $avifPath);
 	}
 
 
@@ -706,13 +706,13 @@ class Media extends Entity {
 	 * @return string|null
 	 */
 	protected function _getOriginalAvifPathAbsolute(): ?string {
-		$ls_originalAvifPath = $this->originalAvifPath;
+		$originalAvifPath = $this->originalAvifPath;
 
-		if (!$ls_originalAvifPath) {
+		if (!$originalAvifPath) {
 			return null;
 		}
 
-		return WWW_ROOT . str_replace('/', DS, $ls_originalAvifPath);
+		return WWW_ROOT . str_replace('/', DS, $originalAvifPath);
 	}
 
 
@@ -748,11 +748,11 @@ class Media extends Entity {
 			return null;
 		}
 
-		$ls_webpPath = substr($this->path, 0, -strlen($this->name));
-		$ls_webpPath .= '_webp';
+		$webpPath = substr($this->path, 0, -strlen($this->name));
+		$webpPath .= '_webp';
 
 
-		return $ls_webpPath . DS . $this->webpName;
+		return $webpPath . DS . $this->webpName;
 	}
 
 
@@ -770,11 +770,11 @@ class Media extends Entity {
 			return null;
 		}
 
-		$ls_name = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
-		$ls_webpPath = substr($this->getOriginal('path'), 0, -strlen($ls_name));
-		$ls_webpPath .= '_webp';
+		$name = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
+		$webpPath = substr($this->getOriginal('path'), 0, -strlen($name));
+		$webpPath .= '_webp';
 
-		return $ls_webpPath . DS . ($this->originalWebpName ?? $this->webpName);
+		return $webpPath . DS . ($this->originalWebpName ?? $this->webpName);
 	}
 
 
@@ -782,13 +782,13 @@ class Media extends Entity {
 	 * @return string|null
 	 */
 	protected function _getWebpPathAbsolute(): ?string {
-		$ls_webpPath = $this->webpPath;
+		$webpPath = $this->webpPath;
 
-		if (!$ls_webpPath) {
+		if (!$webpPath) {
 			return null;
 		}
 
-		return WWW_ROOT . str_replace('/', DS, $ls_webpPath);
+		return WWW_ROOT . str_replace('/', DS, $webpPath);
 	}
 
 
@@ -796,13 +796,13 @@ class Media extends Entity {
 	 * @return string|null
 	 */
 	protected function _getOriginalWebpPathAbsolute(): ?string {
-		$ls_originalWebpPath = $this->originalWebpPath;
+		$originalWebpPath = $this->originalWebpPath;
 
-		if (!$ls_originalWebpPath) {
+		if (!$originalWebpPath) {
 			return null;
 		}
 
-		return WWW_ROOT . str_replace('/', DS, $ls_originalWebpPath);
+		return WWW_ROOT . str_replace('/', DS, $originalWebpPath);
 	}
 
 
@@ -811,13 +811,13 @@ class Media extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	protected function _getFilemtime(): ?int {
-		$ls_path = $this->pathAbsolute;
+		$path = $this->pathAbsolute;
 
-		if (!$ls_path || !file_exists($ls_path)) {
+		if (!$path || !file_exists($path)) {
 			return null;
 		}
 
-		return filemtime($ls_path);
+		return filemtime($path);
 	}
 
 
@@ -826,13 +826,13 @@ class Media extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	protected function _getPreviewFilemtime(): ?int {
-		$ls_path = $this->previewPathAbsolute;
+		$path = $this->previewPathAbsolute;
 
-		if (!$ls_path || !file_exists($ls_path)) {
+		if (!$path || !file_exists($path)) {
 			return null;
 		}
 
-		return filemtime($ls_path);
+		return filemtime($path);
 	}
 
 
@@ -864,16 +864,16 @@ class Media extends Entity {
 		}
 
 		//Get rid of all chained file suffixes, like ".foo.bar" in filename.foo.bar.jpg
-		$la_parts = explode('.', $path);
-		$ls_extension = count($la_parts) > 1 ? end($la_parts) : null;
+		$parts = explode('.', $path);
+		$extension = count($parts) > 1 ? end($parts) : null;
 
-		$ls_path = Text::slug($la_parts[0]);
+		$path = Text::slug($parts[0]);
 
-		if ($ls_extension) {
-			$ls_path .= '.' . $ls_extension;
+		if ($extension) {
+			$path .= '.' . $extension;
 		}
 
 
-		return mb_strtolower($ls_path);
+		return mb_strtolower($path);
 	}
 }

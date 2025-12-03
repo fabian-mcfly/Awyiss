@@ -18,7 +18,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $table */
@@ -35,7 +34,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new MediaResizedImage();
@@ -61,7 +59,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new MediaResizedImage();
@@ -73,7 +70,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::_getExtension()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtensionVirtualPropertyWithValidName(): void {
 		$entity = new MediaResizedImage(['name' => 'image.jpg']);
@@ -87,7 +83,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::_getExtension()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtensionVirtualPropertyWithMultipleDots(): void {
 		$entity = new MediaResizedImage(['name' => 'my.image.file.png']);
@@ -101,7 +96,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::_getExtension()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtensionVirtualPropertyWithNoExtension(): void {
 		$entity = new MediaResizedImage(['name' => 'filename']);
@@ -115,7 +109,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::_getExtension()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testExtensionVirtualPropertyWithNullName(): void {
 		$entity = new MediaResizedImage(['name' => null]);
@@ -129,7 +122,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::_getPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPathAbsoluteVirtualPropertyWithValidPath(): void {
 		$entity = new MediaResizedImage(['path' => 'media/images/test.jpg']);
@@ -144,7 +136,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::_getPathAbsolute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPathAbsoluteVirtualPropertyWithNullPath(): void {
 		$entity = new MediaResizedImage(['path' => null]);
@@ -158,7 +149,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -192,7 +182,6 @@ class MediaResizedImageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaResizedImage::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

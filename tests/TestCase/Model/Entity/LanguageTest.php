@@ -19,7 +19,6 @@ class LanguageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Language::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\LanguagesTable $table */
@@ -36,7 +35,6 @@ class LanguageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Language::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Language();
@@ -62,7 +60,6 @@ class LanguageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Language
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -98,7 +95,6 @@ class LanguageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Language::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
@@ -119,7 +115,6 @@ class LanguageTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Language::$defaultValues
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		/** @var \Awyiss\Model\Table\LanguagesTable $table */

@@ -18,7 +18,6 @@ class ThirdPartyConsentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ThirdPartyConsent::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\ThirdPartyConsentsTable $table */
@@ -35,7 +34,6 @@ class ThirdPartyConsentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ThirdPartyConsent::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new ThirdPartyConsent();
@@ -56,7 +54,6 @@ class ThirdPartyConsentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ThirdPartyConsent
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -82,7 +79,6 @@ class ThirdPartyConsentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ThirdPartyConsent::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

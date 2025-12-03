@@ -18,7 +18,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\UserConfigurationTable $table */
@@ -35,7 +34,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new UserConfiguration();
@@ -56,7 +54,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new UserConfiguration();
@@ -68,7 +65,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testScopeCleaningViaPropertyAssignment(): void {
@@ -94,7 +90,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeCleaningViaSetMethod(): void {
 		$entity = new UserConfiguration();
@@ -120,7 +115,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -146,7 +140,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new UserConfiguration();
@@ -172,7 +165,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::_setValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testValueCleaningViaPropertyAssignment(): void {
@@ -201,7 +193,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::_setValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValueCleaningViaSetMethod(): void {
 		$entity = new UserConfiguration();
@@ -231,7 +222,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::_getPrintableValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrintableValueVirtualProperty(): void {
 		$entity = new UserConfiguration([
@@ -250,7 +240,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::$defaultValues
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		/** @var \Awyiss\Model\Table\UserConfigurationTable $table */
@@ -264,7 +253,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -289,7 +277,6 @@ class UserConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UserConfiguration::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

@@ -22,7 +22,6 @@ class DashboardElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\DashboardElement::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\DashboardElementsTable $table */
@@ -39,7 +38,6 @@ class DashboardElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\DashboardElement::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new DashboardElement();
@@ -62,7 +60,6 @@ class DashboardElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\DashboardElement::_setAccess()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testAccessCleaningViaPropertyAssignment(): void {
@@ -88,7 +85,6 @@ class DashboardElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\DashboardElement::_setAccess()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessCleaningViaSetMethod(): void {
 		$entity = new DashboardElement();
@@ -114,7 +110,6 @@ class DashboardElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\DashboardElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -144,7 +139,6 @@ class DashboardElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\DashboardElement::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

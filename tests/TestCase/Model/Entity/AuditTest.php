@@ -18,7 +18,6 @@ class AuditTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Audit::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\AuditTable $table */
@@ -35,7 +34,6 @@ class AuditTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Audit::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Audit();
@@ -61,7 +59,6 @@ class AuditTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Audit
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -95,7 +92,6 @@ class AuditTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Audit::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

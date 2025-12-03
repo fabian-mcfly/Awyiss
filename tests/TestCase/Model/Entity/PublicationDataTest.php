@@ -20,7 +20,6 @@ class PublicationDataTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PublicationData::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\PublicationDataTable $table */
@@ -37,7 +36,6 @@ class PublicationDataTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PublicationData::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new PublicationData();
@@ -58,7 +56,6 @@ class PublicationDataTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PublicationData
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$dateTime = new DateTime('2023-12-25 10:30:00');
@@ -83,7 +80,6 @@ class PublicationDataTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PublicationData::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
@@ -103,7 +99,6 @@ class PublicationDataTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PublicationData
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityWithPublicationStartType(): void {
 		$entity = new PublicationData([
@@ -123,7 +118,6 @@ class PublicationDataTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PublicationData
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityWithPublicationEndType(): void {
 		$entity = new PublicationData([
@@ -143,7 +137,6 @@ class PublicationDataTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PublicationData
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityWithNullDateTime(): void {
 		$entity = new PublicationData([

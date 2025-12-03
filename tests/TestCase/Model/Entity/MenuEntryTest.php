@@ -18,7 +18,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $table */
@@ -35,7 +34,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new MenuEntry();
@@ -60,7 +58,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildren(): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $table */
@@ -78,7 +75,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildren(): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $table */
@@ -96,7 +92,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParent(): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $table */
@@ -114,7 +109,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithNoParent(): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $table */
@@ -131,7 +125,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParents(): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $table */
@@ -149,7 +142,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentsWithNoParents(): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $table */
@@ -166,7 +158,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -200,7 +191,6 @@ class MenuEntryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MenuEntry::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

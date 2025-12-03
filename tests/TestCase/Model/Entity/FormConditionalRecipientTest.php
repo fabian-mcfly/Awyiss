@@ -18,7 +18,6 @@ class FormConditionalRecipientTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormConditionalRecipient::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\FormConditionalRecipientsTable $table */
@@ -35,7 +34,6 @@ class FormConditionalRecipientTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormConditionalRecipient::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new FormConditionalRecipient();
@@ -59,7 +57,6 @@ class FormConditionalRecipientTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormConditionalRecipient::$defaultValues
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		/** @var \Awyiss\Model\Table\FormConditionalRecipientsTable $table */
@@ -73,7 +70,6 @@ class FormConditionalRecipientTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormConditionalRecipient
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -111,7 +107,6 @@ class FormConditionalRecipientTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormConditionalRecipient
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstructionWithDifferentOperators(): void {
 		$properties = [
@@ -141,7 +136,6 @@ class FormConditionalRecipientTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormConditionalRecipient
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstructionWithBccType(): void {
 		$properties = [
@@ -171,7 +165,6 @@ class FormConditionalRecipientTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormConditionalRecipient
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstructionWithNotEqualsOperator(): void {
 		$properties = [
@@ -201,7 +194,6 @@ class FormConditionalRecipientTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormConditionalRecipient::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

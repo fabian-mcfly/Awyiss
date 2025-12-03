@@ -18,7 +18,6 @@ class ContentTemplateContentAreaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\ContentTemplateContentAreasTable $table */
@@ -35,7 +34,6 @@ class ContentTemplateContentAreaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new ContentTemplateContentArea();
@@ -55,7 +53,6 @@ class ContentTemplateContentAreaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new ContentTemplateContentArea();
@@ -67,7 +64,6 @@ class ContentTemplateContentAreaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -89,7 +85,6 @@ class ContentTemplateContentAreaTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\ContentTemplateContentArea::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

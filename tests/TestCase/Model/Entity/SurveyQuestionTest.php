@@ -19,7 +19,6 @@ class SurveyQuestionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveyQuestion::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\SurveyQuestionsTable $table */
@@ -36,7 +35,6 @@ class SurveyQuestionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveyQuestion::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new SurveyQuestion();
@@ -58,7 +56,6 @@ class SurveyQuestionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveyQuestion
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -88,7 +85,6 @@ class SurveyQuestionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveyQuestion::$defaultValues
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		/** @var \Awyiss\Model\Table\SurveyQuestionsTable $table */
@@ -102,7 +98,6 @@ class SurveyQuestionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\SurveyQuestion::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

@@ -24,7 +24,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -41,7 +40,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Form();
@@ -81,7 +79,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::$defaultValues
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -95,7 +92,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -130,7 +126,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new Form();
@@ -165,7 +160,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -227,7 +221,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
@@ -260,7 +253,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::setFormData()
 	 * @see \Awyiss\Model\Entity\Form::getFormData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormDataHandling(): void {
 		$entity = new Form();
@@ -283,7 +275,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::submitted()
 	 * @see \Awyiss\Model\Entity\Form::isSubmitted()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormSubmissionState(): void {
 		$entity = new Form();
@@ -305,7 +296,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::getValidator()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetValidator(): void {
 		$entity = new Form();
@@ -319,7 +309,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::isValid()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsValidWithNoErrors(): void {
 		$entity = new Form();
@@ -331,7 +320,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::isValid()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsValidWithErrors(): void {
 		$entity = new Form();
@@ -345,7 +333,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::loadFormOptions()
 	 * @see \Awyiss\Model\Entity\Form::getFormOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadFormOptionsWithDefaultFormOptions(): void {
 		$entity = new Form(['identifier' => 'nonexistent_form']);
@@ -360,7 +347,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::loadFormOptions()
 	 * @see \Awyiss\Model\Entity\Form::getFormOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadFormOptionsWithCustomFormOptions(): void {
 		$entity = new Form(['identifier' => 'contact4']);
@@ -377,7 +363,6 @@ class FormTest extends TestCase {
 	 * @see \Awyiss\Model\Entity\Form::getFormElements()
 	 * @see \Awyiss\Model\Entity\Form::getFormElementsChecksum()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadFormElementsWithRealData(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -402,7 +387,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::loadFormElements()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadFormElementsWithNoElements(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -422,7 +406,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::loadFormElements()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadFormElementsInPreviewMode(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -443,7 +426,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::initialize()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -465,7 +447,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::initialize()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeWithPageObject(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -490,7 +471,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::loadFormElements()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadFormElementsWithLanguageSpecificOptions(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -528,7 +508,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::validate()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithFormSubmissionFlow(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -564,7 +543,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::getFormData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormDataRetrievalWithComplexData(): void {
 		$entity = new Form();
@@ -595,7 +573,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::loadFormOptions()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormOptionsModifyFormElement(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -624,7 +601,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::validate()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithMissingRequiredFields(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -670,7 +646,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::validate()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithInvalidEmailFormat(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -702,7 +677,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::getFormElementsChecksum()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormElementsChecksumConsistency(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -727,7 +701,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormWithMultistepConfiguration(): void {
 		// Create a form entity to test multistep functionality
@@ -746,7 +719,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormWithConditionalRecipientsStrategy(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -761,7 +733,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormWithDifferentTransportProfiles(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -784,7 +755,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::validate()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithMultipleChoiceFields(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -818,7 +788,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::validate()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithProtectionMethod(): void {
 		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['hidden_input']);
@@ -852,7 +821,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::validate()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithProtectionMethodFailure(): void {
 		Configure::write('Awyiss.Forms.Frontend.protection.methods', ['hidden_input']);
@@ -889,7 +857,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new Form();
@@ -901,7 +868,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormProgressDataHandling(): void {
 		$entity = new Form();
@@ -925,7 +891,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::loadFormOptions()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormOptionsModifyFormIntegration(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -950,7 +915,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::loadFormOptions()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormOptionsSetConditionalRecipient(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -972,7 +936,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFormWithConditionalRecipientsConfiguration(): void {
 		// Test various conditional recipients strategies
@@ -999,7 +962,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::initialize()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeWithProtectionMethodsConfiguration(): void {
 		Configure::write('Awyiss.Forms.Frontend.protection.methods', [
@@ -1036,7 +998,6 @@ class FormTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::loadFormElements()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadFormElementsWithThreadedStructure(): void {
 		/** @var \Awyiss\Model\Table\FormsTable $table */
@@ -1058,7 +1019,6 @@ class FormTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Form::getValidator()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetValidatorConfiguration(): void {
 		$entity = new Form();

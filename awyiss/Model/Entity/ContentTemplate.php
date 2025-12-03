@@ -68,9 +68,9 @@ class ContentTemplate extends Entity {
 			return null;
 		}
 
-		$ls_fileName = Text::slug($fileName, ['replacement' => '_']);
+		$fileName = Text::slug($fileName, ['replacement' => '_']);
 
 
-		return mb_strtolower($ls_fileName);
+		return mb_strtolower($fileName);
 	}
 }

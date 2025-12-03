@@ -18,7 +18,6 @@ class UrlHistoryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlHistory::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\UrlHistoryTable $table */
@@ -35,7 +34,6 @@ class UrlHistoryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlHistory::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new UrlHistory();
@@ -57,7 +55,6 @@ class UrlHistoryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlHistory::_setStatus()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testStatusCleaningViaPropertyAssignment(): void {
@@ -86,7 +83,6 @@ class UrlHistoryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlHistory::_setStatus()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testStatusCleaningViaSetMethod(): void {
 		$entity = new UrlHistory();
@@ -115,7 +111,6 @@ class UrlHistoryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlHistory
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -141,7 +136,6 @@ class UrlHistoryTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\UrlHistory::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = ['foreign_key' => 456];

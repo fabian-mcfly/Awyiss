@@ -19,7 +19,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\ContentsTable $table */
@@ -36,7 +35,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Content();
@@ -75,7 +73,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new Content();
@@ -87,7 +84,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_setColumnLast()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testColumnLastCleaningViaPropertyAssignment(): void {
@@ -107,7 +103,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_setColumnLast()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnLastCleaningViaSetMethod(): void {
 		$entity = new Content();
@@ -127,7 +122,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_setColumnRtl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testColumnRtlCleaningViaPropertyAssignment(): void {
@@ -147,7 +141,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_setColumnRtl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnRtlCleaningViaSetMethod(): void {
 		$entity = new Content();
@@ -167,7 +160,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_setData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testDataCleaningViaPropertyAssignment(): void {
@@ -187,7 +179,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_setData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDataCleaningViaSetMethod(): void {
 		$entity = new Content();
@@ -207,7 +198,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualProperty(): void {
 		$entity = new Content(['columnWidth' => '2/5', 'columnIndent' => '3/5']);
@@ -225,7 +215,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_getColumn()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnVirtualPropertyWithInvalidWidthAndIndent(): void {
 		$entity = new Content(['columnWidth' => 'invalid-width', 'columnIndent' => 'invalid-indent']);
@@ -243,7 +232,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithTitle(): void {
 		$entity = new Content(['title' => 'Test Content Title']);
@@ -257,7 +245,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithSubtitle(): void {
 		$entity = new Content(['subtitle' => 'Test Content Subtitle']);
@@ -271,7 +258,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithText(): void {
 		$entity = new Content(['text' => '<p>Test Content Text</p>']);
@@ -285,7 +271,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithCssClass(): void {
 		$entity = new Content(['cssClass' => 'test-class']);
@@ -299,7 +284,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyFallbackToDefault(): void {
 		$entity = new Content();
@@ -314,7 +298,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithInactiveContent(): void {
 		$entity = new Content(['title' => 'Test Content', 'active' => false]);
@@ -329,7 +312,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildren(): void {
 		/** @var \Awyiss\Model\Table\ContentsTable $table */
@@ -347,7 +329,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildren(): void {
 		/** @var \Awyiss\Model\Table\ContentsTable $table */
@@ -365,7 +346,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParent(): void {
 		/** @var \Awyiss\Model\Table\ContentsTable $table */
@@ -383,7 +363,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithNoParent(): void {
 		/** @var \Awyiss\Model\Table\ContentsTable $table */
@@ -400,7 +379,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParents(): void {
 		/** @var \Awyiss\Model\Table\ContentsTable $table */
@@ -418,7 +396,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -478,7 +455,6 @@ class ContentTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Content::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

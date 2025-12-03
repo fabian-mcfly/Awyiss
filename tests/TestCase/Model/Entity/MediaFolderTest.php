@@ -18,7 +18,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
@@ -35,7 +34,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new MediaFolder();
@@ -59,7 +57,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::_setPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testPathCleaningViaPropertyAssignment(): void {
@@ -94,7 +91,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::_setPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPathCleaningViaSetMethod(): void {
 		$entity = new MediaFolder();
@@ -129,7 +125,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::_setPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPathCleaningSkippedWhenDeleted(): void {
 		$entity = new MediaFolder(['deleted' => true]);
@@ -143,7 +138,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::getChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildren(): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
@@ -161,7 +155,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::getNestedChildren()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedChildren(): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
@@ -179,7 +172,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParent(): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
@@ -197,7 +189,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::getParent()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithNoParent(): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
@@ -214,7 +205,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParents(): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
@@ -232,7 +222,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::getParents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _testGetParentsWithNoParents(): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $table */
@@ -249,7 +238,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -283,7 +271,6 @@ class MediaFolderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\MediaFolder::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

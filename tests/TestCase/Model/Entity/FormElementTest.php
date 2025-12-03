@@ -18,7 +18,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\FormElementsTable $table */
@@ -35,7 +34,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new FormElement();
@@ -69,7 +67,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -121,7 +118,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstructionWithTextFormElement(): void {
 		$properties = [
@@ -163,7 +159,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstructionWithSelectFormElement(): void {
 		$properties = [
@@ -203,7 +198,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstructionWithTextareaFormElement(): void {
 		$properties = [
@@ -234,7 +228,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstructionWithFileFormElement(): void {
 		$properties = [
@@ -263,7 +256,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstructionWithFreeTextFormElement(): void {
 		$properties = [
@@ -295,7 +287,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstructionWithInactiveFormElement(): void {
 		$properties = [
@@ -318,7 +309,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
@@ -345,7 +335,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildrenWithTestData(): void {
 		/** @var \Awyiss\Model\Table\FormElementsTable $table */
@@ -382,7 +371,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetChildrenWithNoChildren(): void {
 		/** @var \Awyiss\Model\Table\FormElementsTable $table */
@@ -400,7 +388,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithTestData(): void {
 		/** @var \Awyiss\Model\Table\FormElementsTable $table */
@@ -420,7 +407,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetParentWithNoParent(): void {
 		/** @var \Awyiss\Model\Table\FormElementsTable $table */
@@ -437,7 +423,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithFreeTextBasic(): void {
 		$entity = new FormElement([
@@ -454,7 +439,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithFreeTextModuleTags(): void {
 		$entity = new FormElement([
@@ -471,7 +455,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithFreeTextHtmlEntities(): void {
 		$entity = new FormElement([
@@ -488,7 +471,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithFreeTextMultiline(): void {
 		$entity = new FormElement([
@@ -505,7 +487,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithFreeTextLongContent(): void {
 		$longText = str_repeat('This is a very long text that should be truncated. ', 10);
@@ -524,7 +505,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithFreeTextComplexHtml(): void {
 		$entity = new FormElement([
@@ -541,7 +521,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithFreeTextEmptyContent(): void {
 		$entity = new FormElement([
@@ -558,7 +537,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithFreeTextNullContent(): void {
 		$entity = new FormElement([
@@ -575,7 +553,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithFreeTextResponsiveImage(): void {
 		$entity = new FormElement([
@@ -592,7 +569,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithNonFreeTextFallsBackToParent(): void {
 		$entity = new FormElement([
@@ -609,7 +585,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_setColumnLast()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testColumnLastCleaningViaPropertyAssignment(): void {
@@ -629,7 +604,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_setColumnLast()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnLastCleaningViaSetMethod(): void {
 		$entity = new FormElement();
@@ -649,7 +623,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_setColumnRtl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testColumnRtlCleaningViaPropertyAssignment(): void {
@@ -669,7 +642,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_setColumnRtl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testColumnRtlCleaningViaSetMethod(): void {
 		$entity = new FormElement();
@@ -689,7 +661,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -724,7 +695,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new FormElement();
@@ -759,7 +729,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_setOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testOptionsCleaningViaPropertyAssignment(): void {
@@ -779,7 +748,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_setOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOptionsCleaningViaSetMethod(): void {
 		$entity = new FormElement();
@@ -799,7 +767,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithNullOptions(): void {
 		$entity = new FormElement();
@@ -813,7 +780,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithEmptyOptions(): void {
 		$entity = new FormElement();
@@ -827,7 +793,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithBasicOptions(): void {
 		$entity = new FormElement();
@@ -848,7 +813,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithTranslations(): void {
 		$entity = new FormElement();
@@ -869,7 +833,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithMissingKeys(): void {
 		$entity = new FormElement();
@@ -890,7 +853,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithEmptyKeyValueForFirstOption(): void {
 		$entity = new FormElement();
@@ -911,7 +873,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithEmptyKeyValueSkippedForCheckboxRadio(): void {
 		$entity = new FormElement();
@@ -936,7 +897,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithEmptyKeyValueSkippedForNonFirstOptions(): void {
 		$entity = new FormElement();
@@ -958,7 +918,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithRealSelectData(): void {
 		/** @var \Awyiss\Model\Table\FormElementsTable $table */
@@ -982,7 +941,6 @@ class FormElementTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::parseOptions()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseOptionsWithRealSelectDataSpanishTranslation(): void {
 		/** @var \Awyiss\Model\Table\FormElementsTable $table */

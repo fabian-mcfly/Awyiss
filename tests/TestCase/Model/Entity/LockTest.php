@@ -24,7 +24,6 @@ class LockTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -52,7 +51,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\LocksTable $table */
@@ -69,7 +67,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Lock();
@@ -89,7 +86,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testScopeCleaningViaPropertyAssignment(): void {
@@ -124,7 +120,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeCleaningViaSetMethod(): void {
 		$entity = new Lock();
@@ -159,7 +154,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -185,7 +179,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
@@ -205,7 +198,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock::isOwnLock()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsOwnLockWithMatchingUserAndSession(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -227,7 +219,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock::isOwnLock()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsOwnLockWithDifferentUser(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -249,7 +240,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock::isOwnLock()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsOwnLockWithDifferentUniqueId(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -271,7 +261,6 @@ class LockTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Lock::isOwnLock()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsOwnLockWithNoAuthentication(): void {
 		// Create a session and set the lock identifier

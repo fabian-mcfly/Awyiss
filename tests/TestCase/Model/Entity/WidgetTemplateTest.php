@@ -18,7 +18,6 @@ class WidgetTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplate::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\WidgetTemplatesTable $table */
@@ -35,7 +34,6 @@ class WidgetTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplate::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new WidgetTemplate();
@@ -59,7 +57,6 @@ class WidgetTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplate::_setFileName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testFileNameCleaningViaPropertyAssignment(): void {
@@ -88,7 +85,6 @@ class WidgetTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplate::_setFileName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFileNameCleaningViaSetMethod(): void {
 		$entity = new WidgetTemplate();
@@ -117,7 +113,6 @@ class WidgetTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -145,7 +140,6 @@ class WidgetTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\WidgetTemplate::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

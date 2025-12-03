@@ -48,21 +48,21 @@ class Lock extends Entity {
 	 * @return bool
 	 */
 	public function isOwnLock(): bool {
-		$lo_identity = $this->getIdentity();
-		$lo_session = Router::getRequest()->getSession();
+		$identity = $this->getIdentity();
+		$session = Router::getRequest()->getSession();
 
-		if ($lo_identity === null) {
+		if ($identity === null) {
 			return false;
 		}
 
-		$lb_sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
+		$sessionBased = Configure::read('Awyiss.System.Backend.lock.sessionBased', true);
 
-		if ($lb_sessionBased) {
-			return $this->createdBy === $lo_identity->getIdentifier() &&
-			   $this->uniqueId === $lo_session->read('Backend.lockIdentifier');
+		if ($sessionBased) {
+			return $this->createdBy === $identity->getIdentifier() &&
+			   $this->uniqueId === $session->read('Backend.lockIdentifier');
 		}
 
-		return $this->createdBy === $lo_identity->getIdentifier();
+		return $this->createdBy === $identity->getIdentifier();
 	}
 
 

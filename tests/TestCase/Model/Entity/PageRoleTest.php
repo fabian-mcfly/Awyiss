@@ -18,7 +18,6 @@ class PageRoleTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageRole::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\PageRolesTable $table */
@@ -35,7 +34,6 @@ class PageRoleTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageRole::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new PageRole();
@@ -57,7 +55,6 @@ class PageRoleTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageRole::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -95,7 +92,6 @@ class PageRoleTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageRole::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new PageRole();
@@ -133,7 +129,6 @@ class PageRoleTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageRole
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -161,7 +156,6 @@ class PageRoleTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\PageRole::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

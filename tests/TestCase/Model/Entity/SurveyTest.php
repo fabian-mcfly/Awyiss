@@ -25,7 +25,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -42,7 +41,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Survey();
@@ -67,7 +65,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::$defaultValues
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -82,7 +79,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -114,7 +110,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
@@ -137,7 +132,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -166,7 +160,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new Survey();
@@ -195,7 +188,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeLoadsQuestions(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -217,7 +209,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSetsProgress(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -251,7 +242,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeWithPreviewLoadsInactiveQuestions(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -270,7 +260,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeWithPreviewLoadsInactiveAnswers(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -290,7 +279,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getCurrentAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCurrentAction(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -308,7 +296,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getCurrentAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCurrentActionWithProgress(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -334,7 +321,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getCurrentAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCurrentActionWithoutQuestions(): void {
 		$entity = new Survey();
@@ -346,7 +332,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setCurrentAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetCurrentActionWithValidQuestion(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -368,7 +353,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setCurrentAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetCurrentActionWithInvalidQuestion(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -391,7 +375,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setCurrentAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetCurrentActionWithValidEnum(): void {
 		$entity = new Survey();
@@ -407,7 +390,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setCurrentAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetCurrentActionWithInvalidEnum(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -426,7 +408,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setCurrentAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetCurrentActionWithNull(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -448,7 +429,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setCurrentAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetCurrentActionWithFalse(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -469,7 +449,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getNextAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNextAction(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -490,7 +469,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getNextAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNextActionWithProgress(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -512,7 +490,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getNextAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNextActionWithProgressLast(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -538,7 +515,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getNextAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNextActionWithProgressEnd(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -565,7 +541,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getNextAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNextActionWithQuestionNextAction(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -594,7 +569,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getNextAction()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNextActionWithAnswerNextAction(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -638,7 +612,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::hasCycle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasCycleFalse(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -662,7 +635,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::hasCycle()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasCycleTrue(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -693,7 +665,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::buildQuestionsGraph()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildQuestionsGraph(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -739,7 +710,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::buildResultsArray()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildResultsArray(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1192,7 +1162,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::buildResultPath()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildResultPath(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1234,7 +1203,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getNextActionEnum()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNextActionEnum(): void {
 		$entity = new Survey();
@@ -1248,7 +1216,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getQuestionTypeEnum()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetQuestionTypeEnum(): void {
 		$entity = new Survey();
@@ -1262,7 +1229,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressValidatesQuestionSequence(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1286,7 +1252,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressValidatesAnswerSequenceWithPreviousQuestion(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1310,7 +1275,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressTypeConversionSingleChoice(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1332,7 +1296,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressTypeConversionMultipleChoice(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1355,7 +1318,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressTypeConversionInfoText(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1377,7 +1339,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressValidateProgressFreeTextEmpty(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1401,7 +1362,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressCustomAnswerHandlingFreeText(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1427,7 +1387,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressSetsCurrentActionToNextActionAfterProcessing(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1446,7 +1405,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressAnswerSpecificJumpSkipsInactiveQuestion(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1472,7 +1430,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::setProgress()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetProgressAnswerSpecificJumpNotSkipsInactiveQuestionInPreviewMode(): void {
 		$entity = new Survey(['id' => 1]);
@@ -1498,7 +1455,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithAnswerShowForm(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1526,7 +1482,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithAnswerSaveAndShowForm(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1554,7 +1509,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithAnswerShowFormAndSave(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1582,7 +1536,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithAnswerUsesDefaultFormWhenNoTarget(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1610,7 +1563,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithQuestionShowForm(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1641,7 +1593,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithQuestionSaveAndShowForm(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1667,7 +1618,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithQuestionUsesDefaultFormWhenNoTarget(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1693,7 +1643,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithFinalActionShowForm(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1724,7 +1673,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithFinalActionSaveAndShowForm(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1752,7 +1700,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithFinalActionShowFormAndSave(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1780,7 +1727,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormReturnsNullWhenNoFormActions(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1809,7 +1755,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormReturnsNullWhenQuestionIsNull(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1829,7 +1774,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormUsesProgressDataWhenNoQuestionProvided(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1855,7 +1799,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormUsesProgressDataForAnswerSelection(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1883,7 +1826,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormInNormalModeSkipsInactiveForms(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1911,7 +1853,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormInPreviewModeIncludesInactiveForms(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1938,7 +1879,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormWithInvalidAnswerKey(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1954,7 +1894,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormAnswerTakesPrecedenceOverQuestion(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */
@@ -1984,7 +1923,6 @@ class SurveyTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Survey::getForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormQuestionTakesPrecedenceOverFinalAction(): void {
 		/** @var \Awyiss\Model\Table\SurveysTable $table */

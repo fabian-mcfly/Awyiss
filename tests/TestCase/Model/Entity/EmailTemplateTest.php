@@ -18,7 +18,6 @@ class EmailTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\EmailTemplate::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\EmailTemplatesTable $table */
@@ -35,7 +34,6 @@ class EmailTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\EmailTemplate::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new EmailTemplate();
@@ -58,7 +56,6 @@ class EmailTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\EmailTemplate::_setFileName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testFileNameCleaningViaPropertyAssignment(): void {
@@ -87,7 +84,6 @@ class EmailTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\EmailTemplate::_setFileName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFileNameCleaningViaSetMethod(): void {
 		$entity = new EmailTemplate();
@@ -116,7 +112,6 @@ class EmailTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\EmailTemplate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -150,7 +145,6 @@ class EmailTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\EmailTemplate::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

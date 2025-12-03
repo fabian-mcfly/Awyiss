@@ -19,7 +19,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\ConfigurationTable $table */
@@ -36,7 +35,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new Configuration();
@@ -59,7 +57,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::$_virtual
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVirtualFields(): void {
 		$entity = new Configuration();
@@ -71,7 +68,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testScopeCleaningViaPropertyAssignment(): void {
@@ -97,7 +93,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeCleaningViaSetMethod(): void {
 		$entity = new Configuration();
@@ -123,7 +118,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testIdentifierCleaningViaPropertyAssignment(): void {
@@ -149,7 +143,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_setIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIdentifierCleaningViaSetMethod(): void {
 		$entity = new Configuration();
@@ -175,7 +168,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_setValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testValueCleaningViaPropertyAssignment(): void {
@@ -204,7 +196,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_setValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValueCleaningViaSetMethod(): void {
 		$entity = new Configuration();
@@ -234,7 +225,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_getPrintableValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrintableValueVirtualPropertyWithBasicValues(): void {
 		$entity = new Configuration([
@@ -253,7 +243,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_getPrintableValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrintableValueVirtualPropertyWithBooleanValues(): void {
 		$entityTrue = new Configuration([
@@ -278,7 +267,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_getPrintableValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrintableValueVirtualPropertyWithArrayValues(): void {
 		$entity = new Configuration([
@@ -297,7 +285,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_getPrintableValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrintableValueVirtualPropertyWithNullValue(): void {
 		$entity = new Configuration([
@@ -316,7 +303,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::_getPrintableValue()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPrintableValueVirtualPropertyWithMissingRequiredFields(): void {
 		$entity = new Configuration([
@@ -332,7 +318,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::$defaultValues
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDefaultValues(): void {
 		/** @var \Awyiss\Model\Table\ConfigurationTable $table */
@@ -347,7 +332,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -376,7 +360,6 @@ class ConfigurationTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\Configuration::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [

@@ -28,7 +28,6 @@ class UserTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -56,7 +55,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapCompleteness(): void {
 		/** @var \Awyiss\Model\Table\UsersTable $table */
@@ -73,7 +71,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::$_accessible
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAccessibleFields(): void {
 		$entity = new User();
@@ -97,7 +94,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::$_hidden
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHiddenFields(): void {
 		$entity = new User(['password' => 'secret']);
@@ -110,7 +106,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementsInterfaces(): void {
 		$entity = new User();
@@ -123,7 +118,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::getIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetIdentifier(): void {
 		$entity = new User(['id' => 123]);
@@ -135,7 +129,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::getIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetIdentifierWithNullId(): void {
 		$entity = new User();
@@ -147,7 +140,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::getOriginalData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetOriginalData(): void {
 		$entity = new User(['id' => 1]);
@@ -161,7 +153,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::_setPassword()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPasswordHashingViaPropertyAssignment(): void {
 		$entity = new User();
@@ -181,7 +172,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::_setPassword()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPasswordHashingViaSetMethod(): void {
 		$entity = new User();
@@ -202,7 +192,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithActiveUser(): void {
 		$entity = new User(['username' => 'test_user', 'active' => true]);
@@ -216,7 +205,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::_getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelVirtualPropertyWithInactiveUser(): void {
 		$entity = new User(['username' => 'test_user', 'active' => false]);
@@ -230,7 +218,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::_setUsergroups()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetUsergroupsResetsPermissionCollection(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -261,7 +248,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::unsetPermissionCollection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUnsetPermissionCollection(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -291,7 +277,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::getPermissionCollection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPermissionCollectionWithAllAccessUser(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -312,7 +297,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::getPermissionCollection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPermissionCollectionWithNoAccessUser(): void {
 		$this->login(3);
@@ -333,7 +317,6 @@ class UserTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::scopeIsAccessible()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeIsAccessibleWithAllAccessUser(): void {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
@@ -355,7 +338,6 @@ class UserTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::scopeIsAccessible()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeIsAccessibleWithNoAccessUser(): void {
 		$this->login(3);
@@ -376,7 +358,6 @@ class UserTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::scopeIsAccessible()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeIsAccessibleUserConfigurationAlwaysGrantedForSystem(): void {
 		$this->login(3);
@@ -400,7 +381,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::getUsergroups()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetUsergroupsWithAllAccessUser(): void {
 		/** @var \Awyiss\Model\Table\UsersTable $table */
@@ -419,7 +399,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::getUsergroups()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetUsergroupsWithNoAccessUser(): void {
 		/** @var \Awyiss\Model\Table\UsersTable $table */
@@ -438,7 +417,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::getConfiguration()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigurationWithExistingUserConfig(): void {
 		/** @var \Awyiss\Model\Table\UsersTable $table */
@@ -459,7 +437,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::getConfiguration()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigurationWithNoUserConfig(): void {
 		/** @var \Awyiss\Model\Table\UsersTable $table */
@@ -477,7 +454,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::resetConfiguration()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResetConfiguration(): void {
 		/** @var \Awyiss\Model\Table\UsersTable $table */
@@ -503,7 +479,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityConstruction(): void {
 		$properties = [
@@ -537,7 +512,6 @@ class UserTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Entity\User::$fieldMap
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFieldMapDuringConstruction(): void {
 		$properties = [
