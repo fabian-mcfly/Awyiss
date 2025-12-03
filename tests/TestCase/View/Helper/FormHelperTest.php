@@ -48,7 +48,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::create()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateAddsLockAttributes() {
 		$lockedUntil = new DateTimeImmutable('+1 day');
@@ -66,7 +65,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::create()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateReplacesActionWithDataActionWhenNotOwnLock() {
 		$lockedUntil = new DateTimeImmutable('+2 days');
@@ -84,7 +82,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::create()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateKeepsActionWhenOwnLock() {
 		$lockedUntil = new DateTimeImmutable('+3 days');
@@ -102,7 +99,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::create()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateReturnsFormWithoutLockAttributesWhenNoLock() {
 		$result = $this->formHelper->create(null, ['url' => '/dummy']);
@@ -116,7 +112,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::_domId()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDomId(): void {
 		$result = $this->formHelper->label('username');
@@ -136,7 +131,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::label()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelWithProvidedText(): void {
 		$result = $this->formHelper->label('username', 'User Name');
@@ -148,7 +142,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::label()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelWithoutProvidedText(): void {
 		$result = $this->formHelper->label('username');
@@ -167,7 +160,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::label()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelAddsCustomClassAndTemplateVars(): void {
 		$result = $this->formHelper->label('username', null, ['class' => 'foo', 'bar' => 'baz']);
@@ -179,7 +171,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::label()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelHandlesEmptyClassOption(): void {
 		$result = $this->formHelper->label('username', null, ['class' => '']);
@@ -190,7 +181,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::labelTextFromFieldname()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelTextFromFieldnameHandlesMultipleDots(): void {
 		$text = $this->formHelper->labelTextFromFieldname('user.profile.name');
@@ -201,7 +191,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::labelTextFromFieldname()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelTextFromFieldnameHandlesIdsSuffix(): void {
 		$text = $this->formHelper->labelTextFromFieldname('groups._ids');
@@ -212,7 +201,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::labelTextFromFieldname()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelTextFromFieldnameReturnsTranslatedString(): void {
 		// Assuming __() returns the same string in test, but this checks the call path.
@@ -224,7 +212,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::labelTextFromFieldname()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabelWithOptions(): void {
 		$options = ['class' => 'custom-class'];
@@ -238,7 +225,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::select()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSelectReturnsSelectWithEmptyOption(): void {
 		$result = $this->formHelper->select('category', ['Option 1', 'Option 2']);
@@ -253,7 +239,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::select()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSelectWithEmptyOptionDisabled(): void {
 		$attributes = ['empty' => false];
@@ -279,7 +264,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::select()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSelectWithCustomOptionTitle(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -310,7 +294,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::select()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSelectCutsOffLongTitles(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -346,7 +329,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::select()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSelectCutsOffLongGroupTitles(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -381,7 +363,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::textarea()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTextareaWithoutEditorIgnoresInlineImageTags(): void {
 		$table = $this->fetchTable('Contents');
@@ -398,7 +379,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::textarea()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTextareaWithEditorRebuildsImageTags(): void {
 		$table = $this->fetchTable('Contents');
@@ -417,7 +397,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::textarea()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTextareaWithEditorRemovesImageTagsIfNotFound(): void {
 		$table = $this->fetchTable('Contents');
@@ -437,7 +416,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslatableText(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -457,7 +435,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslatableTextMarksOnlyFirstAsRequired(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -476,7 +453,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslatableTextThrowsExceptionWhithoutCreateCall(): void {
 		$this->expectException(RuntimeException::class);
@@ -490,7 +466,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslatableTextReturnsRegularInputWhenFieldNotTranslatable(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -510,7 +485,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslatableTextReturnsRegularInputWhenRealmHasLessThanTwoLanguages(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -539,7 +513,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlAddsColumnSpanWhenProvided(): void {
 		$result = $this->formHelper->control('username', ['columnSpan' => 6]);
@@ -552,7 +525,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlNotAddsColumnSpanWhenNotProvided(): void {
 		$result = $this->formHelper->control('username', ['columnSpan' => null]);
@@ -565,7 +537,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlCreatesTranslatableTextForTranslatableField(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -585,7 +556,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlAddsTimezoneInfoWhenSet(): void {
 		$result = $this->formHelper->control('created', ['type' => 'datetime', 'timezone' => 'America/New_York']);
@@ -598,7 +568,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlAddsConfigTimezoneInfoWhenOmitted(): void {
 		Configure::write('Awyiss.System.' . Awyiss::getRealm() . '.timezone', 'Africa/Abidjan');
@@ -612,7 +581,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlAddsDefaultTimezoneInfoWhenOmitted(): void {
 		$result = $this->formHelper->control('created', ['type' => 'datetime']);
@@ -625,7 +593,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::control()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlSetsCorrectDateTimeValueForTimezone(): void {
 		$now = new DateTime('now');
@@ -638,7 +605,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassFromArray(): void {
 		$options = ['foo' => 'bar', 'class' => ['class1', 'class2', 'class3']];
@@ -652,7 +618,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassFromString(): void {
 		$options = ['foo' => 'bar', 'class' => 'class1 class2 class3'];
@@ -666,7 +631,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassWhenOnlyOneClassInString(): void {
 		$options = ['foo' => 'bar', 'class' => 'class1'];
@@ -678,7 +642,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveClassDoesNotRemoveClassIfNotPresent(): void {
 		$options = ['foo' => 'bar', 'class' => 'class1 class2 class3'];
@@ -690,7 +653,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassFromCustomKey(): void {
 		$options = ['foo' => 'bar', 'customKey' => 'class1 class2 class3'];
@@ -702,7 +664,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::removeClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveClassRemovesClassFromEmptyString(): void {
 		$options = ['foo' => 'bar', 'class' => ''];
@@ -716,7 +677,6 @@ class FormHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @see \Awyiss\View\Helper\FormHelper::setTranslatableField()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetTranslatableField(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -745,7 +705,6 @@ class FormHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\FormHelper::translatableText()
 	 * @see \Awyiss\View\Helper\FormHelper::setTranslatableField()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetTranslatableFieldWithoutMerge(): void {
 		/** @var \Awyiss\Model\Entity\ContentTemplate $entity */
@@ -779,7 +738,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::isFieldError()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsFieldError(): void {
 		$context = $this->createMock(EntityContext::class);
@@ -795,7 +753,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::isFieldError()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsFieldErrorWithDot(): void {
 		$entity = $this->createMock(Entity::class);
@@ -815,7 +772,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::isFieldError()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsFieldErrorWithDotNoAssociatedEntity(): void {
 		$entity = $this->createMock(Entity::class);
@@ -834,7 +790,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::isFieldError()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsFieldErrorWithDotNoErrorInAssociatedEntity(): void {
 		$entity = $this->createMock(Entity::class);
@@ -853,7 +808,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::_inputContainerTemplate()
 	 * @throws \Exception|\PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInputContainerTemplateContainsCorrectClasses(): void {
 		$entity = $this->createMock(Entity::class);
@@ -905,7 +859,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testErrorWithError(): void {
 		$context = $this->createMock(EntityContext::class);
@@ -921,7 +874,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testErrorWithErrorWithMultipleErrorMessage(): void {
 		$context = $this->createMock(EntityContext::class);
@@ -943,7 +895,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testErrorWithErrorWithNestedErrorMessage(): void {
 		$context = $this->createMock(EntityContext::class);
@@ -961,7 +912,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testErrorWithErrorWithMultipleNestedErrorMessage(): void {
 		$context = $this->createMock(EntityContext::class);
@@ -980,7 +930,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testErrorWithoutError(): void {
 		$context = $this->createMock(EntityContext::class);
@@ -995,7 +944,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testErrorWithDotWithError(): void {
 		$entity = $this->createMock(Entity::class);
@@ -1014,7 +962,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testErrorWithDotWithoutError(): void {
 		$entity = $this->createMock(Entity::class);
@@ -1033,7 +980,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testErrorWithDotNoAssociatedEntity(): void {
 		$entity = $this->createMock(Entity::class);
@@ -1051,7 +997,6 @@ class FormHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::error()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCustomErrorTextMapping(): void {
 		$context = $this->createMock(EntityContext::class);
@@ -1067,7 +1012,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::renderFormProtection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderFormProtectionRendersAllProtectionMethods(): void {
 		$formsTable = $this->fetchTable('Forms');
@@ -1086,7 +1030,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::renderFormProtection()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpParamsInspection
 	 */
 	public function testRenderFormProtectionReturnsEmptyStringWhenNoProtectionMethods(): void {
@@ -1123,7 +1066,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::linkSelect()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkSelectWithSimpleOptions(): void {
 		$options = [
@@ -1145,7 +1087,6 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::linkSelect()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkSelectWithCustomAttributes(): void {
 		$options = [
@@ -1166,9 +1107,9 @@ class FormHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FormHelper::linkSelect()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLinkSelectWithEmptyOptions(): void {
+		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$result = $this->formHelper->linkSelect('empty_filter', []);
 
 		$this->assertStringContainsString('class="LinkSelect LinkSelect-EmptyFilter"', $result);

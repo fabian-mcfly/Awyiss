@@ -39,7 +39,6 @@ class PaginatorHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		$this->configApplication(Awyiss::class, []);
@@ -80,7 +79,6 @@ class PaginatorHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::__construct()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorSetsConfig() {
 		// Mock the View object
@@ -122,7 +120,6 @@ class PaginatorHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::meta()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMetaReturnsNullWhenNotPaginated() {
 		// Mock the View object
@@ -150,7 +147,6 @@ class PaginatorHelperTest extends TestCase {
 	 * @dataProvider dataMetaProvider
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::meta()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMeta($page, $prevPage, $nextPage, $pageCount, $options, $expected) {
 		$this->setPaginatedResult([
@@ -264,7 +260,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::sort()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortLink(): void {
 		$this->setPaginatedResult([
@@ -287,7 +282,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::sort()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortLinkAscending(): void {
 		$this->setPaginatedResult([
@@ -310,7 +304,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::sort()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortLinkDescending(): void {
 		$this->setPaginatedResult([
@@ -333,7 +326,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::sort()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortLinkWithTitle(): void {
 		$this->setPaginatedResult([
@@ -356,7 +348,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::sort()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortLinkWithAscendingTitle(): void {
 		$this->setPaginatedResult([
@@ -379,7 +370,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::sort()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortLinkDescendingTitle(): void {
 		$this->setPaginatedResult([
@@ -406,7 +396,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::sort()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortLinkForAssociation(): void {
 		$this->setPaginatedResult([
@@ -429,7 +418,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::sort()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortLinkForAssociationAscending(): void {
 		$this->setPaginatedResult([
@@ -452,7 +440,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::sort()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSortLinkForAssociationDescending(): void {
 		$this->setPaginatedResult([
@@ -475,7 +462,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::isCurrentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsCurrentSortKeySucceeds(): void {
 		$this->setPaginatedResult([
@@ -490,7 +476,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::isCurrentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsCurrentSortKeyFails(): void {
 		$this->setPaginatedResult([
@@ -505,7 +490,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::isCurrentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsCurrentSortKeySucceedsWithDotKey(): void {
 		$this->setPaginatedResult([
@@ -520,7 +504,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::isCurrentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsCurrentSortKeyFailsWithDotKey(): void {
 		$this->setPaginatedResult([
@@ -535,7 +518,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::currentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCurrentSortKeySucceedsWithSort(): void {
 		$this->setPaginatedResult([
@@ -550,7 +532,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::currentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCurrentSortKeyFailsWithSort(): void {
 		$this->setPaginatedResult([
@@ -565,7 +546,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::currentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCurrentSortKeyFailsWithoutSort(): void {
 		$this->setPaginatedResult([
@@ -580,7 +560,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::currentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCurrentSortKeySucceedsWithSortDefault(): void {
 		$this->setPaginatedResult([
@@ -596,7 +575,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::currentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCurrentSortKeyFailsWithSortDefault(): void {
 		$this->setPaginatedResult([
@@ -611,7 +589,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::currentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCurrentSortKeySucceedsWithAliasedFields(): void {
 		$this->setPaginatedResult([
@@ -632,7 +609,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::currentSortKey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCurrentSortKeyFailsWithAliasedFields(): void {
 		$this->setPaginatedResult([
@@ -653,7 +629,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::generateUrlParams()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGenerateUrlParams(): void {
 		$result = $this->paginator->generateUrlParams([
@@ -680,7 +655,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::generateUrlParams()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGenerateUrlParamsSetsFirstPageToFalseOnFirstPage(): void {
 		$result = $this->paginator->generateUrlParams([
@@ -707,7 +681,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::generateUrlParams()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGenerateUrlParamsRemovesSortAndDirectionIfBothAreDefault(): void {
 		$result = $this->paginator->generateUrlParams([
@@ -732,7 +705,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::generateUrlParams()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGenerateUrlParamsDoesNotRemoveSortAndDirectionIfOneIsNotDefault(): void {
 		$result = $this->paginator->generateUrlParams([
@@ -757,7 +729,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::limitControl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLimitControl(): void {
 		$this->setPaginatedResult([
@@ -776,7 +747,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::limitControl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLimitControlWithPerPageMatchingDefault(): void {
 		$this->setPaginatedResult([
@@ -794,7 +764,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::limitControl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLimitControlWithPerPageBetweenDefaultOptions(): void {
 		$this->setPaginatedResult([
@@ -810,7 +779,6 @@ class PaginatorHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::limitControl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLimitControlWithCustomLimits(): void {
 		$this->setPaginatedResult([
@@ -838,7 +806,6 @@ class PaginatorHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::render()
 	 * @see \Awyiss\View\Helper\PaginatorHelper::_numbers()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRender(): void {
 		$this->setPaginatedResult([]);
@@ -860,7 +827,6 @@ class PaginatorHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithoutPaginatedResult(): void {
 		$result = $this->paginator->render();
@@ -875,7 +841,6 @@ class PaginatorHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderForSinglePage(): void {
 		$this->setPaginatedResult([
@@ -899,7 +864,6 @@ class PaginatorHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderForFirstPageAndLastPageIfNotCurrent(): void {
 		$this->setPaginatedResult([
@@ -929,7 +893,6 @@ class PaginatorHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderForLastPageIfCurrent(): void {
 		$this->setPaginatedResult([
@@ -958,7 +921,6 @@ class PaginatorHelperTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Helper\PaginatorHelper::__toString()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToString(): void {
 		$this->setPaginatedResult([]);
@@ -981,7 +943,6 @@ class PaginatorHelperTest extends TestCase {
 	 */
 	protected function setPaginatedResult(array $params, bool $merge = true): void {
 		if ($merge) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$params += [
 				'currentPage' => 1,
 				'count' => 9,

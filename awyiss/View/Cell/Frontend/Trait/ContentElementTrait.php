@@ -32,52 +32,52 @@ trait ContentElementTrait {
 			return;
 		}
 
-		$lo_entities = $entities->listNested();
-		$lo_lastEntity = null;
-		$la_parentEntities = [];
+		$entities = $entities->listNested();
+		$lastEntity = null;
+		$parentEntities = [];
 
 		/**
-		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_entity
+		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 		 */
-		foreach ($lo_entities as $lo_entity) {
-			$this->applyDuplicateData($lo_entity);
+		foreach ($entities as $entity) {
+			$this->applyDuplicateData($entity);
 
-			$lo_entity->setVirtual(['level'], true);
+			$entity->setVirtual(['level'], true);
 			//Add the current depth as a level-property to the entity
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_entity->level = $lo_entities->getDepth();
+			$entity->level = $entities->getDepth();
 
 			// Remember the parent entities
-			if ($lo_lastEntity) {
-				if ($lo_lastEntity->level < $lo_entity->level) {
-					$la_parentEntities[] = $lo_lastEntity;
+			if ($lastEntity) {
+				if ($lastEntity->level < $entity->level) {
+					$parentEntities[] = $lastEntity;
 				}
-				elseif ($lo_lastEntity->level > $lo_entity->level) {
-					$la_parentEntities = array_slice($la_parentEntities, 0, $lo_entity->level);
+				elseif ($lastEntity->level > $entity->level) {
+					$parentEntities = array_slice($parentEntities, 0, $entity->level);
 				}
 			}
 
-			if ($lo_entity instanceof Content) {
-				$lo_entity->parentContents = $la_parentEntities;
+			if ($entity instanceof Content) {
+				$entity->parentContents = $parentEntities;
 			}
-			elseif ($lo_entity instanceof FormElement) {
-				$lo_entity->parentFormElements = $la_parentEntities;
+			elseif ($entity instanceof FormElement) {
+				$entity->parentFormElements = $parentEntities;
 			}
 			else {
-				$lo_entity->parentWidgets = $la_parentEntities;
+				$entity->parentWidgets = $parentEntities;
 			}
 
 			// Set the cssClass property
-			$this->setCssClasses($lo_entity);
+			$this->setCssClasses($entity);
 
 			// Seat the real column width
-			$this->setRealColumnWidth($lo_entity, $columnWidth);
+			$this->setRealColumnWidth($entity, $columnWidth);
 
 			// Set the template for the entity
 			// Will use a custom template named "Content/Widget<id>.twig", if it exists.
-			$this->setTemplate($lo_entity);
+			$this->setTemplate($entity);
 
-			$lo_lastEntity = $lo_entity;
+			$lastEntity = $entity;
 		}
 	}
 
@@ -97,67 +97,67 @@ trait ContentElementTrait {
 			return '';
 		}
 
-		$li_realSystemOrder = 0;
-		$ls_contentElements = '';
-		$lf_currentWidth = 0;
-		$ls_rowContent = '';
-		$la_contentRowClasses = [];
-		$ls_type = 'content';
-		/** @noinspection PhpVariableNamingConventionInspection */
+		$realSystemOrder = 0;
+		$contentElements = '';
+		$currentWidth = 0;
+		$rowContent = '';
+		$contentRowClasses = [];
+		$type = 'content';
 		$entities = array_values($entities);
 		if ($entities[0] instanceof FormElement) {
-			$ls_type = 'form_element';
+			$type = 'form_element';
 		}
 		elseif ($entities[0] instanceof Widget) {
-			$ls_type = 'widget';
+			$type = 'widget';
 		}
 
+		$initialNoContentRow = $noContentRow;
 		/**
-		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_entity
+		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 		 */
-		foreach ($entities as $lo_entity) {
-			$lo_entity->realSystemOrder = ++$li_realSystemOrder;
+		foreach ($entities as $entity) {
+			$entity->realSystemOrder = ++$realSystemOrder;
 
-			$ls_children = '';
+			$children = '';
 
-			if ($lo_entity->children) {
-				$ls_children = $this->buildContents($lo_entity->children, $noContentRow);
+			if ($entity->children) {
+				$children = $this->buildContents($entity->children, $initialNoContentRow);
 			}
 
 			// Render the content before determining if it should be rendered in a content row
 			// This allows the template to modify the content row setting
-			$ls_renderedContent = $this->renderElement($lo_entity, $ls_children);
+			$renderedContent = $this->renderElement($entity, $children);
 
-			$lb_noContentRow = $noContentRow;
-			if (!$lb_noContentRow && !$lo_entity instanceof FormElement) {
-				$ls_template = $lo_entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
+			$noContentRow = $initialNoContentRow;
+			if (!$noContentRow && !$entity instanceof FormElement) {
+				$template = $entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
 
-				$lb_noContentRow = !$lo_entity->$ls_template->inContentRow;
-				if ($lo_entity->has('inContentRow')) {
-					$lb_noContentRow = !$lo_entity->inContentRow;
+				$noContentRow = !$entity->$template->inContentRow;
+				if ($entity->has('inContentRow')) {
+					$noContentRow = !$entity->inContentRow;
 				}
 			}
-			elseif ($lo_entity instanceof FormElement && in_array($lo_entity->type, ['fieldset', 'hidden'])) {
-				$lb_noContentRow = true;
+			elseif ($entity instanceof FormElement && in_array($entity->type, ['fieldset', 'hidden'])) {
+				$noContentRow = true;
 			}
 
 			/*
 			 * If the template should not be rendered in a content row
 			 * render the element directly, but not before rendering existing row contents.
 			 */
-			if ($lb_noContentRow) {
-				if ($ls_rowContent) {
-					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $ls_type, $la_contentRowClasses, $autoSection);
+			if ($noContentRow) {
+				if ($rowContent) {
+					$contentElements .= $this->renderContentRow($rowContent, $type, $contentRowClasses, $autoSection);
 
 					// Reset the row contents
-					$lf_currentWidth = 0;
-					$ls_rowContent = '';
+					$currentWidth = 0;
+					$rowContent = '';
 				}
 
 				// Render the content. Adding the width is not necessary, as the content is rendered directly.
-				$ls_contentElements .= $ls_renderedContent;
+				$contentElements .= $renderedContent;
 				// Unset the row class. Follow-up contents will start a new row and with a blank row class.
-				$la_contentRowClasses = [];
+				$contentRowClasses = [];
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$this->getView()->setRowClass('');
 
@@ -165,11 +165,11 @@ trait ContentElementTrait {
 			}
 
 			// Get the real column width of the content
-			$lf_columnWidth = 100 * $lo_entity->column['width']->getFactor();
+			$columnWidth = 100 * $entity->column['width']->getFactor();
 
 			// If the content has a column indent, add the width of the indent to the current column width
-			if ($lo_entity->column['indent']) {
-				$lf_columnWidth += 100 * $lo_entity->column['indent']->getFactor();
+			if ($entity->column['indent']) {
+				$columnWidth += 100 * $entity->column['indent']->getFactor();
 			}
 
 			/*
@@ -177,39 +177,39 @@ trait ContentElementTrait {
 			 * or if the content - including potential indentation - would exceed the row width.
 			 * If that is the case, render the current row and reset the row contents.
 			 */
-			if ($lf_currentWidth > 100 || $lf_currentWidth + $lf_columnWidth > 100) {
-				if ($ls_rowContent) {
-					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $ls_type, $la_contentRowClasses, $autoSection);
+			if ($currentWidth > 100 || $currentWidth + $columnWidth > 100) {
+				if ($rowContent) {
+					$contentElements .= $this->renderContentRow($rowContent, $type, $contentRowClasses, $autoSection);
 					// Unset the row class. Follow-up contents will start a new row and with a blank row class.
-					$la_contentRowClasses = [];
+					$contentRowClasses = [];
 				}
 
-				$lf_currentWidth = 0;
-				$ls_rowContent = '';
+				$currentWidth = 0;
+				$rowContent = '';
 			}
 
 			// If the row class is set, add it to the content row class
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			if ($this->getView()->getRowClass()) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$la_contentRowClasses[] = $this->getView()->getRowClass();
+				$contentRowClasses[] = $this->getView()->getRowClass();
 			}
 
 			// Add the content to the row contents
-			$ls_rowContent .= $ls_renderedContent;
+			$rowContent .= $renderedContent;
 
 			// If the content is a finisher, render the row and reset the row contents
-			if ($lo_entity->columnLast) {
-				$ls_contentElements .= $this->renderContentRow($ls_rowContent, $ls_type, $la_contentRowClasses, $autoSection);
+			if ($entity->columnLast) {
+				$contentElements .= $this->renderContentRow($rowContent, $type, $contentRowClasses, $autoSection);
 				// Unset the row class. Follow-up contents will start a new row and with a blank row class.
-				$la_contentRowClasses = [];
+				$contentRowClasses = [];
 
-				$lf_currentWidth = 0;
-				$ls_rowContent = '';
+				$currentWidth = 0;
+				$rowContent = '';
 			}
 			else {
 				// Add the width of the content to the current row width
-				$lf_currentWidth += $lf_columnWidth;
+				$currentWidth += $columnWidth;
 			}
 
 			// Clear the row class for the next content element
@@ -218,15 +218,15 @@ trait ContentElementTrait {
 		}
 
 		// Render the last row
-		if ($ls_rowContent) {
-			$ls_contentElements .= $this->renderContentRow($ls_rowContent, $ls_type, $la_contentRowClasses, $autoSection);
+		if ($rowContent) {
+			$contentElements .= $this->renderContentRow($rowContent, $type, $contentRowClasses, $autoSection);
 		}
 
 		// Unset the row class.
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$this->getView()->setRowClass('');
 
-		return $ls_contentElements;
+		return $contentElements;
 	}
 
 
@@ -267,16 +267,16 @@ trait ContentElementTrait {
 	 * @return void
 	 */
 	protected function setCssClasses(Entity $entity): void {
-		static $ld_now = new DateTime();
+		static $now = new DateTime();
 
 		if (empty($entity->cssClass)) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$entity->cssClass = '';
 		}
 
-		$ls_cssClass = trim($entity->cssClass);
+		$cssClass = trim($entity->cssClass);
 
-		$ls_template = match (true) {
+		$template = match (true) {
 			$entity instanceof Content => 'contentTemplate',
 			$entity instanceof FormElement => null,
 			$entity instanceof Widget => 'widgetTemplate',
@@ -288,7 +288,7 @@ trait ContentElementTrait {
 			$entity instanceof Widget => 'Widget',
 		};
 		$entity->cssClass .= 'Element';
-		$entity->cssClass .= ($ls_template ? ' Template-' . Inflector::ucparts($entity->$ls_template->fileName, false) : '');
+		$entity->cssClass .= ($template ? ' Template-' . Inflector::ucparts($entity->$template->fileName, false) : '');
 		$entity->cssClass .= ' ' . $entity->column['width']->getCssClass();
 
 		if ($entity instanceof FormElement) {
@@ -307,14 +307,20 @@ trait ContentElementTrait {
 			$entity->cssClass .= ' Column-Rtl';
 		}
 
-		if ($ls_cssClass) {
-			$entity->cssClass .= ' ' . $ls_cssClass;
+		if ($cssClass) {
+			$entity->cssClass .= ' ' . $cssClass;
 		}
 
 		if (
 			!$entity->active ||
-			($entity->publicationStart && $entity->publicationStart > $ld_now) ||
-			($entity->publicationEnd && $entity->publicationEnd < $ld_now)
+			(
+				$entity->publicationStart &&
+				$entity->publicationStart > $now
+			) ||
+			(
+				$entity->publicationEnd &&
+				$entity->publicationEnd < $now
+			)
 		) {
 			$entity->cssClass .= ' ' . FrontendView::getPreviewModeElementClass();
 		}
@@ -333,22 +339,22 @@ trait ContentElementTrait {
 	protected function setRealColumnWidth(Entity $entity, float $columnWidth): void {
 		$entity->setVirtual(['realColumnWidth'], true);
 
-		$ls_property = match (true) {
+		$property = match (true) {
 			$entity instanceof Content => 'parentContents',
 			$entity instanceof FormElement => 'parentFormElements',
 			$entity instanceof Widget => 'parentWidgets',
 		};
 
-		if (!$entity->$ls_property) {
+		if (!$entity->$property) {
 			$entity->realColumnWidth = $columnWidth * $entity->column['width']->getFactor();
 
 			return;
 		}
 
-		/** @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_parent */
-		$lo_parent = end($entity->$ls_property);
+		/** @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $parent */
+		$parent = end($entity->$property);
 
-		$entity->realColumnWidth = round($lo_parent->realColumnWidth * $entity->column['width']->getFactor(), 4);
+		$entity->realColumnWidth = round($parent->realColumnWidth * $entity->column['width']->getFactor(), 4);
 	}
 
 
@@ -361,29 +367,29 @@ trait ContentElementTrait {
 	 * @noinspection PhpDocSignatureInspection
 	 */
 	protected function setTemplate(Entity $entity): void {
-		static $ls_templatePath;
+		static $templatePath;
 
 		// Skip form elements as they have no template
 		if ($entity instanceof FormElement) {
 			return;
 		}
 
-		if (!isset($ls_templatePath)) {
-			$ls_templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);
+		if (!isset($templatePath)) {
+			$templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);
 		}
 
-		$ls_fileName = ($entity instanceof Widget ? 'Widget' : 'Content') . $entity->id;
+		$fileName = ($entity instanceof Widget ? 'Widget' : 'Content') . $entity->id;
 
-		$ls_filePath = implode(DS, [
-			$ls_templatePath,
+		$filePath = implode(DS, [
+			$templatePath,
 			'Frontend',
 			$entity instanceof Widget ? 'widget' : 'content',
-			$ls_fileName . '.twig',
+			$fileName . '.twig',
 		]);
 
-		if (file_exists($ls_filePath)) {
-			$ls_template = $entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
-			$entity->$ls_template->set('fileName', $ls_fileName, ['setter' => false]);
+		if (file_exists($filePath)) {
+			$template = $entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
+			$entity->$template->set('fileName', $fileName, ['setter' => false]);
 		}
 	}
 

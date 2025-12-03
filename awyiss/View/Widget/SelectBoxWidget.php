@@ -19,7 +19,6 @@ class SelectBoxWidget extends BaseSelectBoxWidget {
 	 * - add the original text as the title
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function _renderOptions(
 		iterable $options,
@@ -104,7 +103,6 @@ class SelectBoxWidget extends BaseSelectBoxWidget {
 	 * - add the original text as the title
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function _renderOptgroup(
 		string $label,

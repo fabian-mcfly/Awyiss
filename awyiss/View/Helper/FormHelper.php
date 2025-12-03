@@ -72,49 +72,48 @@ class FormHelper extends BaseFormHelper {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function create(mixed $context = null, array $options = []): string {
 		// Check if the form is locked
-		$la_lockData = $options['lock'] ?? $this->getView()->get('_lock');
+		$lockData = $options['lock'] ?? $this->getView()->get('_lock');
 
 		unset($options['lock']);
-		if ($la_lockData) {
-			$options['data-locked-until'] = $la_lockData['lockedUntil']->format('c');
-			$options['data-locked'] = $la_lockData['isOwnLock'] ? 'false' : 'true';
+		if ($lockData) {
+			$options['data-locked-until'] = $lockData['lockedUntil']->format('c');
+			$options['data-locked'] = $lockData['isOwnLock'] ? 'false' : 'true';
 		}
 
-		$ls_form = parent::create($context, $options);
+		$form = parent::create($context, $options);
 
 
 		// Check if the form is locked
-		if ($la_lockData && !$la_lockData['isOwnLock']) {
-			$ls_form = str_replace(' action="', ' data-action="', $ls_form);
+		if ($lockData && !$lockData['isOwnLock']) {
+			$form = str_replace(' action="', ' data-action="', $form);
 		}
 
-		$lo_context = $this->context();
+		$context = $this->context();
 
-		if (!is_a($lo_context, EntityContext::class)) {
-			return $ls_form;
+		if (!is_a($context, EntityContext::class)) {
+			return $form;
 		}
 
-		$lo_sourceTable = $lo_context->fetchTable($lo_context->entity()->getSource());
+		$sourceTable = $context->fetchTable($context->entity()->getSource());
 
-		$lo_behavior = $lo_sourceTable->hasBehavior('Translate') ? $lo_sourceTable->getBehavior('Translate') : null;
+		$translateBehavior = $sourceTable->hasBehavior('Translate') ? $sourceTable->getBehavior('Translate') : null;
 
-		$this->translatableFields = array_map(fn ($field) => Inflector::underscore($field), $lo_behavior?->getConfig('fields') ?? []);
+		$this->translatableFields = array_map(fn ($field) => Inflector::underscore($field), $translateBehavior?->getConfig('fields') ?? []);
 
-		$this->languageRealm = $options['languageRealm'] ?? $lo_behavior?->getConfig('realm') ?? Awyiss::REALM_BACKEND;
+		$this->languageRealm = $options['languageRealm'] ?? $translateBehavior?->getConfig('realm') ?? Awyiss::REALM_BACKEND;
 
-		foreach (LocaleMiddleware::getLanguages($this->languageRealm) as $lo_language) {
-			if (!$lo_language->active) {
+		foreach (LocaleMiddleware::getLanguages($this->languageRealm) as $language) {
+			if (!$language->active) {
 				continue;
 			}
 
-			$this->languages[ $lo_language->shortcode ] = $lo_language;
+			$this->languages[ $language->shortcode ] = $language;
 		}
 
-		return $ls_form;
+		return $form;
 	}
 
 
@@ -124,18 +123,14 @@ class FormHelper extends BaseFormHelper {
 	 * Extended version that uses a different default value for the label text, if none was provided.
 	 */
 	public function label(string $fieldName, ?string $text = null, array $options = []): string {
-		$ls_text = $text;
-		if ($ls_text === null) {
-			$ls_text = $this->labelTextFromFieldname($fieldName);
-		}
+		$text ??= $this->labelTextFromFieldname($fieldName);
 
-		$la_options = $options;
-		if (!empty($la_options['class'])) {
-			$la_options['templateVars']['labelClass'] = ' ' . trim($la_options['class']);
+		if (!empty($options['class'])) {
+			$options['templateVars']['labelClass'] = ' ' . trim($options['class']);
 		}
-		unset($la_options['class']);
+		unset($options['class']);
 
-		return parent::label($fieldName, $ls_text, $la_options);
+		return parent::label($fieldName, $text, $options);
 	}
 
 
@@ -146,35 +141,35 @@ class FormHelper extends BaseFormHelper {
 	 * @return string
 	 */
 	public function labelTextFromFieldname(string $fieldName): string {
-		$ls_text = $fieldName;
+		$text = $fieldName;
 
-		if (str_ends_with($ls_text, '._ids')) {
-			$ls_text = substr($ls_text, 0, -5);
+		if (str_ends_with($text, '._ids')) {
+			$text = substr($text, 0, -5);
 		}
 
-		if (str_contains($ls_text, '.')) {
-			$ls_fieldElements = explode('.', $ls_text);
-			$ls_text = array_pop($ls_fieldElements);
+		if (str_contains($text, '.')) {
+			$fieldElements = explode('.', $text);
+			$text = array_pop($fieldElements);
 		}
 
-		$ls_translation = __($ls_text);
+		$translation = __($text);
 
-		if (!str_contains($ls_translation, '::')) {
-			return $ls_translation;
+		if (!str_contains($translation, '::')) {
+			return $translation;
 		}
 
-		$lo_context = $this->_getContext();
-		if (!$lo_context instanceof EntityContext || !$lo_context->entity()->has('attributes')) {
-			return $ls_translation;
+		$context = $this->_getContext();
+		if (!$context instanceof EntityContext || !$context->entity()->has('attributes')) {
+			return $translation;
 		}
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $lo_context->fetchTable($lo_context->entity()->getSource());
-		if (!$lo_table->fieldIsAttribute($ls_text)) {
-			return $ls_translation;
+		/** @var \Awyiss\Model\Table $table */
+		$table = $context->fetchTable($context->entity()->getSource());
+		if (!$table->fieldIsAttribute($text)) {
+			return $translation;
 		}
 
-		return $lo_table->getAttributes()[ $ls_text ]?->title ?? $ls_translation;
+		return $table->getAttributes()[ $text ]?->title ?? $translation;
 	}
 
 
@@ -183,48 +178,46 @@ class FormHelper extends BaseFormHelper {
 	 * @throws \Exception
 	 */
 	public function control(string $fieldName, array $options = []): string {
-		$la_options = $options;
+		unset($options['isCategory']);
 
-		unset($la_options['isCategory']);
-
-		if (!empty($la_options['columnSpan'])) {
-			$la_options['templateVars']['columnSpan'] = ' ColumnSpan-' . $la_options['columnSpan'];
+		if (!empty($options['columnSpan'])) {
+			$options['templateVars']['columnSpan'] = ' ColumnSpan-' . $options['columnSpan'];
 		}
-		unset($la_options['columnSpan']);
+		unset($options['columnSpan']);
 
 		if (in_array($fieldName, $this->translatableFields) && count($this->languages) > 1) {
-			$ls_association = '';
-			$ls_fieldName = $fieldName;
-			if (str_contains($ls_fieldName, '.') && !str_starts_with($ls_fieldName, '_translations.')) {
-				[$ls_association, $ls_fieldName] = explode('.', $ls_fieldName);
-				$ls_association .= '.';
+			$association = '';
+			$associationFieldName = $fieldName;
+			if (str_contains($associationFieldName, '.') && !str_starts_with($associationFieldName, '_translations.')) {
+				[$association, $associationFieldName] = explode('.', $associationFieldName);
+				$association .= '.';
 			}
 
-			$la_options['realType'] = $la_options['type'] ?? null;
-			$la_options['type'] = 'translatableText';
-			$la_options['val'] = $this->getSourceValue($ls_association . '_translations.' . array_key_first($this->languages) . '.' . $ls_fieldName);
+			$options['realType'] = $options['type'] ?? null;
+			$options['type'] = 'translatableText';
+			$options['val'] = $this->getSourceValue($association . '_translations.' . array_key_first($this->languages) . '.' . $associationFieldName);
 
 			//If there's no translation for the main language, reset the val.
 			//We might need to use the untranslated table value.
-			if (empty($la_options['val'])) {
-				$la_options['val'] = null;
+			if (empty($options['val'])) {
+				$options['val'] = null;
 			}
 		}
 
-		$la_options = $this->setTimezoneOptions($fieldName, $la_options);
+		$options = $this->setTimezoneOptions($fieldName, $options);
 
-		$la_options['templateVars'] ??= [];
-		$la_options['templateVars']['containerAttrs'] ??= [];
-		if (in_array(($la_options['type'] ?? null), ['input_list', 'input_key_value_list'])) {
-			$la_options['templateVars']['containerAttrs']['data-list-item-add'] = __('list_item_add');
-			$la_options['templateVars']['containerAttrs']['data-list-item-remove'] = __('list_item_remove');
+		$options['templateVars'] ??= [];
+		$options['templateVars']['containerAttrs'] ??= [];
+		if (in_array(($options['type'] ?? null), ['input_list', 'input_key_value_list'])) {
+			$options['templateVars']['containerAttrs']['data-list-item-add'] = __('list_item_add');
+			$options['templateVars']['containerAttrs']['data-list-item-remove'] = __('list_item_remove');
 		}
 
-		if (is_array($la_options['templateVars']['containerAttrs'] ?? null)) {
-			$la_options['templateVars']['containerAttrs'] = $this->templater()->formatAttributes($la_options['templateVars']['containerAttrs']);
+		if (is_array($options['templateVars']['containerAttrs'] ?? null)) {
+			$options['templateVars']['containerAttrs'] = $this->templater()->formatAttributes($options['templateVars']['containerAttrs']);
 		}
 
-		return parent::control($fieldName, $la_options);
+		return parent::control($fieldName, $options);
 	}
 
 
@@ -263,8 +256,7 @@ class FormHelper extends BaseFormHelper {
 	 * @return string
 	 */
 	public function linkSelect(string $label, array $options = [], array $attributes = []): string {
-		$la_attributes = $attributes;
-		$la_attributes += [
+		$attributes += [
 			'disabled' => false,
 			'escape' => false,
 			'id' => true,
@@ -274,21 +266,21 @@ class FormHelper extends BaseFormHelper {
 			'val' => null,
 		];
 
-		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
-			$la_attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($label), '-');
+		if (isset($attributes['id']) && $attributes['id'] === true) {
+			$attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($label), '-');
 		}
 
-		$la_formattedOptions = [];
-		foreach ($options as $ls_title => $ls_link) {
-			$la_formattedOptions[ (string)$ls_title ] = [
-				'title'	=> (string)$ls_title,
-				'link' => (string)$ls_link,
+		$formattedOptions = [];
+		foreach ($options as $title => $link) {
+			$formattedOptions[ (string)$title ] = [
+				'title'	=> (string)$title,
+				'link' => (string)$link,
 			];
 		}
 
-		$la_attributes['options'] = $la_formattedOptions;
+		$attributes['options'] = $formattedOptions;
 
-		return $this->widget('linkSelect', $la_attributes);
+		return $this->widget('linkSelect', $attributes);
 	}
 
 
@@ -305,12 +297,10 @@ class FormHelper extends BaseFormHelper {
 			($options['data-editor'] ?? null) === true &&
 			$this->_getContext() instanceof EntityContext
 		) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$options['val'] ??= $this->getSourceValue($fieldName);
 			if (is_string($options['val'])) {
 				/**
 				 * @noinspection PhpPossiblePolymorphicInvocationInspection
-				 * @noinspection PhpVariableNamingConventionInspection
 				 */
 				$options['val'] = $this->Media->rebuildSimpleImageTagsInField($this->_getContext()->entity(), $fieldName, $options['val']);
 			}
@@ -336,50 +326,50 @@ class FormHelper extends BaseFormHelper {
 			return $this->control($fieldName, $options);
 		}
 
-		$la_options = $options;
+		$widgetOtions = $options;
 
-		$ls_realType = $la_options['realType'] ?? $la_options['type'] ?? null;
-		unset($la_options['realType']);
-		if ($ls_realType === 'translatableText') {
-			unset($ls_realType);
+		$realType = $widgetOtions['realType'] ?? $widgetOtions['type'] ?? null;
+		unset($widgetOtions['realType']);
+		if ($realType === 'translatableText') {
+			unset($realType);
 		}
 
-		$la_options['type'] = $ls_realType ?? $this->_inputType($fieldName, $la_options);
-		if (!isset($ls_realType)) {
-			$ls_realType = $la_options['type'];
+		$widgetOtions['type'] = $realType ?? $this->_inputType($fieldName, $widgetOtions);
+		if (!isset($realType)) {
+			$realType = $widgetOtions['type'];
 		}
 
 
-		$la_values = $la_options['values'] ?? null;
-		unset($la_options['values']);
+		$values = $widgetOtions['values'] ?? null;
+		unset($widgetOtions['values']);
 
-		$lb_noValue = false;
-		if ($la_values && !($la_options['val'] ?? null)) {
-			$lb_noValue = true;
+		$noValue = false;
+		if ($values && !($widgetOtions['val'] ?? null)) {
+			$noValue = true;
 		}
 
-		$la_options = $this->_initInputField($fieldName, $la_options) + ['controls' => []];
-		if ($lb_noValue) {
-			unset($la_options['val']);
+		$widgetOtions = $this->_initInputField($fieldName, $widgetOtions) + ['controls' => []];
+		if ($noValue) {
+			unset($widgetOtions['val']);
 		}
 
 		if ($this->error($fieldName)) {
-			$la_options = $this->removeClass($la_options, $this->templater()->getConfig('errorClass'));
+			$widgetOtions = $this->removeClass($widgetOtions, $this->templater()->getConfig('errorClass'));
 		}
 
-		if (!empty($la_options['controls'])) {
-			$la_options['aria-required'] = $la_options['required'] = false;
-			$la_options['input'] = $this->widget($ls_realType, $la_options + ['readonly' => true]);
+		if (!empty($widgetOtions['controls'])) {
+			$widgetOtions['aria-required'] = $widgetOtions['required'] = false;
+			$widgetOtions['input'] = $this->widget($realType, $widgetOtions + ['readonly' => true]);
 
-			return $this->widget('translatableText', $la_options);
+			return $this->widget('translatableText', $widgetOtions);
 		}
 
-		$la_options = $this->processMultiLanguageControls($fieldName, $la_options, $options, $ls_realType, $la_values);
+		$widgetOtions = $this->processMultiLanguageControls($fieldName, $widgetOtions, $options, $realType, $values);
 
-		$la_options['aria-required'] = $la_options['required'] = false;
-		$la_options['input'] = $this->widget($ls_realType, $la_options + ['readonly' => true]);
+		$widgetOtions['aria-required'] = $widgetOtions['required'] = false;
+		$widgetOtions['input'] = $this->widget($realType, $widgetOtions + ['readonly' => true]);
 
-		return $this->widget('translatableText', $la_options);
+		return $this->widget('translatableText', $widgetOtions);
 	}
 
 
@@ -388,35 +378,34 @@ class FormHelper extends BaseFormHelper {
 	 *
 	 * @param array $options
 	 * @param string $class
-	 * @param string $key
+	 * @param string $attributeName
 	 * @return array
 	 */
-	public function removeClass(array $options, string $class, string $key = 'class'): array {
-		$la_options = $options;
-		if (isset($la_options[ $key ]) && is_array($la_options[ $key ])) {
-			$ls_key = array_search($class, $la_options[ $key ]);
-			if ($ls_key !== false) {
-				unset($la_options[ $key ][ $ls_key ]);
+	public function removeClass(array $options, string $class, string $attributeName = 'class'): array {
+		if (isset($options[ $attributeName ]) && is_array($options[ $attributeName ])) {
+			$key = array_search($class, $options[ $attributeName ]);
+			if ($key !== false) {
+				unset($options[ $attributeName ][ $key ]);
 			}
 
-			$la_options[ $key ] = array_values($la_options[ $key ]);
+			$options[ $attributeName ] = array_values($options[ $attributeName ]);
 		}
-		elseif (isset($la_options[ $key ]) && trim($la_options[ $key ])) {
-			$la_parts = explode(' ', $la_options[ $key ]);
-			$ls_key = array_search($class, $la_parts);
-			if ($ls_key !== false) {
-				unset($la_parts[ $ls_key ]);
+		elseif (isset($options[ $attributeName ]) && trim($options[ $attributeName ])) {
+			$parts = explode(' ', $options[ $attributeName ]);
+			$key = array_search($class, $parts);
+			if ($key !== false) {
+				unset($parts[ $key ]);
 			}
 
-			$la_options[ $key ] = implode(' ', $la_parts);
+			$options[ $attributeName ] = implode(' ', $parts);
 		}
 
-		if (empty($la_options[ $key ])) {
-			unset($la_options[ $key ]);
+		if (empty($options[ $attributeName ])) {
+			unset($options[ $attributeName ]);
 		}
 
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -432,9 +421,9 @@ class FormHelper extends BaseFormHelper {
 			return $this;
 		}
 
-		foreach ((array)$fields as $ls_field) {
-			if (!in_array($ls_field, $this->translatableFields)) {
-				$this->translatableFields[] = $ls_field;
+		foreach ((array)$fields as $field) {
+			if (!in_array($field, $this->translatableFields)) {
+				$this->translatableFields[] = $field;
 			}
 		}
 
@@ -451,36 +440,36 @@ class FormHelper extends BaseFormHelper {
 	 * @inheritDoc
 	 */
 	protected function _inputContainerTemplate(array $options): string {
-		$ls_inputContainerTemplate = $options['options']['type'] . 'Container' . $options['errorSuffix'];
-		if (!$this->templater()->get($ls_inputContainerTemplate)) {
-			$ls_inputContainerTemplate = 'inputContainer' . $options['errorSuffix'];
+		$inputContainerTemplate = $options['options']['type'] . 'Container' . $options['errorSuffix'];
+		if (!$this->templater()->get($inputContainerTemplate)) {
+			$inputContainerTemplate = 'inputContainer' . $options['errorSuffix'];
 		}
 
-		$ls_name = $options['options']['id'];
+		$name = $options['options']['id'];
 		// When the id starts with the entity context's table, we want to remove the prefix (association name) from the id.
 		if ($this->context() instanceof EntityContext) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_entity = $this->context()->entity();
-			$ls_source = $lo_entity->getSource();
+			$entity = $this->context()->entity();
+			$source = $entity->getSource();
 
-			if (str_starts_with($ls_name, $ls_source . '-')) {
-				$ls_name = substr($ls_name, strlen($ls_source) + 1);
+			if (str_starts_with($name, $source . '-')) {
+				$name = substr($name, strlen($source) + 1);
 			}
 			else {
-				$ls_source = Inflector::singularize($lo_entity->getSource());
+				$source = Inflector::singularize($entity->getSource());
 
-				if (str_starts_with($ls_name, $ls_source . '-')) {
-					$ls_name = substr($ls_name, strlen($ls_source) + 1);
+				if (str_starts_with($name, $source . '-')) {
+					$name = substr($name, strlen($source) + 1);
 				}
 			}
 		}
 
-		return $this->formatTemplate($ls_inputContainerTemplate, [
+		return $this->formatTemplate($inputContainerTemplate, [
 			'content' => $options['content'],
 			'error' => $options['error'],
 			'required' => $options['options']['required'] ? ' Required' : '',
 			'type' => Inflector::ucparts(Inflector::underscore($options['options']['type']), false),
-			'templateVars' => ($options['options']['templateVars'] ?? []) + ['identifier' => $ls_name],
+			'templateVars' => ($options['options']['templateVars'] ?? []) + ['identifier' => $name],
 		]);
 	}
 
@@ -497,23 +486,23 @@ class FormHelper extends BaseFormHelper {
 			return $this->_getContext()->hasError($field);
 		}
 
-		$la_parts = explode('.', $field);
-		$ls_field = array_pop($la_parts);
+		$parts = explode('.', $field);
+		$field = array_pop($parts);
 
 		if ($this->_getContext() instanceof NullContext) {
 			return false;
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_entity = $this->_getContext()->entity();
-		$lo_associatedEntity = $lo_entity->get($la_parts[0]);
+		$entity = $this->_getContext()->entity();
+		$associatedEntity = $entity->get($parts[0]);
 
-		if (!$lo_associatedEntity instanceof EntityInterface) {
+		if (!$associatedEntity instanceof EntityInterface) {
 			return false;
 		}
 
 
-		return (bool)$lo_associatedEntity->getError($ls_field);
+		return (bool)$associatedEntity->getError($field);
 	}
 
 
@@ -528,90 +517,88 @@ class FormHelper extends BaseFormHelper {
 	 * @return string
 	 */
 	public function error(string $field, array|string|null $text = null, array $options = []): string {
-		$ls_field = $field;
-		if (str_ends_with($ls_field, '._ids')) {
-			$ls_field = substr($ls_field, 0, -5);
+		if (str_ends_with($field, '._ids')) {
+			$field = substr($field, 0, -5);
 		}
 
-		$la_options = $options + ['escape' => true];
+		$options = $options + ['escape' => true];
 
-		$lo_context = $this->_getContext();
-		if (!$lo_context->hasError($ls_field) && !str_contains($ls_field, '.')) {
+		$context = $this->_getContext();
+		if (!$context->hasError($field) && !str_contains($field, '.')) {
 			return '';
 		}
 
-		if (!str_contains($ls_field, '.') || $lo_context->error($ls_field)) {
-			$la_error = $lo_context->error($ls_field);
+		if (!str_contains($field, '.') || $context->error($field)) {
+			$errors = $context->error($field);
 		}
 		else {
-			if ($lo_context instanceof NullContext) {
+			if ($context instanceof NullContext) {
 				return '';
 			}
 
-			$la_parts = explode('.', $ls_field);
-			$ls_field = array_pop($la_parts);
+			$parts = explode('.', $field);
+			$field = array_pop($parts);
 			/**
-			 * @var \Awyiss\Model\Entity $lo_entity
+			 * @var \Awyiss\Model\Entity $entity
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
-			$lo_entity = $lo_context->entity();
-			$lo_associatedEntity = $lo_entity->get(implode('.', $la_parts));
+			$entity = $context->entity();
+			$associatedEntity = $entity->get(implode('.', $parts));
 
-			if (!$lo_associatedEntity instanceof EntityInterface) {
+			if (!$associatedEntity instanceof EntityInterface) {
 				return '';
 			}
 
-			$la_error = $lo_associatedEntity->getError($ls_field);
+			$errors = $associatedEntity->getError($field);
 		}
 
-		if (!$la_error) {
+		if (!$errors) {
 			return '';
 		}
 
-		$lx_text = $text;
-		if (is_array($lx_text)) {
-			$la_tmp = [];
-			foreach ($la_error as $lx_errorKey => $ls_error) {
-				if (isset($lx_text[ $lx_errorKey ])) {
-					$la_tmp[] = $lx_text[ $lx_errorKey ];
+		if (is_array($text)) {
+			$tmp = [];
+			foreach ($errors as $errorKey => $error) {
+				if (isset($text[ $errorKey ])) {
+					$tmp[] = $text[ $errorKey ];
 				}
-				elseif (isset($lx_text[ $ls_error ])) {
-					$la_tmp[] = $lx_text[ $ls_error ];
+				elseif (isset($text[ $error ])) {
+					$tmp[] = $text[ $error ];
 				}
 				else {
-					$la_tmp[] = $ls_error;
+					$tmp[] = $error;
 				}
 			}
-			$lx_text = $la_tmp;
+			$text = $tmp;
 		}
 
-		if ($lx_text !== null) {
-			$la_error = $lx_text;
+		if ($text !== null) {
+			$errors = $text;
 		}
 
-		if ($la_options['escape']) {
-			$la_error = h($la_error);
-			unset($la_options['escape']);
+		if ($options['escape']) {
+			$errors = h($errors);
+			unset($options['escape']);
 		}
 
-		if (is_array($la_error)) {
-			if (count($la_error) > 1) {
-				$la_errorTexts = [];
-				foreach ($la_error as $ls_error) {
-					$la_errorTexts[] = $this->formatTemplate('errorItem', ['text' => $ls_error]);
+		if (is_array($errors)) {
+			if (count($errors) > 1) {
+				$errorTexts = [];
+				foreach ($errors as $error) {
+					$errorTexts[] = $this->formatTemplate('errorItem', ['text' => $error]);
 				}
-				$ls_error = $this->formatTemplate('errorList', [
-					'content' => implode('', $la_errorTexts),
+				$errorMessage = $this->formatTemplate('errorList', [
+					'content' => implode('', $errorTexts),
 				]);
 			}
 			else {
-				$ls_error = array_pop($la_error);
+				$errorMessage = array_pop($errors);
 			}
 		}
 
 		return $this->formatTemplate('error', [
-			'content' => $ls_error ?? '',
-			'id' => $this->_domId($ls_field) . '-error',
+			'content' => $errorMessage ?? '',
+			'id' => $this->_domId($field) . '-error',
 		]);
 	}
 
@@ -622,13 +609,13 @@ class FormHelper extends BaseFormHelper {
 	 * @return string|null
 	 */
 	public function renderFormProtection(Form $form, string $position): ?string {
-		$ls_return = '';
+		$return = '';
 
-		foreach ($form->getProtectionMethods() as $lo_protectionMethod) {
-			$ls_return .= $lo_protectionMethod->getHtml($position) . PHP_EOL;
+		foreach ($form->getProtectionMethods() as $protectionMethod) {
+			$return .= $protectionMethod->getHtml($position) . PHP_EOL;
 		}
 
-		return $ls_return;
+		return $return;
 	}
 
 
@@ -640,24 +627,23 @@ class FormHelper extends BaseFormHelper {
 	 */
 	protected function _domId(string $value): string {
 		if (str_contains($value, '.')) {
-			$la_parts = explode('.', $value);
-			array_walk($la_parts, function (&$part): void {
-				/** @noinspection PhpVariableNamingConventionInspection */
+			$parts = explode('.', $value);
+			array_walk($parts, function (&$part): void {
 				$part = Inflector::camelize($part);
 			});
-			$ls_domId = implode('-', $la_parts);
+			$domId = implode('-', $parts);
 		}
 		else {
-			$ls_domId = Inflector::camelize($value);
+			$domId = Inflector::camelize($value);
 		}
 
 
 		if ($this->_idPrefix) {
-			$ls_domId = Inflector::camelize($this->_idPrefix) . '-' . $ls_domId;
+			$domId = Inflector::camelize($this->_idPrefix) . '-' . $domId;
 		}
 
 
-		return $ls_domId;
+		return $domId;
 	}
 
 
@@ -669,28 +655,26 @@ class FormHelper extends BaseFormHelper {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function setTimezoneOptions(string $fieldName, array $options): array {
-		$la_options = $options;
-
 		if (
-			($la_options['type'] ?? null) !== 'datetime' &&
-			$this->_inputType($fieldName, $la_options) !== 'datetime'
+			($options['type'] ?? null) !== 'datetime' &&
+			$this->_inputType($fieldName, $options) !== 'datetime'
 		) {
-			return $la_options;
+			return $options;
 		}
 
-		$ls_timezone = ($la_options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
+		$timezone = ($options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
 
-		if ($ls_timezone === 'auto') {
-			$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
-			$ls_timezone = $lo_language->timezone;
+		if ($timezone === 'auto') {
+			$language = $options['language'] ?? LocaleMiddleware::getLanguage(null);
+			$timezone = $language->timezone;
 		}
 
-		$la_options['timezone'] = $ls_timezone;
+		$options['timezone'] = $timezone;
 
-		$la_options['templateVars']['additionalContent'] ??= '';
-		$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
+		$options['templateVars']['additionalContent'] ??= '';
+		$options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $timezone . '</span>';
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -708,62 +692,61 @@ class FormHelper extends BaseFormHelper {
 	 * @throws \Exception
 	 */
 	protected function processMultiLanguageControls(string $fieldName, array $options, array $baseOptions, string $realType, ?array $values = null): array {
-		$la_options = $options + [
+		$options += [
 			'placeholder' => null,
 			'required' => null,
 		];
 
-		$ls_association = '';
+		$association = '';
 
 		// Strip off the association name from the field name if it exists.
-		$ls_fieldName = $fieldName;
-		if (str_contains($ls_fieldName, '.')) {
-			$la_parts = explode('.', $ls_fieldName);
-			$ls_fieldName = array_pop($la_parts);
+		$plainFieldName = $fieldName;
+		if (str_contains($plainFieldName, '.')) {
+			$parts = explode('.', $plainFieldName);
+			$plainFieldName = array_pop($parts);
 
-			$ls_association = implode('.', $la_parts);
-			$ls_association .= '.';
+			$association = implode('.', $parts);
+			$association .= '.';
 		}
 
-		$lo_userLanguage = LocaleMiddleware::getLanguage($this->languageRealm);
+		$userLanguage = LocaleMiddleware::getLanguage($this->languageRealm);
 
-
-		foreach ($this->languages as $ls_shortcode => $lo_language) {
-			$lx_value = false;
+		foreach ($this->languages as $shortcode => $language) {
+			$value = false;
 			if (isset($values)) {
-				$lx_value = $values[ $ls_shortcode ] ?? null;
-				if ($lx_value instanceof EntityInterface) {
-					$lx_value = $lx_value->get($ls_fieldName);
+				$value = $values[ $shortcode ] ?? null;
+				if ($value instanceof EntityInterface) {
+					$value = $value->get($plainFieldName);
 				}
 			}
 
-			$la_translatableOptions = [
-				'id' => $this->_domId($fieldName . '-Translations[' . $ls_shortcode . ']'),
-				'label' => $lo_language->label,
-				'placeholder' => $la_options['placeholder'] ?? $la_options['val'] ?? null,
-				'required' => $la_options['required'] && !count($la_options['controls']),
+			$translatableOptions = [
+				'id' => $this->_domId($fieldName . '-Translations[' . $shortcode . ']'),
+				'label' => $language->label,
+				'placeholder' => $options['placeholder'] ?? $options['val'] ?? null,
+				'required' => $options['required'] && !count($options['controls']),
 				'type' => $realType,
-				'val' => ($lx_value !== false ? $lx_value : $this->getSourceValue($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName)) ?? '',
+				'val' => ($value !== false ? $value : $this->getSourceValue($association . '_translations.' . $shortcode . '.' . $plainFieldName)) ?? '',
 			];
-			$la_translatableOptions += $baseOptions;
-			unset($la_translatableOptions['values']);
+			$translatableOptions += $baseOptions;
+			unset($translatableOptions['values']);
 
-			if ($lo_userLanguage->shortcode === $ls_shortcode) {
+			if ($userLanguage->shortcode === $shortcode) {
 				// If the user's language is the same as the current language, add a class to highlight it.
-				$la_translatableOptions['templateVars']['containerClass'] = ' IsCurrentLanguage';
+				$translatableOptions['templateVars']['containerClass'] = ' IsCurrentLanguage';
 			}
 
-			if ($ls_association === 'attributes.') {
-				$la_translatableOptions['isTranslation'] = true;
-				$la_translatableOptions['language'] = $lo_language;
-				$la_options['controls'][] = $this->Attributes->control($ls_fieldName, $la_translatableOptions);
+			if ($association === 'attributes.') {
+				$translatableOptions['isTranslation'] = true;
+				$translatableOptions['language'] = $language;
+				$options['controls'][] = $this->Attributes->control($plainFieldName, $translatableOptions);
 			}
 			else {
-				$la_options['controls'][] = $this->control($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName, $la_translatableOptions);
+				$options['controls'][] = $this->control($association . '_translations.' . $shortcode . '.' . $plainFieldName, $translatableOptions);
 			}
 		}
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -773,7 +756,6 @@ class FormHelper extends BaseFormHelper {
 	 */
 	public function context(ContextInterface|EntityInterface|null $context = null): ContextInterface {
 		if ($context instanceof EntityInterface) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$context = $this->_getContext(['entity' => $context]);
 		}
 

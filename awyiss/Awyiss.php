@@ -45,19 +45,19 @@ class Awyiss extends BaseApplication {
 	/**
 	 * The name of the frontend realm
 	 */
-	final public const REALM_FRONTEND = 'Frontend';
+	final public const string REALM_FRONTEND = 'Frontend';
 	/**
 	 * The name of the backend realm
 	 */
-	final public const REALM_BACKEND = 'Backend';
+	final public const string REALM_BACKEND = 'Backend';
 	/**
 	 * The version of Awyiss
 	 */
-	final public const VERSION = '0.1.0';
+	final public const string VERSION = '0.1.0';
 	/**
 	 * The name of the version
 	 */
-	final public const VERSION_NAME = 'Interface';
+	final public const string VERSION_NAME = 'Interface';
 
 
 	/**
@@ -104,14 +104,14 @@ class Awyiss extends BaseApplication {
 		require_once $this->configDir . 'bootstrap.php';
 
 		if (defined('CUSTOM_CONFIG')) {
-			$ls_file = CUSTOM_CONFIG . 'bootstrap.php';
-			if (is_file($ls_file)) {
-				require_once $ls_file;
+			$file = CUSTOM_CONFIG . 'bootstrap.php';
+			if (is_file($file)) {
+				require_once $file;
 			}
 
-			$ls_file = ENV_CUSTOM_CONFIG . 'bootstrap.php';
-			if (is_file($ls_file)) {
-				require_once $ls_file;
+			$file = ENV_CUSTOM_CONFIG . 'bootstrap.php';
+			if (is_file($file)) {
+				require_once $file;
 			}
 		}
 
@@ -130,31 +130,31 @@ class Awyiss extends BaseApplication {
 		if (PHP_SAPI === 'cli') {
 			EventListenersProvider::loadListener('general_events', 'Bake');
 
-			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(true)->setFallbackClassName(Table::class));
+			FactoryLocator::add('Table', new TableLocator()->allowFallbackClass(true)->setFallbackClassName(Table::class));
 		}
 		else {
-			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(false));
+			FactoryLocator::add('Table', new TableLocator()->allowFallbackClass(false));
 		}
 
-		$la_plugins = include $this->configDir . 'plugins.php';
-		if (is_array($la_plugins)) {
-			$this->plugins->addFromConfig($la_plugins);
+		$plugins = include $this->configDir . 'plugins.php';
+		if (is_array($plugins)) {
+			$this->plugins->addFromConfig($plugins);
 		}
 
 		if (defined('CUSTOM_CONFIG')) {
-			$ls_file = CUSTOM_CONFIG . 'plugins.php';
-			if (is_file($ls_file)) {
-				$la_plugins = include $ls_file;
-				if (is_array($la_plugins)) {
-					$this->plugins->addFromConfig($la_plugins);
+			$file = CUSTOM_CONFIG . 'plugins.php';
+			if (is_file($file)) {
+				$plugins = include $file;
+				if (is_array($plugins)) {
+					$this->plugins->addFromConfig($plugins);
 				}
 			}
 
-			$ls_file = ENV_CUSTOM_CONFIG . 'plugins.php';
-			if (is_file($ls_file)) {
-				$la_plugins = include $ls_file;
-				if (is_array($la_plugins)) {
-					$this->plugins->addFromConfig($la_plugins);
+			$file = ENV_CUSTOM_CONFIG . 'plugins.php';
+			if (is_file($file)) {
+				$plugins = include $file;
+				if (is_array($plugins)) {
+					$this->plugins->addFromConfig($plugins);
 				}
 			}
 		}
@@ -173,28 +173,28 @@ class Awyiss extends BaseApplication {
 	 * @return \Cake\Console\CommandCollection
 	 */
 	public function console(CommandCollection $commands): CommandCollection {
-		$la_classes = App::classes('*', 'Command', 'Command', CommandInterface::class, '*');
+		$classes = App::classes('*', 'Command', 'Command', CommandInterface::class, '*');
 
-		$la_commands = [];
-		/** @var class-string<\Cake\Console\CommandInterface::class> $ls_commandClass */
-		foreach ($la_classes as $ls_subNamespace => $ls_commandClass) {
-			$ls_command = $ls_commandClass::defaultName();
+		$foundCommands = [];
+		/** @var class-string<\Cake\Console\CommandInterface::class> $commandClass */
+		foreach ($classes as $subNamespace => $commandClass) {
+			$command = $commandClass::defaultName();
 
-			if (str_contains($ls_subNamespace, '\\')) {
-				$ls_subPath = substr($ls_subNamespace, 0, strpos($ls_subNamespace, '\\'));
-				$ls_subPath = Inflector::underscore($ls_subPath);
-				if (!str_starts_with($ls_command, $ls_subPath . ' ')) {
-					$ls_command = $ls_subPath . ' ' . $ls_command;
+			if (str_contains($subNamespace, '\\')) {
+				$subPath = substr($subNamespace, 0, strpos($subNamespace, '\\'));
+				$subPath = Inflector::underscore($subPath);
+				if (!str_starts_with($command, $subPath . ' ')) {
+					$command = $subPath . ' ' . $command;
 				}
 			}
 
-			if (!isset($la_commands[ $ls_command ])) {
-				$la_commands[ $ls_command ] = $ls_commandClass;
+			if (!isset($foundCommands[ $command ])) {
+				$foundCommands[ $command ] = $commandClass;
 			}
 		}
 
-		if ($la_commands) {
-			$commands->addMany($la_commands);
+		if ($foundCommands) {
+			$commands->addMany($foundCommands);
 		}
 
 		return parent::console($commands);
@@ -252,14 +252,14 @@ class Awyiss extends BaseApplication {
 			return;
 		}
 
-		$ls_file = CUSTOM_CONFIG . 'services.php';
-		if (is_file($ls_file)) {
-			require_once $ls_file;
+		$file = CUSTOM_CONFIG . 'services.php';
+		if (is_file($file)) {
+			require_once $file;
 		}
 
-		$ls_file = ENV_CUSTOM_CONFIG . 'services.php';
-		if (is_file($ls_file)) {
-			require_once $ls_file;
+		$file = ENV_CUSTOM_CONFIG . 'services.php';
+		if (is_file($file)) {
+			require_once $file;
 		}
 	}
 
@@ -275,23 +275,23 @@ class Awyiss extends BaseApplication {
 	 * @throws \ReflectionException
 	 */
 	public function handle(ServerRequestInterface $request): ResponseInterface {
-		$lo_container = $this->getContainer();
-		$lo_container->add(ServerRequest::class, $request);
-		$lo_container->add(ContainerInterface::class, $lo_container);
+		$container = $this->getContainer();
+		$container->add(ServerRequest::class, $request);
+		$container->add(ContainerInterface::class, $container);
 
-		$lo_eventManager = $this->events($this->getEventManager());
-		$this->setEventManager($this->pluginEvents($lo_eventManager));
+		$eventManager = $this->events($this->getEventManager());
+		$this->setEventManager($this->pluginEvents($eventManager));
 
-		$this->controllerFactory ??= new ControllerFactory($lo_container);
+		$this->controllerFactory ??= new ControllerFactory($container);
 
 		if (Router::getRequest() !== $request) {
 			/** @noinspection PhpParamsInspection */
 			Router::setRequest($request);
 		}
 
-		$lo_controller = $this->controllerFactory->create($request);
+		$controller = $this->controllerFactory->create($request);
 
-		return $this->controllerFactory->invoke($lo_controller);
+		return $this->controllerFactory->invoke($controller);
 	}
 
 
@@ -318,11 +318,11 @@ class Awyiss extends BaseApplication {
 	public static function setRealm(?string $realm): void {
 		static::$realm = $realm;
 
-		$lo_eventManager = EventManager::instance();
-		$lo_event = new Event('Awyiss.setRealm', null, [
+		$eventManager = EventManager::instance();
+		$event = new Event('Awyiss.setRealm', null, [
 			'realm' => static::$realm,
 		]);
-		$lo_eventManager->dispatch($lo_event);
+		$eventManager->dispatch($event);
 	}
 
 
@@ -349,16 +349,16 @@ class Awyiss extends BaseApplication {
 	 * @param bool $forceReload
 	 */
 	public static function loadConfiguration(string $frontendLanguage, string $backendLanguage, bool $forceReload = false): void {
-		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
-		$ls_fileName .= '[' . $frontendLanguage . ']';
-		$ls_fileName .= '[' . $backendLanguage . ']';
+		$fileName = Inflector::underscore(CUSTOM_NAMESPACE);
+		$fileName .= '[' . $frontendLanguage . ']';
+		$fileName .= '[' . $backendLanguage . ']';
 
 		if (!$forceReload) {
 			/*
 			 * If the config path `Awyiss` is not empty, we do have a config file
 			 * Therefore loading the database config is skipped
 			 */
-			Configure::load($ls_fileName, 'default', false);
+			Configure::load($fileName, 'default', false);
 			if (Configure::read('Awyiss')) {
 				return;
 			}
@@ -368,11 +368,11 @@ class Awyiss extends BaseApplication {
 			 *
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 			 */
-			$lo_eventManager = EventManager::instance();
-			$lo_eventManager->dispatch('Awyiss.Configuration.createCustomConfiguration');
+			$eventManager = EventManager::instance();
+			$eventManager->dispatch('Awyiss.Configuration.createCustomConfiguration');
 
 			// Try to load the config file again
-			Configure::load($ls_fileName, 'default', false);
+			Configure::load($fileName, 'default', false);
 			if (Configure::read('Awyiss')) {
 				return;
 			}
@@ -380,12 +380,12 @@ class Awyiss extends BaseApplication {
 
 		Configure::delete('Awyiss');
 
-		$la_config = static::getDatabaseConfiguration($frontendLanguage, $backendLanguage);
-		$la_config = static::getFileConfiguration($la_config);
+		$config = static::getDatabaseConfiguration($frontendLanguage, $backendLanguage);
+		$config = static::getFileConfiguration($config);
 
-		ksort($la_config);
+		ksort($config);
 
-		Configure::write($la_config);
+		Configure::write($config);
 	}
 
 
@@ -395,23 +395,23 @@ class Awyiss extends BaseApplication {
 	 * @return void
 	 */
 	public static function loadUserConfiguration(): void {
-		$lo_event = EventManager::instance()->dispatch('Authentication.requestIdentity');
+		$event = EventManager::instance()->dispatch('Authentication.requestIdentity');
 
-		$lo_identity = $lo_event->getResult();
-		$la_userConfig = $lo_identity?->getConfiguration();
+		$identity = $event->getResult();
+		$userConfig = $identity?->getConfiguration();
 
-		if (!$la_userConfig) {
+		if (!$userConfig) {
 			return;
 		}
 
-		$la_userConfig = array_map(function (array $config) {
+		$userConfig = array_map(function (array $config) {
 			return ['Backend' => $config];
-		}, $la_userConfig);
+		}, $userConfig);
 
-		$la_config = Configure::read('Awyiss', []);
-		$la_config = Hash::merge($la_config, $la_userConfig);
+		$config = Configure::read('Awyiss', []);
+		$config = Hash::merge($config, $userConfig);
 
-		Configure::write('Awyiss', $la_config);
+		Configure::write('Awyiss', $config);
 	}
 
 
@@ -419,14 +419,13 @@ class Awyiss extends BaseApplication {
 	 * @param string $frontendLanguage
 	 * @param string $backendLanguage
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function getDatabaseConfiguration(string $frontendLanguage, string $backendLanguage): array {
-		/** @var \Awyiss\Model\Table\ConfigurationTable $lo_configurationTable */
-		$lo_configurationTable = FactoryLocator::get('Table')->get('Configuration');
+		/** @var \Awyiss\Model\Table\ConfigurationTable $configurationTable */
+		$configurationTable = FactoryLocator::get('Table')->get('Configuration');
 
-		$lo_query = $lo_configurationTable->find()->enableHydration(false);
-		$lo_query->where(function (QueryExpression $exp) use ($frontendLanguage, $backendLanguage) {
+		$query = $configurationTable->find()->enableHydration(false);
+		$query->where(function (QueryExpression $exp) use ($frontendLanguage, $backendLanguage) {
 			return $exp->or([
 				['language_shortcode IS' => null],
 				$exp->and([['realm' => Awyiss::REALM_BACKEND], ['language_shortcode' => $backendLanguage]]),
@@ -434,7 +433,7 @@ class Awyiss extends BaseApplication {
 			]);
 		});
 
-		$lo_query->orderBy([
+		$query->orderBy([
 			'scope' => 'ASC',
 			'realm' => 'ASC',
 			'identifier' => 'ASC',
@@ -442,34 +441,34 @@ class Awyiss extends BaseApplication {
 			'language_shortcode' => 'ASC',
 		]);
 
-		$la_config = [];
+		$config = [];
 
-		foreach ($lo_query->all() as $la_item) {
-			$la_item['identifier'] = array_map(function (string $identifier) {
+		foreach ($query->all() as $item) {
+			$item['identifier'] = array_map(function (string $identifier) {
 				return ConfigOptionsProvider::sanitizeIdentifier($identifier);
-			}, explode('.', $la_item['identifier']));
+			}, explode('.', $item['identifier']));
 
-			$ls_path = implode('.', [
+			$path = implode('.', [
 				'Awyiss',
-				ConfigOptionsProvider::sanitizeScope($la_item['scope']),
-				Inflector::camelize($la_item['realm']),
-				...$la_item['identifier'],
+				ConfigOptionsProvider::sanitizeScope($item['scope']),
+				Inflector::camelize($item['realm']),
+				...$item['identifier'],
 			]);
 
-			$la_item['value'] = ConfigOptionsProvider::typecastConfigValue(
-				$la_item['scope'],
-				$la_item['realm'],
-				implode('.', $la_item['identifier']),
-				$la_item['value'],
-				$la_item['language_shortcode']
+			$item['value'] = ConfigOptionsProvider::typecastConfigValue(
+				$item['scope'],
+				$item['realm'],
+				implode('.', $item['identifier']),
+				$item['value'],
+				$item['language_shortcode']
 			);
 
-			if (!isset($la_config[ $ls_path ])) {
-				$la_config[ $ls_path ] = $la_item['value'];
+			if (!isset($config[ $path ])) {
+				$config[ $path ] = $item['value'];
 			}
 		}
 
-		return $la_config;
+		return $config;
 	}
 
 
@@ -478,23 +477,22 @@ class Awyiss extends BaseApplication {
 	 * @return array
 	 */
 	public static function getFileConfiguration(array $config): array {
-		/** @var \Awyiss\Configuration\AbstractConfigOptions $lo_configOptions */
-		foreach (ConfigOptionsProvider::getConfigOptionsFiles(true) as $ls_scope => $lo_configOptionsFile) {
-			if (!$lo_configOptionsFile) {
+		/** @var \Awyiss\Configuration\AbstractConfigOptions $configOptionsFile */
+		foreach (ConfigOptionsProvider::getConfigOptionsFiles(true) as $scope => $configOptionsFile) {
+			if (!$configOptionsFile) {
 				continue;
 			}
 
 			/**
-			 * @var string $ls_realm
-			 * @var \Awyiss\Configuration\ConfigOptionsCollection $lo_realmConfigOptionCollection
+			 * @var string $realm
+			 * @var \Awyiss\Configuration\ConfigOptionsCollection $realmConfigOptionCollection
 			 */
-			foreach ($lo_configOptionsFile->getConfigOptions() as $ls_realm => $lo_realmConfigOptionCollection) {
-				/** @var \Awyiss\Configuration\ConfigOption $lo_configOption */
-				foreach ($lo_realmConfigOptionCollection->getConfigOptions() as $ls_key => $lo_configOption) {
-					$ls_key = 'Awyiss.' . $ls_scope . '.' . $ls_realm . '.' . $ls_key;
-					if (!array_key_exists($ls_key, $config)) {
-						/** @noinspection PhpVariableNamingConventionInspection */
-						$config[ $ls_key ] = $lo_configOption->getDefaultValue();
+			foreach ($configOptionsFile->getConfigOptions() as $realm => $realmConfigOptionCollection) {
+				/** @var \Awyiss\Configuration\ConfigOption $configOption */
+				foreach ($realmConfigOptionCollection->getConfigOptions() as $key => $configOption) {
+					$key = 'Awyiss.' . $scope . '.' . $realm . '.' . $key;
+					if (!array_key_exists($key, $config)) {
+						$config[ $key ] = $configOption->getDefaultValue();
 					}
 				}
 			}

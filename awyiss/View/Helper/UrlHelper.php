@@ -21,54 +21,53 @@ class UrlHelper extends BaseUrlHelper {
 	 * @return string
 	 */
 	public function build(array|string|null $url = null, array $options = []): string {
-		$lx_url = $url;
-		$la_options = $options + [
+		$options += [
 			'fullBase' => false,
 			'escape' => true,
 			'withParams' => null,
 			'withoutParams' => null,
 		];
 
-		if (is_null($lx_url)) {
-			$lx_url = [];
+		if (is_null($url)) {
+			$url = [];
 		}
 
-		if (is_array($lx_url)) {
-			$la_url = [];
-			foreach ($lx_url as $lx_key => $lx_value) {
-				if (is_numeric($lx_key) || str_starts_with($lx_key, '_')) {
-					$la_url[ $lx_key ] = $lx_value;
+		if (is_array($url)) {
+			$cleanUrlParts = [];
+			foreach ($url as $key => $value) {
+				if (is_numeric($key) || str_starts_with($key, '_')) {
+					$cleanUrlParts[ $key ] = $value;
 					continue;
 				}
 
-				$la_url[ Inflector::dasherize($lx_key) ] = $lx_value;
+				$cleanUrlParts[ Inflector::dasherize($key) ] = $value;
 			}
 
-			if (!empty($la_options['withParams']) || !empty($la_options['withoutParams'])) {
-				$la_url += $this->buildParameters($la_options);
+			if (!empty($options['withParams']) || !empty($options['withoutParams'])) {
+				$cleanUrlParts += $this->buildParameters($options);
 			}
 
 			if (
 				(
-					!array_key_exists('_name', $la_url) ||
-					$la_url['_name'] === null
+					!array_key_exists('_name', $cleanUrlParts) ||
+					$cleanUrlParts['_name'] === null
 				) &&
-				empty($la_url['plugin'])
+				empty($cleanUrlParts['plugin'])
 			) {
-				unset($la_url['_name']);
+				unset($cleanUrlParts['_name']);
 			}
 
-			$ls_url = Router::url($la_url, $la_options['fullBase']);
+			$url = Router::url($cleanUrlParts, $options['fullBase']);
 		}
 		else {
-			$ls_url = Router::url($lx_url, $la_options['fullBase']);
+			$url = Router::url($url, $options['fullBase']);
 		}
 
-		if ($la_options['escape']) {
-			return h($ls_url);
+		if ($options['escape']) {
+			return h($url);
 		}
 
-		return $ls_url;
+		return $url;
 	}
 
 
@@ -77,23 +76,22 @@ class UrlHelper extends BaseUrlHelper {
 	 * @return array
 	 */
 	protected function buildParameters(array $options): array {
-		$la_options = $options;
-		$la_params = [];
+		$params = [];
 
-		$la_currentParts = [];
-		foreach (($this->_View->getRequest()->getParam('parts') ?: []) as $lx_key => $lx_value) {
-			if (is_numeric($lx_key)) {
+		$currentParts = [];
+		foreach (($this->_View->getRequest()->getParam('parts') ?: []) as $key => $value) {
+			if (is_numeric($key)) {
 				continue;
 			}
 
-			$la_currentParts[ Inflector::dasherize($lx_key) ] = $lx_value;
+			$currentParts[ Inflector::dasherize($key) ] = $value;
 		}
 
-		$this->addParams($la_params, $la_options['withParams'], $la_currentParts);
+		$this->addParams($params, $options['withParams'], $currentParts);
 
-		$this->removeParams($la_params, $la_options['withoutParams'], $la_currentParts);
+		$this->removeParams($params, $options['withoutParams'], $currentParts);
 
-		return $la_params;
+		return $params;
 	}
 
 
@@ -109,29 +107,27 @@ class UrlHelper extends BaseUrlHelper {
 	 * @return void
 	 */
 	protected function addParams(array &$params, mixed $withParams, array $currentParts): void {
-		$la_withParams = $withParams ?? [];
+		$withParams ??= [];
 
-		if (!$la_withParams) {
+		if (!$withParams) {
 			return;
 		}
 
-		if (!is_array($la_withParams)) {
-			$la_withParams = [$la_withParams];
+		if (!is_array($withParams)) {
+			$withParams = [$withParams];
 		}
 
-		$la_withParams = Hash::flatten($la_withParams);
+		$withParams = Hash::flatten($withParams);
 
-		if (in_array(true, $la_withParams, true)) {
-			/** @noinspection PhpVariableNamingConventionInspection */
+		if (in_array(true, $withParams, true)) {
 			$params = $currentParts;
 
 			return;
 		}
 
-		foreach ($la_withParams as $ls_param) {
-			if (array_key_exists($ls_param, $currentParts)) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$params[ $ls_param ] = $currentParts[ $ls_param ];
+		foreach ($withParams as $param) {
+			if (array_key_exists($param, $currentParts)) {
+				$params[ $param ] = $currentParts[ $param ];
 			}
 		}
 	}
@@ -149,26 +145,24 @@ class UrlHelper extends BaseUrlHelper {
 	 * @return void
 	 */
 	protected function removeParams(array &$params, mixed $withoutParams, array $currentParts): void {
-		$la_withoutParams = $withoutParams ?? [];
+		$withoutParams ??= [];
 
-		if (!$la_withoutParams) {
+		if (!$withoutParams) {
 			return;
 		}
 
-		if (!is_array($la_withoutParams)) {
-			$la_withoutParams = [$la_withoutParams];
+		if (!is_array($withoutParams)) {
+			$withoutParams = [$withoutParams];
 		}
 
-		$la_withoutParams = Hash::flatten($la_withoutParams);
+		$withoutParams = Hash::flatten($withoutParams);
 
-		if (in_array(true, $la_withoutParams, true)) {
-			/** @noinspection PhpVariableNamingConventionInspection */
+		if (in_array(true, $withoutParams, true)) {
 			$params = [];
 		}
 		else {
 			if (!$params) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$params = array_diff_key($currentParts, array_flip($la_withoutParams));
+				$params = array_diff_key($currentParts, array_flip($withoutParams));
 			}
 		}
 
@@ -181,10 +175,8 @@ class UrlHelper extends BaseUrlHelper {
 			 *
 			 * The router will remove a parameter if its value is `false`,
 			 * so pass at least one parameter with `false`.
-			 *
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
-			$params[ reset($la_withoutParams) ] = false;
+			$params[ reset($withoutParams) ] = false;
 		}
 	}
 }

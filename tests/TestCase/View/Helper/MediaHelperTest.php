@@ -39,7 +39,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -97,7 +96,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::element()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testElement(): void {
 		$this->view->expects($this->once())->method('element')->with('media/test_element', $this->anything())->willReturn('<div>media</div>');
@@ -113,7 +111,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::element()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testElementReturnsEmptyStringForUnknownMediaAssignment(): void {
 		$this->view->expects($this->never())->method('element');
@@ -128,7 +125,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBackground(): void {
 		$media = new Media([
@@ -157,7 +153,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBackgroundWithNoAverageColor(): void {
 		$media = new Media([
@@ -186,7 +181,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBackgroundWithNoSelectorThrowsException(): void {
 		$media = new Media([]);
@@ -203,7 +197,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBackgroundWithBreakpoints() {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -255,7 +248,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBackgroundWithBreakpointsHasNoCssBreakpointsWhenResizedImagesAreEmpty() {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -280,7 +272,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBackgroundForNonImageWithPreview() {
 		$media = new Media([
@@ -310,7 +301,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBackgroundForNonImageWithoutPreview() {
 		$media = new Media([
@@ -336,7 +326,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBackgroundForNonImageWithoutPreviewButAverageColor(): void {
 		$media = new Media([
@@ -362,7 +351,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::background()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBackgroundCalculatesCorrectAspectRatioForUnfinishedResizeFiles(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -385,7 +373,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::getBackgroundStyleTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \ReflectionException
 	 */
 	public function testGetBackgroundStyleTagCalculatesCorrectAspectRatioForUnfinishedResizeFiles(): void {
@@ -410,7 +397,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \Exception
 	 */
 	public function testHtmlTagForImage(): void {
@@ -434,7 +420,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \Exception
 	 */
 	public function testHtmlTagForImageWithAlt(): void {
@@ -456,7 +441,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \Exception
 	 */
 	public function testHtmlTagForImageWithAltAttribute(): void {
@@ -484,7 +468,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \Exception
 	 */
 	public function testHtmlTagForNonImageWithPreview(): void {
@@ -510,7 +493,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHtmlTagForNonImageWithPreviewAndDisabledPreview(): void {
 		$media = new Media([
@@ -533,7 +515,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHtmlTagForSvg(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -569,7 +550,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHtmlTagForAudio(): void {
 		$media = new Media([
@@ -602,7 +582,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHtmlTagForVideo(): void {
 		$media = new Media([
@@ -635,7 +614,6 @@ class MediaHelperTest extends TestCase {
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @throws \Exception
 	 */
 	public function testHtmlTagForImageWithLazyload(bool $lazyload): void {
@@ -672,7 +650,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHtmlTagForImageResponsiveWithLazyload(bool $lazyload): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -716,7 +693,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHtmlTagForVideoWithLazyload(bool $lazyload): void {
 		$media = new Media([
@@ -757,7 +733,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::htmlTag()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHtmlTagForImageResponsive(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -826,7 +801,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::audioTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAudioTag(): void {
 		$media = new Media([
@@ -849,7 +823,6 @@ class MediaHelperTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 * @noinspection HtmlUnknownTarget
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAudioTagWithSources(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -870,7 +843,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::audioTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAudioTagWithSingleSource(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -890,7 +862,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::audioTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testAudioTagWithSubtitlesGeneratesVideoTag(): void {
@@ -928,7 +899,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::audioTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAudioTagWithSubtitlesGeneratesAudiTagIfForced(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -948,7 +918,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::audioTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAudioTagWithSubtitlesAndNoDefault(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -980,7 +949,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::audioTag()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAudioTagForNonAudio(): void {
 		$media = new Media([
@@ -998,7 +966,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImageTag(): void {
 		$media = new Media([
@@ -1018,7 +985,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImageTagWithAlt(): void {
 		$media = new Media([
@@ -1039,7 +1005,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImageTagForSvg(): void {
 		$media = new Media([
@@ -1059,7 +1024,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImageTagForNonImageWithPreview(): void {
 		$media = new Media([
@@ -1080,7 +1044,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImageTagForNonImageWithoutPreview(): void {
 		$media = new Media([
@@ -1098,7 +1061,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImageTagCalculatesCorrectAspectRatioForUnfinishedResizeFiles(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1116,7 +1078,6 @@ class MediaHelperTest extends TestCase {
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImageTagWithLazyload(bool $lazyload): void {
 		$media = new Media([
@@ -1151,7 +1112,6 @@ class MediaHelperTest extends TestCase {
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::imageTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImageTagForSvgWithLazyload(bool $lazyload): void {
 		$media = new Media([
@@ -1186,7 +1146,6 @@ class MediaHelperTest extends TestCase {
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPictureTag(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1257,7 +1216,6 @@ class MediaHelperTest extends TestCase {
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPictureTagWithWebpResizeFileType(bool $include2x): void {
 		Configure::write('Awyiss.Media.Frontend.resizing.fileType', 'webp');
@@ -1333,7 +1291,6 @@ class MediaHelperTest extends TestCase {
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPictureTagWithWebpResizeFileTypePerConfig(bool $include2x): void {
 		$this->mediaHelper = new MediaHelper($this->view);
@@ -1407,7 +1364,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPictureTagNotContainsBackgroundColorVarIfEmpty(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1430,7 +1386,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPictureTagWithAlt(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1489,7 +1444,6 @@ class MediaHelperTest extends TestCase {
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPictureTagForSvg(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1519,7 +1473,6 @@ class MediaHelperTest extends TestCase {
 	 * @param bool $include2x
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPictureTagWithoutResize(bool $include2x): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1549,7 +1502,6 @@ class MediaHelperTest extends TestCase {
 	 * @param bool $lazyload
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::pictureTag()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPictureTagWithLazyload(bool $lazyload): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1607,7 +1559,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVideoTag(): void {
 		$media = new Media([
@@ -1631,7 +1582,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testVideoTagWithSources(): void {
@@ -1652,7 +1602,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVideoTagWithSingleSource(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1672,7 +1621,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testVideoTagWithSubtitles(): void {
@@ -1707,7 +1655,6 @@ class MediaHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVideoTagWithSubtitlesAndNoDefault(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1739,7 +1686,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVideoTagForNonVideo(): void {
 		$media = new Media([
@@ -1760,7 +1706,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVideoTagWithLazyload(bool $lazyload): void {
 		$media = new Media([
@@ -1800,7 +1745,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::videoTag()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testVideoTagWithSourcesWithLazyload(bool $lazyload): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1845,7 +1789,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::contents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContents(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1860,7 +1803,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::storeItems()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testStoreItems(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1880,7 +1822,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::preview()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPreview(): void {
 		$media = $this->createMock(Media::class);
@@ -1895,7 +1836,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::preview()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPreviewForImage(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1946,7 +1886,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithRenderOptions(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1973,7 +1912,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithoutRenderOptions(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -1996,7 +1934,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithoutRenderOptionsSameFormat(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -2019,7 +1956,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithoutRenderOptionsWebPFormat(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -2042,7 +1978,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithoutRenderOptionsNullFormat(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -2066,7 +2001,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::getPixelColumnWidth()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPixelColumnWidth(): void {
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
@@ -2083,7 +2017,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::getPixelColumnWidth()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPixelColumnWidthThrowsExceptionForMissingBaseWidth(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -2101,7 +2034,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::getPixelColumnWidth()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPixelColumnWidthThrowsExceptionForMissingColumnWidth(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -2118,7 +2050,7 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTags()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTags(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -2133,7 +2065,7 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTags()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsWithFields(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -2150,7 +2082,7 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInField(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -2166,7 +2098,7 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInFieldWithUnknownMediaId(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -2183,7 +2115,7 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInText()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInText(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -2200,7 +2132,7 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInText()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInTextWithUnknownMediaId(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -2218,7 +2150,7 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::rebuildSimpleImageTagsInText()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInTextWithNullValue(): void {
 		$media = $this->fetchTable('Media')->find('all')->all()->indexBy('id')->toArray();
@@ -2233,7 +2165,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTags(): void {
 		/** @var \Awyiss\Model\Entity\Widget $widget */
@@ -2259,7 +2191,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsWithFields(): void {
 		/** @var \Awyiss\Model\Entity\Widget $widget */
@@ -2288,7 +2220,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsWithUnknownImage(): void {
 		/** @var \Awyiss\Model\Entity\Widget $widget */
@@ -2313,7 +2245,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::replaceCustomImageTagsInField()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsInField(): void {
 		/** @var \Awyiss\Model\Entity\Widget $widget */
@@ -2341,7 +2273,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::replaceCustomImageTagsInField()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget,
 	 */
 	public function testReplaceCustomImageTagsInFieldWithUnknownImage(): void {
 		/** @var \Awyiss\Model\Entity\Widget $widget */
@@ -2368,7 +2300,7 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::replaceCustomImageTagsInField()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsInFieldWithTagAttributes(): void {
 		/** @var \Awyiss\Model\Entity\Widget $widget */
@@ -2396,7 +2328,6 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::getResponsiveImages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetResponsiveImagesNotIgnoresBreakPointsOptionsOfTooLargeBreakpoints(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -2424,7 +2355,6 @@ class MediaHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\MediaHelper::getResponsiveImages()
 	 * @see \Awyiss\View\Helper\MediaHelper::getBreakpointFiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetResponsiveImagesFiltersConsecutiveDuplicateFilePaths(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */

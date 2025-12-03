@@ -22,6 +22,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FactoryLocator;
 use Cake\TestSuite\ConnectionHelper;
+use Cake\Utility\Text;
 use Migrations\Migrations;
 use Migrations\TestSuite\Migrator;
 
@@ -31,15 +32,15 @@ define('CONFIG_ENV', 'development');
 define('CUSTOM_DIR', 'tests' . DS . 'customer');
 define('CUSTOM_NAMESPACE', 'Customer');
 
-$ls_dir = dirname(__DIR__);
+$dir = dirname(__DIR__);
 
-require $ls_dir . '/awyiss/I18n/functions.php';
+require $dir . '/awyiss/I18n/functions.php';
 
-$lo_loader = require dirname(__DIR__) . '/vendor/autoload.php';
+$loader = require dirname(__DIR__) . '/vendor/autoload.php';
 
-require $ls_dir . '/awyiss/config/bootstrap.php';
+require $dir . '/awyiss/config/bootstrap.php';
 
-$lo_loader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], true);
+$loader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], true);
 
 if (empty($_SERVER['HTTP_HOST']) && !Configure::read('App.fullBaseUrl')) {
 	Configure::write('App.fullBaseUrl', 'http://localhost');
@@ -72,21 +73,21 @@ session_id('cli');
 ConnectionHelper::addTestAliases();
 
 // Run the migrations
-(new Migrator())->runMany([
+new Migrator()->runMany([
 	['source' => 'Migrations'],
 	['source' => '..' . DS . '..' . DS . 'tests' . DS . 'customer' . DS . 'config' . DS . 'Migrations'],
 	['plugin' => 'Queue']
 ]);
 
 // Seed the database
-(new Migrations(['connection' => 'test']))->seed();
-(new Migrations(['connection' => 'test']))->seed(['source' => '..' . DS . '..' . DS . 'tests' . DS . 'customer' . DS . 'config' . DS . 'Seeds']);
+new Migrations(['connection' => 'test'])->seed();
+new Migrations(['connection' => 'test'])->seed(['source' => '..' . DS . '..' . DS . 'tests' . DS . 'customer' . DS . 'config' . DS . 'Seeds']);
 
-FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(true)->setFallbackClassName(Table::class));
+FactoryLocator::add('Table', new TableLocator()->allowFallbackClass(true)->setFallbackClassName(Table::class));
 
 // Use a locale that won't ever be present as translations
 // Here it's 'en_ZW' (English in Zimbabwe)
 ini_set('intl.default_locale', 'en_AG');
 \Cake\I18n\I18n::setLocale('en_AG');
 
-\Cake\Utility\Text::setTransliteratorId('de-ASCII; Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove');
+Text::setTransliteratorId('de-ASCII; Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove');

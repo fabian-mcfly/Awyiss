@@ -89,65 +89,65 @@ class FrontendView extends AppView {
 		]);
 		$this->addHelper('Url');
 
-		$lo_twig = $this->getTwig();
+		$twig = $this->getTwig();
 
 		// Find the customer logo
-		$ls_logoPath = $this->getLoginLogoPath();
-		if ($ls_logoPath) {
-			$lo_twig->addGlobal('loginLogoPath', $ls_logoPath);
+		$logoPath = $this->getLoginLogoPath();
+		if ($logoPath) {
+			$twig->addGlobal('loginLogoPath', $logoPath);
 		}
 
 		// Unset language properties
-		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
-		if ($lo_frontendLanguage) {
-			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
-			if ($ls_timezone === 'auto') {
-				$ls_timezone = $lo_frontendLanguage->timezone;
+		$frontendLanguage = LocaleMiddleware::getLanguage();
+		if ($frontendLanguage) {
+			$timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+			if ($timezone === 'auto') {
+				$timezone = $frontendLanguage->timezone;
 			}
 
-			$this->addHelper('Time', ['outputTimezone' => $ls_timezone]);
+			$this->addHelper('Time', ['outputTimezone' => $timezone]);
 
-			if ($lo_frontendLanguage->dateFormat) {
-				$lo_twig->addGlobal('dateFormat', $lo_frontendLanguage->dateFormat);
+			if ($frontendLanguage->dateFormat) {
+				$twig->addGlobal('dateFormat', $frontendLanguage->dateFormat);
 			}
-			if ($lo_frontendLanguage->timeFormat) {
-				$lo_twig->addGlobal('timeFormat', $lo_frontendLanguage->timeFormat);
+			if ($frontendLanguage->timeFormat) {
+				$twig->addGlobal('timeFormat', $frontendLanguage->timeFormat);
 			}
 
-			$lo_frontendLanguage = $this->cleanLanguage($lo_frontendLanguage);
+			$frontendLanguage = $this->cleanLanguage($frontendLanguage);
 		}
 
-		$lo_backendLanguage = null;
+		$backendLanguage = null;
 		if ($this->getRequest()->getSession()->read('Backend.languageShortcode')) {
-			$lo_backendLanguage = LocaleMiddleware::getLanguageByShortcode($this->getRequest()->getSession()->read('Backend.languageShortcode'), Awyiss::REALM_BACKEND);
-			if ($lo_backendLanguage) {
-				$lo_backendLanguage = $this->cleanLanguage($lo_backendLanguage);
+			$backendLanguage = LocaleMiddleware::getLanguageByShortcode($this->getRequest()->getSession()->read('Backend.languageShortcode'), Awyiss::REALM_BACKEND);
+			if ($backendLanguage) {
+				$backendLanguage = $this->cleanLanguage($backendLanguage);
 			}
 		}
 
-		$ls_folder = '/' . (ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
-		if (!str_ends_with($ls_folder, '/')) {
-			$ls_folder .= '/';
+		$folder = '/' . (ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
+		if (!str_ends_with($folder, '/')) {
+			$folder .= '/';
 		}
 
-		$lo_uri = $this->getRequest()->getUri();
-		if ($ls_folder !== '/' && !str_starts_with($lo_uri->getPath(), $ls_folder)) {
-			$lo_uri = $lo_uri->withPath($ls_folder . ltrim($lo_uri->getPath(), '/'));
+		$uri = $this->getRequest()->getUri();
+		if ($folder !== '/' && !str_starts_with($uri->getPath(), $folder)) {
+			$uri = $uri->withPath($folder . ltrim($uri->getPath(), '/'));
 		}
 
-		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
-		$lo_twig->addGlobal('config', Configure::read());
-		$lo_twig->addGlobal('currentBackendLanguage', $lo_backendLanguage);
-		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
-		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
-		$lo_twig->addGlobal('currentUrl', $lo_uri->__toString());
-		$lo_twig->addGlobal('designSettings', $this->getDesignVariables(true));
-		$lo_twig->addGlobal('environment', Configure::read('debug') ? 'Env-' . Inflector::ucparts(CONFIG_ENV) : null);
-		$lo_twig->addGlobal('folder', $ls_folder);
-		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
-		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
-		$lo_twig->addGlobal('previewMode', $this->getRequest()->getSession()->read('previewMode', []));
-		$lo_twig->addGlobal('webfont', $this->getWebfontData());
+		$twig->addGlobal('baseUrl', Router::url('/', true));
+		$twig->addGlobal('config', Configure::read());
+		$twig->addGlobal('currentBackendLanguage', $backendLanguage);
+		$twig->addGlobal('currentLanguage', $frontendLanguage);
+		$twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
+		$twig->addGlobal('currentUrl', $uri->__toString());
+		$twig->addGlobal('designSettings', $this->getDesignVariables(true));
+		$twig->addGlobal('environment', Configure::read('debug') ? 'Env-' . Inflector::ucparts(CONFIG_ENV) : null);
+		$twig->addGlobal('folder', $folder);
+		$twig->addGlobal('languages', LocaleMiddleware::getLanguages());
+		$twig->addGlobal('languageShortcode', $frontendLanguage?->shortcode);
+		$twig->addGlobal('previewMode', $this->getRequest()->getSession()->read('previewMode', []));
+		$twig->addGlobal('webfont', $this->getWebfontData());
 	}
 
 
@@ -172,36 +172,35 @@ class FrontendView extends AppView {
 	 * @psalm-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
 	 */
 	public function content(string $name, array $data = [], array $options = []): string {
-		$la_options = $options + ['callbacks' => false, 'cache' => null, 'plugin' => null, 'ignoreMissing' => false];
-		if (isset($la_options['cache'])) {
-			$la_options['cache'] = $this->_contentCache(
+		$options += ['callbacks' => false, 'cache' => null, 'plugin' => null, 'ignoreMissing' => false];
+		if (isset($options['cache'])) {
+			$options['cache'] = $this->_contentCache(
 				$name,
 				$data,
-				array_diff_key($la_options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null])
+				array_diff_key($options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null])
 			);
 		}
 
-		$lb_pluginCheck = $la_options['plugin'] !== false;
-		$ls_file = $this->_getContentFileName($name, $lb_pluginCheck);
+		$pluginCheck = $options['plugin'] !== false;
+		$file = $this->_getContentFileName($name, $pluginCheck);
 
-		if ($ls_file && $la_options['cache']) {
-			$la_data = $data;
-			return $this->cache(function () use ($ls_file, $la_data, $la_options): void {
-				echo $this->_renderContent($ls_file, $la_data, $la_options);
-			}, $la_options['cache']);
+		if ($file && $options['cache']) {
+			return $this->cache(function () use ($file, $data, $options): void {
+				echo $this->_renderContent($file, $data, $options);
+			}, $options['cache']);
 		}
 
-		if ($ls_file) {
-			return $this->_renderContent($ls_file, $data, $la_options);
+		if ($file) {
+			return $this->_renderContent($file, $data, $options);
 		}
 
-		if ($la_options['ignoreMissing']) {
+		if ($options['ignoreMissing']) {
 			return '';
 		}
 
-		[$ls_plugin, $ls_contentName] = $this->pluginSplit($name, $lb_pluginCheck);
-		$la_paths = iterator_to_array($this->getContentPaths($ls_plugin));
-		throw new MissingContentException([$name . $this->_ext, $ls_contentName . $this->_ext], $la_paths);
+		[$plugin, $contentName] = $this->pluginSplit($name, $pluginCheck);
+		$paths = iterator_to_array($this->getContentPaths($plugin));
+		throw new MissingContentException([$name . $this->_ext, $contentName . $this->_ext], $paths);
 	}
 
 
@@ -217,40 +216,39 @@ class FrontendView extends AppView {
 	 */
 	protected function _contentCache(string $name, array $data, array $options): array {
 		if (isset($options['cache']['key'], $options['cache']['config'])) {
-			/** @psalm-var array{key:string, config:string} $la_cache */
-			$la_cache = $options['cache'];
-			$la_cache['key'] = 'content_' . $la_cache['key'];
+			/** @psalm-var array{key:string, config:string} $cache */
+			$cache = $options['cache'];
+			$cache['key'] = 'content_' . $cache['key'];
 
-			return $la_cache;
+			return $cache;
 		}
 
-		[$ls_plugin, $ls_name] = $this->pluginSplit($name);
+		[$plugin, $name] = $this->pluginSplit($name);
 
-		$ls_pluginKey = null;
-		if ($ls_plugin) {
-			$ls_pluginKey = str_replace('/', '_', Inflector::underscore($ls_plugin));
+		$pluginKey = null;
+		if ($plugin) {
+			$pluginKey = str_replace('/', '_', Inflector::underscore($plugin));
 		}
-		$ls_contentKey = str_replace(['\\', '/'], '_', $ls_name);
+		$contentKey = str_replace(['\\', '/'], '_', $name);
 
-		$la_cache = $options['cache'];
-		/** @noinspection PhpVariableNamingConventionInspection */
+		$cache = $options['cache'];
 		unset($options['cache']);
-		$la_keys = array_merge(
-			[$ls_pluginKey, $ls_contentKey],
+		$keys = array_merge(
+			[$pluginKey, $contentKey],
 			array_keys($options),
 			array_keys($data)
 		);
-		$la_config = [
+		$config = [
 			'config' => $this->contentCache,
-			'key' => implode('_', $la_keys),
+			'key' => implode('_', $keys),
 		];
-		if (is_array($la_cache)) {
-			$la_config = $la_cache + $la_config;
+		if (is_array($cache)) {
+			$config = $cache + $config;
 		}
-		$la_config['key'] = 'content_' . $la_config['key'];
+		$config['key'] = 'content_' . $config['key'];
 
 		/** @var array{config: string, key: string} */
-		return $la_config;
+		return $config;
 	}
 
 
@@ -262,12 +260,12 @@ class FrontendView extends AppView {
 	 * @return string|false Either a string to the content filename or false when one can't be found.
 	 */
 	protected function _getContentFileName(string $name, bool $pluginCheck = true): string|false {
-		[$ls_plugin, $ls_name] = $this->pluginSplit($name, $pluginCheck);
+		[$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
-		$ls_name .= $this->_ext;
-		foreach ($this->getContentPaths($ls_plugin) as $ls_path) {
-			if (is_file($ls_path . $ls_name)) {
-				return $ls_path . $ls_name;
+		$name .= $this->_ext;
+		foreach ($this->getContentPaths($plugin) as $path) {
+			if (is_file($path . $name)) {
+				return $path . $name;
 			}
 		}
 
@@ -282,10 +280,10 @@ class FrontendView extends AppView {
 	 * @return \Generator
 	 */
 	protected function getContentPaths(?string $plugin): Generator {
-		$la_contentPaths = $this->_getSubPaths(static::TYPE_CONTENT);
-		foreach ($this->_paths($plugin) as $ls_path) {
-			foreach ($la_contentPaths as $ls_subdir) {
-				yield $ls_path . $ls_subdir . DIRECTORY_SEPARATOR;
+		$contentPaths = $this->_getSubPaths(static::TYPE_CONTENT);
+		foreach ($this->_paths($plugin) as $path) {
+			foreach ($contentPaths as $subdir) {
+				yield $path . $subdir . DIRECTORY_SEPARATOR;
 			}
 		}
 	}
@@ -328,34 +326,33 @@ class FrontendView extends AppView {
 	 * @psalm-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
 	 */
 	public function widget(string $name, array $data = [], array $options = []): string {
-		$la_options = $options + ['callbacks' => false, 'cache' => null, 'plugin' => null, 'ignoreMissing' => false];
-		if (isset($la_options['cache'])) {
-			$la_options['cache'] = $this->_widgetCache(
+		$options += ['callbacks' => false, 'cache' => null, 'plugin' => null, 'ignoreMissing' => false];
+		if (isset($options['cache'])) {
+			$options['cache'] = $this->_widgetCache(
 				$name,
 				$data,
-				array_diff_key($la_options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null])
+				array_diff_key($options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null])
 			);
 		}
 
-		$lb_pluginCheck = $la_options['plugin'] !== false;
-		$ls_file = $this->_getWidgetFileName($name, $lb_pluginCheck);
-		if ($ls_file && $la_options['cache']) {
-			$la_data = $data;
-			return $this->cache(function () use ($ls_file, $la_data, $la_options): void {
-				echo $this->_renderWidget($ls_file, $la_data, $la_options);
-			}, $la_options['cache']);
+		$pluginCheck = $options['plugin'] !== false;
+		$file = $this->_getWidgetFileName($name, $pluginCheck);
+		if ($file && $options['cache']) {
+			return $this->cache(function () use ($file, $data, $options): void {
+				echo $this->_renderWidget($file, $data, $options);
+			}, $options['cache']);
 		}
-		if ($ls_file) {
-			return $this->_renderWidget($ls_file, $data, $la_options);
+		if ($file) {
+			return $this->_renderWidget($file, $data, $options);
 		}
 
-		if ($la_options['ignoreMissing']) {
+		if ($options['ignoreMissing']) {
 			return '';
 		}
 
-		[$ls_plugin, $ls_widgetName] = $this->pluginSplit($name, $lb_pluginCheck);
-		$la_paths = iterator_to_array($this->getWidgetPaths($ls_plugin));
-		throw new MissingWidgetException([$name . $this->_ext, $ls_widgetName . $this->_ext], $la_paths);
+		[$plugin, $widgetName] = $this->pluginSplit($name, $pluginCheck);
+		$paths = iterator_to_array($this->getWidgetPaths($plugin));
+		throw new MissingWidgetException([$name . $this->_ext, $widgetName . $this->_ext], $paths);
 	}
 
 
@@ -371,40 +368,39 @@ class FrontendView extends AppView {
 	 */
 	protected function _widgetCache(string $name, array $data, array $options): array {
 		if (isset($options['cache']['key'], $options['cache']['config'])) {
-			/** @psalm-var array{key:string, config:string} $la_cache */
-			$la_cache = $options['cache'];
-			$la_cache['key'] = 'widget_' . $la_cache['key'];
+			/** @psalm-var array{key:string, config:string} $cache */
+			$cache = $options['cache'];
+			$cache['key'] = 'widget_' . $cache['key'];
 
-			return $la_cache;
+			return $cache;
 		}
 
-		[$ls_plugin, $ls_name] = $this->pluginSplit($name);
+		[$plugin, $name] = $this->pluginSplit($name);
 
-		$ls_pluginKey = null;
-		if ($ls_plugin) {
-			$ls_pluginKey = str_replace('/', '_', Inflector::underscore($ls_plugin));
+		$pluginKey = null;
+		if ($plugin) {
+			$pluginKey = str_replace('/', '_', Inflector::underscore($plugin));
 		}
-		$ls_widgetKey = str_replace(['\\', '/'], '_', $ls_name);
+		$widgetKey = str_replace(['\\', '/'], '_', $name);
 
-		$la_cache = $options['cache'];
-		/** @noinspection PhpVariableNamingConventionInspection */
+		$cache = $options['cache'];
 		unset($options['cache']);
-		$la_keys = array_merge(
-			[$ls_pluginKey, $ls_widgetKey],
+		$keys = array_merge(
+			[$pluginKey, $widgetKey],
 			array_keys($options),
 			array_keys($data)
 		);
-		$la_config = [
+		$config = [
 			'config' => $this->widgetCache,
-			'key' => implode('_', $la_keys),
+			'key' => implode('_', $keys),
 		];
-		if (is_array($la_cache)) {
-			$la_config = $la_cache + $la_config;
+		if (is_array($cache)) {
+			$config = $cache + $config;
 		}
-		$la_config['key'] = 'widget_' . $la_config['key'];
+		$config['key'] = 'widget_' . $config['key'];
 
 		/** @var array{config: string, key: string} */
-		return $la_config;
+		return $config;
 	}
 
 
@@ -416,12 +412,12 @@ class FrontendView extends AppView {
 	 * @return string|false Either a string to the widget filename or false when one can't be found.
 	 */
 	protected function _getWidgetFileName(string $name, bool $pluginCheck = true): string|false {
-		[$ls_plugin, $ls_name] = $this->pluginSplit($name, $pluginCheck);
+		[$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
-		$ls_name .= $this->_ext;
-		foreach ($this->getWidgetPaths($ls_plugin) as $ls_path) {
-			if (is_file($ls_path . $ls_name)) {
-				return $ls_path . $ls_name;
+		$name .= $this->_ext;
+		foreach ($this->getWidgetPaths($plugin) as $path) {
+			if (is_file($path . $name)) {
+				return $path . $name;
 			}
 		}
 
@@ -436,10 +432,10 @@ class FrontendView extends AppView {
 	 * @return \Generator
 	 */
 	protected function getWidgetPaths(?string $plugin): Generator {
-		$la_widgetPaths = $this->_getSubPaths(static::TYPE_WIDGET);
-		foreach ($this->_paths($plugin) as $ls_path) {
-			foreach ($la_widgetPaths as $ls_subdir) {
-				yield $ls_path . $ls_subdir . DIRECTORY_SEPARATOR;
+		$widgetPaths = $this->_getSubPaths(static::TYPE_WIDGET);
+		foreach ($this->_paths($plugin) as $path) {
+			foreach ($widgetPaths as $subdir) {
+				yield $path . $subdir . DIRECTORY_SEPARATOR;
 			}
 		}
 	}
@@ -469,24 +465,24 @@ class FrontendView extends AppView {
 	 * @return string
 	 */
 	protected function renderContentOrWidget(string $type, bool $callbacks, string $file, array $data): string {
-		$ls_current = $this->_current;
-		$ls_restore = $this->_currentType;
+		$current = $this->_current;
+		$restore = $this->_currentType;
 		$this->_currentType = $type === 'widget' ? static::TYPE_WIDGET : static::TYPE_CONTENT;
 
 		if ($callbacks) {
 			$this->dispatchEvent('View.beforeRender', [$file]);
 		}
 
-		$ls_widget = $this->_render($file, array_merge($this->viewVars, $data));
+		$widget = $this->_render($file, array_merge($this->viewVars, $data));
 
 		if ($callbacks) {
-			$this->dispatchEvent('View.afterRender', [$file, $ls_widget]);
+			$this->dispatchEvent('View.afterRender', [$file, $widget]);
 		}
 
-		$this->_currentType = $ls_restore;
-		$this->_current = $ls_current;
+		$this->_currentType = $restore;
+		$this->_current = $current;
 
-		return $ls_widget;
+		return $widget;
 	}
 
 
@@ -496,27 +492,27 @@ class FrontendView extends AppView {
 	 */
 	protected function getDesignVariables(bool $allowDesignPreview = false): array {
 		if ($allowDesignPreview) {
-			$ls_designPreviewIdentifier = $this->request->getSession()->read('designPreviewIdentifier');
+			$designPreviewIdentifier = $this->request->getSession()->read('designPreviewIdentifier');
 
-			$lo_design = null;
-			if ($ls_designPreviewIdentifier) {
-				$lo_designTable = FactoryLocator::get('Table')->get('Designs');
-				/** @var \Awyiss\Model\Entity\Design $lo_design */
-				$lo_design = $lo_designTable->find('all')->where([
-					'identifier' => $ls_designPreviewIdentifier,
+			$design = null;
+			if ($designPreviewIdentifier) {
+				$designTable = FactoryLocator::get('Table')->get('Designs');
+				/** @var \Awyiss\Model\Entity\Design $design */
+				$design = $designTable->find('all')->where([
+					'identifier' => $designPreviewIdentifier,
 					'in_use' => false,
 				])->first();
 			}
 
-			if ($lo_design) {
-				return $lo_design->settings ?? [];
+			if ($design) {
+				return $design->settings ?? [];
 			}
 		}
 
-		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
-		$lo_designMiddleware = $this->getRequest()->getAttribute('design');
+		/** @var \Awyiss\Middleware\DesignMiddleware $designMiddleware */
+		$designMiddleware = $this->getRequest()->getAttribute('design');
 
-		return $lo_designMiddleware?->getDesignVariables() ?? [];
+		return $designMiddleware?->getDesignVariables() ?? [];
 	}
 
 
@@ -543,26 +539,26 @@ class FrontendView extends AppView {
 	 * @return array
 	 */
 	protected function getWebfontData(): array {
-		$la_variables = $this->getDesignVariables();
+		$variables = $this->getDesignVariables();
 
-		if (!$la_variables) {
+		if (!$variables) {
 			return [];
 		}
 
-		$la_webfontData = [];
+		$webfontData = [];
 
-		foreach ($la_variables as $ls_variable => $lx_value) {
-			if (!is_array($lx_value) || !isset($lx_value['font']['name'])) {
+		foreach ($variables as $variable => $value) {
+			if (!is_array($value) || !isset($value['font']['name'])) {
 				continue;
 			}
 
-			$la_webfontData[ $ls_variable ] = [
-				'name' => $lx_value['font']['name'],
-				'variants' => $lx_value['variants'] ?? [],
+			$webfontData[ $variable ] = [
+				'name' => $value['font']['name'],
+				'variants' => $value['variants'] ?? [],
 			];
 		}
 
-		return $la_webfontData;
+		return $webfontData;
 	}
 
 
@@ -592,10 +588,10 @@ class FrontendView extends AppView {
 		}
 
 		// Find the customer logo
-		$ls_logoPath = $this->getLoginLogoPath();
-		if ($ls_logoPath) {
+		$logoPath = $this->getLoginLogoPath();
+		if ($logoPath) {
 			// If the logo path is found, set the Open Graph image URL
-			$this->set('ogImage', Router::url($ls_logoPath, true));
+			$this->set('ogImage', Router::url($logoPath, true));
 		}
 	}
 

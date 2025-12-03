@@ -23,7 +23,6 @@ class FlashHelperTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -51,7 +50,6 @@ class FlashHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FlashHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRender(): void {
 		$flashHelper = new FlashHelper($this->view);
@@ -69,7 +67,6 @@ class FlashHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FlashHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderSpecificFlashMessageRendersOnlySpecifiedMessage(): void {
 		$flashHelper = new FlashHelper($this->view);
@@ -87,7 +84,6 @@ class FlashHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FlashHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderNoFlashMessagesReturnsNull(): void {
 		$flashHelper = new FlashHelper($this->view);
@@ -102,7 +98,6 @@ class FlashHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FlashHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderFlashMessageEscapesHtml(): void {
 		$flashHelper = new FlashHelper($this->view);
@@ -120,7 +115,6 @@ class FlashHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FlashHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderFlashMessageWithoutEscapingDoesNotEscapeHtml(): void {
 		$flashHelper = new FlashHelper($this->view);
@@ -137,7 +131,6 @@ class FlashHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\FlashHelper::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderFlashMessageWithClassIncludesClassAttribute(): void {
 		$flashHelper = new FlashHelper($this->view);

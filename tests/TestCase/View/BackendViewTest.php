@@ -29,7 +29,6 @@ class BackendViewTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -43,7 +42,6 @@ class BackendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\BackendView::initialize()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		$view = $this->getMockBuilder(BackendView::class)
@@ -61,7 +59,6 @@ class BackendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\BackendView::initialize()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddHelpers(): void {
 		$this->view->initialize();
@@ -89,7 +86,6 @@ class BackendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\BackendView::initialize()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSetsTwigGlobals(): void {
 		$view = $this->getMockBuilder(BackendView::class)
@@ -106,7 +102,6 @@ class BackendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\BackendView::addTwigGlobals()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddTwigGlobals(): void {
 		$twig = $this->getMockBuilder(Environment::class)
@@ -132,7 +127,6 @@ class BackendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\BackendView::getLoginLogoPath()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLoginLogoPath(): void {
 		$path = $this->callProtectedMethod($this->view, 'getLoginLogoPath');
@@ -145,7 +139,6 @@ class BackendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\BackendView::cleanLanguage()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanLanguage(): void {
 		$language = new Language([
@@ -188,7 +181,6 @@ class BackendViewTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddFrontendLanguage(): void {
 		$this->view->initialize();
@@ -207,7 +199,6 @@ class BackendViewTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddUserLanguage(): void {
 		$this->view->initialize();

@@ -34,13 +34,13 @@ class LocaleHelper extends Helper {
 			return null;
 		}
 
-		$la_languages = $languagesByShortcode ?: LocaleMiddleware::getLanguagesByShortcode();
-		if (!isset($la_languages [ $shortcode ])) {
+		$languages = $languagesByShortcode ?: LocaleMiddleware::getLanguagesByShortcode();
+		if (!isset($languages [ $shortcode ])) {
 			return null;
 		}
 
 
-		return ($la_languages [ $shortcode ][ Awyiss::REALM_FRONTEND ] ?? $la_languages [ $shortcode ][ Awyiss::REALM_BACKEND ] ?? null)?->title ?? null;
+		return ($languages [ $shortcode ][ Awyiss::REALM_FRONTEND ] ?? $languages [ $shortcode ][ Awyiss::REALM_BACKEND ] ?? null)?->title ?? null;
 	}
 
 
@@ -61,24 +61,24 @@ class LocaleHelper extends Helper {
 	 * @see FormHelper::control
 	 */
 	public function control(?string $fieldName = null, array $attributes = []): string {
-		$la_attributes = $attributes + ['type' => 'select'];
+		$attributes += ['type' => 'select'];
 
 		if (empty($attributes['languageRealm'])) {
-			$la_languages = $this->allLanguages(true);
+			$languages = $this->allLanguages(true);
 		}
 		else {
-			$la_languages = $this->languagesForRealm($attributes['languageRealm'], true);
+			$languages = $this->languagesForRealm($attributes['languageRealm'], true);
 		}
 
-		$la_languages = array_filter($la_languages, fn($language) => $language->active);
-		$la_languages = array_map(fn($language) => $language->title, $la_languages);
+		$languages = array_filter($languages, fn($language) => $language->active);
+		$languages = array_map(fn($language) => $language->title, $languages);
 
-		$la_attributes['options'] = $la_languages;
+		$attributes['options'] = $languages;
 
-		unset($la_attributes['languageRealm']);
+		unset($attributes['languageRealm']);
 
 
-		return $this->Form->control($fieldName, $la_attributes);
+		return $this->Form->control($fieldName, $attributes);
 	}
 
 
@@ -87,20 +87,20 @@ class LocaleHelper extends Helper {
 	 * @return array
 	 */
 	public function allLanguages(bool $raw = false): array {
-		$la_languages = [];
+		$languages = [];
 
-		foreach (LocaleMiddleware::getLanguagesByShortcode() as $ls_shortcode => $la_languagesByRealm) {
-			$lo_language = $la_languagesByRealm[ Awyiss::REALM_FRONTEND ] ?? $la_languagesByRealm[ Awyiss::REALM_BACKEND ] ?? null;
+		foreach (LocaleMiddleware::getLanguagesByShortcode() as $shortcode => $languagesByRealm) {
+			$language = $languagesByRealm[ Awyiss::REALM_FRONTEND ] ?? $languagesByRealm[ Awyiss::REALM_BACKEND ] ?? null;
 
-			if (!$lo_language) {
+			if (!$language) {
 				continue;
 			}
 
-			$la_languages[ $ls_shortcode ] = $raw ? $lo_language : $lo_language->title;
+			$languages[ $shortcode ] = $raw ? $language : $language->title;
 		}
 
 
-		return $la_languages;
+		return $languages;
 	}
 
 
@@ -108,7 +108,6 @@ class LocaleHelper extends Helper {
 	 * @param string $realm
 	 * @param bool $raw
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function languagesForRealm(string $realm, bool $raw = false): array {
 		return array_map(function (Language $language) use ($raw) {

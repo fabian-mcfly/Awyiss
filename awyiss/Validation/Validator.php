@@ -65,17 +65,17 @@ class Validator extends BaseValidator {
 	 * @noinspection PhpHierarchyChecksInspection (CakePHP marks the `name` argument as optional` which is not the case)
 	 */
 	public function field(string $name, ?ValidationSet $validationSet = null): ValidationSet {
-		$ls_name = $this->underscoreField($name);
+		$underscoredName = $this->underscoreField($name);
 
-		if (empty($this->_fields[ $ls_name ])) {
-			$this->_fields[ $ls_name ] = $validationSet ?? new ValidationSet();
+		if (empty($this->_fields[ $underscoredName ])) {
+			$this->_fields[ $underscoredName ] = $validationSet ?? new ValidationSet();
 
 			//Allow an empty string per default. Makes much more sense
 			$this->allowEmptyString($name);
 		}
 
 
-		return $this->_fields[ $ls_name ];
+		return $this->_fields[ $underscoredName ];
 	}
 
 
@@ -107,14 +107,14 @@ class Validator extends BaseValidator {
 	 * @return string|null
 	 */
 	public function getRequiredMessage(string $field): ?string {
-		$ls_field = $this->underscoreField($field);
+		$field = $this->underscoreField($field);
 
-		if (!isset($this->_fields[ $ls_field ])) {
+		if (!isset($this->_fields[ $field ])) {
 			return null;
 		}
 
-		if (isset($this->_presenceMessages[ $ls_field ])) {
-			return $this->_presenceMessages[ $ls_field ];
+		if (isset($this->_presenceMessages[ $field ])) {
+			return $this->_presenceMessages[ $field ];
 		}
 
 		return __df($this->i18nDomain, 'validation', 'error_required');
@@ -126,20 +126,20 @@ class Validator extends BaseValidator {
 	 * @return string|null
 	 */
 	public function getNotEmptyMessage(string $field): ?string {
-		$ls_field = $this->underscoreField($field);
+		$field = $this->underscoreField($field);
 
-		if (!isset($this->_fields[ $ls_field ])) {
+		if (!isset($this->_fields[ $field ])) {
 			return null;
 		}
 
-		foreach ($this->_fields[ $ls_field ] as $lo_rule) {
-			if ($lo_rule->get('rule') === 'notBlank' && $lo_rule->get('message')) {
-				return $lo_rule->get('message');
+		foreach ($this->_fields[ $field ] as $rule) {
+			if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {
+				return $rule->get('message');
 			}
 		}
 
-		if (isset($this->_allowEmptyMessages[ $ls_field ])) {
-			return $this->_allowEmptyMessages[ $ls_field ];
+		if (isset($this->_allowEmptyMessages[ $field ])) {
+			return $this->_allowEmptyMessages[ $field ];
 		}
 
 		return __df($this->i18nDomain, 'validation', 'error_not_empty');
@@ -164,78 +164,78 @@ class Validator extends BaseValidator {
 	 * @return array
 	 */
 	protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array {
-		$la_errors = [];
+		$errors = [];
 
-		foreach ($rules as $ls_name => $lo_rule) {
-			$lx_result = $lo_rule->process($data[ $field ], $this->_providers, [
+		foreach ($rules as $name => $rule) {
+			$result = $rule->process($data[ $field ], $this->_providers, [
 				'newRecord' => $newRecord,
 				'data' => $data,
 				'field' => $field,
 			]);
 
-			if ($lx_result === true) {
+			if ($result === true) {
 				continue;
 			}
 
-			if (is_string($lx_result) || (is_array($lx_result) && $ls_name === static::NESTED)) {
-				if (is_string($lx_result)) {
-					$la_errors[ $ls_name ] = $lx_result;
+			if (is_string($result) || (is_array($result) && $name === static::NESTED)) {
+				if (is_string($result)) {
+					$errors[ $name ] = $result;
 				}
 				else {
-					$la_errors = $lx_result;
+					$errors = $result;
 				}
 
-				if ($lo_rule->isLast()) {
+				if ($rule->isLast()) {
 					break;
 				}
 
 				continue;
 			}
 
-			$la_pass = [
+			$pass = [
 				'field' => __df($this->i18nDomain, 'system', Inflector::underscore($field)),
 			];
 
-			$lx_param = $lo_rule->get('pass')[0] ?? [];
+			$param = $rule->get('pass')[0] ?? [];
 
-			if (!$lx_param) {
-				$la_errors[ $ls_name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($ls_name));
+			if (!$param) {
+				$errors[ $name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($name));
 
-				if ($lo_rule->isLast()) {
+				if ($rule->isLast()) {
 					break;
 				}
 
 				continue;
 			}
 
-			if (in_array($ls_name, ['equalTo', 'sameAs', 'notSameAs', 'compareWith', 'compareFields'])) {
-				$lx_param = __d($this->i18nDomain, Inflector::underscore($lx_param));
+			if (in_array($name, ['equalTo', 'sameAs', 'notSameAs', 'compareWith', 'compareFields'])) {
+				$param = __d($this->i18nDomain, Inflector::underscore($param));
 			}
-			elseif ($ls_name == 'dateTime') {
-				$lx_param = is_string($lx_param) ? $lx_param : ($lx_param[0] ?? 'Ymd');
+			elseif ($name == 'dateTime') {
+				$param = is_string($param) ? $param : ($param[0] ?? 'Ymd');
 			}
-			elseif ($ls_name == 'enum') {
-				$la_cases = array_map(fn ($case) => $case->value, $lx_param::cases());
-				$lx_param = '`' . implode('`, `', $la_cases) . '`';
+			elseif ($name == 'enum') {
+				$cases = array_map(fn ($case) => $case->value, $param::cases());
+				$param = '`' . implode('`, `', $cases) . '`';
 			}
-			elseif ($ls_name == 'inList') {
-				$lx_param = implode(', ', $lx_param);
+			elseif ($name == 'inList') {
+				$param = implode(', ', $param);
 			}
-			elseif (!is_scalar($lx_param)) {
-				throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_param, true)));
+			elseif (!is_scalar($param)) {
+				throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $name, print_r($param, true)));
 			}
 
-			$la_pass[ $ls_name ] = $lx_param;
+			$pass[ $name ] = $param;
 
-			$la_errors[ $ls_name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($ls_name), $la_pass[ $ls_name ] ?? '');
+			$errors[ $name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($name), $pass[ $name ] ?? '');
 
-			if ($lo_rule->isLast()) {
+			if ($rule->isLast()) {
 				break;
 			}
 		}
 
 
-		return $la_errors;
+		return $errors;
 	}
 
 
@@ -248,18 +248,16 @@ class Validator extends BaseValidator {
 	 * @return array
 	 */
 	protected function underscoreFields(array $fields, bool $underscoreKeys = false): array {
-		$la_fields = [];
+		$underscoredFields = [];
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		foreach ($fields as $field => $value) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$mapped = ($underscoreKeys ? 'field' : 'value');
 			$$mapped = $this->underscoreField($$mapped);
 
-			$la_fields[ $field ] = $value;
+			$underscoredFields[ $field ] = $value;
 		}
 
-		return $la_fields;
+		return $underscoredFields;
 	}
 
 
@@ -277,14 +275,14 @@ class Validator extends BaseValidator {
 			return $field;
 		}
 
-		$li_lastPos = strrpos($field, '.');
-		if ($li_lastPos === false) {
+		$lastPos = strrpos($field, '.');
+		if ($lastPos === false) {
 			return Inflector::underscore($field);
 		}
 
-		$ls_prefix = substr($field, 0, $li_lastPos);
-		$ls_field = substr($field, $li_lastPos + 1);
+		$prefix = substr($field, 0, $lastPos);
+		$field = substr($field, $lastPos + 1);
 
-		return $ls_prefix . '.' . Inflector::underscore($ls_field);
+		return $prefix . '.' . Inflector::underscore($field);
 	}
 }

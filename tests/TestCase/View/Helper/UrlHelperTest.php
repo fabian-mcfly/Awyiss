@@ -28,7 +28,6 @@ class UrlHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		$this->configApplication(Awyiss::class, []);
@@ -58,7 +57,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithoutNameUsesSetRealm(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
@@ -90,7 +88,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithFrontendName(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
@@ -121,7 +118,6 @@ class UrlHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithFrontendNameWithoutSlugThrowsException(): void {
 		$this->loadRoutes();
@@ -144,7 +140,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithFrontendNameAndAdditionalParameter(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
@@ -176,7 +171,6 @@ class UrlHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithInvalidRoute(): void {
 		$this->loadRoutes();
@@ -194,7 +188,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithOptionWithParams(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
@@ -242,7 +235,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithOptionWithParamsAll(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
@@ -290,7 +282,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithOptionWithParamsString(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
@@ -338,7 +329,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithoutOptionWithParams(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
@@ -386,7 +376,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithOptionWithoutParams(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
@@ -438,7 +427,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithOptionWithoutParamsString(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);
@@ -490,7 +478,6 @@ class UrlHelperTest extends TestCase {
 	 * @param bool $includeLanguageShortcode
 	 * @return void
 	 * @see \Awyiss\View\Helper\UrlHelper::build()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildUrlWithOptionWithoutParamsAll(bool $includeLanguageShortcode): void {
 		Configure::write('Route.includeLanguageShortcode', $includeLanguageShortcode);

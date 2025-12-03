@@ -38,22 +38,22 @@ class BootstrapTest extends TestCase {
 		/**
 		 * Find all models
 		 *
-		 * @var array<class-string<\Awyiss\Model\Table>> $la_models
+		 * @var array<class-string<\Awyiss\Model\Table>> $models
 		 */
-		$la_models = glob(ROOT . '/awyiss/Model/Table/*.php');
+		$models = glob(ROOT . '/awyiss/Model/Table/*.php');
 
-		$la_tables = ConnectionManager::get('test')->getSchemaCollection()->listTables();
+		$tables = ConnectionManager::get('test')->getSchemaCollection()->listTables();
 
 		// Get all tables
-		foreach ($la_models as $ls_model) {
-			$ls_model = '\Awyiss\Model\Table\\' . basename($ls_model, '.php');
+		foreach ($models as $model) {
+			$model = '\Awyiss\Model\Table\\' . basename($model, '.php');
 
-			if (empty($ls_model::TABLE)) {
+			if (empty($model::TABLE)) {
 				continue;
 			}
 
 			// Check if the table exists in the database
-			$this->assertContains($ls_model::TABLE, $la_tables, 'Table ' . $ls_model::TABLE . ' does not exist');
+			$this->assertContains($model::TABLE, $tables, 'Table ' . $model::TABLE . ' does not exist');
 		}
 	}
 }

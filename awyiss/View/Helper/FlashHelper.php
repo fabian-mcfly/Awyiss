@@ -29,20 +29,20 @@ class FlashHelper extends Helper {
 	 * @see Helper\FlashHelper::render
 	 */
 	public function render(string $key = '*', array $options = []): ?string {
-		$lo_flash = $this->_View->getRequest()->getFlash();
+		$flash = $this->_View->getRequest()->getFlash();
 
-		$la_messages = $lo_flash->consume($key);
+		$messages = $flash->consume($key);
 
-		if (!$la_messages) {
+		if (!$messages) {
 			return null;
 		}
 
-		$ls_messages = '';
-		foreach ($la_messages as $la_message) {
-			$la_message = $options + $la_message;
+		$renderedMessages = '';
+		foreach ($messages as $message) {
+			$message = $options + $message;
 
-			if (!isset($la_message['params']['escape']) || $la_message['params']['escape'] !== false) {
-				$la_message['message'] = h($la_message['message']);
+			if (!isset($message['params']['escape']) || $message['params']['escape'] !== false) {
+				$message['message'] = h($message['message']);
 			}
 
 			/**
@@ -54,23 +54,23 @@ class FlashHelper extends Helper {
 			 *
 			 * @see \Cake\Http\FlashMessage::set()
 			 */
-			$la_message['class'] = '';
-			if (!empty($la_message['params']['class'])) {
-				$la_message['class'] .= ' ' . $la_message['params']['class'];
+			$message['class'] = '';
+			if (!empty($message['params']['class'])) {
+				$message['class'] .= ' ' . $message['params']['class'];
 			}
 			// Unset the class param, even if it's empty
-			if ($la_message['params'] ?? []) {
-				unset($la_message['params']['class']);
+			if ($message['params'] ?? []) {
+				unset($message['params']['class']);
 			}
 
-			$ls_messages .= $this->_View->element($la_message['element'], [
-				'message' => $la_message['message'],
-				'params' => $la_message['params'] ?? [],
-				'classes' => $la_message['class'],
+			$renderedMessages .= $this->_View->element($message['element'], [
+				'message' => $message['message'],
+				'params' => $message['params'] ?? [],
+				'classes' => $message['class'],
 			]);
 		}
 
 
-		return $ls_messages;
+		return $renderedMessages;
 	}
 }

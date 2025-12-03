@@ -88,7 +88,6 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		$this->configApplication(Awyiss::class, []);
@@ -121,7 +120,6 @@ class FrontendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::initialize()
 	 * @throws \Twig\Error\LoaderError
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		$this->view->initialize();
@@ -143,7 +141,6 @@ class FrontendViewTest extends TestCase {
 	 * @see \Awyiss\View\FrontendView::initialize()
 	 * @throws \Twig\Error\LoaderError
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTwigHasGlobals(): void {
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -211,7 +208,6 @@ class FrontendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::getRowClass()
 	 * @see \Awyiss\View\FrontendView::setRowClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetRowClass(): void {
 		FrontendView::setRowClass('test-class');
@@ -223,7 +219,6 @@ class FrontendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\BackendView::getLoginLogoPath()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLoginLogoPath(): void {
 		$path = $this->callProtectedMethod($this->view, 'getLoginLogoPath');
@@ -236,7 +231,6 @@ class FrontendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::setOgImage()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetOgImage(): void {
 		$this->view->set('ogImage');
@@ -253,7 +247,6 @@ class FrontendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::setOgImage()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetOgImageSkipsIfExistsBySet(): void {
 		$this->view->set('ogImage', 'existing-image.png');
@@ -270,7 +263,6 @@ class FrontendViewTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::setOgImage()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetOgImageSkipsIfExistsByAssign(): void {
 		$this->view->assign('ogImage', 'existing-image.png');
@@ -286,7 +278,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::content()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContent(): void {
 		$result = $this->view->content('test_content', ['key' => 'value']);
@@ -299,7 +290,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::content()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContentThrowsExceptionForMissingContent(): void {
 		$this->expectException(MissingContentException::class);
@@ -310,7 +300,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::content()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContentThrowsNoExceptionForMissingContentWhenIgnoring(): void {
 		$result = $this->view->content('not_existing_test_content', ['key' => 'value'], ['ignoreMissing' => true]);
@@ -322,7 +311,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::content()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testContentCache(): void {
 		$name = 'test_content';
@@ -350,7 +338,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::widget()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidget(): void {
 		$result = $this->view->widget('test_widget', ['key' => 'value']);
@@ -363,7 +350,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::widget()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidgetThrowsExceptionForMissingWidget(): void {
 		$this->expectException(MissingWidgetException::class);
@@ -374,7 +360,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::widget()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidgetThrowsNoExceptionForMissingWidgetWhenIgnoring(): void {
 		$result = $this->view->widget('not_existing_test_widget', ['key' => 'value'], ['ignoreMissing' => true]);
@@ -386,7 +371,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::widget()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testWidgetCache(): void {
 		$name = 'test_widget';
@@ -416,7 +400,6 @@ class FrontendViewTest extends TestCase {
 	 * @see \Awyiss\View\FrontendView::getWebfontData()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetWebfontData(): void {
 		$designMiddlewareMock = $this->createMock(DesignMiddleware::class);
@@ -447,7 +430,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::getContentFileName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetContentFileName(): void {
 		$name = 'test_content';
@@ -459,7 +441,6 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\FrontendView::getContentFileName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetContentFileNameWithData(): void {
 		$name = 'test_content';
@@ -470,7 +451,6 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetWidgetFileName(): void {
 		$name = 'test_widget';
@@ -481,7 +461,6 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetWidgetFileNameWithData(): void {
 		$name = 'test_widget';

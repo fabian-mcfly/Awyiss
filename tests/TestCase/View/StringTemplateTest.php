@@ -16,7 +16,6 @@ class StringTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\StringTemplate::load()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadValidFile(): void {
 		$stringTemplate = new StringTemplate();
@@ -41,7 +40,6 @@ class StringTemplateTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\StringTemplate::load()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLoadEmptyFileThrowsException(): void {
 		$this->expectException(CakeException::class);

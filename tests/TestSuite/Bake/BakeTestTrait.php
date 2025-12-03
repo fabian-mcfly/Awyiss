@@ -18,17 +18,18 @@ trait BakeTestTrait {
 	/**
 	 * @var string
 	 */
-	protected $generatedFile = '';
+	protected string $generatedFile = '';
 	/**
 	 * @var list<string>
 	 */
-	protected $generatedFiles = [];
+	protected array $generatedFiles = [];
 
 
 	/**
 	 * @inheritDoc
 	 */
 	public function tearDown(): void {
+		/** @noinspection PhpMultipleClassDeclarationsInspection */
 		parent::tearDown();
 
 		if ($this->generatedFile && file_exists($this->generatedFile)) {

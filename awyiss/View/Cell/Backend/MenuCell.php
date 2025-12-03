@@ -58,57 +58,56 @@ class MenuCell extends Cell {
 	 */
 	public function display(?string $currentPageRole = null): void {
 		// Get the user's identity and session
-		$lo_identity = $this->_getIdentity();
-		$lo_session = $this->request->getSession();
+		$identity = $this->_getIdentity();
+		$session = $this->request->getSession();
+		// Define the session identifier for the menu
+		$sessionIdentifier = 'Backend.menu.' . LocaleMiddleware::getLanguage()->shortcode;
 
 		// Initialize an empty array for the menu data
-		$la_menuData = [];
-
-		// Define the session identifier for the menu
-		$ls_sessionIdentifier = 'Backend.menu.' . LocaleMiddleware::getLanguage()->shortcode;
+		$menuData = [];
 
 		// Try to read the menu from the session
-		$ls_menu = $lo_session->read($ls_sessionIdentifier);
+		$menu = $session->read($sessionIdentifier);
 
 		// If the menu is in the session, decode it and get the time it was cached
-		if ($ls_menu) {
-			$la_menuData = json_decode($ls_menu, true);
-			$lo_time = new DateTime($la_menuData['time']);
+		if ($menu) {
+			$menuData = json_decode($menu, true);
+			$time = new DateTime($menuData['time']);
 
 			/**
 			 * If the user hasn't changed since the menu was changed,
 			 * check if there are any new, changed or deleted menu entries
 			 * in the database since the menu was cached. If there are, invalidate the menu cache.
 			 */
-			if ($lo_time >= $lo_identity->changedOn) {
-				$lo_table = $this->fetchTable('BackendMenuEntries');
+			if ($time >= $identity->changedOn) {
+				$backendMenuEntriesTable = $this->fetchTable('BackendMenuEntries');
 				/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-				$lo_entity = $lo_table->find()->select('id')->find('withDeleted')->where([
+				$entity = $backendMenuEntriesTable->find()->select('id')->find('withDeleted')->where([
 					'OR' => [
-						'created_on >' => $lo_time,
-						'changed_on >' => $lo_time,
-						'deleted_on >' => $lo_time,
+						'created_on >' => $time,
+						'changed_on >' => $time,
+						'deleted_on >' => $time,
 					],
 				])->first();
 
 				// If there are newer menu entries, invalidate the menu cache.
-				if ($lo_entity) {
-					$la_menuData = [];
+				if ($entity) {
+					$menuData = [];
 				}
 			}
 			else {
 				// If the user has changed since the menu was cached, invalidate the menu cache.
-				$la_menuData = [];
+				$menuData = [];
 			}
 		}
 
-		if (!$la_menuData) {
-			/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $ls_backendMenuProviderClass */
-			$ls_backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
+		if (!$menuData) {
+			/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $backendMenuProviderClass */
+			$backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
 
 			try {
-				$lo_menu = new $ls_backendMenuProviderClass();
-				$lo_menu = $lo_menu->getDynamicMenu();
+				$menu = new $backendMenuProviderClass();
+				$menu = $menu->getDynamicMenu();
 			}
 			catch (MenuDuplicateIdentifierException | MenuFileException | MenuValidationException $ex) {
 				// Set the menu in the view variables
@@ -123,40 +122,40 @@ class MenuCell extends Cell {
 			}
 
 			// Cache the menu data and the time it was cached
-			$lo_session->write($ls_sessionIdentifier, json_encode([
-				'menuData' => serialize($lo_menu),
+			$session->write($sessionIdentifier, json_encode([
+				'menuData' => serialize($menu),
 				'time' => new DateTime(),
 			]));
 		}
 		else {
 			// If the menu data is in the session and is not outdated, use the cached menu data
-			$lo_menu = unserialize($la_menuData['menuData']);
+			$menu = unserialize($menuData['menuData']);
 		}
 
-		$lo_menu->setIdentity($lo_identity);
+		$menu->setIdentity($identity);
 
-		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_menuRendererClass */
-		$ls_menuRendererClass = App::className('MenuRenderer', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $menuRendererClass */
+		$menuRendererClass = App::className('MenuRenderer', 'Utility/Menu');
 		// Create a new menu renderer with the menu data
-		$lo_renderer = new $ls_menuRendererClass($lo_menu, $this->rendererOptions);
+		$renderer = new $menuRendererClass($menu, $this->rendererOptions);
 
 		// Set the current route in the menu renderer
-		$ls_url = '/backend/' . $this->request->getParam('lang') . '/';
+		$url = '/backend/' . $this->request->getParam('lang') . '/';
 		if ($currentPageRole) {
-			$ls_url .= $currentPageRole . '/overview/';
+			$url .= $currentPageRole . '/overview/';
 		}
 		else {
-			$ls_url .= Inflector::dasherize($this->request->getParam('controller'));
-			$ls_url .= '/' . $this->request->getParam('action') . '/';
+			$url .= Inflector::dasherize($this->request->getParam('controller'));
+			$url .= '/' . $this->request->getParam('action') . '/';
 		}
-		$lo_renderer->setCurrentRoute(Router::url($ls_url));
+		$renderer->setCurrentRoute(Router::url($url));
 
 		// Render the menu
-		$ls_menu = $lo_renderer->render('System');
+		$menu = $renderer->render('System');
 
 		// Set the menu in the view variables
 		$this->set([
-			'menu' => $ls_menu,
+			'menu' => $menu,
 		]);
 
 		// Set the template for the view
@@ -168,19 +167,19 @@ class MenuCell extends Cell {
 	 * Retrieve the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
-		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */
-		$lo_identity = $this->request->getAttribute('identity');
+		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $identity */
+		$identity = $this->request->getAttribute('identity');
 
-		if (!$lo_identity) {
+		if (!$identity) {
 			throw new RuntimeException('No identity found in the request.');
 		}
 
-		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
-			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
+		if (!($identity instanceof IdentityPermissionsInterface)) {
+			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
 		}
 
 
-		return $lo_identity;
+		return $identity;
 	}
 
 
@@ -190,13 +189,11 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderNoLink(array $data, StringTemplate $template): string {
-		$la_data = $data;
-
-		$la_data['tabindex'] = '';
-		if (!empty($la_data['children'])) {
-			$la_data['tabindex'] = ' tabindex="0"';
+		$data['tabindex'] = '';
+		if (!empty($data['children'])) {
+			$data['tabindex'] = ' tabindex="0"';
 		}
 
-		return $template->format('noLink', $la_data);
+		return $template->format('noLink', $data);
 	}
 }

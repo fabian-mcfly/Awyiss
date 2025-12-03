@@ -42,45 +42,44 @@ class ContentsCell extends Cell {
 	public function display(string $contentArea, Page $page, FrontendView $view, array $options = []): void {
 		$this->View = $view;
 
-		$la_options = $this->initCellOptions($options);
+		$options = $this->initCellOptions($options);
 
 		if ($options['pageId'] ?? null) {
 			/**
 			 * @var \Awyiss\Model\Entity\Page $page
-			 * @noinspection PhpVariableNamingConventionInspection
 			 */
 			$page = $this->fetchTable('Pages')->find($this->isPreview() ? 'all' : 'active')->where(['id' => $options['pageId']])->firstOrFail();
 		}
 
-		$lo_contents = $this->getThreadedContents($page, $contentArea, $this->isPreview());
+		$contents = $this->getThreadedContents($page, $contentArea, $this->isPreview());
 
-		$this->cacheAssignedMediaItems($lo_contents, 'contents');
+		$this->cacheAssignedMediaItems($contents, 'contents');
 
-		$this->addDuplicates($lo_contents, $this->isPreview());
+		$this->addDuplicates($contents, $this->isPreview());
 
-		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth']);
+		$this->prepareEntities($contents, (float)$options['columnWidth']);
 
-		$this->addDynamicCss($lo_contents);
+		$this->addDynamicCss($contents);
 
-		$this->setViewVars($la_options);
+		$this->setViewVars($options);
 
-		$ls_contents = $this->buildContents($lo_contents->toArray(), false, $options['autoSection'] ?? true);
+		$renderedContents = $this->buildContents($contents->toArray(), false, $options['autoSection'] ?? true);
 
-		$ls_currentRoute = Router::url($this->request->getRequestTarget());
-		if ($ls_contents && $ls_currentRoute !== '/') {
+		$currentRoute = Router::url($this->request->getRequestTarget());
+		if ($renderedContents && $currentRoute !== '/') {
 			// Replace all `href="#anchor"` with `href="<currentRoute>#anchor"`
-			$ls_contents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . ltrim($ls_currentRoute, '/') . '$1"', $ls_contents);
+			$renderedContents = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . ltrim($currentRoute, '/') . '$1"', $renderedContents);
 		}
 
 		// Set the view variables
 		$this->set([
-			'contents' => $ls_contents,
-			'fullWidth' => $la_options['fullWidth'],
+			'contents' => $renderedContents,
+			'fullWidth' => $options['fullWidth'],
 			'identifier' => $contentArea,
-			'includeWrapper' => $la_options['includeWrapper'],
+			'includeWrapper' => $options['includeWrapper'],
 			'page' => $page,
-			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
-			...$la_options['viewVars'],
+			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
+			...$options['viewVars'],
 		]);
 
 		// Set the template for the view
@@ -98,10 +97,10 @@ class ContentsCell extends Cell {
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
 		/**
-		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_mediaRenderOptions = $this->getView()->helpers()->get('Media')->mediaRenderOptions(
+		$mediaRenderOptions = $this->getView()->helpers()->get('Media')->mediaRenderOptions(
 			baseWidth: $this->getView()->get('fullWidth', 1920),
 			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
 			columnWidth: $entity->realColumnWidth,
@@ -110,21 +109,21 @@ class ContentsCell extends Cell {
 		);
 
 		// Parse the module
-		$this->parseAwyissImageTags($entity, $lo_mediaRenderOptions);
+		$this->parseAwyissImageTags($entity, $mediaRenderOptions);
 
 		// Parse the module
-		$this->parseModule($entity, $lo_mediaRenderOptions);
+		$this->parseModule($entity, $mediaRenderOptions);
 
-		$ls_fullWidthMissingWarning = '';
+		$fullWidthMissingWarning = '';
 		if (!$this->getView()->get('fullWidth')) {
-			$ls_fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the content cell. -->';
+			$fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the content cell. -->';
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $ls_fullWidthMissingWarning . $this->getView()->content($entity->contentTemplate->fileName, [
+		return $fullWidthMissingWarning . $this->getView()->content($entity->contentTemplate->fileName, [
 			'content' => $entity,
 			'children' => $children,
-			'mediaRenderOptions' => $lo_mediaRenderOptions,
+			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
 	}
 
@@ -137,72 +136,72 @@ class ContentsCell extends Cell {
 	 * @return void
 	 */
 	protected function addDuplicates(CollectionInterface $contents, bool $isPreview = false): void {
-		$lo_contents = $contents->listNested();
+		$contents = $contents->listNested();
 
-		$la_duplicatingEntities = [];
-		/** @var \Awyiss\Model\Entity\Content $lo_entity */
-		foreach ($lo_contents as $lo_entity) {
-			if ($lo_entity->duplicateOf ?? null) {
-				$la_duplicatingEntities[] = $lo_entity;
+		$duplicatingEntities = [];
+		/** @var \Awyiss\Model\Entity\Content $entity */
+		foreach ($contents as $entity) {
+			if ($entity->duplicateOf ?? null) {
+				$duplicatingEntities[] = $entity;
 			}
 		}
 
-		if (!$la_duplicatingEntities) {
+		if (!$duplicatingEntities) {
 			return;
 		}
 
-		$la_duplicatedIds = array_column($la_duplicatingEntities, 'duplicateOf');
+		$duplicatedIds = array_column($duplicatingEntities, 'duplicateOf');
 
-		$lo_query = $this->getContentsQuery();
-		$lo_query->where([
-			'Contents.id IN' => $la_duplicatedIds,
+		$query = $this->getContentsQuery();
+		$query->where([
+			'Contents.id IN' => $duplicatedIds,
 		]);
-		$la_duplicatedEntities = $lo_query->all()->indexBy('id')->toArray();
+		$duplicatedEntities = $query->all()->indexBy('id')->toArray();
 
-		/** @var \Awyiss\Model\Entity\Content $lo_entity */
-		foreach ($la_duplicatingEntities as $lo_entity) {
-			if (empty($la_duplicatedEntities[ $lo_entity->duplicateOf ])) {
+		/** @var \Awyiss\Model\Entity\Content $entity */
+		foreach ($duplicatingEntities as $entity) {
+			if (empty($duplicatedEntities[ $entity->duplicateOf ])) {
 				continue;
 			}
 
-			/** @var \Awyiss\Model\Entity\Content $lo_duplicatedEntity */
-			$lo_duplicatedEntity = $la_duplicatedEntities[ $lo_entity->duplicateOf ];
-			$lo_entity->set('duplicateOfContent', $lo_duplicatedEntity);
+			/** @var \Awyiss\Model\Entity\Content $duplicatedEntity */
+			$duplicatedEntity = $duplicatedEntities[ $entity->duplicateOf ];
+			$entity->set('duplicateOfContent', $duplicatedEntity);
 
 			// If the duplicating content has children, we don't need to fetch children for the duplicated content
-			if (!empty($lo_entity->children)) {
+			if (!empty($entity->children)) {
 				continue;
 			}
 
-			$la_finders = [];
+			$finders = [];
 
 			if (!$isPreview) {
-				$la_finders = ['active', 'published'];
+				$finders = ['active', 'published'];
 			}
 
-			$la_finders = array_merge($la_finders, [
+			$finders = array_merge($finders, [
 				'mediaAssignments' => [
 					'includeElementSelector' => true,
 					'useMediaEntity' => true,
 				],
 			]);
 
-			$lo_children = $lo_duplicatedEntity->getNestedChildren([
+			$children = $duplicatedEntity->getNestedChildren([
 				'contain' => [
 					'ContentAreas',
 					'ContentTemplates',
 				],
-				'finders' => $la_finders,
+				'finders' => $finders,
 			]);
 
-			if ($lo_children->count()) {
-				$lo_children = $lo_children->nest('id', 'parent_id');
-				foreach ($lo_children as $lo_child) {
-					$lo_child->parentId = $lo_entity->id;
+			if ($children->count()) {
+				$children = $children->nest('id', 'parent_id');
+				foreach ($children as $child) {
+					$child->parentId = $entity->id;
 				}
 			}
 
-			$lo_entity->set('children', $lo_children->toList());
+			$entity->set('children', $children->toList());
 		}
 	}
 
@@ -212,13 +211,13 @@ class ContentsCell extends Cell {
 	 * @return void
 	 */
 	protected function applyDuplicateData(Entity $entity): void {
-		static $la_blocklistedKeys;
+		static $blocklistedKeys;
 
-		if (!isset($la_blocklistedKeys)) {
-			/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-			$lo_table = $this->fetchTable('Contents');
+		if (!isset($blocklistedKeys)) {
+			/** @var \Awyiss\Model\Table\ContentsTable $table */
+			$table = $this->fetchTable('Contents');
 
-			$la_blocklistedKeys = array_merge($lo_table->getAllowedKeyForDuplicating(), [
+			$blocklistedKeys = array_merge($table->getAllowedKeyForDuplicating(), [
 				'id',
 				'contentTemplateId',
 				'createdBy',
@@ -239,10 +238,10 @@ class ContentsCell extends Cell {
 			return;
 		}
 
-		$la_data = $entity->duplicateOfContent->extract(null, false, false);
-		$la_data = array_diff_key($la_data, array_flip($la_blocklistedKeys));
+		$data = $entity->duplicateOfContent->extract(null, false, false);
+		$data = array_diff_key($data, array_flip($blocklistedKeys));
 
-		$entity->patch($la_data);
+		$entity->patch($data);
 	}
 
 
@@ -253,20 +252,20 @@ class ContentsCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getThreadedContents(Page $page, string $contentArea, bool $isPreview = false): CollectionInterface {
-		$lo_query = $this->getContentsQuery($isPreview);
+		$query = $this->getContentsQuery($isPreview);
 
-		$lo_query->where([
+		$query->where([
 			'Contents.page_id' => $page->duplicateOf ?? $page->id,
 			'ContentAreas.identifier' => $contentArea,
 		]);
 
 		if (!$isPreview) {
-			$lo_query->where([
+			$query->where([
 				'ContentAreas.active' => true,
 			]);
 		}
 
-		$lo_contents = $lo_query->all();
+		$contents = $query->all();
 
 		/*
 		 * Filter out all first level contents with a parent_id
@@ -276,7 +275,7 @@ class ContentsCell extends Cell {
 		 * Either because it's not active (allowed to happen)
 		 * or because it's not part of the same page. (shouldn't happen)
 		 */
-		return $lo_contents->filter(function (Content $content) {
+		return $contents->filter(function (Content $content) {
 			return $content->parentId === null;
 		})->compile();
 	}
@@ -287,29 +286,29 @@ class ContentsCell extends Cell {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function getContentsQuery(bool $isPreview = false): SelectQuery {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_contentsTable */
-		$lo_contentsTable = $this->fetchTable('Contents');
+		/** @var \Awyiss\Model\Table\ContentsTable $contentsTable */
+		$contentsTable = $this->fetchTable('Contents');
 
 		if ($isPreview) {
-			$lo_query = $lo_contentsTable->find('all');
+			$query = $contentsTable->find('all');
 		}
 		else {
 			/**
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$lo_query = $lo_contentsTable->find('active')->find('published');
+			$query = $contentsTable->find('active')->find('published');
 		}
 
-		$lo_query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+		$query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 
 		// Contain ContentAreas and ContentTemplates
-		$lo_query->contain([
+		$query->contain([
 			'ContentAreas',
 			'ContentTemplates',
 		]);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -318,16 +317,16 @@ class ContentsCell extends Cell {
 	 * @return void
 	 */
 	protected function addDynamicCss(CollectionInterface $contents): void {
-		/** @var \Awyiss\View\Helper\AssetHelper $lo_assetHelper */
-		$lo_assetHelper = $this->View->helpers()->get('Asset');
+		/** @var \Awyiss\View\Helper\AssetHelper $assetHelper */
+		$assetHelper = $this->View->helpers()->get('Asset');
 
-		/** @var \Awyiss\Model\Entity\Content $lo_content */
-		foreach ($contents->listNested() as $lo_content) {
-			if (empty($lo_content->css)) {
+		/** @var \Awyiss\Model\Entity\Content $content */
+		foreach ($contents->listNested() as $content) {
+			if (empty($content->css)) {
 				continue;
 			}
 
-			$lo_assetHelper->addContentStyleBlock('#Content' . $lo_content->id, $lo_content->css);
+			$assetHelper->addContentStyleBlock('#Content' . $content->id, $content->css);
 		}
 	}
 }

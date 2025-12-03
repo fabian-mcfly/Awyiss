@@ -38,7 +38,6 @@ class AttributesHelperTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		$this->configApplication(Awyiss::class, []);
@@ -60,7 +59,6 @@ class AttributesHelperTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function tearDown(): void {
 		parent::tearDown();
@@ -74,8 +72,7 @@ class AttributesHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
-	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \ReflectionException|\Exception
 	 */
 	public function testAllControlsThrowsExceptionWithoutFormContext(): void {
 		$this->expectException(RuntimeException::class);
@@ -88,8 +85,7 @@ class AttributesHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
-	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \ReflectionException|\Exception
 	 */
 	public function testAllControls(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -107,8 +103,7 @@ class AttributesHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
-	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \ReflectionException|\Exception
 	 */
 	public function testAllControlsForEmptyFieldset(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -126,8 +121,7 @@ class AttributesHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::allControls()
-	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \ReflectionException|\Exception
 	 */
 	public function testAllControlsRendersOnlyProvided(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -146,7 +140,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlThrowsExceptionWithoutFormContext(): void {
 		$this->expectException(RuntimeException::class);
@@ -160,7 +153,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControl(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -177,7 +169,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlUsesEntityValue(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -195,7 +186,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlIncludesError(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -215,7 +205,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlMarksRequiredField(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -242,7 +231,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlCreatesTranslatableWhenSet(): void {
 		Configure::write('Awyiss.Cars.Backend.translatable', true);
@@ -272,7 +260,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlIncludesAttributeOptionsCollectionOptions(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -296,7 +283,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlPrioritizesProvidedOptions(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -322,7 +308,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlIncludesTimezoenForTranslatableDateTime(): void {
 		Configure::write('Awyiss.Cars.Backend.translatable', true);
@@ -345,7 +330,6 @@ class AttributesHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AttributesHelper::control()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlReturnsEmptyFieldWhenAttributeNotFound(): void {
 		$entity = $this->fetchTable('Pages')->newDefaultEntity();
@@ -362,7 +346,6 @@ class AttributesHelperTest extends TestCase {
 	 * AttributesHelper::$initiatedSources and AttributesHelper::$attributeOptions
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpExpressionResultUnusedInspection
 	 */
 	protected function resetStaticProperties(): void {

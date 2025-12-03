@@ -80,71 +80,71 @@ class MenuCell extends Cell {
 	public function display(string $identifier, string $languageShortcode, FrontendView $view, array $options = []): void {
 		$this->View = $view;
 
-		$la_options = $options + [
+		$options += [
 			'includeWrapper' => true,
 			'currentRoute' => Router::url($this->request->getRequestTarget()),
 			'viewVars' => [],
 		];
 
-		if ($la_options['currentRoute'] === '/') {
-			/** @var \Awyiss\Model\Entity\Page $lo_currentPage */
-			$lo_currentPage = $this->request->getAttribute('currentPage');
-			if ($lo_currentPage) {
-				$la_options['currentRoute'] = '/' . $lo_currentPage->languageShortcode . '/' . $lo_currentPage->slug . '/';
+		if ($options['currentRoute'] === '/') {
+			/** @var \Awyiss\Model\Entity\Page $currentPage */
+			$currentPage = $this->request->getAttribute('currentPage');
+			if ($currentPage) {
+				$options['currentRoute'] = '/' . $currentPage->languageShortcode . '/' . $currentPage->slug . '/';
 			}
 		}
 
-		$this->options = $la_options;
+		$this->options = $options;
 
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Menu');
 
-		$lo_menuRecord = $this->getMenu($identifier);
-		$lo_menuEntries = $lo_menuRecord ? $this->getMenuEntries($lo_menuRecord, $languageShortcode) : new Collection([]);
+		$menuRecord = $this->getMenu($identifier);
+		$menuEntries = $menuRecord ? $this->getMenuEntries($menuRecord, $languageShortcode) : new Collection([]);
 
-		$lb_active = false;
-		if ($lo_menuRecord) {
-			$lb_active = $lo_menuRecord->active;
+		$active = false;
+		if ($menuRecord) {
+			$active = $menuRecord->active;
 
-			$ld_now = new DateTime();
+			$now = new DateTime();
 			if (
-				($lo_menuRecord->publicationStart && $lo_menuRecord->publicationStart > $ld_now) ||
-				($lo_menuRecord->publicationEnd && $lo_menuRecord->publicationEnd < $ld_now)
+				($menuRecord->publicationStart && $menuRecord->publicationStart > $now) ||
+				($menuRecord->publicationEnd && $menuRecord->publicationEnd < $now)
 			) {
-				$lb_active = false;
+				$active = false;
 			}
 		}
 
-		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenu> $ls_menuClass */
-		$ls_menuClass = App::className('FrontendMenu', 'Utility/Menu');
-		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenuItem> $ls_menuItemClass */
-		$ls_menuItemClass = App::className('FrontendMenuItem', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenu> $menuClass */
+		$menuClass = App::className('FrontendMenu', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenuItem> $menuItemClass */
+		$menuItemClass = App::className('FrontendMenuItem', 'Utility/Menu');
 
 		/** @see \Awyiss\Utility\Menu\FrontendMenu::__construct() */
-		$lo_menu = new $ls_menuClass($lo_menuEntries->toArray(), [
-			'active' => $lb_active,
-			'identifier' => $lo_menuRecord?->identifier ? Inflector::ucparts($lo_menuRecord->identifier, false) : null,
-			'menuClass' => $ls_menuClass,
-			'menuItemClass' => $ls_menuItemClass,
+		$menu = new $menuClass($menuEntries->toArray(), [
+			'active' => $active,
+			'identifier' => $menuRecord?->identifier ? Inflector::ucparts($menuRecord->identifier, false) : null,
+			'menuClass' => $menuClass,
+			'menuItemClass' => $menuItemClass,
 		]);
 
-		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_menuRendererClass */
-		$ls_menuRendererClass = App::className('MenuRenderer', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $menuRendererClass */
+		$menuRendererClass = App::className('MenuRenderer', 'Utility/Menu');
 		/** @see \Awyiss\Utility\Menu\MenuRenderer::__construct() */
-		$lo_renderer = new $ls_menuRendererClass($lo_menu, $this->rendererOptions);
+		$renderer = new $menuRendererClass($menu, $this->rendererOptions);
 
-		$lo_renderer->setCurrentRoute($la_options['currentRoute']);
-		$lo_renderer->setConfig('identifier', Inflector::ucparts($identifier, false));
+		$renderer->setCurrentRoute($options['currentRoute']);
+		$renderer->setConfig('identifier', Inflector::ucparts($identifier, false));
 
 		$this->set([
 			'identifier' => $identifier,
-			'menuEntries' => $lo_menuEntries,
-			'menu' => $lo_menu,
-			'menuRecord' => $lo_menuRecord,
-			'renderer' => $lo_renderer,
-			'currentRoute' => $la_options['currentRoute'],
-			'includeWrapper' => !!$la_options['includeWrapper'],
-			...$la_options['viewVars'],
+			'menuEntries' => $menuEntries,
+			'menu' => $menu,
+			'menuRecord' => $menuRecord,
+			'renderer' => $renderer,
+			'currentRoute' => $options['currentRoute'],
+			'includeWrapper' => !!$options['includeWrapper'],
+			...$options['viewVars'],
 		]);
 	}
 
@@ -154,18 +154,18 @@ class MenuCell extends Cell {
 	 * @return \Awyiss\Model\Entity\Menu|null
 	 */
 	protected function getMenu(string $identifier): ?MenuEntity {
-		/** @var \Awyiss\Model\Table\MenusTable $lo_menusTable */
-		$lo_menusTable = FactoryLocator::get('Table')->get('Menus');
+		/** @var \Awyiss\Model\Table\MenusTable $menusTable */
+		$menusTable = FactoryLocator::get('Table')->get('Menus');
 
 		if ($this->isPreview()) {
-			$lo_query = $lo_menusTable->find('all');
+			$query = $menusTable->find('all');
 		}
 		else {
 			/**
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$lo_query = $lo_menusTable->find('active')->find('published');
+			$query = $menusTable->find('active')->find('published');
 		}
 
 		/**
@@ -174,13 +174,13 @@ class MenuCell extends Cell {
 		 * as the menu entries are loaded with translations and publication data,
 		 * requiring a more complex query.
 		 *
-		 * @var MenuEntity $lo_menu
+		 * @var \Awyiss\Model\Entity\Menu $menu
 		 */
-		$lo_menu = $lo_query->where([
+		$menu = $query->where([
 			'identifier' => $identifier,
 		])->first();
 
-		return $lo_menu;
+		return $menu;
 	}
 
 
@@ -190,26 +190,26 @@ class MenuCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getMenuEntries(MenuEntity $menu, string $languageShortcode): CollectionInterface {
-		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_menuEntriesTable */
-		$lo_menuEntriesTable = FactoryLocator::get('Table')->get('MenuEntries');
+		/** @var \Awyiss\Model\Table\MenuEntriesTable $menuEntriesTable */
+		$menuEntriesTable = FactoryLocator::get('Table')->get('MenuEntries');
 
 		if ($this->isPreview()) {
-			$lo_query = $lo_menuEntriesTable->find('all');
+			$query = $menuEntriesTable->find('all');
 		}
 		else {
 			/**
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$lo_query = $lo_menuEntriesTable->find('active')->find('published');
+			$query = $menuEntriesTable->find('active')->find('published');
 		}
 
-		$lo_menuEntries = $lo_query->find('threaded')->where([
+		$menuEntries = $query->find('threaded')->where([
 			'menu_id' => $menu->id,
 			'language_shortcode' => $languageShortcode,
 		])->all();
 
-		return $lo_menuEntries->filter(function (MenuEntry $menuEntry) {
+		return $menuEntries->filter(function (MenuEntry $menuEntry) {
 			return $menuEntry->parentId === null;
 		})->compile();
 	}
@@ -221,12 +221,10 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderList(array $data, StringTemplate $template): string {
-		$la_data = $data;
+		$isPreview = $data['level'] === 1 && $this->isPreview() && ($data['menuConfig']['active'] ?? true) === false;
+		$data['isPreview'] = $isPreview ? ' ' . FrontendView::getPreviewModeElementClass() : '';
 
-		$lb_isPreview = $data['level'] === 1 && $this->isPreview() && ($la_data['menuConfig']['active'] ?? true) === false;
-		$la_data['isPreview'] = $lb_isPreview ? ' ' . FrontendView::getPreviewModeElementClass() : '';
-
-		return $template->format('list', $la_data);
+		return $template->format('list', $data);
 	}
 
 
@@ -236,22 +234,20 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderItem(array $data, StringTemplate $template): string {
-		$la_data = $data;
+		$data['id'] = $data['item']->identifier;
+		$data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);
 
-		$la_data['id'] = $data['item']->identifier;
-		$la_data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);
-
-		if (!empty($la_data['children'])) {
-			$la_data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger" />' . PHP_EOL .
-				'<label for="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger-Label" tabindex="0">' . __('submenu_trigger') . '</label>';
+		if (!empty($data['children'])) {
+			$data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger" />' . PHP_EOL .
+				'<label for="SubmenuTrigger-' . $data['id'] .  '" class="SubmenuTrigger-Label" tabindex="0">' . __('submenu_trigger') . '</label>';
 		}
 
-		$la_data['isPreview'] = '';
+		$data['isPreview'] = '';
 		if ($this->isPreview() && !$data['item']->active) {
-			$la_data['isPreview'] = ' ' . FrontendView::getPreviewModeElementClass();
+			$data['isPreview'] = ' ' . FrontendView::getPreviewModeElementClass();
 		}
 
-		return $template->format('item', $la_data);
+		return $template->format('item', $data);
 	}
 
 
@@ -261,25 +257,23 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderContent(array $data, StringTemplate $template): string {
-		$la_data = $data;
+		$data['tabindex'] = '';
+		if (!empty($data['url'])) {
+			$templateName = 'link';
 
-		$la_data['tabindex'] = '';
-		if (!empty($la_data['url'])) {
-			$ls_template = 'link';
-
-			if (isset($this->options['currentRoute']) && str_starts_with($la_data['url'], $this->options['currentRoute'] . '#') && Router::getRequest()->getPath() === '/') {
-				$la_data['url'] = substr($la_data['url'], strlen($this->options['currentRoute']));
+			if (isset($this->options['currentRoute']) && str_starts_with($data['url'], $this->options['currentRoute'] . '#') && Router::getRequest()->getPath() === '/') {
+				$data['url'] = substr($data['url'], strlen($this->options['currentRoute']));
 			}
 		}
 		else {
-			$ls_template = 'noLink';
-			if (!empty($la_data['children'])) {
-				$la_data['tabindex'] = ' tabindex="0"';
+			$templateName = 'noLink';
+			if (!empty($data['children'])) {
+				$data['tabindex'] = ' tabindex="0"';
 			}
 		}
 
-		$la_data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);
+		$data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);
 
-		return $template->format($ls_template, $la_data);
+		return $template->format($templateName, $data);
 	}
 }

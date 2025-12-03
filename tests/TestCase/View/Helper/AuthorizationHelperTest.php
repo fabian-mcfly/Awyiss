@@ -40,7 +40,6 @@ class AuthorizationHelperTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		$this->configApplication(Awyiss::class, []);
@@ -108,7 +107,6 @@ class AuthorizationHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::getIdentity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetIdentityThrowsExceptionWithoutIdentityInRequest(): void {
 		$helper = new AuthorizationHelper($this->view);
@@ -124,7 +122,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::getIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetIdentityReturnsIdentityFromRequestIfNotSet(): void {
 		$helper = new AuthorizationHelper($this->view);
@@ -145,7 +142,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::getIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetIdentity(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -160,7 +156,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::setIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetIdentity(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -175,7 +170,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::resetIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResetIdentity(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -190,7 +184,6 @@ class AuthorizationHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::getScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScopeReturnsControllerNameIfNotSet(): void {
 		$helper = new AuthorizationHelper($this->view);
@@ -204,7 +197,6 @@ class AuthorizationHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::setScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetScope(): void {
 		$this->helper->setScope('CustomScope');
@@ -216,7 +208,6 @@ class AuthorizationHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::resetScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResetScope(): void {
 		$this->helper->setScope('CustomScope');
@@ -231,7 +222,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::isAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessible(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -251,7 +241,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::isAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleCallsScopeIsAccessibleWithCurrentScope(): void {
 		$helper = $this->getMockBuilder(AuthorizationHelper::class)
@@ -279,7 +268,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::isAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleCallsScopeIsAccessibleWithSpreadIdentifiers(): void {
 		$helper = $this->getMockBuilder(AuthorizationHelper::class)
@@ -305,7 +293,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::scopeIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeIsAccessible(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -323,7 +310,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::scopeIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeIsAccessiblePassesAdditionDataAsIs(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -353,7 +339,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::scopeIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testScopeIsAccessiblePassesSpreadIdentifiers(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -372,7 +357,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::anyIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAnyIsAccessibleReturnsTrueForOneAvailable(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -416,7 +400,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::anyIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAnyIsAccessibleReturnsFalseIfNoneAvailable(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -437,7 +420,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::anyIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAnyIsAccessiblePassesSpreadIdentifiers(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -459,7 +441,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::anyIsAccessible()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAnyIsAccessiblePassesSpreadIdentifiersWithAdditionalData(): void {
 		$identity = $this->createMock(IdentityPermissionsInterface::class);
@@ -497,7 +478,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::permissionOptions()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPermissionOptions(): void {
 		$service = new AuthorizationService('Backend');
@@ -517,7 +497,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::permissionOptions()
 	 * @throws \Exception
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPermissionOptionsRendersElement(): void {
 		$service = new AuthorizationService('Backend');
@@ -553,7 +532,6 @@ class AuthorizationHelperTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Helper\AuthorizationHelper::permissionOptions()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPermissionOptionsThrowsExceptionWithoutIdentifier(): void {
 		$this->expectException(RuntimeException::class);

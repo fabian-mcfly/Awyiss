@@ -43,7 +43,6 @@ class MediaElementsCellTest extends TestCase {
 	/**
 	 * @inheritDoc
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -78,7 +77,7 @@ class MediaElementsCellTest extends TestCase {
 
 	/**
 	 * @return array
-	 * @noinspection PhpPossiblePolymorphicInvocationInspection, PhpVariableNamingConventionInspection
+	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public static function displayDataProvider(): array {
 		// Required because this method is called before setUpBeforeClass()
@@ -109,7 +108,6 @@ class MediaElementsCellTest extends TestCase {
 	 * @param string|false $type
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testDisplayWithUnauthorizedUser(callable $entityProvider, string|false $type): void {
@@ -133,7 +131,6 @@ class MediaElementsCellTest extends TestCase {
 	 * @param string|false $type
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayWithAuthorizedUser(callable $entityProvider, string|false $type): void {
 		$entity = $entityProvider();
@@ -168,7 +165,6 @@ class MediaElementsCellTest extends TestCase {
 	 * @param string|false $type
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function testDisplayWithAccessDeniedUser(callable $entityProvider, string|false $type): void {
@@ -188,7 +184,6 @@ class MediaElementsCellTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::display()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayRebuildsMediaAssignmentsWhenDirty(): void {
 		/** @var \Awyiss\Model\Entity\Content $entity */
@@ -223,7 +218,6 @@ class MediaElementsCellTest extends TestCase {
 	/**
 	 * @return array
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function elementAssignmentsDataProvider(): array {
 		$tableLocator = FactoryLocator::get('Table');
@@ -249,7 +243,6 @@ class MediaElementsCellTest extends TestCase {
 	 * @param bool $assignmentsAvailable
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::elementAssignments()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::elementAssignments
 	 */
 	public function testElementAssignments(callable $entityProvider, bool $assignmentsAvailable) {

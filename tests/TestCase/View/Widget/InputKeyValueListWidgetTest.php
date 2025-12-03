@@ -20,7 +20,6 @@ class InputKeyValueListWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputKeyValueListWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -51,7 +50,6 @@ class InputKeyValueListWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputKeyValueListWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -92,7 +90,6 @@ class InputKeyValueListWidgetTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputKeyValueListWidget::render()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -132,7 +129,6 @@ class InputKeyValueListWidgetTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputKeyValueListWidget::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -160,7 +156,6 @@ class InputKeyValueListWidgetTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputKeyValueListWidget::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -186,7 +181,6 @@ class InputKeyValueListWidgetTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputKeyValueListWidget::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */
@@ -222,7 +216,6 @@ class InputKeyValueListWidgetTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\View\Widget\InputKeyValueListWidget::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAttribute
 	 * @noinspection HtmlUnknownTarget
 	 */

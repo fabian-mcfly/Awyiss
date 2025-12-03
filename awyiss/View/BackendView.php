@@ -96,35 +96,35 @@ class BackendView extends AppView {
 	 * @throws \Exception
 	 */
 	protected function addTwigGlobals(): void {
-		$lo_twig = $this->getTwig();
-		$ls_logoPath = $this->getLoginLogoPath();
+		$twig = $this->getTwig();
+		$logoPath = $this->getLoginLogoPath();
 
-		if ($ls_logoPath) {
+		if ($logoPath) {
 			// If the logo path is set, remove the root path and custom directory from the path
-			$lo_twig->addGlobal('loginLogoPath', $ls_logoPath);
+			$twig->addGlobal('loginLogoPath', $logoPath);
 		}
 
-		$this->addFrontendLanguage($lo_twig);
+		$this->addFrontendLanguage($twig);
 
-		$this->addUserLanguage($lo_twig);
+		$this->addUserLanguage($twig);
 
-		$ls_folder = '/' . (ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
-		if (!str_ends_with($ls_folder, '/')) {
-			$ls_folder .= '/';
+		$folder = '/' . (ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
+		if (!str_ends_with($folder, '/')) {
+			$folder .= '/';
 		}
 
-		$lo_uri = $this->getRequest()->getUri();
-		if ($ls_folder !== '/' && !str_starts_with($lo_uri->getPath(), $ls_folder)) {
-			$lo_uri = $lo_uri->withPath($ls_folder . ltrim($lo_uri->getPath(), '/'));
+		$uri = $this->getRequest()->getUri();
+		if ($folder !== '/' && !str_starts_with($uri->getPath(), $folder)) {
+			$uri = $uri->withPath($folder . ltrim($uri->getPath(), '/'));
 		}
 
-		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
-		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
-		$lo_twig->addGlobal('currentUrl', $lo_uri->__toString());
-		$lo_twig->addGlobal('config', Configure::read());
-		$lo_twig->addGlobal('folder', $ls_folder);
-		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
-		$lo_twig->addGlobal('localConfig', LocalConfig::read());
+		$twig->addGlobal('baseUrl', Router::url('/', true));
+		$twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
+		$twig->addGlobal('currentUrl', $uri->__toString());
+		$twig->addGlobal('config', Configure::read());
+		$twig->addGlobal('folder', $folder);
+		$twig->addGlobal('languages', LocaleMiddleware::getLanguages());
+		$twig->addGlobal('localConfig', LocalConfig::read());
 	}
 
 
@@ -134,14 +134,14 @@ class BackendView extends AppView {
 	 * @throws \Exception
 	 */
 	protected function addFrontendLanguage(Environment $twig): void {
-		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
+		$frontendLanguage = LocaleMiddleware::getLanguage();
 
-		if ($lo_frontendLanguage) {
-			$lo_frontendLanguage = $this->cleanLanguage($lo_frontendLanguage);
+		if ($frontendLanguage) {
+			$frontendLanguage = $this->cleanLanguage($frontendLanguage);
 		}
 
-		$twig->addGlobal('currentLanguage', $lo_frontendLanguage);
-		$twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
+		$twig->addGlobal('currentLanguage', $frontendLanguage);
+		$twig->addGlobal('languageShortcode', $frontendLanguage?->shortcode);
 	}
 
 
@@ -151,26 +151,26 @@ class BackendView extends AppView {
 	 * @throws \Exception
 	 */
 	protected function addUserLanguage(Environment $twig): void {
-		$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
+		$backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
 
-		if (!$lo_backendLanguage) {
+		if (!$backendLanguage) {
 			$twig->addGlobal('userLanguage', null);
 
 			return;
 		}
 
-		$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
-		if ($ls_timezone === 'auto') {
-			$ls_timezone = $lo_backendLanguage->timezone;
+		$timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+		if ($timezone === 'auto') {
+			$timezone = $backendLanguage->timezone;
 		}
 
-		$this->addHelper('Time', ['outputTimezone' => $ls_timezone]);
+		$this->addHelper('Time', ['outputTimezone' => $timezone]);
 
-		$twig->addGlobal('dateFormat', $lo_backendLanguage->dateFormat ?? 'yyyy-MM-dd');
-		$twig->addGlobal('timeFormat', $lo_backendLanguage->timeFormat ?? 'HH:mm');
+		$twig->addGlobal('dateFormat', $backendLanguage->dateFormat ?? 'yyyy-MM-dd');
+		$twig->addGlobal('timeFormat', $backendLanguage->timeFormat ?? 'HH:mm');
 
-		$lo_backendLanguage = $this->cleanLanguage($lo_backendLanguage);
+		$backendLanguage = $this->cleanLanguage($backendLanguage);
 
-		$twig->addGlobal('userLanguage', $lo_backendLanguage);
+		$twig->addGlobal('userLanguage', $backendLanguage);
 	}
 }

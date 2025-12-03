@@ -19,7 +19,6 @@ class SelectBoxWidgetTest extends TestCase {
 	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptions()
 	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptgroup()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithTextLimitation(): void {
 		$stringTemplate = new StringTemplate();
@@ -53,7 +52,6 @@ class SelectBoxWidgetTest extends TestCase {
 	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptions()
 	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptgroup()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithOptionGroups(): void {
 		$stringTemplate = new StringTemplate();
@@ -100,7 +98,6 @@ class SelectBoxWidgetTest extends TestCase {
 	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptions()
 	 * @see \Awyiss\View\Widget\SelectBoxWidget::_renderOptgroup()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCustomAttributes(): void {
 		$stringTemplate = new StringTemplate();

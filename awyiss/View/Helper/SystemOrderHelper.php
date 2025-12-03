@@ -83,47 +83,47 @@ class SystemOrderHelper extends Helper {
 		}
 
 		//Add the provided attributes to the config, so both will be merged
-		$la_attributes = Hash::merge($this->getConfig(), $attributes);
+		$attributes = Hash::merge($this->getConfig(), $attributes);
 
-		//No entity? That's a big problem.
+		// No entity? That's a big problem.
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_entity = $la_attributes['entity'] ?? $this->Form->context()?->entity() ?? null;
-		if (!$lo_entity) {
+		$entity = $attributes['entity'] ?? $this->Form->context()?->entity() ?? null;
+		if (!$entity) {
 			throw new CakeException('Missing entity for SystemOrderHelper::control');
 		}
 
 		//If the given entity is not an instance of Entity, we can't continue
-		if (!($lo_entity instanceof Entity)) {
-			$ls_type = is_object($lo_entity) ? get_class($lo_entity) : gettype($lo_entity);
-			$ls_message = sprintf('Entity provided must be an instance of `%s`, `%s` given.', Entity::class, $ls_type);
+		if (!($entity instanceof Entity)) {
+			$type = is_object($entity) ? get_class($entity) : gettype($entity);
+			$message = sprintf('Entity provided must be an instance of `%s`, `%s` given.', Entity::class, $type);
 
-			throw new RuntimeException($ls_message);
+			throw new RuntimeException($message);
 		}
 
-		$la_attributes['options'] = $this->buildSystemOrderOptions($la_attributes['options'], $la_attributes, $lo_entity);
+		$attributes['options'] = $this->buildSystemOrderOptions($attributes['options'], $attributes, $entity);
 
 		//Default input type, if none was provided
-		if (!array_key_exists('type', $la_attributes)) {
-			$la_attributes['type'] = 'select';
+		if (!array_key_exists('type', $attributes)) {
+			$attributes['type'] = 'select';
 		}
 
 		//Unset attributes that shouldn't be part of the generated select
 		unset(
-			$la_attributes['field'],
-			$la_attributes['entity'],
-			$la_attributes['includeFirst'],
-			$la_attributes['relatedColumns'],
-			$la_attributes['templateClass'],
-			$la_attributes['templates'],
-			$la_attributes['titleFirst'],
+			$attributes['field'],
+			$attributes['entity'],
+			$attributes['includeFirst'],
+			$attributes['relatedColumns'],
+			$attributes['templateClass'],
+			$attributes['templates'],
+			$attributes['titleFirst'],
 		);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		return $this->Form->control(
 			$fieldName ?? 'system_order',
-			$la_attributes + [
+			$attributes + [
 				'disabled' => $this->_View->getRequest()->getData('save_as_copy') ? false : [SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER],
-				'val' => $lo_entity->systemOrder,
+				'val' => $entity->systemOrder,
 			]
 		);
 	}
@@ -138,53 +138,52 @@ class SystemOrderHelper extends Helper {
 	 * @return array
 	 */
 	protected function buildSystemOrderOptions(?iterable $options, array $attributes, Entity $entity): array {
-		$la_options = [];
-		$lb_isNew = $entity->isNew();
-		$la_dirtyRelatedColumns = array_intersect($entity->getDirty(), $attributes['relatedColumns'] ?? []);
+		$systemOrderOptions = [];
+		$isNew = $entity->isNew();
+		$dirtyRelatedColumns = array_intersect($entity->getDirty(), $attributes['relatedColumns'] ?? []);
 
 		//If the option `first`-option should be part of the options, add it
 		if ($attributes['includeFirst']) {
-			$li_firstOrder = $this->_View->getRequest()->getData('save_as_copy') ? 0 : 1;
+			$firstOrder = $this->_View->getRequest()->getData('save_as_copy') ? 0 : 1;
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$la_options[ $li_firstOrder ] = $this->formatFirstTitle(
+			$systemOrderOptions[ $firstOrder ] = $this->formatFirstTitle(
 				$attributes + [
-					'isOriginalSystemOrder' => !$lb_isNew && $entity->hasOriginal('systemOrder') && $entity->getOriginal('systemOrder') === 1,
-					'isSelectedSystemOrder' => $entity->systemOrder === $li_firstOrder,
+					'isOriginalSystemOrder' => !$isNew && $entity->hasOriginal('systemOrder') && $entity->getOriginal('systemOrder') === 1,
+					'isSelectedSystemOrder' => $entity->systemOrder === $firstOrder,
 				]
 			);
 		}
 
 		if ($options instanceof Traversable) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$options = iterator_to_array($options);
 		}
 
-		$lb_reachedOriginalSystemOrder = false;
-		foreach ($options as $lx_option) {
+		$reachedOriginalSystemOrder = false;
+		foreach ($options as $option) {
 			/*
 			 * The option is the original when
 			 * - the entity is not new AND
 			 * - no system order related columns are dirty AND
 			 * - the `system order`-property of the option equals the entity's original
 			 */
-			$lb_isOriginalSystemOrder = false;
-			if (!$lb_isNew && !$la_dirtyRelatedColumns) {
-				if ($entity->hasOriginal('systemOrder') && ($lx_option['systemOrder'] == $entity->getOriginal('systemOrder'))) {
-					$lb_isOriginalSystemOrder = true;
+			$isOriginalSystemOrder = false;
+			if (!$isNew && !$dirtyRelatedColumns) {
+				if ($entity->hasOriginal('systemOrder') && ($option['systemOrder'] == $entity->getOriginal('systemOrder'))) {
+					$isOriginalSystemOrder = true;
 				}
-				elseif (!$entity->hasOriginal('systemOrder') && ($lx_option['systemOrder'] == $entity->get('systemOrder'))) {
-					$lb_isOriginalSystemOrder = true;
+				elseif (!$entity->hasOriginal('systemOrder') && ($option['systemOrder'] == $entity->get('systemOrder'))) {
+					$isOriginalSystemOrder = true;
 				}
 			}
 
 			//Remember that we reached the original position
-			if ($lb_isOriginalSystemOrder/* && ! $lb_reachedOriginalSystemOrder*/) {
-				$lb_reachedOriginalSystemOrder = true;
+			if ($isOriginalSystemOrder/* && ! $reachedOriginalSystemOrder*/) {
+				$reachedOriginalSystemOrder = true;
 			}
 
 			//The value should be the `system_order`-property of the option
-			$li_systemOrder = $lx_option['systemOrder'];
-			if (!$lb_reachedOriginalSystemOrder) {
+			$systemOrder = $option['systemOrder'];
+			if (!$reachedOriginalSystemOrder) {
 				/**
 				 * As long as we haven't reached the original system order in this loop,
 				 * increase the value by one.
@@ -199,7 +198,7 @@ class SystemOrderHelper extends Helper {
 				 * And since the value says 6, it's the correct value
 				 * for "AFTER #5".
 				 */
-				$li_systemOrder++;
+				$systemOrder++;
 			}
 
 			/**
@@ -209,23 +208,23 @@ class SystemOrderHelper extends Helper {
 			 *
 			 * @see SystemOrderBehavior::beforeMarshal
 			 */
-			if ($lb_isOriginalSystemOrder && !$this->_View->getRequest()->getData('save_as_copy')) {
-				$li_systemOrder = SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER;
+			if ($isOriginalSystemOrder && !$this->_View->getRequest()->getData('save_as_copy')) {
+				$systemOrder = SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER;
 			}
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			//Append a new option with the system_order as its value.
-			$la_options[ $li_systemOrder ] = $this->formatTitle(
-				$lx_option,
+			$systemOrderOptions[ $systemOrder ] = $this->formatTitle(
+				$option,
 				$attributes + [
-					'isOriginalSystemOrder' => $lb_isOriginalSystemOrder,
-					'isSelectedSystemOrder' => $li_systemOrder == $entity->systemOrder,
+					'isOriginalSystemOrder' => $isOriginalSystemOrder,
+					'isSelectedSystemOrder' => $systemOrder == $entity->systemOrder,
 				]
 			);
 		}
 
 
-		return $la_options;
+		return $systemOrderOptions;
 	}
 
 
@@ -236,45 +235,44 @@ class SystemOrderHelper extends Helper {
 	 * @return string
 	 */
 	protected function formatFirstTitle(array $config): string {
-		$ls_template = 'titleFirst';
-		$la_config = $config;
+		$templateName = 'titleFirst';
 
-		//If the first position is the current system order of the entity, use the `titleFirstCurrent`-template
-		if ($la_config['isOriginalSystemOrder']) {
-			$ls_template = 'titleFirstCurrent';
+		// If the first position is the current system order of the entity, use the `titleFirstCurrent`-template
+		if ($config['isOriginalSystemOrder']) {
+			$templateName = 'titleFirstCurrent';
 		}
 
-		//If the first position is the selected system order of the entity, use the `titleFirstSelected`-template
-		if ($la_config['isSelectedSystemOrder']) {
-			$ls_template = 'titleFirstSelected';
+		// If the first position is the selected system order of the entity, use the `titleFirstSelected`-template
+		if ($config['isSelectedSystemOrder']) {
+			$templateName = 'titleFirstSelected';
 		}
 
-		//Get the template
-		$lx_template = $la_config['templates'][ $ls_template ];
+		// Get the template
+		$template = $config['templates'][ $templateName ];
 
-		//In case the template is a string
-		if (is_string($lx_template)) {
+		// In case the template is a string
+		if (is_string($template)) {
 			//Add the template with its name to the templater
-			$this->templater()->add([$ls_template => $lx_template]);
+			$this->templater()->add([$templateName => $template]);
 
 			/*
 			 * Format the given template, using the `first`-option from the config as a label,
 			 * with a fallback to the translation of '::system_order_first'
 			 */
-			$ls_title = $this->formatTemplate(
-				$ls_template,
+			$title = $this->formatTemplate(
+				$templateName,
 				[
-					'first' => is_null($la_config['first']) ? __('system_order_first') : $la_config['first'],
-				] + $la_config
+					'first' => is_null($config['first']) ? __('system_order_first') : $config['first'],
+				] + $config
 			);
 		}
 		//If the template is a callable, call it and use its return value as the title
-		elseif (is_callable($lx_template)) {
-			$ls_title = call_user_func($lx_template, $la_config);
+		elseif (is_callable($template)) {
+			$title = call_user_func($template, $config);
 		}
 
 
-		return $ls_title ?? '';
+		return $title ?? '';
 	}
 
 
@@ -284,52 +282,50 @@ class SystemOrderHelper extends Helper {
 	 * @return string
 	 */
 	protected function formatTitle(mixed $data, array $config): string {
-		$ls_title = '';
-		$ls_template = 'titleOption';
-		$la_config = $config;
+		$title = '';
+		$templateName = 'titleOption';
 
-		//If the position is the current system order of the entity, use the `titleOptionCurrent`-template
-		if ($la_config['isOriginalSystemOrder']) {
-			$ls_template = 'titleOptionCurrent';
+		// If the position is the current system order of the entity, use the `titleOptionCurrent`-template
+		if ($config['isOriginalSystemOrder']) {
+			$templateName = 'titleOptionCurrent';
 		}
 
-		//If the position is the selected system order of the entity, use the `titleOptionSelected`-template
-		if ($la_config['isSelectedSystemOrder']) {
-			$ls_template = 'titleOptionSelected';
+		// If the position is the selected system order of the entity, use the `titleOptionSelected`-template
+		if ($config['isSelectedSystemOrder']) {
+			$templateName = 'titleOptionSelected';
 		}
 
-		$lx_template = $la_config['templates'][ $ls_template ];
+		$template = $config['templates'][ $templateName ];
 
-		//In case the template is a string
-		if (is_string($lx_template)) {
-			//Make sure the data is an array
-			$la_data = $data;
-			if ($la_data instanceof Entity) {
-				$la_data = $la_data->toArray();
+		// In case the template is a string
+		if (is_string($template)) {
+			// Make sure the data is an array
+			if ($data instanceof Entity) {
+				$data = $data->toArray();
 			}
 			elseif (!is_array($data)) {
-				$la_data = (array)$la_data;
+				$data = (array)$data;
 			}
 
 			//Add the template with its name to the templater
-			$this->templater()->add([$ls_template => $lx_template]);
+			$this->templater()->add([$templateName => $template]);
 			/*
 			 * Format the given template, using the `after`-option from the config as a label,
 			 * with a fallback to the translation of '::system_order_after'
 			 */
-			$ls_title = $this->formatTemplate(
-				$ls_template,
-				$la_data + [
-					'after' => is_null($la_config['after']) ? __('system_order_after') : $la_config['after'],
+			$title = $this->formatTemplate(
+				$templateName,
+				$data + [
+					'after' => is_null($config['after']) ? __('system_order_after') : $config['after'],
 				]
 			);
 		}
 		//If the template is a callable, call it and use its return value as the title
-		elseif (is_callable($lx_template)) {
-			$ls_title = call_user_func($lx_template, $data, $la_config);
+		elseif (is_callable($template)) {
+			$title = call_user_func($template, $data, $config);
 		}
 
 
-		return $ls_title ?? '';
+		return $title ?? '';
 	}
 }

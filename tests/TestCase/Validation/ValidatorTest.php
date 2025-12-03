@@ -39,7 +39,6 @@ class ValidatorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::getI18nDomain()
 	 * @see \Awyiss\Validation\Validator::setI18nDomain()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetAndGetI18nDomain(): void {
 		$this->assertSame('test_domain', $this->validator->getI18nDomain());
@@ -52,7 +51,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::validate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidate(): void {
 		$data = [
@@ -83,7 +81,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::validate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithValue(): void {
 		$data = [
@@ -108,7 +105,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::validate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithBoolValue(): void {
 		$data = [
@@ -136,7 +132,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::validate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateNotBooleanWithBoolValue(): void {
 		$data = [
@@ -170,7 +165,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::validate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithValueAndCompareWith(): void {
 		$data = [
@@ -202,7 +196,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::validate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithRuleInList(): void {
 		$data = [
@@ -225,7 +218,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::validate()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateWithRuleDateTime(): void {
 		$data = [
@@ -248,7 +240,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::allowEmptyFor()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAllowEmptyFor(): void {
 		$this->validator->allowEmptyFor('fieldName');
@@ -261,7 +252,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::field()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testField(): void {
 		$validationSet = $this->validator->field('fieldName');
@@ -273,7 +263,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::hasField()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasField(): void {
 		$this->validator->field('fieldName');
@@ -289,7 +278,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::remove()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveField(): void {
 		$this->validator->field('fieldName');
@@ -307,7 +295,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::getRequiredMessage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetRequiredMessage(): void {
 		$message = $this->validator->getRequiredMessage('fieldName');
@@ -322,7 +309,6 @@ class ValidatorTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::getNotEmptyMessage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNotEmptyMessage(): void {
 		$this->validator->field('fieldName');
@@ -335,7 +321,6 @@ class ValidatorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::underscoreFields()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUnderscoreFields(): void {
 		$fields = [
@@ -367,7 +352,6 @@ class ValidatorTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Validation\Validator::underscoreField()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testUnderscoreField(): void {
 		// Test simple field name

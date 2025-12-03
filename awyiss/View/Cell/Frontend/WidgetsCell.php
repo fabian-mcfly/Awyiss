@@ -39,31 +39,31 @@ class WidgetsCell extends Cell {
 	public function display(string $identifier, FrontendView $view, array $options = []): void {
 		$this->View = $view;
 
-		$la_options = $this->initCellOptions($options);
-		$la_options['viewVars']['identifier'] = $identifier;
+		$options = $this->initCellOptions($options);
+		$options['viewVars']['identifier'] = $identifier;
 
-		$lo_widgets = $this->getThreadedWidgets($identifier, $this->isPreview());
+		$widgets = $this->getThreadedWidgets($identifier, $this->isPreview());
 
-		$this->cacheAssignedMediaItems($lo_widgets, 'widgets');
+		$this->cacheAssignedMediaItems($widgets, 'widgets');
 
-		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth']);
+		$this->prepareEntities($widgets, (float)$options['columnWidth']);
 
-		$this->setViewVars($la_options);
+		$this->setViewVars($options);
 
-		$ls_widgets = $this->buildContents($lo_widgets->toArray());
+		$renderedWidgets = $this->buildContents($widgets->toArray());
 
-		$ls_currentRoute = Router::url($this->request->getRequestTarget());
-		if ($ls_widgets && $ls_currentRoute !== '/') {
+		$currentRoute = Router::url($this->request->getRequestTarget());
+		if ($renderedWidgets && $currentRoute !== '/') {
 			// Replace all `href="#anchor"` with `href="<currentRoute>#anchor"`
-			$ls_widgets = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . ltrim($ls_currentRoute, '/') . '$1"', $ls_widgets);
+			$renderedWidgets = preg_replace('/href=[\'"](#[^\'"]+)[\'"]/', 'href="' . ltrim($currentRoute, '/') . '$1"', $renderedWidgets);
 		}
 
 		// Set the view variables
 		$this->set([
-			'fullWidth' => $la_options['fullWidth'],
-			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
-			'widgets' => $ls_widgets,
-			...$la_options['viewVars'],
+			'fullWidth' => $options['fullWidth'],
+			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
+			'widgets' => $renderedWidgets,
+			...$options['viewVars'],
 		]);
 
 		// Set the template for the view
@@ -81,10 +81,10 @@ class WidgetsCell extends Cell {
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
 		/**
-		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_mediaRenderOptions = $this->getView()->helpers()->get('Media')->mediaRenderOptions(
+		$mediaRenderOptions = $this->getView()->helpers()->get('Media')->mediaRenderOptions(
 			baseWidth: $this->getView()->get('fullWidth', 1920),
 			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
 			columnWidth: $entity->realColumnWidth,
@@ -93,21 +93,21 @@ class WidgetsCell extends Cell {
 		);
 
 		// Parse the module
-		$this->parseAwyissImageTags($entity, $lo_mediaRenderOptions);
+		$this->parseAwyissImageTags($entity, $mediaRenderOptions);
 
 		// Parse the module
-		$this->parseModule($entity, $lo_mediaRenderOptions);
+		$this->parseModule($entity, $mediaRenderOptions);
 
-		$ls_fullWidthMissingWarning = '';
+		$fullWidthMissingWarning = '';
 		if (!$this->getView()->get('fullWidth')) {
-			$ls_fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the widget cell. -->';
+			$fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the widget cell. -->';
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $ls_fullWidthMissingWarning . $this->getView()->widget($entity->widgetTemplate->fileName, [
+		return $fullWidthMissingWarning . $this->getView()->widget($entity->widgetTemplate->fileName, [
 			'widget' => $entity,
 			'children' => $children,
-			'mediaRenderOptions' => $lo_mediaRenderOptions,
+			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
 	}
 
@@ -118,31 +118,31 @@ class WidgetsCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getThreadedWidgets(string $identifier, bool $isPreview = false): CollectionInterface {
-		/** @var \Awyiss\Model\Table\WidgetsTable $lo_widgetsTable */
-		$lo_widgetsTable = $this->fetchTable('Widgets');
+		/** @var \Awyiss\Model\Table\WidgetsTable $widgetsTable */
+		$widgetsTable = $this->fetchTable('Widgets');
 
 		if ($isPreview) {
-			$lo_query = $lo_widgetsTable->find('all');
+			$query = $widgetsTable->find('all');
 		}
 		else {
 			/**
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$lo_query = $lo_widgetsTable->find('active')->find('published');
+			$query = $widgetsTable->find('active')->find('published');
 		}
 
-		$lo_query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
-		$lo_query->where([
+		$query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+		$query->where([
 			'Widgets.identifier' => $identifier,
 		]);
 
 		// Contain WidgetTemplates and MediaAssignments
-		$lo_query->contain([
+		$query->contain([
 			'WidgetTemplates',
 		]);
 
-		$lo_widgets = $lo_query->all();
+		$widgets = $query->all();
 
 		/*
 		 * Filter out all first level widgets with a parent_id
@@ -152,7 +152,7 @@ class WidgetsCell extends Cell {
 		 * Either because it's not active (allowed to happen)
 		 * or because it's not part of the same page. (shouldn't happen)
 		 */
-		return $lo_widgets->filter(function (Widget $widget) {
+		return $widgets->filter(function (Widget $widget) {
 			return $widget->parentId === null;
 		})->compile();
 	}

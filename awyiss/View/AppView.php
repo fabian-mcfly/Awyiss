@@ -55,11 +55,11 @@ class AppView extends TwigView {
 			'strict_variables' => false,
 		]);
 
-		$lb_twigInitialized = static::$twig !== null;
+		$twigInitialized = static::$twig !== null;
 
 		parent::initialize();
 
-		if (!$lb_twigInitialized) {
+		if (!$twigInitialized) {
 			$this->initTwig($this->getTwig());
 		}
 
@@ -79,25 +79,25 @@ class AppView extends TwigView {
 	 * @see \Cake\View\CellTrait::cell()
 	 */
 	public function cell(string $cell, array $data = [], array $options = []): Cell {
-		$la_parts = explode('::', $cell);
+		$parts = explode('::', $cell);
 
-		if (count($la_parts) === 2) {
-			[$ls_pluginAndCell, $ls_action] = [$la_parts[0], $la_parts[1]];
+		if (count($parts) === 2) {
+			[$pluginAndCell, $action] = [$parts[0], $parts[1]];
 		}
 		else {
-			[$ls_pluginAndCell, $ls_action] = [$la_parts[0], 'display'];
+			[$pluginAndCell, $action] = [$parts[0], 'display'];
 		}
 
-		[$ls_plugin] = pluginSplit($ls_pluginAndCell);
-		$ls_className = App::className($ls_pluginAndCell, 'View/Cell', 'Cell');
+		[$plugin] = pluginSplit($pluginAndCell);
+		$className = App::className($pluginAndCell, 'View/Cell', 'Cell');
 
-		if (!$ls_className) {
-			throw new MissingCellException(['className' => $ls_pluginAndCell . 'Cell']);
+		if (!$className) {
+			throw new MissingCellException(['className' => $pluginAndCell . 'Cell']);
 		}
 
-		$la_options = ['action' => $ls_action, 'args' => $data] + $options;
+		$options = ['action' => $action, 'args' => $data] + $options;
 
-		return $this->_createCell($ls_className, $ls_action, $ls_plugin, $la_options);
+		return $this->_createCell($className, $action, $plugin, $options);
 	}
 
 
@@ -122,21 +122,21 @@ class AppView extends TwigView {
 		parent::loadHelpers();
 
 		// Get the Twig instance.
-		$lo_twig = $this->getTwig();
+		$twig = $this->getTwig();
 
-		$la_globals = $lo_twig->getGlobals();
+		$globals = $twig->getGlobals();
 
 		// Set the helper instances to the view.
-		foreach ($this->helpers()->loaded() as $ls_helper) {
-			if (isset($la_globals[ $ls_helper . 'Helper' ])) {
+		foreach ($this->helpers()->loaded() as $helper) {
+			if (isset($globals[ $helper . 'Helper' ])) {
 				continue;
 			}
 
-			$lo_helper = $this->helperClass($ls_helper);
+			$helperClass = $this->helperClass($helper);
 
-			$this->helperCache[ $ls_helper ] = $lo_helper;
+			$this->helperCache[ $helper ] = $helperClass;
 
-			$lo_twig->addGlobal($ls_helper . 'Helper', $lo_helper);
+			$twig->addGlobal($helper . 'Helper', $helperClass);
 		}
 	}
 
@@ -188,19 +188,17 @@ class AppView extends TwigView {
 			 * @throws \BadMethodCallException
 			 */
 			public function __call(string $method, array $args): mixed {
-				$ls_method = $method;
-
-				if (!method_exists($this->helper, $ls_method) && !method_exists($this->helper, '__call')) {
-					$ls_method = 'get' . ucfirst($method);
+				if (!method_exists($this->helper, $method) && !method_exists($this->helper, '__call')) {
+					$method = 'get' . ucfirst($method);
 				}
 
-				$lx_result = call_user_func([$this->helper, $ls_method], ...$args);
+				$result = call_user_func([$this->helper, $method], ...$args);
 
-				if (is_string($lx_result)) {
-					return new Markup($lx_result, 'UTF-8');
+				if (is_string($result)) {
+					return new Markup($result, 'UTF-8');
 				}
 
-				return $lx_result;
+				return $result;
 			}
 		};
 	}
@@ -212,33 +210,33 @@ class AppView extends TwigView {
 	 * @throws \Twig\Error\LoaderError
 	 */
 	protected function initTwig(Environment $twig): void {
-		/** @var \Awyiss\Twig\FileLoader $lo_loader */
-		$lo_loader = $twig->getLoader();
+		/** @var \Awyiss\Twig\FileLoader $loader */
+		$loader = $twig->getLoader();
 
-		$ls_awyissTemplatesPath = Configure::read('App.paths.templates.awyiss');
-		$lo_loader->addPath($ls_awyissTemplatesPath, Configure::read('App.namespace'));
+		$awyissTemplatesPath = Configure::read('App.paths.templates.awyiss');
+		$loader->addPath($awyissTemplatesPath, Configure::read('App.namespace'));
 
-		$la_frontendPaths = [$ls_awyissTemplatesPath . 'Frontend' . DS];
-		$la_backendPaths = [$ls_awyissTemplatesPath . 'Backend' . DS];
+		$frontendPaths = [$awyissTemplatesPath . 'Frontend' . DS];
+		$backendPaths = [$awyissTemplatesPath . 'Backend' . DS];
 		if (defined('CUSTOM_DIR')) {
-			$ls_customerTemplatesPath = Configure::read('App.paths.templates.customer');
-			$lo_loader->addPath($ls_customerTemplatesPath, CUSTOM_NAMESPACE);
+			$customerTemplatesPath = Configure::read('App.paths.templates.customer');
+			$loader->addPath($customerTemplatesPath, CUSTOM_NAMESPACE);
 
-			array_unshift($la_frontendPaths, $ls_customerTemplatesPath . 'Frontend' . DS);
-			array_unshift($la_backendPaths, $ls_customerTemplatesPath . 'Backend' . DS);
+			array_unshift($frontendPaths, $customerTemplatesPath . 'Frontend' . DS);
+			array_unshift($backendPaths, $customerTemplatesPath . 'Backend' . DS);
 		}
 
-		$lo_loader->setPaths($la_frontendPaths, 'Frontend');
-		$lo_loader->setPaths($la_backendPaths, 'Backend');
+		$loader->setPaths($frontendPaths, 'Frontend');
+		$loader->setPaths($backendPaths, 'Backend');
 
 		$twig->addExtension(new AwyissExtension());
 		$twig->addExtension(new EnumExtension());
 
 		if (defined('CUSTOM_NAMESPACE')) {
 			//This looks for a custom Twig Extension class in \<CustomNamespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
-			$ls_customExtensionClass = App::className(CUSTOM_NAMESPACE, 'Twig/Extension', 'Extension');
-			if ($ls_customExtensionClass) {
-				$twig->addExtension(new $ls_customExtensionClass());
+			$customExtensionClass = App::className(CUSTOM_NAMESPACE, 'Twig/Extension', 'Extension');
+			if ($customExtensionClass) {
+				$twig->addExtension(new $customExtensionClass());
 			}
 		}
 	}
@@ -252,14 +250,14 @@ class AppView extends TwigView {
 	 * @return string|null
 	 */
 	protected function getLoginLogoPath(): ?string {
-		$ls_extensions = ['svg', 'png', 'jpg'];
-		$ls_basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
+		$extensions = ['svg', 'png', 'jpg'];
+		$basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
 
 		// For each extension, check if the file exists
-		foreach ($ls_extensions as $ls_extension) {
-			$ls_tempPath = $ls_basePath . $ls_extension;
-			if (file_exists($ls_tempPath)) {
-				return substr_replace($ls_tempPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR));
+		foreach ($extensions as $extension) {
+			$tempPath = $basePath . $extension;
+			if (file_exists($tempPath)) {
+				return substr_replace($tempPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR));
 			}
 		}
 
@@ -272,21 +270,21 @@ class AppView extends TwigView {
 	 * @return \Awyiss\Model\Entity\Language
 	 */
 	protected function cleanLanguage(Language $language): Language {
-		$la_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn'];
+		$blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn'];
 
-		$lo_language = clone $language;
+		$language = clone $language;
 
-		foreach ($la_blocklistedProperties as $ls_property) {
-			unset($lo_language->{$ls_property});
+		foreach ($blocklistedProperties as $property) {
+			unset($language->{$property});
 		}
 
-		$la_virtualFields = $lo_language->getVirtual();
-		$la_virtualFields = array_filter($la_virtualFields, function (string $key): bool {
+		$virtualFields = $language->getVirtual();
+		$virtualFields = array_filter($virtualFields, function (string $key): bool {
 			return $key !== 'label';
 		});
 
-		$lo_language->setVirtual($la_virtualFields, true);
+		$language->setVirtual($virtualFields, true);
 
-		return $lo_language;
+		return $language;
 	}
 }
