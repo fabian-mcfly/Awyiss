@@ -16,7 +16,6 @@ use Awyiss\Test\TestSuite\TestCase;
 class PhpConfigTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testReadTraversesAllPaths(): void {
 		$config = new PhpConfig();
@@ -46,7 +45,6 @@ class PhpConfigTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Brick\VarExporter\ExportException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDump(): void {
 		$config = new PhpConfig();

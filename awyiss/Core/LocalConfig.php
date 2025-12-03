@@ -26,24 +26,22 @@ class LocalConfig extends Configure {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public static function read(string|array|null $path = null, mixed $default = null, ?string $scope = null): mixed {
-		$ls_scope = $scope ?? Router::getRequest()->getParam('controller');
+		$scope ??= Router::getRequest()->getParam('controller');
 
+		$path ??= [];
 		if ($path) {
-			$la_path = is_array($path) ? $path : explode('.', $path);
-		}
-		else {
-			$la_path = [];
+			$path = is_array($path) ? $path : explode('.', $path);
 		}
 
 		array_unshift(
-			$la_path,
+			$path,
 			'Awyiss',
-			$ls_scope,
+			$scope,
 			Awyiss::getRealm()
 		);
 
 
-		return parent::read(static::stringify($la_path), $default);
+		return parent::read(static::stringify($path), $default);
 	}
 
 
@@ -58,28 +56,27 @@ class LocalConfig extends Configure {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public static function write(array|string $config, mixed $value = null, ?string $scope = null): void {
-		$ls_scope = $scope ?? Router::getRequest()->getParam('controller');
+		$scope ??= Router::getRequest()->getParam('controller');
 
-		$la_config = $config;
 		if (!is_array($config)) {
-			$la_config = [$config => $value];
+			$config = [$config => $value];
 		}
 
-		$la_localConfig = [];
-		foreach ($la_config as $ls_key => $lx_value) {
-			$la_path = explode('.', $ls_key);
+		$localConfig = [];
+		foreach ($config as $itemKey => $itemValue) {
+			$path = explode('.', $itemKey);
 
 			array_unshift(
-				$la_path,
+				$path,
 				'Awyiss',
-				$ls_scope,
+				$scope,
 				Awyiss::getRealm()
 			);
 
-			$la_localConfig = Hash::merge($la_localConfig, [static::stringify($la_path) => $lx_value]);
+			$localConfig = Hash::merge($localConfig, [static::stringify($path) => $itemValue]);
 		}
 
-		parent::write($la_localConfig, $value);
+		parent::write($localConfig, $value);
 	}
 
 
