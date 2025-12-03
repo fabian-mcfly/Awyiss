@@ -43,7 +43,6 @@ class ContentTemplatesListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -60,7 +59,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -77,7 +75,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithEmptyElements(): void {
 		$data = new ArrayObject([]);
@@ -101,7 +98,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithTitleAndSubtitlePresent(): void {
 		$elements = [
@@ -132,7 +128,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithTitleButNoSubtitle(): void {
 		$elements = [
@@ -161,7 +156,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithSubtitleButNoTitle(): void {
 		$elements = [
@@ -190,7 +184,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithNeitherTitleNorSubtitle(): void {
 		$elements = [
@@ -217,7 +210,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithNoFileNameChange(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -236,7 +228,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithSameFileName(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -261,7 +252,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithFileNameChangeAndNoQueuedJob(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -294,7 +284,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithFileNameChangeAndQueuedJob(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -331,7 +320,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithNewEntity(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -376,7 +364,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithNewEntityAndExistingFile(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -414,7 +401,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntity(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -466,7 +452,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndExistingFile(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -511,7 +496,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndFileNameChange(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -562,7 +546,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndFileNameChangeAndExistingOldFile(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -616,7 +599,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndFileNameChangeAndExistingNewFile(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -673,7 +655,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndFileNameChangeAndExistingOldFileAndExistingNewFile(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -733,7 +714,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithCopyOption(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -778,7 +758,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithCopyOptionAndExistingFile(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -816,7 +795,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteWithExistingFile(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([
@@ -869,7 +847,6 @@ class ContentTemplatesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\ContentTemplatesListener::afterSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteWithoutExistingFile(): void {
 		$entity = $this->fetchTable('ContentTemplates')->newDefaultEntity([

@@ -34,7 +34,6 @@ class AttributesListener implements EventListenerInterface {
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options): void {
 		if (empty($data['input_type'])) {
@@ -55,17 +54,17 @@ class AttributesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function beforeSave(Event $event, Attribute $entity): void {
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-		if ($lo_queue->isQueued('attributes::table_changes')) {
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+		if ($queuedJobsTable->isQueued('attributes::table_changes')) {
 			$event->stopPropagation();
 			$entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
 
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table\AttributesTable $attributesTable */
+		$attributesTable = $event->getSubject();
 
 		if (in_array($entity->scope, ['contents', 'widgets'])) {
 			//For contents & widgets, the content template decides where an attribute will go
@@ -74,12 +73,12 @@ class AttributesListener implements EventListenerInterface {
 			$entity->required = false;
 		}
 
-		$la_pageRoles = array_keys(array_filter($lo_table->getAvailableScopes(), function ($table) {
+		$pageRoles = array_keys(array_filter($attributesTable->getAvailableScopes(), function ($table) {
 			return !is_string($table);
 		}));
 
 		//Contents, Menu Entries and all types of pages don't need to have translatable attributes since they all are translations themselves
-		if (in_array($entity->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']))) {
+		if (in_array($entity->scope, array_merge($pageRoles, ['contents', 'menu_entries', 'pages']))) {
 			$entity->translatable = false;
 		}
 	}
@@ -96,23 +95,23 @@ class AttributesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, Attribute $entity): void {
-		$la_relevantColumns = ['scope', 'identifier', 'type', 'hasIndex', 'required', 'defaultValue', 'deleted'];
+		$relevantColumns = ['scope', 'identifier', 'type', 'hasIndex', 'required', 'defaultValue', 'deleted'];
 
-		$la_oldData = $entity->isNew() ? array_fill_keys($la_relevantColumns, null) : $entity->extractOriginal($la_relevantColumns, false);
-		$la_newData = $entity->extract($la_relevantColumns, false, false);
-		$la_diff = Hash::diff($la_newData, $la_oldData);
+		$oldData = $entity->isNew() ? array_fill_keys($relevantColumns, null) : $entity->extractOriginal($relevantColumns, false);
+		$newData = $entity->extract($relevantColumns, false, false);
+		$diff = Hash::diff($newData, $oldData);
 
 		//No changes found in columns, relevant to the migrations?
-		if (empty($la_diff)) {
+		if (empty($diff)) {
 			return;
 		}
 
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-		$lo_queue->createJob('Attributes/Upsert', [
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+		$queuedJobsTable->createJob('Attributes/Upsert', [
 			'id' => $entity->id,
-			'old' => $la_oldData,
-			'new' => $la_newData,
+			'old' => $oldData,
+			'new' => $newData,
 		], [
 			'group' => 'general',
 			'priority' => 1,

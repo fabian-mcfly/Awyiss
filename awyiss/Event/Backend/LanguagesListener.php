@@ -44,8 +44,8 @@ class LanguagesListener implements EventListenerInterface {
 			 *
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 			 */
-			$lo_eventManager = EventManager::instance();
-			$lo_eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
+			$eventManager = EventManager::instance();
+			$eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
 		}
 	}
 
@@ -58,11 +58,11 @@ class LanguagesListener implements EventListenerInterface {
 	 */
 	public function beforeSoftDelete(Event $event, Language $entity): void {
 		if ($entity->realm === Awyiss::REALM_FRONTEND) {
-			/** @var \Awyiss\Model\Table\LanguagesTable $lo_table */
-			$lo_table = $event->getSubject();
-			$lo_table->MenuEntries->setDependent(true);
-			$lo_table->Pages->setDependent(true);
-			$lo_table->Pages->ChildPages->setDependent(false)->setCascadeCallbacks(false);
+			/** @var \Awyiss\Model\Table\LanguagesTable $languagesTable */
+			$languagesTable = $event->getSubject();
+			$languagesTable->MenuEntries->setDependent(true);
+			$languagesTable->Pages->setDependent(true);
+			$languagesTable->Pages->ChildPages->setDependent(false)->setCascadeCallbacks(false);
 		}
 	}
 
@@ -74,11 +74,11 @@ class LanguagesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDelete(Event $event, Language $entity): void {
-		/** @var \Awyiss\Model\Table\LanguagesTable $lo_table */
-		$lo_table = $event->getSubject();
-		$lo_table->MenuEntries->setDependent(false);
-		$lo_table->Pages->setDependent(false);
-		$lo_table->Pages->ChildPages->setDependent(true)->setCascadeCallbacks(true);
+		/** @var \Awyiss\Model\Table\LanguagesTable $languagesTable */
+		$languagesTable = $event->getSubject();
+		$languagesTable->MenuEntries->setDependent(false);
+		$languagesTable->Pages->setDependent(false);
+		$languagesTable->Pages->ChildPages->setDependent(true)->setCascadeCallbacks(true);
 
 
 		/**
@@ -86,7 +86,7 @@ class LanguagesListener implements EventListenerInterface {
 		 *
 		 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 		 */
-		$lo_eventManager = EventManager::instance();
-		$lo_eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
+		$eventManager = EventManager::instance();
+		$eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
 	}
 }

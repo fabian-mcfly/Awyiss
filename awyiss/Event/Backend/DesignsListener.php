@@ -49,8 +49,8 @@ class DesignsListener implements EventListenerInterface {
 
 		// If the design should be in use, other designs should be set to not in use
 		if ($entity->inUse) {
-			$lo_designs = $this->fetchTable('Designs');
-			$lo_designs->updateAll([
+			$designsTable = $this->fetchTable('Designs');
+			$designsTable->updateAll([
 				'in_use' => false,
 			], [
 				'id !=' => $entity->id,
@@ -71,34 +71,33 @@ class DesignsListener implements EventListenerInterface {
 			return;
 		}
 
-		$la_fonts = [];
-
-		foreach (($entity->settings ?? []) as $lx_value) {
-			if (!is_array($lx_value) || !isset($lx_value['font']['id'])) {
+		$fonts = [];
+		foreach (($entity->settings ?? []) as $value) {
+			if (!is_array($value) || !isset($value['font']['id'])) {
 				continue;
 			}
 
-			$la_fonts[] = [
-				'id' => $lx_value['font']['id'],
-				'name' => $lx_value['font']['name'],
-				'variants' => $lx_value['variants'] ?? [],
-				'version' => $lx_value['font']['version'],
+			$fonts[] = [
+				'id' => $value['font']['id'],
+				'name' => $value['font']['name'],
+				'variants' => $value['variants'] ?? [],
+				'version' => $value['font']['version'],
 			];
 		}
 
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = $this->fetchTable('Queue.QueuedJobs');
-		$lo_queue->createJob('Design/WebfontDownload', [
-			'fonts' => $la_fonts,
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = $this->fetchTable('Queue.QueuedJobs');
+		$queuedJobsTable->createJob('Design/WebfontDownload', [
+			'fonts' => $fonts,
 		], [
 			'group' => 'general',
 			'priority' => 1,
 			'reference' => 'designs::webfont_download',
 		]);
 
-		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
-		$lo_designMiddleware = Router::getRequest()->getAttribute('design');
-		$lo_designMiddleware->resetDesignVariables();
-		$lo_designMiddleware->compileScss(true, Awyiss::REALM_FRONTEND);
+		/** @var \Awyiss\Middleware\DesignMiddleware $designMiddleware */
+		$designMiddleware = Router::getRequest()->getAttribute('design');
+		$designMiddleware->resetDesignVariables();
+		$designMiddleware->compileScss(true, Awyiss::REALM_FRONTEND);
 	}
 }

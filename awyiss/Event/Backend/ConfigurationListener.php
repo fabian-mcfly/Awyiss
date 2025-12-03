@@ -138,38 +138,38 @@ class ConfigurationListener implements EventListenerInterface {
 	 */
 	public function createCustomConfiguration(): void {
 		// Remember the current config
-		$la_rememberedConfig = Configure::read('Awyiss');
+		$rememberedConfig = Configure::read('Awyiss');
 
 		$this->deleteCustomConfiguration();
 
-		$la_languages = LocaleMiddleware::getLanguages();
-		foreach ($la_languages as &$la_realmLanguages) {
-			$la_realmLanguages = array_keys($la_realmLanguages);
+		$languages = LocaleMiddleware::getLanguages();
+		foreach ($languages as &$realmLanguages) {
+			$realmLanguages = array_keys($realmLanguages);
 		}
-		unset($la_realmLanguages);
+		unset($realmLanguages);
 
-		foreach (collection($la_languages)->cartesianProduct()->toArray() as $la_languages) {
+		foreach (collection($languages)->cartesianProduct()->toArray() as $languages) {
 			// Load the config with the provided languages
-			Awyiss::loadConfiguration($la_languages[0] ?? null, $la_languages[1] ?? null, true);
+			Awyiss::loadConfiguration($languages[0] ?? null, $languages[1] ?? null, true);
 
-			$ls_frontendLanguage = $la_languages[0] ?? null;
-			$ls_backendLanguage = $la_languages[1] ?? null;
+			$frontendLanguage = $languages[0] ?? null;
+			$backendLanguage = $languages[1] ?? null;
 
-			$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
-			if ($ls_frontendLanguage) {
-				$ls_fileName .= '[' . $ls_frontendLanguage . ']';
+			$fileName = Inflector::underscore(CUSTOM_NAMESPACE);
+			if ($frontendLanguage) {
+				$fileName .= '[' . $frontendLanguage . ']';
 
-				if ($ls_backendLanguage) {
-					$ls_fileName .= '[' . $ls_backendLanguage . ']';
+				if ($backendLanguage) {
+					$fileName .= '[' . $backendLanguage . ']';
 				}
 			}
 
 			// Dump the config to a file
-			Configure::dump($ls_fileName, 'default', ['Awyiss']);
+			Configure::dump($fileName, 'default', ['Awyiss']);
 		}
 
 		Configure::delete('Awyiss');
-		Configure::write($la_rememberedConfig ?? []);
+		Configure::write($rememberedConfig ?? []);
 	}
 
 
@@ -180,9 +180,9 @@ class ConfigurationListener implements EventListenerInterface {
 	 */
 	public function deleteCustomConfiguration(): void {
 		// Delete all files
-		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE) . '\[??\]\[??\].php';
-		foreach (glob(ENV_CUSTOM_CONFIG . $ls_fileName) as $ls_filePath) {
-			unlink($ls_filePath);
+		$fileName = Inflector::underscore(CUSTOM_NAMESPACE) . '\[??\]\[??\].php';
+		foreach (glob(ENV_CUSTOM_CONFIG . $fileName) as $filePath) {
+			unlink($filePath);
 		}
 	}
 
@@ -195,30 +195,30 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @return bool
 	 */
 	protected function dispatchEvent(string $name, Event $originalEvent, Configuration $entity, ArrayObject $options): bool {
-		$ls_scope = Inflector::camelize($entity->scope);
+		$scope = Inflector::camelize($entity->scope);
 
 		try {
-			$lo_table = $this->fetchTable($ls_scope);
+			$table = $this->fetchTable($scope);
 		}
 		catch (MissingTableClassException | DatabaseException) {
 			return false;
 		}
 
-		$la_eventParts = [
+		$eventParts = [
 			'Configuration',
-			$ls_scope,
+			$scope,
 			Inflector::camelize($entity->realm),
 			Inflector::variable($entity->identifier),
 			$name,
 		];
 
-		$lo_event = new Event(implode('.', $la_eventParts), $lo_table, ['entity' => $entity, 'options' => $options]);
-		$lo_table->getEventManager()->dispatch($lo_event);
+		$event = new Event(implode('.', $eventParts), $table, ['entity' => $entity, 'options' => $options]);
+		$table->getEventManager()->dispatch($event);
 
 		//If the new event was stopped, stop the old one as well and set the result.
-		if ($lo_event->isStopped()) {
+		if ($event->isStopped()) {
 			$originalEvent->stopPropagation();
-			$originalEvent->setResult($lo_event->getResult());
+			$originalEvent->setResult($event->getResult());
 
 			return false;
 		}

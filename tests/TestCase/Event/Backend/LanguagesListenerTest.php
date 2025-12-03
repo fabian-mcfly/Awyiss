@@ -24,7 +24,6 @@ class LanguagesListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -36,7 +35,6 @@ class LanguagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\LanguagesListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -52,7 +50,6 @@ class LanguagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\LanguagesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitDispatchesDeleteCustomConfigEventWhenNew(): void {
 		$eventSent = false;
@@ -81,7 +78,6 @@ class LanguagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\LanguagesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotDispatchesDeleteCustomConfigEventWhenNotNew(): void {
 		$eventSent = false;
@@ -112,7 +108,6 @@ class LanguagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\LanguagesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitDispatchesDeleteCustomConfigEventWhenShortcodeChanged(): void {
 		$eventSent = false;
@@ -145,7 +140,6 @@ class LanguagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\LanguagesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitDispatchesDeleteCustomConfigEventWhenRealmChanged(): void {
 		$eventSent = false;
@@ -178,7 +172,6 @@ class LanguagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\LanguagesListener::beforeSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSoftDeleteSetsMarksAssociationsDependentWhenRealmFrontend(): void {
 		$languagesTable = $this->fetchTable('Languages');
@@ -203,7 +196,6 @@ class LanguagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\LanguagesListener::beforeSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSoftDeleteNotSetsMarksAssociationsDependentWhenRealmNotFrontend(): void {
 		$languagesTable = $this->fetchTable('Languages');
@@ -228,7 +220,6 @@ class LanguagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\LanguagesListener::afterSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteSetsMarksAssociationsNotDependent(): void {
 		$languagesTable = $this->fetchTable('Languages');
@@ -260,7 +251,6 @@ class LanguagesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\LanguagesListener::afterSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteDispatchesDeleteCustomConfigEventWhenRealmChanged(): void {
 		$eventSent = false;

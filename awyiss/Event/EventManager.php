@@ -45,17 +45,16 @@ class EventManager extends BaseEventManager {
 	 * @inheritDoc
 	 */
 	public function dispatch(EventInterface|string $event): EventInterface {
-		$lo_event = $event;
 		if (is_string($event)) {
-			$lo_event = new Event($event);
+			$event = new Event($event);
 		}
 
-		if (!$this->listeners($lo_event->getName())) {
-			$this->lazyLoadListeners($lo_event->getName());
+		if (!$this->listeners($event->getName())) {
+			$this->lazyLoadListeners($event->getName());
 		}
 
 
-		return parent::dispatch($lo_event);
+		return parent::dispatch($event);
 	}
 
 
@@ -72,15 +71,15 @@ class EventManager extends BaseEventManager {
 			static::$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		}
 
-		$la_parts = explode('.', $name);
+		$parts = explode('.', $name);
 
-		if (!$la_parts) {
+		if (!$parts) {
 			return;
 		}
 
-		$ls_scope = $la_parts[0];
+		$scope = $parts[0];
 		// Don't use general event scopes, as they aren't what Awyiss understands as scopes.
-		$lb_generalScope = in_array($ls_scope, [
+		$generalScope = in_array($scope, [
 			'Application',
 			'Awyiss',
 			'Bake',
@@ -95,39 +94,39 @@ class EventManager extends BaseEventManager {
 			'View',
 		]);
 
-		if ($lb_generalScope) {
+		if ($generalScope) {
 			if (
-				empty($la_parts[1]) ||
-				$la_parts[1][0] !== strtoupper($la_parts[1][0])
+				empty($parts[1]) ||
+				$parts[1][0] !== strtoupper($parts[1][0])
 			) {
 				// No second part, or it starts with a lower case letter: do nothing as it's not a scope
 				return;
 			}
 
-			$ls_scope = $la_parts[1];
+			$scope = $parts[1];
 		}
 
-		$ls_scope = EventListenersProvider::sanitizeScope($ls_scope);
+		$scope = EventListenersProvider::sanitizeScope($scope);
 
-		if (!in_array($ls_scope, static::$lazyLoadAttempts['global'])) {
-			static::$lazyLoadAttempts['global'][] = $ls_scope;
+		if (!in_array($scope, static::$lazyLoadAttempts['global'])) {
+			static::$lazyLoadAttempts['global'][] = $scope;
 
 			// Try loading the scope from for the global realm
-			EventListenersProvider::loadListener($ls_scope, 'Global');
+			EventListenersProvider::loadListener($scope, 'Global');
 
-			if (static::$pageRoleEnum::tryFromName($ls_scope)) {
+			if (static::$pageRoleEnum::tryFromName($scope)) {
 				//Try loading the pages listener from for the current realm
 				EventListenersProvider::loadListener('Pages', 'Global');
 			}
 		}
 
-		if (Awyiss::getRealm() && !in_array($ls_scope, static::$lazyLoadAttempts[ Awyiss::getRealm() ])) {
-			static::$lazyLoadAttempts[ Awyiss::getRealm() ][] = $ls_scope;
+		if (Awyiss::getRealm() && !in_array($scope, static::$lazyLoadAttempts[ Awyiss::getRealm() ])) {
+			static::$lazyLoadAttempts[ Awyiss::getRealm() ][] = $scope;
 
 			// Try loading the scope from for the current realm
-			EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm());
+			EventListenersProvider::loadListener($scope, Awyiss::getRealm());
 
-			if (static::$pageRoleEnum::tryFromName($ls_scope)) {
+			if (static::$pageRoleEnum::tryFromName($scope)) {
 				//Try loading the pages listener from for the current realm
 				EventListenersProvider::loadListener('Pages', Awyiss::getRealm());
 			}

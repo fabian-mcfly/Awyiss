@@ -41,8 +41,8 @@ class MediaElementSelectorsListener implements EventListenerInterface {
 		/**
 		 * Update the identifier in the assignments
 		 */
-		$lo_table = $this->fetchTable('MediaAssignments');
-		$lo_table->updateAll(
+		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		$mediaAssignmentsTable->updateAll(
 			[
 				'media_element_selector_identifier' => $entity->get('identifier'),
 			],

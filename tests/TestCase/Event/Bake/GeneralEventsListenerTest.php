@@ -50,7 +50,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -65,7 +64,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::afterCommandExecute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCommandExecuteWithEnumCommandAndPageRoleOption(): void {
 		EventListenersProvider::loadListener('GeneralEvents', 'Bake');
@@ -92,7 +90,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::afterCommandExecute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCommandExecuteWithEnumCommandButNoPageRoleOption(): void {
 		$eventManager = EventManager::instance();
@@ -118,7 +115,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::afterCommandExecute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCommandExecuteWithEnumCommandAndNullPageRoleOption(): void {
 		$eventManager = EventManager::instance();
@@ -144,7 +140,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::afterCommandExecute()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCommandExecuteWithDifferentCommand(): void {
 		$eventManager = EventManager::instance();
@@ -170,7 +165,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::beforeRenderControllerController()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeRenderControllerControllerWithDefaultActions(): void {
 		$view = $this->createMock(View::class);
@@ -188,7 +182,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::beforeRenderControllerController()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeRenderControllerControllerWithCustomActions(): void {
 		$view = $this->createMock(View::class);
@@ -206,7 +199,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::beforeRenderControllerController()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeRenderControllerControllerWithPartialDefaultActions(): void {
 		$view = $this->createMock(View::class);
@@ -224,7 +216,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::beforeRenderControllerController()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeRenderControllerControllerWithDifferentOrder(): void {
 		$view = $this->createMock(View::class);
@@ -242,7 +233,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Bake\GeneralEventsListener::beforeRenderControllerController()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeRenderControllerControllerWithEmptyActions(): void {
 		$view = $this->createMock(View::class);

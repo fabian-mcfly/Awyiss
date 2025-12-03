@@ -38,23 +38,23 @@ class FormElementsListener implements EventListenerInterface {
 		}
 
 		// Transform the children into a flat list
-		$lo_children = collection($entity->childFormElements)->listNested('desc', 'childFormElements');
+		$children = collection($entity->childFormElements)->listNested('desc', 'childFormElements');
 
 		/** @var \Awyiss\Model\Entity\FormElement $lo_childFormElement */
-		foreach ($lo_children as $lo_childFormElement) {
-			if (in_array($lo_childFormElement->type, ['free_text', 'submit'])) {
+		foreach ($children as $childFormElement) {
+			if (in_array($childFormElement->type, ['free_text', 'submit'])) {
 				continue;
 			}
 
 			// Copied form elements must have a unique identifier
 			// Otherwise the validation will fail
-			if (strlen($lo_childFormElement->identifier) > 36) {
+			if (strlen($childFormElement->identifier) > 36) {
 				// If the identifier is longer than 36 characters, we need to truncate it
 				// to 36 characters, otherwise the validation will fail (50 characters max)
-				$lo_childFormElement->identifier = substr($lo_childFormElement->identifier, 0, 36);
+				$childFormElement->identifier = substr($childFormElement->identifier, 0, 36);
 			}
 
-			$lo_childFormElement->identifier .= '_copy_' . Security::randomString(8);
+			$childFormElement->identifier .= '_copy_' . Security::randomString(8);
 		}
 	}
 }

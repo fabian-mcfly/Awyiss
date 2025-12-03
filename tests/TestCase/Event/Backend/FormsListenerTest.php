@@ -38,7 +38,6 @@ class FormsListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -53,7 +52,6 @@ class FormsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -72,7 +70,6 @@ class FormsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormsListener::afterCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyCopiesFormElements(): void {
 		$formsTable = $this->fetchTable('Forms');
@@ -105,7 +102,6 @@ class FormsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormsListener::afterCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyCopiesMediaAssignmentsOfFormElements(): void {
 		$request = Router::getRequest();
@@ -136,7 +132,6 @@ class FormsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormsListener::afterCopy()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyCopiesTranslationsOfFormElements(): void {
 		$request = Router::getRequest();
@@ -178,7 +173,6 @@ class FormsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormsListener::afterCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopySkipsWhenNotPrimary(): void {
 		$formsTable = $this->fetchTable('Forms');
@@ -205,7 +199,6 @@ class FormsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormsListener::beforeSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSoftDeleteDisabledCascadingOnChildFormElements(): void {
 		$formsTable = $this->fetchTable('Forms');
@@ -226,7 +219,6 @@ class FormsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormsListener::beforeDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteDisabledCascadingOnChildFormElements(): void {
 		$formsTable = $this->fetchTable('Forms');
@@ -247,7 +239,6 @@ class FormsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\FormsListener::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteEnabledCascadingOnChildFormElements(): void {
 		$formsTable = $this->fetchTable('Forms');

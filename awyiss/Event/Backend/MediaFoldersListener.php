@@ -52,11 +52,11 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(Event $event, MediaFolder $entity): void {
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $mediaFoldersTable */
+		$mediaFoldersTable = $event->getSubject();
 
-		$ls_field = $lo_table->getSchema()->getColumn('path');
-		$li_fieldLength = $ls_field ? $ls_field['length'] : 0;
+		$field = $mediaFoldersTable->getSchema()->getColumn('path');
+		$fieldLength = $field ? $field['length'] : 0;
 
 		if (empty($entity->path)) {
 			// Make sure the path is set. Use the title if it's empty.
@@ -73,42 +73,42 @@ class MediaFoldersListener implements EventListenerInterface {
 			return;
 		}
 
-		$ls_prePath = '';
+		$prePath = '';
 		if (!empty($entity->parentId)) {
-			/** @var \Awyiss\Model\Entity\MediaFolder $lo_parentMediaFolder */
-			$lo_parentMediaFolder = $lo_table->get($entity->parentId);
+			/** @var \Awyiss\Model\Entity\MediaFolder $parentMediaFolder */
+			$parentMediaFolder = $mediaFoldersTable->get($entity->parentId);
 			// If there's a parent media folder, add its path the one of the current media folder
-			$ls_prePath = trim($lo_parentMediaFolder->path, '/') . '/';
+			$prePath = trim($parentMediaFolder->path, '/') . '/';
 
-			$entity->parentsActive = $lo_parentMediaFolder->active && $lo_parentMediaFolder->parentsActive;
+			$entity->parentsActive = $parentMediaFolder->active && $parentMediaFolder->parentsActive;
 		}
 		elseif ($entity->parentsActive !== true) {
 			$entity->parentsActive = true;
 		}
 
-		$la_parts = explode('/', $entity->path);
-		$ls_path = array_pop($la_parts);
-		$ls_path = $ls_prePath . rtrim($ls_path, '-');
-		$ls_languageShortcode = $entity->languageShortcode;
+		$parts = explode('/', $entity->path);
+		$path = array_pop($parts);
+		$path = $prePath . rtrim($path, '-');
+		$languageShortcode = $entity->languageShortcode;
 
-		$ls_originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : $entity->path;
-		$ls_originalLanguageShortcode = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode') : $entity->languageShortcode;
+		$originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : $entity->path;
+		$originalLanguageShortcode = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode') : $entity->languageShortcode;
 
-		if (!str_starts_with($ls_path, 'media/') && $ls_path !== 'media') {
-			$ls_path = 'media/' . $ls_path;
+		if (!str_starts_with($path, 'media/') && $path !== 'media') {
+			$path = 'media/' . $path;
 		}
 
 		// When the path has changed
 		if (
 			$entity->isNew() ||
-			$ls_path != $ls_originalPath ||
-			$ls_languageShortcode != $ls_originalLanguageShortcode
+			$path != $originalPath ||
+			$languageShortcode != $originalLanguageShortcode
 		) {
-			$ls_path = $this->ensureUniquePath($lo_table, $entity, $ls_path, $li_fieldLength);
+			$path = $this->ensureUniquePath($mediaFoldersTable, $entity, $path, $fieldLength);
 		}
 
-		$entity->set('path', $ls_path, ['setter' => false]);
-		if (!$entity->isNew() && $ls_path === $ls_originalPath) {
+		$entity->set('path', $path, ['setter' => false]);
+		if (!$entity->isNew() && $path === $originalPath) {
 			$entity->setDirty('path', false);
 		}
 	}
@@ -122,28 +122,28 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @throws \Exception
 	 */
 	public function afterCopyCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $mediaFoldersTable */
+		$mediaFoldersTable = $event->getSubject();
 
 		/**
-		 * @var \Awyiss\Model\Entity\MediaFolder $lo_originalEntity
+		 * @var \Awyiss\Model\Entity\MediaFolder $originalEntity
 		 * @noinspection PhpUndefinedFieldInspection
 		 */
-		$lo_originalEntity = $entity->originalEntity;
+		$originalEntity = $entity->originalEntity;
 
-		$this->copyMediaEntities($entity, $lo_originalEntity, $lo_table);
+		$this->copyMediaEntities($entity, $originalEntity, $mediaFoldersTable);
 
 		if ($options['_primary'] === false) {
 			return;
 		}
 
-		$ls_originalPath = $lo_originalEntity->path;
-		if (!str_starts_with($ls_originalPath, 'media/')) {
-			$ls_originalPath = 'media/' . $ls_originalPath;
+		$originalPath = $originalEntity->path;
+		if (!str_starts_with($originalPath, 'media/')) {
+			$originalPath = 'media/' . $originalPath;
 		}
 
 		$this->copyDirectory(
-			WWW_ROOT . str_replace('/', DS, $ls_originalPath),
+			WWW_ROOT . str_replace('/', DS, $originalPath),
 			WWW_ROOT . str_replace('/', DS, $entity->path)
 		);
 	}
@@ -160,38 +160,38 @@ class MediaFoldersListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $mediaFoldersTable */
+		$mediaFoldersTable = $event->getSubject();
 
-		$ls_originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : null;
-		$lb_pathChanged = $ls_originalPath && $entity->path != $ls_originalPath;
+		$originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : null;
+		$pathChanged = $originalPath && $entity->path != $originalPath;
 
-		if ($lb_pathChanged) {
-			$this->createHistoricalPaths($ls_originalPath);
+		if ($pathChanged) {
+			$this->createHistoricalPaths($originalPath);
 
-			foreach ([$lo_table->getTable(), 'media', 'media_resized_images'] as $ls_table) {
-				$this->rebuildDatabasePath($ls_table, $entity, $ls_originalPath);
+			foreach ([$mediaFoldersTable->getTable(), 'media', 'media_resized_images'] as $table) {
+				$this->rebuildDatabasePath($table, $entity, $originalPath);
 			}
 
-			if (is_dir(WWW_ROOT . str_replace('/', DS, $ls_originalPath))) {
+			if (is_dir(WWW_ROOT . str_replace('/', DS, $originalPath))) {
 				rename(
-					WWW_ROOT . str_replace('/', DS, $ls_originalPath),
+					WWW_ROOT . str_replace('/', DS, $originalPath),
 					WWW_ROOT . str_replace('/', DS, $entity->path)
 				);
 			}
 		}
 
-		$lb_originalActive = $entity->hasOriginal('active') ? $entity->getOriginal('active') : null;
-		$lb_activeChanged = $lb_originalActive !== null && $entity->active !== $lb_originalActive;
+		$originalActive = $entity->hasOriginal('active') ? $entity->getOriginal('active') : null;
+		$activeChanged = $originalActive !== null && $entity->active !== $originalActive;
 
-		$lb_originalParentsActive = $entity->hasOriginal('parentsActive') ? $entity->getOriginal('parentsActive') : null;
-		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $entity->parentsActive !== $lb_originalParentsActive;
+		$originalParentsActive = $entity->hasOriginal('parentsActive') ? $entity->getOriginal('parentsActive') : null;
+		$parentsActiveChanged = $originalParentsActive !== null && $entity->parentsActive !== $originalParentsActive;
 
-		if ($lb_activeChanged || $lb_parentsActiveChanged) {
+		if ($activeChanged || $parentsActiveChanged) {
 			$this->updateDescendants(
-				$lo_table,
+				$mediaFoldersTable,
 				$entity,
-				$ls_originalPath,
+				$originalPath,
 			);
 		}
 	}
@@ -264,43 +264,42 @@ class MediaFoldersListener implements EventListenerInterface {
 			return;
 		}
 
-		$ls_originalPath = $originalPath;
-		$lo_mediaTable = $this->fetchTable('Media');
-		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
+		$mediaTable = $this->fetchTable('Media');
+		$urlHistoryTable = $this->fetchTable('UrlHistory');
 
 		// Find all media whose path starts with the original path of the provided folder
-		$lo_records = $lo_mediaTable->find()->where(function (QueryExpression $expression) use ($ls_originalPath) {
-			return $expression->like('path', $ls_originalPath . '/%');
+		$records = $mediaTable->find()->where(function (QueryExpression $expression) use ($originalPath) {
+			return $expression->like('path', $originalPath . '/%');
 		})->all();
 
-		if (!$lo_records->count()) {
+		if (!$records->count()) {
 			return;
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$li_userId = $this->getIdentity()?->id;
-		$ld_now = new DateTime('now');
+		$userId = $this->getIdentity()?->id;
+		$now = new DateTime('now');
 
-		$lo_query = $lo_urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
+		$query = $urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
 
 		/**
 		 * For each media that has a path that starts with the original path of the provided folder,
 		 * create a new historical entry.
 		 *
-		 * @var \Awyiss\Model\Entity\Media $lo_media
+		 * @var \Awyiss\Model\Entity\Media $media
 		 */
-		foreach ($lo_records as $lo_media) {
-			$lo_query->values([
-				'url' => $lo_media->path,
+		foreach ($records as $media) {
+			$query->values([
+				'url' => $media->path,
 				'scope' => 'media',
-				'foreign_key' => $lo_media->id,
+				'foreign_key' => $media->id,
 				'status' => 308,
-				'created_by' => $li_userId,
-				'created_on' => $ld_now,
+				'created_by' => $userId,
+				'created_on' => $now,
 			]);
 		}
 
-		$lo_query->execute();
+		$query->execute();
 	}
 
 
@@ -311,16 +310,16 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function rebuildDatabasePath(string $table, MediaFolder $entity, string $originalPath): void {
-		$lo_query = FactoryLocator::get('Table')->get(Inflector::camelize($table))->updateQuery();
+		$query = FactoryLocator::get('Table')->get(Inflector::camelize($table))->updateQuery();
 
 		/**
 		 * UPDATE media_folders SET path = (CONCAT('newpath', substr(path, '8'))) WHERE path LIKE 'oldpath/%'
 		 *
 		 * @noinspection PhpUndefinedMethodInspection
 		 */
-		$lo_query->update($table)->set('path', $lo_query->newExpr($lo_query->func()->concat([
+		$query->update($table)->set('path', $query->newExpr($query->func()->concat([
 			$entity->path,
-			$lo_query->func()->substr([
+			$query->func()->substr([
 				'path' => 'identifier',
 				mb_strlen($originalPath) + 1,
 			], [
@@ -344,40 +343,36 @@ class MediaFoldersListener implements EventListenerInterface {
 		MediaFolder $entity,
 		?string $originalPath,
 	): void {
-		$lo_query = $table->updateQuery();
+		$query = $table->updateQuery();
 
-		$lb_parentsActive = $entity->active && $entity->parentsActive;
-
-		$lo_entity = $entity;
-		$ls_originalPath = $originalPath;
-
-		if ($lb_parentsActive) {
+		$parentsActive = $entity->active && $entity->parentsActive;
+		if ($parentsActive) {
 			/**
 			 * When updating all media folders with the same path (LIKE 'oldpath/%'),
 			 * do not set the parents_active to true for media folders that
 			 * are descendants of inactive folders.
 			 */
-			$lo_subFolders = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($lo_entity, $ls_originalPath) {
-				return $expression->like('path', ($ls_originalPath ?? $lo_entity->path) . '/%');
+			$subFolders = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($entity, $originalPath) {
+				return $expression->like('path', ($originalPath ?? $entity->path) . '/%');
 			})->where(['active' => false])->all();
 
-			foreach ($lo_subFolders as $lo_subFolder) {
-				$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($lo_subFolder) {
-					return $expression->notLike('path', $lo_subFolder->path . '/%');
+			foreach ($subFolders as $subFolder) {
+				$query->where(function (QueryExpression $expression/*, Query $query*/) use ($subFolder) {
+					return $expression->notLike('path', $subFolder->path . '/%');
 				});
 			}
 		}
 
-		$lo_query->set('parents_active', $lb_parentsActive);
+		$query->set('parents_active', $parentsActive);
 
 		/**
 		 * WHERE path LIKE 'oldpath/%'
 		 */
-		$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_originalPath) {
-			return $expression->like('path', ($ls_originalPath ?? $lo_entity->path) . '/%');
+		$query->where(function (QueryExpression $expression/*, Query $query*/) use ($entity, $originalPath) {
+			return $expression->like('path', ($originalPath ?? $entity->path) . '/%');
 		});
 
-		$lo_query->execute();
+		$query->execute();
 	}
 
 
@@ -401,24 +396,24 @@ class MediaFoldersListener implements EventListenerInterface {
 		}
 
 		//Open the source directory
-		$lr_dir = opendir($sourceDirectory);
+		$dir = opendir($sourceDirectory);
 
 		//Read each file in directory
-		while (($ls_fileName = readdir($lr_dir)) !== false) {
-			if (($ls_fileName != '.') && ($ls_fileName != '..')) {
-				if (is_dir($sourceDirectory . DS . $ls_fileName)) {
+		while (($fileName = readdir($dir)) !== false) {
+			if (($fileName != '.') && ($fileName != '..')) {
+				if (is_dir($sourceDirectory . DS . $fileName)) {
 					//If the file is a directory, recursively copy it
-					$this->copyDirectory($sourceDirectory . DS . $ls_fileName, $targetDirectory . DS . $ls_fileName);
+					$this->copyDirectory($sourceDirectory . DS . $fileName, $targetDirectory . DS . $fileName);
 				}
 				else {
 					//If the file is not a directory, copy it to the destination
-					copy($sourceDirectory . DS . $ls_fileName, $targetDirectory . DS . $ls_fileName);
+					copy($sourceDirectory . DS . $fileName, $targetDirectory . DS . $fileName);
 				}
 			}
 		}
 
 		//Close the source directory
-		closedir($lr_dir);
+		closedir($dir);
 	}
 
 
@@ -431,14 +426,14 @@ class MediaFoldersListener implements EventListenerInterface {
 	 */
 	protected function copyMediaEntities(MediaFolder $entity, MediaFolder $originalEntity, MediaFoldersTable $table): void {
 		/** @uses \Awyiss\Model\Table::findTranslations() */
-		$lo_files = $table->Media->find('translations')->where(['media_folder_id' => $originalEntity->id])->all();
-		/** @var \Awyiss\Model\Entity\Media $lo_file */
-		foreach ($lo_files as $lo_file) {
-			$lo_file->setNew(true);
-			$lo_file->mediaFolderId = $entity->id;
+		$files = $table->Media->find('translations')->where(['media_folder_id' => $originalEntity->id])->all();
+		/** @var \Awyiss\Model\Entity\Media $file */
+		foreach ($files as $file) {
+			$file->setNew(true);
+			$file->mediaFolderId = $entity->id;
 		}
 
-		$table->Media->saveMany($lo_files->toList(), [
+		$table->Media->saveMany($files->toList(), [
 			'checkRules' => false,
 			'isCopy' => true,
 		]);
@@ -453,21 +448,20 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @return string
 	 */
 	protected function ensureUniquePath(MediaFoldersTable $table, MediaFolder $entity, string $path, int $fieldLength): string {
-		$ls_field = $table->getAlias() . '.path';
+		$field = $table->getAlias() . '.path';
 
-		$ls_path = $path;
-		$la_conditions = [
-			$ls_field => $ls_path,
+		$conditions = [
+			$field => $path,
 		];
 
-		$ls_primaryKey = $table->getPrimaryKey();
-		$li_id = $entity->get($ls_primaryKey);
-		if ($li_id) {
-			$la_conditions['NOT'] = [$table->getAlias() . '.' . $ls_primaryKey => $li_id];
+		$primaryKey = $table->getPrimaryKey();
+		$id = $entity->get($primaryKey);
+		if ($id) {
+			$conditions['NOT'] = [$table->getAlias() . '.' . $primaryKey => $id];
 		}
 
 		/**
-		 * `$la_conditions` holds an array of query conditions that are used to find media folders with the same
+		 * `$conditions` holds an array of query conditions that are used to find media folders with the same
 		 * path
 		 * ```
 		 * [
@@ -480,27 +474,27 @@ class MediaFoldersListener implements EventListenerInterface {
 		 * ```
 		 */
 
-		$li_i = 1;
-		$ls_suffix = '';
+		$i = 1;
+		$suffix = '';
 
 		//As long as a media folder with the same path exists, append an increasing number to the path and try again
-		while ($table->exists($la_conditions)) {
-			$li_i++;
-			$ls_suffix = '-' . $li_i;
+		while ($table->exists($conditions)) {
+			$i++;
+			$suffix = '-' . $i;
 
-			if ($fieldLength && (mb_strlen($ls_path . $ls_suffix) > $fieldLength)) {
-				$ls_path = mb_substr($ls_path, 0, $fieldLength - mb_strlen($ls_suffix));
+			if ($fieldLength && (mb_strlen($path . $suffix) > $fieldLength)) {
+				$path = mb_substr($path, 0, $fieldLength - mb_strlen($suffix));
 			}
 
-			$la_conditions[ $ls_field ] = $ls_path . $ls_suffix;
+			$conditions[ $field ] = $path . $suffix;
 		}
 
 		//Append the suffix, if it's not empty
-		if ($ls_suffix) {
-			$ls_path .= $ls_suffix;
+		if ($suffix) {
+			$path .= $suffix;
 		}
 
-		return $ls_path;
+		return $path;
 	}
 
 

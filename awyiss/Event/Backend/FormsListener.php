@@ -40,29 +40,29 @@ class FormsListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\FormsTable $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
+		$formsTable = $event->getSubject();
 
 		/**
-		 * @var \Awyiss\Model\Entity\Form $lo_originalEntity
+		 * @var \Awyiss\Model\Entity\Form $originalEntity
 		 * @noinspection PhpUndefinedFieldInspection
 		 */
-		$lo_originalEntity = $entity->originalEntity;
+		$originalEntity = $entity->originalEntity;
 
 		/** @uses \Awyiss\Model\Table::findTranslations() */
-		$lo_elements = $lo_table->FormElements->find('threaded', nestingKey: 'childFormElements')
-		->find('mediaAssignments', formatResult: false)
-		->find('translations')
-		->where(['form_id' => $lo_originalEntity->id])
-		->all();
+		$elements = $formsTable->FormElements->find('threaded', nestingKey: 'childFormElements')
+			->find('mediaAssignments', formatResult: false)
+			->find('translations')
+			->where(['form_id' => $originalEntity->id])
+			->all();
 
-		$lo_listedElements = $lo_elements->listNested('desc', 'childFormElements');
-		/** @var \Awyiss\Model\Entity\FormElement $lo_formElement */
-		foreach ($lo_listedElements as $lo_formElement) {
-			$lo_formElement->formId = $entity->id;
+		$listedElements = $elements->listNested('desc', 'childFormElements');
+		/** @var \Awyiss\Model\Entity\FormElement $formElement */
+		foreach ($listedElements as $formElement) {
+			$formElement->formId = $entity->id;
 		}
 
-		$lo_table->FormElements->saveMany($lo_elements->toList(), [
+		$formsTable->FormElements->saveMany($elements->toList(), [
 			'checkRules' => false,
 			'isCopy' => true,
 			'_primary' => false,
@@ -75,10 +75,10 @@ class FormsListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function beforeSoftDelete(Event $event): void {
-		/** @var \Awyiss\Model\Table\FormsTable $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
+		$formsTable = $event->getSubject();
 
-		$lo_table->FormElements->disableCascadeCallbacks();
+		$formsTable->FormElements->disableCascadeCallbacks();
 	}
 
 
@@ -87,10 +87,10 @@ class FormsListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function beforeDelete(Event $event): void {
-		/** @var \Awyiss\Model\Table\FormsTable $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
+		$formsTable = $event->getSubject();
 
-		$lo_table->FormElements->disableCascadeCallbacks();
+		$formsTable->FormElements->disableCascadeCallbacks();
 	}
 
 
@@ -99,10 +99,10 @@ class FormsListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function afterSoftDelete(Event $event): void {
-		/** @var \Awyiss\Model\Table\FormsTable $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
+		$formsTable = $event->getSubject();
 
-		$lo_table->FormElements->enableCascadeCallbacks();
+		$formsTable->FormElements->enableCascadeCallbacks();
 	}
 
 
@@ -111,9 +111,9 @@ class FormsListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function afterDelete(Event $event): void {
-		/** @var \Awyiss\Model\Table\FormsTable $lo_table */
-		$lo_table = $event->getSubject();
+		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
+		$formsTable = $event->getSubject();
 
-		$lo_table->FormElements->enableCascadeCallbacks();
+		$formsTable->FormElements->enableCascadeCallbacks();
 	}
 }

@@ -23,7 +23,6 @@ class MediaElementSelectorsListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -38,7 +37,6 @@ class MediaElementSelectorsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaElementSelectorsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -53,7 +51,6 @@ class MediaElementSelectorsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaElementSelectorsListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUpdatesIdentifierWhenChanged(): void {
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
@@ -136,7 +133,6 @@ class MediaElementSelectorsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaElementSelectorsListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUpdatesIdentifierWhenUnchanged(): void {
 		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');

@@ -35,7 +35,6 @@ class UrlHistoryListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UrlHistoryListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -50,7 +49,6 @@ class UrlHistoryListenerTest extends TestCase {
 	 * Test beforeMarshal method
 	 *
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshal(): void {
 		$event = new Event('Model.UrlHistory.beforeMarshal', $this->listener);

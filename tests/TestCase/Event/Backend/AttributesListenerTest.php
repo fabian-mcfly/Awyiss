@@ -27,7 +27,6 @@ class AttributesListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -38,7 +37,6 @@ class AttributesListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -53,7 +51,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -69,7 +66,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithInputList(): void {
 		$data = new ArrayObject([
@@ -91,7 +87,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithInputKeyValueList(): void {
 		$data = new ArrayObject([
@@ -113,7 +108,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeMarshal()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeMarshalWithOtherInputType(): void {
 		$data = new ArrayObject([
@@ -135,7 +129,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithContentsScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
@@ -157,7 +150,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithWidgetsScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
@@ -179,7 +171,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithPagesScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
@@ -201,7 +192,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithMenuEntriesScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
@@ -223,7 +213,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithNewsScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
@@ -245,7 +234,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithQueuedJob(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
@@ -275,7 +263,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithoutQueuedJob(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
@@ -304,7 +291,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithNewEntityAndRelevantChanges(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
@@ -365,7 +351,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndNoChanges(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
@@ -401,7 +386,6 @@ class AttributesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithExistingEntityAndRelevantChanges(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([

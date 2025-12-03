@@ -25,7 +25,6 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -40,7 +39,6 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaElementAssignmentsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -55,7 +53,6 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaElementAssignmentsListener::afterDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteDeletesMediaAssignmentsWithSameMediaElementIdInHasManyAssociations(): void {
 		$request = Router::getRequest();

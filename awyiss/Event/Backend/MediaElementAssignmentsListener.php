@@ -38,41 +38,41 @@ class MediaElementAssignmentsListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterDelete(Event $event, MediaElementAssignment $entity): void {
-		$ls_scope = $entity->scope;
-		$lo_table = $this->fetchTable(Inflector::camelize($ls_scope));
+		$scope = $entity->scope;
+		$table = $this->fetchTable(Inflector::camelize($scope));
 
-		$lo_reflection = new ReflectionClass($lo_table);
+		$reflection = new ReflectionClass($table);
 
-		$la_attributes = $lo_reflection->getAttributes(MediaElementAssignable::class);
+		$attributes = $reflection->getAttributes(MediaElementAssignable::class);
 
-		if (!$la_attributes) {
+		if (!$attributes) {
 			return;
 		}
 
-		$lo_attributeInstance = $la_attributes[0]->newInstance();
-		if (!($lo_attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL)) {
+		$attributeInstance = $attributes[0]->newInstance();
+		if (!($attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL)) {
 			return;
 		}
 
 		// Get all associations of the table of type "HasMany"
-		$la_scopes = [];
-		$la_associations = $lo_table->associations()->getByType('HasMany');
-		foreach ($la_associations as $lo_association) {
-			$la_scopes[] = $lo_association->getTable();
+		$scopes = [];
+		$associations = $table->associations()->getByType('HasMany');
+		foreach ($associations as $association) {
+			$scopes[] = $association->getTable();
 		}
 
-		/** @var \Awyiss\Model\Table\MediaElementAssignmentsTable $lo_mediaAssignmentsTable */
-		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
-		$lo_records = $lo_mediaAssignmentsTable->find('all')->where([
+		/** @var \Awyiss\Model\Table\MediaElementAssignmentsTable $mediaAssignmentsTable */
+		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		$records = $mediaAssignmentsTable->find('all')->where([
 			'media_element_id' => $entity->mediaElementId,
-			'scope IN' => $la_scopes,
+			'scope IN' => $scopes,
 		])->all();
 
-		if (!$lo_records->count()) {
+		if (!$records->count()) {
 			return;
 		}
 
-		$lo_mediaAssignmentsTable->deleteMany($lo_records, [
+		$mediaAssignmentsTable->deleteMany($records, [
 			'transaction' => false,
 		]);
 	}

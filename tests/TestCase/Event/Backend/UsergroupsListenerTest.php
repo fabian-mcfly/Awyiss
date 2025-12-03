@@ -31,7 +31,6 @@ class UsergroupsListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -42,7 +41,6 @@ class UsergroupsListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -57,7 +55,6 @@ class UsergroupsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UsergroupsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -72,7 +69,6 @@ class UsergroupsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UsergroupsListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUnsetsUsergroupsOnCurrentUserWhenNotInGroupAndGroupNotEmpty(): void {
 		$request = Router::getRequest();
@@ -115,7 +111,6 @@ class UsergroupsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UsergroupsListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUnsetsUsergroupsOnCurrentUserWhenNotInGroupAndGroupEmpty(): void {
 		$request = Router::getRequest();
@@ -158,7 +153,6 @@ class UsergroupsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UsergroupsListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUnsetsUsergroupsOnCurrentUserWhenInGroup(): void {
 		$request = Router::getRequest();
@@ -201,7 +195,6 @@ class UsergroupsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\UsergroupsListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUpdatesChangedOnOnAllAssignedUsers(): void {
 		$request = Router::getRequest();

@@ -42,12 +42,12 @@ class PageRolesListener implements EventListenerInterface {
 	 */
 	public function beforeSave(Event $event, PageRole $entity): void {
 		// If the page role has an attributes table and there is a table change in progress, stop the event.
-		$ls_attributesTable = 'attributes_' . Inflector::tableize($entity->identifier);
-		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
-		if (in_array($ls_attributesTable, $la_tables)) {
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			if ($lo_queue->isQueued('attributes::table_changes')) {
+		$attributesTableName = 'attributes_' . Inflector::tableize($entity->identifier);
+		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		if (in_array($attributesTableName, $tables)) {
+			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			if ($queuedJobsTable->isQueued('attributes::table_changes')) {
 				$event->stopPropagation();
 				$entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
 			}
@@ -95,28 +95,28 @@ class PageRolesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDelete(Event $event, PageRole $entity): void {
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$tableLocator = FactoryLocator::get('Table');
 
-		$lo_menuEntries = $lo_tableLocator->get('BackendMenuEntries');
-		$lo_menuEntries->deleteAll([
+		$menuEntries = $tableLocator->get('BackendMenuEntries');
+		$menuEntries->deleteAll([
 			'OR' => [
 				'link LIKE' => Inflector::camelize(Inflector::pluralize($entity->identifier)) . '::%',
 				'link' => 'Configuration::overview::scope:' . Inflector::pluralize($entity->identifier),
 			],
 		]);
 
-		$lo_configuration = $lo_tableLocator->get('Configuration');
-		$lo_configuration->deleteAll([
+		$configuration = $tableLocator->get('Configuration');
+		$configuration->deleteAll([
 			'scope' => Inflector::pluralize($entity->identifier),
 		]);
 
-		$lo_configuration = $lo_tableLocator->get('I18n');
-		$lo_configuration->deleteAll([
+		$i18n = $tableLocator->get('I18n');
+		$i18n->deleteAll([
 			'model' => Inflector::pluralize($entity->identifier),
 		]);
 
-		$lo_usergroupPermissions = $lo_tableLocator->get('UsergroupPermissions');
-		$lo_usergroupPermissions->deleteAll([
+		$usergroupPermissions = $tableLocator->get('UsergroupPermissions');
+		$usergroupPermissions->deleteAll([
 			'scope' => Inflector::pluralize($entity->identifier),
 		]);
 	}
@@ -129,25 +129,25 @@ class PageRolesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDeleteCommit(Event $event, PageRole $entity): void {
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$tableLocator = FactoryLocator::get('Table');
 
 		$this->bakePageRoleEnum();
 
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
 
-		$ls_attributesTable = 'attributes_' . Inflector::tableize($entity->identifier);
-		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
-		if (in_array($ls_attributesTable, $la_tables)) {
-			/** @var \Awyiss\Model\Table $lo_attributesTable */
-			$lo_attributesTable = $lo_tableLocator->get('Attributes');
+		$attributesTableName = 'attributes_' . Inflector::tableize($entity->identifier);
+		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		if (in_array($attributesTableName, $tables)) {
+			/** @var \Awyiss\Model\Table $attributesTable */
+			$attributesTable = $tableLocator->get('Attributes');
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$li_identityId = $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id;
+			$identityId = $attributesTable->getBehavior('Audit')->getIdentity()?->id;
 
-			$lo_queue->createJob('Attributes/Delete', [
+			$queuedJobsTable->createJob('Attributes/Delete', [
 				'identifier' => Inflector::tableize($entity->identifier),
-				'identityId' => $li_identityId,
+				'identityId' => $identityId,
 			], [
 				'group' => 'general',
 				'priority' => 1,
@@ -155,23 +155,23 @@ class PageRolesListener implements EventListenerInterface {
 			]);
 		}
 
-		$la_commands = [];
+		$commands = [];
 
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
-		if (file_exists($ls_filePath)) {
-			$la_commands[] = 'unlink ' . $ls_filePath;
+		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
+		if (file_exists($filePath)) {
+			$commands[] = 'unlink ' . $filePath;
 		}
 
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($entity->identifier)) . 'Table.php']);
-		if (file_exists($ls_filePath)) {
-			$la_commands[] = 'unlink ' . $ls_filePath;
+		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($entity->identifier)) . 'Table.php']);
+		if (file_exists($filePath)) {
+			$commands[] = 'unlink ' . $filePath;
 		}
 
-		$la_commands[] = 'bin' . DS . 'cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
-		$lo_queue->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $la_commands)) . ')',
+		$queuedJobsTable->createJob('Queue.Execute', [
+			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $commands)) . ')',
 			'escape' => false,
 			'log' => true,
 		], [
@@ -189,29 +189,29 @@ class PageRolesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function bakePageRoleEnum(): void {
-		$la_pageRoles = [];
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$pageRoles = [];
+		$tableLocator = FactoryLocator::get('Table');
 
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = $lo_tableLocator->get('PageRoles');
+		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
+		$pageRolesTable = $tableLocator->get('PageRoles');
 
-		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {
-			$la_pageRoles[] = $lo_pageRole->identifier . ':' . $lo_pageRole->id;
+		/** @var \Awyiss\Model\Entity\PageRole $pageRole */
+		foreach ($pageRolesTable->find() as $pageRole) {
+			$pageRoles[] = $pageRole->identifier . ':' . $pageRole->id;
 		}
 
-		$la_commands[] = 'bin' . DS . 'cake bake enum PageRole ' . implode(',', $la_pageRoles) . ' -i --namespace ' . CUSTOM_NAMESPACE . ' --is-pagerole --force';
+		$commands[] = 'bin' . DS . 'cake bake enum PageRole ' . implode(',', $pageRoles) . ' -i --namespace ' . CUSTOM_NAMESPACE . ' --is-pagerole --force';
 
-		if (!empty($la_commands)) {
-			$la_data = [
-				'command' => implode(' && ', array_map('escapeshellcmd', $la_commands)),
+		if (!empty($commands)) {
+			$data = [
+				'command' => implode(' && ', array_map('escapeshellcmd', $commands)),
 				'escape' => false,
 				'log' => true,
 			];
 
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
-			$lo_queue->createJob('Queue.Execute', $la_data, [
+			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+			$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
+			$queuedJobsTable->createJob('Queue.Execute', $data, [
 				'group' => 'general',
 				'priority' => 1,
 				'reference' => 'page_roles::create_enum',
@@ -229,37 +229,37 @@ class PageRolesListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
-		if ($lo_queue->isQueued('system::create_page_role_model::' . $entity->identifier)) {
+		if ($queuedJobsTable->isQueued('system::create_page_role_model::' . $entity->identifier)) {
 			return;
 		}
 
-		$la_commands = [];
+		$commands = [];
 
-		$ls_command = 'bin' . DS . 'cake bake model ' . Inflector::camelize(Inflector::pluralize($entity->identifier));
-		$ls_command .= ' --namespace ' . CUSTOM_NAMESPACE;
+		$command = 'bin' . DS . 'cake bake model ' . Inflector::camelize(Inflector::pluralize($entity->identifier));
+		$command .= ' --namespace ' . CUSTOM_NAMESPACE;
 
-		$ls_command .= ' --force';
-		$ls_command .= ' --is-pagerole';
-		$ls_command .= ' --no-associations';
-		$ls_command .= ' --no-fixture';
-		$ls_command .= ' --no-hidden';
-		$ls_command .= ' --no-rules';
-		$ls_command .= ' --no-test';
-		$ls_command .= ' --no-validation';
-		$ls_command .= ' --skip-relation-check';
-		$ls_command .= ' --table pages';
-		$ls_command .= ' --update';
+		$command .= ' --force';
+		$command .= ' --is-pagerole';
+		$command .= ' --no-associations';
+		$command .= ' --no-fixture';
+		$command .= ' --no-hidden';
+		$command .= ' --no-rules';
+		$command .= ' --no-test';
+		$command .= ' --no-validation';
+		$command .= ' --skip-relation-check';
+		$command .= ' --table pages';
+		$command .= ' --update';
 
-		$la_commands[] = $ls_command;
+		$commands[] = $command;
 
-		$la_commands[] = 'bin' . DS . 'cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
-		$lo_queue->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $la_commands)) . ')',
+		$queuedJobsTable->createJob('Queue.Execute', [
+			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $commands)) . ')',
 			'escape' => false,
 			'log' => true,
 		], [
@@ -279,12 +279,12 @@ class PageRolesListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_menuEntriesTable */
-		$lo_menuEntriesTable = $this->fetchTable('BackendMenuEntries');
+		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $menuEntriesTable */
+		$menuEntriesTable = $this->fetchTable('BackendMenuEntries');
 
-		$ls_scope = Inflector::pluralize($entity->identifier);
-		$ls_controller = Inflector::camelize($ls_scope);
+		$scope = Inflector::pluralize($entity->identifier);
+		$controller = Inflector::camelize($scope);
 
-		$lo_menuEntriesTable->createEntries($entity, $ls_controller, $ls_scope);
+		$menuEntriesTable->createEntries($entity, $controller, $scope);
 	}
 }

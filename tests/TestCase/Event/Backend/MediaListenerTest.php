@@ -64,7 +64,6 @@ class MediaListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -89,7 +88,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -110,7 +108,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveAddsExtensionWhenMissingWithKnownMimeType(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -133,7 +130,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveMarksPathAsCleanWhenNotChanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -163,7 +159,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveStopsEventWhenExtensionMissingAndUnknownMimeType(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -189,7 +184,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsPathFromMediaFolder(): void {
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -220,7 +214,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsPathToMediaForUnknownFolder(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -242,7 +235,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsDimensionsForImage(): void {
 		$tempFile = $this->createTempImageFile();
@@ -269,7 +261,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsDimensionsForSvg(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -345,7 +336,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsAutoRotateForImage(): void {
 		$tempFile = $this->createTempImageFile();
@@ -371,7 +361,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveSetsNotAutoRotateForImageWhenCropSet(): void {
 		$tempFile = $this->createTempImageFile();
@@ -398,7 +387,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveNotSetsAutoRotateForSvg(): void {
 		$svgContent = '<svg width="100" height="50"><rect width="100" height="200" fill="red"/></svg>';
@@ -425,7 +413,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveNotSetsAutoRotateForNonImage(): void {
 		$tempFile = $this->createTempFile('document content', 'test.pdf');
@@ -451,7 +438,6 @@ class MediaListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveNotSetsDimensionsNonImage(): void {
 		$tempFile = $this->createTempFile('document content', 'test.pdf');
@@ -479,7 +465,6 @@ class MediaListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \Exception
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveUsesExistingDataWithFileAndAutoOverwriteTrue(): void {
 		Configure::write('Awyiss.Media.Backend.upload.autoOverwrite', true);
@@ -535,7 +520,6 @@ class MediaListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \Exception
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniqueFileNameWithFileAndAutoOverwriteFalse(): void {
 		Configure::write('Awyiss.Media.Backend.upload.autoOverwrite', false);
@@ -588,7 +572,6 @@ class MediaListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \Exception
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniqueFileNameWithFileAndAutoOverwriteTrueAndFileNotNew(): void {
 		Configure::write('Awyiss.Media.Backend.upload.autoOverwrite', true);
@@ -636,7 +619,6 @@ class MediaListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \Exception
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniqueFileNameWithoutFileAndNameDirty(): void {
 		Configure::write('Awyiss.Media.Backend.upload.autoOverwrite', true);
@@ -679,7 +661,6 @@ class MediaListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \Exception
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniqueFileNameWithoutFileAndFolderIdDirty(): void {
 		Configure::write('Awyiss.Media.Backend.upload.autoOverwrite', true);
@@ -722,7 +703,6 @@ class MediaListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\MediaListener::beforeSave()
 	 * @throws \Exception
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuresUniqueFileNameWithFileUploadError(): void {
 		Configure::write('Awyiss.Media.Backend.upload.autoOverwrite', true);
@@ -778,7 +758,6 @@ class MediaListenerTest extends TestCase {
 	 * @see \Awyiss\Event\Backend\PagesListener::beforeSave()
 	 * @throws \Exception
 	 * @throws \ImagickException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEnsuringUniqueFileNameNeverExceedsMaxLength(): void {
 		Configure::write('Awyiss.Media.Backend.upload.autoOverwrite', true);
@@ -823,7 +802,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveUnlinksFileWhenWhenFileUploadedAndPathChanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -858,7 +836,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotUnlinksFileWhenWhenFileUploadedAndPathNotChanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -895,7 +872,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveMovesFileWhenFileErrorAndPathChanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -933,7 +909,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotMovesFileWhenFileErrorAndPathUnhanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -973,7 +948,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveMovesFileWhenNoFileAndPathChanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1008,7 +982,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotMovesFileWhenNoFileAndPathUnhanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1044,7 +1017,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveDeletesConvertedFileWhenFileUploaded(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1075,7 +1047,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotDeletesConvertedFileWhenFileError(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1106,7 +1077,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveMovesConvertedFileWhenNoFileAndPathChanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1146,7 +1116,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotMovesConvertedFileWhenNoFileAndPathUnchanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1177,7 +1146,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveDeletesResizedFileWhenFileUploaded(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1208,7 +1176,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotDeletesResizedFileWhenFileError(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1239,7 +1206,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveMovesResizedFileWhenNoFileAndPathChanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1279,7 +1245,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotMovesResizedFileWhenNoFileAndPathUnchanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1310,7 +1275,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalPathsWhenFileUploadedAndPathChangedAndConfigSettingDisabled(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_DISABLED);
@@ -1355,7 +1319,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalPathsWhenFileUploadedAndPathChangedAndConfigSettingFalse(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', false);
@@ -1400,7 +1363,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesHistoricalPathsWhenFileUploadedAndPathChangedAndConfigSettingFileNameChange(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE);
@@ -1454,7 +1416,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesHistoricalPathsWhenFileUploadedAndPathChangedAndConfigSettingAlways(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS);
@@ -1508,7 +1469,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalPathsWhenFileUploadedAndPathChangedAndConfigSettingFolderNameChange(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE);
@@ -1553,7 +1513,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalPathsWhenFileUploadErrorAndPathNotChanged(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS);
@@ -1598,7 +1557,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesHistoricalPathsWhenFileUploadErrorAndPathChanged(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS);
@@ -1649,7 +1607,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesHistoricalPathsWhenNoFileAndPathNotChanged(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS);
@@ -1690,7 +1647,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesHistoricalPathsWhenNoFileAndPathChanged(): void {
 		Configure::write('Awyiss.Media.Backend.createHistoricalPaths', MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS);
@@ -1737,7 +1693,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotDeleteResizedFilesWhenFocusPointUnchanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1774,7 +1729,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveDeleteResizedFilesWhenFocusPointChanged(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1811,7 +1765,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteDeletesConvertedFiles(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1843,7 +1796,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteDeletesResizedFiles(): void {
 		$mediaTable = $this->fetchTable('Media');
@@ -1876,7 +1828,6 @@ class MediaListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MediaListener::afterDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteRemovesFileWhenExists(): void {
 		$testFile = $this->tmpDir . DIRECTORY_SEPARATOR . 'test-delete.txt';
@@ -1903,7 +1854,6 @@ class MediaListenerTest extends TestCase {
 	 * @param string $content
 	 * @param string $filename
 	 * @return string
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createTempFile(string $content, string $filename): string {
 		$path = $this->tmpDir . DIRECTORY_SEPARATOR . $filename;
@@ -1916,7 +1866,6 @@ class MediaListenerTest extends TestCase {
 
 	/**
 	 * @return string
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createTempImageFile(): string {
 		$image = imagecreate(10, 10);

@@ -78,10 +78,10 @@ class MediaListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = $this->fetchTable('Queue.QueuedJobs');
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = $this->fetchTable('Queue.QueuedJobs');
 
-		$lo_queue->createJob('Queue.Execute', [
+		$queuedJobsTable->createJob('Queue.Execute', [
 			'command' => 'bin' . DS . 'cake media clear_cache',
 			'escape' => false,
 			'log' => true,
@@ -100,10 +100,10 @@ class MediaListener implements EventListenerInterface {
 	 * @noinspection PhpUnused,PhpUnusedParameterInspection
 	 */
 	public function clearMediaCacheAfterDelete(Event $event, Configuration $configuration): void {
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = $this->fetchTable('Queue.QueuedJobs');
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = $this->fetchTable('Queue.QueuedJobs');
 
-		$lo_queue->createJob('Queue.Execute', [
+		$queuedJobsTable->createJob('Queue.Execute', [
 			'command' => 'bin' . DS . 'cake media clear_cache',
 			'escape' => false,
 			'log' => true,
@@ -127,9 +127,9 @@ class MediaListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection, PhpComposerExtensionStubsInspection
 	 */
 	public function beforeSave(Event $event, Media $entity, ArrayObject $options): void {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $event->getSubject();
-		$lb_isNew = $entity->isNew();
+		/** @var \Awyiss\Model\Table\MediaTable $mediaTable */
+		$mediaTable = $event->getSubject();
+		$isNew = $entity->isNew();
 
 		// If the systemOrder is the only dirty field, we don't need to do anything
 		if ($entity->getDirty() === ['systemOrder']) {
@@ -138,40 +138,40 @@ class MediaListener implements EventListenerInterface {
 
 		if (!isset(static::$mediaFolders)) {
 			/**
-			 * @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolders
+			 * @var \Cake\Collection\Iterator\TreeIterator $mediaFolders
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
-			$lo_mediaFolders = $lo_table->MediaFolders->find()->select(['id', 'title', 'path'])->all();
-			static::$mediaFolders = $lo_mediaFolders->indexBy('id')->toArray();
+			$mediaFolders = $mediaTable->MediaFolders->find()->select(['id', 'title', 'path'])->all();
+			static::$mediaFolders = $mediaFolders->indexBy('id')->toArray();
 		}
 
 		if (!isset(static::$media[ $entity->mediaFolderId ])) {
-			/** @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolders */
-			$lo_media = $lo_table->find()->where(['media_folder_id' => $entity->mediaFolderId])->all();
-			static::$media[ $entity->mediaFolderId ] = $lo_media->indexBy('name')->toArray();
+			/** @var \Cake\Collection\Iterator\TreeIterator $mediaFolders */
+			$media = $mediaTable->find()->where(['media_folder_id' => $entity->mediaFolderId])->all();
+			static::$media[ $entity->mediaFolderId ] = $media->indexBy('name')->toArray();
 		}
 
 		if (!$entity->extension) {
-			$la_knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $entity->mimeType));
+			$knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $entity->mimeType));
 
-			if (!$la_knownExtensions) {
+			if (!$knownExtensions) {
 				$event->stopPropagation();
 
 				$entity->setError(
 					'name',
-					__df(strtolower($lo_table->getI18nDomain()), 'validation', 'error_media_has_file_extension'),
+					__df(strtolower($mediaTable->getI18nDomain()), 'validation', 'error_media_has_file_extension'),
 					true
 				);
 
 				return;
 			}
 
-			$ls_realExtension = current($la_knownExtensions);
-			if ($ls_realExtension === 'jpeg') {
-				$ls_realExtension = 'jpg';
+			$realExtension = current($knownExtensions);
+			if ($realExtension === 'jpeg') {
+				$realExtension = 'jpg';
 			}
 
-			$entity->name .= '.' . $ls_realExtension;
+			$entity->name .= '.' . $realExtension;
 		}
 
 		// Unset file if there was an error during upload
@@ -185,26 +185,26 @@ class MediaListener implements EventListenerInterface {
 			$entity->avif = in_array($entity->mimeType, ['image/avif', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
 			$entity->webp = in_array($entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
 
-			if ($lb_isNew && LocalConfig::read('upload.autoOverwrite', false, 'Media') === true) {
-				$this->useExistingsFileData($lo_table, $entity);
+			if ($isNew && LocalConfig::read('upload.autoOverwrite', false, 'Media') === true) {
+				$this->useExistingsFileData($mediaTable, $entity);
 			}
 			else {
-				$this->ensureUniqueFileName($lo_table, $entity);
+				$this->ensureUniqueFileName($mediaTable, $entity);
 			}
 		}
 		elseif ($entity->isDirty('name') || $entity->isDirty('mediaFolderId')) {
-			$this->ensureUniqueFileName($lo_table, $entity);
+			$this->ensureUniqueFileName($mediaTable, $entity);
 		}
 
-		$ls_path = 'media/';
-		$ls_originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : $entity->path;
+		$path = 'media/';
+		$originalPath = $entity->hasOriginal('path') ? $entity->getOriginal('path') : $entity->path;
 
 		if (isset(static::$mediaFolders[ $entity->mediaFolderId ])) {
-			$ls_path = static::$mediaFolders[ $entity->mediaFolderId ]->path . '/';
+			$path = static::$mediaFolders[ $entity->mediaFolderId ]->path . '/';
 		}
 
-		$entity->path = $ls_path . $entity->name;
-		if (!$entity->isNew() && $ls_path . $entity->name === $ls_originalPath) {
+		$entity->path = $path . $entity->name;
+		if (!$entity->isNew() && $path . $entity->name === $originalPath) {
 			$entity->setDirty('path', false);
 		}
 	}
@@ -258,9 +258,9 @@ class MediaListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterDelete(Event $event, Media $entity, ArrayObject $options): void {
-		$ls_sourceFile = $entity->path;
-		if ($ls_sourceFile && is_file($ls_sourceFile)) {
-			unlink($ls_sourceFile);
+		$sourceFile = $entity->path;
+		if ($sourceFile && is_file($sourceFile)) {
+			unlink($sourceFile);
 		}
 
 		$entity->deleteResizedFiles();
@@ -283,25 +283,24 @@ class MediaListener implements EventListenerInterface {
 			return;
 		}
 
-		$ls_originalPath = $originalPath;
-		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
+		$urlHistoryTable = $this->fetchTable('UrlHistory');
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$li_userId = $this->getIdentity()?->id;
-		$ld_now = new DateTime('now');
+		$userId = $this->getIdentity()?->id;
+		$now = new DateTime('now');
 
-		$lo_query = $lo_urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
+		$query = $urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
 
-		$lo_query->values([
-			'url' => $ls_originalPath,
+		$query->values([
+			'url' => $originalPath,
 			'scope' => 'media',
 			'foreign_key' => $entity->id,
 			'status' => 308,
-			'created_by' => $li_userId,
-			'created_on' => $ld_now,
+			'created_by' => $userId,
+			'created_on' => $now,
 		]);
 
-		$lo_query->execute();
+		$query->execute();
 	}
 
 
@@ -311,42 +310,42 @@ class MediaListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function ensureUniqueFileName(MediaTable $table, Media $entity): void {
-		$ls_extension = $entity->extension;
-		$ls_fileName = $entity->cleanName;
+		$extension = $entity->extension;
+		$fileName = $entity->cleanName;
 
-		$la_conditions = [
+		$conditions = [
 			'name' => $entity->name,
 			'media_folder_id' => $entity->mediaFolderId,
 		];
 
-		$ls_primaryKey = $table->getPrimaryKey();
-		$li_id = $entity->get($ls_primaryKey);
-		if ($li_id) {
-			$la_conditions['NOT'] = [$table->getAlias() . '.' . $ls_primaryKey => $li_id];
+		$primaryKey = $table->getPrimaryKey();
+		$id = $entity->get($primaryKey);
+		if ($id) {
+			$conditions['NOT'] = [$table->getAlias() . '.' . $primaryKey => $id];
 		}
 
 
-		$ls_field = $table->getSchema()->getColumn('name');
-		$li_length = $ls_field ? $ls_field['length'] : 0;
+		$field = $table->getSchema()->getColumn('name');
+		$length = $field ? $field['length'] : 0;
 
-		$li_i = 1;
-		$ls_suffix = '';
+		$i = 1;
+		$suffix = '';
 
 		// As long as a page with the same slug exists, append an increasing number to the slug and try again
-		while ($table->exists($la_conditions)) {
-			$li_i++;
-			$ls_suffix = '-' . $li_i . '.' . $ls_extension;
+		while ($table->exists($conditions)) {
+			$i++;
+			$suffix = '-' . $i . '.' . $extension;
 
-			if ($li_length && (mb_strlen($ls_fileName . $ls_suffix) > $li_length)) {
-				$ls_fileName = mb_substr($ls_fileName, 0, $li_length - mb_strlen($ls_suffix));
+			if ($length && (mb_strlen($fileName . $suffix) > $length)) {
+				$fileName = mb_substr($fileName, 0, $length - mb_strlen($suffix));
 			}
 
-			$la_conditions['name'] = $ls_fileName . $ls_suffix;
+			$conditions['name'] = $fileName . $suffix;
 		}
 
 		// Append the suffix if it's not empty
-		if ($ls_suffix) {
-			$entity->name = $ls_fileName . $ls_suffix;
+		if ($suffix) {
+			$entity->name = $fileName . $suffix;
 		}
 	}
 
@@ -356,32 +355,32 @@ class MediaListener implements EventListenerInterface {
 	 * @return array
 	 */
 	protected function getSvgDimensions(string $fileContents): array {
-		$lf_width = $lf_height = null;
+		$width = $height = null;
 
-		preg_match('/<svg[^>]*\s(width|height)="(\d+)"[^>]*\s(width|height)="(\d+)"[^>]*>/i', $fileContents, $la_matches);
-		if ($la_matches) {
-			if (strtolower($la_matches[1]) === 'width') {
-				$lf_width = (float)$la_matches[2];
-				$lf_height = (float)$la_matches[4];
+		preg_match('/<svg[^>]*\s(width|height)="(\d+)"[^>]*\s(width|height)="(\d+)"[^>]*>/i', $fileContents, $matches);
+		if ($matches) {
+			if (strtolower($matches[1]) === 'width') {
+				$width = (float)$matches[2];
+				$height = (float)$matches[4];
 			}
 			else {
-				$lf_width = (float)$la_matches[4];
-				$lf_height = (float)$la_matches[2];
+				$width = (float)$matches[4];
+				$height = (float)$matches[2];
 			}
 		}
 		else {
 			/** @noinspection RegExpRedundantEscape */
-			preg_match('/viewbox="(?<sizes>[0-9\. ]*)"/i', $fileContents, $la_matches);
-			if (!empty($la_matches['sizes'])) {
-				$la_coordinates = explode(' ', $la_matches['sizes'], 4);
-				$lf_width = (float)$la_coordinates[2];
-				$lf_height = (float)$la_coordinates[3];
+			preg_match('/viewbox="(?<sizes>[0-9\. ]*)"/i', $fileContents, $matches);
+			if (!empty($matches['sizes'])) {
+				$coordinates = explode(' ', $matches['sizes'], 4);
+				$width = (float)$coordinates[2];
+				$height = (float)$coordinates[3];
 			}
 		}
 
 		return [
-			'width' => $lf_width,
-			'height' => $lf_height,
+			'width' => $width,
+			'height' => $height,
 		];
 	}
 
@@ -400,18 +399,18 @@ class MediaListener implements EventListenerInterface {
 			return getimagesize($tempName);
 		}
 
-		$la_imageSize = [null, null];
+		$imageSize = [null, null];
 
 		if (!class_exists('Imagick')) {
-			return $la_imageSize;
+			return $imageSize;
 		}
 
-		$lo_imagick = new Imagick();
-		$lo_imagick->pingImage($tempName);
+		$imagick = new Imagick();
+		$imagick->pingImage($tempName);
 
 		return [
-			$lo_imagick->getImageWidth(),
-			$lo_imagick->getImageHeight(),
+			$imagick->getImageWidth(),
+			$imagick->getImageHeight(),
 		];
 	}
 
@@ -422,22 +421,22 @@ class MediaListener implements EventListenerInterface {
 	 * @throws \ImagickException
 	 */
 	protected function setDimensions(Media $entity): void {
-		$lo_stream = $entity->file->getStream();
-		$ls_tempName = $lo_stream->getMetadata('uri');
+		$stream = $entity->file->getStream();
+		$tempName = $stream->getMetadata('uri');
 
 		if ($entity->mimeType === 'image/svg+xml') {
-			$la_dimensions = $this->getSvgDimensions(file_get_contents($ls_tempName));
+			$dimensions = $this->getSvgDimensions(file_get_contents($tempName));
 
-			$entity->width = $la_dimensions['width'];
-			$entity->height = $la_dimensions['height'];
+			$entity->width = $dimensions['width'];
+			$entity->height = $dimensions['height'];
 
 			$entity->preview = ProcessStatus::NotRequired;
 		}
 		elseif ($entity->isImage()) {
-			$la_imageSize = $this->getImageSize($ls_tempName);
+			$imageSize = $this->getImageSize($tempName);
 
-			$entity->width = (float)$la_imageSize[0];
-			$entity->height = (float)$la_imageSize[1];
+			$entity->width = (float)$imageSize[0];
+			$entity->height = (float)$imageSize[1];
 
 			$entity->preview = ProcessStatus::NotRequired;
 
@@ -461,25 +460,25 @@ class MediaListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function useExistingsFileData(MediaTable $table, Media $entity): void {
-		$lo_currentMedia = static::$media[ $entity->mediaFolderId ][ $entity->name ] ?? null;
-		if ($lo_currentMedia) {
+		$currentMedia = static::$media[ $entity->mediaFolderId ][ $entity->name ] ?? null;
+		if ($currentMedia) {
 			$entity->setNew(false);
 			$entity->patch([
-				'id' => $lo_currentMedia->id,
-				'alt' => $entity->alt ?? $lo_currentMedia->alt,
-				'systemOrder' => $lo_currentMedia->systemOrder,
-				'createdBy' => $lo_currentMedia->createdBy,
-				'createdOn' => $lo_currentMedia->createdOn,
+				'id' => $currentMedia->id,
+				'alt' => $entity->alt ?? $currentMedia->alt,
+				'systemOrder' => $currentMedia->systemOrder,
+				'createdBy' => $currentMedia->createdBy,
+				'createdOn' => $currentMedia->createdOn,
 			], [
 				'guard' => false,
 			]);
 
-			$entity->usageCount = $table->MediaAssignments->find()->where(['media_id' => $lo_currentMedia->id, 'deleted' => 0])->count();
+			$entity->usageCount = $table->MediaAssignments->find()->where(['media_id' => $currentMedia->id, 'deleted' => 0])->count();
 
 			$entity->setDirty('systemOrder', false);
 
-			if ($lo_currentMedia->attributes) {
-				$entity->attributes = $lo_currentMedia->attributes;
+			if ($currentMedia->attributes) {
+				$entity->attributes = $currentMedia->attributes;
 			}
 		}
 	}

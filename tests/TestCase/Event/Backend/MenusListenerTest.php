@@ -36,7 +36,6 @@ class MenusListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -51,7 +50,6 @@ class MenusListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MenusListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -70,7 +68,6 @@ class MenusListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MenusListener::afterCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopyCopiesMenuEntries(): void {
 		$menusTable = $this->fetchTable('Menus');
@@ -104,7 +101,6 @@ class MenusListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MenusListener::afterCopy()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterCopySkipsWhenNotPrimary(): void {
 		$menusTable = $this->fetchTable('Menus');
@@ -130,7 +126,6 @@ class MenusListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MenusListener::beforeSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSoftDeleteSetsFinderToAll(): void {
 		$menusTable = $this->fetchTable('Menus');
@@ -146,7 +141,6 @@ class MenusListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MenusListener::beforeDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeDeleteSetsFinderToAll(): void {
 		$menusTable = $this->fetchTable('Menus');
@@ -162,7 +156,6 @@ class MenusListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MenusListener::afterSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteRestoresOriginalFinder(): void {
 		$menusTable = $this->fetchTable('Menus');
@@ -182,7 +175,6 @@ class MenusListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\MenusListener::afterDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterDeleteRestoresOriginalFinder(): void {
 		$menusTable = $this->fetchTable('Menus');

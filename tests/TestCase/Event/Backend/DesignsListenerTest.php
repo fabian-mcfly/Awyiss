@@ -30,7 +30,6 @@ class DesignsListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -46,7 +45,6 @@ class DesignsListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -61,7 +59,6 @@ class DesignsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DesignsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -77,7 +74,6 @@ class DesignsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DesignsListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithDesignNotInUse(): void {
 		$designsTable = $this->fetchTable('Designs');
@@ -108,7 +104,6 @@ class DesignsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DesignsListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithDesignInUseChanged(): void {
 		$designsTable = $this->fetchTable('Designs');
@@ -138,7 +133,6 @@ class DesignsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DesignsListener::afterSave()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveWithDesignInUseUnchanged(): void {
 		$designsTable = $this->fetchTable('Designs');
@@ -170,7 +164,6 @@ class DesignsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DesignsListener::afterSaveCommit()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithDesignNotInUse(): void {
 		$designMiddleware = $this->getMockBuilder(DesignMiddleware::class)->onlyMethods([
@@ -200,7 +193,6 @@ class DesignsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DesignsListener::afterSaveCommit()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithDesignInUse(): void {
 		$designMiddleware = $this->getMockBuilder(DesignMiddleware::class)->onlyMethods([
@@ -230,7 +222,6 @@ class DesignsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\DesignsListener::afterSaveCommit()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitWithDesignInUseWithFonts(): void {
 		$entity = new Design([
@@ -311,7 +302,6 @@ class DesignsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createDummyDesigns(): void {
 		$designsTable = $this->fetchTable('Designs');
@@ -342,7 +332,6 @@ class DesignsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function deleteDummyDesigns(): void {
 		$designsTable = $this->fetchTable('Designs');

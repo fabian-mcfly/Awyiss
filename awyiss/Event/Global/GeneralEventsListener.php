@@ -54,10 +54,10 @@ class GeneralEventsListener implements EventListenerInterface {
 	public function awyissSetRealm(EventInterface $event): void {
 		$this->realm = $event->getData('realm');
 
-		/** @var Table $lo_model */
-		foreach (static::$initializedModels as $li_key => $lo_model) {
-			EventListenersProvider::loadListener($lo_model->getAlias(), $this->realm);
-			unset(static::$initializedModels[ $li_key ]);
+		/** @var \Awyiss\Model\Table $model */
+		foreach (static::$initializedModels as $key => $model) {
+			EventListenersProvider::loadListener($model->getAlias(), $this->realm);
+			unset(static::$initializedModels[ $key ]);
 		}
 	}
 
@@ -70,21 +70,21 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function modelInitialize(EventInterface $event): void {
-		/** @var Table $lo_model */
-		$lo_model = $event->getSubject();
+		/** @var \Awyiss\Model\Table $model */
+		$model = $event->getSubject();
 
-		if (!$lo_model instanceof Table) {
+		if (!$model instanceof Table) {
 			return;
 		}
 
 		if (!isset($this->realm)) {
-			if (!in_array($lo_model, static::$initializedModels, true)) {
-				static::$initializedModels[] = $lo_model;
+			if (!in_array($model, static::$initializedModels, true)) {
+				static::$initializedModels[] = $model;
 			}
 
 			return;
 		}
 
-		EventListenersProvider::loadListener($lo_model->getAlias(), $this->realm);
+		EventListenersProvider::loadListener($model->getAlias(), $this->realm);
 	}
 }

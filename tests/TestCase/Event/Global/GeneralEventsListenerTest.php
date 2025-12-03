@@ -36,7 +36,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Global\GeneralEventsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -53,7 +52,6 @@ class GeneralEventsListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Global\GeneralEventsListener::awyissGetRealm()
 	 * @see \Awyiss\Event\Global\GeneralEventsListener::awyissSetRealm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAwyissGetSetRealm(): void {
 		EventListenersProvider::loadListener('GeneralEvents', 'Global');
@@ -72,7 +70,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Global\GeneralEventsListener::awyissSetRealm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetRealmLoadsListenersForAlreadyLoadedModels(): void {
 		EventListenersProvider::loadListener('GeneralEvents', 'Global');
@@ -96,7 +93,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Global\GeneralEventsListener::modelInitialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModelInitializeLoadsModelListenersForCurrentRealm(): void {
 		EventListenersProvider::loadListener('GeneralEvents', 'Global');
@@ -128,7 +124,6 @@ class GeneralEventsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Global\GeneralEventsListener::modelInitialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModelInitializeNotLoadsModelListenersForDifferentRealm(): void {
 		EventListenersProvider::loadListener('GeneralEvents', 'Global');

@@ -60,18 +60,18 @@ class AuthenticationListener implements EventListenerInterface {
 	public function authenticationAfterAuthenticate(Event $event, AuthenticatorInterface $authenticator, IdentityInterface $identity): void {
 		$this->identity = $identity;
 
-		/** @var \Awyiss\Authentication\IdentityAwareTrait $lo_class */
-		foreach (static::$initializedClasses as $li_key => $lo_class) {
-			$lo_class->setIdentity($this->identity);
-			unset(static::$initializedClasses[ $li_key ]);
+		/** @var \Awyiss\Authentication\IdentityAwareTrait $class */
+		foreach (static::$initializedClasses as $key => $class) {
+			$class->setIdentity($this->identity);
+			unset(static::$initializedClasses[ $key ]);
 		}
 
-		/** @var Table $lo_model */
-		foreach (static::$initializedModels as $li_key => $lo_model) {
-			if ($lo_model->hasBehavior('Audit')) {
-				$lo_model->getBehavior('Audit')->setIdentity($this->identity);
+		/** @var \Awyiss\Model\Table $model */
+		foreach (static::$initializedModels as $key => $model) {
+			if ($model->hasBehavior('Audit')) {
+				$model->getBehavior('Audit')->setIdentity($this->identity);
 			}
-			unset(static::$initializedModels[ $li_key ]);
+			unset(static::$initializedModels[ $key ]);
 		}
 	}
 
@@ -82,29 +82,29 @@ class AuthenticationListener implements EventListenerInterface {
 	 */
 	public function authenticationRequestIdentity(Event $event): void {
 		try {
-			/** @var Table $lo_model */
-			$lo_class = $event->getSubject();
+			/** @var \Awyiss\Model\Table $lo_model */
+			$class = $event->getSubject();
 		}
 		catch (CakeException) {
-			$lo_class = null;
+			$class = null;
 		}
 
 		if (isset($this->identity)) {
 			$event->setResult($this->identity);
 		}
 
-		if (!$lo_class || !method_exists($lo_class, 'setIdentity')) {
+		if (!$class || !method_exists($class, 'setIdentity')) {
 			return;
 		}
 
 		if (isset($this->identity)) {
-			$lo_class->setIdentity($this->identity);
+			$class->setIdentity($this->identity);
 
 			return;
 		}
 
-		if (!in_array($lo_class, static::$initializedClasses, true)) {
-			static::$initializedClasses[] = $lo_class;
+		if (!in_array($class, static::$initializedClasses, true)) {
+			static::$initializedClasses[] = $class;
 		}
 	}
 
@@ -142,22 +142,22 @@ class AuthenticationListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function modelInitialize(Event $event): void {
-		/** @var Table $lo_model */
-		$lo_model = $event->getSubject();
-		if (!$lo_model instanceof Table) {
+		/** @var \Awyiss\Model\Table $model */
+		$model = $event->getSubject();
+		if (!$model instanceof Table) {
 			return;
 		}
 
 		if (isset($this->identity)) {
-			if ($lo_model->hasBehavior('Audit')) {
-				$lo_model->getBehavior('Audit')->setIdentity($this->identity);
+			if ($model->hasBehavior('Audit')) {
+				$model->getBehavior('Audit')->setIdentity($this->identity);
 			}
 
 			return;
 		}
 
-		if (!in_array($lo_model, static::$initializedModels, true)) {
-			static::$initializedModels[] = $lo_model;
+		if (!in_array($model, static::$initializedModels, true)) {
+			static::$initializedModels[] = $model;
 		}
 	}
 }

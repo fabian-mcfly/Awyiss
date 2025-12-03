@@ -37,7 +37,6 @@ class PageRolesListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -52,7 +51,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -70,7 +68,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithNoAttributesTable(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -98,7 +95,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithAttributesTableButNoQueuedJob(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -126,7 +122,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveWithAttributesTableAndQueuedJob(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -158,7 +153,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCreatesBackendMenuEntries(): void {
 		Configure::write('Awyiss.PageRoles.Backend.autoCreateMenuEntries', true);
@@ -196,7 +190,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesBackendMenuEntriesWhenConfigFalse(): void {
 		Configure::write('Awyiss.PageRoles.Backend.autoCreateMenuEntries', false);
@@ -221,7 +214,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesBackendMenuEntriesWhenExistingEntity(): void {
 		Configure::write('Awyiss.PageRoles.Backend.autoCreateMenuEntries', true);
@@ -247,7 +239,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveNotCreatesBackendMenuEntriesWhenPageRolePage(): void {
 		Configure::write('Awyiss.PageRoles.Backend.autoCreateMenuEntries', true);
@@ -272,7 +263,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitBakesPageRoleEnumForNewEntity(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -323,7 +313,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitBakesPageRoleEnumForChangedIdentifier(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -377,7 +366,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotBakesPageRoleEnumForExistingEntity(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -406,7 +394,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotBakesPageRoleEnumForUnchangedIdentifier(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -439,7 +426,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitBakesPageRoleModelForNewEntity(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -491,7 +477,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitBakesPageRoleModelForChangedIdentifier(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -546,7 +531,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotBakesPageRoleModelForExistingEntity(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -575,7 +559,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotBakesPageRoleModelForUnchangedIdentifier(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -608,7 +591,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSaveCommit()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSaveCommitNotBakesPageRoleModelWhenAlreadyQueued(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -649,7 +631,6 @@ class PageRolesListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSoftDelete()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCleansUpBackendMenuEntries(): void {
 		Configure::write('Awyiss.PageRoles.Backend.autoCreateMenuEntries', true);
@@ -686,7 +667,6 @@ class PageRolesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCleansUpConfiguration(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -732,7 +712,6 @@ class PageRolesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCleansUpI18n(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');
@@ -784,7 +763,6 @@ class PageRolesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\PageRolesListener::afterSoftDelete()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAfterSoftDeleteCleansUpUsergroupPermissions(): void {
 		$pageRolesTable = $this->fetchTable('PageRoles');

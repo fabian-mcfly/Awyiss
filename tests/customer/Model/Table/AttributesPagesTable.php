@@ -73,7 +73,6 @@ class AttributesPagesTable extends Table {
 	 *
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @return \Awyiss\ORM\RulesChecker
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(function (Entity $entity, array $options) use ($rules) {

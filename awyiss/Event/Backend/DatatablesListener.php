@@ -43,12 +43,12 @@ class DatatablesListener implements EventListenerInterface {
 	 */
 	public function beforeSave(Event $event, Datatable $entity): void {
 		//If the datatable has an attributes table and there is a table change in progress, stop the event.
-		$ls_attributesTable = 'attributes_' . $entity->identifier;
-		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
-		if (in_array($ls_attributesTable, $la_tables)) {
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			if ($lo_queue->isQueued('attributes::table_changes')) {
+		$attributesTableName = 'attributes_' . $entity->identifier;
+		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		if (in_array($attributesTableName, $tables)) {
+			/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+			$queuedJobsTable = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			if ($queuedJobsTable->isQueued('attributes::table_changes')) {
 				$event->stopPropagation();
 				$entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
 			}
@@ -84,8 +84,8 @@ class DatatablesListener implements EventListenerInterface {
 			 *
 			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 			 */
-			$lo_eventManager = EventManager::instance();
-			$lo_eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
+			$eventManager = EventManager::instance();
+			$eventManager->dispatch('Awyiss.Configuration.deleteCustomConfiguration');
 		}
 	}
 
@@ -97,28 +97,28 @@ class DatatablesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDelete(Event $event, Datatable $entity): void {
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$tableLocator = FactoryLocator::get('Table');
 
-		$lo_menuEntries = $lo_tableLocator->get('BackendMenuEntries');
-		$lo_menuEntries->deleteAll([
+		$menuEntries = $tableLocator->get('BackendMenuEntries');
+		$menuEntries->deleteAll([
 			'OR' => [
 				'link LIKE' => Inflector::camelize($entity->identifier) . '::%',
 				'link' => 'Configuration::overview::scope:' . $entity->identifier,
 			],
 		]);
 
-		$lo_configuration = $lo_tableLocator->get('Configuration');
-		$lo_configuration->deleteAll([
+		$configuration = $tableLocator->get('Configuration');
+		$configuration->deleteAll([
 			'scope' => $entity->identifier,
 		]);
 
-		$lo_configuration = $lo_tableLocator->get('I18n');
-		$lo_configuration->deleteAll([
+		$i18n = $tableLocator->get('I18n');
+		$i18n->deleteAll([
 			'model' => $entity->identifier,
 		]);
 
-		$lo_usergroupPermissions = $lo_tableLocator->get('UsergroupPermissions');
-		$lo_usergroupPermissions->deleteAll([
+		$usergroupPermissions = $tableLocator->get('UsergroupPermissions');
+		$usergroupPermissions->deleteAll([
 			'scope' => $entity->identifier,
 		]);
 	}
@@ -131,23 +131,23 @@ class DatatablesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDeleteCommit(Event $event, Datatable $entity): void {
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$tableLocator = FactoryLocator::get('Table');
 
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
 
-		$ls_attributesTable = 'attributes_' . $entity->identifier;
-		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
-		if (in_array($ls_attributesTable, $la_tables)) {
-			/** @var \Awyiss\Model\Table $lo_attributesTable */
-			$lo_attributesTable = $lo_tableLocator->get('Attributes');
+		$attributesTableName = 'attributes_' . $entity->identifier;
+		$tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		if (in_array($attributesTableName, $tables)) {
+			/** @var \Awyiss\Model\Table $attributesTable */
+			$attributesTable = $tableLocator->get('Attributes');
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$li_identityId = $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id;
+			$identityId = $attributesTable->getBehavior('Audit')->getIdentity()?->id;
 
-			$lo_queue->createJob('Attributes/Delete', [
+			$queuedJobsTable->createJob('Attributes/Delete', [
 				'identifier' => $entity->identifier,
-				'identityId' => $li_identityId,
+				'identityId' => $identityId,
 			], [
 				'group' => 'general',
 				'priority' => 1,
@@ -155,33 +155,33 @@ class DatatablesListener implements EventListenerInterface {
 			]);
 		}
 
-		$la_commands = [];
+		$commands = [];
 
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
-		if (file_exists($ls_filePath)) {
-			$la_commands[] = 'unlink ' . $ls_filePath;
+		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
+		if (file_exists($filePath)) {
+			$commands[] = 'unlink ' . $filePath;
 		}
 
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize($entity->identifier) . 'Table.php']);
-		if (file_exists($ls_filePath)) {
-			$la_commands[] = 'unlink ' . $ls_filePath;
+		$filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize($entity->identifier) . 'Table.php']);
+		if (file_exists($filePath)) {
+			$commands[] = 'unlink ' . $filePath;
 		}
 
 		//Bake a `drop`-migration
-		$la_commands[] = 'bin' . DS . 'cake bake migration drop_' . $entity->identifier . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
+		$commands[] = 'bin' . DS . 'cake bake migration drop_' . $entity->identifier . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 		//Migrate all the newly baked migrations
-		$la_commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 
 		//Clear the database schema
-		$la_commands[] = 'bin' . DS . 'cake schema_cache clear';
+		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		//Bake the seed of the datatables table
-		$la_commands[] = 'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
-		$lo_queue->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $la_commands)) . ')',
+		$queuedJobsTable->createJob('Queue.Execute', [
+			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $commands)) . ')',
 			'escape' => false,
 			'log' => true,
 		], [
@@ -201,12 +201,12 @@ class DatatablesListener implements EventListenerInterface {
 			return;
 		}
 
-		$la_commands = [];
+		$commands = [];
 
 		//Force migrations for datatables to be stored in the custom directory, to not mess with the Awyiss migrations.
-		$ls_migrationsPath = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
+		$migrationsPath = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
-		$la_columns = [
+		$columns = [
 			'parent_id:integer?[11]:index',
 			'language_shortcode:char?[2]:index',
 			'title:string?[255]',
@@ -222,26 +222,26 @@ class DatatablesListener implements EventListenerInterface {
 		];
 
 		//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-		$la_commands[] = 'bin' . DS . 'cake bake migration create_' . $entity->identifier . ' ' . implode(' ', $la_columns) . $ls_migrationsPath;
+		$commands[] = 'bin' . DS . 'cake bake migration create_' . $entity->identifier . ' ' . implode(' ', $columns) . $migrationsPath;
 
 		//Migrate all the newly baked migrations
-		$la_commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 
 		//Clear the database schema
-		$la_commands[] = 'bin' . DS . 'cake schema_cache clear';
+		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		//Bake the model
-		$la_commands[] = 'bin' . DS . 'cake bake model ' . $entity->identifier . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force --is-datatable';
+		$commands[] = 'bin' . DS . 'cake bake model ' . $entity->identifier . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force --is-datatable';
 
 		//Bake the seed of the datatables table
-		$la_commands[] = 'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
-		$lo_tableLocator = FactoryLocator::get('Table');
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
+		$tableLocator = FactoryLocator::get('Table');
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = $tableLocator->get('Queue.QueuedJobs');
 		//Queue the job.
-		$lo_queue->createJob('Queue.Execute', [
-			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $la_commands)) . ')',
+		$queuedJobsTable->createJob('Queue.Execute', [
+			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $commands)) . ')',
 			'escape' => false,
 			'log' => true,
 		], [
@@ -261,11 +261,11 @@ class DatatablesListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_menuEntriesTable */
-		$lo_menuEntriesTable = $this->fetchTable('BackendMenuEntries');
+		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $menuEntriesTable */
+		$menuEntriesTable = $this->fetchTable('BackendMenuEntries');
 
-		$ls_controller = Inflector::camelize($entity->identifier);
+		$controller = Inflector::camelize($entity->identifier);
 
-		$lo_menuEntriesTable->createEntries($entity, $ls_controller, $entity->identifier, 'media');
+		$menuEntriesTable->createEntries($entity, $controller, $entity->identifier, 'media');
 	}
 }

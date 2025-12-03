@@ -35,7 +35,6 @@ class WidgetsListenerTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -50,7 +49,6 @@ class WidgetsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\WidgetsListener::implementedEvents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testImplementedEvents(): void {
 		$result = $this->listener->implementedEvents();
@@ -64,7 +62,6 @@ class WidgetsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\WidgetsListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEmptiesTitleTagWhenEmptyTitle(): void {
 		$entity = $this->fetchTable('Widgets')->newDefaultEntity([
@@ -94,7 +91,6 @@ class WidgetsListenerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Event\Backend\WidgetsListener::beforeSave()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBeforeSaveEmptiesSubtitleTagWhenEmptySubtitle(): void {
 		$entity = $this->fetchTable('Widgets')->newDefaultEntity([
