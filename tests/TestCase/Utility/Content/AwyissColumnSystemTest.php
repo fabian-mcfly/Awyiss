@@ -28,7 +28,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidthsReturnsCorrectNumberOfColumns(): void {
 		$columnWidths = AwyissColumnSystem::getColumnWidths();
@@ -40,7 +39,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidthsReturnsAwyissColumnInstances(): void {
 		$columnWidths = AwyissColumnSystem::getColumnWidths();
@@ -54,7 +52,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidthsContainsCorrectFractions(): void {
 		$columnWidths = AwyissColumnSystem::getColumnWidths();
@@ -80,7 +77,6 @@ class AwyissColumnSystemTest extends TestCase {
 	 * @param int $denominator
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidthsColumnsHaveCorrectNumeratorAndDenominator(int $numerator, int $denominator): void {
 		$columnWidths = AwyissColumnSystem::getColumnWidths();
@@ -94,7 +90,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsExcludesFullWidthColumn(): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
@@ -106,7 +101,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsReturnsCorrectNumberOfIndents(): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
@@ -118,7 +112,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsContainsCorrectFractions(): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
@@ -132,7 +125,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsColumnsHaveOffsetCssClassPrefix(): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
@@ -158,7 +150,6 @@ class AwyissColumnSystemTest extends TestCase {
 	 * @param int $denominator
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndentsColumnsHaveCorrectNumeratorAndDenominator(int $numerator, int $denominator): void {
 		$columnIndents = AwyissColumnSystem::getColumnIndents();
@@ -172,7 +163,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNameReturnsAwyiss(): void {
 		$name = AwyissColumnSystem::getName();
@@ -184,7 +174,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::getScssFilePaths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetScssFilePaths(): void {
 		$filePaths = AwyissColumnSystem::getScssFilePaths();
@@ -202,7 +191,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::setMaxDenominator()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetMaxDenominatorChangesColumnCount(): void {
 		AwyissColumnSystem::setMaxDenominator(6);
@@ -215,7 +203,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::setMaxDenominator()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetMaxDenominatorChangesColumnFractions(): void {
 		AwyissColumnSystem::setMaxDenominator(4);
@@ -229,7 +216,6 @@ class AwyissColumnSystemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\AwyissColumnSystem::setMaxDenominator()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetMaxDenominatorAffectsColumnIndents(): void {
 		AwyissColumnSystem::setMaxDenominator(3);

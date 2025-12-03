@@ -34,31 +34,31 @@ class WebfontProvider {
 	 * @return array<string, array{category: string, id: string, name: string, popularity: int, variants: array, version: string}>
 	 */
 	protected function fetchWebfonts(): array {
-		$la_apiResult = json_decode(file_get_contents($this->fontApiUrl), true);
+		$apiResult = json_decode(file_get_contents($this->fontApiUrl), true);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
 			throw new RuntimeException('Could not fetch webfonts');
 		}
 
-		$la_webfonts = [];
-		foreach ($la_apiResult as $la_font) {
-			if (!isset($la_font['subsets']) || !in_array('latin', $la_font['subsets'], true)) {
+		$webfonts = [];
+		foreach ($apiResult as $font) {
+			if (!isset($font['subsets']) || !in_array('latin', $font['subsets'], true)) {
 				continue;
 			}
 
-			$la_webfonts[ $la_font['id'] ] = [
-				'category' => $la_font['category'],
-				'id' => $la_font['id'],
-				'name' => $la_font['family'],
-				'popularity' => $la_font['popularity'],
-				'variants' => $la_font['variants'],
-				'version' => $la_font['version'],
+			$webfonts[ $font['id'] ] = [
+				'category' => $font['category'],
+				'id' => $font['id'],
+				'name' => $font['family'],
+				'popularity' => $font['popularity'],
+				'variants' => $font['variants'],
+				'version' => $font['version'],
 			];
 		}
 
-		Arrays::naturalSort($la_webfonts, 'name');
+		Arrays::naturalSort($webfonts, 'name');
 
-		return $la_webfonts;
+		return $webfonts;
 	}
 
 
@@ -80,8 +80,8 @@ class WebfontProvider {
 	public function getWebfonts(): array {
 		$this->webfonts = Cache::remember('webfonts', fn () => $this->fetchWebfonts(), 'persistent');
 
-		$lo_webfonts = new Collection($this->webfonts);
+		$webfonts = new Collection($this->webfonts);
 
-		return $lo_webfonts->filter(fn ($font) => $font['popularity'] < 1000)->toArray();
+		return $webfonts->filter(fn ($font) => $font['popularity'] < 1000)->toArray();
 	}
 }

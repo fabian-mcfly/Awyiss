@@ -22,7 +22,6 @@ use ReflectionClass;
 class ResizedImageManagerTest extends TestCase {
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -48,7 +47,6 @@ class ResizedImageManagerTest extends TestCase {
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::addMediaItem()
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::getMediaItems()
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::getResizedItems()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAndGetMediaItems(): void {
 		// Create test media with resized images
@@ -76,7 +74,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::addMediaItemsFromEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddMediaItemsFromEntity(): void {
 		// Create entity with media assignments
@@ -157,7 +154,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::setMediaItems()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetMediaItems(): void {
 		// Create test media
@@ -189,7 +185,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeFails(): void {
 		// 1. Media without path
@@ -217,7 +212,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithImage(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -242,7 +236,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithoutUpscale(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -264,7 +257,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithUpscale(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -285,7 +277,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithoutDimensions(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -303,7 +294,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithImageAndExistingResizedImage(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -331,7 +321,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithImageAndExistingResizedImageButDifferentStrategy(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -356,7 +345,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithImageWithNewResizedImage(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -378,7 +366,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeWithAspectRatio(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -414,7 +401,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeFindsWithinTreshold(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -443,7 +429,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeFindsWithinTresholdSameFormatOnly(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -468,7 +453,6 @@ class ResizedImageManagerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Media\ResizedImageManager::resize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResizeFindsWithinTresholdSameStrategyOnly(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -506,7 +490,6 @@ class ResizedImageManagerTest extends TestCase {
 	 * @param int $height
 	 * @param string $type
 	 * @return \Awyiss\Model\Entity\Media
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createMedia(int $id, int $width = 800, int $height = 600, string $type = 'jpg'): Media {
 		$types = [
@@ -577,7 +560,6 @@ class ResizedImageManagerTest extends TestCase {
 	 * @param \Awyiss\Model\Enum\ResizeStrategy $strategy
 	 * @param string $extension
 	 * @return \Awyiss\Model\Entity\MediaResizedImage
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function createResizedImage(
 		int $id,

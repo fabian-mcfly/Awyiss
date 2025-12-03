@@ -66,9 +66,9 @@ class ResizedImageManager {
 		static::$mediaItems[ $mediaItem->id ] = $mediaItem;
 
 		if ($mediaItem->mediaResizedImages) {
-			/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
-			foreach ($mediaItem->mediaResizedImages as $lo_resizedImage) {
-				static::$resizedRecords[ $mediaItem->id ][ $lo_resizedImage->id ] = $lo_resizedImage;
+			/** @var \Awyiss\Model\Entity\MediaResizedImage $resizedImage */
+			foreach ($mediaItem->mediaResizedImages as $resizedImage) {
+				static::$resizedRecords[ $mediaItem->id ][ $resizedImage->id ] = $resizedImage;
 			}
 		}
 	}
@@ -86,32 +86,32 @@ class ResizedImageManager {
 			return;
 		}
 
-		$la_mediaElements = [];
+		$mediaElements = [];
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		foreach ($entity->mediaAssignments as $la_assignments) {
-			foreach ($la_assignments as $ls_identifier => $lo_media) {
-				if (!is_int($ls_identifier) && str_starts_with($ls_identifier, '_')) {
+		foreach ($entity->mediaAssignments as $assignments) {
+			foreach ($assignments as $identifier => $media) {
+				if (!is_int($identifier) && str_starts_with($identifier, '_')) {
 					continue;
 				}
 
-				if ($lo_media instanceof Media) {
-					$la_mediaElements[] = $lo_media;
+				if ($media instanceof Media) {
+					$mediaElements[] = $media;
 				}
-				elseif ($lo_media instanceof MediaAssignment && $lo_media->media) {
-					$la_mediaElements[] = $lo_media->media;
+				elseif ($media instanceof MediaAssignment && $media->media) {
+					$mediaElements[] = $media->media;
 				}
-				elseif (is_array($lo_media)) {
-					foreach ($lo_media as $lo_mediaItem) {
-						if ($lo_mediaItem instanceof Media) {
-							$la_mediaElements[] = $lo_mediaItem;
+				elseif (is_array($media)) {
+					foreach ($media as $mediaItem) {
+						if ($mediaItem instanceof Media) {
+							$mediaElements[] = $mediaItem;
 						}
 					}
 				}
 			}
 		}
 
-		if ($la_mediaElements) {
-			static::setMediaItems($la_mediaElements);
+		if ($mediaElements) {
+			static::setMediaItems($mediaElements);
 		}
 	}
 
@@ -124,48 +124,48 @@ class ResizedImageManager {
 	 * @return void
 	 */
 	public static function setMediaItems(array $mediaItems, bool $merge = true): void {
-		$la_itemsToFetch = [];
+		$itemsToFetch = [];
 
 		if (!$merge) {
 			static::$mediaItems = [];
 		}
 
 		/** @var \Awyiss\Model\Entity\Media|int $lo_mediaItem */
-		foreach ($mediaItems as $lx_mediaItem) {
-			if ($lx_mediaItem instanceof Media) {
-				static::$mediaItems[ $lx_mediaItem->id ] = $lx_mediaItem;
+		foreach ($mediaItems as $mediaItem) {
+			if ($mediaItem instanceof Media) {
+				static::$mediaItems[ $mediaItem->id ] = $mediaItem;
 
-				if ($lx_mediaItem->mediaResizedImages) {
-					/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
-					foreach ($lx_mediaItem->mediaResizedImages as $lo_resizedImage) {
-						static::$resizedRecords[ $lx_mediaItem->id ][ $lo_resizedImage->id ] = $lo_resizedImage;
+				if ($mediaItem->mediaResizedImages) {
+					/** @var \Awyiss\Model\Entity\MediaResizedImage $resizedImage */
+					foreach ($mediaItem->mediaResizedImages as $resizedImage) {
+						static::$resizedRecords[ $mediaItem->id ][ $resizedImage->id ] = $resizedImage;
 					}
 				}
 
 				continue;
 			}
 
-			if (!is_numeric($lx_mediaItem)) {
+			if (!is_numeric($mediaItem)) {
 				continue;
 			}
 
 			// If the media item is an id and not in the static storage, add it to the list of items to fetch
-			if (!isset(static::$mediaItems[ $lx_mediaItem ])) {
-				$la_itemsToFetch[] = $lx_mediaItem;
+			if (!isset(static::$mediaItems[ $mediaItem ])) {
+				$itemsToFetch[] = $mediaItem;
 			}
 		}
 
-		if ($la_itemsToFetch) {
+		if ($itemsToFetch) {
 			if (!isset(static::$mediaTable)) {
 				/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 				static::$mediaTable = FactoryLocator::get('Table')->get('Media');
 			}
 
-			$lo_records = static::$mediaTable->find()->where(['id IN' => $la_itemsToFetch])->all();
+			$records = static::$mediaTable->find()->where(['id IN' => $itemsToFetch])->all();
 
-			/** @var \Awyiss\Model\Entity\Media $lo_record */
-			foreach ($lo_records as $lo_record) {
-				static::$mediaItems[ $lo_record->id ] = $lo_record;
+			/** @var \Awyiss\Model\Entity\Media $record */
+			foreach ($records as $record) {
+				static::$mediaItems[ $record->id ] = $record;
 			}
 		}
 	}
@@ -218,45 +218,45 @@ class ResizedImageManager {
 			return null;
 		}
 
-		['width' => $li_width, 'height' => $li_height] = static::normalizeSizes($width, $height, $aspectRatio);
+		['width' => $width, 'height' => $height] = static::normalizeSizes($width, $height, $aspectRatio);
 
 		// Throw an error if both width and height are null
-		if ($li_width === null && $li_height === null) {
+		if ($width === null && $height === null) {
 			throw new InvalidArgumentException('Either width or height must be set.');
 		}
 
-		$le_strategy = ResizeStrategy::normalize($strategy);
+		$strategy = ResizeStrategy::normalize($strategy);
 
 		// Add the media item to the static storage
 		static::addMediaItem($media);
 		static::fetchMissingResizedRecords();
 
-		$lb_canBeResized = static::fileCanBeResized($media, $li_width, $li_height, $le_strategy, $allowUpscale);
+		$canBeResized = static::fileCanBeResized($media, $width, $height, $strategy, $allowUpscale);
 
-		if (!$lb_canBeResized) {
+		if (!$canBeResized) {
 			return null;
 		}
 
 		// Check if the media item is already resized
-		$lo_resizedImage = static::findResizedImage($media, $li_width, $li_height, $le_strategy, $format, $strictSize);
+		$resizedImage = static::findResizedImage($media, $width, $height, $strategy, $format, $strictSize);
 
-		if ($lo_resizedImage) {
-			if (!$lo_resizedImage->media) {
-				$lo_resizedImage->media = $media;
+		if ($resizedImage) {
+			if (!$resizedImage->media) {
+				$resizedImage->media = $media;
 			}
 
-			return $lo_resizedImage;
+			return $resizedImage;
 		}
 
-		$lo_resizedImage = static::newMediaResizedImage($media, $li_width, $li_height, $le_strategy, $format);
+		$resizedImage = static::newMediaResizedImage($media, $width, $height, $strategy, $format);
 
-		if (!static::$mediaResizedImagesTable->save($lo_resizedImage, ['associated' => false])) {
+		if (!static::$mediaResizedImagesTable->save($resizedImage, ['associated' => false])) {
 			return null;
 		}
 
-		static::$resizedRecords[ $media->id ][ $lo_resizedImage->id ] = $lo_resizedImage;
+		static::$resizedRecords[ $media->id ][ $resizedImage->id ] = $resizedImage;
 
-		return $lo_resizedImage;
+		return $resizedImage;
 	}
 
 
@@ -266,31 +266,31 @@ class ResizedImageManager {
 	 * @return void
 	 */
 	protected static function fetchMissingResizedRecords(): void {
-		$la_missingMediaIds = array_keys(array_diff_key(static::$mediaItems, static::$resizedRecords));
+		$missingMediaIds = array_keys(array_diff_key(static::$mediaItems, static::$resizedRecords));
 
 		// Fetch all missing resized records
-		if ($la_missingMediaIds) {
+		if ($missingMediaIds) {
 			if (!isset(static::$mediaResizedImagesTable)) {
 				/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 				static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
 			}
 
-			$lo_resizedRecords = static::$mediaResizedImagesTable->find()->where(['media_id IN' => $la_missingMediaIds])->all();
+			$resizedRecords = static::$mediaResizedImagesTable->find()->where(['media_id IN' => $missingMediaIds])->all();
 
 			/**
 			 * Group the fetched records by media id
 			 *
-			 * @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedRecord
+			 * @var \Awyiss\Model\Entity\MediaResizedImage $resizedRecord
 			 */
-			foreach ($lo_resizedRecords as $lo_resizedRecord) {
-				static::$resizedRecords[ $lo_resizedRecord->media_id ][ $lo_resizedRecord->id ] = $lo_resizedRecord;
+			foreach ($resizedRecords as $resizedRecord) {
+				static::$resizedRecords[ $resizedRecord->mediaId ][ $resizedRecord->id ] = $resizedRecord;
 			}
 		}
 
 		// Set an empty array for media items without related resized records
-		foreach ($la_missingMediaIds as $li_mediaId) {
-			if (!isset(static::$resizedRecords[ $li_mediaId ])) {
-				static::$resizedRecords[ $li_mediaId ] = [];
+		foreach ($missingMediaIds as $mediaId) {
+			if (!isset(static::$resizedRecords[ $mediaId ])) {
+				static::$resizedRecords[ $mediaId ] = [];
 			}
 		}
 	}
@@ -315,29 +315,29 @@ class ResizedImageManager {
 		string $format,
 		ResizeStrategy|string|int|null $strategy = null
 	): ?MediaResizedImage {
-		$la_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
+		$resizedImages = static::$resizedRecords[ $media->id ] ?? [];
 
-		$li_widthThreshold = $width ? ceil($width * 1.1) : null;
-		$li_heightThreshold = $height ? ceil($height * 1.1) : null;
+		$widthThreshold = $width ? ceil($width * 1.1) : null;
+		$heightThreshold = $height ? ceil($height * 1.1) : null;
 
-		$le_strategy = $strategy ? ResizeStrategy::normalize($strategy) : null;
+		$strategy = $strategy ? ResizeStrategy::normalize($strategy) : null;
 
-		/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
-		foreach ($la_resizedImages as $lo_resizedImage) {
-			if ($le_strategy && $lo_resizedImage->strategy !== $le_strategy) {
+		/** @var \Awyiss\Model\Entity\MediaResizedImage $resizedImage */
+		foreach ($resizedImages as $resizedImage) {
+			if ($strategy && $resizedImage->strategy !== $strategy) {
 				continue;
 			}
 
-			if ($width && ($lo_resizedImage->width < $width || $lo_resizedImage->width > $li_widthThreshold)) {
+			if ($width && ($resizedImage->width < $width || $resizedImage->width > $widthThreshold)) {
 				continue;
 			}
 
-			if ($height && ($lo_resizedImage->height < $height || $lo_resizedImage->height > $li_heightThreshold)) {
+			if ($height && ($resizedImage->height < $height || $resizedImage->height > $heightThreshold)) {
 				continue;
 			}
 
-			if ($lo_resizedImage->extension === $format) {
-				return $lo_resizedImage;
+			if ($resizedImage->extension === $format) {
+				return $resizedImage;
 			}
 		}
 
@@ -373,19 +373,19 @@ class ResizedImageManager {
 		string $format,
 		bool $strictSize = false,
 	): ?MediaResizedImage {
-		$la_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
+		$resizedImages = static::$resizedRecords[ $media->id ] ?? [];
 
-		$le_strategy = ResizeStrategy::normalize($strategy);
+		$strategy = ResizeStrategy::normalize($strategy);
 
-		/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
-		foreach ($la_resizedImages as $lo_resizedImage) {
+		/** @var \Awyiss\Model\Entity\MediaResizedImage $resizedImage */
+		foreach ($resizedImages as $resizedImage) {
 			if (
-				$lo_resizedImage->width == $width &&
-				$lo_resizedImage->height == $height &&
-				$lo_resizedImage->strategy === $le_strategy &&
-				$lo_resizedImage->extension === $format
+				$resizedImage->width == $width &&
+				$resizedImage->height == $height &&
+				$resizedImage->strategy === $strategy &&
+				$resizedImage->extension === $format
 			) {
-				return $lo_resizedImage;
+				return $resizedImage;
 			}
 		}
 
@@ -395,14 +395,14 @@ class ResizedImageManager {
 		}
 
 		// Check if there is a resized image within a certain threshold
-		$lo_resizedImage = static::findWithinThreshold($media, $width, $height, $format, $le_strategy);
+		$resizedImage = static::findWithinThreshold($media, $width, $height, $format, $strategy);
 
-		if ($lo_resizedImage) {
-			if (!$lo_resizedImage->media) {
-				$lo_resizedImage->media = $media;
+		if ($resizedImage) {
+			if (!$resizedImage->media) {
+				$resizedImage->media = $media;
 			}
 
-			return $lo_resizedImage;
+			return $resizedImage;
 		}
 
 		return null;
@@ -490,22 +490,22 @@ class ResizedImageManager {
 	 * @return array{width: int|null, height: int|null}
 	 */
 	protected static function normalizeSizes(float|int|null $width, float|int|null $height, float|int|null $aspectRatio): array {
-		$li_width = $width ? round($width) : null;
-		$li_height = $height ? round($height) : null;
+		$width = $width ? round($width) : null;
+		$height = $height ? round($height) : null;
 
 		// If the aspect ratio is set but only one dimension (width or height) is provided, calculate the other
 		if ($aspectRatio) {
-			if ($li_width && !$li_height) {
-				$li_height = round($li_width / $aspectRatio);
+			if ($width && !$height) {
+				$height = round($width / $aspectRatio);
 			}
-			elseif ($li_height && !$li_width) {
-				$li_width = round($li_height * $aspectRatio);
+			elseif ($height && !$width) {
+				$width = round($height * $aspectRatio);
 			}
 		}
 
 		return [
-			'width' => $li_width ? (int)$li_width : null,
-			'height' => $li_height ? (int)$li_height : null,
+			'width' => $width ? (int)$width : null,
+			'height' => $height ? (int)$height : null,
 		];
 	}
 }

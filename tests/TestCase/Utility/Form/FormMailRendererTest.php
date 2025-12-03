@@ -19,9 +19,7 @@ use Cake\Http\ServerRequest;
  */
 class FormMailRendererTest extends TestCase {
 	/**
-	 * Setup for each test
-	 *
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @inheritDoc
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -47,7 +45,6 @@ class FormMailRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormMailRenderer::render();
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithoutTemplate(): void {
 		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
@@ -80,7 +77,6 @@ class FormMailRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormMailRenderer::render();
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithTemplate(): void {
 		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */

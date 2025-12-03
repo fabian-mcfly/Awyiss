@@ -18,7 +18,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWhenLabelIsNotSet(): void {
 		$column = new BootstrapColumn(6, 12);
@@ -40,7 +39,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWhenLabelIsSet(): void {
 		$column = new BootstrapColumn(6, 12, 'Custom Label');
@@ -60,7 +58,6 @@ class BootstrapColumnTest extends TestCase {
 	 * @param string $expectedPercentage
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getLabel()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabelWithDifferentFractions(int $numerator, int $denominator, string $expectedPercentage): void {
 		$column = new BootstrapColumn($numerator, $denominator);
@@ -73,7 +70,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getPercentage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPercentageWithDefaultPrecision(): void {
 		$column = new BootstrapColumn(1, 3);
@@ -87,7 +83,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getPercentage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPercentageWithCustomPrecision(): void {
 		$column = new BootstrapColumn(1, 3);
@@ -101,7 +96,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getPercentage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPercentageWithZeroPrecision(): void {
 		$column = new BootstrapColumn(1, 3);
@@ -115,7 +109,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getPercentage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPercentageWithHighPrecision(): void {
 		$column = new BootstrapColumn(1, 6);
@@ -129,7 +122,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getPercentage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPercentageWithFullWidth(): void {
 		$column = new BootstrapColumn(12, 12);
@@ -143,7 +135,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getPercentage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPercentageWithZeroNumerator(): void {
 		$column = new BootstrapColumn(0, 12);
@@ -157,7 +148,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithZeroDenominator(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -169,7 +159,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithNegativeNominator(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -181,7 +170,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithNegativeDenominator(): void {
 		$this->expectException(InvalidArgumentException::class);
@@ -193,7 +181,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::getPercentage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNumeratorGreaterThanDenominator(): void {
 		$column = new BootstrapColumn(15, 12);
@@ -207,7 +194,6 @@ class BootstrapColumnTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\BootstrapColumn::jsonSerialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testJsonSerialize(): void {
 		$column = new BootstrapColumn(6, 12);

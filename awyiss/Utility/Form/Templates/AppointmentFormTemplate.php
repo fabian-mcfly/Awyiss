@@ -85,9 +85,9 @@ class AppointmentFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	public static function getElements(array $languages): array {
-		$la_fields = ['title', 'name', 'phone', 'email', 'datetime', 'message', 'privacy_accepted', 'submit'];
+		$fields = ['title', 'name', 'phone', 'email', 'datetime', 'message', 'privacy_accepted', 'submit'];
 
-		return static::buildElements($la_fields, $languages);
+		return static::buildElements($fields, $languages);
 	}
 
 
@@ -95,9 +95,9 @@ class AppointmentFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	protected static function addDatetime(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = parent::addDatetime($mainLocale, $i18n, $languages);
-		$la_settings['required'] = true;
+		$settings = parent::addDatetime($mainLocale, $i18n, $languages);
+		$settings['required'] = true;
 
-		return $la_settings;
+		return $settings;
 	}
 }

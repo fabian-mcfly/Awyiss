@@ -19,7 +19,6 @@ use InvalidArgumentException;
 class AddressCollectionTest extends TestCase {
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithEmptyArray(): void {
 		$collection = new AddressCollection();
@@ -30,7 +29,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithAddressObjects(): void {
 		$address1 = new Address(51.5074, -0.1278, 'London');
@@ -46,7 +44,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithAddressArrays(): void {
 		$addressArray1 = [
@@ -73,7 +70,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithAddressesMixed(): void {
 		$address1 = new Address(51.5074, -0.1278, 'London');
@@ -94,7 +90,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddSingleAddress(): void {
 		$collection = new AddressCollection();
@@ -110,7 +105,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddMultipleAddresses(): void {
 		$collection = new AddressCollection();
@@ -127,7 +121,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddAddressArray(): void {
 		$collection = new AddressCollection();
@@ -148,7 +141,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddInvalidAddressArray(): void {
 		$collection = new AddressCollection();
@@ -163,7 +155,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetValidIndex(): void {
 		$address = new Address(51.5074, -0.1278, 'London');
@@ -175,7 +166,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetInvalidIndex(): void {
 		$collection = new AddressCollection();
@@ -187,7 +177,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveValidIndex(): void {
 		$address1 = new Address(51.5074, -0.1278, 'London');
@@ -204,7 +193,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveInvalidIndex(): void {
 		$collection = new AddressCollection();
@@ -218,7 +206,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCountable(): void {
 		$collection = new AddressCollection();
@@ -238,7 +225,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIteratorAggregate(): void {
 		$address1 = new Address(51.5074, -0.1278, 'London');
@@ -258,7 +244,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToArrayShallow(): void {
 		$address1 = new Address(51.5074, -0.1278, 'London');
@@ -275,7 +260,6 @@ class AddressCollectionTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToArrayDeep(): void {
 		$address1 = new Address(51.5074, -0.1278, 'London');

@@ -46,7 +46,6 @@ class SurveyRendererTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		$this->configApplication(Awyiss::class, []);
@@ -80,7 +79,6 @@ class SurveyRendererTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -103,7 +101,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSurveyByIdentifierWithIdReturnsSurvey(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -117,7 +114,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSurveyByIdentifierWithStringIdentifierReturnsSurvey(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -131,7 +127,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSurveyByIdentifierReturnsNullIfInactive(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -144,7 +139,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSurveyByIdentifierReturnsSurveyInPreviewModeIfInactive(): void {
 		// Mock the preview mode inside the SurveyRenderer
@@ -163,7 +157,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSurveyByIdentifierReturnsNullIfNotFound(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -176,7 +169,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::initSurvey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitSurveyInitializesSurvey(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -192,7 +184,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::initSurvey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitSurveyInitializesSurveyWithValidIdentifier(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -208,7 +199,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::initSurvey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitSurveyWithInvalidIdentifier(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -223,7 +213,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::initSurvey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitSurveyWithInactiveSurveyReturnsNull(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -236,7 +225,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::initSurvey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitSurveyWithInactiveSurveyInPreviewMode(): void {
 		$renderer = $this->getMockBuilder(SurveyRenderer::class)->onlyMethods(['isPreview'])->setConstructorArgs([$this->view])->getMock();
@@ -254,7 +242,6 @@ class SurveyRendererTest extends TestCase {
 	 * @param int $expectedQuestions
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::initSurvey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	#[TestWith([false, 4])]
 	#[TestWith([true, 6])]
@@ -274,7 +261,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::initSurvey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitSurveyWithValidRequestData(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -295,7 +281,6 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::initSurvey()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitSurveyWithInvalidRequestData(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -316,8 +301,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testProcess(): void {
@@ -336,7 +321,7 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testProcessThrowsIfNoSurveyInitialized(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -351,8 +336,8 @@ class SurveyRendererTest extends TestCase {
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessSavesAndRedirectsWhenConditionsMet(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -389,8 +374,8 @@ class SurveyRendererTest extends TestCase {
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testProcessNotSavesAndRedirectsWhenDifferentSurvey(BackedEnum $action): void {
@@ -426,8 +411,8 @@ class SurveyRendererTest extends TestCase {
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testProcessNotSavesAndRedirectsWhenFormIdentifierIsSet(BackedEnum $action): void {
@@ -466,8 +451,8 @@ class SurveyRendererTest extends TestCase {
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testProcessDoesNotSavesAndRedirectsForOtherActions(BackedEnum $action): void {
@@ -502,7 +487,6 @@ class SurveyRendererTest extends TestCase {
 
 	/**
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function saveEntryAndRedirectActionsProvider(): array {
 		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $enum */
@@ -516,7 +500,6 @@ class SurveyRendererTest extends TestCase {
 
 	/**
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function showFormActionsProvider(): array {
 		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $enum */
@@ -533,8 +516,8 @@ class SurveyRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::processSurveyEntryFromHash()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessProcessesEntryFromHash(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -566,8 +549,8 @@ class SurveyRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::processSurveyEntryFromHash()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessProcessesEntryFromHashWithInvalidHash(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -594,7 +577,7 @@ class SurveyRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::processSurveyFromData()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testProcessLoadsProgressFromFormEntryHash(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -622,8 +605,8 @@ class SurveyRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::processSurveyFromData()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNotLoadsProgressFromFormEntryHash(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -651,8 +634,8 @@ class SurveyRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::processSurveyFromData()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNotLoadsProgressFromFormEntryHashWithDataOfDifferentSurvey(): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -681,8 +664,8 @@ class SurveyRendererTest extends TestCase {
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessShowsForm(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -727,8 +710,8 @@ class SurveyRendererTest extends TestCase {
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessShowsFormWithInvalidDataContainsError(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -776,8 +759,8 @@ class SurveyRendererTest extends TestCase {
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessShowsFormWithInvalidDataContainsNotErrorWithOtherFormIdentifier(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -825,7 +808,7 @@ class SurveyRendererTest extends TestCase {
 	 * @param \BackedEnum $action
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
-	 * @noinspection PhpVariableNamingConventionInspection
+	 * @throws \Exception
 	 */
 	public function testProcessSubmitsFormWithValidData(BackedEnum $action): void {
 		$renderer = new SurveyRenderer($this->view);
@@ -882,8 +865,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testParseAwyissImageTagInSuccessMessage(): void {
@@ -926,8 +909,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testParseAwyissImageTagInErrorMessage(): void {
@@ -963,14 +946,11 @@ class SurveyRendererTest extends TestCase {
 	}
 
 
-
-
-
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testParseAwyissImageTagInInfoTextQuestion(): void {
@@ -1006,8 +986,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testParseModuleInSuccessMessage(): void {
@@ -1048,8 +1028,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::process()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testParseModuleInErrorMessage(): void {
@@ -1086,8 +1066,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testParseModuleInInfoTextQuestion(): void {
 		$view = new FrontendView($this->view->getRequest());
@@ -1122,8 +1102,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResultClassFinalResult(): void {
 		$view = new FrontendView($this->view->getRequest());
@@ -1155,8 +1135,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testResultClassStepResult(): void {
 		$view = new FrontendView($this->view->getRequest());
@@ -1189,8 +1169,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testGetSurveyBodySingleChoice(): void {
@@ -1214,8 +1194,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testGetSurveyBodyMultipleChoice(): void {
@@ -1246,8 +1226,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testGetSurveyBodyInfoText(): void {
@@ -1279,8 +1259,8 @@ class SurveyRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getSurveyBody()
+	 * @throws \Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testGetSurveyBodyFreeText(): void {
@@ -1312,7 +1292,6 @@ class SurveyRendererTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Survey\SurveyRenderer::getFormRenderer()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection HtmlUnknownAnchorTarget
 	 */
 	public function testGetFormRendererLoadsCustomFormRenderer(): void {

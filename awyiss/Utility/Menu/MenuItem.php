@@ -101,12 +101,11 @@ abstract class MenuItem implements ArrayAccess {
 			return null;
 		}
 
-		$lo_identity = $identity;
-		if (!$lo_identity) {
-			$lo_identity = $this->identity;
+		if (!$identity) {
+			$identity = $this->identity;
 		}
 
-		return $lo_identity->scopeIsAccessible($this->access->getScope(), $this->access->getAdditionalData() ?? [], $this->access->getIdentifier());
+		return $identity->scopeIsAccessible($this->access->getScope(), $this->access->getAdditionalData() ?? [], $this->access->getIdentifier());
 	}
 
 
@@ -141,7 +140,7 @@ abstract class MenuItem implements ArrayAccess {
 	 * @return bool True if the current route matches the route of the menu item, false otherwise.
 	 */
 	public function isCurrentRoute(string $currentRoute): bool {
-		static $ls_fullBaseUrl;
+		static $fullBaseUrl;
 
 		if ($this->isCurrentRoute !== null) {
 			return $this->isCurrentRoute;
@@ -152,44 +151,44 @@ abstract class MenuItem implements ArrayAccess {
 			return false;
 		}
 
-		$ls_testUrl = $this->getLink()?->getUrl();
-		if (!$ls_testUrl) {
+		$testUrl = $this->getLink()?->getUrl();
+		if (!$testUrl) {
 			$this->isCurrentRoute = false;
 			return false;
 		}
 
-		$ls_currentRoute = trim($currentRoute, '/') . '/';
-		if (str_contains($ls_currentRoute, '?') || str_contains($ls_currentRoute, '#')) {
-			$ls_currentRoute = rtrim($ls_currentRoute, '/');
+		$currentRoute = trim($currentRoute, '/') . '/';
+		if (str_contains($currentRoute, '?') || str_contains($currentRoute, '#')) {
+			$currentRoute = rtrim($currentRoute, '/');
 		}
-		$ls_testUrl = trim($ls_testUrl, '/') . '/';
-		if (str_contains($ls_testUrl, '?') || str_contains($ls_testUrl, '#')) {
-			$ls_testUrl = rtrim($ls_testUrl, '/');
-		}
-
-		if (!isset($ls_fullBaseUrl)) {
-			$ls_fullBaseUrl = Router::url('/', true);
-		}
-		if (str_starts_with($ls_testUrl, $ls_fullBaseUrl)) {
-			$ls_testUrl = ltrim(substr_replace($ls_testUrl, '', 0, strlen($ls_fullBaseUrl)), '/');
+		$testUrl = trim($testUrl, '/') . '/';
+		if (str_contains($testUrl, '?') || str_contains($testUrl, '#')) {
+			$testUrl = rtrim($testUrl, '/');
 		}
 
-		if ($ls_testUrl === $ls_currentRoute) {
+		if (!isset($fullBaseUrl)) {
+			$fullBaseUrl = Router::url('/', true);
+		}
+		if (str_starts_with($testUrl, $fullBaseUrl)) {
+			$testUrl = ltrim(substr_replace($testUrl, '', 0, strlen($fullBaseUrl)), '/');
+		}
+
+		if ($testUrl === $currentRoute) {
 			$this->isCurrentRoute = true;
 			return true;
 		}
 
 		// If there are parameters in the url, remove them and try again
-		if (str_contains($ls_currentRoute, ':')) {
-			$la_segments = explode('/', trim($ls_currentRoute, '/'));
-			$la_segments = array_filter($la_segments, function (string $segment) {
+		if (str_contains($currentRoute, ':')) {
+			$segments = explode('/', trim($currentRoute, '/'));
+			$segments = array_filter($segments, function (string $segment) {
 				$this->isCurrentRoute = !str_contains($segment, ':');
 				return $this->isCurrentRoute;
 			});
 
-			$ls_cleanRoute = implode('/', $la_segments) . '/';
+			$cleanRoute = implode('/', $segments) . '/';
 
-			$this->isCurrentRoute = $ls_testUrl === $ls_cleanRoute;
+			$this->isCurrentRoute = $testUrl === $cleanRoute;
 
 			return $this->isCurrentRoute;
 		}
@@ -207,8 +206,8 @@ abstract class MenuItem implements ArrayAccess {
 	 * @return bool True if the current route matches the route of the menu item or any of its children, false otherwise.
 	 */
 	public function hasCurrentRoute(string $currentRoute): bool {
-		foreach ($this->children() as $lo_child) {
-			if ($lo_child->isCurrentRoute($currentRoute)) {
+		foreach ($this->children() as $child) {
+			if ($child->isCurrentRoute($currentRoute)) {
 				return true;
 			}
 		}
@@ -233,8 +232,8 @@ abstract class MenuItem implements ArrayAccess {
 			return;
 		}
 
-		foreach ($this->children->items($maxLevel) as $lx_identifier => $lo_childItem) {
-			yield $lx_identifier => $lo_childItem;
+		foreach ($this->children->items($maxLevel) as $identifier => $childItem) {
+			yield $identifier => $childItem;
 		}
 	}
 
@@ -257,19 +256,19 @@ abstract class MenuItem implements ArrayAccess {
 	 * @return void
 	 */
 	public function setChildren(iterable $children, ?array $config = null): void {
-		$la_config = $config ?? $this->getConfig();
+		$config ??= $this->getConfig();
 
-		if (!array_key_exists('identity', $la_config)) {
-			$la_config['identity'] = $this->identity;
+		if (!array_key_exists('identity', $config)) {
+			$config['identity'] = $this->identity;
 		}
 
-		$la_config['menuItemClass'] ??= static::class;
+		$config['menuItemClass'] ??= static::class;
 
-		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_menuClass */
-		$ls_menuClass = $la_config['menuClass'] ?? App::className('Menu', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\Menu> $menuClass */
+		$menuClass = $config['menuClass'] ?? App::className('Menu', 'Utility/Menu');
 
 		/** @see \Awyiss\Utility\Menu\Menu::__construct() */
-		$this->children = new $ls_menuClass($children, $la_config, $this->level + 1);
+		$this->children = new $menuClass($children, $config, $this->level + 1);
 	}
 
 
@@ -308,8 +307,8 @@ abstract class MenuItem implements ArrayAccess {
 		}
 
 		if ($this->hasChildren()) {
-			foreach ($this->children() as $lo_child) {
-				$lo_child->setIdentity($identity);
+			foreach ($this->children() as $child) {
+				$child->setIdentity($identity);
 			}
 		}
 
@@ -379,22 +378,22 @@ abstract class MenuItem implements ArrayAccess {
 		}
 
 		// Determine visibility based on the item's own accessibility
-		$lb_isVisible = $this->isAccessible();
+		$isVisible = $this->isAccessible();
 
-		$lo_children = $this->getChildren();
-		$lb_anyChildIsVisible = null;
-		if ($lo_children) {
-			$lb_anyChildIsVisible = false;
+		$children = $this->getChildren();
+		$anyChildIsVisible = null;
+		if ($children) {
+			$anyChildIsVisible = false;
 
 			// Check the visibility of child items
-			foreach ($lo_children->items() as $lo_child) {
+			foreach ($children->items() as $child) {
 				// Determine and set visibility for each child
-				$lb_childIsVisible = $lo_child->determineVisibility($reset);
+				$childIsVisible = $child->determineVisibility($reset);
 
 				// If any child is visible, set the parent item to be visible as well
-				if ($lb_childIsVisible) {
-					$lb_isVisible = true;
-					$lb_anyChildIsVisible = true;
+				if ($childIsVisible) {
+					$isVisible = true;
+					$anyChildIsVisible = true;
 
 					if (!$reset) {
 						break;
@@ -406,14 +405,14 @@ abstract class MenuItem implements ArrayAccess {
 		// When no child is visible and the item has no link,
 		// there is no reason to show this item,
 		// so we set it to not visible
-		if ($lb_anyChildIsVisible === false && !$this->getLink()?->getUrl()) {
-			$lb_isVisible = false;
+		if ($anyChildIsVisible === false && !$this->getLink()?->getUrl()) {
+			$isVisible = false;
 		}
 
 		// Set the visibility for this item
-		$this->visible = $lb_isVisible;
+		$this->visible = $isVisible;
 
-		return $lb_isVisible;
+		return $isVisible;
 	}
 
 
@@ -452,12 +451,12 @@ abstract class MenuItem implements ArrayAccess {
 		}
 
 		/**
-		 * @var class-string<\Awyiss\Utility\Menu\MenuItemAccess> $ls_menuItemAccessClass
+		 * @var class-string<\Awyiss\Utility\Menu\MenuItemAccess> $menuItemAccessClass
 		 * @see \Awyiss\Utility\Menu\MenuItemAccess::__construct()
 		 */
-		$ls_menuItemAccessClass = App::className('MenuItemAccess', 'Utility/Menu');
+		$menuItemAccessClass = App::className('MenuItemAccess', 'Utility/Menu');
 
-		return new $ls_menuItemAccessClass((object)$entity->access);
+		return new $menuItemAccessClass((object)$entity->access);
 	}
 
 
@@ -473,19 +472,19 @@ abstract class MenuItem implements ArrayAccess {
 		}
 
 		/**
-		 * @var class-string<\Awyiss\Utility\Menu\MenuItem> $ls_menuItemLinkClass
+		 * @var class-string<\Awyiss\Utility\Menu\MenuItem> $menuItemLinkClass
 		 * @see \Awyiss\Utility\Menu\MenuItemLink::__construct()
 		 */
-		$ls_menuItemLinkClass = App::className('MenuItemLink', 'Utility/Menu');
+		$menuItemLinkClass = App::className('MenuItemLink', 'Utility/Menu');
 
-		$lo_link = new $ls_menuItemLinkClass($entity->link);
+		$link = new $menuItemLinkClass($entity->link);
 
 		if ($entity->external ?? false) {
-			$lo_link->setTarget('_blank');
-			$lo_link->setRel('noopener noreferrer');
+			$link->setTarget('_blank');
+			$link->setRel('noopener noreferrer');
 		}
 
-		return $lo_link;
+		return $link;
 	}
 
 
@@ -519,9 +518,9 @@ abstract class MenuItem implements ArrayAccess {
 	 * @return mixed The value of the property.
 	 */
 	public function __get(string $field): mixed {
-		$ls_method = 'get' . Inflector::camelize($field);
-		if (method_exists($this, $ls_method)) {
-			return $this->$ls_method();
+		$method = 'get' . Inflector::camelize($field);
+		if (method_exists($this, $method)) {
+			return $this->$method();
 		}
 
 		throw new RuntimeException(sprintf('Unknown field `%s` in `%s`', $field, static::class));

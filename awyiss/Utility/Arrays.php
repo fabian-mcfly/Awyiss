@@ -23,43 +23,57 @@ class Arrays {
 	/**
 	 * @param array $data
 	 * @param string|int|null $field
+	 * @param bool $orderByKey
+	 * @param int $direction
 	 * @return void
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	public static function naturalSort(array &$data, string|int|null $field = null, bool $orderByKey = false): void {
-		$ls_locale = I18n::getLocale();
+	public static function naturalSort(array &$data, string|int|null $field = null, bool $orderByKey = false, int $direction = SORT_ASC): void {
+		$locale = I18n::getLocale();
 
-		if (!isset(static::$collators[ $ls_locale ])) {
-			$lo_collator = static::$collators[ $ls_locale ] = new Collator($ls_locale);
+		if (!isset(static::$collators[ $locale ])) {
+			$collator = static::$collators[ $locale ] = new Collator($locale);
 
 			/**
 			 * Ignore case but not accents
 			 * This will allow sorting 'Äpfel' after 'Apfel', not after 'Zitronen'
 			 */
-			$lo_collator->setStrength(Collator::SECONDARY);
+			/** @noinspection PhpExpectedValuesShouldBeUsedInspection */
+			$collator->setStrength(Collator::SECONDARY);
 			// Enable natural sorting for numbers
-			$lo_collator->setAttribute(Collator::NUMERIC_COLLATION, Collator::ON);
+			$collator->setAttribute(Collator::NUMERIC_COLLATION, Collator::ON);
 		}
 
-		$lo_collator ??= static::$collators[ $ls_locale ];
+		$collator ??= static::$collators[ $locale ];
 
 		if ($orderByKey) {
-			uksort($data, function (mixed $a, mixed $b) use ($lo_collator): int {
-				return $lo_collator->compare($a, $b);
+			uksort($data, function (mixed $a, mixed $b) use ($collator, $direction): int {
+				if ($direction === SORT_DESC) {
+					return $collator->compare($b, $a);
+				}
+
+				return $collator->compare($a, $b);
 			});
 
 			return;
 		}
 
-		uasort($data, function (mixed $a, mixed $b) use ($field, $lo_collator): int {
+		uasort($data, function (mixed $a, mixed $b) use ($field, $collator, $direction): int {
 			if ($field !== null) {
 				$aValue = is_object($a) ? $a->{ $field } : $a[ $field ];
 				$bValue = is_object($b) ? $b->{ $field } : $b[ $field ];
 
-				return $lo_collator->compare($aValue, $bValue);
+				if ($direction === SORT_DESC) {
+					return $collator->compare($bValue, $aValue);
+				}
+
+				return $collator->compare($aValue, $bValue);
 			}
 
-			return $lo_collator->compare($a, $b);
+			if ($direction === SORT_DESC) {
+				return $collator->compare($b, $a);
+			}
+
+			return $collator->compare($a, $b);
 		});
 	}
 }

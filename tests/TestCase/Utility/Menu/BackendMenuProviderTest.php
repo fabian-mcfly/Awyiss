@@ -87,7 +87,6 @@ class BackendMenuProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuProvider::__construct()
 	 * @see \Awyiss\Utility\Menu\BackendMenuProvider::createMenu()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateMenu(): void {
 		$menu = $this->menuProvider->getMenu();
@@ -122,7 +121,6 @@ class BackendMenuProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuProvider::__construct()
 	 * @see \Awyiss\Utility\Menu\BackendMenuProvider::createCustomMenu()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateCustomMenu(): void {
 		$customMenu = $this->menuProvider->getCustomMenu();
@@ -164,7 +162,6 @@ class BackendMenuProviderTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\BackendMenuProvider::__construct()
 	 * @see \Awyiss\Utility\Menu\BackendMenuProvider::createDynamicMenu()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCreateDynamicMenu(): void {
 		$dynamicMenu = $this->menuProvider->getDynamicMenu();

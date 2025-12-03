@@ -64,9 +64,9 @@ class CallbackFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	public static function getElements(array $languages): array {
-		$la_fields = ['name', 'phone', 'privacy_accepted', 'submit'];
+		$fields = ['name', 'phone', 'privacy_accepted', 'submit'];
 
-		return static::buildElements($la_fields, $languages);
+		return static::buildElements($fields, $languages);
 	}
 
 
@@ -74,7 +74,7 @@ class CallbackFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	protected static function addPhone(string $mainLocale, bool $i18n, array $languages): array {
-		$la_settings = [
+		$settings = [
 			'type' => 'tel',
 			'identifier' => 'phone',
 			'title' => static::$translations[ $mainLocale ]['phone'],
@@ -82,9 +82,9 @@ class CallbackFormTemplate extends AbstractFormTemplate {
 		];
 
 		if ($i18n) {
-			$la_settings['_translations'] = static::getTranslations('phone', $languages);
+			$settings['_translations'] = static::getTranslations('phone', $languages);
 		}
 
-		return $la_settings;
+		return $settings;
 	}
 }

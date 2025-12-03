@@ -26,9 +26,9 @@ class BackendMenu extends Menu {
 			return;
 		}
 
-		$la_children = $this->toArray();
-		if (isset($la_children[ $identifier ])) {
-			$this->appendInNestedChildren($la_children[ $identifier ], $entries, $determineVisibility);
+		$children = $this->toArray();
+		if (isset($children[ $identifier ])) {
+			$this->appendInNestedChildren($children[ $identifier ], $entries, $determineVisibility);
 			return;
 		}
 
@@ -58,7 +58,6 @@ class BackendMenu extends Menu {
 		 * known identifier.
 		 */
 		if ($identifier && !isset($this->items[ $identifier ]) && !$this->getItem($identifier)) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$identifier = array_key_last($this->items);
 		}
 
@@ -74,12 +73,12 @@ class BackendMenu extends Menu {
 	 * @throws \ReflectionException
 	 */
 	protected function appendInNestedChildren(MenuItem $item, array $entries, bool $determineVisibility): void {
-		$lo_subMenu = $item->getChildren();
-		if (!$lo_subMenu) {
+		$subMenu = $item->getChildren();
+		if (!$subMenu) {
 			$item->setChildren($entries);
 		}
 		else {
-			$lo_subMenu->insertEntriesAfter($entries, null, false);
+			$subMenu->insertEntriesAfter($entries, null, false);
 		}
 
 		if ($determineVisibility && $this->identity) {

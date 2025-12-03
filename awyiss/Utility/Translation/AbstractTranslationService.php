@@ -37,42 +37,42 @@ abstract class AbstractTranslationService implements TranslationServiceInterface
 		array $options = []
 	): EntityInterface|false {
 		// Extract texts from entity fields
-		$la_texts = [];
+		$texts = [];
 
-		$la_fields = $fields ?: $this->getTranslatableFields($entity);
+		$fields = $fields ?: $this->getTranslatableFields($entity);
 
-		foreach ($la_fields as $ls_field) {
-			if ($entity->has($ls_field)) {
-				$la_texts[ $ls_field ] = $entity->get($ls_field);
+		foreach ($fields as $field) {
+			if ($entity->has($field)) {
+				$texts[ $field ] = $entity->get($field);
 				continue;
 			}
 
 			if ($entity->has('attributes') && $entity->attributes instanceof EntityInterface) {
-				if ($entity->attributes->has($ls_field)) {
-					$la_texts[ $ls_field ] = $entity->attributes->get($ls_field);
+				if ($entity->attributes->has($field)) {
+					$texts[ $field ] = $entity->attributes->get($field);
 				}
 			}
 		}
 
-		$la_texts = array_filter($la_texts, fn($value) => !empty($value));
-		if (empty($la_texts)) {
+		$texts = array_filter($texts, fn($value) => !empty($value));
+		if (empty($texts)) {
 			// All fields are empty or no translatable fields found
 			return $entity;
 		}
 
 		// Translate all texts in batch
-		$la_results = $this->translateBatch($la_texts, $targetLanguage, $sourceLanguage, $options);
+		$results = $this->translateBatch($texts, $targetLanguage, $sourceLanguage, $options);
 
-		if ($la_results === false) {
+		if ($results === false) {
 			return false;
 		}
 
 		// Update the entity with translated fields
-		foreach ($la_results as $ls_field => $lo_translation) {
-			if ($lo_translation->isSuccess()) {
-				$entity->set($ls_field, $lo_translation->getTranslatedText());
+		foreach ($results as $field => $translation) {
+			if ($translation->isSuccess()) {
+				$entity->set($field, $translation->getTranslatedText());
 
-				if (!$entity->has($ls_field) && $entity->has('attributes') && $entity->attributes instanceof EntityInterface) {
+				if (!$entity->has($field) && $entity->has('attributes') && $entity->attributes instanceof EntityInterface) {
 					// Field is an attribute
 					$entity->setDirty('attributes');
 				}
@@ -123,22 +123,22 @@ abstract class AbstractTranslationService implements TranslationServiceInterface
 
 		static::$translationFieldsCache['content'] = ['title', 'subtitle', 'text'];
 
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_contentsTable */
-		$lo_contentsTable = FactoryLocator::get('Table')->get('Contents');
-		if (!$lo_contentsTable->hasAttributes()) {
+		/** @var \Awyiss\Model\Table\ContentsTable $contentsTable */
+		$contentsTable = FactoryLocator::get('Table')->get('Contents');
+		if (!$contentsTable->hasAttributes()) {
 			return static::$translationFieldsCache['content'];
 		}
 
-		$lo_attributes = $lo_contentsTable->getAttributes();
-		foreach ($lo_attributes as $lo_attribute) {
+		$attributes = $contentsTable->getAttributes();
+		foreach ($attributes as $attribute) {
 			if (
-				in_array($lo_attribute->inputType, [
+				in_array($attribute->inputType, [
 					'text',
 					'textarea',
 					'texteditor',
 				])
 			) {
-				static::$translationFieldsCache['content'][] = $lo_attribute->identifier;
+				static::$translationFieldsCache['content'][] = $attribute->identifier;
 			}
 		}
 
@@ -153,33 +153,33 @@ abstract class AbstractTranslationService implements TranslationServiceInterface
 	 * @return array
 	 */
 	protected function getPageRoleTranslatableFields(Page $entity): array {
-		$ls_pageRole = $entity->pageRoleId->name;
+		$pageRole = $entity->pageRoleId->name;
 
-		if (isset(static::$translationFieldsCache[ $ls_pageRole ])) {
-			return static::$translationFieldsCache[ $ls_pageRole ];
+		if (isset(static::$translationFieldsCache[ $pageRole ])) {
+			return static::$translationFieldsCache[ $pageRole ];
 		}
 
-		static::$translationFieldsCache[ $ls_pageRole ] = ['title', 'meta_title', 'meta_description'];
+		static::$translationFieldsCache[ $pageRole ] = ['title', 'meta_title', 'meta_description'];
 
-		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get(Inflector::pluralize($ls_pageRole));
-		if (!$lo_table->hasAttributes()) {
-			return static::$translationFieldsCache[ $ls_pageRole ];
+		/** @var \Awyiss\Model\Table\PagesTable $table */
+		$table = FactoryLocator::get('Table')->get(Inflector::pluralize($pageRole));
+		if (!$table->hasAttributes()) {
+			return static::$translationFieldsCache[ $pageRole ];
 		}
 
-		$lo_attributes = $lo_table->getAttributes();
-		foreach ($lo_attributes as $lo_attribute) {
+		$attributes = $table->getAttributes();
+		foreach ($attributes as $attribute) {
 			if (
-				in_array($lo_attribute->inputType, [
+				in_array($attribute->inputType, [
 					'text',
 					'textarea',
 					'texteditor',
 				])
 			) {
-				static::$translationFieldsCache[ $ls_pageRole ][] = $lo_attribute->identifier;
+				static::$translationFieldsCache[ $pageRole ][] = $attribute->identifier;
 			}
 		}
 
-		return static::$translationFieldsCache[ $ls_pageRole ];
+		return static::$translationFieldsCache[ $pageRole ];
 	}
 }

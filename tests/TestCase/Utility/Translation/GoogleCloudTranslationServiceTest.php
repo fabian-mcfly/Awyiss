@@ -24,7 +24,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -37,7 +36,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorThrowsExceptionWhenApiKeyNotConfigured(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.googleApiKey');
@@ -52,7 +50,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::getSupportedSourceLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSupportedSourceLanguages(): void {
 		$service = new GoogleCloudTranslationService();
@@ -72,7 +69,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::getSupportedTargetLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSupportedTargetLanguages(): void {
 		$service = new GoogleCloudTranslationService();
@@ -89,7 +85,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::getBatchSize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetBatchSize(): void {
 		$service = new GoogleCloudTranslationService();
@@ -101,7 +96,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextWithSuccess(): void {
 		$responseBody = json_encode([
@@ -135,7 +129,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextWithAutoDetection(): void {
 		$responseBody = json_encode([
@@ -165,7 +158,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextReturnsFalseOnApiError(): void {
 		$errorBody = json_encode([
@@ -190,7 +182,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextReturnsFalseOnMissingTranslation(): void {
 		$responseBody = json_encode([
@@ -214,7 +205,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextHandlesHtmlTags(): void {
 		$responseBody = json_encode([
@@ -244,7 +234,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchWithSuccess(): void {
 		$responseBody = json_encode([
@@ -301,7 +290,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchPreservesArrayKeys(): void {
 		$responseBody = json_encode([
@@ -341,7 +329,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchReturnsFalseOnApiError(): void {
 		$errorBody = json_encode([
@@ -366,7 +353,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchReturnsFalseOnMissingTranslations(): void {
 		$responseBody = json_encode([
@@ -390,7 +376,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchWithEmptyArray(): void {
 		$responseBody = json_encode([
@@ -415,7 +400,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::getUsageInfo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetUsageInfoReturnsNull(): void {
 		$service = new GoogleCloudTranslationService();
@@ -429,7 +413,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityWithContentEntity(): void {
 		$responseBody = json_encode([
@@ -475,7 +458,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextWithoutDetectedSourceLanguage(): void {
 		$responseBody = json_encode([
@@ -505,7 +487,6 @@ class GoogleCloudTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\GoogleCloudTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchWithoutDetectedSourceLanguage(): void {
 		$responseBody = json_encode([

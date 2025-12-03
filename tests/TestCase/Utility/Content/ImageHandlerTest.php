@@ -48,7 +48,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceImageTags(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -68,7 +68,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceImageTagsWithUnknownImage(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -86,7 +86,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceImageTagsWithTagAttributes(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -106,7 +106,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceImageTagsWithFields(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -144,7 +144,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInAttribute(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -168,7 +168,7 @@ class ImageHandlerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInAttributeWhenAttributeInputTypeNotTexteditor(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -194,7 +194,7 @@ class ImageHandlerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInAttributeWhenAttributeInputTypeNotTexteditorAndNotExplicitelyProvided(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -223,7 +223,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInTranslations(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -248,7 +248,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceImageTagsMultipleInOneField(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -275,7 +275,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceImageTagsAvoidsDuplicateMediaAssignmentsInOneField(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -300,7 +300,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection
 	 */
 	public function testReplaceImageTagsAvoidsDuplicateMediaAssignmentsInTwoFields(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -322,7 +322,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsAvoidsDuplicateMediaAssignmentsInEntityAndAttributes(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -344,7 +344,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsAvoidsDuplicateMediaAssignmentsInEntityAndTranslation(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -371,7 +371,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTags()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection,
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute,
 	 */
 	public function testReplaceImageTagsWithExistingMediaAssignmentsKeepMediaAssignmentId(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -401,7 +401,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceImageTagsInField(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -422,7 +422,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInFieldWithUnknownImage(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -441,7 +441,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInFieldWithTagAttributes(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -462,7 +462,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInFieldOfAttribute(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -487,7 +487,7 @@ class ImageHandlerTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInFieldOfAttributeWhenAttributeInputTypeNotTexteditor(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -509,7 +509,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceImageTagsInFieldMultipleInOneField(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -541,7 +541,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceImageTagsInFieldAvoidsDuplicateMediaAssignmentsInOneField(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -571,7 +571,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection
 	 */
 	public function testReplaceImageTagsInFieldAvoidsDuplicateMediaAssignmentsInTwoFields(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -596,7 +596,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInFieldAvoidsDuplicateMediaAssignmentsInEntityAndAttributes(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -621,7 +621,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceImageTagsInFieldAvoidsDuplicateMediaAssignmentsInEntityAndTranslation(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -651,7 +651,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection,
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute,
 	 */
 	public function testReplaceImageTagsInFieldWithExistingMediaAssignmentsKeepMediaAssignmentId(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -682,7 +682,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTags()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTags(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -697,7 +697,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTags()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsWithUnknownMediaId(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -713,7 +713,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTags()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsWithFields(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -739,7 +739,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTags()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInAttribute(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -755,7 +755,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTags()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInTranslations(): void {
 		/**
@@ -784,7 +784,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTags()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsMultipleInOneField(): void {
 		/** @var \Awyiss\Model\Entity\Widget $widget */
@@ -802,7 +802,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInField(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -818,7 +818,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInFieldWithUnknownMediaId(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -835,7 +835,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInFieldInAttribute(): void {
 		/** @var \Awyiss\Model\Entity\Page $news */
@@ -852,7 +852,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInField()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInFieldMultipleInOneField(): void {
 		/** @var \Awyiss\Model\Entity\Widget $widget */
@@ -874,7 +874,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInText()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInText(): void {
 		$media = $this->getMediaArray();
@@ -890,7 +890,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInText()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInTextWithUnknownMediaId(): void {
 		$media = $this->getMediaArray();
@@ -907,7 +907,7 @@ class ImageHandlerTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::rebuildSimpleImageTagsInText()
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInTextMultipleInOneField(): void {
 		$media = $this->getMediaArray();
@@ -927,7 +927,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTags(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -949,7 +949,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testReplaceCustomImageTagsWithMediaRenderOptions(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -985,7 +985,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsWithUnknownImage(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1006,7 +1006,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsWithTagAttributes(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1029,7 +1029,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsWithFields(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1065,7 +1065,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceCustomImageTagsInAttribute(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1087,7 +1087,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceCustomImageTagsInTranslations(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1112,7 +1112,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTags()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsMultipleInOneField(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1140,7 +1140,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsInField(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1164,7 +1164,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testReplaceCustomImageTagsInFieldWithMediaRenderOptions(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1204,7 +1204,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsInFieldWithUnknownImage(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1227,7 +1227,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsInFieldWithTagAttributes(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1252,7 +1252,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
+	 * @noinspection HtmlUnknownTarget, PhpUndefinedFieldInspection, PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testReplaceCustomImageTagsInFieldInAttribute(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
@@ -1276,7 +1276,7 @@ class ImageHandlerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Content\ImageHandler::replaceCustomImageTagsInField()
 	 * @throws \Exception
-	 * @noinspection HtmlUnknownTarget, PhpVariableNamingConventionInspection
+	 * @noinspection HtmlUnknownTarget
 	 */
 	public function testReplaceCustomImageTagsInFieldMultipleInOneField(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();

@@ -79,7 +79,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::CLEAN_NONE
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanNone(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -96,7 +95,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::CLEAN_MODERATE
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanModerate(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -175,7 +173,6 @@ HTML,
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::CLEAN_STRICT
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanStrict(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -233,7 +230,6 @@ HTML,
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::CLEAN_STRICT
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::removeLeadingAndTrailingBrTags()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRemoveLeadingAndTrailingBrTagsMovesTrailingBrTagsInlineTags(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -285,7 +281,6 @@ HTML;
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::CLEAN_STRICT
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanStrictNotRemovesLeadingAndTrailingTagsWhenNoTextButLinkAndImgTagInside(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -323,7 +318,6 @@ HTML,
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::CLEAN_STRICT
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanStrictNotRemovesLeadingAndTrailingTagsWhenNoTextButLinkAndAwyissImgTagInside(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -360,7 +354,6 @@ HTML,
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanWithInvalidMethod(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -377,7 +370,6 @@ HTML,
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanWithFields(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -401,7 +393,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanInAttribute(): void {
 		/**
@@ -432,7 +423,6 @@ HTML;
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Content\HtmlCleaner::clean()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCleanInTranslations(): void {
 		/**

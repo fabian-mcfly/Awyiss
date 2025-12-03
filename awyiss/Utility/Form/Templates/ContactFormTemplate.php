@@ -94,8 +94,8 @@ class ContactFormTemplate extends AbstractFormTemplate {
 	 * @inheritDoc
 	 */
 	public static function getElements(array $languages): array {
-		$la_fields = ['title', 'firstname', 'lastname', 'phone', 'email', 'message', 'privacy_accepted', 'submit'];
+		$fields = ['title', 'firstname', 'lastname', 'phone', 'email', 'message', 'privacy_accepted', 'submit'];
 
-		return static::buildElements($la_fields, $languages);
+		return static::buildElements($fields, $languages);
 	}
 }

@@ -50,15 +50,15 @@ class MenuItemLink {
 	 * @return array
 	 */
 	public function getAttributes(): array {
-		$la_attributes = [];
+		$attributes = [];
 		if ($this->target) {
-			$la_attributes['target'] = $this->target;
+			$attributes['target'] = $this->target;
 		}
 		if ($this->rel) {
-			$la_attributes['rel'] = $this->rel;
+			$attributes['rel'] = $this->rel;
 		}
 
-		return $la_attributes;
+		return $attributes;
 	}
 
 
@@ -127,22 +127,22 @@ class MenuItemLink {
 			return Router::url($this->url);
 		}
 
-		$ls_url = $this->url;
+		$url = $this->url;
 		if (!str_contains($this->url, '//')) {
 			// If the URL is relative but does not start with a slash, add one.
-			if (!str_starts_with($ls_url, '/') && !empty(Router::getRequest()->getAttribute('base'))) {
-				$ls_url = '/' . $ls_url;
+			if (!str_starts_with($url, '/') && !empty(Router::getRequest()->getAttribute('base'))) {
+				$url = '/' . $url;
 			}
 
-			$ls_url = Router::url($ls_url);
+			$url = Router::url($url);
 
 			// Always ensure the URL ends with a slash if it doesn't contain a query string
-			if (!str_contains($ls_url, '?') && !str_contains($ls_url, '#') && !str_ends_with($ls_url, '/')) {
-				$ls_url .= '/';
+			if (!str_contains($url, '?') && !str_contains($url, '#') && !str_ends_with($url, '/')) {
+				$url .= '/';
 			}
 		}
 
-		return $ls_url;
+		return $url;
 	}
 
 
@@ -191,26 +191,26 @@ class MenuItemLink {
 			return;
 		}
 
-		$la_parts = explode('::', $link);
+		$parts = explode('::', $link);
 
-		$ls_controller = array_shift($la_parts);
-		$ls_action = array_shift($la_parts);
+		$controller = array_shift($parts);
+		$action = array_shift($parts);
 
-		if (empty($la_parts)) {
-			$this->url = ['controller' => $ls_controller, 'action' => $ls_action];
+		if (empty($parts)) {
+			$this->url = ['controller' => $controller, 'action' => $action];
 
 			return;
 		}
 
-		$la_params = [];
-		foreach ($la_parts as $lx_value) {
-			$la_innerParts = explode(':', $lx_value);
-			$la_params[ $la_innerParts[0] ] = $la_innerParts[1] ?? null;
+		$params = [];
+		foreach ($parts as $value) {
+			$innerParts = explode(':', $value);
+			$params[ $innerParts[0] ] = $innerParts[1] ?? null;
 		}
-		$la_params = array_filter($la_params, function ($value) {
+		$params = array_filter($params, function ($value) {
 			return $value !== null;
 		});
 
-		$this->url = ['controller' => $ls_controller, 'action' => $ls_action] + $la_params;
+		$this->url = ['controller' => $controller, 'action' => $action] + $params;
 	}
 }

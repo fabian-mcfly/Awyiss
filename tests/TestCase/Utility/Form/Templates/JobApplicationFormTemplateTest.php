@@ -33,7 +33,6 @@ class JobApplicationFormTemplateTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\Templates\JobApplicationFormTemplate::getElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetElements(): void {
 		$elements = JobApplicationFormTemplate::getElements([
@@ -51,7 +50,6 @@ class JobApplicationFormTemplateTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Form\Templates\JobApplicationFormTemplate::getElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetElementsIncludesTranslationsnForMultipleLanguages(): void {
 		$elements = JobApplicationFormTemplate::getElements([

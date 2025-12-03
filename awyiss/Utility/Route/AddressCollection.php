@@ -34,8 +34,8 @@ class AddressCollection implements Countable, IteratorAggregate {
 	public function __construct(array $addresses = []) {
 		$this->addressClass = App::className('Address', 'Utility/Route');
 
-		foreach ($addresses as $lx_address) {
-			$this->add($lx_address);
+		foreach ($addresses as $address) {
+			$this->add($address);
 		}
 	}
 
@@ -45,16 +45,16 @@ class AddressCollection implements Countable, IteratorAggregate {
 	 * @return static
 	 */
 	public function add(AddressInterface|array ...$addresses): static {
-		foreach ($addresses as $lx_address) {
-			if (!$lx_address instanceof AddressInterface) {
-				$lx_address = $this->addressClass::fromArray($lx_address);
+		foreach ($addresses as $address) {
+			if (!$address instanceof AddressInterface) {
+				$address = $this->addressClass::fromArray($address);
 
-				if (!$lx_address) {
+				if (!$address) {
 					throw new InvalidArgumentException('Invalid address array provided');
 				}
 			}
 
-			$this->addresses[] = $lx_address;
+			$this->addresses[] = $address;
 		}
 
 		return $this;
@@ -128,13 +128,13 @@ class AddressCollection implements Countable, IteratorAggregate {
 			return $this->addresses;
 		}
 
-		$la_addresses = [];
-		foreach ($this->addresses as $lo_address) {
-			if ($lo_address instanceof AddressInterface) {
-				$la_addresses[] = $lo_address->toArray();
+		$addresses = [];
+		foreach ($this->addresses as $address) {
+			if ($address instanceof AddressInterface) {
+				$addresses[] = $address->toArray();
 			}
 		}
 
-		return $la_addresses;
+		return $addresses;
 	}
 }

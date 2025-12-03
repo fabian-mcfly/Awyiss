@@ -45,19 +45,19 @@ class ImageHandler {
 	 * @return void
 	 */
 	public static function replaceImageTags(EntityInterface $entity, array $fields = [], ?EntityInterface $referenceEntity = null): void {
-		$la_fields = $fields ?: static::getDefaultFields($entity);
+		$fields = $fields ?: static::getDefaultFields($entity);
 
-		foreach ($la_fields as $ls_field) {
-			if (!static::fieldIsValid($entity, $ls_field)) {
+		foreach ($fields as $field) {
+			if (!static::fieldIsValid($entity, $field)) {
 				continue;
 			}
 
-			static::replaceImageTagsInField($entity, $ls_field, null, $referenceEntity);
+			static::replaceImageTagsInField($entity, $field, null, $referenceEntity);
 		}
 
 		if ($entity->has('_translations')) {
-			foreach ($entity->get('_translations') as $lo_translation) {
-				static::replaceImageTags($lo_translation, $fields, $entity);
+			foreach ($entity->get('_translations') as $translation) {
+				static::replaceImageTags($translation, $fields, $entity);
 			}
 		}
 	}
@@ -76,76 +76,76 @@ class ImageHandler {
 		?string $value = null,
 		?EntityInterface $referenceEntity = null
 	): ?string {
-		$ls_value = $value ?? $entity->get($field) ?? '';
+		$value ??= $entity->get($field) ?? '';
 
-		if (!is_string($ls_value) || !str_contains($ls_value, '<img')) {
-			return $ls_value;
+		if (!is_string($value) || !str_contains($value, '<img')) {
+			return $value;
 		}
 
-		$lo_dom = static::getDom($ls_value);
+		$dom = static::getDom($value);
 
 		// Find all <img> tags
-		$lo_tags = $lo_dom->querySelectorAll('img');
+		$tags = $dom->querySelectorAll('img');
 
-		$la_foundSources = [];
+		$foundSources = [];
 
-		foreach ($lo_tags as $lo_tag) {
+		foreach ($tags as $tag) {
 			// Get all attributes
-			$la_attributes = [];
-			foreach ($lo_tag->attributes as $lo_attribute) {
-				$la_attributes[ Inflector::variable($lo_attribute->name) ] = $lo_attribute->value;
+			$attributes = [];
+			foreach ($tag->attributes as $attribute) {
+				$attributes[ Inflector::variable($attribute->name) ] = $attribute->value;
 			}
 
 			// Get the src attribute
-			if ($la_attributes['src'] ?? null) {
-				$la_foundSources[] = [
-					'src' => $la_attributes['src'],
-					'attributes' => $la_attributes,
-					'node' => $lo_tag,
+			if ($attributes['src'] ?? null) {
+				$foundSources[] = [
+					'src' => $attributes['src'],
+					'attributes' => $attributes,
+					'node' => $tag,
 				];
 			}
 		}
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('Media');
-		$lo_media = $lo_table->find('all')->where([
+		/** @var \Awyiss\Model\Table $table */
+		$table = FactoryLocator::get('Table')->get('Media');
+		$media = $table->find('all')->where([
 			'path IN' => array_map(function (array $foundSource) {
 				return $foundSource['src'];
-			}, $la_foundSources),
+			}, $foundSources),
 		])->all()->indexBy('path');
 
-		if (!$lo_media->count()) {
-			return $ls_value;
+		if (!$media->count()) {
+			return $value;
 		}
 
-		$la_media = $lo_media->toArray();
-		foreach ($la_foundSources as $la_source) {
-			if (!isset($la_media[ $la_source['src'] ])) {
+		$media = $media->toArray();
+		foreach ($foundSources as $source) {
+			if (!isset($media[ $source['src'] ])) {
 				continue;
 			}
 
-			$lo_mediaEntity = $la_media[ $la_source['src'] ];
+			$mediaEntity = $media[ $source['src'] ];
 
 			// Create a new custom image tag
-			$lo_customTag = $lo_dom->createElement('awyiss-responsive-image');
+			$customTag = $dom->createElement('awyiss-responsive-image');
 
-			$la_attributes = $la_source['attributes'];
+			$attributes = $source['attributes'];
 			// Remove the source
-			unset($la_attributes['src']);
+			unset($attributes['src']);
 			// Add the media id
-			$la_attributes['mediaId'] = (string)$lo_mediaEntity->id;
+			$attributes['mediaId'] = (string)$mediaEntity->id;
 
 			// Set the JSON string as the content of the custom tag
-			$lo_customTag->textContent = json_encode($la_attributes);
+			$customTag->textContent = json_encode($attributes);
 
 			// Replace the original image tag with the custom tag
-			$la_source['node']->parentNode->replaceChild($lo_customTag, $la_source['node']);
+			$source['node']->parentNode->replaceChild($customTag, $source['node']);
 		}
 
 		// Build media assignments
-		static::buildMediaAssignments($referenceEntity ?? $entity, $la_media);
+		static::buildMediaAssignments($referenceEntity ?? $entity, $media);
 
-		$entity->set($field, trim(static::getBody($lo_dom)) ?: null);
+		$entity->set($field, trim(static::getBody($dom)) ?: null);
 
 		return $entity->get($field);
 	}
@@ -158,19 +158,19 @@ class ImageHandler {
 	 * @return void
 	 */
 	public static function rebuildSimpleImageTags(EntityInterface $entity, array $fields = [], ?EntityInterface $referenceEntity = null): void {
-		$la_fields = $fields ?: static::getDefaultFields($entity);
+		$fields = $fields ?: static::getDefaultFields($entity);
 
-		foreach ($la_fields as $ls_field) {
-			if (!static::fieldIsValid($entity, $ls_field)) {
+		foreach ($fields as $field) {
+			if (!static::fieldIsValid($entity, $field)) {
 				continue;
 			}
 
-			static::rebuildSimpleImageTagsInField($entity, $ls_field, null, $referenceEntity);
+			static::rebuildSimpleImageTagsInField($entity, $field, null, $referenceEntity);
 		}
 
 		if ($entity->has('_translations')) {
-			foreach ($entity->get('_translations') as $lo_translation) {
-				static::rebuildSimpleImageTags($lo_translation, $fields, $entity);
+			foreach ($entity->get('_translations') as $translation) {
+				static::rebuildSimpleImageTags($translation, $fields, $entity);
 			}
 		}
 	}
@@ -191,44 +191,44 @@ class ImageHandler {
 		?string $value = null,
 		?EntityInterface $referenceEntity = null
 	): ?string {
-		$ls_value = $value ?? $entity->get($field) ?? '';
-		$lb_isDirty = $entity->isDirty($field);
+		$value ??= $entity->get($field) ?? '';
+		$isDirty = $entity->isDirty($field);
 
-		if (!is_string($ls_value) || !str_contains($ls_value, '<awyiss-responsive-image')) {
-			return $ls_value;
+		if (!is_string($value) || !str_contains($value, '<awyiss-responsive-image')) {
+			return $value;
 		}
 
-		$lo_dom = static::getDom($ls_value);
+		$dom = static::getDom($value);
 
 		// Find all <awyiss-responsive-image> tags
-		$lo_tags = $lo_dom->querySelectorAll('awyiss-responsive-image');
+		$tags = $dom->querySelectorAll('awyiss-responsive-image');
 
-		foreach ($lo_tags as $lo_tag) {
-			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $referenceEntity ?? $entity);
+		foreach ($tags as $tag) {
+			[$attributes, $media] = self::extractMediaAttributes($dom, $tag, $referenceEntity ?? $entity);
 
-			if (!$lo_media) {
+			if (!$media) {
 				continue;
 			}
 
 			// Create a new <img> tag
-			$lo_imgTag = $lo_dom->createElement('img');
-			$lo_imgTag->setAttribute('src', $lo_media->path);
+			$imgTag = $dom->createElement('img');
+			$imgTag->setAttribute('src', $media->path);
 
 			// Set the other attributes
-			foreach ($la_attributes as $ls_key => $ls_value) {
-				if ($ls_key === 'mediaId') {
+			foreach ($attributes as $key => $attributeValue) {
+				if ($key === 'mediaId') {
 					continue;
 				}
 
-				$lo_imgTag->setAttribute($ls_key, (string)$ls_value);
+				$imgTag->setAttribute($key, (string)$attributeValue);
 			}
 
 			// Replace the custom tag with the <img> tag
-			$lo_tag->parentNode->replaceChild($lo_imgTag, $lo_tag);
+			$tag->parentNode->replaceChild($imgTag, $tag);
 		}
 
-		$entity->set($field, trim(static::getBody($lo_dom)) ?: null);
-		$entity->setDirty($field, $lb_isDirty);
+		$entity->set($field, trim(static::getBody($dom)) ?: null);
+		$entity->setDirty($field, $isDirty);
 
 		return $entity->get($field);
 	}
@@ -245,42 +245,42 @@ class ImageHandler {
 			return $value;
 		}
 
-		$lo_dom = static::getDom($value);
+		$dom = static::getDom($value);
 
 		// Find all <awyiss-responsive-image> tags
-		$lo_tags = $lo_dom->querySelectorAll('awyiss-responsive-image');
+		$tags = $dom->querySelectorAll('awyiss-responsive-image');
 
-		$ls_baseUrl = $absolutePath ? Router::url('/', true) : '';
+		$baseUrl = $absolutePath ? Router::url('/', true) : '';
 
-		foreach ($lo_tags as $lo_tag) {
-			$la_attributes = json_decode($lo_tag->textContent, true);
+		foreach ($tags as $tag) {
+			$attributes = json_decode($tag->textContent, true);
 
 			if (
-				!is_array($la_attributes) ||
-				!isset($la_attributes['mediaId']) ||
-				!isset($media[ $la_attributes['mediaId'] ])
+				!is_array($attributes) ||
+				!isset($attributes['mediaId']) ||
+				!isset($media[ $attributes['mediaId'] ])
 			) {
 				continue;
 			}
 
 			// Create a new <img> tag
-			$lo_imgTag = $lo_dom->createElement('img');
-			$lo_imgTag->setAttribute('src', $ls_baseUrl . $media[ $la_attributes['mediaId'] ]->path);
+			$imgTag = $dom->createElement('img');
+			$imgTag->setAttribute('src', $baseUrl . $media[ $attributes['mediaId'] ]->path);
 
 			// Set the other attributes
-			foreach ($la_attributes as $ls_key => $ls_value) {
-				if ($ls_key === 'mediaId') {
+			foreach ($attributes as $key => $attributeValue) {
+				if ($key === 'mediaId') {
 					continue;
 				}
 
-				$lo_imgTag->setAttribute($ls_key, (string)$ls_value);
+				$imgTag->setAttribute($key, (string)$attributeValue);
 			}
 
 			// Replace the custom tag with the <img> tag
-			$lo_tag->parentNode->replaceChild($lo_imgTag, $lo_tag);
+			$tag->parentNode->replaceChild($imgTag, $tag);
 		}
 
-		return trim(static::getBody($lo_dom)) ?: null;
+		return trim(static::getBody($dom)) ?: null;
 	}
 
 
@@ -300,19 +300,19 @@ class ImageHandler {
 		array $fields = [],
 		?EntityInterface $referenceEntity = null
 	): void {
-		$la_fields = $fields ?: static::getDefaultFields($entity);
+		$fields = $fields ?: static::getDefaultFields($entity);
 
-		foreach ($la_fields as $ls_field) {
-			if (!static::fieldIsValid($entity, $ls_field)) {
+		foreach ($fields as $field) {
+			if (!static::fieldIsValid($entity, $field)) {
 				continue;
 			}
 
-			static::replaceCustomImageTagsInField($entity, $view, $mediaRenderOptions, $ls_field, null, $referenceEntity);
+			static::replaceCustomImageTagsInField($entity, $view, $mediaRenderOptions, $field, null, $referenceEntity);
 		}
 
 		if ($entity->has('_translations')) {
-			foreach ($entity->get('_translations') as $lo_translation) {
-				static::replaceCustomImageTags($lo_translation, $view, $mediaRenderOptions, $fields, $entity);
+			foreach ($entity->get('_translations') as $translation) {
+				static::replaceCustomImageTags($translation, $view, $mediaRenderOptions, $fields, $entity);
 			}
 		}
 	}
@@ -338,48 +338,48 @@ class ImageHandler {
 		?string $value = null,
 		?EntityInterface $referenceEntity = null
 	): ?string {
-		$ls_value = $value ?? $entity->get($field) ?? '';
-		$lb_isDirty = $entity->isDirty($field);
+		$value ??= $entity->get($field) ?? '';
+		$isDirty = $entity->isDirty($field);
 
-		if (!is_string($ls_value) || !str_contains($ls_value, '<awyiss-responsive-image')) {
-			return $ls_value;
+		if (!is_string($value) || !str_contains($value, '<awyiss-responsive-image')) {
+			return $value;
 		}
 
-		/** @var \Awyiss\View\Helper\MediaHelper $lo_mediaHelper */
-		$lo_mediaHelper = $view->helpers()->get('Media');
+		/** @var \Awyiss\View\Helper\MediaHelper $mediaHelper */
+		$mediaHelper = $view->helpers()->get('Media');
 
-		$lo_dom = static::getDom($ls_value);
+		$dom = static::getDom($value);
 
 		// Find all <awyiss-responsive-image> tags
-		$lo_tags = $lo_dom->querySelectorAll('awyiss-responsive-image');
+		$tags = $dom->querySelectorAll('awyiss-responsive-image');
 
-		foreach ($lo_tags as $lo_tag) {
-			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $referenceEntity ?? $entity);
-			unset($la_attributes['mediaId']);
+		foreach ($tags as $tag) {
+			[$attributes, $media] = self::extractMediaAttributes($dom, $tag, $referenceEntity ?? $entity);
+			unset($attributes['mediaId']);
 
-			if (!$lo_media) {
+			if (!$media) {
 				continue;
 			}
 
-			$lo_mediaRenderOptions = $mediaRenderOptions->withAttributes($la_attributes);
-			if ($la_attributes['width'] ?? null) {
-				$lo_mediaRenderOptions = $lo_mediaRenderOptions
-					->withWidth((int)$la_attributes['width'])
-					->withResponsive(false);
+			$with = [
+				'attributes' => $attributes,
+			];
+			if ($attributes['width'] ?? null) {
+				$with['width'] = (int)$attributes['width'];
+				$with['responsive'] = false;
 			}
-			if ($la_attributes['height'] ?? null) {
-				$lo_mediaRenderOptions = $lo_mediaRenderOptions
-					->withHeight((int)$la_attributes['height'])
-					->withResponsive(false);
+			if ($attributes['height'] ?? null) {
+				$with['height'] = (int)$attributes['height'];
+				$with['responsive'] = false;
 			}
 
-			$ls_htmlTag = $lo_mediaHelper->htmlTag($lo_media, $lo_mediaRenderOptions);
+			$htmlTag = $mediaHelper->htmlTag($media, $mediaRenderOptions->with($with));
 
-			$ls_value = str_replace($lo_tag->ownerDocument->saveHTML($lo_tag), $ls_htmlTag, $ls_value);
+			$value = str_replace($tag->ownerDocument->saveHTML($tag), $htmlTag, $value);
 		}
 
-		$entity->set($field, trim($ls_value) ?: null);
-		$entity->setDirty($field, $lb_isDirty);
+		$entity->set($field, trim($value) ?: null);
+		$entity->setDirty($field, $isDirty);
 
 		return $entity->get($field);
 	}
@@ -402,18 +402,18 @@ class ImageHandler {
 	 * @noinspection DuplicatedCode
 	 */
 	protected static function getBody(HTMLDocument $dom): string|false {
-		$ls_html = '';
+		$html = '';
 
 		// Remove the opening and closing `<body>`-tags
-		$lo_body = $dom->querySelector('body');
+		$body = $dom->querySelector('body');
 
-		while ($lo_body->firstChild) {
-			$ls_html .= $dom->saveHTML($lo_body->firstChild);
-			$lo_body->removeChild($lo_body->firstChild);
+		while ($body->firstChild) {
+			$html .= $dom->saveHTML($body->firstChild);
+			$body->removeChild($body->firstChild);
 		}
 
 		// Return the cleaned HTML
-		return $ls_html;
+		return $html;
 	}
 
 
@@ -425,53 +425,53 @@ class ImageHandler {
 	 * @return void
 	 */
 	protected static function buildMediaAssignments(EntityInterface $entity, array $media): void {
-		$la_mediaAssignments = $entity->get('mediaAssignments') ?: [];
-		$lo_mediaAssignmentsTable = FactoryLocator::get('Table')->get('MediaAssignments');
+		$mediaAssignments = $entity->get('mediaAssignments') ?: [];
+		$mediaAssignmentsTable = FactoryLocator::get('Table')->get('MediaAssignments');
 
-		$la_originalMediaAssignments = $entity->hasOriginal('mediaAssignments') ? $entity->getOriginal('mediaAssignments') : [];
-		$la_originalInlineAssignments = $la_originalMediaAssignments['inlineImgTag'] ?? [];
+		$originalMediaAssignments = $entity->hasOriginal('mediaAssignments') ? $entity->getOriginal('mediaAssignments') : [];
+		$originalInlineAssignments = $originalMediaAssignments['inlineImgTag'] ?? [];
 
 		// Remember the media ids
-		$la_inlineAssignments = array_filter($la_mediaAssignments, function (MediaAssignment $assignment): bool {
+		$inlineAssignments = array_filter($mediaAssignments, function (MediaAssignment $assignment): bool {
 			return $assignment->mediaElementSelectorIdentifier === 'inline_img_tag';
 		});
-		$la_mediaIdsFound = array_column($la_inlineAssignments, 'mediaId');
-		foreach ($media as $lo_media) {
+		$mediaIdsFound = array_column($inlineAssignments, 'mediaId');
+		foreach ($media as $mediaItem) {
 			// If the media id is already in the assignments, skip it
 			// There's no need to create multiple assignments for the same media
-			if (in_array($lo_media->id, $la_mediaIdsFound)) {
+			if (in_array($mediaItem->id, $mediaIdsFound)) {
 				continue;
 			}
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_assignment = $lo_mediaAssignmentsTable->newDefaultEntity();
+			$assignment = $mediaAssignmentsTable->newDefaultEntity();
 
-			$lo_assignment->patch([
+			$assignment->patch([
 				'mediaElementId' => 5, // 5 for `inline_img_tag`
 				'mediaElementSelectorIdentifier' => 'inline_img_tag',
-				'mediaId' => $lo_media->id,
+				'mediaId' => $mediaItem->id,
 				'scope' => Inflector::underscore($entity->getSource()),
 			]);
 
 			// Copy the original assignment ID if it exists, but only if the entity is not new
 			// If it is new, it's a copy, and we don't want to steal the assignment from the original content
-			if (!$entity->isNew() && isset($la_originalInlineAssignments[ $lo_media->id ])) {
-				$lo_original = $la_originalInlineAssignments[ $lo_media->id ];
+			if (!$entity->isNew() && isset($originalInlineAssignments[ $mediaItem->id ])) {
+				$original = $originalInlineAssignments[ $mediaItem->id ];
 
-				$lo_assignment->set('id', $lo_original->id);
-				$lo_assignment->set('createdBy', $lo_original->createdBy);
-				$lo_assignment->set('createdOn', $lo_original->createdOn);
+				$assignment->set('id', $original->id);
+				$assignment->set('createdBy', $original->createdBy);
+				$assignment->set('createdOn', $original->createdOn);
 
-				$lo_assignment->setNew(false);
+				$assignment->setNew(false);
 			}
 
-			$la_mediaAssignments[] = $lo_assignment;
+			$mediaAssignments[] = $assignment;
 
 			// Remember the media id
-			$la_mediaIdsFound[] = $lo_media->id;
+			$mediaIdsFound[] = $mediaItem->id;
 		}
 
-		$entity->set('mediaAssignments', $la_mediaAssignments);
+		$entity->set('mediaAssignments', $mediaAssignments);
 	}
 
 
@@ -483,12 +483,12 @@ class ImageHandler {
 	 */
 	protected static function extractMediaAttributes(HTMLDocument $dom, Element $tag, EntityInterface $entity): array {
 		// The attributes are stored as a JSON string in the textContent
-		$la_attributes = json_decode($tag->textContent, true);
+		$attributes = json_decode($tag->textContent, true);
 
 		if (
-			!is_array($la_attributes) ||
-			!isset($la_attributes['mediaId']) ||
-			!isset($entity->mediaAssignments['inlineImgTag'][ $la_attributes['mediaId'] ])
+			!is_array($attributes) ||
+			!isset($attributes['mediaId']) ||
+			!isset($entity->mediaAssignments['inlineImgTag'][ $attributes['mediaId'] ])
 		) {
 			// Replace the node with an empty string
 			$tag->parentNode->replaceChild($dom->createTextNode(''), $tag);
@@ -497,12 +497,12 @@ class ImageHandler {
 		}
 
 		/**
-		 * @var \Awyiss\Model\Entity\Media $lo_media
+		 * @var \Awyiss\Model\Entity\Media $media
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_media = $entity->mediaAssignments['inlineImgTag'][ $la_attributes['mediaId'] ]->media;
+		$media = $entity->mediaAssignments['inlineImgTag'][ $attributes['mediaId'] ]->media;
 
-		return [$la_attributes, $lo_media];
+		return [$attributes, $media];
 	}
 
 
@@ -547,26 +547,26 @@ class ImageHandler {
 	 * @noinspection DuplicatedCode
 	 */
 	protected static function getDefaultFields(EntityInterface $entity): array {
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($entity->getSource());
+		/** @var \Awyiss\Model\Table $table */
+		$table = FactoryLocator::get('Table')->get($entity->getSource());
 
-		if (!$lo_table->hasBehavior('Attributes') || !$lo_table->hasAttributes()) {
+		if (!$table->hasBehavior('Attributes') || !$table->hasAttributes()) {
 			return static::$defaultFields;
 		}
 
-		$la_fields = static::$defaultFields;
+		$fields = static::$defaultFields;
 
-		foreach ($lo_table->getAttributes() as $lo_attribute) {
-			if ($lo_attribute->inputType !== 'texteditor') {
+		foreach ($table->getAttributes() as $attribute) {
+			if ($attribute->inputType !== 'texteditor') {
 				continue;
 			}
 
-			$ls_field = Inflector::variable($lo_attribute->identifier);
-			if (!in_array($ls_field, $la_fields, true)) {
-				$la_fields[] = $ls_field;
+			$field = Inflector::variable($attribute->identifier);
+			if (!in_array($field, $fields, true)) {
+				$fields[] = $field;
 			}
 		}
 
-		return $la_fields;
+		return $fields;
 	}
 }

@@ -82,7 +82,7 @@ class BackendMenuProvider {
 	 * @return void
 	 */
 	protected function createMenu(): void {
-		$la_config = [
+		$config = [
 			/** @see \Awyiss\Utility\Menu\BackendMenu::__construct */
 			'menuClass' => App::className('BackendMenu', 'Utility/Menu'),
 			/** @see \Awyiss\Utility\Menu\BackendMenuItem::__construct */
@@ -94,8 +94,8 @@ class BackendMenuProvider {
 			],
 		];
 
-		$ls_filePath = realpath(CONFIG . 'menu.json');
-		$this->menu = MenuLoader::fromJsonFile($ls_filePath, $la_config);
+		$filePath = realpath(CONFIG . 'menu.json');
+		$this->menu = MenuLoader::fromJsonFile($filePath, $config);
 	}
 
 
@@ -104,18 +104,18 @@ class BackendMenuProvider {
 	 * @throws \ReflectionException
 	 */
 	protected function createCustomMenu(): void {
-		$ls_filePath = realpath(CUSTOM_CONFIG . 'menu.json');
-		if (!$ls_filePath) {
+		$filePath = realpath(CUSTOM_CONFIG . 'menu.json');
+		if (!$filePath) {
 			return;
 		}
 
-		$lo_customMenuData = MenuLoader::loadJsonFile($ls_filePath);
-		$lb_valid = MenuLoader::validateData($lo_customMenuData, [
+		$customMenuData = MenuLoader::loadJsonFile($filePath);
+		$valid = MenuLoader::validateData($customMenuData, [
 			'schemaPath' => CONFIG . 'menu-extension.schema.json',
 			'uniqueIdentifiers' => true,
 		]);
 
-		if (!$lb_valid) {
+		if (!$valid) {
 			throw new MenuValidationException('The data is not valid according to menu-extension.schema.json');
 		}
 
@@ -124,7 +124,7 @@ class BackendMenuProvider {
 		 * since cloning will not clone nested objects
 		 */
 		$this->customMenu = unserialize(serialize($this->getMenu()));
-		$this->customMenu?->extend($lo_customMenuData);
+		$this->customMenu?->extend($customMenuData);
 	}
 
 
@@ -134,9 +134,9 @@ class BackendMenuProvider {
 	 * @throws \ReflectionException
 	 */
 	protected function createDynamicMenu(?SelectQuery $query = null): void {
-		$lo_query = $query ?? $this->fetchTable('BackendMenuEntries');
+		$query ??= $this->fetchTable('BackendMenuEntries');
 
-		$la_menuEntries = $lo_query->find('threaded')->all()->groupBy(function (BackendMenuEntry $entity) {
+		$menuEntries = $query->find('threaded')->all()->groupBy(function (BackendMenuEntry $entity) {
 			return $entity->parentId ? 'appendTo' : 'insertAfter';
 		})->map(function (array $menuEntries) {
 			return collection($menuEntries)->groupBy(function (BackendMenuEntry $entity) {
@@ -149,6 +149,6 @@ class BackendMenuProvider {
 		 * since cloning will not clone nested objects
 		 */
 		$this->dynamicMenu = unserialize(serialize($this->getCustomMenu() ?? $this->getMenu()));
-		$this->dynamicMenu->extend($la_menuEntries);
+		$this->dynamicMenu->extend($menuEntries);
 	}
 }

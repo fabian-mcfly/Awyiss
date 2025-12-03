@@ -25,7 +25,6 @@ class DeepLTranslationServiceTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -38,7 +37,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorThrowsExceptionWhenApiKeyNotConfigured(): void {
 		Configure::write('Awyiss.System.Backend.autoTranslate.deeplApiKey');
@@ -53,7 +51,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::getSupportedSourceLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSupportedSourceLanguages(): void {
 		$service = new DeepLTranslationService();
@@ -72,7 +69,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::getSupportedTargetLanguages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSupportedTargetLanguages(): void {
 		$service = new DeepLTranslationService();
@@ -89,7 +85,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::getBatchSize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetBatchSize(): void {
 		$service = new DeepLTranslationService();
@@ -101,7 +96,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextWithSuccess(): void {
 		$responseBody = json_encode([
@@ -133,7 +127,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextWithAutoDetection(): void {
 		$responseBody = json_encode([
@@ -161,7 +154,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextReturnsFalseOnApiError(): void {
 		$this->mockClientPost(
@@ -179,7 +171,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextReturnsFalseOnMissingTranslation(): void {
 		$responseBody = json_encode([
@@ -201,7 +192,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextHandlesHtmlTags(): void {
 		$responseBody = json_encode([
@@ -229,7 +219,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchWithSuccess(): void {
 		$responseBody = json_encode([
@@ -284,7 +273,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchPreservesArrayKeys(): void {
 		$responseBody = json_encode([
@@ -322,7 +310,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchReturnsFalseOnApiError(): void {
 		$this->mockClientPost(
@@ -340,7 +327,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchReturnsFalseOnMissingTranslations(): void {
 		$responseBody = json_encode([
@@ -362,7 +348,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchWithEmptyArray(): void {
 		$responseBody = json_encode([
@@ -385,7 +370,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::getUsageInfo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetUsageInfoReturnsUsageData(): void {
 		$responseBody = json_encode([
@@ -412,7 +396,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::getUsageInfo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetUsageInfoReturnsNullOnApiError(): void {
 		$this->mockClientGet(
@@ -430,7 +413,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::getUsageInfo()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetUsageInfoReturnsNullOnMissingData(): void {
 		$responseBody = json_encode([
@@ -452,7 +434,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateText()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateTextIncludesMetadata(): void {
 		$responseBody = json_encode([
@@ -482,7 +463,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateBatch()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBatchIncludesMetadata(): void {
 		$responseBody = json_encode([
@@ -513,7 +493,6 @@ class DeepLTranslationServiceTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\DeepLTranslationService::translateEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateEntityWithContentEntity(): void {
 		$responseBody = json_encode([

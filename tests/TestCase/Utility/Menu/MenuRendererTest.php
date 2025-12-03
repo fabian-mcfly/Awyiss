@@ -42,7 +42,6 @@ class MenuRendererTest extends TestCase {
 	 * Setup method to create test directory
 	 *
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function setUp(): void {
 		parent::setUp();
@@ -98,7 +97,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderEmptyMenu(): void {
 		$menu = new BackendMenu([], [
@@ -119,7 +117,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderMenuWithItems(): void {
 		$data = json_decode(json_encode([
@@ -150,7 +147,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderMenuWithNestedItems(): void {
 		$data = json_decode(json_encode([
@@ -193,7 +189,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderMenuWithInaccessibleItems(): void {
 		$this->identity->method('scopeIsAccessible')->willReturnCallback(function ($scope, $data, $identifier) {
@@ -237,7 +232,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCustomClasses(): void {
 		$data = json_decode(json_encode([
@@ -277,7 +271,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCurrentRoute(): void {
 		$data = json_decode(json_encode([
@@ -307,7 +300,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see\Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderWithCurrentRouteInChildren(): void {
 		$data = json_decode(json_encode([
@@ -344,7 +336,6 @@ class MenuRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::optimizeUrl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderLinkAttributes(): void {
 		$data = json_decode(json_encode([
@@ -370,7 +361,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::optimizeUrl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderHomepageLink(): void {
 		$request = new ServerRequest([
@@ -418,7 +408,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::optimizeUrl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderNonHomepageLink(): void {
 		$request = new ServerRequest([
@@ -466,7 +455,6 @@ class MenuRendererTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::optimizeUrl()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderEscapesTitle(): void {
 		$data = json_decode(json_encode([
@@ -495,7 +483,6 @@ class MenuRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderActiveOnly(): void {
 		$data = json_decode(json_encode([
@@ -535,7 +522,6 @@ class MenuRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderMaxLevel(): void {
 		$data = json_decode(json_encode([
@@ -582,7 +568,6 @@ class MenuRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\MenuRenderer::render()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testRenderUsesFormatters(): void {
 		$data = json_decode(json_encode([

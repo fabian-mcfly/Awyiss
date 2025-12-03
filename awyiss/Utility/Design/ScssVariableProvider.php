@@ -51,11 +51,9 @@ class ScssVariableProvider {
 	 */
 	public function __construct(array $config, array $scssFiles = []) {
 		if (isset($config['scssFiles']) && !$scssFiles) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$scssFiles = $config['scssFiles'];
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		unset($config['scssFiles']);
 		$this->setConfig($config);
 
@@ -101,38 +99,38 @@ class ScssVariableProvider {
 	 * @return array
 	 */
 	public function getInternalVariables(): array {
-		$la_vars = [];
+		$vars = [];
 
-		foreach ($this->scssFiles as $ls_scssFile) {
+		foreach ($this->scssFiles as $scssFile) {
 			if (
-				!str_ends_with($ls_scssFile, '.scss') ||
-				!file_exists($ls_scssFile) ||
-				!is_file($ls_scssFile)
+				!str_ends_with($scssFile, '.scss') ||
+				!file_exists($scssFile) ||
+				!is_file($scssFile)
 			) {
-				throw new InvalidArgumentException(sprintf('The SCSS file `%s` does not exist.', $ls_scssFile));
+				throw new InvalidArgumentException(sprintf('The SCSS file `%s` does not exist.', $scssFile));
 			}
 
 			try {
-				$lo_stylesheet = Stylesheet::parseScss(file_get_contents($ls_scssFile));
+				$stylesheet = Stylesheet::parseScss(file_get_contents($scssFile));
 			}
 			catch (SassFormatException) {
 				continue;
 			}
 
-			foreach ($lo_stylesheet->getChildren() as $lo_var) {
-				if (!is_a($lo_var, VariableDeclaration::class)) {
+			foreach ($stylesheet->getChildren() as $var) {
+				if (!is_a($var, VariableDeclaration::class)) {
 					continue;
 				}
 
-				if (!$lo_var->isGuarded()) {
+				if (!$var->isGuarded()) {
 					continue;
 				}
 
-				$la_vars[ $lo_var->getName() ] = $lo_var->getExpression();
+				$vars[ $var->getName() ] = $var->getExpression();
 			}
 		}
 
-		return $la_vars;
+		return $vars;
 	}
 
 
@@ -140,29 +138,29 @@ class ScssVariableProvider {
 	 * @return array
 	 */
 	public function getNormalizedInternalVariables(): array {
-		$la_internalVariables = $this->getInternalVariables();
+		$internalVariables = $this->getInternalVariables();
 
-		foreach ($la_internalVariables as $ls_key => $ls_value) {
-			$lb_isBlocklisted = $this->variableIsBlocklisted($ls_key);
+		foreach ($internalVariables as $key => $value) {
+			$isBlocklisted = $this->variableIsBlocklisted($key);
 
-			if ($lb_isBlocklisted) {
-				unset($la_internalVariables[ $ls_key ]);
+			if ($isBlocklisted) {
+				unset($internalVariables[ $key ]);
 				continue;
 			}
 
-			$la_options = $this->normalizeValue($ls_value);
+			$options = $this->normalizeValue($value);
 
-			if ($la_options === null) {
-				unset($la_internalVariables[ $ls_key ]);
+			if ($options === null) {
+				unset($internalVariables[ $key ]);
 				continue;
 			}
 
-			$la_options = $this->mergeOptions($ls_key, $la_options);
+			$options = $this->mergeOptions($key, $options);
 
-			$la_internalVariables[ $ls_key ] = $la_options;
+			$internalVariables[ $key ] = $options;
 		}
 
-		return $la_internalVariables;
+		return $internalVariables;
 	}
 
 
@@ -171,29 +169,29 @@ class ScssVariableProvider {
 	 * @return string
 	 */
 	protected function normalizeFunctionCall(FunctionExpression $function): string {
-		$ls_functionName = $function->getName();
-		$la_arguments = $function->getArguments()->getPositional();
+		$functionName = $function->getName();
+		$arguments = $function->getArguments()->getPositional();
 
-		$la_arguments = array_map(function (Expression $argument) {
-			$la_options = $this->normalizeValue($argument);
+		$arguments = array_map(function (Expression $argument) {
+			$options = $this->normalizeValue($argument);
 
-			if ($la_options === null) {
+			if ($options === null) {
 				return '';
 			}
 
-			$lx_value = $la_options['value'];
-			if ($la_options['unit']) {
-				$lx_value .= $la_options['unit'];
+			$value = $options['value'];
+			if ($options['unit']) {
+				$value .= $options['unit'];
 			}
 
-			if ($la_options['quotes']) {
-				$lx_value = $la_options['quotes'] . $lx_value . $la_options['quotes'];
+			if ($options['quotes']) {
+				$value = $options['quotes'] . $value . $options['quotes'];
 			}
 
-			return $lx_value;
-		}, $la_arguments);
+			return $value;
+		}, $arguments);
 
-		return sprintf('%s(%s)', $ls_functionName, implode(', ', $la_arguments));
+		return sprintf('%s(%s)', $functionName, implode(', ', $arguments));
 	}
 
 
@@ -204,58 +202,58 @@ class ScssVariableProvider {
 	 * @return array|null
 	 */
 	protected function normalizeValue(mixed $value): ?array {
-		$la_options = [
+		$options = [
 			'unit' => null,
 			'quotes' => null,
 			'value' => null,
 		];
 
 		if (is_a($value, BooleanExpression::class)) {
-			$la_options['value'] = $value->getValue();
+			$options['value'] = $value->getValue();
 		}
 		elseif (is_a($value, ColorExpression::class)) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$la_options['value'] = $value->getValue()->getFormat()->getOriginal();
+			$options['value'] = $value->getValue()->getFormat()->getOriginal();
 		}
 		elseif (is_a($value, NumberExpression::class)) {
-			$la_options['value'] = $value->getValue();
-			$la_options['unit'] = $value->getUnit();
+			$options['value'] = $value->getValue();
+			$options['unit'] = $value->getUnit();
 		}
 		elseif (is_a($value, StringExpression::class)) {
-			$la_options['value'] = implode('', $value->getText()->getContents() ?? []);
-			$la_options['quotes'] = $value->hasQuotes() ? '\'' : null;
+			$options['value'] = implode('', $value->getText()->getContents() ?? []);
+			$options['quotes'] = $value->hasQuotes() ? '\'' : null;
 		}
 		elseif (is_a($value, ListExpression::class)) {
-			$la_options['value'] = implode($value->getSeparator()->getSeparator(), array_map(function (Expression $item) {
-				$la_options = $this->normalizeValue($item);
+			$options['value'] = implode($value->getSeparator()->getSeparator(), array_map(function (Expression $item) {
+				$options = $this->normalizeValue($item);
 
-				if ($la_options['quotes']) {
-					$la_options['value'] = $la_options['quotes'] . $la_options['value'] . $la_options['quotes'];
+				if ($options['quotes']) {
+					$options['value'] = $options['quotes'] . $options['value'] . $options['quotes'];
 				}
 
-				return $la_options['value'];
+				return $options['value'];
 			}, $value->getContents()));
 		}
 		elseif (is_a($value, FunctionExpression::class)) {
-			$la_options['value'] = $this->normalizeFunctionCall($value);
+			$options['value'] = $this->normalizeFunctionCall($value);
 		}
 		elseif (is_a($value, VariableExpression::class)) {
-			$la_options['value'] = '$' . $value->getName();
+			$options['value'] = '$' . $value->getName();
 		}
 		elseif (is_object($value) && method_exists($value, 'getValue')) {
-			$la_options['value'] = $value->getValue();
+			$options['value'] = $value->getValue();
 		}
 		elseif (is_object($value) && method_exists($value, '__toString')) {
-			$la_options['value'] = (string)$value;
+			$options['value'] = (string)$value;
 		}
 		elseif (is_scalar($value)) {
-			$la_options['value'] = $value;
+			$options['value'] = $value;
 		}
 		else {
 			throw new InvalidArgumentException(sprintf('Unsupported value type: %s', gettype($value)));
 		}
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -268,54 +266,54 @@ class ScssVariableProvider {
 	 * @return array
 	 */
 	protected function mergeOptions(string $key, mixed $options): array {
-		$la_units = $this->getConfig('units');
-		$la_variableMapping = $this->getConfig('variableMapping');
+		$units = $this->getConfig('units');
+		$variableMapping = $this->getConfig('variableMapping');
 
-		$la_options = $options;
-		if (isset($la_variableMapping[ $key ])) {
-			$la_options = Hash::merge($la_variableMapping[ $key ], $options);
+		$mergedOptions = $options;
+		if (isset($variableMapping[ $key ])) {
+			$mergedOptions = Hash::merge($variableMapping[ $key ], $options);
 		}
 		else {
-			$la_patternOptions = [];
-			foreach ($la_variableMapping as $ls_pattern => $la_mapping) {
-				if (preg_match('/^' . $ls_pattern . '$/', $key, $la_matches)) {
-					$la_patternOptions = $la_mapping;
+			$patternOptions = [];
+			foreach ($variableMapping as $pattern => $mapping) {
+				if (preg_match('/^' . $pattern . '$/', $key, $matches)) {
+					$patternOptions = $mapping;
 					break;
 				}
 			}
 
-			if ($la_patternOptions) {
-				$la_options = Hash::merge($la_patternOptions, $options);
+			if ($patternOptions) {
+				$mergedOptions = Hash::merge($patternOptions, $options);
 			}
 
-			if (isset($la_options['associatedVariables']) && !empty($la_matches)) {
-				foreach ($la_options['associatedVariables'] as &$ls_associatedVariable) {
-					$ls_associatedVariable = preg_replace_callback('/\$(\d+)/', function (array $matches) use ($la_matches) {
-						return $la_matches[ $matches[1] ];
-					}, $ls_associatedVariable);
+			if (isset($mergedOptions['associatedVariables']) && !empty($matches)) {
+				foreach ($mergedOptions['associatedVariables'] as &$associatedVariable) {
+					$associatedVariable = preg_replace_callback('/\$(\d+)/', function (array $associationMatches) use ($matches) {
+						return $matches[ $associationMatches[1] ];
+					}, $associatedVariable);
 				}
-				unset($ls_associatedVariable);
+				unset($associatedVariable);
 			}
 		}
 
-		if (!isset($la_options['type'])) {
-			$la_options['type'] = ScssVariableType::String;
+		if (!isset($mergedOptions['type'])) {
+			$mergedOptions['type'] = ScssVariableType::String;
 		}
 
-		$la_options['units'] ??= null;
+		$mergedOptions['units'] ??= null;
 		/** @noinspection PhpInArrayCanBeReplacedWithComparisonInspection */
-		if (in_array($la_options['type'], [ScssVariableType::Number])) {
-			$la_options['units'] = Hash::merge($la_units, $la_options['units'] ?? []);
-			$la_options['units'] = array_filter($la_options['units'], function ($unit, $key) use ($la_options) {
-				if (isset($la_options['forcedUnit'])) {
-					return $key === $la_options['forcedUnit'];
+		if (in_array($mergedOptions['type'], [ScssVariableType::Number])) {
+			$mergedOptions['units'] = Hash::merge($units, $mergedOptions['units'] ?? []);
+			$mergedOptions['units'] = array_filter($mergedOptions['units'], function ($unit, $key) use ($mergedOptions) {
+				if (isset($mergedOptions['forcedUnit'])) {
+					return $key === $mergedOptions['forcedUnit'];
 				}
 
 				return !empty($unit);
 			}, ARRAY_FILTER_USE_BOTH);
 		}
 
-		return $la_options;
+		return $mergedOptions;
 	}
 
 
@@ -324,14 +322,14 @@ class ScssVariableProvider {
 	 * @return bool
 	 */
 	protected function variableIsBlocklisted(string $key): bool {
-		$la_blocklistedVariables = $this->getConfig('blocklistedVariables', []);
+		$blocklistedVariables = $this->getConfig('blocklistedVariables', []);
 
-		if (in_array($key, $la_blocklistedVariables)) {
+		if (in_array($key, $blocklistedVariables)) {
 			return true;
 		}
 		else {
-			foreach ($la_blocklistedVariables as $ls_blocklistedVariable) {
-				if (preg_match('/^' . $ls_blocklistedVariable . '$/', $key)) {
+			foreach ($blocklistedVariables as $blocklistedVariable) {
+				if (preg_match('/^' . $blocklistedVariable . '$/', $key)) {
 					return true;
 				}
 			}

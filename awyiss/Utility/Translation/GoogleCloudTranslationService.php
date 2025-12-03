@@ -74,34 +74,34 @@ class GoogleCloudTranslationService extends AbstractTranslationService {
 	 * @inheritDoc
 	 */
 	public function translateText(string $text, string $targetLanguage, ?string $sourceLanguage = null, array $options = []): TranslationResult|false {
-		$la_data = [
+		$data = [
 			'q' => $text,
 			'target' => $targetLanguage,
 			'key' => $this->apiKey,
 		];
 
 		if ($sourceLanguage !== null) {
-			$la_data['source'] = $sourceLanguage;
+			$data['source'] = $sourceLanguage;
 		}
 
 		try {
 			// Make API request
-			$la_response = $this->apiRequest($la_data);
+			$response = $this->apiRequest($data);
 		}
 		catch (Exception) {
 			return false;
 		}
 
-		if (!isset($la_response['data']['translations'][0])) {
+		if (!isset($response['data']['translations'][0])) {
 			return false;
 		}
 
-		$la_translation = $la_response['data']['translations'][0];
+		$translation = $response['data']['translations'][0];
 
 		return new TranslationResult(
 			$text,
-			$la_translation['translatedText'],
-			$la_translation['detectedSourceLanguage'] ?? $sourceLanguage ?? '',
+			$translation['translatedText'],
+			$translation['detectedSourceLanguage'] ?? $sourceLanguage ?? '',
 			$targetLanguage,
 			true,
 			null,
@@ -114,40 +114,40 @@ class GoogleCloudTranslationService extends AbstractTranslationService {
 	 * @inheritDoc
 	 */
 	public function translateBatch(array $texts, string $targetLanguage, ?string $sourceLanguage = null, array $options = []): array|false {
-		$la_originalTexts = array_values($texts);
+		$originalTexts = array_values($texts);
 
-		$la_data = [
-			'q' => $la_originalTexts,
+		$data = [
+			'q' => $originalTexts,
 			'target' => $targetLanguage,
 			'format' => 'html',
 		];
 
 		if ($sourceLanguage !== null) {
-			$la_data['source'] = $sourceLanguage;
+			$data['source'] = $sourceLanguage;
 		}
 
 		try {
 			// Make API request
-			$la_response = $this->apiRequest($la_data);
+			$response = $this->apiRequest($data);
 		}
 		catch (Exception) {
 			return false;
 		}
 
-		if (!isset($la_response['data']['translations'])) {
+		if (!isset($response['data']['translations'])) {
 			return false;
 		}
 
-		$la_translations = [];
-		$la_keys = array_keys($texts);
+		$translations = [];
+		$keys = array_keys($texts);
 
-		foreach ($la_response['data']['translations'] as $li_index => $la_translation) {
-			$ls_key = $la_keys[ $li_index ];
-			$ls_originalText = $la_originalTexts[ $li_index ];
-			$la_translations[ $ls_key ] = new TranslationResult(
-				$ls_originalText,
-				$la_translation['translatedText'],
-				$la_translation['detectedSourceLanguage'] ?? $sourceLanguage ?? '',
+		foreach ($response['data']['translations'] as $index => $translation) {
+			$key = $keys[ $index ];
+			$originalText = $originalTexts[ $index ];
+			$translations[ $key ] = new TranslationResult(
+				$originalText,
+				$translation['translatedText'],
+				$translation['detectedSourceLanguage'] ?? $sourceLanguage ?? '',
 				$targetLanguage,
 				true,
 				null,
@@ -155,7 +155,7 @@ class GoogleCloudTranslationService extends AbstractTranslationService {
 			);
 		}
 
-		return $la_translations;
+		return $translations;
 	}
 
 
@@ -174,21 +174,21 @@ class GoogleCloudTranslationService extends AbstractTranslationService {
 	 * @return array
 	 */
 	protected function apiRequest(array $data): array {
-		$ls_url = $this->apiUrl . '?key=' . $this->apiKey;
+		$url = $this->apiUrl . '?key=' . $this->apiKey;
 
-		$lo_client = new Client([
+		$client = new Client([
 			'timeout' => 30,
 			'http_errors' => false,
 		]);
 
-		$lo_response = $lo_client->post($ls_url, $data, ['type' => 'json']);
+		$response = $client->post($url, $data, ['type' => 'json']);
 
-		if (!$lo_response->isSuccess()) {
-			$la_body = $lo_response->getJson();
-			$ls_errorMessage = $la_body['error']['message'] ?? $lo_response->getBody();
-			throw new RuntimeException(sprintf('API Error: HTTP %s - %s', $lo_response->getStatusCode(), $ls_errorMessage));
+		if (!$response->isSuccess()) {
+			$body = $response->getJson();
+			$errorMessage = $body['error']['message'] ?? $response->getBody();
+			throw new RuntimeException(sprintf('API Error: HTTP %s - %s', $response->getStatusCode(), $errorMessage));
 		}
 
-		return $lo_response->getJson();
+		return $response->getJson();
 	}
 }

@@ -19,7 +19,6 @@ class ScssFilesCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssFilesCollection::__construct()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructor(): void {
 		$folder = Configure::read('App.paths.assets.Frontend.customer');
@@ -37,7 +36,6 @@ class ScssFilesCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssFilesCollection::addFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAddFile(): void {
 		$folder = Configure::read('App.paths.assets.Frontend.customer');
@@ -62,7 +60,6 @@ class ScssFilesCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssFilesCollection::addFile()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPartialAddFile(): void {
 		$folder = Configure::read('App.paths.assets.Frontend.customer');
@@ -86,7 +83,6 @@ class ScssFilesCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssFilesCollection::getLastModified()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLastModified(): void {
 		$folder = Configure::read('App.paths.assets.Frontend.customer');
@@ -116,7 +112,6 @@ class ScssFilesCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssFilesCollection::getLastModified()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLastModifiedForMultipleFiles(): void {
 		$folder = Configure::read('App.paths.assets.Frontend.customer');
@@ -152,7 +147,6 @@ class ScssFilesCollectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Design\ScssFilesCollection::getLastModified()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLastModifiedForMultipleFilesInverted(): void {
 		$folder = Configure::read('App.paths.assets.Frontend.customer');

@@ -36,30 +36,30 @@ class Inflector extends CakeInflector {
 	 * @return string
 	 */
 	public static function ucparts(string $string, string|bool $delimiter = true): string {
-		$ls_cacheKey = __FUNCTION__ . '__' . (is_bool($delimiter) ? (int)$delimiter : $delimiter);
+		$cacheKey = __FUNCTION__ . '__' . (is_bool($delimiter) ? (int)$delimiter : $delimiter);
 
-		$lx_result = static::_cache($ls_cacheKey, $string);
+		$result = static::_cache($cacheKey, $string);
 
-		if ($lx_result !== false) {
-			return $lx_result;
+		if ($result !== false) {
+			return $result;
 		}
 
-		$ls_string = ucwords(strtolower($string));
+		$result = ucwords(strtolower($string));
 
-		foreach (['-', '\'', '_', ' '] as $ls_delimiter) {
-			if (!str_contains($ls_string, $ls_delimiter)) {
+		foreach (['-', '\'', '_', ' '] as $currentDelimiter) {
+			if (!str_contains($result, $currentDelimiter)) {
 				continue;
 			}
 
-			$ls_string = implode(
-				$delimiter ? (is_string($delimiter) ? $delimiter : $ls_delimiter) : '',
-				array_map('ucfirst', explode($ls_delimiter, $ls_string))
+			$result = implode(
+				$delimiter ? (is_string($delimiter) ? $delimiter : $currentDelimiter) : '',
+				array_map('ucfirst', explode($currentDelimiter, $result))
 			);
 		}
 
-		static::_cache($ls_cacheKey, $string, $ls_string);
+		static::_cache($cacheKey, $string, $result);
 
-		return $ls_string;
+		return $result;
 	}
 
 
@@ -69,11 +69,9 @@ class Inflector extends CakeInflector {
 	 * @inheritDoc
 	 */
 	public static function underscore(string $string): string {
-		$ls_string = parent::underscore($string);
+		$string = parent::underscore($string);
 
 		// Prevent double underscores
-		$ls_string = preg_replace('/_+/', '_', $ls_string);
-
-		return $ls_string;
+		return preg_replace('/_+/', '_', $string);
 	}
 }

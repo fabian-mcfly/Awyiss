@@ -45,40 +45,37 @@ abstract class Menu {
 	 * @param int $level
 	 */
 	public function __construct(object|iterable $items, array $config = [], int $level = 1) {
-		$la_items = $items;
-		$la_config = $config;
-
 		if (!is_array($items)) {
-			$la_items = (array)$items;
+			$items = (array)$items;
 		}
 
 		$this->level = $level;
 
-		foreach ($la_items as $lx_identifier => $lx_item) {
-			$lo_item = (object)$lx_item;
+		foreach ($items as $identifier => $item) {
+			$item = (object)$item;
 
 			// If the identifier is not a string and the item has an id, use the id as identifier
-			if (!is_string($lx_identifier) && isset($lo_item->id)) {
-				$lx_identifier = $lo_item->id;
+			if (!is_string($identifier) && isset($item->id)) {
+				$identifier = $item->id;
 			}
 
 			// Make sure the item has an identifier
-			if (!isset($lo_item->identifier)) {
-				$lo_item->identifier = $lx_identifier;
+			if (!isset($item->identifier)) {
+				$item->identifier = $identifier;
 			}
 
 			/** @uses \Awyiss\Utility\Menu\MenuItem */
-			$this->items[ $lx_identifier ] = new $la_config['menuItemClass']($lo_item, $la_config, $level);
+			$this->items[ $identifier ] = new $config['menuItemClass']($item, $config, $level);
 		}
 
-		if (isset($la_config['identity'])) {
-			$this->identity = $la_config['identity'];
+		if (isset($config['identity'])) {
+			$this->identity = $config['identity'];
 
 			//Make sure to not set the identity in the config to avoid confusion
-			unset($la_config['identity']);
+			unset($config['identity']);
 		}
 
-		$this->setConfig($la_config);
+		$this->setConfig($config);
 	}
 
 
@@ -90,9 +87,9 @@ abstract class Menu {
 	 * @throws \ReflectionException
 	 */
 	public function appendEntries(array $entries, string $identifier, bool $determineVisibility = true): void {
-		$lo_item = $this->getItem($identifier);
+		$item = $this->getItem($identifier);
 
-		if (!$lo_item) {
+		if (!$item) {
 			// If an item to append to is still not found, throw an exception
 			throw new MenuValidationException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $identifier));
 		}
@@ -101,12 +98,12 @@ abstract class Menu {
 			throw new MenuValidationException('Cannot append empty entries.');
 		}
 
-		$lo_subMenu = $lo_item->getChildren();
-		if (!$lo_subMenu) {
-			$lo_item->setChildren($entries);
+		$subMenu = $item->getChildren();
+		if (!$subMenu) {
+			$item->setChildren($entries);
 		}
 		else {
-			$lo_subMenu->insertEntriesAfter($entries, null, false);
+			$subMenu->insertEntriesAfter($entries, null, false);
 		}
 
 		if ($determineVisibility && $this->identity) {
@@ -123,14 +120,14 @@ abstract class Menu {
 	 * @see /awyiss/config/menu-extension.schema.json
 	 */
 	public function extend(iterable|object $menuData): static {
-		$la_menuData = (array)$menuData;
+		$menuData = (array)$menuData;
 
-		foreach ($la_menuData['appendTo'] ?? [] as $ls_identifier => $lx_entries) {
-			$this->appendEntries((array)$lx_entries, $ls_identifier, false);
+		foreach ($menuData['appendTo'] ?? [] as $identifier => $entries) {
+			$this->appendEntries((array)$entries, $identifier, false);
 		}
 
-		foreach ($la_menuData['insertAfter'] ?? [] as $ls_identifier => $lx_entries) {
-			$this->insertEntriesAfter((array)$lx_entries, $ls_identifier, false);
+		foreach ($menuData['insertAfter'] ?? [] as $identifier => $entries) {
+			$this->insertEntriesAfter((array)$entries, $identifier, false);
 		}
 
 		//Only after all elements are updated, the visibility can be calculated
@@ -158,10 +155,10 @@ abstract class Menu {
 	 * @return \Awyiss\Utility\Menu\MenuItem|null
 	 */
 	public function getItem(string|int $id, bool $deep = true): ?MenuItem {
-		$la_items = $deep ? $this->items() : $this->items;
-		foreach ($la_items as $lx_identifier => $lo_item) {
-			if ($lx_identifier === $id) {
-				return $lo_item;
+		$items = $deep ? $this->items() : $this->items;
+		foreach ($items as $identifier => $item) {
+			if ($identifier === $id) {
+				return $item;
 			}
 		}
 
@@ -190,10 +187,10 @@ abstract class Menu {
 			throw new MenuValidationException(sprintf('Cannot insert entries after an unknown identifier. `%s` given.', $identifier));
 		}
 
-		$lo_newMenu = new static($entries, $this->getConfig() + ['identity' => $this->identity], $this->level);
+		$newMenu = new static($entries, $this->getConfig() + ['identity' => $this->identity], $this->level);
 
 		if (!$identifier) {
-			$this->items = $lo_newMenu->getItems() + $this->getItems();
+			$this->items = $newMenu->getItems() + $this->getItems();
 
 			if ($determineVisibility && $this->identity) {
 				//Only after all elements are updated, the visibility can be calculated
@@ -205,17 +202,17 @@ abstract class Menu {
 		}
 
 		if (!isset($this->items[ $identifier ])) {
-			/** @var array<\Awyiss\Utility\Menu\MenuItem> $lo_items */
-			$lo_items = $this->items();
-			foreach ($lo_items as $lo_item) {
-				$lo_children = $lo_item->getChildren();
+			/** @var array<\Awyiss\Utility\Menu\MenuItem> $items */
+			$items = $this->items();
+			foreach ($items as $item) {
+				$children = $item->getChildren();
 
-				if (!$lo_children) {
+				if (!$children) {
 					continue;
 				}
 
-				if ($lo_children->getItem($identifier, false)) {
-					$lo_children->insertEntriesAfter($entries, $identifier, false);
+				if ($children->getItem($identifier, false)) {
+					$children->insertEntriesAfter($entries, $identifier, false);
 
 					break;
 				}
@@ -229,16 +226,16 @@ abstract class Menu {
 			return;
 		}
 
-		$li_count = 0;
-		$la_items = $this->getItems();
-		foreach ($la_items as $lx_identifier => $lo_item) {
-			if ($lx_identifier === $identifier) {
+		$count = 0;
+		$items = $this->getItems();
+		foreach ($items as $itemIdentifier => $item) {
+			if ($itemIdentifier === $identifier) {
 				break;
 			}
-			$li_count++;
+			$count++;
 		}
 
-		$this->items = array_slice($la_items, 0, $li_count + 1, true) + $lo_newMenu->getItems() + array_slice($la_items, $li_count, null, true);
+		$this->items = array_slice($items, 0, $count + 1, true) + $newMenu->getItems() + array_slice($items, $count, null, true);
 
 		if ($determineVisibility && $this->identity) {
 			//Only after all elements are updated, the visibility can be calculated
@@ -251,15 +248,15 @@ abstract class Menu {
 	 * @return \Generator<string|int, \Awyiss\Utility\Menu\MenuItem>
 	 */
 	public function items(int $maxLevel = -1): Generator {
-		foreach ($this->items as $lx_identifier => $lo_item) {
-			yield $lx_identifier => $lo_item;
+		foreach ($this->items as $identifier => $item) {
+			yield $identifier => $item;
 
 			if ($maxLevel !== -1 && $maxLevel <= $this->level) {
 				continue;
 			}
 
-			foreach ($lo_item->children($maxLevel) as $lx_childIdentifier => $lo_child) {
-				yield $lx_childIdentifier => $lo_child;
+			foreach ($item->children($maxLevel) as $childIdentifier => $child) {
+				yield $childIdentifier => $child;
 			}
 		}
 	}
@@ -271,9 +268,9 @@ abstract class Menu {
 	 * @throws \ReflectionException
 	 */
 	public function setIdentity(IdentityPermissionsInterface $identity): static {
-		foreach ($this->items() as $lo_item) {
+		foreach ($this->items() as $item) {
 			//Don't let MenuItem::setIdentity loop through nested children since $this->items() already iterates over ALL items
-			$lo_item->setIdentity($identity, false);
+			$item->setIdentity($identity, false);
 		}
 
 		//Only after all elements are updated, the visibility can be calculated
@@ -288,8 +285,8 @@ abstract class Menu {
 	 * @return void
 	 */
 	public function determineVisibility(): void {
-		foreach ($this->items as $lo_item) {
-			$lo_item->determineVisibility(true);
+		foreach ($this->items as $item) {
+			$item->determineVisibility(true);
 		}
 	}
 
@@ -298,14 +295,14 @@ abstract class Menu {
 	 * @return array<string|int, \Awyiss\Utility\Menu\MenuItem>
 	 */
 	public function toArray(): array {
-		$la_items = [];
+		$items = [];
 
 		/** @noinspection PhpLoopCanBeConvertedToArrayMapInspection */
-		foreach ($this->items() as $lx_identifier => $lo_item) {
-			$la_items[ $lx_identifier ] = $lo_item;
+		foreach ($this->items() as $identifier => $item) {
+			$items[ $identifier ] = $item;
 		}
 
 
-		return $la_items;
+		return $items;
 	}
 }

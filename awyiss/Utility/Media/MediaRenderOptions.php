@@ -276,10 +276,10 @@ class MediaRenderOptions {
 	 * @return $this
 	 */
 	public function withBreakpoint(float|int $breakpoint, array $options = []): static {
-		$la_breakpoints = $this->breakpoints;
-		$la_breakpoints[ $breakpoint ] = $options;
+		$breakpoints = $this->breakpoints;
+		$breakpoints[ $breakpoint ] = $options;
 
-		return $this->with(['breakpoints' => $this->normalizeBreakpoints($la_breakpoints)]);
+		return $this->with(['breakpoints' => $this->normalizeBreakpoints($breakpoints)]);
 	}
 
 
@@ -396,16 +396,16 @@ class MediaRenderOptions {
 	 * @return $this
 	 */
 	public function with(array $changes): static {
-		$la_properties = get_object_vars($this);
-		foreach ($la_properties as $ls_name => $lx_value) {
-			$la_properties[ $ls_name ] = $lx_value;
+		$properties = get_object_vars($this);
+		foreach ($properties as $name => $value) {
+			$properties[ $name ] = $value;
 
-			if (array_key_exists($ls_name, $changes) && $changes[ $ls_name ] !== self::PRESERVE_VALUE) {
-				$la_properties[ $ls_name ] = $changes[ $ls_name ];
+			if (array_key_exists($name, $changes) && $changes[ $name ] !== self::PRESERVE_VALUE) {
+				$properties[ $name ] = $changes[ $name ];
 			}
 		}
 
-		return new self(...$la_properties);
+		return new self(...$properties);
 	}
 
 
@@ -417,7 +417,7 @@ class MediaRenderOptions {
 	 * @return array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
 	 */
 	public static function normalizeBreakpoint(string|float|int $key, array|float|int $value): array {
-		$la_options = [
+		$options = [
 			'aspectRatio' => self::PRESERVE_VALUE,
 			'baseWidth' => null,
 			'breakpoint' => (float)$key,
@@ -429,22 +429,22 @@ class MediaRenderOptions {
 		];
 
 		if (is_numeric($value)) {
-			$la_options['breakpoint'] = (float)$value;
+			$options['breakpoint'] = (float)$value;
 
-			return $la_options;
+			return $options;
 		}
 
-		foreach ($la_options as $ls_key => $lx_value) {
-			if (array_key_exists($ls_key, $value)) {
-				$la_options[ $ls_key ] = $value[ $ls_key ];
+		foreach ($options as $optionKey => $optionValue) {
+			if (array_key_exists($optionKey, $value)) {
+				$options[ $optionKey ] = $value[ $optionKey ];
 			}
 
-			if ($ls_key !== 'resizeStrategy' && !empty($la_options[ $ls_key ]) && $la_options[ $ls_key ] !== self::PRESERVE_VALUE) {
-				$la_options[ $ls_key ] = (float)$la_options[ $ls_key ];
+			if ($optionKey !== 'resizeStrategy' && !empty($options[ $optionKey ]) && $options[ $optionKey ] !== self::PRESERVE_VALUE) {
+				$options[ $optionKey ] = (float)$options[ $optionKey ];
 			}
 		}
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -455,16 +455,16 @@ class MediaRenderOptions {
 	 * @return array
 	 */
 	public static function normalizeBreakpoints(array $breakpoints): array {
-		$la_breakpoints = [];
+		$normalizedBreakpoints = [];
 
-		foreach ($breakpoints as $lx_key => $lx_value) {
-			$la_breakpoint = static::normalizeBreakpoint($lx_key, $lx_value);
-			$li_breakpoint = (int)$la_breakpoint['breakpoint'];
-			$la_breakpoints[ $li_breakpoint ] = $la_breakpoint;
+		foreach ($breakpoints as $key => $value) {
+			$breakpointOptions = static::normalizeBreakpoint($key, $value);
+			$breakpoint = (int)$breakpointOptions['breakpoint'];
+			$normalizedBreakpoints[ $breakpoint ] = $breakpointOptions;
 		}
 
 		// Sort breakpoints by breakpoint value
-		usort($la_breakpoints, function (array $a, array $b): int {
+		usort($normalizedBreakpoints, function (array $a, array $b): int {
 			if ($a['breakpoint'] === $b['breakpoint']) {
 				return $b['is2x'] <=> $a['is2x'];
 			}
@@ -472,7 +472,7 @@ class MediaRenderOptions {
 			return $a['breakpoint'] <=> $b['breakpoint'];
 		});
 
-		return $la_breakpoints;
+		return $normalizedBreakpoints;
 	}
 
 

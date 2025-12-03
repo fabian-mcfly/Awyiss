@@ -71,7 +71,6 @@ class RouteTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Route::getStart()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetStart(): void {
 		$route = new Route($this->start, $this->end, $this->geoJson);
@@ -83,7 +82,6 @@ class RouteTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Route::getEnd()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetEnd(): void {
 		$route = new Route($this->start, $this->end, $this->geoJson);
@@ -95,7 +93,6 @@ class RouteTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Route::getGeoJson()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetGeoJson(): void {
 		$route = new Route($this->start, $this->end, $this->geoJson);
@@ -107,7 +104,6 @@ class RouteTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Route\Route::toArray()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testToArray(): void {
 		$route = new Route($this->start, $this->end, $this->geoJson);

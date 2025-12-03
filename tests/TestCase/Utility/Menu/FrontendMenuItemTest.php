@@ -50,7 +50,6 @@ class FrontendMenuItemTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -89,7 +88,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithMinimalProperties(): void {
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
@@ -106,7 +104,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithLink(): void {
 		$link = new stdClass();
@@ -134,7 +131,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithLinkForExistingRoute(): void {
 		$link = new stdClass();
@@ -151,7 +147,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithLinkForNonExistingRoute(): void {
 		$link = new stdClass();
@@ -170,7 +165,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testConstructorWithChildren(): void {
 		$childEntry = new MenuEntry([
@@ -196,7 +190,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::__construct()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testPublicationDates(): void {
 		// Test with future publication start date
@@ -223,7 +216,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::setAccessible()
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::isAccessible()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleWithoutAccess(): void {
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
@@ -250,7 +242,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::setAccessible()
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::isAccessible()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsAccessibleWithAccess(): void {
 		// Create a menu entry with access control
@@ -285,7 +276,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::setVisible()
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::isVisible()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsVisibleWithoutAccess(): void {
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
@@ -312,7 +302,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::setVisible()
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::isVisible()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsVisibleWithAccess(): void {
 		// Create a menu entry with access control
@@ -346,7 +335,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::getLabel()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetLabel(): void {
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
@@ -363,7 +351,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::isCurrentRoute()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testIsCurrentRoute(): void {
 		// Set up a link
@@ -398,7 +385,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::offsetSet()
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::offsetUnset()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGettersAndArrayAccess(): void {
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
@@ -417,7 +403,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::offsetSet()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOffsetSetIsDisabled(): void {
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
@@ -432,7 +417,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::offsetUnset()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testOffsetUnsetIsDisabled(): void {
 		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
@@ -448,7 +432,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::getTitle()
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::convertTitle()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testObjectTitleTranslation(): void {
 		$titleObj = new stdClass();
@@ -466,7 +449,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibility(): void {
 		// Test with link - should be visible
@@ -481,7 +463,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityWithAccess(): void {
 		// Test with access control - should be invisible by default
@@ -503,7 +484,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityNoLink(): void {
 		// Item with no link should be visible unless explicitly set otherwise
@@ -517,7 +497,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityWithLinkAndAccess(): void {
 		// Create menu item with link and access control
@@ -542,7 +521,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityWithIdentityAllowed(): void {
 		// Create menu item with access control
@@ -575,7 +553,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityWithIdentityDenied(): void {
 		// Create menu item with access control
@@ -608,7 +585,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityParentWithAccessibleChild(): void {
 		// Child with access control
@@ -650,7 +626,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityParentWithInaccessibleChild(): void {
 		// Child with access control
@@ -691,7 +666,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityReset(): void {
 		$this->menuEntry->link = '/test-url';
@@ -715,7 +689,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityWithMixedChildrenVisibility(): void {
 		// Create parent with multiple children having different visibility
@@ -753,7 +726,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityWithDeepNesting(): void {
 		// Create a deeply nested structure: grandparent -> parent -> child
@@ -799,7 +771,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDetermineVisibilityComplexHierarchy(): void {
 		// Create a complex hierarchy with multiple branches
@@ -888,7 +859,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::setIdentity()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetIdentityResetsVisibility(): void {
 		// Create a menu item with access control
@@ -929,7 +899,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::hasCurrentRoute()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHasCurrentRoute(): void {
 		// Create parent with a child that matches a route
@@ -971,7 +940,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::setChildren()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSetChildren(): void {
 		// Create parent with multiple children
@@ -1013,7 +981,6 @@ class FrontendMenuItemTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::getLevel()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLevelPropagation(): void {
 		// Create a deeply nested structure: root -> parent -> child -> grandchild
@@ -1067,7 +1034,6 @@ class FrontendMenuItemTest extends TestCase {
 	/**
 	 * @return void
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMenuClassAndMenuItemClass(): void {
 		$childEntry = new MenuEntry([

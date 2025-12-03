@@ -27,21 +27,21 @@ class FrontendMenuItem extends MenuItem {
 		array $config = [],
 		int $level = 1
 	) {
-		$lb_active = $entity->active;
+		$active = $entity->active;
 		// If the item is active, but not published, it is not active
-		if ($lb_active) {
-			$ld_now = new DateTime();
+		if ($active) {
+			$now = new DateTime();
 
 			if (
-				($entity->publicationStart && $entity->publicationStart > $ld_now) ||
-				($entity->publicationEnd && $entity->publicationEnd < $ld_now)
+				($entity->publicationStart && $entity->publicationStart > $now) ||
+				($entity->publicationEnd && $entity->publicationEnd < $now)
 			) {
-				$lb_active = false;
+				$active = false;
 			}
 		}
 
 		$this->access = $this->convertAccess($entity);
-		$this->active = $lb_active;
+		$this->active = $active;
 		$this->identifier = $entity->id;
 		$this->level = $level;
 		$this->link = $this->convertLink($entity);
@@ -56,8 +56,6 @@ class FrontendMenuItem extends MenuItem {
 		}
 		/**
 		 * Make sure to not set the identity in the config to avoid confusion
-		 *
-		 * @noinspection PhpVariableNamingConventionInspection
 		 */
 		unset($config['identity']);
 		$this->setConfig($config);
