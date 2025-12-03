@@ -74,7 +74,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(14, $this->contentsTable->associations()->keys());
@@ -186,7 +185,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getColumnSystemClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnSystemClass(): void {
 		$columnSystemClass = $this->contentsTable->getColumnSystemClass();
@@ -199,7 +197,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidths(): void {
 		$columnWidths = $this->contentsTable->getColumnWidths();
@@ -230,7 +227,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndents(): void {
 		$columnIndents = $this->contentsTable->getColumnIndents();
@@ -260,7 +256,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::findLatestForPages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindLatestForPages(): void {
 		$query = $this->contentsTable->find('all');
@@ -290,7 +285,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getAllowedKeyForDuplicating()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAllowedKeyForDuplicating(): void {
 		$allowedKeys = $this->contentsTable->getAllowedKeyForDuplicating();
@@ -315,7 +309,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::forPageRole()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testForPageRole(): void {
 		/** @var \Awyiss\Model\Table\ContentsTable $forNewsTable */
@@ -358,7 +351,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getForScope()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetForScope(): void {
 		$this->assertEquals('pages', $this->contentsTable->getForScope());
@@ -368,7 +360,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getPageRole()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPageRole(): void {
 		$pageRole = $this->contentsTable->getPageRole();
@@ -380,7 +371,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getPage()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPage(): void {
 		$page = $this->contentsTable->getPage(1);
@@ -396,7 +386,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -440,7 +429,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -468,7 +456,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -487,7 +474,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -540,7 +526,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -581,7 +566,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnWidthInList(): void {
 		// Test valid column width
@@ -602,7 +586,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnWidthNotInList(): void {
 		// Test invalid column width
@@ -623,7 +606,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnIndentInList(): void {
 		// Test valid column indent
@@ -644,7 +626,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnIndentNotInList(): void {
 		// Test invalid column indent
@@ -665,7 +646,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationDataArrayMaxLength(): void {
 		$largeData = array_fill(0, 10000, str_repeat('x', 100)); // Create very large array
@@ -687,7 +667,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidContentArea(): void {
 		// Test with valid page, content template, and content area combination
@@ -708,7 +687,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidPageId(): void {
 		// Test with non-existing page
@@ -734,7 +712,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidContentTemplateId(): void {
 		// Test with non-existing content template
@@ -760,7 +737,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidContentAreaId(): void {
 		// Test with content area not assigned to content template
@@ -786,7 +762,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFormId(): void {
 		// Test with existing form
@@ -808,7 +783,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNullFormId(): void {
 		// Test with null form (should be allowed)
@@ -830,7 +804,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidFormId(): void {
 		// Test with non-existing form
@@ -857,7 +830,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidSurveyId(): void {
 		// Test with existing survey
@@ -879,7 +851,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNullSurveyId(): void {
 		// Test with null survey (should be allowed)
@@ -901,7 +872,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidSurveyId(): void {
 		// Test with non-existing survey
@@ -928,7 +898,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidWidthIndentCombination(): void {
 		// Test valid width/indent combination
@@ -951,7 +920,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidWidthIndentCombination(): void {
 		// Test invalid width/indent combination
@@ -979,7 +947,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidDuplicateOf(): void {
 		// Test with valid duplicate of (existing content on different page)
@@ -1001,7 +968,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidDuplicateOfNonExisting(): void {
 		// Test with non-existing duplicate target
@@ -1028,7 +994,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidDuplicateOfSamePage(): void {
 		// Test with duplicate target on same page
@@ -1057,7 +1022,6 @@ class ContentsTableTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidDuplicateOfSelf(): void {
 		$entity = $this->contentsTable->newEntity([
@@ -1086,7 +1050,6 @@ class ContentsTableTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidDuplicateOfAlreadyDuplicated(): void {
 		$entity = $this->contentsTable->newEntity([
@@ -1115,7 +1078,6 @@ class ContentsTableTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidDuplicateOfDuplicatingContent(): void {
 		$entity = $this->contentsTable->newEntity([
@@ -1139,7 +1101,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoDuplicatingContents(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -1158,7 +1119,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesSuccess(): void {
 		/** @var \Awyiss\Model\Entity\Content $content */
@@ -1175,7 +1135,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->contentsTable->newDefaultEntity();
@@ -1209,7 +1168,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -1252,7 +1210,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::disableCascadeCallbacks()
 	 * @see \Awyiss\Model\Table\ContentsTable::enableCascadeCallbacks()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCascadeCallbacksToggle(): void {
 		// Test disabling cascade callbacks
@@ -1272,7 +1229,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::$categories
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCategoriesBehavior(): void {
 		$this->assertTrue($this->contentsTable->hasBehavior('Categories'));
@@ -1291,7 +1247,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehavior(): void {
 		$this->assertTrue($this->contentsTable->hasBehavior('Nest'));
@@ -1307,7 +1262,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::$search
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSearchBehavior(): void {
 		$this->assertTrue($this->contentsTable->hasBehavior('Search'));
@@ -1322,7 +1276,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->contentsTable->hasBehavior('SystemOrder'));
@@ -1337,7 +1290,6 @@ class ContentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaDataColumn(): void {
 		$schema = $this->contentsTable->getSchema();
@@ -1350,7 +1302,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesFormId(): void {
 		$result = $this->contentsTable->getPossibleFieldValues('form_id');
@@ -1370,7 +1321,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesDuplicateOf(): void {
 		$result = $this->contentsTable->getPossibleFieldValues('duplicate_of');
@@ -1440,7 +1390,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesContentTemplateId(): void {
 		$result = $this->contentsTable->getPossibleFieldValues('content_template_id');
@@ -1457,7 +1406,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesSurveyId(): void {
 		$result = $this->contentsTable->getPossibleFieldValues('survey_id');
@@ -1479,7 +1427,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidScss(): void {
 		// Mock DesignMiddleware with design variables
@@ -1514,7 +1461,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidScss(): void {
 		// Mock DesignMiddleware with design variables
@@ -1550,7 +1496,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesScssWithKnownVariables(): void {
 		// Mock DesignMiddleware with design variables
@@ -1589,7 +1534,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesScssWithUnknownVariables(): void {
 		// Mock DesignMiddleware with design variables
@@ -1627,7 +1571,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesCssWithImport(): void {
 		// Mock DesignMiddleware with design variables
@@ -1663,7 +1606,6 @@ class ContentsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidNestedScss(): void {
 		// Mock DesignMiddleware with design variables
@@ -1697,7 +1639,6 @@ class ContentsTableTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesEmptyCss(): void {
 		// Test with empty CSS
@@ -1723,7 +1664,6 @@ class ContentsTableTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Model\Table\ContentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNullCss(): void {
 		// Test with null CSS

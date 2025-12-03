@@ -53,7 +53,6 @@ class I18nTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\I18nTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\I18n $entity */
@@ -75,7 +74,6 @@ class I18nTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\I18nTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -104,7 +102,6 @@ class I18nTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\I18nTable::$audit
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testAuditBehavior(): void {
 		$this->assertTrue($this->i18nTable->hasBehavior('Audit'));

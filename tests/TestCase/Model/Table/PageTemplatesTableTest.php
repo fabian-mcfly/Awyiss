@@ -66,7 +66,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMediaElementAssignableAttribute(): void {
 		$reflection = new ReflectionClass(PageTemplatesTable::class);
@@ -86,7 +85,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(11, $this->pageTemplatesTable->associations()->keys());
@@ -179,7 +177,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::findWithUsages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindWithUsages(): void {
 		$query = $this->pageTemplatesTable->find('withUsages');
@@ -210,7 +207,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -240,7 +236,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -262,7 +257,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -281,7 +275,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -314,7 +307,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -337,7 +329,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationBlankFields(): void {
 		$data = [
@@ -360,7 +351,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFileNameAscii(): void {
 		$data = [
@@ -380,7 +370,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesFileNameUnique(): void {
 		/** @var \Awyiss\Model\Entity\PageTemplate $entity1 */
@@ -404,7 +393,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidPageRoleId(): void {
 		$data = [
@@ -434,7 +422,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveyQuestionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidPageRoleId(): void {
 		$data = [
@@ -469,7 +456,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNoLinkedPageTemplatesUpdateWithSameValue(): void {
 		/** @var \Awyiss\Model\Entity\PageTemplate $entity */
@@ -495,7 +481,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNoLinkedPageTemplatesUpdate(): void {
 		/** @var \Awyiss\Model\Entity\PageTemplate $entity */
@@ -519,7 +504,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNoLinkedPageTemplatesUpdateWithCopy(): void {
 		/** @var \Awyiss\Model\Entity\PageTemplate $entity */
@@ -537,7 +521,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNoLinkedPages(): void {
 		/** @var \Awyiss\Model\Entity\PageTemplate $entity */
@@ -565,7 +548,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->pageTemplatesTable->newDefaultEntity();
@@ -586,7 +568,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -615,7 +596,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaPageRoleIdColumn(): void {
 		$schema = $this->pageTemplatesTable->getSchema();
@@ -628,7 +608,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::$categories
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCategoriesBehavior(): void {
 		$this->assertTrue($this->pageTemplatesTable->hasBehavior('Categories'));
@@ -646,7 +625,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->pageTemplatesTable->hasBehavior('SystemOrder'));
@@ -661,7 +639,6 @@ class PageTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PageTemplatesTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->pageTemplatesTable->hasBehavior('Translate'));

@@ -59,7 +59,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::TYPE_PATTERN
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTypePatternConstant(): void {
 		/** @var string $pattern */
@@ -98,7 +97,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(6, $this->attributesTable->associations()->keys());
@@ -151,7 +149,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -189,7 +186,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -219,7 +215,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -239,7 +234,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -282,7 +276,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -313,7 +306,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -340,7 +332,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationTypeRegexValid(): void {
 		// Test valid type formats
@@ -371,7 +362,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationTypeRegexInvalid(): void {
 		// Test invalid type format
@@ -394,7 +384,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnSpanValid(): void {
 		$columnSpans = $this->attributesTable->getColumnSpans();
@@ -418,7 +407,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnSpanInvalid(): void {
 		// Test invalid column span
@@ -440,7 +428,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidIdentifier(): void {
 		// Test with valid identifier that doesn't conflict with table columns or reserved words
@@ -461,7 +448,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesReservedIdentifier(): void {
 		// Test with MySQL reserved word
@@ -487,7 +473,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesExistingTableColumn(): void {
 		// Test with identifier that matches existing table column
@@ -508,7 +493,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueForScopeValid(): void {
 		// Create first attribute
@@ -530,7 +514,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierValidForDifferentscope(): void {
 		/** @var \Awyiss\Model\Entity\Attribute $entity */
@@ -547,7 +530,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueForScopeInvalid(): void {
 		$entity = $this->attributesTable->get(1);
@@ -566,7 +548,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFieldset(): void {
 		$availableFieldsets = $this->attributesTable->getAvailableFieldsets();
@@ -607,7 +588,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidFieldset(): void {
 		// Test with invalid fieldset for non-special scope
@@ -633,7 +613,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidInputType(): void {
 		$availableInputTypes = $this->attributesTable->getAvailableInputTypes();
@@ -656,7 +635,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidInputType(): void {
 		// Test with invalid input type
@@ -682,7 +660,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::buildCategories()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildCategories(): void {
 		$categories = $this->attributesTable->buildCategories();
@@ -721,7 +698,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableFieldsets()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableFieldsets(): void {
 		$fieldsets = $this->attributesTable->getAvailableFieldsets();
@@ -745,7 +721,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableInputTypes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableInputTypes(): void {
 		$inputTypes = $this->attributesTable->getAvailableInputTypes();
@@ -774,7 +749,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableScopes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableScopes(): void {
 		$scopes = $this->attributesTable->getAvailableScopes();
@@ -813,7 +787,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::getColumnSpans()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnSpans(): void {
 		$columnSpans = $this->attributesTable->getColumnSpans();
@@ -844,7 +817,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\Attribute $entity */
@@ -876,7 +848,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -922,7 +893,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::$categories
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCategoriesBehavior(): void {
 		$this->assertTrue($this->attributesTable->hasBehavior('Categories'));
@@ -940,7 +910,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::$search
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSearchBehavior(): void {
 		$this->assertTrue($this->attributesTable->hasBehavior('Search'));
@@ -954,7 +923,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->attributesTable->hasBehavior('SystemOrder'));
@@ -968,7 +936,6 @@ class AttributesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\AttributesTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->attributesTable->hasBehavior('Translate'));

@@ -182,42 +182,42 @@ class AttributesTable extends Table {
 	 * @noinspection DuplicatedCode
 	 */
 	public function buildCategories(): array {
-		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
-		$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
-		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+		/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
+		$datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$datatables = $datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
 
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
+		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
+		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
 			return Inflector::pluralize($pageRole->identifier);
 		})->toArray();
 
-		$la_attributeScopes = [];
+		$attributeScopes = [];
 		if (!isset($this->attributeScopes)) {
 			$this->getAvailableScopes();
 		}
 
-		foreach ($this->attributeScopes as $ls_identifier => $ls_className) {
-			$ls_identifier = Inflector::underscore($ls_identifier);
+		foreach ($this->attributeScopes as $identifier => $className) {
+			$identifier = Inflector::underscore($identifier);
 
-			if (isset($la_pageRoles[ $ls_identifier ]) && $ls_identifier !== 'pages') {
-				$la_attributeScopes[ $ls_identifier ] = $la_pageRoles[ $ls_identifier ]->label;
-
-				continue;
-			}
-
-			if (isset($la_datatables[ $ls_identifier ])) {
-				$la_attributeScopes[ $ls_identifier ] = $la_datatables[ $ls_identifier ]->label;
+			if (isset($pageRoles[ $identifier ]) && $identifier !== 'pages') {
+				$attributeScopes[ $identifier ] = $pageRoles[ $identifier ]->label;
 
 				continue;
 			}
 
-			$la_attributeScopes[ $ls_identifier ] = __d($ls_identifier, 'menu_title');
+			if (isset($datatables[ $identifier ])) {
+				$attributeScopes[ $identifier ] = $datatables[ $identifier ]->label;
+
+				continue;
+			}
+
+			$attributeScopes[ $identifier ] = __d($identifier, 'menu_title');
 		}
 
-		Arrays::naturalSort($la_attributeScopes);
+		Arrays::naturalSort($attributeScopes);
 
-		return $la_attributeScopes;
+		return $attributeScopes;
 	}
 
 
@@ -356,25 +356,25 @@ class AttributesTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(function (Attribute $entity) {
 			if (!$entity->getError('scope')) {
-				$lx_table = $this->getAvailableScopes()[ $entity->scope ];
-				/** @var Table $lo_table */
-				$lo_table = is_string($lx_table) ? FactoryLocator::get('Table')->get($lx_table) : $lx_table;
-				if ($lo_table->getSchema()->getColumn($entity->identifier)) {
+				$table = $this->getAvailableScopes()[ $entity->scope ];
+				$table = is_string($table) ? FactoryLocator::get('Table')->get($table) : $table;
+				/** @var \Awyiss\Model\Table $table */
+				if ($table->getSchema()->getColumn($entity->identifier)) {
 					return false;
 				}
 			}
 
-			$la_reservedWords = static::$reservedWords['common'];
+			$reservedWords = static::$reservedWords['common'];
 
-			$lo_connection = ConnectionManager::get('default');
-			if ($lo_connection->getDriver() instanceof Mysql) {
-				$la_reservedWords = array_merge($la_reservedWords, static::$reservedWords['mysql']);
+			$connection = ConnectionManager::get('default');
+			if ($connection->getDriver() instanceof Mysql) {
+				$reservedWords = array_merge($reservedWords, static::$reservedWords['mysql']);
 			}
-			elseif ($lo_connection->getDriver() instanceof Sqlite) {
-				$la_reservedWords = array_merge($la_reservedWords, static::$reservedWords['sqlite']);
+			elseif ($connection->getDriver() instanceof Sqlite) {
+				$reservedWords = array_merge($reservedWords, static::$reservedWords['sqlite']);
 			}
 
-			return !in_array($entity->identifier, $la_reservedWords);
+			return !in_array($entity->identifier, $reservedWords);
 		}, 'validIdentifier', [
 			'errorField' => 'identifier',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_reserved_identifier'),
@@ -392,11 +392,11 @@ class AttributesTable extends Table {
 
 
 		$rules->add(function (Attribute $entity/*, array $options*/): bool {
-			$la_availableFieldsets = $this->getAvailableFieldsets();
+			$availableFieldsets = $this->getAvailableFieldsets();
 
 
 			//Check if the provided fieldset is valid. For scope `contents` and `widgets`, always return true
-			return in_array($entity->fieldset, $la_availableFieldsets) || in_array($entity->scope, ['contents', 'widgets']);
+			return in_array($entity->fieldset, $availableFieldsets) || in_array($entity->scope, ['contents', 'widgets']);
 		}, 'validFieldset', [
 			'errorField' => 'fieldset',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_fieldset'),
@@ -404,11 +404,11 @@ class AttributesTable extends Table {
 
 
 		$rules->add(function (Attribute $entity/*, array $options*/): bool {
-			$la_availableInputTypes = $this->getAvailableInputTypes();
+			$availableInputTypes = $this->getAvailableInputTypes();
 
 
 			//Check if the provided scope can have attributes
-			return in_array($entity->inputType, $la_availableInputTypes);
+			return in_array($entity->inputType, $availableInputTypes);
 		}, 'validInputType', [
 			'errorField' => 'inputType',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_input_type'),
@@ -453,49 +453,49 @@ class AttributesTable extends Table {
 			return $this->attributeScopes;
 		}
 
-		$la_classes = App::classes('*', 'Model/Table', 'Table', null, null, ['GenericDatatablesTable']);
+		$classes = App::classes('*', 'Model/Table', 'Table', null, null, ['GenericDatatablesTable']);
 
-		/** @var class-string<\Awyiss\Model\Table> $ls_className */
-		foreach ($la_classes as $ls_className) {
+		/** @var class-string<\Awyiss\Model\Table> $className */
+		foreach ($classes as $className) {
 			/**
 			 * If an entry exists or if the table does not allow attributes, skip it
 			 *
 			 * @noinspection PhpIllegalArrayKeyTypeInspection
 			 */
-			if (isset($this->attributeScopes[ $ls_className::TABLE ]) || !$ls_className::ATTRIBUTABLE) {
+			if (isset($this->attributeScopes[ $className::TABLE ]) || !$className::ATTRIBUTABLE) {
 				continue;
 			}
 
 			//If the given table is not a subclass of \Awyiss\Model\Table, skip it
-			if (!is_subclass_of($ls_className, Table::class)) {
+			if (!is_subclass_of($className, Table::class)) {
 				continue;
 			}
 
 			/** @noinspection PhpIllegalArrayKeyTypeInspection */
-			$this->attributeScopes[ $ls_className::TABLE ] = $ls_className;
+			$this->attributeScopes[ $className::TABLE ] = $className;
 		}
 		/**
 		 * Get all page roles because we want them to have attributes too
 		 *
-		 * @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum
+		 * @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum
 		 */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
-			$ls_identifier = Inflector::pluralize(Inflector::underscore($le_pageRole->name));
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		foreach ($pageRoleEnum::cases() as $pageRole) {
+			$identifier = Inflector::pluralize(Inflector::underscore($pageRole->name));
 
-			if ($ls_identifier === 'Pages' || isset($this->attributeScopes[ $ls_identifier ])) {
+			if ($identifier === 'Pages' || isset($this->attributeScopes[ $identifier ])) {
 				continue;
 			}
 
-			/** @var \Awyiss\Model\Table\PagesTable $lo_pageTable */
-			$lo_pageTable = FactoryLocator::get('Table')->get(Inflector::camelize($ls_identifier));
+			/** @var \Awyiss\Model\Table\PagesTable $pageTable */
+			$pageTable = FactoryLocator::get('Table')->get(Inflector::camelize($identifier));
 
 			//If an entry exists or if the table does not allow attributes, skip it
-			if (!$lo_pageTable::ATTRIBUTABLE) {
+			if (!$pageTable::ATTRIBUTABLE) {
 				continue;
 			}
 
-			$this->attributeScopes[ $ls_identifier ] = $lo_pageTable;
+			$this->attributeScopes[ $identifier ] = $pageTable;
 		}
 
 		ksort($this->attributeScopes);

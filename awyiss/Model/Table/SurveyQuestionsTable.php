@@ -83,10 +83,10 @@ class SurveyQuestionsTable extends Table {
 
 
 		$validator->notEmptyString('type');
-		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_surveyQuestionTypeEnum */
-		$ls_surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $surveyQuestionTypeEnum */
+		$surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 		$validator->add('type', [
-			'enum' => ['rule' => ['enum', $ls_surveyQuestionTypeEnum]],
+			'enum' => ['rule' => ['enum', $surveyQuestionTypeEnum]],
 		]);
 
 
@@ -138,10 +138,10 @@ class SurveyQuestionsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
 			function (SurveyQuestion $entity): bool {
-				/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_surveyQuestionTypeEnum */
-				$ls_surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
+				/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $surveyQuestionTypeEnum */
+				$surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 
-				return in_array($entity->type, $ls_surveyQuestionTypeEnum::cases());
+				return in_array($entity->type, $surveyQuestionTypeEnum::cases());
 			},
 			'validType',
 			[
@@ -170,9 +170,9 @@ class SurveyQuestionsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_surveyQuestionTypeEnum */
-		$ls_surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $surveyQuestionTypeEnum */
+		$surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 
-		$schema->setColumnType('type', EnumType::from($ls_surveyQuestionTypeEnum));
+		$schema->setColumnType('type', EnumType::from($surveyQuestionTypeEnum));
 	}
 }

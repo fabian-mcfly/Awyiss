@@ -63,7 +63,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(12, $this->formElementsTable->associations()->keys());
@@ -153,7 +152,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::getAvailableTypes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableTypes(): void {
 		$types = $this->formElementsTable->getAvailableTypes();
@@ -186,7 +184,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::getAvailableTypes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableTypesTranslated(): void {
 		$types = $this->formElementsTable->getAvailableTypes(true);
@@ -218,7 +215,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::getColumnSystemClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnSystemClass(): void {
 		$columnSystemClass = $this->formElementsTable->getColumnSystemClass();
@@ -241,7 +237,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidths(): void {
 		$columnWidths = $this->formElementsTable->getColumnWidths();
@@ -272,7 +267,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndents(): void {
 		$columnIndents = $this->formElementsTable->getColumnIndents();
@@ -302,7 +296,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -344,7 +337,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -377,7 +369,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -395,7 +386,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationConditionalRequiredTitle(): void {
 		// Title is required for all types except 'free_text'
@@ -424,7 +414,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationConditionalRequiredIdentifier(): void {
 		// Identifier is required for all types except 'free_text' and 'submit'
@@ -465,7 +454,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -514,7 +502,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -549,7 +536,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -571,7 +557,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnWidthInList(): void {
 		// Test valid column width
@@ -593,7 +578,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnWidthNotInList(): void {
 		// Test invalid column width
@@ -615,7 +599,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnIndentInList(): void {
 		// Test valid column indent
@@ -637,7 +620,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnIndentNotInList(): void {
 		// Test invalid column indent
@@ -659,7 +641,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationOptionsArrayMaxLength(): void {
 		$largeOptions = array_fill(0, 10000, ['key' => str_repeat('x', 100), 'value' => str_repeat('y', 100)]);
@@ -682,7 +663,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUniqueIdentifier(): void {
 		// Test with existing identifier/form combination (should fail)
@@ -707,7 +687,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidInputType(): void {
 		// Test with valid input type
@@ -728,7 +707,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidInputType(): void {
 		// Test with invalid input type
@@ -753,7 +731,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidWidthIndentCombination(): void {
 		// Test valid width/indent combination
@@ -776,7 +753,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidWidthIndentCombination(): void {
 		// Test invalid width/indent combination
@@ -803,7 +779,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->formElementsTable->newDefaultEntity();
@@ -836,7 +811,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -889,7 +863,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::$categories
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCategoriesBehavior(): void {
 		$this->assertTrue($this->formElementsTable->hasBehavior('Categories'));
@@ -906,7 +879,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehavior(): void {
 		$this->assertTrue($this->formElementsTable->hasBehavior('Nest'));
@@ -921,7 +893,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::$search
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSearchBehavior(): void {
 		$this->assertTrue($this->formElementsTable->hasBehavior('Search'));
@@ -935,7 +906,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->formElementsTable->hasBehavior('SystemOrder'));
@@ -949,7 +919,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->formElementsTable->hasBehavior('Translate'));
@@ -971,7 +940,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaJsonColumns(): void {
 		$schema = $this->formElementsTable->getSchema();
@@ -984,7 +952,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::disableCascadeCallbacks()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testDisableCascadeCallbacks(): void {
@@ -1005,7 +972,6 @@ class FormElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormElementsTable::enableCascadeCallbacks()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpConditionAlreadyCheckedInspection
 	 */
 	public function testEnableCascadeCallbacks(): void {

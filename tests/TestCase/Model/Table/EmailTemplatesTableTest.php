@@ -60,7 +60,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(10, $this->emailTemplatesTable->associations()->keys());
@@ -139,7 +138,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::findWithUsages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindWithUsages(): void {
 		$query = $this->emailTemplatesTable->find('all');
@@ -163,7 +161,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::getAvailableLayouts()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableLayouts(): void {
 		$layouts = $this->emailTemplatesTable->getAvailableLayouts();
@@ -183,7 +180,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -214,7 +210,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -237,7 +232,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -256,7 +250,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -287,7 +280,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -314,7 +306,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -335,7 +326,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotEmptyString(): void {
 		$data = [
@@ -356,7 +346,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFileNameAscii(): void {
 		$data = [
@@ -376,7 +365,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAllowEmptyTextFields(): void {
 		$data = [
@@ -398,7 +386,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUniqueFileName(): void {
 		// Test with existing fileName (should fail)
@@ -422,7 +409,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidLayout(): void {
 		$availableLayouts = $this->emailTemplatesTable->getAvailableLayouts();
@@ -444,7 +430,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidLayout(): void {
 		$data = [
@@ -467,7 +452,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedFormEmailsValid(): void {
 		$data = [
@@ -488,7 +472,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedFormEmailsInvalid(): void {
 		/** @var \Awyiss\Model\Entity\EmailTemplate $emailTemplate */
@@ -506,7 +489,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedFormConfirmationEmails(): void {
 		/** @var \Awyiss\Model\Entity\EmailTemplate $emailTemplate */
@@ -524,7 +506,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->emailTemplatesTable->newDefaultEntity();
@@ -546,7 +527,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -579,7 +559,6 @@ class EmailTemplatesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->emailTemplatesTable->hasBehavior('Translate'));

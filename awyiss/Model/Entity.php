@@ -52,12 +52,12 @@ class Entity extends BaseEntity {
 	 * @param array $options
 	 */
 	public function __construct(array $properties = [], array $options = []) {
-		$la_properties = $this->mapFields($properties, true);
+		$properties = $this->mapFields($properties, true);
 
 		//Remember the original field names here.
-		$this->setOriginalField(array_keys($la_properties));
+		$this->setOriginalField(array_keys($properties));
 
-		parent::__construct($la_properties, $options);
+		parent::__construct($properties, $options);
 
 		if (!array_key_exists('_translations', $this->_accessible)) {
 			$this->setAccess('_translations', true);
@@ -81,13 +81,13 @@ class Entity extends BaseEntity {
 	 * @inheritDoc
 	 */
 	public function &get(string $field): mixed {
-		$ls_field = static::mapField($field);
+		$field = static::mapField($field);
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection ... stupid PhpStorm */
-		$lx_value = &$this->getOrGetFromAttribute($ls_field);
+		$value = &$this->getOrGetFromAttribute($field);
 
 
-		return $lx_value;
+		return $value;
 	}
 
 
@@ -115,10 +115,10 @@ class Entity extends BaseEntity {
 	 * @inheritDoc
 	 */
 	public function patch(array $values, array $options = []): EntityInterface {
-		$la_values = static::mapFields($values, true);
+		$values = static::mapFields($values, true);
 
 
-		return $this->patchOrPatchAttribute($la_values, $options);
+		return $this->patchOrPatchAttribute($values, $options);
 	}
 
 
@@ -185,13 +185,13 @@ class Entity extends BaseEntity {
 			return null;
 		}
 
-		$lo_now = new DateTime();
+		$now = new DateTime();
 
-		if ($this->publicationStart && $this->publicationStart > $lo_now) {
+		if ($this->publicationStart && $this->publicationStart > $now) {
 			return false;
 		}
 
-		if ($this->publicationEnd && $this->publicationEnd < $lo_now) {
+		if ($this->publicationEnd && $this->publicationEnd < $now) {
 			return false;
 		}
 
@@ -209,27 +209,27 @@ class Entity extends BaseEntity {
 	 * @noinspection PhpUnused
 	 */
 	protected function _getLabel(): string {
-		$ls_scope = Inflector::underscore($this->getSource()) ?: 'system';
+		$scope = Inflector::underscore($this->getSource()) ?: 'system';
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ls_title = $this->title ?? $this->name;
+		$title = $this->title ?? $this->name;
 
-		if (empty($ls_title)) {
+		if (empty($title)) {
 			if (!empty($this->identifier)) {
-				$ls_identifier = $this->identifier;
-				$ls_title = __d($ls_scope, 'title_' . Inflector::underscore($ls_identifier));
+				$identifier = $this->identifier;
+				$title = __d($scope, 'title_' . Inflector::underscore($identifier));
 			}
 			else {
-				$ls_title = $this->fileName ?? null ?? Inflector::singularize($this->getSource()) . $this->id;
+				$title = $this->fileName ?? null ?? Inflector::singularize($this->getSource()) . $this->id;
 			}
 		}
 
-		$ls_inactive = '';
+		$inactive = '';
 		if (key_exists('active', $this->_fields) && empty($this->active)) {
-			$ls_inactive = __d($ls_scope, 'inactive') . ' ';
+			$inactive = __d($scope, 'inactive') . ' ';
 		}
 
 
-		return $ls_inactive . $ls_title;
+		return $inactive . $title;
 	}
 }

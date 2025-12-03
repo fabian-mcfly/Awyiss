@@ -68,10 +68,10 @@ class PublicationDataTable extends Table {
 
 
 		$validator->notEmptyString('type');
-		/** @var class-string<\Awyiss\Model\Enum\PublicationDataType> $ls_publicationDataTypeEnumClass */
-		$ls_publicationDataTypeEnumClass = App::className('PublicationDataType', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PublicationDataType> $publicationDataTypeEnumClass */
+		$publicationDataTypeEnumClass = App::className('PublicationDataType', 'Model/Enum');
 		$validator->add('type', [
-			'enum' => ['rule' => ['enum', $ls_publicationDataTypeEnumClass]],
+			'enum' => ['rule' => ['enum', $publicationDataTypeEnumClass]],
 		]);
 
 
@@ -94,10 +94,10 @@ class PublicationDataTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
 			function (PublicationData $entity): bool {
-				/** @var class-string<\Awyiss\Model\Enum\PublicationDataType> $ls_publicationDataTypeEnumClass */
-				$ls_publicationDataTypeEnumClass = App::className('PublicationDataType', 'Model/Enum');
+				/** @var class-string<\Awyiss\Model\Enum\PublicationDataType> $publicationDataTypeEnumClass */
+				$publicationDataTypeEnumClass = App::className('PublicationDataType', 'Model/Enum');
 
-				return in_array($entity->type, $ls_publicationDataTypeEnumClass::cases());
+				return in_array($entity->type, $publicationDataTypeEnumClass::cases());
 			},
 			'validType',
 			[
@@ -116,9 +116,9 @@ class PublicationDataTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\PublicationDataType> $ls_publicationDataTypeEnumClass */
-		$ls_publicationDataTypeEnumClass = App::className('PublicationDataType', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\PublicationDataType> $publicationDataTypeEnumClass */
+		$publicationDataTypeEnumClass = App::className('PublicationDataType', 'Model/Enum');
 
-		$schema->setColumnType('type', EnumType::from($ls_publicationDataTypeEnumClass));
+		$schema->setColumnType('type', EnumType::from($publicationDataTypeEnumClass));
 	}
 }

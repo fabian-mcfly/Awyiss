@@ -182,20 +182,20 @@ class MediaTable extends Table {
 		]);
 
 
-		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
-		$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $processStatusEnumClass */
+		$processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
 		$validator->add('preview', [
-			'enum' => ['rule' => ['enum', $ls_processStatusEnumClass]],
+			'enum' => ['rule' => ['enum', $processStatusEnumClass]],
 		]);
 
 
 		$validator->add('avif', [
-			'enum' => ['rule' => ['enum', $ls_processStatusEnumClass]],
+			'enum' => ['rule' => ['enum', $processStatusEnumClass]],
 		]);
 
 
 		$validator->add('webp', [
-			'enum' => ['rule' => ['enum', $ls_processStatusEnumClass]],
+			'enum' => ['rule' => ['enum', $processStatusEnumClass]],
 		]);
 
 
@@ -274,29 +274,29 @@ class MediaTable extends Table {
 					return true;
 				}
 
-				$ls_extension = $entity->extension;
+				$extension = $entity->extension;
 
-				if (!$ls_extension) {
+				if (!$extension) {
 					return __df($this->getI18nDomain(), 'validation', 'error_media_has_file_extension');
 				}
 
-				$lo_stream = $entity->file->getStream();
-				$ls_tempName = $lo_stream->getMetadata('uri');
+				$stream = $entity->file->getStream();
+				$tempName = $stream->getMetadata('uri');
 
-				$ls_knownExtensions = static::getFinfo()->file($ls_tempName, FILEINFO_EXTENSION);
-				$la_knownExtensions = explode('/', $ls_knownExtensions);
+				$detectedExtension = static::getFinfo()->file($tempName, FILEINFO_EXTENSION);
+				$knownExtensions = explode('/', $detectedExtension);
 
-				if ($ls_knownExtensions === '???' || !in_array($ls_extension, $la_knownExtensions)) {
+				if ($detectedExtension === '???' || !in_array($extension, $knownExtensions)) {
 					//Fallback if extension isn't known for the mimetype
-					$la_knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $entity->mimeType));
+					$knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $entity->mimeType));
 				}
 
-				if (empty($la_knownExtensions) || !in_array($ls_extension, $la_knownExtensions)) {
+				if (empty($knownExtensions) || !in_array($extension, $knownExtensions)) {
 					return __df(
 						$this->getI18nDomain(),
 						'validation',
 						'error_media_mime_type_matches_extension',
-						$ls_extension,
+						$extension,
 						$entity->mimeType
 					);
 				}
@@ -316,14 +316,14 @@ class MediaTable extends Table {
 					return true;
 				}
 
-				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
-				$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $processStatusEnumClass */
+				$processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
 
 				if (is_int($entity->preview)) {
-					return $ls_processStatusEnumClass::tryFrom($entity->preview) !== null;
+					return $processStatusEnumClass::tryFrom($entity->preview) !== null;
 				}
 
-				return in_array($entity->preview, $ls_processStatusEnumClass::cases());
+				return in_array($entity->preview, $processStatusEnumClass::cases());
 			},
 			'validPreview',
 			[
@@ -339,14 +339,14 @@ class MediaTable extends Table {
 					return true;
 				}
 
-				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
-				$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $processStatusEnumClass */
+				$processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
 
 				if (is_int($entity->webp)) {
-					return $ls_processStatusEnumClass::tryFrom($entity->webp) !== null;
+					return $processStatusEnumClass::tryFrom($entity->webp) !== null;
 				}
 
-				return in_array($entity->webp, $ls_processStatusEnumClass::cases());
+				return in_array($entity->webp, $processStatusEnumClass::cases());
 			},
 			'validWebp',
 			[
@@ -362,14 +362,14 @@ class MediaTable extends Table {
 					return true;
 				}
 
-				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
-				$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+				/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $processStatusEnumClass */
+				$processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
 
 				if (is_int($entity->avif)) {
-					return $ls_processStatusEnumClass::tryFrom($entity->avif) !== null;
+					return $processStatusEnumClass::tryFrom($entity->avif) !== null;
 				}
 
-				return in_array($entity->avif, $ls_processStatusEnumClass::cases());
+				return in_array($entity->avif, $processStatusEnumClass::cases());
 			},
 			'validAvif',
 			[
@@ -401,24 +401,24 @@ class MediaTable extends Table {
 	 * @return int
 	 */
 	public function getMaxFileSize(): int {
-		$ls_maxFileSize = ini_get('upload_max_filesize');
-		$ls_maxFileSize = trim($ls_maxFileSize);
-		$ls_last = strtolower($ls_maxFileSize[strlen($ls_maxFileSize) - 1]);
+		$maxFileSize = ini_get('upload_max_filesize');
+		$maxFileSize = trim($maxFileSize);
+		$last = strtolower($maxFileSize[strlen($maxFileSize) - 1]);
 
-		$li_maxFileSize = (int)substr($ls_maxFileSize, 0, -1);
+		$maxFileSize = (int)substr($maxFileSize, 0, -1);
 
-		switch ($ls_last) {
+		switch ($last) {
 			case 'g':
-				$li_maxFileSize *= 1024;
+				$maxFileSize *= 1024;
 				// no break
 			case 'm':
-				$li_maxFileSize *= 1024;
+				$maxFileSize *= 1024;
 				// no break
 			case 'k':
-				$li_maxFileSize *= 1024;
+				$maxFileSize *= 1024;
 		}
 
-		return $li_maxFileSize;
+		return $maxFileSize;
 	}
 
 
@@ -428,29 +428,29 @@ class MediaTable extends Table {
 	 * @return string
 	 */
 	public function detectMimeType(UploadedFile $uploadedFile, string $extension): string {
-		$lo_stream = $uploadedFile->getStream();
-		$ls_tempName = $lo_stream->getMetadata('uri');
+		$stream = $uploadedFile->getStream();
+		$tempName = $stream->getMetadata('uri');
 
-		$ls_mimeType = static::getFinfo()->file($ls_tempName, FILEINFO_MIME_TYPE);
+		$mimeType = static::getFinfo()->file($tempName, FILEINFO_MIME_TYPE);
 
 		// If the uploaded file's mime type is the same as the detected mime type, return it
-		if ($ls_mimeType === $uploadedFile->getClientMediaType()) {
-			return $ls_mimeType;
+		if ($mimeType === $uploadedFile->getClientMediaType()) {
+			return $mimeType;
 		}
 
 		//Fallback if extension isn't known for the mimetype
-		$la_knownExtensionsForDetectedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $ls_mimeType), []);
-		$la_knownExtensionsForProvidedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $uploadedFile->getClientMediaType()), []);
+		$knownExtensionsForDetectedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $mimeType), []);
+		$knownExtensionsForProvidedMimeType = Configure::read('MimeTypes.' . str_replace('.', '-', $uploadedFile->getClientMediaType()), []);
 
 		// If both mime types contain the same, provided extension, return the provided mime type
 		if (
-			in_array($extension, $la_knownExtensionsForDetectedMimeType) &&
-			in_array($extension, $la_knownExtensionsForProvidedMimeType)
+			in_array($extension, $knownExtensionsForDetectedMimeType) &&
+			in_array($extension, $knownExtensionsForProvidedMimeType)
 		) {
 			return $uploadedFile->getClientMediaType();
 		}
 
-		return $ls_mimeType;
+		return $mimeType;
 	}
 
 
@@ -462,12 +462,12 @@ class MediaTable extends Table {
 
 		$schema->setColumnType('meta_data', 'json');
 
-		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $ls_processStatusEnumClass */
-		$ls_processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\ProcessStatus> $processStatusEnumClass */
+		$processStatusEnumClass = App::className('ProcessStatus', 'Model/Enum');
 
-		$schema->setColumnType('preview', EnumType::from($ls_processStatusEnumClass));
-		$schema->setColumnType('avif', EnumType::from($ls_processStatusEnumClass));
-		$schema->setColumnType('webp', EnumType::from($ls_processStatusEnumClass));
+		$schema->setColumnType('preview', EnumType::from($processStatusEnumClass));
+		$schema->setColumnType('avif', EnumType::from($processStatusEnumClass));
+		$schema->setColumnType('webp', EnumType::from($processStatusEnumClass));
 
 		$schema->setColumnType('crop', 'json');
 	}

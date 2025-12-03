@@ -61,7 +61,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(19, $this->formsTable->associations()->keys());
@@ -201,7 +200,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -245,7 +243,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -272,7 +269,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -290,7 +286,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -351,7 +346,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -396,7 +390,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -416,7 +409,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmailFields(): void {
 		$data = [
@@ -438,7 +430,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationValidEmailPlaceholders(): void {
 		$data = [
@@ -472,7 +463,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidEmailPlaceholders(): void {
 		$data = [
@@ -492,7 +482,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationCcBccArraysValid(): void {
 		$data = [
@@ -520,7 +509,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationCcBccArraysInvalid(): void {
 		// Test invalid CC/BCC
@@ -547,7 +535,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationConditionalRequired(): void {
 		// Test that email template is required when send_email is true
@@ -587,7 +574,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationConditionalRecipientsStrategy(): void {
 		$data = [
@@ -622,7 +608,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidEmailTemplate(): void {
 		// Test with existing email template
@@ -643,7 +628,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidEmailTemplate(): void {
 		// Test with non-existing email template
@@ -667,7 +651,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidConfirmationEmailTemplate(): void {
 		// Test with existing confirmation email template
@@ -688,7 +671,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidConfirmationEmailTemplate(): void {
 		// Test with non-existing confirmation email template
@@ -713,7 +695,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUniqueIdentifier(): void {
 		// Test with existing identifier (should fail)
@@ -737,7 +718,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidTransportProfile(): void {
 		// Test with valid transport profile - we need to check what's available
@@ -766,7 +746,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidTransportProfile(): void {
 		// Test with non-existing transport profile
@@ -791,7 +770,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedContents(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -810,7 +788,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedPages(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -829,7 +806,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedSurveys(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -848,7 +824,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoLinkedWidgets(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
@@ -868,7 +843,6 @@ class FormsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::getFormTemplates()
 	 * @throws \Exception
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetFormTemplates(): void {
 		$templates = $this->formsTable->getFormTemplates();
@@ -887,7 +861,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::getTransportProfiles()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetTransportProfiles(): void {
 		$profiles = $this->formsTable->getTransportProfiles();
@@ -904,7 +877,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->formsTable->newDefaultEntity();
@@ -941,7 +913,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -979,7 +950,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->formsTable->hasBehavior('Translate'));
@@ -1002,7 +972,6 @@ class FormsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaJsonColumns(): void {
 		$schema = $this->formsTable->getSchema();

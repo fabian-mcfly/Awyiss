@@ -60,7 +60,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(8, $this->usergroupsTable->associations()->keys());
@@ -124,7 +123,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -147,7 +145,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -166,7 +163,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -186,7 +182,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -210,7 +205,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -230,7 +224,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyTitle(): void {
 		$data = [
@@ -248,7 +241,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function _estEntityValidationBlankTitle(): void {
 		$data = [
@@ -267,7 +259,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUniqueTitle(): void {
 		$data = [
@@ -287,7 +278,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesExistingTitle(): void {
 		// Try to create another usergroup with the same title as an existing one
@@ -314,7 +304,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesUpdateWithSameTitle(): void {
 		// Get an existing usergroup
@@ -332,7 +321,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\Usergroup $entity */
@@ -351,7 +339,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -374,7 +361,6 @@ class UsergroupsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->usergroupsTable->hasBehavior('Translate'));

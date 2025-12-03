@@ -147,10 +147,10 @@ class SurveySurveyQuestionsTable extends Table {
 		]);
 
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 		$validator->add('nextAction', [
-			'enum' => ['rule' => ['enum', $ls_surveyNextActionEnum]],
+			'enum' => ['rule' => ['enum', $surveyNextActionEnum]],
 		]);
 
 
@@ -232,10 +232,10 @@ class SurveySurveyQuestionsTable extends Table {
 					return true;
 				}
 
-				/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-				$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+				/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+				$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-				return in_array($entity->nextAction, $ls_surveyNextActionEnum::cases());
+				return in_array($entity->nextAction, $surveyNextActionEnum::cases());
 			},
 			'validNextAction',
 			[
@@ -254,9 +254,9 @@ class SurveySurveyQuestionsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-		$schema->setColumnType('next_action', EnumType::from($ls_surveyNextActionEnum));
+		$schema->setColumnType('next_action', EnumType::from($surveyNextActionEnum));
 	}
 }

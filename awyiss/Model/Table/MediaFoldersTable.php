@@ -28,6 +28,7 @@ use Cake\Validation\Validator;
  * @method \Cake\Collection\CollectionInterface|null getParents(MediaFolder $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class MediaFoldersTable extends Table {
 	/**

@@ -53,7 +53,6 @@ class LocksTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LocksTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\Lock $entity */
@@ -75,7 +74,6 @@ class LocksTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\LocksTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [

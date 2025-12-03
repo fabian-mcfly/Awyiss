@@ -62,38 +62,38 @@ class ConfigurationTable extends Table {
 	 * @noinspection DuplicatedCode
 	 */
 	public function buildCategories(): array {
-		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
-		$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
-		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+		/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
+		$datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$datatables = $datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
 
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
+		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
+		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
 			return Inflector::pluralize($pageRole->identifier);
 		})->toArray();
 
-		$la_configScopes = [];
-		foreach ($this->getScopes() as $ls_identifier => $ls_className) {
-			$ls_identifier = Inflector::underscore($ls_identifier);
+		$configScopes = [];
+		foreach ($this->getScopes() as $identifier => $className) {
+			$identifier = Inflector::underscore($identifier);
 
-			if (isset($la_pageRoles[ $ls_identifier ]) && $ls_identifier !== 'pages') {
-				$la_configScopes[ $ls_identifier ] = $la_pageRoles[ $ls_identifier ]->label;
-
-				continue;
-			}
-
-			if (isset($la_datatables[ $ls_identifier ])) {
-				$la_configScopes[ $ls_identifier ] = $la_datatables[ $ls_identifier ]->label;
+			if (isset($pageRoles[ $identifier ]) && $identifier !== 'pages') {
+				$configScopes[ $identifier ] = $pageRoles[ $identifier ]->label;
 
 				continue;
 			}
 
-			$la_configScopes[ $ls_identifier ] = __d($ls_identifier, 'menu_title');
+			if (isset($datatables[ $identifier ])) {
+				$configScopes[ $identifier ] = $datatables[ $identifier ]->label;
+
+				continue;
+			}
+
+			$configScopes[ $identifier ] = __d($identifier, 'menu_title');
 		}
 
-		Arrays::naturalSort($la_configScopes);
+		Arrays::naturalSort($configScopes);
 
-		return $la_configScopes;
+		return $configScopes;
 	}
 
 
@@ -226,7 +226,7 @@ class ConfigurationTable extends Table {
 				return false;
 			}
 
-			$lb_valid = ConfigOptionsProvider::validateConfigValue(
+			$valid = ConfigOptionsProvider::validateConfigValue(
 				$entity->scope,
 				$entity->realm,
 				$entity->identifier,
@@ -234,8 +234,8 @@ class ConfigurationTable extends Table {
 				$entity->languageShortcode
 			);
 
-			if (!$lb_valid) {
-				$lx_value = ConfigOptionsProvider::typecastConfigValue(
+			if (!$valid) {
+				$value = ConfigOptionsProvider::typecastConfigValue(
 					$entity->scope,
 					$entity->realm,
 					$entity->identifier,
@@ -245,31 +245,30 @@ class ConfigurationTable extends Table {
 
 				//A typecast to null cannot be valid if the initial value wasn't null.
 				//This happens when one tries to json_decode a string, for example.
-				if ($entity->value !== null && $lx_value !== null) {
-					$lb_valid = ConfigOptionsProvider::validateConfigValue(
+				if ($entity->value !== null && $value !== null) {
+					$valid = ConfigOptionsProvider::validateConfigValue(
 						$entity->scope,
 						$entity->realm,
 						$entity->identifier,
-						$lx_value,
+						$value,
 						$entity->languageShortcode
 					);
 				}
 			}
 
-			return $lb_valid;
+			return $valid;
 		}, 'validValue', [
 			'errorField' => 'value',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_value'),
 		]);
 
 
-		$lo_rules = $rules;
-		$rules->add(function (Configuration $entity, array $options) use ($lo_rules): bool {
+		$rules->add(function (Configuration $entity, array $options) use ($rules): bool {
 			if (!$entity->get('languageShortcode')) {
 				return true;
 			}
 
-			$lo_existsIn = $lo_rules->existsIn([
+			$existsIn = $rules->existsIn([
 				'realm',
 				'languageShortcode',
 			], 'Languages', [
@@ -278,7 +277,7 @@ class ConfigurationTable extends Table {
 			]);
 
 
-			return $lo_existsIn($entity, $options);
+			return $existsIn($entity, $options);
 		}, 'languageExists');
 
 
@@ -298,11 +297,12 @@ class ConfigurationTable extends Table {
 
 		$this->configScopes = [];
 
-		$lo_identity = $this->getIdentity();
+		$identity = $this->getIdentity();
 
-		foreach (ConfigOptionsProvider::getConfigOptionsFiles() as $ls_scope => $ls_className) {
-			if ($lo_identity?->scopeIsAccessible($this->getTable(), ['scope' => $ls_scope], 'read')) {
-				$this->configScopes[ $ls_scope ] = $ls_className;
+		foreach (ConfigOptionsProvider::getConfigOptionsFiles() as $scope => $className) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			if ($identity?->scopeIsAccessible($this->getTable(), ['scope' => $scope], 'read')) {
+				$this->configScopes[ $scope ] = $className;
 			}
 		}
 

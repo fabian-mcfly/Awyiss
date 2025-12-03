@@ -81,9 +81,9 @@ class AttributesPagesTable extends Table {
 				return true;
 			}
 
-			$lo_existsIn = $rules->existsIn(['pageId'], 'Pages');
+			$existsIn = $rules->existsIn(['pageId'], 'Pages');
 
-			return $lo_existsIn($entity, $options);
+			return $existsIn($entity, $options);
 		}, 'validPageId', ['errorField' => 'pageId']);
 
 		return $rules;

@@ -66,7 +66,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(15, $this->widgetsTable->associations()->keys());
@@ -178,7 +177,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::getColumnSystemClass()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnSystemClass(): void {
 		$columnSystemClass = $this->widgetsTable->getColumnSystemClass();
@@ -200,7 +198,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::getColumnWidths()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnWidths(): void {
 		$columnWidths = $this->widgetsTable->getColumnWidths();
@@ -231,7 +228,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::getColumnIndents()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetColumnIndents(): void {
 		$columnIndents = $this->widgetsTable->getColumnIndents();
@@ -261,7 +257,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -299,7 +294,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -326,7 +320,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -345,7 +338,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -391,7 +383,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -429,7 +420,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnWidthInList(): void {
 		// Test valid column width
@@ -450,7 +440,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnWidthNotInList(): void {
 		// Test invalid column width
@@ -471,7 +460,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnIndentInList(): void {
 		// Test valid column indent
@@ -492,7 +480,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationColumnIndentNotInList(): void {
 		// Test invalid column indent
@@ -513,7 +500,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationDataArrayMaxLength(): void {
 		$largeData = array_fill(0, 10000, str_repeat('x', 100)); // Create very large array
@@ -535,7 +521,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidWidgetTemplate(): void {
 		// Test with existing widget template
@@ -558,7 +543,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidWidgetTemplate(): void {
 		// Test with non-existing widget template
@@ -589,7 +573,6 @@ class WidgetsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateInputFields()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateAssignedElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidAssignedElements(): void {
 		// Template 1 has required elements: widget_template_id, identifier, system_order
@@ -626,7 +609,6 @@ class WidgetsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateInputFields()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateAssignedElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidAssignedElements(): void {
 		// Template 1 has required elements: widget_template_id, identifier, system_order
@@ -661,7 +643,6 @@ class WidgetsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateInputFields()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateUnassignedElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidUnassignedElements(): void {
 		// Unassigned elements should be empty/default: title, title_tag, subtitle, subtitle_tag, link, form_id, survey_id
@@ -700,7 +681,6 @@ class WidgetsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateInputFields()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateUnassignedElements()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidUnassignedElements(): void {
 		// Unassigned elements should be empty/default: title, title_tag, subtitle, subtitle_tag, link, form_id, survey_id
@@ -762,7 +742,6 @@ class WidgetsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateInputFields()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateUnassignedAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidUnassignedAttributes(): void {
 		// Template 1 has assigned attribute: free_text
@@ -795,7 +774,6 @@ class WidgetsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateInputFields()
 	 * @see \Awyiss\Model\Table\WidgetsTable::validateUnassignedAttributes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidUnassignedAttributes(): void {
 		// Template 1 has assigned attribute: free_text
@@ -833,7 +811,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFormId(): void {
 		// Test with existing form
@@ -859,7 +836,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNullFormId(): void {
 		// Test with null form (should be allowed)
@@ -884,7 +860,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvvalidFormId(): void {
 		// Test with non-existing form
@@ -916,7 +891,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidSurveyId(): void {
 		// Test with existing survey
@@ -942,7 +916,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNullSurveyId(): void {
 		// Test with null survey (should be allowed)
@@ -968,7 +941,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidSurveyId(): void {
 		// Test with non-existing survey
@@ -1000,7 +972,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidWidthIndentCombination(): void {
 		// Test valid width/indent combination
@@ -1026,7 +997,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidWidthIndentCombination(): void {
 		// Test invalid width/indent combination
@@ -1058,7 +1028,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::nestedByIdentifier()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestedByIdentifier(): void {
 		$query = $this->widgetsTable->find('all');
@@ -1094,7 +1063,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testNewDefaultEntity(): void {
@@ -1134,7 +1102,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
@@ -1183,7 +1150,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehavior(): void {
 		$this->assertTrue($this->widgetsTable->hasBehavior('Nest'));
@@ -1198,7 +1164,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->widgetsTable->hasBehavior('SystemOrder'));
@@ -1212,7 +1177,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->widgetsTable->hasBehavior('Translate'));
@@ -1229,7 +1193,6 @@ class WidgetsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaDataColumn(): void {
 		$schema = $this->widgetsTable->getSchema();
@@ -1242,7 +1205,6 @@ class WidgetsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesFormId(): void {
 		$result = $this->widgetsTable->getPossibleFieldValues('form_id');
@@ -1262,7 +1224,6 @@ class WidgetsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesSurveyId(): void {
 		$result = $this->widgetsTable->getPossibleFieldValues('survey_id');
@@ -1282,7 +1243,6 @@ class WidgetsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\WidgetsTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesWidgetTemplateId(): void {
 		$result = $this->widgetsTable->getPossibleFieldValues('widget_template_id');

@@ -81,9 +81,9 @@ class AttributesNewsTable extends Table {
 				return true;
 			}
 
-			$lo_existsIn = $rules->existsIn(['pageId'], 'News');
+			$existsIn = $rules->existsIn(['pageId'], 'News');
 
-			return $lo_existsIn($entity, $options);
+			return $existsIn($entity, $options);
 		}, 'validPageId', ['errorField' => 'pageId']);
 
 		return $rules;

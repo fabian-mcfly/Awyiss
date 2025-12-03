@@ -59,7 +59,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(6, $this->mediaSelectorsTable->associations()->keys());
@@ -110,7 +109,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -136,7 +134,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -156,7 +153,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -174,7 +170,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -199,7 +194,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -220,7 +214,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -239,7 +232,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueValid(): void {
 		$entity = $this->mediaSelectorsTable->newEntity([
@@ -259,7 +251,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueInvalid(): void {
 		$entity = $this->mediaSelectorsTable->get(1);
@@ -280,7 +271,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNotDefaultSelectorValid(): void {
 		// Test that default selectors (id < 10) cannot be created or updated
@@ -303,7 +293,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNotDefaultSelectorDeletionInvalid(): void {
 		// Test that default selectors (id < 10) cannot be deleted
@@ -323,7 +312,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\MediaSelector $entity */
@@ -344,7 +332,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -370,7 +357,6 @@ class MediaSelectorsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaSelectorsTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->mediaSelectorsTable->hasBehavior('Translate'));

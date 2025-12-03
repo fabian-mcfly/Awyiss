@@ -234,13 +234,13 @@ class LanguagesTable extends Table {
 				return true;
 			}
 
-			$li_count = $this->find()->where([
+			$count = $this->find()->where([
 				'realm' => $entity->hasOriginal('realm') ? $entity->getOriginal('realm') : $entity->realm,
 				'active' => true,
 				'id !=' => $entity->id,
 			])->count();
 
-			if ($li_count > 0) {
+			if ($count > 0) {
 				return true;
 			}
 
@@ -284,9 +284,9 @@ class LanguagesTable extends Table {
 
 		$rules->addDelete(
 			function (Language $entity): bool {
-				$li_count = $this->find()->where(['realm' => $entity->realm])->count();
+				$count = $this->find()->where(['realm' => $entity->realm])->count();
 
-				return $li_count > 1;
+				return $count > 1;
 			},
 			'notLastLanguageInRealm',
 			[

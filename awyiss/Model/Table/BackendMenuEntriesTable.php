@@ -144,31 +144,30 @@ class BackendMenuEntriesTable extends Table {
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$lo_rules = $rules;
 		$rules->add(
-			function (BackendMenuEntry $entity, array $options) use ($lo_rules): bool {
-				static $lo_menu;
+			function (BackendMenuEntry $entity, array $options) use ($rules): bool {
+				static $menu;
 
-				$lx_parentId = $entity->get('parentId');
-				if (!$lx_parentId) {
+				$parentId = $entity->get('parentId');
+				if (!$parentId) {
 					return true;
 				}
 
-				if (!is_numeric($lx_parentId)) {
-					if (!isset($lo_menu)) {
-						/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $ls_backendMenuProviderClass */
-						$ls_backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
-						$lo_menu = new $ls_backendMenuProviderClass();
+				if (!is_numeric($parentId)) {
+					if (!isset($menu)) {
+						/** @var class-string<\Awyiss\Utility\Menu\BackendMenuProvider> $backendMenuProviderClass */
+						$backendMenuProviderClass = App::className('BackendMenuProvider', 'Utility/Menu');
+						$menu = new $backendMenuProviderClass();
 					}
 
 
-					return (bool)($lo_menu->getCustomMenu() ?? $lo_menu->getMenu())->getItem($lx_parentId);
+					return (bool)($menu->getCustomMenu() ?? $menu->getMenu())->getItem($parentId);
 				}
 
-				$lo_existsIn = $lo_rules->existsIn('parentId', 'ParentBackendMenuEntries');
+				$existsIn = $rules->existsIn('parentId', 'ParentBackendMenuEntries');
 
 
-				return $lo_existsIn($entity, $options);
+				return $existsIn($entity, $options);
 			},
 			'validParentId',
 			[
@@ -191,7 +190,7 @@ class BackendMenuEntriesTable extends Table {
 	 */
 	public function createEntries(Entity $entity, string $controller, string $scope, string $insertAfterId = 'pages'): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$la_data = [
+		$data = [
 			'title' => $entity->title,
 			'insert_after_id' => $insertAfterId,
 			'link' => $controller . '::overview',
@@ -231,13 +230,13 @@ class BackendMenuEntriesTable extends Table {
 		];
 
 		if (isset($entity->_translations)) {
-			/** @var \Awyiss\Model\Entity $lo_translation */
-			foreach ($entity->_translations as $ls_shortcode => $lo_translation) {
-				$la_data['_translations'][ $ls_shortcode ] = $lo_translation->extract([], false, false);
+			/** @var \Awyiss\Model\Entity $translation */
+			foreach ($entity->_translations as $shortcode => $translation) {
+				$data['_translations'][ $shortcode ] = $translation->extract([], false, false);
 			}
 		}
 
-		$lo_menuEntry = $this->patchEntity($this->newDefaultEntity(), $la_data, [
+		$menuEntry = $this->patchEntity($this->newDefaultEntity(), $data, [
 			'accessibleFields' => 'childBackendMenuEntries',
 			'associated' => [
 				'ChildBackendMenuEntries' => [
@@ -247,7 +246,7 @@ class BackendMenuEntriesTable extends Table {
 			'validate' => false,
 		]);
 
-		$this->save($lo_menuEntry);
+		$this->save($menuEntry);
 	}
 
 

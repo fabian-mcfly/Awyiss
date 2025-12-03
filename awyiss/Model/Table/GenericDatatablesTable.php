@@ -45,20 +45,20 @@ abstract class GenericDatatablesTable extends Table {
 	 * @inheritDoc
 	 */
 	public function __construct(array $config = []) {
-		$ls_scope = Inflector::camelize($this->getTable());
+		$scope = Inflector::camelize($this->getTable());
 
-		$this->nestable = LocalConfig::read('nest.enabled', false, $ls_scope);
+		$this->nestable = LocalConfig::read('nest.enabled', false, $scope);
 		if ($this->nestable) {
 			$this->systemOrder['relatedColumns'][] = 'parentId';
 		}
 
-		$this->splitIntoLanguages = LocalConfig::read('splitIntoLanguages', true, $ls_scope);
+		$this->splitIntoLanguages = LocalConfig::read('splitIntoLanguages', true, $scope);
 		if ($this->splitIntoLanguages) {
 			$this->nest['relatedColumns'][] = 'languageShortcode';
 			$this->systemOrder['relatedColumns'][] = 'languageShortcode';
 		}
 
-		$this->translatable = LocalConfig::read('translatable', false, $ls_scope);
+		$this->translatable = LocalConfig::read('translatable', false, $scope);
 		if ($this->translatable) {
 			$this->translate['fields'][] = 'title';
 		}
@@ -77,10 +77,10 @@ abstract class GenericDatatablesTable extends Table {
 		 * unset possible translatable attribute fields.
 		 */
 		if (!$this->translatable && $this->hasAttributes()) {
-			$lo_attributesTable = $this->getAttributesTable();
-			if ($lo_attributesTable->hasBehavior('Translate')) {
+			$attributesTable = $this->getAttributesTable();
+			if ($attributesTable->hasBehavior('Translate')) {
 				/** @noinspection PhpRedundantOptionalArgumentInspection */
-				$lo_attributesTable->getBehavior('Translate')->setConfig('fields', null);
+				$attributesTable->getBehavior('Translate')->setConfig('fields', null);
 			}
 		}
 	}
@@ -171,13 +171,13 @@ abstract class GenericDatatablesTable extends Table {
 	 *
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @return \Awyiss\ORM\RulesChecker
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		if ($this->splitIntoLanguages) {
 			$rules->add(
 				function (Entity $entity, array $options) use ($rules): bool|string {
 					// When split into languages, the languageShortcode must be set
+					/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 					if (!$entity->languageShortcode) {
 						return false;
 					}

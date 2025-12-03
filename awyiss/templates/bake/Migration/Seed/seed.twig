@@ -30,15 +30,15 @@ class {{ name }}Seed extends AbstractSeed {
 	 */
 	public function run(): void {
 {% if records %}
-		$la_data = {{ records|raw }};
+		$data = {{ records|raw }};
 {% else %}
-		$la_data = [];
+		$data = [];
 {% endif %}
 
-		$lo_table = $this->table('{{ table }}');
+		$table = $this->table('{{ table }}');
 {% if truncate %}
-		$lo_table->truncate();
+		$table->truncate();
 {% endif %}
-		$lo_table->insert($la_data)->save();
+		$table->insert($data)->save();
 	}
 }

@@ -35,7 +35,6 @@ class DashboardElementsTableTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function setUp(): void {
 		parent::setUp();
@@ -89,7 +88,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(6, $this->dashboardElementsTable->associations()->keys());
@@ -141,7 +139,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -168,7 +165,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -190,7 +186,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -208,7 +203,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -235,7 +229,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -256,7 +249,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -275,7 +267,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListFieldsSuccess(): void {
 		$data = [
@@ -296,7 +287,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListFieldsEmptySettings(): void {
 		$data = [
@@ -315,7 +305,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListFieldsNoFields(): void {
 		$data = [
@@ -336,7 +325,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListFieldsNotArray(): void {
 		$data = [
@@ -358,7 +346,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListFieldsInvalidField(): void {
 		$data = [
@@ -380,7 +367,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFilterSettingsSuccess(): void {
 		$data = [
@@ -406,7 +392,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFilterSettingsEmptyFilter(): void {
 		$data = [
@@ -427,7 +412,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFilterSettingsNotArray(): void {
 		$data = [
@@ -449,7 +433,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFilterSettingsInvalidColumn(): void {
 		$data = [
@@ -476,7 +459,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFilterSettingsBooleanWithoutOperator(): void {
 		$data = [
@@ -501,7 +483,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListSortSuccess(): void {
 		$data = [
@@ -527,7 +508,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListSortEmptySort(): void {
 		$data = [
@@ -548,7 +528,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListSortNotArray(): void {
 		$data = [
@@ -570,7 +549,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListSortInvalidField(): void {
 		$data = [
@@ -597,7 +575,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListSortMissingField(): void {
 		$data = [
@@ -623,7 +600,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListSortInvalidDirection(): void {
 		$data = [
@@ -650,7 +626,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListSortDescDirection(): void {
 		$data = [
@@ -676,7 +651,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidListSortMissingDirection(): void {
 		$data = [
@@ -702,7 +676,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchema(): void {
 		$schema = $this->dashboardElementsTable->getSchema();
@@ -715,7 +688,6 @@ class DashboardElementsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::getAvailableScopes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableScopes(): void {
 		$scopes = $this->dashboardElementsTable->getAvailableScopes();

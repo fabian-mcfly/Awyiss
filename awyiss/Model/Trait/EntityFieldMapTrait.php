@@ -38,9 +38,9 @@ trait EntityFieldMapTrait {
 	 * @param array $options
 	 */
 	public function __construct(array $properties = [], array $options = []) {
-		$la_properties = static::mapFields($properties, true);
+		$properties = static::mapFields($properties, true);
 
-		parent::__construct($la_properties, $options);
+		parent::__construct($properties, $options);
 	}
 
 
@@ -77,11 +77,11 @@ trait EntityFieldMapTrait {
 	 * @inheritDoc
 	 */
 	public function patch(array $values, array $options = []): EntityInterface {
-		$la_values = static::mapFields($values, true);
+		$values = static::mapFields($values, true);
 
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::patch($la_values, $options);
+		return parent::patch($values, $options);
 	}
 
 
@@ -118,16 +118,9 @@ trait EntityFieldMapTrait {
 	 * @return bool
 	 */
 	public function has(array|string $field): bool {
-		$la_fields = static::mapFields((array)$field);
+		$fields = static::mapFields((array)$field);
 
-		foreach ($la_fields as $ls_field) {
-			if (!array_key_exists($ls_field, $this->_fields) && !static::_accessor($ls_field, 'get')) {
-				return false;
-			}
-		}
-
-
-		return true;
+		return array_all($fields, fn ($field) => array_key_exists($field, $this->_fields) || static::_accessor($field, 'get'));
 	}
 
 
@@ -154,15 +147,15 @@ trait EntityFieldMapTrait {
 	 * @inheritDoc
 	 */
 	public function extract(?array $fields = [], bool $onlyDirty = false, bool $unmapped = true): array {
-		$la_fields = $fields ?: array_keys($this->_fields);
-		$la_extracted = parent::extract(static::mapFields($la_fields), $onlyDirty);
+		$fields = $fields ?: array_keys($this->_fields);
+		$extracted = parent::extract(static::mapFields($fields), $onlyDirty);
 
 		if ($unmapped) {
-			$la_extracted = static::unmapFields($la_extracted, true);
+			$extracted = static::unmapFields($extracted, true);
 		}
 
 
-		return $la_extracted;
+		return $extracted;
 	}
 
 
@@ -170,15 +163,15 @@ trait EntityFieldMapTrait {
 	 * @inheritDoc
 	 */
 	public function extractOriginal(?array $fields = [], bool $unmapped = true): array {
-		$la_fields = $fields ?: array_keys($this->_fields);
-		$la_extracted = parent::extractOriginal(static::mapFields($la_fields));
+		$fields = $fields ?: array_keys($this->_fields);
+		$extracted = parent::extractOriginal(static::mapFields($fields));
 
 		if ($unmapped) {
-			$la_extracted = static::unmapFields($la_extracted, true);
+			$extracted = static::unmapFields($extracted, true);
 		}
 
 
-		return $la_extracted;
+		return $extracted;
 	}
 
 
@@ -190,27 +183,27 @@ trait EntityFieldMapTrait {
 	 * @return array
 	 */
 	public function extractOriginalChanged(?array $fields = [], bool $includeUnknownFields = false, bool $unmapped = true): array {
-		$la_fields = static::mapFields($fields ?: array_keys($this->_fields));
-		$la_extracted = parent::extractOriginalChanged($la_fields);
+		$fields = static::mapFields($fields ?: array_keys($this->_fields));
+		$extracted = parent::extractOriginalChanged($fields);
 
 		//Include fields that aren't part of the entity but requested.
 		if ($includeUnknownFields) {
-			foreach ($la_fields as $ls_field) {
+			foreach ($fields as $field) {
 				if (
-					!array_key_exists($ls_field, $la_extracted) &&
-					!in_array($ls_field, $this->_originalFields)
+					!array_key_exists($field, $extracted) &&
+					!in_array($field, $this->_originalFields)
 				) {
-					$la_extracted[ $ls_field ] = null;
+					$extracted[ $field ] = null;
 				}
 			}
 		}
 
 		if ($unmapped) {
-			$la_extracted = static::unmapFields($la_extracted, true);
+			$extracted = static::unmapFields($extracted, true);
 		}
 
 
-		return $la_extracted;
+		return $extracted;
 	}
 
 
@@ -348,17 +341,17 @@ trait EntityFieldMapTrait {
 	 * @return array
 	 */
 	public static function mapFields(array $fields, bool $mapKeys = false): array {
-		$la_fields = [];
+		$mappedFields = [];
 
-		foreach ($fields as $lx_field => $lx_value) {
-			$lx_mapped = ($mapKeys ? 'lx_field' : 'lx_value');
-			$$lx_mapped = static::mapField($$lx_mapped);
+		foreach ($fields as $field => $value) {
+			$mapped = ($mapKeys ? 'field' : 'value');
+			$$mapped = static::mapField($$mapped);
 
-			$la_fields[ $lx_field ] = $lx_value;
+			$mappedFields[ $field ] = $value;
 		}
 
 
-		return $la_fields;
+		return $mappedFields;
 	}
 
 
@@ -373,9 +366,9 @@ trait EntityFieldMapTrait {
 			return $field;
 		}
 
-		$ls_key = array_search($field, static::$fieldMap);
-		if ($ls_key !== false) {
-			return $ls_key;
+		$key = array_search($field, static::$fieldMap);
+		if ($key !== false) {
+			return $key;
 		}
 
 
@@ -393,16 +386,16 @@ trait EntityFieldMapTrait {
 	 * @noinspection PhpUnused
 	 */
 	public static function unmapFields(array $fields, bool $mapKeys = false): array {
-		$la_fields = [];
+		$unmappedFields = [];
 
-		foreach ($fields as $lx_field => $lx_value) {
-			$lx_mapped = ($mapKeys ? 'lx_field' : 'lx_value');
-			$$lx_mapped = static::unmapField($$lx_mapped);
+		foreach ($fields as $field => $value) {
+			$mapped = ($mapKeys ? 'field' : 'value');
+			$$mapped = static::unmapField($$mapped);
 
-			$la_fields[ $lx_field ] = $lx_value;
+			$unmappedFields[ $field ] = $value;
 		}
 
 
-		return $la_fields;
+		return $unmappedFields;
 	}
 }

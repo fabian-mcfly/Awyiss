@@ -235,32 +235,32 @@ class Table extends BaseTable {
 		$this->initializeAssociations();
 
 		/** @noinspection PhpStrictTypeCheckingInspection, PhpParamsInspection, PhpUndefinedFieldInspection */
-		$ls_sourceTable = isset($this->pageRole) ? Inflector::tableize($this->pageRole->name) : $this->getTable();
+		$sourceTable = isset($this->pageRole) ? Inflector::tableize($this->pageRole->name) : $this->getTable();
 
 		// Merge the config properties with custom configuration from the database
-		foreach ($this->customConfigProperties as $ls_property) {
-			$ls_path = implode('.', ['Awyiss', Inflector::camelize($ls_sourceTable), Awyiss::REALM_BACKEND, $ls_property]);
-			$la_customConfig = Configure::read($ls_path);
+		foreach ($this->customConfigProperties as $property) {
+			$path = implode('.', ['Awyiss', Inflector::camelize($sourceTable), Awyiss::REALM_BACKEND, $property]);
+			$customConfig = Configure::read($path);
 
-			if ($la_customConfig && is_array($this->$ls_property ?? null)) {
+			if ($customConfig && is_array($this->$property ?? null)) {
 				/** @noinspection PhpParamsInspection */
-				$this->$ls_property = Hash::merge($this->$ls_property, $la_customConfig);
+				$this->$property = Hash::merge($this->$property, $customConfig);
 			}
 		}
 
-		$lb_isAttributesTable = str_starts_with($this->getTable(), 'attributes_');
+		$isAttributesTable = str_starts_with($this->getTable(), 'attributes_');
 
-		$lo_schema = $this->getSchema();
+		$schema = $this->getSchema();
 
-		if ($lb_isAttributesTable) {
+		if ($isAttributesTable) {
 			$this->addAttributesBehavior();
 		}
 		else {
-			$this->addAttributesBehavior($ls_sourceTable);
+			$this->addAttributesBehavior($sourceTable);
 
 			$this->addBehavior('Audit', $this->audit + ['priority' => 999999]);
 
-			if ($lo_schema->getColumn('deleted')) {
+			if ($schema->getColumn('deleted')) {
 				$this->addBehavior('SoftDelete', $this->softDelete);
 			}
 
@@ -268,7 +268,7 @@ class Table extends BaseTable {
 
 			$this->addBehavior('EventTrigger', $this->eventTrigger);
 
-			if ($lo_schema->getColumn('system_order')) {
+			if ($schema->getColumn('system_order')) {
 				$this->addBehavior('SystemOrder', $this->systemOrder);
 			}
 
@@ -301,7 +301,7 @@ class Table extends BaseTable {
 			$this->addTranslateBehavior();
 		}
 
-		$this->initializeSchema($lo_schema);
+		$this->initializeSchema($schema);
 	}
 
 
@@ -365,20 +365,20 @@ class Table extends BaseTable {
 	 * @throws \Exception
 	 */
 	public function findForCurrentLanguage(SelectQuery $query, string|false|null $languageShortcode = null, ?Entity $entity = null, bool $includeGlobal = true): SelectQuery {
-		$ls_languageShortcode = $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode;
+		$languageShortcode ??= LocaleMiddleware::getLanguage()->shortcode;
 
-		if ($ls_languageShortcode === false) {
-			$ls_languageShortcode = null;
+		if ($languageShortcode === false) {
+			$languageShortcode = null;
 		}
 
 		if ($entity) {
-			$ls_languageShortcode = $entity->languageShortcode;
+			$languageShortcode = $entity->languageShortcode;
 		}
 
-		if ($includeGlobal && $ls_languageShortcode) {
+		if ($includeGlobal && $languageShortcode) {
 			return $query->where([
 				'OR' => [
-					'language_shortcode' => $ls_languageShortcode,
+					'language_shortcode' => $languageShortcode,
 					'language_shortcode IS' => null,
 				],
 			]);
@@ -386,7 +386,7 @@ class Table extends BaseTable {
 
 
 		return $query->where([
-			'language_shortcode' . ($ls_languageShortcode ? '' : ' IS') => $ls_languageShortcode,
+			'language_shortcode' . ($languageShortcode ? '' : ' IS') => $languageShortcode,
 		]);
 	}
 
@@ -401,27 +401,27 @@ class Table extends BaseTable {
 	 */
 	public function getEntityClass(): string {
 		if (!$this->_entityClass) {
-			$ls_default = Inflector::classify($this->_table);
-			$la_parts = explode('\\', static::class);
+			$default = Inflector::classify($this->_table);
+			$parts = explode('\\', static::class);
 
-			if (static::class === self::class || count($la_parts) < 3) {
+			if (static::class === self::class || count($parts) < 3) {
 				return $this->_entityClass = Entity::class;
 			}
 
-			$ls_alias = Inflector::classify(Inflector::underscore(substr(array_pop($la_parts), 0, -5)));
-			$ls_name = '\\' . implode('\\', array_slice($la_parts, 0, -1)) . '\\Entity\\' . $ls_alias;
+			$alias = Inflector::classify(Inflector::underscore(substr(array_pop($parts), 0, -5)));
+			$name = '\\' . implode('\\', array_slice($parts, 0, -1)) . '\\Entity\\' . $alias;
 
-			/** @var class-string<\Cake\Datasource\EntityInterface>|null $ls_class */
-			$ls_class = App::className($ls_alias, 'Model/Entity');
-			if (!$ls_class) {
-				$ls_class = App::className($ls_default, 'Model/Entity');
+			/** @var class-string<\Cake\Datasource\EntityInterface>|null $class */
+			$class = App::className($alias, 'Model/Entity');
+			if (!$class) {
+				$class = App::className($default, 'Model/Entity');
 			}
 
-			if (!$ls_class) {
-				throw new MissingEntityException([$ls_name]);
+			if (!$class) {
+				throw new MissingEntityException([$name]);
 			}
 
-			$this->_entityClass = $ls_class;
+			$this->_entityClass = $class;
 		}
 
 
@@ -436,13 +436,13 @@ class Table extends BaseTable {
 	 * @return \Awyiss\ORM\Association\BelongsTo
 	 */
 	public function belongsTo(string $associated, array $options = []): BelongsTo {
-		$la_options = $options + ['sourceTable' => $this];
+		$options += ['sourceTable' => $this];
 
-		/** @var BelongsTo $lo_association */
-		$lo_association = $this->_associations->load(BelongsTo::class, $associated, $la_options);
+		/** @var \Awyiss\ORM\Association\BelongsTo $association */
+		$association = $this->_associations->load(BelongsTo::class, $associated, $options);
 
 
-		return $lo_association;
+		return $association;
 	}
 
 
@@ -453,13 +453,13 @@ class Table extends BaseTable {
 	 * @return \Awyiss\ORM\Association\BelongsToMany
 	 */
 	public function belongsToMany(string $associated, array $options = []): BelongsToMany {
-		$la_options = $options + ['sourceTable' => $this];
+		$options += ['sourceTable' => $this];
 
-		/** @var BelongsToMany $lo_association */
-		$lo_association = $this->_associations->load(BelongsToMany::class, $associated, $la_options);
+		/** @var \Awyiss\ORM\Association\BelongsToMany $association */
+		$association = $this->_associations->load(BelongsToMany::class, $associated, $options);
 
 
-		return $lo_association;
+		return $association;
 	}
 
 
@@ -470,13 +470,13 @@ class Table extends BaseTable {
 	 * @return \Awyiss\ORM\Association\HasOne
 	 */
 	public function hasOne(string $associated, array $options = []): HasOne {
-		$la_options = $options + ['sourceTable' => $this];
+		$options += ['sourceTable' => $this];
 
-		/** @var HasOne $lo_association */
-		$lo_association = $this->_associations->load(HasOne::class, $associated, $la_options);
+		/** @var \Awyiss\ORM\Association\HasOne $association */
+		$association = $this->_associations->load(HasOne::class, $associated, $options);
 
 
-		return $lo_association;
+		return $association;
 	}
 
 
@@ -487,13 +487,13 @@ class Table extends BaseTable {
 	 * @return \Awyiss\ORM\Association\HasMany
 	 */
 	public function hasMany(string $associated, array $options = []): HasMany {
-		$la_options = $options + ['sourceTable' => $this];
+		$options += ['sourceTable' => $this];
 
-		/** @var HasMany $lo_association */
-		$lo_association = $this->_associations->load(HasMany::class, $associated, $la_options);
+		/** @var \Awyiss\ORM\Association\HasMany $association */
+		$association = $this->_associations->load(HasMany::class, $associated, $options);
 
 
-		return $lo_association;
+		return $association;
 	}
 
 
@@ -506,14 +506,14 @@ class Table extends BaseTable {
 	 * @return bool
 	 */
 	public function exists(QueryExpression|Closure|array|string|null $conditions, array $options = []): bool {
-		$lx_finder = $options['finder'] ?? 'all';
-		[$lx_finder, $la_options] = $this->_extractFinder($lx_finder);
+		$finder = $options['finder'] ?? 'all';
+		[$finder, $finderOptions] = $this->_extractFinder($finder);
 
-		$la_options = array_merge($la_options, $options);
-		unset($la_options['finder']);
+		$options = array_merge($finderOptions, $options);
+		unset($options['finder']);
 
-		$lo_results = $this->find($lx_finder, ...$la_options)
-			->applyOptions($la_options)
+		$results = $this->find($finder, ...$options)
+			->applyOptions($options)
 			->select(['existing' => 1])
 			->where($conditions)
 			->limit(1)
@@ -521,7 +521,7 @@ class Table extends BaseTable {
 			->toArray();
 
 
-		return (bool)count($lo_results);
+		return (bool)count($results);
 	}
 
 
@@ -542,14 +542,14 @@ class Table extends BaseTable {
 	 * @inheritDoc
 	 */
 	public function implementedEvents(): array {
-		$la_eventMap = $this->getConfig('implementedEvents', []);
+		$eventMap = $this->getConfig('implementedEvents', []);
 
-		if (empty($la_eventMap)) {
+		if (empty($eventMap)) {
 			return [];
 		}
 
 
-		return $this->buildEventMap($this, $la_eventMap);
+		return $this->buildEventMap($this, $eventMap);
 	}
 
 
@@ -562,50 +562,51 @@ class Table extends BaseTable {
 	 * @return array
 	 */
 	public function buildEventMap(Table|Behavior $instance, array $eventMap, ?int $priority = null): array {
-		$la_eventMap = [];
+		$builtEventMap = [];
 
-		foreach ($eventMap as $ls_event => $lx_callable) {
-			$li_priority = $priority;
+		$basePriority = $priority;
+		foreach ($eventMap as $eventName => $callable) {
+			$priority = $basePriority;
 
-			if (is_array($lx_callable)) {
-				if (isset($lx_callable['priority'])) {
-					$li_priority = $lx_callable['priority'];
+			if (is_array($callable)) {
+				if (isset($callable['priority'])) {
+					$priority = $callable['priority'];
 				}
 
-				$lx_callable = $lx_callable['callable'] ?? null;
+				$callable = $callable['callable'] ?? null;
 
-				if (!$lx_callable) {
-					throw new RuntimeException(sprintf('When provided an array, the key `%s` must contain a `callable` key', $ls_event));
+				if (!$callable) {
+					throw new RuntimeException(sprintf('When provided an array, the key `%s` must contain a `callable` key', $eventName));
 				}
 			}
 
 			if (
-				(is_string($lx_callable) && !method_exists($instance, $lx_callable)) ||
-				(!is_string($lx_callable) && !is_callable($lx_callable))
+				(is_string($callable) && !method_exists($instance, $callable)) ||
+				(!is_string($callable) && !is_callable($callable))
 			) {
 				continue;
 			}
 
-			if (is_numeric($ls_event)) {
-				if (!is_string($lx_callable)) {
-					throw new RuntimeException(sprintf('When provided a callable, the key must be a string. `%s` given', gettype($ls_event)));
+			if (is_numeric($eventName)) {
+				if (!is_string($callable)) {
+					throw new RuntimeException(sprintf('When provided a callable, the key must be a string. `%s` given', gettype($eventName)));
 				}
-				$ls_event = 'Model.' . $lx_callable;
+				$eventName = 'Model.' . $callable;
 			}
 
-			if ($li_priority === null) {
-				$la_eventMap[ $ls_event ] = $lx_callable;
+			if ($priority === null) {
+				$builtEventMap[ $eventName ] = $callable;
 			}
 			else {
-				$la_eventMap[ $ls_event ] = [
-					'callable' => $lx_callable,
-					'priority' => $li_priority,
+				$builtEventMap[ $eventName ] = [
+					'callable' => $callable,
+					'priority' => $priority,
 				];
 			}
 		}
 
 
-		return $la_eventMap;
+		return $builtEventMap;
 	}
 
 
@@ -616,13 +617,13 @@ class Table extends BaseTable {
 	 * @return bool
 	 */
 	public function fieldIsAttribute(string $field): bool {
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $this->getEntityClass();
+		/** @var \Awyiss\Model\Entity $entityClass */
+		$entityClass = $this->getEntityClass();
 
-		$ls_column = $ls_entityClass::unmapField($field);
+		$column = $entityClass::unmapField($field);
 
 		//If the column isn't part of the table, just assume it's part of the attributes table.
-		if (!$this->getSchema()->getColumn($ls_column) && $this->hasAttributes()) {
+		if (!$this->getSchema()->getColumn($column) && $this->hasAttributes()) {
 			return true;
 		}
 
@@ -639,13 +640,13 @@ class Table extends BaseTable {
 			return $this->i18nDomain;
 		}
 
-		$ls_alias = $this->getAlias();
-		if (str_starts_with($ls_alias, 'Attributes') && strlen($ls_alias) > 10) {
-			$ls_alias = substr($ls_alias, 10);
+		$alias = $this->getAlias();
+		if (str_starts_with($alias, 'Attributes') && strlen($alias) > 10) {
+			$alias = substr($alias, 10);
 		}
 
 
-		return $this->i18nDomain = Inflector::underscore($ls_alias);
+		return $this->i18nDomain = Inflector::underscore($alias);
 	}
 
 
@@ -655,33 +656,32 @@ class Table extends BaseTable {
 	 */
 	protected function addAttributesBehavior(?string $sourceTable = null): void {
 		if ($sourceTable) {
-			$la_options = ['isAttributesTable' => false] + $this->attributes + [
+			$options = ['isAttributesTable' => false] + $this->attributes + [
 				'sourceTable' => $sourceTable,
 				'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
 			];
 		}
 		else {
-			$ls_sourceTable = substr($this->getTable(), 11);
-			$la_options = ['isAttributesTable' => true, 'sourceTable' => $ls_sourceTable] + $this->attributes;
+			$options = ['isAttributesTable' => true, 'sourceTable' => substr($this->getTable(), 11)] + $this->attributes;
 		}
 
-		$this->addBehavior('Attributes', $la_options);
+		$this->addBehavior('Attributes', $options);
 
 		if ($sourceTable) {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Behavior\AttributesBehavior $lo_attributes */
-		$lo_attributes = $this->getBehavior('Attributes');
+		/** @var \Awyiss\Model\Behavior\AttributesBehavior $attributesBehavior */
+		$attributesBehavior = $this->getBehavior('Attributes');
 
-		$la_attributes = $lo_attributes->getAttributes();
+		$attributes = $attributesBehavior->getAttributes();
 
-		foreach ($la_attributes as $lo_attribute) {
-			if (!$lo_attribute->translatable) {
+		foreach ($attributes as $attribute) {
+			if (!$attribute->translatable) {
 				continue;
 			}
 
-			$this->translate['fields'][] = $lo_attribute->identifier;
+			$this->translate['fields'][] = $attribute->identifier;
 		}
 	}
 
@@ -692,35 +692,35 @@ class Table extends BaseTable {
 	protected function addCategoriesBehavior(): void {
 		$this->addBehavior('Categories', $this->categories);
 
-		$la_categoriesOptions = $this->getBehavior('Categories')->getConfig();
+		$categoriesOptions = $this->getBehavior('Categories')->getConfig();
 
-		if (!$la_categoriesOptions['enabled'] === true) {
+		if (!$categoriesOptions['enabled'] === true) {
 			return;
 		}
 
-		$ls_fieldName = $la_categoriesOptions['field'] ?? $la_categoriesOptions['identifier'] ?? 'category';
+		$fieldName = $categoriesOptions['field'] ?? $categoriesOptions['identifier'] ?? 'category';
 
 		//Disable the rule check for the NestBehavior if the category field is same as the parent foreign key
-		if (Inflector::underscore($ls_fieldName) === Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')) {
+		if (Inflector::underscore($fieldName) === Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')) {
 			$this->nest['buildRules'] = false;
 		}
 
 		//Prefix the field with `attributes.` if it's an attribute
-		if ($this->fieldIsAttribute($ls_fieldName)) {
-			$ls_fieldName = 'attributes.' . $ls_fieldName;
+		if ($this->fieldIsAttribute($fieldName)) {
+			$fieldName = 'attributes.' . $fieldName;
 		}
 
 		//Add field to the nested related columns
 		if (
-			!in_array($ls_fieldName, $this->nest['relatedColumns'] ?? []) &&
-			Inflector::underscore($ls_fieldName) !== Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')
+			!in_array($fieldName, $this->nest['relatedColumns'] ?? []) &&
+			Inflector::underscore($fieldName) !== Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')
 		) {
-			$this->nest['relatedColumns'][] = $ls_fieldName;
+			$this->nest['relatedColumns'][] = $fieldName;
 		}
 
 		//Add field to the system order related columns
-		if (!in_array($ls_fieldName, $this->systemOrder['relatedColumns'] ?? [])) {
-			$this->systemOrder['relatedColumns'][] = $ls_fieldName;
+		if (!in_array($fieldName, $this->systemOrder['relatedColumns'] ?? [])) {
+			$this->systemOrder['relatedColumns'][] = $fieldName;
 		}
 	}
 
@@ -736,7 +736,6 @@ class Table extends BaseTable {
 			$this->getTable() !== 'languages'
 		) {
 			if (Awyiss::hasRealm()) {
-				/** @noinspection PhpVariableNamingConventionInspection */
 				$translateLanguage = LocaleMiddleware::getLanguage($this->translate['realm'] ?? Awyiss::getRealm());
 			}
 		}
@@ -771,22 +770,21 @@ class Table extends BaseTable {
 	 * @inheritDoc
 	 */
 	public function save(EntityInterface $entity, array $options = []): EntityInterface|false {
-		$la_options = $options;
-		$la_options['isCopy'] ??= false;
-		$la_options['asCopy'] ??= false;
+		$options['isCopy'] ??= false;
+		$options['asCopy'] ??= false;
 
-		if ($la_options['asCopy'] === true || $la_options['isCopy'] === true) {
+		if ($options['asCopy'] === true || $options['isCopy'] === true) {
 			$this->prepareForCopy($entity);
 		}
 
-		if ($la_options['asCopy'] === true) {
-			$la_options['isCopy'] = true;
+		if ($options['asCopy'] === true) {
+			$options['isCopy'] = true;
 			$this->prepareAssociationsForCopy($entity);
 		}
 
-		unset($la_options['asCopy']);
+		unset($options['asCopy']);
 
-		return parent::save($entity, $la_options);
+		return parent::save($entity, $options);
 	}
 
 
@@ -802,13 +800,13 @@ class Table extends BaseTable {
 	 * @throws \Exception
 	 */
 	public function saveMany(iterable $entities, array $options = []): iterable|false {
-		$la_options = $options + ['transaction' => true];
+		$options += ['transaction' => true];
 
 		try {
-			return $this->_saveMany($entities, $la_options);
+			return $this->_saveMany($entities, $options);
 		}
 		catch (PersistenceFailedException $ex) {
-			if ($la_options['transaction'] === false) {
+			if ($options['transaction'] === false) {
 				throw $ex;
 			}
 
@@ -822,7 +820,6 @@ class Table extends BaseTable {
 	 * if no soft delete behavior is enabled or if the soft delete behavior is not enabled.
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function delete(EntityInterface $entity, array $options = []): bool {
 		$options = new ArrayObject(
@@ -862,7 +859,7 @@ class Table extends BaseTable {
 	 * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
 	 */
 	protected function _saveMany(iterable $entities, array $options = []): iterable {
-		$la_options = new ArrayObject(
+		$options = new ArrayObject(
 			$options + [
 				'atomic' => true,
 				'checkRules' => true,
@@ -870,31 +867,30 @@ class Table extends BaseTable {
 				'_primary' => true,
 			]
 		);
-		$la_options['_cleanOnSuccess'] = false;
+		$options['_cleanOnSuccess'] = false;
 
-		/** @var array<bool> $la_isNew */
-		$la_isNew = [];
-		$lc_cleanupOnFailure = function ($entities) use (&$la_isNew): void {
+		/** @var array<bool> $isNew */
+		$isNew = [];
+		$cleanupOnFailure = function ($entities) use (&$isNew): void {
 			/** @var iterable<\Cake\Datasource\EntityInterface> $entities */
-			foreach ($entities as $lx_key => $lo_entity) {
-				if (isset($la_isNew[ $lx_key ]) && $la_isNew[ $lx_key ]) {
-					$lo_entity->unset($this->getPrimaryKey());
-					$lo_entity->setNew(true);
+			foreach ($entities as $key => $entity) {
+				if (isset($isNew[ $key ]) && $isNew[ $key ]) {
+					$entity->unset($this->getPrimaryKey());
+					$entity->setNew(true);
 				}
 			}
 		};
 
-		/** @var \Cake\Datasource\EntityInterface|null $lo_failed */
-		$lo_failed = null;
-		$lx_entities = &$entities;
+		/** @var \Cake\Datasource\EntityInterface|null $failed */
+		$failed = null;
 		try {
-			$lc_saveMany = function () use ($lx_entities, $la_options, &$la_isNew, &$lo_failed): bool {
+			$saveMany = function () use ($entities, $options, &$isNew, &$failed): bool {
 				// Cache array cast since options are the same for each entity
-				$la_options = (array)$la_options;
-				foreach ($lx_entities as $lx_key => $lo_entity) {
-					$la_isNew[ $lx_key ] = $lo_entity->isNew();
-					if ($this->save($lo_entity, $la_options) === false) {
-						$lo_failed = $lo_entity;
+				$options = (array)$options;
+				foreach ($entities as $key => $entity) {
+					$isNew[ $key ] = $entity->isNew();
+					if ($this->save($entity, $options) === false) {
+						$failed = $entity;
 
 						return false;
 					}
@@ -904,58 +900,58 @@ class Table extends BaseTable {
 				return true;
 			};
 
-			if ($la_options['transaction'] !== false) {
-				$this->getConnection()->transactional($lc_saveMany);
+			if ($options['transaction'] !== false) {
+				$this->getConnection()->transactional($saveMany);
 			}
 			else {
-				$lc_saveMany();
+				$saveMany();
 			}
 		}
 		catch (Exception $ex) {
-			$lc_cleanupOnFailure($lx_entities);
+			$cleanupOnFailure($entities);
 
 			throw $ex;
 		}
 
-		if ($lo_failed !== null) {
-			$lc_cleanupOnFailure($lx_entities);
+		if ($failed !== null) {
+			$cleanupOnFailure($entities);
 
-			throw new PersistenceFailedException($lo_failed, ['saveMany']);
+			throw new PersistenceFailedException($failed, ['saveMany']);
 		}
 
-		$lc_cleanupOnSuccess = function (EntityInterface $entity) use (&$lc_cleanupOnSuccess): void {
+		$cleanupOnSuccess = function (EntityInterface $entity) use (&$cleanupOnSuccess): void {
 			$entity->clean();
 			$entity->setNew(false);
 
-			foreach (array_keys($entity->toArray()) as $ls_field) {
-				$lx_value = $entity->get($ls_field);
+			foreach (array_keys($entity->toArray()) as $field) {
+				$value = $entity->get($field);
 
-				if ($lx_value instanceof EntityInterface) {
-					$lc_cleanupOnSuccess($lx_value);
+				if ($value instanceof EntityInterface) {
+					$cleanupOnSuccess($value);
 				}
-				elseif (is_array($lx_value) && current($lx_value) instanceof EntityInterface) {
-					foreach ($lx_value as $lo_associated) {
-						$lc_cleanupOnSuccess($lo_associated);
+				elseif (is_array($value) && current($value) instanceof EntityInterface) {
+					foreach ($value as $associated) {
+						$cleanupOnSuccess($associated);
 					}
 				}
 			}
 		};
 
-		if ($la_options['transaction'] === false || $this->_transactionCommitted($la_options['atomic'], $la_options['_primary'])) {
-			foreach ($lx_entities as $lo_entity) {
+		if ($options['transaction'] === false || $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+			foreach ($entities as $entity) {
 				$this->dispatchEvent('Model.afterSaveCommit', [
-					'entity' => $lo_entity,
-					'options' => $la_options,
+					'entity' => $entity,
+					'options' => $options,
 				]);
 
-				if ($la_options['atomic'] || $la_options['_primary']) {
-					$lc_cleanupOnSuccess($lo_entity);
+				if ($options['atomic'] || $options['_primary']) {
+					$cleanupOnSuccess($entity);
 				}
 			}
 		}
 
 
-		return $lx_entities;
+		return $entities;
 	}
 
 
@@ -973,7 +969,7 @@ class Table extends BaseTable {
 			$this->dispatchEvent('Model.beforeSaveAssociations', ['entity' => $entity, 'options' => clone $options]);
 		}
 
-		$lx_success = $this->_associations->saveChildren(
+		$success = $this->_associations->saveChildren(
 			$this,
 			$entity,
 			$options['associated'],
@@ -981,7 +977,7 @@ class Table extends BaseTable {
 		);
 
 
-		if (!$lx_success && $options['atomic']) {
+		if (!$success && $options['atomic']) {
 			return false;
 		}
 
@@ -989,14 +985,14 @@ class Table extends BaseTable {
 			$this->dispatchEvent('Model.afterSaveAssociations', ['entity' => $entity, 'options' => clone $options]);
 		}
 
-		$lo_event = $this->dispatchEvent('Model.afterSave', ['entity' => $entity, 'options' => $options]);
-		if ($lo_event->isStopped()) {
-			$lx_errors = $lo_event->getResult();
-			if (!is_array($lx_errors)) {
-				$lx_errors = ['_general' => $lx_errors];
+		$event = $this->dispatchEvent('Model.afterSave', ['entity' => $entity, 'options' => $options]);
+		if ($event->isStopped()) {
+			$errors = $event->getResult();
+			if (!is_array($errors)) {
+				$errors = ['_general' => $errors];
 			}
 
-			$entity->setErrors($lx_errors);
+			$entity->setErrors($errors);
 			return false;
 		}
 
@@ -1034,20 +1030,20 @@ class Table extends BaseTable {
 			return;
 		}
 
-		foreach ($this->getAttributes() as $lo_attribute) {
-			$la_column = $schema->getColumn($lo_attribute->identifier);
+		foreach ($this->getAttributes() as $attribute) {
+			$columnData = $schema->getColumn($attribute->identifier);
 
-			if (!$la_column) {
+			if (!$columnData) {
 				continue;
 			}
 
-			if ($lo_attribute->type === 'json') {
-				$schema->setColumnType($lo_attribute->identifier, 'json');
+			if ($attribute->type === 'json') {
+				$schema->setColumnType($attribute->identifier, 'json');
 			}
 
-			if (($la_column['default'] ?? null) !== $lo_attribute->defaultValue) {
-				$la_column['default'] = $lo_attribute->defaultValue;
-				$schema->addColumn($lo_attribute->identifier, $la_column);
+			if (($columnData['default'] ?? null) !== $attribute->defaultValue) {
+				$columnData['default'] = $attribute->defaultValue;
+				$schema->addColumn($attribute->identifier, $columnData);
 			}
 		}
 	}
@@ -1062,13 +1058,13 @@ class Table extends BaseTable {
 	 * @see \Cake\ORM\Association::_extractFinder()
 	 */
 	protected function _extractFinder(array|string $finderData): array {
-		$la_finderData = (array)$finderData;
+		$finderData = (array)$finderData;
 
-		if (is_numeric(key($la_finderData))) {
-			return [current($la_finderData), []];
+		if (is_numeric(key($finderData))) {
+			return [current($finderData), []];
 		}
 
-		return [key($la_finderData), current($la_finderData)];
+		return [key($finderData), current($finderData)];
 	}
 
 
@@ -1099,9 +1095,9 @@ class Table extends BaseTable {
 		 * cleaning would be done later on.
 		 */
 		if (Configure::read('Awyiss.System.Backend.htmlCleaning', 'none') !== 'none') {
-			/** @var \Awyiss\Utility\Content\HtmlCleaner $ls_className */
-			$ls_className = App::className('HtmlCleaner', 'Utility/Content');
-			$ls_className::clean($entity, Configure::read('Awyiss.System.Backend.htmlCleaning'));
+			/** @var \Awyiss\Utility\Content\HtmlCleaner $className */
+			$className = App::className('HtmlCleaner', 'Utility/Content');
+			$className::clean($entity, Configure::read('Awyiss.System.Backend.htmlCleaning'));
 		}
 	}
 
@@ -1126,9 +1122,9 @@ class Table extends BaseTable {
 
 		// Convert image tags to the custom format
 		if (Configure::read('Awyiss.Media.Backend.handleImagesInHtml')) {
-			/** @var \Awyiss\Utility\Content\ImageHandler $ls_className */
-			$ls_className = App::className('ImageHandler', 'Utility/Content');
-			$ls_className::replaceImageTags($entity);
+			/** @var \Awyiss\Utility\Content\ImageHandler $className */
+			$className = App::className('ImageHandler', 'Utility/Content');
+			$className::replaceImageTags($entity);
 		}
 	}
 
@@ -1152,9 +1148,9 @@ class Table extends BaseTable {
 			$entity->originalEntity->clean();
 		}
 
-		$la_primaryKeys = $entity->extractOriginal((array)$this->getPrimaryKey());
-		if ($la_primaryKeys) {
-			$entity->originalPrimaryKeyValues ??= $la_primaryKeys;
+		$primaryKeys = $entity->extractOriginal((array)$this->getPrimaryKey());
+		if ($primaryKeys) {
+			$entity->originalPrimaryKeyValues ??= $primaryKeys;
 			$entity->unset((array)$this->getPrimaryKey());
 		}
 
@@ -1172,30 +1168,30 @@ class Table extends BaseTable {
 		 * unset the primary key of the associated entities,
 		 * and mark them as new.
 		 */
-		foreach ($this->associations() as $lo_association) {
-			$ls_property = $lo_association->getProperty();
+		foreach ($this->associations() as $association) {
+			$property = $association->getProperty();
 
-			if (!$entity->has($ls_property) || !$entity->get($ls_property)) {
+			if (!$entity->has($property) || !$entity->get($property)) {
 				continue;
 			}
 
-			if ($lo_association instanceof HasMany) {
-				$entity->setDirty($ls_property);
-				foreach (($entity->get($ls_property) ?? []) as $lx_associated) {
-					if (!($lx_associated instanceof EntityInterface)) {
+			if ($association instanceof HasMany) {
+				$entity->setDirty($property);
+				foreach (($entity->get($property) ?? []) as $associated) {
+					if (!($associated instanceof EntityInterface)) {
 						continue;
 					}
 
-					$lx_associated->unset((array)$lo_association->getPrimaryKey());
-					$lx_associated->setNew(true);
+					$associated->unset((array)$association->getPrimaryKey());
+					$associated->setNew(true);
 				}
 			}
 
-			if ($lo_association instanceof HasOne) {
-				$entity->setDirty($ls_property);
-				$lo_associated = $entity->get($ls_property);
-				$lo_associated->unset((array)$lo_association->getPrimaryKey());
-				$lo_associated->setNew(true);
+			if ($association instanceof HasOne) {
+				$entity->setDirty($property);
+				$associated = $entity->get($property);
+				$associated->unset((array)$association->getPrimaryKey());
+				$associated->setNew(true);
 			}
 		}
 	}

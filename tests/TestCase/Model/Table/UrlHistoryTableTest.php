@@ -57,7 +57,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(6, $this->urlHistoryTable->associations()->keys());
@@ -102,7 +101,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::getAvailableScopes()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetAvailableScopes(): void {
 		$scopes = $this->urlHistoryTable->getAvailableScopes();
@@ -115,7 +113,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -135,7 +132,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -154,7 +150,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccessWithScope(): void {
 		$data = [
@@ -174,7 +169,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyUrl(): void {
 		$data = [
@@ -194,7 +188,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationBlankUrl(): void {
 		$data = [
@@ -215,7 +208,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationUrlTooLong(): void {
 		$data = [
@@ -236,7 +228,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationTargetRequiredWhenNoScope(): void {
 		$data = [
@@ -256,7 +247,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationTargetNotRequiredWhenScope(): void {
 		$data = [
@@ -278,7 +268,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationTargetTooLong(): void {
 		$data = [
@@ -299,7 +288,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationForeignKeyRequiredWhenScope(): void {
 		$data = [
@@ -320,7 +308,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationForeignKeyNotRequiredWhenNoScope(): void {
 		$data = [
@@ -341,7 +328,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationForeignKeyInvalidType(): void {
 		$data = [
@@ -363,7 +349,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationForeignKeyTooLong(): void {
 		$data = [
@@ -385,7 +370,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationStatusRequired(): void {
 		$data = [
@@ -405,7 +389,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationStatusInvalidType(): void {
 		$data = [
@@ -427,7 +410,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationStatusWrongLength(): void {
 		$data = [
@@ -456,7 +438,6 @@ class UrlHistoryTableTest extends TestCase {
 	 * @param bool $allowed
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationStatusValidLengths(int $status, bool $allowed): void {
 		$data = [
@@ -483,7 +464,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -520,7 +500,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidPagesScope(): void {
 		$data = [
@@ -541,7 +520,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidPagesScope(): void {
 		$data = [
@@ -568,7 +546,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidMediaScope(): void {
 		$data = [
@@ -589,7 +566,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidMediaScope(): void {
 		$data = [
@@ -616,7 +592,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNoScopeEmptyForeignKey(): void {
 		$data = [
@@ -637,7 +612,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNoScopeWithForeignKey(): void {
 		$data = [
@@ -664,7 +638,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidTargetWithScope(): void {
 		$data = [
@@ -687,7 +660,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidTargetWithScope(): void {
 		$data = [
@@ -715,7 +687,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\UrlHistory $entity */
@@ -736,7 +707,6 @@ class UrlHistoryTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [

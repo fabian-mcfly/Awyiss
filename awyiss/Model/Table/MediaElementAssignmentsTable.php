@@ -99,10 +99,10 @@ class MediaElementAssignmentsTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		static $la_assignableModels;
+		static $assignableModels;
 
-		if (!isset($la_assignableModels)) {
-			$la_assignableModels = $this->MediaElements->getAssignableModels(true, false);
+		if (!isset($assignableModels)) {
+			$assignableModels = $this->MediaElements->getAssignableModels(true, false);
 		}
 
 		$rules->add($rules->existsIn('mediaElementId', 'MediaElements'), 'mediaElementExists', [
@@ -110,22 +110,22 @@ class MediaElementAssignmentsTable extends Table {
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_element_exists'),
 		]);
 
-		$rules->add(function (MediaElementAssignment $entity) use ($la_assignableModels) {
-			if (!isset($la_assignableModels[ $entity->scope ])) {
+		$rules->add(function (MediaElementAssignment $entity) use ($assignableModels) {
+			if (!isset($assignableModels[ $entity->scope ])) {
 				return false;
 			}
 
-			if ($entity->foreignKey && $la_assignableModels[ $entity->scope ]['entityLevel'] === false) {
+			if ($entity->foreignKey && $assignableModels[ $entity->scope ]['entityLevel'] === false) {
 				return __df($this->getI18nDomain(), 'validation', 'error_assignment_allows_entity_level');
 			}
 
-			if (!$entity->foreignKey && $la_assignableModels[ $entity->scope ]['modelLevel'] === false) {
+			if (!$entity->foreignKey && $assignableModels[ $entity->scope ]['modelLevel'] === false) {
 				return __df($this->getI18nDomain(), 'validation', 'error_assignment_allows_model_level');
 			}
 
-			$la_possibleEntities = $la_assignableModels[ $entity->scope ]['entities'];
+			$possibleEntities = $assignableModels[ $entity->scope ]['entities'];
 
-			if ($entity->foreignKey && !isset($la_possibleEntities[ $entity->foreignKey ])) {
+			if ($entity->foreignKey && !isset($possibleEntities[ $entity->foreignKey ])) {
 				return __df($this->getI18nDomain(), 'validation', 'error_assignment_invalid_entity');
 			}
 

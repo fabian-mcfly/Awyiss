@@ -32,13 +32,13 @@ enum ResizeStrategy: int {
 
 		// If the resize strategy is a string, check if it is a valid enum case (name, not value)
 		if (is_string($value)) {
-			$ls_resizeStrategy = self::class . '::' . Inflector::camelize($value);
+			$resizeStrategy = self::class . '::' . Inflector::camelize($value);
 
-			if (!defined($ls_resizeStrategy)) {
+			if (!defined($resizeStrategy)) {
 				throw new InvalidArgumentException('Invalid resize strategy: ' . $value);
 			}
 
-			return constant($ls_resizeStrategy);
+			return constant($resizeStrategy);
 		}
 
 		return self::from($value);

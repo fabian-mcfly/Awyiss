@@ -57,7 +57,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -79,7 +78,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -99,7 +97,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -119,7 +116,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -143,7 +139,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -163,7 +158,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyUrl(): void {
 		$data = [
@@ -181,7 +175,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyReferrer(): void {
 		$data = [
@@ -200,7 +193,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNullReferrer(): void {
 		$data = [
@@ -219,7 +211,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNullIsRobot(): void {
 		$data = [
@@ -238,7 +229,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNullCreatedOn(): void {
 		$data = [
@@ -257,7 +247,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationBooleanValues(): void {
 		// Test valid boolean values
@@ -281,7 +270,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationDateTimeFormats(): void {
 		// Test various valid datetime formats
@@ -310,7 +298,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationLongUrls(): void {
 		// Test URLs at maximum length (2048 characters)
@@ -333,7 +320,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSpecialCharacters(): void {
 		$data = [
@@ -353,7 +339,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\UrlsNotFound $entity */
@@ -373,7 +358,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -399,7 +383,6 @@ class UrlsNotFoundTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UrlsNotFoundTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithMinimalData(): void {
 		$additionalData = [

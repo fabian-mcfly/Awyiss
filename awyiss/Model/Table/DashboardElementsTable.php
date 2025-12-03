@@ -13,13 +13,12 @@ use Awyiss\Model\Enum\ComparisonOperator;
 use Awyiss\Model\Enum\DateComparisonOperator;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\FactoryLocator;
-use Cake\I18n\I18n;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
-use Collator;
 
 
 /**
@@ -137,16 +136,10 @@ class DashboardElementsTable extends Table {
 				return false;
 			}
 
-			$la_tableFields = $entity->scope ? $this->getTableFields($entity->scope) : [];
-			unset($la_tableFields['page_role_id']);
+			$tableFields = $entity->scope ? $this->getTableFields($entity->scope) : [];
+			unset($tableFields['page_role_id']);
 
-			foreach ($entity->settings['fields'] as $ls_field) {
-				if (!array_key_exists($ls_field, $la_tableFields)) {
-					return false;
-				}
-			}
-
-			return true;
+			return array_all($entity->settings['fields'], fn ($field) => array_key_exists($field, $tableFields));
 		}, 'validListFields', [
 			'errorField' => 'listFields',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_list_fields'),
@@ -166,44 +159,44 @@ class DashboardElementsTable extends Table {
 				return false;
 			}
 
-			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
-			$la_tableFilterColumns = $lo_table->getFilterColumns([], null, null, false);
+			/** @var \Awyiss\Model\Table $table */
+			$table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
+			$tableFilterColumns = $table->getFilterColumns([], null, null, false);
 
-			$la_operators = [];
-			foreach (ComparisonOperator::cases() as $le_operator) {
-				if ($le_operator === ComparisonOperator::Regexp) {
+			$operators = [];
+			foreach (ComparisonOperator::cases() as $operator) {
+				if ($operator === ComparisonOperator::Regexp) {
 					continue;
 				}
 
-				$la_operators[] = $le_operator->value;
+				$operators[] = $operator->value;
 			}
 
-			$la_dateOperators = [];
-			foreach (DateComparisonOperator::cases() as $le_operator) {
-				$la_dateOperators[] = $le_operator->value;
+			$dateOperators = [];
+			foreach (DateComparisonOperator::cases() as $operator) {
+				$dateOperators[] = $operator->value;
 			}
 
-			foreach ($entity->settings['filter'] as $ls_column => $la_columnSettings) {
-				if (!array_key_exists($ls_column, $la_tableFilterColumns)) {
+			foreach ($entity->settings['filter'] as $column => $columnSettings) {
+				if (!array_key_exists($column, $tableFilterColumns)) {
 					return false;
 				}
 
-				if (empty($la_columnSettings['operator']) && $la_tableFilterColumns[ $ls_column ]->type === 'boolean') {
+				if (empty($columnSettings['operator']) && $tableFilterColumns[ $column ]->type === 'boolean') {
 					return true;
 				}
 
-				if (in_array($la_tableFilterColumns[ $ls_column ]->type, ['date', 'datetime'], true)) {
-					return !empty($la_columnSettings['operator']) && (
-						in_array($la_columnSettings['operator'], $la_dateOperators, true) ||
-						in_array($la_columnSettings['operator'], $la_operators, true)
+				if (in_array($tableFilterColumns[ $column ]->type, ['date', 'datetime'], true)) {
+					return !empty($columnSettings['operator']) && (
+						in_array($columnSettings['operator'], $dateOperators, true) ||
+						in_array($columnSettings['operator'], $operators, true)
 					);
 				}
 
 				if (
-					empty($la_columnSettings['operator']) ||
-					!in_array($la_columnSettings['operator'], $la_operators, true) ||
-					in_array($la_columnSettings['operator'], $la_tableFilterColumns[ $ls_column ]->disabledOperators, true)
+					empty($columnSettings['operator']) ||
+					!in_array($columnSettings['operator'], $operators, true) ||
+					in_array($columnSettings['operator'], $tableFilterColumns[ $column ]->disabledOperators, true)
 				) {
 					return false;
 				}
@@ -229,18 +222,18 @@ class DashboardElementsTable extends Table {
 				return false;
 			}
 
-			$la_tableFields = $entity->scope ? $this->getTableFields($entity->scope) : [];
-			foreach ($entity->settings['sort'] as $la_sortSettings) {
+			$tableFields = $entity->scope ? $this->getTableFields($entity->scope) : [];
+			foreach ($entity->settings['sort'] as $sortSettings) {
 				if (
-					empty($la_sortSettings['field']) ||
-					!array_key_exists($la_sortSettings['field'], $la_tableFields)
+					empty($sortSettings['field']) ||
+					!array_key_exists($sortSettings['field'], $tableFields)
 				) {
 					return false;
 				}
 
 				if (
-					empty($la_sortSettings['direction']) ||
-					!in_array(strtolower($la_sortSettings['direction']), ['asc', 'desc'], true)
+					empty($sortSettings['direction']) ||
+					!in_array(strtolower($sortSettings['direction']), ['asc', 'desc'], true)
 				) {
 					return false;
 				}
@@ -275,17 +268,17 @@ class DashboardElementsTable extends Table {
 			return static::$scopes;
 		}
 
-		$la_classes = App::classes('*', 'Model/Table', 'Table');
+		$classes = App::classes('*', 'Model/Table', 'Table');
 
 		/**
-		 * @var \Awyiss\Model\Table $ls_className
+		 * @var \Awyiss\Model\Table $className
 		 */
-		foreach ($la_classes as $ls_tableName => $ls_className) {
-			$ls_tableName = Inflector::underscore(substr($ls_tableName, 0, -5));
+		foreach ($classes as $tableName => $className) {
+			$tableName = Inflector::underscore(substr($tableName, 0, -5));
 
 			if (
-				str_starts_with($ls_tableName, 'attributes_') ||
-				in_array($ls_tableName, [
+				str_starts_with($tableName, 'attributes_') ||
+				in_array($tableName, [
 					'audit',
 					'content_template_content_areas',
 					'content_template_elements',
@@ -307,25 +300,25 @@ class DashboardElementsTable extends Table {
 				continue;
 			}
 
-			static::$scopes[ $ls_tableName ] = __d($ls_tableName, 'headline_overview');
+			static::$scopes[ $tableName ] = __d($tableName, 'headline_overview');
 		}
 
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		$lo_pageRolesTable->findAllAndCache()->each(function (PageRole $pageRole): void {
-			$ls_pageRole = Inflector::pluralize($pageRole->identifier);
+		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
+		$pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$pageRolesTable->findAllAndCache()->each(function (PageRole $pageRole): void {
+			$pageRoleName = Inflector::pluralize($pageRole->identifier);
 
-			if (isset(static::$scopes[ $ls_pageRole ]) && !str_contains(static::$scopes[ $ls_pageRole ], '::')) {
+			if (isset(static::$scopes[ $pageRoleName ]) && !str_contains(static::$scopes[ $pageRoleName ], '::')) {
 				return;
 			}
 
-			static::$scopes[ $ls_pageRole ] = $pageRole->label;
+			static::$scopes[ $pageRoleName ] = $pageRole->label;
 		});
 
 
-		/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('Datatables');
-		$lo_table->findAllAndCache()->each(function (Datatable $datatable): void {
+		/** @var \Awyiss\Model\Table\DatatablesTable $table */
+		$table = FactoryLocator::get('Table')->get('Datatables');
+		$table->findAllAndCache()->each(function (Datatable $datatable): void {
 			if (isset(static::$scopes[ $datatable->identifier ]) && !str_contains(static::$scopes[ $datatable->identifier ], '::')) {
 				return;
 			}
@@ -333,20 +326,7 @@ class DashboardElementsTable extends Table {
 			static::$scopes[ $datatable->identifier ] = $datatable->label;
 		});
 
-		$lo_collator = new Collator(I18n::getLocale());
-		/**
-		 * Ignore case but not accents
-		 * This will allow sorting 'Äpfel' after 'Apfel', not after 'Zitronen'
-		 *
-		 * @noinspection PhpExpectedValuesShouldBeUsedInspection, SpellCheckingInspection
-		 */
-		$lo_collator->setStrength(Collator::SECONDARY);
-		// Enable natural sorting for numbers
-		$lo_collator->setAttribute(Collator::NUMERIC_COLLATION, Collator::ON);
-
-		uasort(static::$scopes, function (string $a, string $b) use ($lo_collator) {
-			return $lo_collator->compare($a, $b);
-		});
+		Arrays::naturalSort(static::$scopes);
 
 		return static::$scopes;
 	}

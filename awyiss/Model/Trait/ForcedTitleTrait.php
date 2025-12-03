@@ -38,30 +38,30 @@ trait ForcedTitleTrait {
 	 * @noinspection DuplicatedCode
 	 */
 	public function getForcedTitle(bool $includeHtml = true): string {
-		$la_fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'mediaAssignments', 'formId', 'surveyId', 'cssClass'];
+		$fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'mediaAssignments', 'formId', 'surveyId', 'cssClass'];
 
 		if ($this->_registryAlias === 'Widgets') {
-			$la_fields[] = 'widgetTemplateId';
-			$ls_defaultTitle = 'Widget';
+			$fields[] = 'widgetTemplateId';
+			$defaultTitle = 'Widget';
 		}
 		else {
-			$la_fields[] = 'contentTemplateId';
-			$ls_defaultTitle = 'Content';
+			$fields[] = 'contentTemplateId';
+			$defaultTitle = 'Content';
 		}
 
-		foreach ($la_fields as $ls_column) {
-			$ls_title = $this->processField($ls_column, $includeHtml);
-			if ($ls_title !== null) {
+		foreach ($fields as $column) {
+			$title = $this->processField($column, $includeHtml);
+			if ($title !== null) {
 				break;
 			}
 		}
 
-		$ls_inactive = '';
+		$inactive = '';
 		if (key_exists('active', $this->_fields) && empty($this->active)) {
-			$ls_inactive = __d($this->_registryAlias !== 'Widgets' ? 'contents' : 'widgets', 'inactive') . ' ';
+			$inactive = __d($this->_registryAlias !== 'Widgets' ? 'contents' : 'widgets', 'inactive') . ' ';
 		}
 
-		return $ls_inactive . ($ls_title ?: $ls_defaultTitle);
+		return $inactive . ($title ?: $defaultTitle);
 	}
 
 
@@ -106,9 +106,9 @@ trait ForcedTitleTrait {
 	 * @return string|null
 	 */
 	protected function processFormId(bool $includeHtml): ?string {
-		$lo_form = $this->form ?? $this->getForm();
+		$form = $this->form ?? $this->getForm();
 
-		return $lo_form ? __d('contents', 'form_id') . ': ' . ($includeHtml ? '<em>' . $lo_form->label . '</em>' : $lo_form->label) : null;
+		return $form ? __d('contents', 'form_id') . ': ' . ($includeHtml ? '<em>' . $form->label . '</em>' : $form->label) : null;
 	}
 
 
@@ -117,9 +117,9 @@ trait ForcedTitleTrait {
 	 * @return string|null
 	 */
 	protected function processSurveyId(bool $includeHtml): ?string {
-		$lo_survey = $this->survey ?? $this->getSurvey();
+		$survey = $this->survey ?? $this->getSurvey();
 
-		return $lo_survey ? __d('contents', 'survey_id') . ': ' . ($includeHtml ? '<em>' . $lo_survey->label . '</em>' : $lo_survey->label) : null;
+		return $survey ? __d('contents', 'survey_id') . ': ' . ($includeHtml ? '<em>' . $survey->label . '</em>' : $survey->label) : null;
 	}
 
 
@@ -135,9 +135,9 @@ trait ForcedTitleTrait {
 	 * @return string|null
 	 */
 	protected function processDuplicateOf(): ?string {
-		$lo_content = $this->loadDuplicatedContent();
+		$content = $this->loadDuplicatedContent();
 
-		return $lo_content ? __d('contents', 'duplicate_of') . ': ' . $lo_content->label . ' (ID: ' . $lo_content->id . ')' : null;
+		return $content ? __d('contents', 'duplicate_of') . ': ' . $content->label . ' (ID: ' . $content->id . ')' : null;
 	}
 
 
@@ -146,9 +146,9 @@ trait ForcedTitleTrait {
 	 * @return string|null
 	 */
 	protected function processContentTemplateId(bool $includeHtml): ?string {
-		$lo_template = $this->contentTemplate ?? $this->loadContentTemplate();
+		$template = $this->contentTemplate ?? $this->loadContentTemplate();
 
-		return $lo_template ? 'Template: ' . ($includeHtml ? '<em>' . $lo_template->label . '</em>' : $lo_template->label) : null;
+		return $template ? 'Template: ' . ($includeHtml ? '<em>' . $template->label . '</em>' : $template->label) : null;
 	}
 
 
@@ -157,9 +157,9 @@ trait ForcedTitleTrait {
 	 * @return string|null
 	 */
 	protected function processWidgetTemplateId(bool $includeHtml): ?string {
-		$lo_template = $this->widgetTemplate ?? $this->loadWidgetTemplate();
+		$template = $this->widgetTemplate ?? $this->loadWidgetTemplate();
 
-		return $lo_template ? 'Template: ' . ($includeHtml ? '<em>' . $lo_template->label . '</em>' : $lo_template->label) : null;
+		return $template ? 'Template: ' . ($includeHtml ? '<em>' . $template->label . '</em>' : $template->label) : null;
 	}
 
 
@@ -168,21 +168,21 @@ trait ForcedTitleTrait {
 	 * @return string|null
 	 */
 	protected function processDefaultField(string $column): ?string {
-		$ls_title = $this->cleanTitle((string)$this->$column);
+		$title = $this->cleanTitle((string)$this->$column);
 
-		if (empty($ls_title)) {
+		if (empty($title)) {
 			return null;
 		}
 
 		if ($column === 'title' && $this->titleTag) {
-			$ls_title = '(' . $this->titleTag . ') ' . $ls_title;
+			$title = '(' . $this->titleTag . ') ' . $title;
 		}
 		elseif ($column === 'subtitle' && $this->subtitleTag) {
-			$ls_title = '(' . $this->subtitleTag . ') ' . $ls_title;
+			$title = '(' . $this->subtitleTag . ') ' . $title;
 		}
 
 
-		return $ls_title;
+		return $title;
 	}
 
 
@@ -192,39 +192,37 @@ trait ForcedTitleTrait {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function cleanTitle(string $title): string {
-		$ls_title = $title;
-
 		// If there's a <awyiss-responsive-image> tag in the title
-		if (str_contains($ls_title, '<awyiss-responsive-image')) {
-			$ls_testTitle = trim(strip_tags(preg_replace('/<awyiss-responsive-image>.*?<\/awyiss-responsive-image>/', '', $ls_title)));
-			if (empty($ls_testTitle)) {
+		if (str_contains($title, '<awyiss-responsive-image')) {
+			$testTitle = trim(strip_tags(preg_replace('/<awyiss-responsive-image>.*?<\/awyiss-responsive-image>/', '', $title)));
+			if (empty($testTitle)) {
 				// If the title is empty after removing the <awyiss-responsive-image> tag, set the title to the image's alt attribute
-				preg_match('/<awyiss-responsive-image>(.*?)<\/awyiss-responsive-image>/', $ls_title, $la_matches);
-				$la_attributes = json_decode($la_matches[1], true) ?: [];
-				$lo_media = $this->mediaAssignments['inlineImgTag'][ $la_attributes['mediaId'] ]?->media ?? null;
-				$ls_title = $lo_media?->name ?? $la_matches[1];
+				preg_match('/<awyiss-responsive-image>(.*?)<\/awyiss-responsive-image>/', $title, $matches);
+				$attributes = json_decode($matches[1], true) ?: [];
+				$media = $this->mediaAssignments['inlineImgTag'][ $attributes['mediaId'] ]?->media ?? null;
+				$title = $media?->name ?? $matches[1];
 			}
 			else {
-				$ls_title = preg_replace('/<awyiss-responsive-image>.*?<\/awyiss-responsive-image>/', '', $ls_title);
+				$title = preg_replace('/<awyiss-responsive-image>.*?<\/awyiss-responsive-image>/', '', $title);
 			}
 		}
 
 		// If there is a <module> tag in the title, replace it with the module identifier (data-identifier attribute)
-		if (str_contains($ls_title, '<module')) {
-			$ls_title = preg_replace('/<module[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/module>/', 'Module: <em>$1</em>', $ls_title);
+		if (str_contains($title, '<module')) {
+			$title = preg_replace('/<module[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/module>/', 'Module: <em>$1</em>', $title);
 		}
 
-		$ls_title = trim(strip_tags(html_entity_decode(str_replace(['&nbsp;', '<br>'], ' ', (string)$ls_title))));
+		$title = trim(strip_tags(html_entity_decode(str_replace(['&nbsp;', '<br>'], ' ', (string)$title))));
 
 		// Multiline titles should only show the first line
-		if (str_contains($ls_title, PHP_EOL)) {
-			$ls_title = substr($ls_title, 0, strpos($ls_title, PHP_EOL));
+		if (str_contains($title, PHP_EOL)) {
+			$title = substr($title, 0, strpos($title, PHP_EOL));
 		}
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$ls_title = mb_strlen($ls_title) > 100 ? mb_substr($ls_title, 0, 100) . '...' : $ls_title;
+		$title = mb_strlen($title) > 100 ? mb_substr($title, 0, 100) . '...' : $title;
 
-		return $ls_title;
+		return $title;
 	}
 
 
@@ -233,8 +231,8 @@ trait ForcedTitleTrait {
 	 */
 	protected function loadContentTemplate(): ?ContentTemplate {
 		if (!isset(static::$contentTemplates)) {
-			$lo_table = FactoryLocator::get('Table')->get('ContentTemplates');
-			static::$contentTemplates = $lo_table->find()->all()->indexBy('id')->toArray();
+			$table = FactoryLocator::get('Table')->get('ContentTemplates');
+			static::$contentTemplates = $table->find()->all()->indexBy('id')->toArray();
 		}
 
 		return $this->contentTemplate = static::$contentTemplates[ $this->contentTemplateId ] ?? null;
@@ -246,8 +244,8 @@ trait ForcedTitleTrait {
 	 */
 	protected function loadWidgetTemplate(): ?WidgetTemplate {
 		if (!isset(static::$widgetTemplates)) {
-			$lo_table = FactoryLocator::get('Table')->get('WidgetTemplates');
-			static::$widgetTemplates = $lo_table->find()->all()->indexBy('id')->toArray();
+			$table = FactoryLocator::get('Table')->get('WidgetTemplates');
+			static::$widgetTemplates = $table->find()->all()->indexBy('id')->toArray();
 		}
 
 		return $this->widgetTemplate = static::$widgetTemplates[ $this->widgetTemplateId ] ?? null;
@@ -258,16 +256,16 @@ trait ForcedTitleTrait {
 	 * @return \Awyiss\Model\Entity\Content|null
 	 */
 	protected function loadDuplicatedContent(): ?Content {
-		$lo_entity = $this->duplicateOfContent;
+		$entity = $this->duplicateOfContent;
 
-		if (!$lo_entity) {
-			$lo_table = FactoryLocator::get('Table')->get('Contents');
-			$lo_table->loadInto($this, ['DuplicateOfContents']);
+		if (!$entity) {
+			$table = FactoryLocator::get('Table')->get('Contents');
+			$table->loadInto($this, ['DuplicateOfContents']);
 			/** @noinspection PhpConditionAlreadyCheckedInspection */
-			$lo_entity = $this->duplicateOfContent;
+			$entity = $this->duplicateOfContent;
 		}
 
-		return $lo_entity;
+		return $entity;
 	}
 
 
@@ -277,25 +275,22 @@ trait ForcedTitleTrait {
 	 */
 	protected function getFirstMediaElementTitle(): ?string {
 		// Get the first media element
-		$la_medias = current($this->mediaAssignments);
+		$medias = current($this->mediaAssignments);
 		// Get the first assigned media
-		$la_medias = is_array($la_medias) ? $la_medias : $la_medias->toArray();
-		$lx_media = current($la_medias);
+		$medias = is_array($medias) ? $medias : $medias->toArray();
+		$media = current($medias);
 
 		// If the media is an array, get the first element
-		if (is_array($lx_media)) {
-			$lo_media = current($lx_media);
-		}
-		else {
-			$lo_media = $lx_media;
+		if (is_array($media)) {
+			$media = current($media);
 		}
 
-		if ($lo_media instanceof MediaAssignment) {
-			$lo_media = $lo_media->media ?? [];
+		if ($media instanceof MediaAssignment) {
+			$media = $media->media ?? [];
 		}
 
-		/** @var \Awyiss\Model\Entity\Media $lo_media */
-		return $lo_media instanceof Media ? $lo_media->name : json_encode($lo_media);
+		/** @var \Awyiss\Model\Entity\Media $media */
+		return $media instanceof Media ? $media->name : json_encode($media);
 	}
 
 
@@ -309,14 +304,14 @@ trait ForcedTitleTrait {
 		}
 
 		try {
-			/** @var \Awyiss\Model\Entity\Form $lo_form */
-			$lo_form = FactoryLocator::get('Table')->get('Forms')->get($this->formId);
+			/** @var \Awyiss\Model\Entity\Form $form */
+			$form = FactoryLocator::get('Table')->get('Forms')->get($this->formId);
 		}
 		catch (RecordNotFoundException) {
 			return null;
 		}
 
-		return $lo_form;
+		return $form;
 	}
 
 
@@ -330,13 +325,13 @@ trait ForcedTitleTrait {
 		}
 
 		try {
-			/** @var \Awyiss\Model\Entity\Survey $lo_survey */
-			$lo_survey = FactoryLocator::get('Table')->get('Surveys')->get($this->surveyId);
+			/** @var \Awyiss\Model\Entity\Survey $survey */
+			$survey = FactoryLocator::get('Table')->get('Surveys')->get($this->surveyId);
 		}
 		catch (RecordNotFoundException) {
 			return null;
 		}
 
-		return $lo_survey;
+		return $survey;
 	}
 }

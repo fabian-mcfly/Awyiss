@@ -57,7 +57,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(2, $this->usergroupPermissionsTable->associations()->keys());
@@ -74,7 +73,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -101,7 +99,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -122,7 +119,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -146,7 +142,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -174,7 +169,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -200,7 +194,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyScope(): void {
 		$data = [
@@ -219,7 +212,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationBlankScope(): void {
 		$data = [
@@ -239,7 +231,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationEmptyIdentifier(): void {
 		$data = [
@@ -258,7 +249,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationBlankIdentifier(): void {
 		$data = [
@@ -278,7 +268,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidAccess(): void {
 		$data = [
@@ -301,7 +290,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSettingsEmpty(): void {
 		$data = [
@@ -321,7 +309,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSettingsExceedsMaxLength(): void {
 		$largeSettings = array_fill(0, 1000, str_repeat('x', 100)); // Create very large array
@@ -344,7 +331,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidUsergroup(): void {
 		$data = [
@@ -365,7 +351,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidUsergroup(): void {
 		$data = [
@@ -392,7 +377,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidAccess() {
 		$data = [
@@ -422,7 +406,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidAccess() {
 		$data = [
@@ -457,7 +440,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\UsergroupPermission $entity */
@@ -478,7 +460,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -505,7 +486,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithIntegerAccess(): void {
 		$additionalData = [
@@ -526,7 +506,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaAccessColumn(): void {
 		$schema = $this->usergroupPermissionsTable->getSchema();
@@ -539,7 +518,6 @@ class UsergroupPermissionsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaSettingsColumn(): void {
 		$schema = $this->usergroupPermissionsTable->getSchema();

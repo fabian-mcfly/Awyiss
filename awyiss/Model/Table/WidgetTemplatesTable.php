@@ -132,17 +132,17 @@ class WidgetTemplatesTable extends Table {
 			]);
 		}
 
-		$la_availableWidgetAttributes = $this->getAvailableWidgetAttributes();
-		$la_availableWidgetElementIdentifiers = array_column($widgetTemplate->widgetTemplateElements ?? [], 'identifier');
-		$la_assignedWidgetAttributes = [];
-		foreach ($la_availableWidgetAttributes as $la_attribute) {
-			if (in_array('attributes.' . $la_attribute['identifier'], $la_availableWidgetElementIdentifiers)) {
-				$la_assignedWidgetAttributes[] = $la_attribute['identifier'];
+		$availableWidgetAttributes = $this->getAvailableWidgetAttributes();
+		$availableWidgetElementIdentifiers = array_column($widgetTemplate->widgetTemplateElements ?? [], 'identifier');
+		$assignedWidgetAttributes = [];
+		foreach ($availableWidgetAttributes as $attribute) {
+			if (in_array('attributes.' . $attribute['identifier'], $availableWidgetElementIdentifiers)) {
+				$assignedWidgetAttributes[] = $attribute['identifier'];
 			}
 		}
 
 
-		return $la_assignedWidgetAttributes;
+		return $assignedWidgetAttributes;
 	}
 
 
@@ -167,15 +167,15 @@ class WidgetTemplatesTable extends Table {
 	 * @return array<int, array>
 	 */
 	public function getAvailableWidgetAttributes(bool $includeInactive = false): array {
-		$ls_key = $includeInactive ? 'withInactive' : 'active';
+		$key = $includeInactive ? 'withInactive' : 'active';
 
-		if (isset($this->availableWidgetAttributes[ $ls_key ])) {
-			return $this->availableWidgetAttributes[ $ls_key ];
+		if (isset($this->availableWidgetAttributes[ $key ])) {
+			return $this->availableWidgetAttributes[ $key ];
 		}
 
-		/** @var \Awyiss\Model\Table\AttributesTable $lo_attributesTable */
-		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableWidgetAttributes[ $ls_key ] = $lo_attributesTable->find($includeInactive ? 'all' : 'active')->where(['scope' => 'widgets'])->all()->indexBy('identifier')->map(
+		/** @var \Awyiss\Model\Table\AttributesTable $attributesTable */
+		$attributesTable = FactoryLocator::get('Table')->get('Attributes');
+		$this->availableWidgetAttributes[ $key ] = $attributesTable->find($includeInactive ? 'all' : 'active')->where(['scope' => 'widgets'])->all()->indexBy('identifier')->map(
 			function (Attribute $attribute): array {
 				return [
 					'title' => $attribute->title,
@@ -189,7 +189,7 @@ class WidgetTemplatesTable extends Table {
 		)->toArray();
 
 
-		return $this->availableWidgetAttributes[ $ls_key ];
+		return $this->availableWidgetAttributes[ $key ];
 	}
 
 
@@ -264,29 +264,29 @@ class WidgetTemplatesTable extends Table {
 
 
 		$rules->add(function (WidgetTemplate $entity): bool {
-			$lb_valid = true;
+			$valid = true;
 
-			$la_availableAttributes = array_keys($this->getAvailableWidgetAttributes());
-			foreach (($entity->widgetTemplateElements ?? []) as $lo_assignedWidgetElement) {
-				if (str_starts_with($lo_assignedWidgetElement->identifier, 'attributes.')) {
-					$ls_identifier = substr($lo_assignedWidgetElement->identifier, 11);
+			$availableAttributes = array_keys($this->getAvailableWidgetAttributes());
+			foreach (($entity->widgetTemplateElements ?? []) as $assignedWidgetElement) {
+				if (str_starts_with($assignedWidgetElement->identifier, 'attributes.')) {
+					$identifier = substr($assignedWidgetElement->identifier, 11);
 
-					if (!in_array($ls_identifier, $la_availableAttributes)) {
-						$lb_valid = false;
+					if (!in_array($identifier, $availableAttributes)) {
+						$valid = false;
 						break;
 					}
 
 					continue;
 				}
 
-				if (!in_array($lo_assignedWidgetElement->identifier, array_keys($this->availableWidgetElements))) {
-					$lb_valid = false;
+				if (!in_array($assignedWidgetElement->identifier, array_keys($this->availableWidgetElements))) {
+					$valid = false;
 					break;
 				}
 			}
 
 
-			return $lb_valid;
+			return $valid;
 		}, 'validWidgetElements', [
 			'errorField' => 'widgetTemplateElements',
 			//No domain fallback, since this is a message, specific to widget templates.

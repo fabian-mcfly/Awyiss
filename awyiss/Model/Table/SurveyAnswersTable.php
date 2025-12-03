@@ -180,23 +180,23 @@ class SurveyAnswersTable extends Table {
 	 * @return array
 	 */
 	public function getDisabledQuestions(): array {
-		$la_disabled = [];
+		$disabled = [];
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_surveyQuestionTypeEnum */
-		$ls_surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $surveyQuestionTypeEnum */
+		$surveyQuestionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 
 		/**
-		 * @var \Awyiss\Model\Entity\SurveyQuestion $lo_category
+		 * @var \Awyiss\Model\Entity\SurveyQuestion $category
 		 */
-		foreach ($this->getBehavior('Categories')->getCategories(true) as $lo_category) {
+		foreach ($this->getBehavior('Categories')->getCategories(true) as $category) {
 			if (
-				$lo_category->type === $ls_surveyQuestionTypeEnum::FreeText ||
-				$lo_category->type === $ls_surveyQuestionTypeEnum::InfoText
+				$category->type === $surveyQuestionTypeEnum::FreeText ||
+				$category->type === $surveyQuestionTypeEnum::InfoText
 			) {
-				$la_disabled[] = $lo_category->id;
+				$disabled[] = $category->id;
 			}
 		}
 
-		return $la_disabled;
+		return $disabled;
 	}
 }

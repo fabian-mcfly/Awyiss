@@ -98,7 +98,6 @@ class NextActionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Enum\Survey\NextAction::label()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabel(): void {
 		$label = NextAction::NextQuestion->label();

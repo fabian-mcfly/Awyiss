@@ -57,7 +57,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(2, $this->mediaElementAssignmentsTable->associations()->keys());
@@ -85,7 +84,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -105,7 +103,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -124,7 +121,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccessWithNullForeignKey(): void {
 		$data = [
@@ -143,7 +139,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -160,7 +155,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -183,7 +177,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -206,7 +199,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -224,7 +216,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationForeignKeyAllowEmpty(): void {
 		$data = [
@@ -243,7 +234,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaElementExists(): void {
 		// Test with existing media element
@@ -262,7 +252,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaElementNotExists(): void {
 		// Test with non-existing media element
@@ -285,7 +274,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesForeignKeyExistsValidScope(): void {
 		// Test with valid assignable scope
@@ -304,7 +292,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesForeignKeyExistsInvalidScope(): void {
 		// Test with invalid scope
@@ -327,7 +314,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesForeignKeyExistsEntityLevelNotAllowed(): void {
 		// Test entity level assignment on scope that doesn't allow entity level
@@ -350,7 +336,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesForeignKeyExistsModelLevelValid(): void {
 		// Test valid model level assignment (null foreign key)
@@ -369,7 +354,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesForeignKeyExistsInvalidEntity(): void {
 		// Test with non-existing entity
@@ -392,7 +376,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaElementUniqueForScope(): void {
 		/** @var \Awyiss\Model\Entity\MediaElementAssignment $entity */
@@ -412,7 +395,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesMediaElementUniqueForScopeWithNulls(): void {
 		// Test that multiple nulls are not allowed (allowMultipleNulls => false)
@@ -433,7 +415,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\MediaElementAssignment $entity */
@@ -452,7 +433,6 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaElementAssignmentsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [

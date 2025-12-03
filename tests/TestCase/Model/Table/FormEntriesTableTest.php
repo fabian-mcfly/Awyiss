@@ -57,7 +57,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(5, $this->formEntriesTable->associations()->keys());
@@ -104,7 +103,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -142,7 +140,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -169,7 +166,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -190,7 +186,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -227,7 +222,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -262,7 +256,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotEmptyString(): void {
 		$data = [
@@ -285,7 +278,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAllowEmptyStringFields(): void {
 		$data = [
@@ -310,7 +302,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidForm(): void {
 		// Test with existing form
@@ -332,7 +323,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidForm(): void {
 		// Test with non-existing form
@@ -358,7 +348,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidPage(): void {
 		// Test with existing page
@@ -380,7 +369,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidPage(): void {
 		// Test with non-existing page
@@ -406,7 +394,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->formEntriesTable->newDefaultEntity();
@@ -432,7 +419,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -472,7 +458,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::$categories
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCategoriesBehavior(): void {
 		$this->assertTrue($this->formEntriesTable->hasBehavior('Categories'));
@@ -490,7 +475,6 @@ class FormEntriesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormEntriesTable::$search
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSearchBehavior(): void {
 		$this->assertTrue($this->formEntriesTable->hasBehavior('Search'));

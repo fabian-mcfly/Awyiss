@@ -92,10 +92,10 @@ class FormConditionalRecipientsTable extends Table {
 
 
 		$validator->notEmptyString('operator');
-		/** @var class-string<\Awyiss\Model\Enum\ComparisonOperator> $ls_comparisonOperatorEnumClass */
-		$ls_comparisonOperatorEnumClass = App::className('ComparisonOperator', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\ComparisonOperator> $comparisonOperatorEnumClass */
+		$comparisonOperatorEnumClass = App::className('ComparisonOperator', 'Model/Enum');
 		$validator->add('operator', [
-			'enum' => ['rule' => ['enum', $ls_comparisonOperatorEnumClass]],
+			'enum' => ['rule' => ['enum', $comparisonOperatorEnumClass]],
 		]);
 
 
@@ -154,9 +154,9 @@ class FormConditionalRecipientsTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\ComparisonOperator> $ls_comparisonOperatorEnumClass */
-		$ls_comparisonOperatorEnumClass = App::className('ComparisonOperator', 'Model/Enum');
+		/** @var class-string<\Awyiss\Model\Enum\ComparisonOperator> $comparisonOperatorEnumClass */
+		$comparisonOperatorEnumClass = App::className('ComparisonOperator', 'Model/Enum');
 
-		$schema->setColumnType('operator', EnumType::from($ls_comparisonOperatorEnumClass));
+		$schema->setColumnType('operator', EnumType::from($comparisonOperatorEnumClass));
 	}
 }

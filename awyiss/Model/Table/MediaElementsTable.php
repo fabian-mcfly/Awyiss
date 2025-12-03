@@ -11,6 +11,7 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Content\BackendColumnSystem;
 use Awyiss\Utility\Inflector;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -219,87 +220,85 @@ class MediaElementsTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function getAssignableModels(bool $includeEntities = false, bool $allowGrouping = true): array {
-		$ls_withEntities = $includeEntities ? 'withEntities' : 'withoutEntities';
-		$ls_allowGrouping = $allowGrouping ? 'allowGrouping' : 'noGrouping';
+		$withEntitiesKey = $includeEntities ? 'withEntities' : 'withoutEntities';
+		$allowGroupingKey = $allowGrouping ? 'allowGrouping' : 'noGrouping';
 
-		if (isset($this->availableModels[ $ls_withEntities ][ $ls_allowGrouping ])) {
-			return $this->availableModels[ $ls_withEntities ][ $ls_allowGrouping ];
+		if (isset($this->availableModels[ $withEntitiesKey ][ $allowGroupingKey ])) {
+			return $this->availableModels[ $withEntitiesKey ][ $allowGroupingKey ];
 		}
 
-		$la_availableModels = [];
+		$availableModels = [];
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$la_datatables = FactoryLocator::get('Table')->get('Datatables')->findAllAndCache()->indexBy(fn($datatable) => $datatable->identifier)->toArray();
+		$datatables = FactoryLocator::get('Table')->get('Datatables')->findAllAndCache()->indexBy(fn($datatable) => $datatable->identifier)->toArray();
 
 		/**
-		 * @var \Cake\Collection\Collection $lo_pageRoles
+		 * @var \Cake\Collection\Collection $pageRoles
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_pageRoles = FactoryLocator::get('Table')->get('PageRoles')->findAllAndCache()->indexBy(fn($pageRole) => $pageRole->id);
-		$lo_pageRoles = $lo_pageRoles->map(fn($pageRole) => $pageRole->label);
-		$la_pageRoles = $lo_pageRoles->toArray();
+		$pageRoles = FactoryLocator::get('Table')->get('PageRoles')->findAllAndCache()->indexBy(fn($pageRole) => $pageRole->id);
+		$pageRoles = $pageRoles->map(fn($pageRole) => $pageRole->label)->toArray();
 
-		$la_classes = App::classes('*', 'Model/Table', 'Table', null, null, ['GenericDatatablesTable']);
+		$classes = App::classes('*', 'Model/Table', 'Table', null, null, ['GenericDatatablesTable']);
 
-		/** @var class-string<\Awyiss\Model\Table> $ls_className */
-		foreach ($la_classes as $ls_className) {
-			/** @var string $ls_tableName */
-			$ls_tableName = $ls_className::TABLE;
+		/** @var class-string<\Awyiss\Model\Table> $className */
+		foreach ($classes as $className) {
+			/** @var string $tableName */
+			$tableName = $className::TABLE;
 
-			if (isset($la_availableModels[ $ls_tableName ])) {
+			if (isset($availableModels[ $tableName ])) {
 				continue;
 			}
 
-			$lo_reflection = new ReflectionClass($ls_className);
+			$reflection = new ReflectionClass($className);
 
-			$la_attributes = $lo_reflection->getAttributes(MediaElementAssignable::class);
+			$attributes = $reflection->getAttributes(MediaElementAssignable::class);
 
-			if (!$la_attributes) {
+			if (!$attributes) {
 				continue;
 			}
 
-			$lo_attributeInstance = $la_attributes[0]->newInstance();
+			$attributeInstance = $attributes[0]->newInstance();
 
-			$lb_entityLevel = (bool)($lo_attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL);
+			$entityLevel = (bool)($attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL);
 
-			$la_entities = false;
-			if ($includeEntities && $lb_entityLevel) {
-				$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ls_tableName));
-				$lo_entities = $lo_table->find()->all()->indexBy('id');
+			$entities = false;
+			if ($includeEntities && $entityLevel) {
+				$table = FactoryLocator::get('Table')->get(Inflector::camelize($tableName));
+				$entities = $table->find()->all()->indexBy('id');
 
-				if ($allowGrouping && $ls_tableName === 'page_templates') {
-					$lo_entities = $lo_entities->groupBy(function ($entity) use ($la_pageRoles) {
-						return $la_pageRoles[ $entity->pageRoleId->value ];
+				if ($allowGrouping && $tableName === 'page_templates') {
+					$entities = $entities->groupBy(function (EntityInterface $entity) use ($pageRoles): string {
+						/** @var \Awyiss\Model\Entity\PageTemplate $entity */
+						return $pageRoles[ $entity->pageRoleId->value ];
 					});
 
-					$lo_entities = $lo_entities->map(fn ($entities) => collection($entities)->indexBy('id')->map(function ($entity) {
+					$entities = $entities->map(fn (array $groupedEntities) => collection($groupedEntities)->indexBy('id')->map(function (EntityInterface $entity): string {
+						/** @var \Awyiss\Model\Entity $entity */
 						return $entity->label;
-					})->toArray());
+					})->toArray())->toArray();
 
-					$la_entities = $lo_entities->toArray();
-
-					uksort($la_entities, function ($key1, $key2) use ($la_pageRoles) {
-						return array_search($key1, $la_pageRoles) <=> array_search($key2, $la_pageRoles);
+					uksort($entities, function (string $key1, string $key2) use ($pageRoles) {
+						return array_search($key1, $pageRoles) <=> array_search($key2, $pageRoles);
 					});
 				}
 				else {
-					$lo_entities = $lo_entities->map(fn ($entity) => $entity->label);
-					$la_entities = $lo_entities->toArray();
+					$entities = $entities->map(fn ($entity) => $entity->label)->toArray();
 				}
 			}
 
-			$la_availableModels[ $ls_tableName ] = [
-				'entityLevel' => $lb_entityLevel,
-				'modelLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
-				'label' => isset($la_datatables[ $ls_tableName ]) ? $la_datatables[ $ls_tableName ]->label : __d($ls_tableName, 'headline_overview'),
-				'entities' => $la_entities,
+			$availableModels[ $tableName ] = [
+				'entityLevel' => $entityLevel,
+				'modelLevel' => (bool)($attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
+				'label' => isset($datatables[ $tableName ]) ? $datatables[ $tableName ]->label : __d($tableName, 'headline_overview'),
+				'entities' => $entities,
 			];
 		}
 
-		uasort($la_availableModels, fn($a, $b) => strcasecmp($a['label'], $b['label']));
+		uasort($availableModels, fn($a, $b) => strcasecmp($a['label'], $b['label']));
 
-		$this->availableModels[ $ls_withEntities ][ $ls_allowGrouping ] = $la_availableModels;
+		$this->availableModels[ $withEntitiesKey ][ $allowGroupingKey ] = $availableModels;
 
-		return $this->availableModels[ $ls_withEntities ][ $ls_allowGrouping ];
+		return $this->availableModels[ $withEntitiesKey ][ $allowGroupingKey ];
 	}
 }

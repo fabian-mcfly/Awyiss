@@ -17,7 +17,7 @@ use Cake\Utility\Text;
  * Page Entity
  *
  * @property int $id
- * @property \Awyiss\Model\Enum\PageRoleEnumInterface|null $pageRoleId
+ * @property \Awyiss\Model\Enum\PageRoleEnumInterface|int|null $pageRoleId
  * @property int|null $pageTemplateId
  * @property int|null $parentId
  * @property string|null $languageShortcode

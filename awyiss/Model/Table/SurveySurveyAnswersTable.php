@@ -128,10 +128,10 @@ class SurveySurveyAnswersTable extends Table {
 		]);
 
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 		$validator->add('nextAction', [
-			'enum' => ['rule' => ['enum', $ls_surveyNextActionEnum]],
+			'enum' => ['rule' => ['enum', $surveyNextActionEnum]],
 		]);
 
 
@@ -171,9 +171,9 @@ class SurveySurveyAnswersTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
 			function (SurveySurveyAnswer $entity/*, array $options*/): string|bool {
-				$lo_tableLocator = FactoryLocator::get('Table');
+				$tableLocator = FactoryLocator::get('Table');
 				// Check if the given answer id is part of the question
-				$lo_query = $lo_tableLocator->get('SurveySurveyQuestions')
+				$query = $tableLocator->get('SurveySurveyQuestions')
 					->find()
 					->innerJoinWith('SurveyQuestions.SurveyAnswers')
 					->where([
@@ -181,7 +181,7 @@ class SurveySurveyAnswersTable extends Table {
 						'SurveyAnswers.id' => $entity->surveyAnswerId,
 					]);
 
-				return $lo_query->count() > 0;
+				return $query->count() > 0;
 			},
 			'validSurveyAnswerId',
 			[
@@ -206,10 +206,10 @@ class SurveySurveyAnswersTable extends Table {
 					return true;
 				}
 
-				/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-				$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+				/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+				$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-				return in_array($entity->nextAction, $ls_surveyNextActionEnum::cases());
+				return in_array($entity->nextAction, $surveyNextActionEnum::cases());
 			},
 			'validNextAction',
 			[
@@ -228,9 +228,9 @@ class SurveySurveyAnswersTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-		$schema->setColumnType('next_action', EnumType::from($ls_surveyNextActionEnum));
+		$schema->setColumnType('next_action', EnumType::from($surveyNextActionEnum));
 	}
 }

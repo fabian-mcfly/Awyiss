@@ -59,7 +59,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(7, $this->datatablesTable->associations()->keys());
@@ -117,7 +116,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -143,7 +141,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -163,7 +160,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -181,7 +177,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -206,7 +201,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -227,7 +221,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -246,7 +239,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotEmptyString(): void {
 		$data = [
@@ -265,7 +257,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUnchangedOnUpdate(): void {
 		$entity = $this->datatablesTable->get(1);
@@ -283,7 +274,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUnchangedOnCopy(): void {
 		$entity = $this->datatablesTable->get(1);
@@ -297,7 +287,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierStartsWithAttributes(): void {
 		$data = [
@@ -319,7 +308,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierInBlocklist(): void {
 		$blocklistedIdentifiers = [
@@ -352,7 +340,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierBackendController(): void {
 		// Test with an identifier that would match a backend controller name
@@ -375,7 +362,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierPageRole(): void {
 		// Test with an identifier that matches a page role
@@ -398,7 +384,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueValid(): void {
 		$data = [
@@ -415,7 +400,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierUniqueInvalid(): void {
 		$data = [
@@ -436,7 +420,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesIdentifierNotDirty(): void {
 		// Test that validation doesn't run when identifier is not dirty
@@ -456,7 +439,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->datatablesTable->newDefaultEntity();
@@ -475,7 +457,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -502,7 +483,6 @@ class DatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\DatatablesTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehavior(): void {
 		$this->assertTrue($this->datatablesTable->hasBehavior('Translate'));

@@ -237,11 +237,11 @@ class FormsTable extends Table {
 
 				/** @noinspection RegExpRedundantEscape */
 				if (
-					preg_match('/^\{\{(?<identifiers>[^\|\}]*?)(?:\|(?<alternative>[^\}]*?))?\}\}$/', $value, $la_matches) ||
-					preg_match('/^(\$(?<identifier>[A-Za-z0-9_]+))$/', $value, $la_matches)
+					preg_match('/^\{\{(?<identifiers>[^\|\}]*?)(?:\|(?<alternative>[^\}]*?))?\}\}$/', $value, $matches) ||
+					preg_match('/^(\$(?<identifier>[A-Za-z0-9_]+))$/', $value, $matches)
 				) {
-					if (!empty($la_matches['alternative'])) {
-						return Validation::email($la_matches['alternative']);
+					if (!empty($matches['alternative'])) {
+						return Validation::email($matches['alternative']);
 					}
 
 					return true;
@@ -263,17 +263,9 @@ class FormsTable extends Table {
 		$validator->add('cc', [
 			'isArray' => ['rule' => 'isArray'],
 			'email' => ['rule' => function (array $value): bool {
-				foreach ($value as $la_cc) {
-					if (
-						empty($la_cc['email']) ||
-						!is_string($la_cc['email']) ||
-						!Validation::email($la_cc['email'])
-					) {
-						return false;
-					}
-				}
-
-				return true;
+				return array_all($value, function (array $cc): bool {
+					return !empty($cc['email']) && is_string($cc['email']) && Validation::email($cc['email']);
+				});
 			}],
 			'maxLengthBytes' => [
 				'rule' => function (array $value): bool {
@@ -286,17 +278,9 @@ class FormsTable extends Table {
 		$validator->add('bcc', [
 			'isArray' => ['rule' => 'isArray'],
 			'email' => ['rule' => function (array $value): bool {
-				foreach ($value as $la_bcc) {
-					if (
-						empty($la_bcc['email']) ||
-						!is_string($la_bcc['email']) ||
-						!Validation::email($la_bcc['email'])
-					) {
-						return false;
-					}
-				}
-
-				return true;
+				return array_all($value, function (array $bcc): bool {
+					return !empty($bcc['email']) && is_string($bcc['email']) && Validation::email($bcc['email']);
+				});
 			}],
 			'maxLengthBytes' => [
 				'rule' => function (array $value): bool {
@@ -468,16 +452,16 @@ class FormsTable extends Table {
 	 * @throws \Exception
 	 */
 	public function getFormTemplates(): array {
-		$la_classes = App::classes('*', 'Utility/Form/Templates', 'FormTemplate', FormTemplateInterface::class);
+		$classes = App::classes('*', 'Utility/Form/Templates', 'FormTemplate', FormTemplateInterface::class);
 
 		/** @var class-string<\Awyiss\Utility\Form\Templates\FormTemplateInterface> $ls_className */
-		$la_templates = array_map(function ($ls_className) {
+		$templates = array_map(function ($ls_className) {
 			return $ls_className::getTitle();
-		}, $la_classes);
+		}, $classes);
 
-		Arrays::naturalSort($la_templates);
+		Arrays::naturalSort($templates);
 
-		return $la_templates;
+		return $templates;
 	}
 
 
@@ -485,17 +469,17 @@ class FormsTable extends Table {
 	 * @return array
 	 */
 	public function getTransportProfiles(): array {
-		$la_profiles = [];
+		$profiles = [];
 
-		foreach (TransportFactory::configured() ?: [] as $ls_profile) {
-			$la_config = TransportFactory::get($ls_profile)->getConfig();
-			unset($la_config['url'], $la_config['password']);
+		foreach (TransportFactory::configured() ?: [] as $profile) {
+			$config = TransportFactory::get($profile)->getConfig();
+			unset($config['url'], $config['password']);
 
-			$ls_label = __d('forms', 'transport_profile_' . $ls_profile, $la_config);
-			$la_profiles[ $ls_profile ] = str_contains($ls_label, '::') ? $ls_profile : $ls_label;
+			$label = __d('forms', 'transport_profile_' . $profile, $config);
+			$profiles[ $profile ] = str_contains($label, '::') ? $profile : $label;
 		}
 
-		return $la_profiles;
+		return $profiles;
 	}
 
 

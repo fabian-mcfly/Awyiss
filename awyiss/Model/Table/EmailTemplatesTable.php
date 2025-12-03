@@ -220,21 +220,21 @@ class EmailTemplatesTable extends Table {
 	 * @return array
 	 */
 	public function getAvailableLayouts(): array {
-		$la_paths = Configure::read('App.paths.templates');
+		$paths = Configure::read('App.paths.templates');
 
-		$la_layouts = [];
+		$layouts = [];
 
-		foreach ($la_paths as $ls_path) {
-			$ls_path = $ls_path . 'Frontend' . DS . 'layout' . DS . 'email' . DS . '*.twig';
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_fileName = basename($ls_filePath);
+		foreach ($paths as $path) {
+			$path = $path . 'Frontend' . DS . 'layout' . DS . 'email' . DS . '*.twig';
+			foreach (glob($path) as $filePath) {
+				$fileName = basename($filePath);
 
-				if (!isset($la_layouts[ $ls_fileName ])) {
-					$la_layouts[ $ls_fileName ] = $ls_fileName;
+				if (!isset($layouts[ $fileName ])) {
+					$layouts[ $fileName ] = $fileName;
 				}
 			}
 		}
 
-		return $la_layouts;
+		return $layouts;
 	}
 }

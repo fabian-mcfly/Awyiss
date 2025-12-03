@@ -8,14 +8,14 @@ use BackedEnum;
 
 
 /**
- * An interface used to clarify that an enum relects page roles
+ * An interface used to clarify that an enum reflects page roles
  */
 interface PageRoleEnumInterface extends BackedEnum {
 	/**
 	 * Try to get a case from the name. Returns the page role id if found
 	 *
 	 * @param string $name
-	 * @return int|null
+	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface|null
 	 */
 	public static function tryFromName(string $name): ?PageRoleEnumInterface;
 

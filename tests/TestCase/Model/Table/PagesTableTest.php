@@ -62,7 +62,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializePageRoleLogic(): void {
 		// Test that pageRole is properly set based on class name
@@ -87,7 +86,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::getPageRole()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPageRole(): void {
 		$pageRole = $this->pagesTable->getPageRole();
@@ -101,7 +99,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaPageRoleIdColumn(): void {
 		$schema = $this->pagesTable->getSchema();
@@ -114,7 +111,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(16, $this->pagesTable->associations()->keys());
@@ -238,7 +234,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociationsCreatesPageRoleDependentAssociations(): void {
 		$newsTable = FactoryLocator::get('Table')->get('News');
@@ -262,7 +257,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::findActive()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFindActive(): void {
 		$query = $this->pagesTable->find('active');
@@ -287,7 +281,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -333,7 +326,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -357,7 +349,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -378,7 +369,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -435,7 +425,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -476,7 +465,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationLanguageShortcodeExactLength(): void {
 		$data = [
@@ -498,7 +486,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationRedirectLinkUrl(): void {
 		$data = [
@@ -521,7 +508,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesLanguageExistsValid(): void {
 		// Test with existing language
@@ -542,7 +528,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesLanguageExistsInvalid(): void {
 		// Test with non-existing language
@@ -568,7 +553,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidPageRoleValid(): void {
 		// Test with existing page role
@@ -602,7 +586,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidPageRoleInvalid(): void {
 		// Test with non-existing page role
@@ -640,7 +623,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidPageTemplateValid(): void {
 		// Test with existing page template matching page role
@@ -661,7 +643,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidPageTemplateInvalid(): void {
 		// Test with non-existing page template
@@ -687,7 +668,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidPageTemplateInvalidForPageRole(): void {
 		// Test with page template not matching page role
@@ -713,7 +693,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFormIdValid(): void {
 		// Test with valid form ID
@@ -735,7 +714,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFormIdNull(): void {
 		// Test with null form ID (should be valid)
@@ -757,7 +735,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidFormIdInvalid(): void {
 		// Test with non-existing form ID
@@ -784,7 +761,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidSurveyIdValid(): void {
 		// Test with valid survey ID
@@ -806,7 +782,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidSurveyIdNull(): void {
 		// Test with null survey ID (should be valid)
@@ -828,7 +803,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidSurveyIdInvalid(): void {
 		// Test with non-existing survey ID
@@ -855,7 +829,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidDuplicateOfValid(): void {
 		// Test with valid duplicate of (existing page)
@@ -877,7 +850,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidDuplicateOfNull(): void {
 		// Test with empty duplicate of (should be valid)
@@ -899,7 +871,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidDuplicateOfInvalid(): void {
 		// Test with non-existing duplicate target
@@ -926,7 +897,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidDuplicateOfInvalidForDifferentPageRole(): void {
 		// Test with non-existing duplicate target
@@ -955,7 +925,6 @@ class PagesTableTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidDuplicateOfSelf(): void {
 		$entity = $this->pagesTable->newEntity([
@@ -985,7 +954,6 @@ class PagesTableTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidDuplicateOfAlreadyDuplicated(): void {
 		$entity = $this->pagesTable->newEntity([
@@ -1015,7 +983,6 @@ class PagesTableTest extends TestCase {
 	 *
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidDuplicateOfDuplicatingDuplicating(): void {
 		$entity = $this->pagesTable->newEntity([
@@ -1040,7 +1007,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildDeleteRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoDuplicatingPages(): void {
 		/** @var \Awyiss\Model\Entity\Page $page */
@@ -1059,7 +1025,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildDeleteRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoDuplicatingSubpages(): void {
 		/** @var \Awyiss\Model\Entity\Page $page */
@@ -1078,7 +1043,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildDeleteRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoDuplicatedContents(): void {
 		/** @var \Awyiss\Model\Entity\Page $page */
@@ -1098,7 +1062,6 @@ class PagesTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildDeleteRules()
 	 * @see \Awyiss\Model\Table\PagesTable::hasDescendantsWithDifferentPageRole()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesNoNestedChildrenWithDifferentPageRole(): void {
 		/** @var \Awyiss\Model\Entity\Page $page */
@@ -1117,7 +1080,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::buildDeleteRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildDeleteRulesSuccess(): void {
 		/** @var \Awyiss\Model\Entity\Page $page */
@@ -1134,7 +1096,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::getNestedPages()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetNestedPages(): void {
 		/** @var \Awyiss\Model\Entity\Page $entity */
@@ -1168,7 +1129,6 @@ class PagesTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesFormId(): void {
 		$result = $this->pagesTable->getPossibleFieldValues('form_id');
@@ -1188,7 +1148,6 @@ class PagesTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesDuplicateOf(): void {
 		$result = $this->pagesTable->getPossibleFieldValues('duplicate_of');
@@ -1236,7 +1195,6 @@ class PagesTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesPageTemplateId(): void {
 		$result = $this->pagesTable->getPossibleFieldValues('page_template_id');
@@ -1254,7 +1212,6 @@ class PagesTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesPageTemplateIdForDifferentPageRole(): void {
 		/** @var \Customer\Model\Table\NewsTable $newsTable */
@@ -1272,7 +1229,6 @@ class PagesTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::getPossibleFieldValues()
 	 * @throws \ReflectionException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetPossibleFieldValuesSurveyId(): void {
 		$result = $this->pagesTable->getPossibleFieldValues('survey_id');
@@ -1291,7 +1247,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::$categories
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCategoriesBehavior(): void {
 		$this->assertTrue($this->pagesTable->hasBehavior('Categories'));
@@ -1307,7 +1262,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehavior(): void {
 		$this->assertTrue($this->pagesTable->hasBehavior('Nest'));
@@ -1323,7 +1277,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::$search
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSearchBehavior(): void {
 		$this->assertTrue($this->pagesTable->hasBehavior('Search'));
@@ -1338,7 +1291,6 @@ class PagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PagesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehavior(): void {
 		$this->assertTrue($this->pagesTable->hasBehavior('SystemOrder'));

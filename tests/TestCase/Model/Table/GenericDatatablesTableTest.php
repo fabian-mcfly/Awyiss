@@ -45,7 +45,6 @@ class GenericDatatablesTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable
 	 * @see \Customer\Model\Table\CarsTable
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function testGenericDatatablesIsAbstract(): void {
 		$reflection = new ReflectionClass(GenericDatatablesTable::class);
@@ -86,7 +85,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testMediaElementAssignableAttribute(): void {
 		$reflection = new ReflectionClass(GenericDatatablesTable::class);
@@ -106,7 +104,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(9, $this->carsTable->associations()->keys());
@@ -179,7 +176,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociationsWithTranslatable(): void {
 		Configure::write('Awyiss.Cars.Backend.translatable', true);
@@ -208,7 +204,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefaultWithSplitIntoLanguagesEnabled(): void {
 		Configure::write('Awyiss.Cars.Backend.splitIntoLanguages', true);
@@ -241,7 +236,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefaultWithSplitIntoLanguagesDisabled(): void {
 		Configure::write('Awyiss.Cars.Backend.splitIntoLanguages', false);
@@ -274,7 +268,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -296,7 +289,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -314,7 +306,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -343,7 +334,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -368,7 +358,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationLanguageShortcodeExactLengthValid(): void {
 		// Test valid language shortcodes
@@ -389,7 +378,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationLanguageShortcodeExactLengthInvalid(): void {
 		// Test invalid language shortcodes
@@ -410,7 +398,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -428,7 +415,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesLanguageExistsWithSplitIntoLanguagesEnabled(): void {
 		Configure::write('Awyiss.Cars.Backend.splitIntoLanguages', true);
@@ -454,7 +440,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesLanguageNotExistsWithSplitIntoLanguagesEnabled(): void {
 		Configure::write('Awyiss.Cars.Backend.splitIntoLanguages', true);
@@ -484,7 +469,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesNoLanguageValidationWithSplitIntoLanguagesDisabled(): void {
 		Configure::write('Awyiss.Cars.Backend.splitIntoLanguages', false);
@@ -513,7 +497,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		$entity = $this->carsTable->newDefaultEntity();
@@ -533,7 +516,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -561,7 +543,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehaviorWithNestableDisabledSplitIntoLanguagesEnabled(): void {
 		Configure::write('Awyiss.Cars.Backend.nest.enabled', false);
@@ -588,7 +569,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehaviorWithNestableEnabledSplitIntoLanguagesEnabled(): void {
 		Configure::write('Awyiss.Cars.Backend.nest.enabled', true);
@@ -615,7 +595,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehaviorWithNestableDisabledSplitIntoLanguagesDisabled(): void {
 		Configure::write('Awyiss.Cars.Backend.nest.enabled', false);
@@ -642,7 +621,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$nest
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNestBehaviorWithNestableEnabledSplitIntoLanguagesDisabled(): void {
 		Configure::write('Awyiss.Cars.Backend.nest.enabled', true);
@@ -669,7 +647,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehaviorWithNestableDisabledSplitIntoLanguagesEnabled(): void {
 		Configure::write('Awyiss.Cars.Backend.nest.enabled', false);
@@ -696,7 +673,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehaviorWithNestableEnabledSplitIntoLanguagesEnabled(): void {
 		Configure::write('Awyiss.Cars.Backend.nest.enabled', true);
@@ -722,7 +698,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehaviorWithNestableDisabledSplitIntoLanguagesDisabled(): void {
 		Configure::write('Awyiss.Cars.Backend.nest.enabled', false);
@@ -748,7 +723,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$systemOrder
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testSystemOrderBehaviorWithNestableEnabledSplitIntoLanguagesDisabled(): void {
 		Configure::write('Awyiss.Cars.Backend.nest.enabled', true);
@@ -776,7 +750,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehaviorWithTranslatableEnabled(): void {
 		Configure::write('Awyiss.Cars.Backend.translatable', true);
@@ -799,7 +772,6 @@ class GenericDatatablesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\GenericDatatablesTable::$translate
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTranslateBehaviorWithTranslatableDisabled(): void {
 		Configure::write('Awyiss.Cars.Backend.translatable', false);

@@ -82,7 +82,6 @@ class PageRoleTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Trait\PageRoleEnumTrait::tryFromName()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testTryFromNameValid(): void {
 		$result = PageRole::tryFromName('page');
@@ -125,7 +124,6 @@ class PageRoleTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Trait\PageRoleEnumTrait::label()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testLabel(): void {
 		$label = PageRole::Page->label();

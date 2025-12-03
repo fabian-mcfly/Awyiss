@@ -55,7 +55,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\PublicationDataTable::initializeAssociations()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(1, $this->thirdPartyConsentsTable->associations()->keys());
@@ -67,7 +66,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -97,7 +95,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -117,7 +114,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -145,7 +141,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -171,7 +166,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -191,7 +185,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationConsentIdEmpty(): void {
 		$data = [
@@ -212,7 +205,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationConsentIdExactLength(): void {
 		$data = [
@@ -233,7 +225,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationConsentIdWrongLength(): void {
 		$data = [
@@ -255,7 +246,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationConsentIdTooLong(): void {
 		$data = [
@@ -277,7 +267,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationConsentIdNonAscii(): void {
 		$data = [
@@ -299,7 +288,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAcceptTypeBlank(): void {
 		$data = [
@@ -321,7 +309,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAcceptedCategoriesEmpty(): void {
 		$data = [
@@ -342,7 +329,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationAcceptedCategoriesMaxLength(): void {
 		$largeCategories = array_fill(0, 1000, str_repeat('x', 100)); // Create very large array
@@ -366,7 +352,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationRejectedCategoriesEmpty(): void {
 		$data = [
@@ -387,7 +372,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationRejectedCategoriesMaxLength(): void {
 		$largeCategories = array_fill(0, 1000, str_repeat('y', 100)); // Create very large array
@@ -411,7 +395,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationValidConsentTypes(): void {
 		$validTypes = ['all', 'custom', 'necessary'];
@@ -436,7 +419,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidConsentType(): void {
 		$data = [
@@ -459,7 +441,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\ThirdPartyConsent $entity */
@@ -479,7 +460,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -504,7 +484,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaAcceptedCategoriesColumn(): void {
 		$schema = $this->thirdPartyConsentsTable->getSchema();
@@ -517,7 +496,6 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\ThirdPartyConsentsTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaRejectedCategoriesColumn(): void {
 		$schema = $this->thirdPartyConsentsTable->getSchema();

@@ -59,7 +59,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeAssociations(): void {
 		$this->assertCount(1, $this->mediaResizedImagesTable->associations()->keys());
@@ -76,7 +75,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::newEntityFromMedia()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewEntityFromMediaWithDefaults(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaResizedImagesTable */
@@ -102,7 +100,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::newEntityFromMedia()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewEntityFromMediaWithCustomParameters(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaResizedImagesTable */
@@ -132,7 +129,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::newEntityFromMedia()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewEntityFromMediaWithHeightOnly(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaResizedImagesTable */
@@ -151,7 +147,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::newEntityFromMedia()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewEntityFromMediaWithDifferentFormats(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaResizedImagesTable */
@@ -170,7 +165,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::newEntityFromMedia()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewEntityFromMediaWithUnsupportedFormat(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $mediaResizedImagesTable */
@@ -188,7 +182,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidationDefault(): void {
 		$validator = new Validator();
@@ -215,7 +208,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationSuccess(): void {
 		$data = [
@@ -241,7 +233,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationMissingRequired(): void {
 		$data = [
@@ -261,7 +252,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationInvalidTypes(): void {
 		$data = [
@@ -293,7 +283,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationFieldLength(): void {
 		$data = [
@@ -315,7 +304,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationNotBlank(): void {
 		$data = [
@@ -335,7 +323,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::validationDefault()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testEntityValidationStrategyEnum(): void {
 		// Test valid strategy
@@ -365,7 +352,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidMediaId(): void {
 		// Test with existing media
@@ -385,7 +371,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidMediaId(): void {
 		// Test with non-existing media
@@ -409,7 +394,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidStatus(): void {
 		$data = [
@@ -439,7 +423,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidStatus(): void {
 		$data = [
@@ -474,7 +457,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesValidStrategy(): void {
 		$data = [
@@ -504,7 +486,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaTable::buildRules()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testBuildRulesInvalidStrategy(): void {
 		$data = [
@@ -539,7 +520,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntity(): void {
 		/** @var \Awyiss\Model\Entity\MediaResizedImage $entity */
@@ -564,7 +544,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::newDefaultEntity()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
@@ -601,7 +580,6 @@ class MediaResizedImagesTableTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Model\Table\MediaResizedImagesTable::initializeSchema()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitializeSchemaEnumColumns(): void {
 		$schema = $this->mediaResizedImagesTable->getSchema();
