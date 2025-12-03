@@ -35,10 +35,10 @@ class WidgetTemplatesController extends Controller {
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		/** @uses \Awyiss\Model\Table\WidgetTemplatesTable::findWithUsages() */
-		$lo_query = $this->WidgetTemplates->find('withUsages')->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->WidgetTemplates->find('withUsages')->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -50,20 +50,20 @@ class WidgetTemplatesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_widgetTemplates = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$widgetTemplates = $this->paginate($query);
 		}
 		else {
-			$lo_widgetTemplates = $lo_query->all();
+			$widgetTemplates = $query->all();
 		}
 
 		$this->set([
-			'widgetTemplates' => $lo_widgetTemplates,
+			'widgetTemplates' => $widgetTemplates,
 			'attributes' => $this->WidgetTemplates->getAttributes(),
-			'paginated' => $lb_paginated,
+			'paginated' => $paginated,
 		]);
 	}
 
@@ -77,15 +77,15 @@ class WidgetTemplatesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_widgetTemplate = $this->WidgetTemplates->newDefaultEntity([
+		$widgetTemplate = $this->WidgetTemplates->newDefaultEntity([
 			'mediaElementAssignments' => [],
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_widgetTemplate);
+			$this->save($widgetTemplate);
 		}
 
-		$this->setViewVars($lo_widgetTemplate);
+		$this->setViewVars($widgetTemplate);
 	}
 
 
@@ -99,12 +99,12 @@ class WidgetTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\WidgetTemplate $lo_widgetTemplate
+		 * @var \Awyiss\Model\Entity\WidgetTemplate $widgetTemplate
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_widgetTemplate = $this->WidgetTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')
+		$widgetTemplate = $this->WidgetTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')
 		->contain([
 			'WidgetTemplateElements' => [
 				'queryBuilder' => function (SelectQuery $query) {
@@ -114,17 +114,17 @@ class WidgetTemplatesController extends Controller {
 			],
 		])->first();
 
-		if (!$lo_widgetTemplate) {
+		if (!$widgetTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_widgetTemplate, 'edit');
+			$this->save($widgetTemplate, 'edit');
 		}
 
-		$this->setViewVars($lo_widgetTemplate);
+		$this->setViewVars($widgetTemplate);
 	}
 
 
@@ -140,16 +140,16 @@ class WidgetTemplatesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Awyiss\Model\Entity\WidgetTemplate $lo_widgetTemplate */
-		$lo_widgetTemplate = $this->WidgetTemplates->findById($id)->first();
-		if (!$lo_widgetTemplate) {
+		/** @var \Awyiss\Model\Entity\WidgetTemplate $widgetTemplate */
+		$widgetTemplate = $this->WidgetTemplates->findById($id)->first();
+		if (!$widgetTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->WidgetTemplates->delete($lo_widgetTemplate)) {
+		if ($this->WidgetTemplates->delete($widgetTemplate)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -157,8 +157,8 @@ class WidgetTemplatesController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_widgetTemplate->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($widgetTemplate->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -174,50 +174,49 @@ class WidgetTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function save(WidgetTemplate $widgetTemplate, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->WidgetTemplates->hasAttributes()) {
-			$la_associated[] = $this->WidgetTemplates->getAttributesTableName(true);
+			$associated[] = $this->WidgetTemplates->getAttributesTableName(true);
 			$widgetTemplate->setAccess('attributes', true);
 		}
 
-		$la_requestData = $this->request->getData() + ['widget_template_elements' => []];
+		$requestData = $this->request->getData() + ['widget_template_elements' => []];
 
-		if (!empty($la_requestData['widget_template_elements'])) {
-			$la_requestData['widget_template_elements'] = array_filter($la_requestData['widget_template_elements'], function ($element) {
+		if (!empty($requestData['widget_template_elements'])) {
+			$requestData['widget_template_elements'] = array_filter($requestData['widget_template_elements'], function ($element) {
 				return !empty($element['identifier']);
 			});
 
-			$ls_currentFieldset = '';
-			$li_systemOrder = 1;
-			$la_requestData['widget_template_elements'] = array_map(function (array $element) use (&$ls_currentFieldset, &$li_systemOrder): array {
-				if ($element['fieldset'] !== $ls_currentFieldset) {
-					$ls_currentFieldset = $element['fieldset'];
-					$li_systemOrder = 1;
+			$currentFieldset = '';
+			$systemOrder = 1;
+			$requestData['widget_template_elements'] = array_map(function (array $element) use (&$currentFieldset, &$systemOrder): array {
+				if ($element['fieldset'] !== $currentFieldset) {
+					$currentFieldset = $element['fieldset'];
+					$systemOrder = 1;
 				}
 
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$element['system_order'] = $li_systemOrder++;
+				$element['system_order'] = $systemOrder++;
 
 				return $element;
-			}, $la_requestData['widget_template_elements']);
+			}, $requestData['widget_template_elements']);
 
-			$lo_request = $this->request->withData('widget_template_elements', $la_requestData['widget_template_elements']);
-			$this->setRequest($lo_request);
+			$request = $this->request->withData('widget_template_elements', $requestData['widget_template_elements']);
+			$this->setRequest($request);
 
-			$la_associated[] = 'WidgetTemplateElements';
+			$associated[] = 'WidgetTemplateElements';
 		}
 
-		$this->WidgetTemplates->patchEntity($widgetTemplate, $la_requestData, [
-			'associated' => $la_associated,
+		$this->WidgetTemplates->patchEntity($widgetTemplate, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->WidgetTemplates->save($widgetTemplate, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->WidgetTemplates->save($widgetTemplate, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -231,9 +230,9 @@ class WidgetTemplatesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($widgetTemplate->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($widgetTemplate->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -245,65 +244,63 @@ class WidgetTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(WidgetTemplate $widgetTemplate): void {
-		$lo_widgetTemplate = $widgetTemplate;
-
 		// Sort the available widget elements by the order of the assigned widget template elements
-		$la_availableWidgetElements = $this->WidgetTemplates->getAvailableWidgetElements();
-		uksort($la_availableWidgetElements, function ($a, $b) use ($lo_widgetTemplate) {
-			$la_keys = array_keys($lo_widgetTemplate->widgetTemplateElements ?? []);
-			$lx_aPos = array_search($a, $la_keys);
-			$lx_bPos = array_search($b, $la_keys);
+		$availableWidgetElements = $this->WidgetTemplates->getAvailableWidgetElements();
+		uksort($availableWidgetElements, function ($a, $b) use ($widgetTemplate) {
+			$keys = array_keys($widgetTemplate->widgetTemplateElements ?? []);
+			$aPos = array_search($a, $keys);
+			$bPos = array_search($b, $keys);
 
 			// If $a is not found in the keys, set its position to a high value to sort it at the end
-			if ($lx_aPos === false) {
-				$lx_aPos = PHP_INT_MAX;
+			if ($aPos === false) {
+				$aPos = PHP_INT_MAX;
 			}
 
 			// Do the same for $b
-			if ($lx_bPos === false) {
-				$lx_bPos = PHP_INT_MAX;
+			if ($bPos === false) {
+				$bPos = PHP_INT_MAX;
 			}
 
 			// Compare the positions
-			return $lx_aPos <=> $lx_bPos;
+			return $aPos <=> $bPos;
 		});
 
 		// Sort the available widget attributes by the order of the assigned widget template elements
-		$la_availableWidgetAttributes = $this->WidgetTemplates->getAvailableWidgetAttributes();
-		uasort($la_availableWidgetAttributes, function (array $a, array $b) use ($lo_widgetTemplate): int {
-			$la_keys = array_keys($lo_widgetTemplate->widgetTemplateElements ?? []);
-			$ls_aIdentifier = 'attributes.' . $a['identifier'];
-			$ls_bIdentifier = 'attributes.' . $b['identifier'];
+		$availableWidgetAttributes = $this->WidgetTemplates->getAvailableWidgetAttributes();
+		uasort($availableWidgetAttributes, function (array $a, array $b) use ($widgetTemplate): int {
+			$keys = array_keys($widgetTemplate->widgetTemplateElements ?? []);
+			$aIdentifier = 'attributes.' . $a['identifier'];
+			$bIdentifier = 'attributes.' . $b['identifier'];
 
-			$lx_aPos = array_search($ls_aIdentifier, $la_keys);
-			$lx_bPos = array_search($ls_bIdentifier, $la_keys);
+			$aPos = array_search($aIdentifier, $keys);
+			$bPos = array_search($bIdentifier, $keys);
 
 			// If $a is not found in the keys, set its position to a high value to sort it at the end
-			if ($lx_aPos === false) {
-				$lx_aPos = PHP_INT_MAX;
+			if ($aPos === false) {
+				$aPos = PHP_INT_MAX;
 			}
 
 			// Do the same for $b
-			if ($lx_bPos === false) {
-				$lx_bPos = PHP_INT_MAX;
+			if ($bPos === false) {
+				$bPos = PHP_INT_MAX;
 			}
 
 			// Compare the positions
-			return $lx_aPos <=> $lx_bPos;
+			return $aPos <=> $bPos;
 		});
 
-		$la_columnSpans = $this->WidgetTemplates->WidgetTemplateElements->getColumnSpans();
-		$la_columnSpans = array_map(function (ColumnInterface $column): string {
+		$columnSpans = $this->WidgetTemplates->WidgetTemplateElements->getColumnSpans();
+		$columnSpans = array_map(function (ColumnInterface $column): string {
 			return $column->getLabel();
-		}, $la_columnSpans);
+		}, $columnSpans);
 
 
 		$this->set([
 			'widgetTemplate' => $widgetTemplate,
-			'availableWidgetElements' => $la_availableWidgetElements,
-			'availableWidgetAttributes' => $la_availableWidgetAttributes,
+			'availableWidgetElements' => $availableWidgetElements,
+			'availableWidgetAttributes' => $availableWidgetAttributes,
 			'availableFieldsets' => $this->WidgetTemplates->getAvailableFieldsets(),
-			'columnSpans' => $la_columnSpans,
+			'columnSpans' => $columnSpans,
 		]);
 	}
 }

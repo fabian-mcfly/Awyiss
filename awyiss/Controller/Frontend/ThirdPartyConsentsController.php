@@ -19,7 +19,7 @@ class ThirdPartyConsentsController extends AppController {
 	 * @return void
 	 */
 	public function track(): void {
-		$la_requestData = $this->request->getData();
+		$requestData = $this->request->getData();
 
 		$this->viewBuilder()
 			->setClassName('Json')
@@ -27,10 +27,10 @@ class ThirdPartyConsentsController extends AppController {
 
 		// Check if the required fields exist
 		if (
-			!isset($la_requestData['consentId']) ||
-			!isset($la_requestData['acceptType']) ||
-			!isset($la_requestData['acceptedCategories']) ||
-			!isset($la_requestData['rejectedCategories'])
+			!isset($requestData['consentId']) ||
+			!isset($requestData['acceptType']) ||
+			!isset($requestData['acceptedCategories']) ||
+			!isset($requestData['rejectedCategories'])
 		) {
 			// Set the response data
 			$this->set([
@@ -42,21 +42,21 @@ class ThirdPartyConsentsController extends AppController {
 			return;
 		}
 
-		$lo_track = $this->ThirdPartyConsents->newDefaultEntity();
-		$this->ThirdPartyConsents->patchEntity($lo_track, $la_requestData);
+		$track = $this->ThirdPartyConsents->newDefaultEntity();
+		$this->ThirdPartyConsents->patchEntity($track, $requestData);
 
-		if ($this->ThirdPartyConsents->save($lo_track, ['allowFrontendSave' => true])) {
-			$lb_error = false;
+		if ($this->ThirdPartyConsents->save($track, ['allowFrontendSave' => true])) {
+			$status = 'success';
 			$this->response = $this->response->withStatus(201);
 		}
 		else {
 			$this->response = $this->response->withStatus(500);
-			$lb_error = true;
+			$status = 'error';
 		}
 
 		// Set the response data
 		$this->set([
-			'status' => $lb_error ? 'error' : 'success',
+			'status' => $status,
 		]);
 	}
 }

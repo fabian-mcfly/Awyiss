@@ -49,45 +49,45 @@ class SystemController extends Controller {
 		$this->Authorization->ensure('analyze');
 
 		// Check if the cronjob is running
-		$lo_table = $this->fetchTable('Queue.QueueProcesses');
-		$li_timeOffset = time() - Configure::read('Queue.workermaxruntime');
-		$lb_cronjobRunning = $lo_table->find('all')->where(['QueueProcesses.modified >' => date('Y-m-d H:i:s', $li_timeOffset)])->count() > 0;
+		$queuedProcessesTable = $this->fetchTable('Queue.QueueProcesses');
+		$timeOffset = time() - Configure::read('Queue.workermaxruntime');
+		$cronjobRunning = $queuedProcessesTable->find('all')->where(['QueueProcesses.modified >' => date('Y-m-d H:i:s', $timeOffset)])->count() > 0;
 
 		// Check if webroot/media is writable
-		$ls_mediaPath = WWW_ROOT . 'media';
-		$lb_mediaWritable = is_writable($ls_mediaPath);
+		$mediaPath = WWW_ROOT . 'media';
+		$mediaWritable = is_writable($mediaPath);
 
 		// Check if awyiss/assets/css is writable
-		$ls_awyissCssPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'css';
-		$lb_awyissCssWritable = is_writable($ls_awyissCssPath);
+		$awyissCssPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'css';
+		$awyissCssWritable = is_writable($awyissCssPath);
 
 		// Check if awyiss/assets/js is writable
-		$ls_awyissJsPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'js';
-		$lb_awyissJsWritable = is_writable($ls_awyissJsPath);
+		$awyissJsPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'js';
+		$awyissJsWritable = is_writable($awyissJsPath);
 
 		// Check if webroot/assets/css is writable
-		$ls_assetsCssPath = WWW_ROOT . 'assets' . DS . 'css';
-		$lb_assetsCssWritable = is_writable($ls_assetsCssPath);
+		$assetsCssPath = WWW_ROOT . 'assets' . DS . 'css';
+		$assetsCssWritable = is_writable($assetsCssPath);
 
 		// Check if webroot/assets/font is writable
-		$ls_assetsFontPath = WWW_ROOT . 'assets' . DS . 'font';
-		$lb_assetsFontWritable = is_writable($ls_assetsFontPath);
+		$assetsFontPath = WWW_ROOT . 'assets' . DS . 'font';
+		$assetsFontWritable = is_writable($assetsFontPath);
 
 		// Check if webroot/assets/js is writable
-		$ls_assetsJsPath = WWW_ROOT . 'assets' . DS . 'js';
-		$lb_assetsJsWritable = is_writable($ls_assetsJsPath);
+		$assetsJsPath = WWW_ROOT . 'assets' . DS . 'js';
+		$assetsJsWritable = is_writable($assetsJsPath);
 
 		// Check if tmp is writable
-		$ls_tmpPath = TMP;
-		$lb_tmpWritable = is_writable($ls_tmpPath);
+		$tmpPath = TMP;
+		$tmpWritable = is_writable($tmpPath);
 
 		// Check if the log path is writable
-		$ls_logPath = LOGS;
-		$lb_logWritable = is_writable($ls_logPath);
+		$logPath = LOGS;
+		$logWritable = is_writable($logPath);
 
 		// Check if webroot is part of the URL
-		$ls_url = Router::url('/', true);
-		$lb_webrootNotInUrl = !str_contains($ls_url, '/webroot/');
+		$url = Router::url('/', true);
+		$webrootNotInUrl = !str_contains($url, '/webroot/');
 
 		$this->set([
 			'currentUser' => get_current_user(),
@@ -95,16 +95,16 @@ class SystemController extends Controller {
 			'customPath' => ROOT . DS . CUSTOM_DIR . DS,
 			'logPath' => LOGS,
 			'tempPath' => TMP,
-			'cronjobRunning' => $lb_cronjobRunning,
-			'mediaWritable' => $lb_mediaWritable,
-			'awyissCssWritable' => $lb_awyissCssWritable,
-			'awyissJsWritable' => $lb_awyissJsWritable,
-			'assetsCssWritable' => $lb_assetsCssWritable,
-			'assetsFontWritable' => $lb_assetsFontWritable,
-			'assetsJsWritable' => $lb_assetsJsWritable,
-			'logWritable' => $lb_logWritable,
-			'tmpWritable' => $lb_tmpWritable,
-			'webrootNotInUrl' => $lb_webrootNotInUrl,
+			'cronjobRunning' => $cronjobRunning,
+			'mediaWritable' => $mediaWritable,
+			'awyissCssWritable' => $awyissCssWritable,
+			'awyissJsWritable' => $awyissJsWritable,
+			'assetsCssWritable' => $assetsCssWritable,
+			'assetsFontWritable' => $assetsFontWritable,
+			'assetsJsWritable' => $assetsJsWritable,
+			'logWritable' => $logWritable,
+			'tmpWritable' => $tmpWritable,
+			'webrootNotInUrl' => $webrootNotInUrl,
 		]);
 	}
 
@@ -116,57 +116,58 @@ class SystemController extends Controller {
 	public function clearCache(): void {
 		$this->Authorization->ensure(['overview', 'analyze']);
 
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = $this->fetchTable('Queue.QueuedJobs');
+		/** @var \Queue\Model\Table\QueuedJobsTable $queuedJobsTable */
+		$queuedJobsTable = $this->fetchTable('Queue.QueuedJobs');
 
-		$lo_session = $this->request->getSession();
-		$li_runningJobId = $lo_session->read('Backend.System.clearCache.jobId');
-		$lo_runningJob = null;
+		$session = $this->request->getSession();
+		$runningJobId = $session->read('Backend.System.clearCache.jobId');
+		$runningJob = null;
 
-		if ($li_runningJobId) {
-			$lo_runningJob = $lo_queue->findById($li_runningJobId)->first();
+		if ($runningJobId) {
+			/** @noinspection PhpUndefinedMethodInspection */
+			$runningJob = $queuedJobsTable->findById($runningJobId)->first();
 
-			if (!$lo_runningJob || $lo_runningJob->completed) {
-				$lo_session->delete('Backend.System.clearCache.jobId');
+			if (!$runningJob || $runningJob->completed) {
+				$session->delete('Backend.System.clearCache.jobId');
 			}
 		}
 
-		$ls_type = $this->request->getParam('type');
-		$la_commands = [];
+		$type = $this->request->getParam('type');
+		$commands = [];
 
-		if (!$ls_type || $ls_type === 'all') {
-			$la_commands[] = 'bin' . DS . 'cake cache clear_all';
+		if (!$type || $type === 'all') {
+			$commands[] = 'bin' . DS . 'cake cache clear_all';
 		}
 
-		if (in_array($ls_type, ['media', 'all'], true)) {
-			$la_commands[] = 'bin' . DS . 'cake media clear_cache';
+		if (in_array($type, ['media', 'all'], true)) {
+			$commands[] = 'bin' . DS . 'cake media clear_cache';
 		}
 
-		if (in_array($ls_type, ['twig', 'all'], true)) {
-			$la_commands[] = 'bin' . DS . 'cake twig clear_cache';
+		if (in_array($type, ['twig', 'all'], true)) {
+			$commands[] = 'bin' . DS . 'cake twig clear_cache';
 		}
 
-		if (!$lo_runningJob) {
-			$ls_reference = 'system::clear_cache';
+		if (!$runningJob) {
+			$reference = 'system::clear_cache';
 
-			$lo_runningJob = $lo_queue->find()->where([
-				'reference' => $ls_reference,
+			$runningJob = $queuedJobsTable->find()->where([
+				'reference' => $reference,
 				'completed IS' => null,
 			])->first();
 
-			if (!$lo_runningJob) {
-				$lo_runningJob = $lo_queue->createJob('Queue.Execute', [
-					'command' => implode(' && ', $la_commands),
+			if (!$runningJob) {
+				$runningJob = $queuedJobsTable->createJob('Queue.Execute', [
+					'command' => implode(' && ', $commands),
 					'escape' => false,
 					'log' => true,
 				], [
 					'group' => 'general',
 					'priority' => 1,
-					'reference' => $ls_reference,
+					'reference' => $reference,
 				]);
 			}
 
-			$lo_session->write('Backend.System.clearCache.jobId', $lo_runningJob->id);
+			$session->write('Backend.System.clearCache.jobId', $runningJob->id);
 		}
 
 		if ($this->request->is('ajax')) {
@@ -174,7 +175,7 @@ class SystemController extends Controller {
 		}
 
 		$this->set([
-			'runningJob' => $lo_runningJob,
+			'runningJob' => $runningJob,
 		]);
 	}
 }

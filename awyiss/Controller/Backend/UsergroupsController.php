@@ -35,10 +35,10 @@ class UsergroupsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Usergroups->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->Usergroups->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -50,19 +50,19 @@ class UsergroupsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
+		$paginated = $this->paginate['enabled'];
 		unset($this->paginate['enabled']);
-		if ($lb_paginated) {
-			$lo_usergroups = $this->paginate($lo_query);
+		if ($paginated) {
+			$usergroups = $this->paginate($query);
 		}
 		else {
-			$lo_usergroups = $lo_query->all();
+			$usergroups = $query->all();
 		}
 
 		$this->set([
-			'usergroups' => $lo_usergroups,
+			'usergroups' => $usergroups,
 			'attributes' => $this->Usergroups->getAttributes(),
 		]);
 	}
@@ -77,17 +77,17 @@ class UsergroupsController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lb_usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', [], ['create', 'update']);
+		$usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', [], ['create', 'update']);
 
-		$lo_usergroup = $this->Usergroups->newDefaultEntity();
+		$usergroup = $this->Usergroups->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_usergroup, $lb_usersScopeIsAccessible);
+			$this->save($usergroup, $usersScopeIsAccessible);
 		}
 
-		$this->formatPermissions($lo_usergroup);
+		$this->formatPermissions($usergroup);
 
-		$this->setViewVars($lo_usergroup, $lb_usersScopeIsAccessible);
+		$this->setViewVars($usergroup, $usersScopeIsAccessible);
 	}
 
 
@@ -100,20 +100,20 @@ class UsergroupsController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		$lb_usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', [], ['create', 'update']);
+		$usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', [], ['create', 'update']);
 
-		$la_contain = ['UsergroupPermissions'];
-		if ($lb_usersScopeIsAccessible) {
-			$la_contain[] = 'Users';
+		$contain = ['UsergroupPermissions'];
+		if ($usersScopeIsAccessible) {
+			$contain[] = 'Users';
 		}
 		/**
-		 * @var \Awyiss\Model\Entity\Usergroup $lo_usergroup
+		 * @var \Awyiss\Model\Entity\Usergroup $usergroup
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_usergroup = $this->Usergroups->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain($la_contain)->first();
-		if (!$lo_usergroup) {
+		$usergroup = $this->Usergroups->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain($contain)->first();
+		if (!$usergroup) {
 			$this->Flash->error(__('record_not_found'));
 
 
@@ -121,12 +121,12 @@ class UsergroupsController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_usergroup, $lb_usersScopeIsAccessible, 'edit');
+			$this->save($usergroup, $usersScopeIsAccessible, 'edit');
 		}
 
-		$this->formatPermissions($lo_usergroup);
+		$this->formatPermissions($usergroup);
 
-		$this->setViewVars($lo_usergroup, $lb_usersScopeIsAccessible);
+		$this->setViewVars($usergroup, $usersScopeIsAccessible);
 	}
 
 
@@ -142,16 +142,16 @@ class UsergroupsController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Usergroup $lo_usergroup */
-		$lo_usergroup = $this->Usergroups->findById($id)->first();
-		if (!$lo_usergroup) {
+		/** @var \Awyiss\Model\Entity\Usergroup $usergroup */
+		$usergroup = $this->Usergroups->findById($id)->first();
+		if (!$usergroup) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Usergroups->delete($lo_usergroup)) {
+		if ($this->Usergroups->delete($usergroup)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -159,8 +159,8 @@ class UsergroupsController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_usergroup->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($usergroup->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -171,51 +171,50 @@ class UsergroupsController extends Controller {
 
 
 	/**
-	 * @param Usergroup $usergroup
+	 * @param \Awyiss\Model\Entity\Usergroup $usergroup
 	 * @param bool $usersScopeIsAccessible
 	 * @param string $method
 	 * @return void
-	 * @throws RedirectException
+	 * @throws \Cake\Http\Exception\RedirectException
 	 * @throws \Exception
 	 */
 	protected function save(Usergroup $usergroup, bool $usersScopeIsAccessible, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->Usergroups->hasAttributes()) {
-			$la_associated[] = $this->Usergroups->getAttributesTableName(true);
+			$associated[] = $this->Usergroups->getAttributesTableName(true);
 			$usergroup->setAccess('attributes', true);
 		}
 
-		$la_data = $this->request->getData();
-		$la_data['usergroup_permissions'] = $this->reformatPermissionsData($la_data);
+		$requestData['usergroup_permissions'] = $this->reformatPermissionsData($this->request->getData());
 
-		$la_associated[] = 'UsergroupPermissions';
+		$associated[] = 'UsergroupPermissions';
 		$usergroup->setAccess('usergroupPermissions', true);
 		if ($usersScopeIsAccessible) {
-			$la_associated['Users'] = ['onlyIds' => true];
+			$associated['Users'] = ['onlyIds' => true];
 			$usergroup->setAccess('users', true);
 		}
 
-		$this->Usergroups->patchEntity($usergroup, $la_data, [
-			'associated' => $la_associated,
+		$this->Usergroups->patchEntity($usergroup, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Usergroups->save($usergroup, ['asCopy' => $lb_saveAsCopy])) {
-				/** @var \Awyiss\Model\Entity\User $lo_currentUser */
-				$lo_session = $this->request->getSession();
-				$lo_currentUser = $lo_session->read('Auth');
-				$li_userId = $lo_currentUser?->id;
+			if ($this->Usergroups->save($usergroup, ['asCopy' => $saveAsCopy])) {
+				/** @var \Awyiss\Model\Entity\User $currentUser */
+				$session = $this->request->getSession();
+				$currentUser = $session->read('Auth');
+				$userId = $currentUser?->id;
 
-				if ($usergroup->users && in_array($li_userId, array_column($usergroup->users, 'id'))) {
-					$lo_currentUser->usergroups = null;
-					$lo_session->delete('Backend.menu');
+				if ($usergroup->users && in_array($userId, array_column($usergroup->users, 'id'))) {
+					$currentUser->usergroups = null;
+					$session->delete('Backend.menu');
 				}
 
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -229,9 +228,9 @@ class UsergroupsController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($usergroup->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($usergroup->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -239,28 +238,27 @@ class UsergroupsController extends Controller {
 
 
 	/**
-	 * Retreive all available AuthorizationPolicies, found in both the Awyiss and the custom namespace,
+	 * Retrieve all available AuthorizationPolicies, found in both the Awyiss and the custom namespace,
 	 * combined with instances of AbstractGenericPolicy for page roles without a specified policy
 	 *
 	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\AbstractGenericPolicy>
-	 * @throws \ReflectionException
 	 */
 	protected function getAuthorizationPolicies(): array {
-		static $la_policies;
+		static $policies;
 
-		if (isset($la_policies)) {
-			return $la_policies;
+		if (isset($policies)) {
+			return $policies;
 		}
 
-		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
-		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
-		$la_policies = $lo_authorizationService->getPolicies();
-		unset($la_policies['user_configuration']);
+		/** @var \Awyiss\Authorization\AuthorizationService $authorizationService */
+		$authorizationService = $this->getRequest()->getAttribute('authorization');
+		$policies = $authorizationService->getPolicies();
+		unset($policies['user_configuration']);
 
-		ksort($la_policies);
+		ksort($policies);
 
 
-		return $la_policies;
+		return $policies;
 	}
 
 
@@ -297,40 +295,40 @@ class UsergroupsController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function reformatPermissionsData(array $data = []): array {
-		$la_permissions = [];
+		$permissions = [];
 
-		$la_authorizationPolicies = $this->getAuthorizationPolicies();
+		$authorizationPolicies = $this->getAuthorizationPolicies();
 
-		/** @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lx_authorizationPolicy */
-		foreach ($la_authorizationPolicies as $lx_authorizationPolicy) {
-			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $lo_permission */
-			foreach ((!is_object($lx_authorizationPolicy) ? $lx_authorizationPolicy::getPermissionOptions() : $lx_authorizationPolicy->getPermissionOptions()) as $lo_permission) {
-				$ls_scope = !is_object($lx_authorizationPolicy) ? $lx_authorizationPolicy::getScope() : $lx_authorizationPolicy->getScope();
-				$ls_scope = Inflector::underscore($ls_scope);
+		/** @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $authorizationPolicy */
+		foreach ($authorizationPolicies as $authorizationPolicy) {
+			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $permission */
+			foreach ((!is_object($authorizationPolicy) ? $authorizationPolicy::getPermissionOptions() : $authorizationPolicy->getPermissionOptions()) as $permission) {
+				$scope = !is_object($authorizationPolicy) ? $authorizationPolicy::getScope() : $authorizationPolicy->getScope();
+				$scope = Inflector::underscore($scope);
 
-				$ls_identifier = $lo_permission->getConfig('identifier');
-				$ls_identifier = Inflector::underscore($ls_identifier);
+				$identifier = $permission->getConfig('identifier');
+				$identifier = Inflector::underscore($identifier);
 
-				$lx_access = Hash::get($data, ['permissions', $ls_scope, $ls_identifier]);
-				$lx_access = $lo_permission->harmonizeOptionValue($lx_access);
+				$access = Hash::get($data, ['permissions', $scope, $identifier]);
+				$access = $permission->harmonizeOptionValue($access);
 
-				if (is_null($lx_access)) {
+				if (is_null($access)) {
 					continue;
 				}
 
-				$lx_settings = Hash::get($data, ['permission_settings', $ls_scope, $ls_identifier]);
+				$settings = Hash::get($data, ['permission_settings', $scope, $identifier]);
 
-				$la_permissions[] = [
-					'scope' => $ls_scope,
-					'identifier' => $lo_permission->getConfig('identifier'),
-					'access' => $lx_access->value,
-					'settings' => $lx_settings,
+				$permissions[] = [
+					'scope' => $scope,
+					'identifier' => $permission->getConfig('identifier'),
+					'access' => $access->value,
+					'settings' => $settings,
 				];
 			}
 		}
 
 
-		return $la_permissions;
+		return $permissions;
 	}
 
 
@@ -358,20 +356,20 @@ class UsergroupsController extends Controller {
 	 * @return void
 	 */
 	protected function formatPermissions(Usergroup $usergroup): void {
-		$la_currentPermissions = [];
+		$currentPermissions = [];
 
-		foreach ($usergroup->usergroupPermissions ?? [] as $lo_usergroupPermission) {
-			if (!isset($la_currentPermissions[ $lo_usergroupPermission->scope ])) {
-				$la_currentPermissions[ $lo_usergroupPermission->scope ] = [];
+		foreach ($usergroup->usergroupPermissions ?? [] as $usergroupPermission) {
+			if (!isset($currentPermissions[ $usergroupPermission->scope ])) {
+				$currentPermissions[ $usergroupPermission->scope ] = [];
 			}
 
-			$la_currentPermissions[ $lo_usergroupPermission->scope ][ $lo_usergroupPermission->identifier ] = (object)[
-				'access' => $lo_usergroupPermission->access,
-				'settings' => $lo_usergroupPermission->settings,
+			$currentPermissions[ $usergroupPermission->scope ][ $usergroupPermission->identifier ] = (object)[
+				'access' => $usergroupPermission->access,
+				'settings' => $usergroupPermission->settings,
 			];
 		}
 
-		$usergroup->usergroupPermissions = $la_currentPermissions;
+		$usergroup->usergroupPermissions = $currentPermissions;
 	}
 
 
@@ -379,60 +377,59 @@ class UsergroupsController extends Controller {
 	 * @param \Awyiss\Model\Entity\Usergroup $usergroup
 	 * @param bool $usersScopeIsAccessible
 	 * @return void
-	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	protected function setViewVars(Usergroup $usergroup, bool $usersScopeIsAccessible): void {
-		$la_users = [];
+		$users = [];
 		if ($usersScopeIsAccessible) {
-			$la_users = $this->Usergroups->Users->find()->all()->toArray();
+			$users = $this->Usergroups->Users->find()->all()->toArray();
 		}
 
-		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
-		$lo_datatablesTable = $this->fetchTable('Datatables');
-		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+		/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
+		$datatablesTable = $this->fetchTable('Datatables');
+		$datatables = $datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
 
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = $this->fetchTable('PageRoles');
-		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
+		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
+		$pageRolesTable = $this->fetchTable('PageRoles');
+		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
 			return Inflector::pluralize($pageRole->identifier);
 		})->toArray();
 
-		$la_authorizationPolicies = [];
+		$authorizationPolicies = [];
 		/**
-		 * @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lx_policyClass
+		 * @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $policyClass
 		 */
-		foreach ($this->getAuthorizationPolicies() as $lx_policyClass) {
-			$ls_scope = is_string($lx_policyClass) ? $lx_policyClass::getScope() : $lx_policyClass->getScope();
+		foreach ($this->getAuthorizationPolicies() as $policyClass) {
+			$scope = is_string($policyClass) ? $policyClass::getScope() : $policyClass->getScope();
 
-			if (isset($la_pageRoles[ $ls_scope ])) {
-				$ls_title = $la_pageRoles[ $ls_scope ]->label;
+			if (isset($pageRoles[ $scope ])) {
+				$title = $pageRoles[ $scope ]->label;
 			}
-			elseif (isset($la_datatables[ $ls_scope ])) {
-				$ls_title = $la_datatables[ $ls_scope ]->label;
+			elseif (isset($datatables[ $scope ])) {
+				$title = $datatables[ $scope ]->label;
 			}
 			else {
-				$ls_title = __d($ls_scope, 'headline_overview');
+				$title = __d($scope, 'headline_overview');
 			}
 
-			$la_authorizationPolicies[] = [
-				'permissions' => is_string($lx_policyClass) ? $lx_policyClass::getPermissionOptions() : $lx_policyClass->getPermissionOptions(),
-				'scope' => $ls_scope,
-				'title' => $ls_title,
+			$authorizationPolicies[] = [
+				'permissions' => is_string($policyClass) ? $policyClass::getPermissionOptions() : $policyClass->getPermissionOptions(),
+				'scope' => $scope,
+				'title' => $title,
 			];
 		}
 
 		// Sort the policies by title
-		usort($la_authorizationPolicies, function ($a, $b) {
+		usort($authorizationPolicies, function ($a, $b) {
 			return strcasecmp($a['title'], $b['title']);
 		});
 
 		$this->set([
 			'usergroup' => $usergroup,
-			'users' => $la_users,
-			'authorizationPolicies' => $la_authorizationPolicies,
-			'datatables' => $la_datatables,
-			'pageRoles' => $la_pageRoles,
+			'users' => $users,
+			'authorizationPolicies' => $authorizationPolicies,
+			'datatables' => $datatables,
+			'pageRoles' => $pageRoles,
 		]);
 	}
 }

@@ -71,24 +71,24 @@ class MediaController extends Controller {
 			$this->Categories->setConfig('verifySelection', false);
 		}
 
-		$li_mediaFolderId = $this->request->getParam('mediaFolderId') ?? $this->request->getData('media_folder_id');
-		if ($li_mediaFolderId) {
-			/** @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder */
-			$lo_mediaFolder = $this->Media->MediaFolders->findById($li_mediaFolderId)->first();
-			if ($lo_mediaFolder && $lo_mediaFolder->hidden) {
+		$mediaFolderId = $this->request->getParam('mediaFolderId') ?? $this->request->getData('media_folder_id');
+		if ($mediaFolderId) {
+			/** @var \Awyiss\Model\Entity\MediaFolder $mediaFolder */
+			$mediaFolder = $this->Media->MediaFolders->findById($mediaFolderId)->first();
+			if ($mediaFolder && $mediaFolder->hidden) {
 				$this->activeHiddenFolder = true;
 
-				$lo_behavior = $this->Media->getBehavior('Categories');
-				$la_queryConditions = $lo_behavior->getConfig('queryConditions');
+				$categoriesBehavior = $this->Media->getBehavior('Categories');
+				$queryConditions = $categoriesBehavior->getConfig('queryConditions');
 
-				unset($la_queryConditions['hidden']);
+				unset($queryConditions['hidden']);
 
-				$la_queryConditions['OR'] = [
+				$queryConditions['OR'] = [
 					'hidden' => false,
-					'id' => $lo_mediaFolder->id,
+					'id' => $mediaFolder->id,
 				];
 
-				$lo_behavior->setConfig('queryConditions', $la_queryConditions, false);
+				$categoriesBehavior->setConfig('queryConditions', $queryConditions, false);
 			}
 		}
 	}
@@ -99,10 +99,10 @@ class MediaController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Media->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+		$query = $this->Media->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -114,12 +114,12 @@ class MediaController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
 		if ($this->request->getParam('paginate')) {
-			$lb_paginated = ($this->request->getParam('paginate', 'false') === 'true');
+			$paginated = ($this->request->getParam('paginate', 'false') === 'true');
 
-			if ($lb_paginated) {
+			if ($paginated) {
 				$this->Paginate->enable();
 			}
 			else {
@@ -127,38 +127,38 @@ class MediaController extends Controller {
 			}
 		}
 		else {
-			$lb_paginated = $this->paginate['enabled'];
+			$paginated = $this->paginate['enabled'];
 		}
 
-		$lo_query->enableAutoFields()->select([
-			'usage_count' => $lo_query->func()->count('MediaAssignments.id'),
+		$query->enableAutoFields()->select([
+			'usage_count' => $query->func()->count('MediaAssignments.id'),
 		])->leftJoinWith('MediaAssignments')->groupBy('Media.id');
 
-		if ($lb_paginated) {
-			$lo_media = $this->paginate($lo_query);
+		if ($paginated) {
+			$media = $this->paginate($query);
 		}
 		else {
-			$lo_media = $lo_query->all();
+			$media = $query->all();
 		}
 
 		/**
 		 * @uses \Awyiss\Model\Table::findActive()
 		 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 		 */
-		$lo_mediaFoldersQuery = $this->Media->MediaFolders->find('active')->find('threaded')->find('forCurrentLanguage');
+		$mediaFoldersQuery = $this->Media->MediaFolders->find('active')->find('threaded')->find('forCurrentLanguage');
 
-		$la_where = [];
+		$where = [];
 		if (!$this->request->getParam('includeHidden', false)) {
-			$la_where['OR'] = [
+			$where['OR'] = [
 				'hidden' => false,
 				'id' => $this->Categories->getSelectedCategory(),
 			];
 		}
 
 		// Exclude hidden folders but include the selected one
-		$lo_mediaFoldersQuery->where($la_where);
+		$mediaFoldersQuery->where($where);
 
-		$la_mediaFolders = $lo_mediaFoldersQuery->all()->groupBy(function (MediaFolder $element) {
+		$mediaFolders = $mediaFoldersQuery->all()->groupBy(function (MediaFolder $element) {
 			if ($element->hidden) {
 				return 'hidden';
 			}
@@ -166,13 +166,13 @@ class MediaController extends Controller {
 			return $element->languageShortcode ?? '';
 		})->toArray();
 
-		$ls_currentLanguageShortcode = $this->request->getParam('lang');
+		$currentLanguageShortcode = $this->request->getParam('lang');
 		// Sort the grouped media folders by the global and the current language first
-		uksort($la_mediaFolders, function (string $a, string $b) use ($ls_currentLanguageShortcode): int {
+		uksort($mediaFolders, function (string $a, string $b) use ($currentLanguageShortcode): int {
 			if (
 				($a === 'hidden' && $b === 'hidden') ||
 				($a === '' && $b === '') ||
-				($a === $ls_currentLanguageShortcode && $b === $ls_currentLanguageShortcode)
+				($a === $currentLanguageShortcode && $b === $currentLanguageShortcode)
 			) {
 				return 0;
 			}
@@ -189,12 +189,12 @@ class MediaController extends Controller {
 		});
 
 		$this->set([
-			'media' => $lo_media,
-			'groupedMediaFolders' => $la_mediaFolders,
+			'media' => $media,
+			'groupedMediaFolders' => $mediaFolders,
 			'maxFileSize' => $this->Media->getMaxFileSize(),
 			'isAjax' => $this->request->is('ajax'),
 			'languageRealm' => Awyiss::REALM_FRONTEND,
-			'paginated' => $lb_paginated,
+			'paginated' => $paginated,
 			'attributes' => $this->Media->getAttributes(),
 		]);
 
@@ -213,15 +213,15 @@ class MediaController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_media = $this->Media->newDefaultEntity();
+		$media = $this->Media->newDefaultEntity();
 
 		if ($this->request->is('post')) {
 			try {
-				$this->save($lo_media, 'add', $this->request->is('ajax'));
+				$this->save($media, 'add', $this->request->is('ajax'));
 			}
-			catch (RedirectException $lo_exception) {
+			catch (RedirectException $ex) {
 				if (!$this->request->is('ajax')) {
-					throw $lo_exception;
+					throw $ex;
 				}
 			}
 
@@ -230,7 +230,7 @@ class MediaController extends Controller {
 			 * set the view class to JSON, disable the auto layout and render the response
 			 */
 			if ($this->request->is('ajax') && !$this->request->getData('reload_form')) {
-				$ls_errorMessage = $this->getErrorMessage($lo_media);
+				$errorMessage = $this->getErrorMessage($media);
 
 				// Consume the flash messages to prevent them from being displayed the next time the page is loaded
 				$this->request->getFlash()->consume('media');
@@ -238,20 +238,20 @@ class MediaController extends Controller {
 				// Set the view class to JSON
 				$this->viewBuilder()->disableAutoLayout();
 
-				$lo_elementView = $this->createView();
-				$lo_elementView->set([
-					'mediaItem' => $lo_media,
+				$elementView = $this->createView();
+				$elementView->set([
+					'mediaItem' => $media,
 					'paginate' => ($this->request->getParam('paginate', 'false') === 'true'),
 					'attributes' => $this->Media->getAttributes(),
 				]);
 
 				$this->set([
 					'response' => [
-						'html' => $lo_media->hasErrors() ? null : $lo_elementView->render('Backend/Media/overview_ajax_item'),
-						'message' => $ls_errorMessage,
-						'success' => !$lo_media->hasErrors(),
-						'id' => 'Media-ListItem' . $lo_media->id,
-						'item' => $lo_media->getErrors(),
+						'html' => $media->hasErrors() ? null : $elementView->render('Backend/Media/overview_ajax_item'),
+						'message' => $errorMessage,
+						'success' => !$media->hasErrors(),
+						'id' => 'Media-ListItem' . $media->id,
+						'item' => $media->getErrors(),
 					],
 				]);
 
@@ -261,7 +261,7 @@ class MediaController extends Controller {
 		}
 
 		$this->set([
-			'media' => $lo_media,
+			'media' => $media,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
@@ -287,26 +287,26 @@ class MediaController extends Controller {
 		 */
 		try {
 			/**
-			 * @var \Awyiss\Model\Entity\Media $lo_media
+			 * @var \Awyiss\Model\Entity\Media $media
 			 * @uses \Awyiss\Model\Table::findTranslations()
 			 */
-			$lo_media = $this->Media->findById($id)->find('translations')->first();
+			$media = $this->Media->findById($id)->find('translations')->first();
 
-			if (!$lo_media) {
+			if (!$media) {
 				$this->Flash->error(__('record_not_found'));
 
 				return $this->redirect(['action' => 'overview']);
 			}
 
-			$lo_media->usageCount = $this->Media->MediaAssignments->find()->where(['media_id' => $lo_media->id, 'deleted' => 0])->count();
+			$media->usageCount = $this->Media->MediaAssignments->find()->where(['media_id' => $media->id, 'deleted' => 0])->count();
 
 			if ($this->request->is(['patch', 'post', 'put'])) {
-				$this->save($lo_media, 'edit', $this->request->is('ajax'));
+				$this->save($media, 'edit', $this->request->is('ajax'));
 			}
 		}
-		catch (RedirectException $lo_exception) {
+		catch (RedirectException $ex) {
 			if (!$this->request->is('ajax') || $this->request->getParam('ajaxForm')) {
-				throw $lo_exception;
+				throw $ex;
 			}
 		}
 
@@ -320,7 +320,7 @@ class MediaController extends Controller {
 			!$this->request->getData('reload_form') &&
 			!$this->request->getParam('ajaxForm')
 		) {
-			$ls_errorMessage = $this->getErrorMessage($lo_media);
+			$errorMessage = $this->getErrorMessage($media);
 
 			// Consume the flash messages to prevent them from being displayed the next time the page is loaded
 			$this->request->getFlash()->consume('media');
@@ -328,19 +328,19 @@ class MediaController extends Controller {
 			// Set the view class to JSON
 			$this->viewBuilder()->disableAutoLayout();
 
-			$lo_elementView = $this->createView();
-			$lo_elementView->set([
-				'mediaItem' => $lo_media,
+			$elementView = $this->createView();
+			$elementView->set([
+				'mediaItem' => $media,
 				'paginate' => ($this->request->getParam('paginate', 'false') === 'true'),
 			]);
 
 			$this->set([
 				'response' => [
-					'html' => $lo_media->hasErrors() ? null : $lo_elementView->render('Backend/Media/overview_ajax_item'),
-					'message' => $ls_errorMessage,
-					'success' => !$lo_media->hasErrors(),
-					'id' => 'Media-ListItem' . $lo_media->id,
-					'item' => $lo_media->getErrors(),
+					'html' => $media->hasErrors() ? null : $elementView->render('Backend/Media/overview_ajax_item'),
+					'message' => $errorMessage,
+					'success' => !$media->hasErrors(),
+					'id' => 'Media-ListItem' . $media->id,
+					'item' => $media->getErrors(),
 				],
 			]);
 
@@ -349,7 +349,7 @@ class MediaController extends Controller {
 		}
 
 		$this->set([
-			'media' => $lo_media,
+			'media' => $media,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
@@ -366,26 +366,26 @@ class MediaController extends Controller {
 		$this->Authorization->ensure('create');
 
 		$this->paginate['enabled'] = false;
-		$lo_query = $this->getOverviewQuery()->find('translations');
-		$lo_media = $lo_query->all();
+		$query = $this->getOverviewQuery()->find('translations');
+		$media = $query->all();
 		$this->Paginate->disable();
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->batchSave($lo_media);
+			$this->batchSave($media);
 		}
 
-		$la_languages = [];
-		foreach (LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND) as $lo_language) {
-			if (!$lo_language->active) {
+		$languages = [];
+		foreach (LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND) as $language) {
+			if (!$language->active) {
 				continue;
 			}
 
-			$la_languages[ $lo_language->shortcode ] = $lo_language;
+			$languages[ $language->shortcode ] = $language;
 		}
 
 		$this->set([
-			'media' => $lo_media,
-			'languages' => $la_languages,
+			'media' => $media,
+			'languages' => $languages,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
@@ -408,15 +408,15 @@ class MediaController extends Controller {
 			return $this->_deleteMultiple();
 		}
 
-		/** @var Media $lo_media */
-		$lo_media = $this->Media->findById($id)->first();
-		if (!$lo_media) {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->Media->findById($id)->first();
+		if (!$media) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Media->delete($lo_media)) {
+		if ($this->Media->delete($media)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -424,8 +424,8 @@ class MediaController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_media->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($media->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -475,7 +475,7 @@ class MediaController extends Controller {
 		session_write_close();
 
 		// Get the start time
-		$li_startTime = time();
+		$startTime = time();
 
 		// Set the necessary headers for JSON
 		header('Content-Type: application/json');
@@ -483,20 +483,20 @@ class MediaController extends Controller {
 		header('Connection: keep-alive');
 
 		// Initialize an array to store the media files from the last iteration
-		$la_lastRecords = [];
+		$lastRecords = [];
 
 		// If there are initial elements, remember them for the first iteration
 		// Due to race-conditions the initial elements might have been processed already by the time the loop starts
 		if ($this->request->getData('elements')) {
 			if ($type === 'preview') {
 				// Get the media files that do not have a preview image yet
-				$lo_query = $this->Media->find()->where([
+				$query = $this->Media->find()->where([
 					'id IN' => $this->request->getData('elements'),
 				]);
 			}
 			elseif ($type === 'resize') {
 				// Get the media files that do not have resized images yet
-				$lo_query = $this->Media->MediaResizedImages->find()->where([
+				$query = $this->Media->MediaResizedImages->find()->where([
 					'id IN' => $this->request->getData('elements'),
 				]);
 			}
@@ -504,17 +504,17 @@ class MediaController extends Controller {
 				throw new InvalidArgumentException('Invalid type');
 			}
 
-			$la_lastRecords = $lo_query->all()->indexBy('id')->toArray();
+			$lastRecords = $query->all()->indexBy('id')->toArray();
 		}
 
 		ignore_user_abort(true);
 
 		// Loop for three minutes
-		while (time() - $li_startTime < 180) {
+		while (time() - $startTime < 180) {
 			if (connection_aborted()) {
 				// Send an "aborted" event
-				$la_data = ['message' => 'aborted'];
-				echo json_encode($la_data);
+				$data = ['message' => 'aborted'];
+				echo json_encode($data);
 				echo "\n";
 
 				// Flush the output buffer one last time
@@ -526,7 +526,7 @@ class MediaController extends Controller {
 
 			if ($type === 'preview') {
 				// Get the media files that do not have a preview image yet
-				$lo_query = $this->Media->find()->where([
+				$query = $this->Media->find()->where([
 					'preview IN' => [
 						ProcessStatus::Undefined,
 						ProcessStatus::InProgress,
@@ -535,7 +535,7 @@ class MediaController extends Controller {
 			}
 			elseif ($type === 'resize') {
 				// Get the media files that do not have resized images yet
-				$lo_query = $this->Media->MediaResizedImages->find()->where([
+				$query = $this->Media->MediaResizedImages->find()->where([
 					'status IN' => [
 						ProcessStatus::Undefined,
 						ProcessStatus::InProgress,
@@ -546,36 +546,36 @@ class MediaController extends Controller {
 				throw new InvalidArgumentException('Invalid type');
 			}
 
-			$la_currentRecords = $lo_query->all()->indexBy('id')->toArray();
+			$currentRecords = $query->all()->indexBy('id')->toArray();
 
 			// Initialize arrays to store the completed and failed records
-			$la_completed = [];
-			$la_failed = [];
+			$completed = [];
+			$failed = [];
 
 			// Check which media files from the last iteration are no longer in the current records
-			/** @var \Awyiss\Model\Entity\Media|\Awyiss\Model\Entity\MediaResizedImage $lo_lastRecord */
-			foreach ($la_lastRecords as $li_id => $lo_lastRecord) {
-				if (!isset($la_currentRecords[ $li_id ])) {
+			/** @var \Awyiss\Model\Entity\Media|\Awyiss\Model\Entity\MediaResizedImage $lastRecord */
+			foreach ($lastRecords as $id => $lastRecord) {
+				if (!isset($currentRecords[ $id ])) {
 					// The record is either completed or failed
-					if (file_exists($lo_lastRecord instanceof Media ? $lo_lastRecord->previewPathAbsolute : $lo_lastRecord->pathAbsolute)) {
-						$la_completed[] = $li_id;
+					if (file_exists($lastRecord instanceof Media ? $lastRecord->previewPathAbsolute : $lastRecord->pathAbsolute)) {
+						$completed[] = $id;
 					}
 					else {
-						$la_failed[] = $li_id;
+						$failed[] = $id;
 					}
 				}
 			}
 
 			// Output a JSON encoded array with the message, the incomplete records, the completed records and the failed records
-			$la_data = [
-				'message' => !$la_currentRecords ? 'done' : 'waiting',
-				'incomplete' => array_keys($la_currentRecords),
-				'completed' => $la_completed,
-				'failed' => $la_failed,
+			$data = [
+				'message' => !$currentRecords ? 'done' : 'waiting',
+				'incomplete' => array_keys($currentRecords),
+				'completed' => $completed,
+				'failed' => $failed,
 			];
 
 			// Echo the JSON encoded data
-			echo json_encode($la_data);
+			echo json_encode($data);
 			echo "\n";
 
 			// Flush the output buffer
@@ -583,12 +583,12 @@ class MediaController extends Controller {
 			flush();
 
 			// If there are no more media files to process, exit the loop
-			if (!$la_currentRecords) {
+			if (!$currentRecords) {
 				exit;
 			}
 
 			// Update the last records with the current records
-			$la_lastRecords = $la_currentRecords;
+			$lastRecords = $currentRecords;
 
 			sleep(5);
 		}
@@ -608,26 +608,26 @@ class MediaController extends Controller {
 	public function folderSelect(): void {
 		$this->Authorization->ensure('read');
 
-		$la_where = [];
+		$where = [];
 
 		if (!$this->request->getParam('includeHidden', false)) {
-			$la_where['hidden'] = false;
+			$where['hidden'] = false;
 		}
 
 		/** @uses \Awyiss\Model\Table::findActive() */
-		$lo_mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->where($la_where)->all();
-		$la_mediaFolders = $lo_mediaFolders->groupBy(function (MediaFolder $element) {
+		$mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->where($where)->all();
+		$mediaFolders = $mediaFolders->groupBy(function (MediaFolder $element) {
 			return $element->languageShortcode ?? '';
 		})->toArray();
 
-		$ls_currentLanguageShortcode = $this->request->getParam('lang');
+		$currentLanguageShortcode = $this->request->getParam('lang');
 		// Sort the grouped media folders by the global and the current language first
-		uksort($la_mediaFolders, function ($a, $b) use ($ls_currentLanguageShortcode) {
-			if ($a === '' || $a === $ls_currentLanguageShortcode) {
+		uksort($mediaFolders, function ($a, $b) use ($currentLanguageShortcode) {
+			if ($a === '' || $a === $currentLanguageShortcode) {
 				return -1;
 			}
 
-			if ($b === '' || $b === $ls_currentLanguageShortcode) {
+			if ($b === '' || $b === $currentLanguageShortcode) {
 				return 1;
 			}
 
@@ -635,7 +635,7 @@ class MediaController extends Controller {
 		});
 
 		$this->set([
-			'groupedMediaFolders' => $la_mediaFolders,
+			'groupedMediaFolders' => $mediaFolders,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 			'mediaFolderId' => $this->request->getData('media_folder_id'),
 		]);
@@ -653,9 +653,9 @@ class MediaController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function rebuildSystemOrder(): void {
-		$li_folderid = $this->request->getParam('mediaFolderId');
+		$folderid = $this->request->getParam('mediaFolderId');
 
-		if (!$li_folderid) {
+		if (!$folderid) {
 			if ($this->request->is('ajax')) {
 				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
@@ -674,26 +674,26 @@ class MediaController extends Controller {
 			}
 		}
 
-		$li_affectedRows = $this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
-			'media_folder_id' => (int)$li_folderid,
+		$affectedRows = $this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
+			'media_folder_id' => (int)$folderid,
 		]);
 
 		if ($this->request->is('ajax')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
-			$this->set('success', $li_affectedRows !== false);
-			$this->set('message', $li_affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
+			$this->set('success', $affectedRows !== false);
+			$this->set('message', $affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
 
-			if ($li_affectedRows === false) {
+			if ($affectedRows === false) {
 				// Setting the response status to 422 Unprocessable Entity
 				$this->response = $this->response->withStatus(422, 'Unable to process entity');
 			}
 		}
 		else {
-			if ($li_affectedRows === false) {
+			if ($affectedRows === false) {
 				$this->Flash->error(__('rebuild_system_order_failed'));
 			}
 			else {
@@ -745,56 +745,56 @@ class MediaController extends Controller {
 
 		$this->request->allowMethod(['get']);
 
-		$li_id = $this->request->getParam('id');
+		$id = (int)$this->request->getParam('id');
 
-		if (!$li_id) {
+		if (!$id) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		/** @var Media $lo_media */
-		$lo_media = $this->Media->findById($li_id)->contain([
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->Media->findById($id)->contain([
 			'MediaAssignments.MediaElements',
 			'MediaAssignments.MediaElementSelectors',
 		])->first();
-		if (!$lo_media) {
+		if (!$media) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
-		$lo_datatablesTable = $this->fetchTable('Datatables');
-		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+		/** @var \Awyiss\Model\Table\DatatablesTable $datatablesTable */
+		$datatablesTable = $this->fetchTable('Datatables');
+		$datatables = $datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
 
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = $this->fetchTable('PageRoles');
-		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
+		/** @var \Awyiss\Model\Table\PageRolesTable $pageRolesTable */
+		$pageRolesTable = $this->fetchTable('PageRoles');
+		$pageRoles = $pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
 			return Inflector::pluralize($pageRole->identifier);
 		})->toArray();
 
-		$la_inaccessibleAssignments = [];
-		$la_usedScopes = $this->getUsedScopes($lo_media, $la_pageRoles, $la_datatables);
+		$inaccessibleAssignments = [];
+		$usedScopes = $this->getUsedScopes($media, $pageRoles, $datatables);
 
 		// Reorder the media assignments by their scope
-		$la_mediaAssignments = collection($lo_media->mediaAssignments ?? [])
+		$mediaAssignments = collection($media->mediaAssignments ?? [])
 			->groupBy('scope')
 			->toArray();
 
-		if (isset($la_mediaAssignments['contents'])) {
-			$this->groupAssignmentsByPageRole($la_mediaAssignments, $la_usedScopes, $la_inaccessibleAssignments, $la_pageRoles);
+		if (isset($mediaAssignments['contents'])) {
+			$this->groupAssignmentsByPageRole($mediaAssignments, $usedScopes, $inaccessibleAssignments, $pageRoles);
 		}
 
-		Arrays::naturalSort($la_usedScopes);
+		Arrays::naturalSort($usedScopes);
 
-		$la_inaccessibleAssignments = $this->setInaccessibleScopes($la_inaccessibleAssignments, $la_usedScopes, $la_mediaAssignments);
+		$inaccessibleAssignments = $this->setInaccessibleScopes($inaccessibleAssignments, $usedScopes, $mediaAssignments);
 
 		$this->set([
-			'mediaAssignments' => $la_mediaAssignments,
-			'inaccessibleAssignments' => $la_inaccessibleAssignments,
-			'media' => $lo_media,
-			'usedScopes' => $la_usedScopes,
+			'mediaAssignments' => $mediaAssignments,
+			'inaccessibleAssignments' => $inaccessibleAssignments,
+			'media' => $media,
+			'usedScopes' => $usedScopes,
 		]);
 
 		return $this->render();
@@ -811,21 +811,19 @@ class MediaController extends Controller {
 	protected function save(Media $media, string $method = 'add', bool $isAjax = false): void {
 		$this->patchEntity($media);
 
-		/** @var \Laminas\Diactoros\UploadedFile $lo_uploadedFile */
-		$lo_uploadedFile = $this->request->getData('file');
+		/** @var \Laminas\Diactoros\UploadedFile $uploadedFile */
+		$uploadedFile = $this->request->getData('file');
 
-		$this->ensureValidFile($method, $media, $lo_uploadedFile);
+		$this->ensureValidFile($method, $media, $uploadedFile);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$la_options = [];
+			$options = [];
 
 			if ($isAjax) {
-				$la_options = [
-					'systemOrder' => ['skip' => true],
-				];
+				$options['systemOrder'] = ['skip' => true];
 			}
 
-			if ($this->Media->save($media, $la_options)) {
+			if ($this->Media->save($media, $options)) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__($method . '_succeeded'));
 				}
@@ -843,8 +841,8 @@ class MediaController extends Controller {
 
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__($method . '_failed'));
-				foreach ($media->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($media->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -859,23 +857,22 @@ class MediaController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function batchSave(ResultSetInterface $media): void {
-		$la_media = $media->indexBy('id')->toArray();
-		$la_requestData = $this->request->getData('media');
-		$la_requestData = array_map(function ($data, $id): array {
-			/** @noinspection PhpVariableNamingConventionInspection */
+		$media = $media->indexBy('id')->toArray();
+		$requestData = $this->request->getData('media');
+		$requestData = array_map(function (array $data, int $id): array {
 			$data['id'] = $id;
 
 			return $data;
-		}, $la_requestData, array_keys($la_requestData));
-		$la_requestData = array_filter($la_requestData, function ($data) use ($la_media): bool {
-			return !empty($data['name']) && isset($la_media[ $data['id'] ]);
+		}, $requestData, array_keys($requestData));
+		$requestData = array_filter($requestData, function ($data) use ($media): bool {
+			return !empty($data['name']) && isset($media[ $data['id'] ]);
 		});
 
-		$this->Media->patchEntities($la_media, $la_requestData, [
+		$this->Media->patchEntities($media, $requestData, [
 			'fields' => ['name', 'alt', '_translations'],
 		]);
 
-		if ($this->Media->saveMany($la_media)) {
+		if ($this->Media->saveMany($media)) {
 			$this->Flash->success(__('batch_edit_succeeded'));
 
 			throw new RedirectException(Router::url(['action' => 'batchEdit'], true), 302);
@@ -889,37 +886,37 @@ class MediaController extends Controller {
 	 * @inheritDoc
 	 */
 	protected function _saveSystemOrder(array $requestData, Table $table): int {
-		$li_mediaFolderId = $this->request->getData('media_folder_id');
+		$mediaFolderId = $this->request->getData('media_folder_id');
 
-		$la_orderData = [];
-		foreach ($requestData as $li_index => $li_mediaId) {
-			$la_orderData[] = [
-				'id' => $li_mediaId,
-				'mediaFolderId' => (int)$li_mediaFolderId,
-				'systemOrder' => $li_index + 1,
+		$orderData = [];
+		foreach ($requestData as $index => $mediaId) {
+			$orderData[] = [
+				'id' => $mediaId,
+				'mediaFolderId' => (int)$mediaFolderId,
+				'systemOrder' => $index + 1,
 			];
 		}
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$li_affectedRows = $table->updateAll(function (QueryExpression $expression) use ($la_orderData) {
-			$lo_folderCase = $expression->case();
-			$lo_systemOrderCase = $expression->case();
+		$affectedRows = $table->updateAll(function (QueryExpression $expression) use ($orderData) {
+			$folderCase = $expression->case();
+			$systemOrderCase = $expression->case();
 
-			foreach ($la_orderData as $la_data) {
-				$lo_folderCase->when(['id' => $la_data['id']])->then($la_data['mediaFolderId'], 'integer');
-				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
+			foreach ($orderData as $data) {
+				$folderCase->when(['id' => $data['id']])->then($data['mediaFolderId'], 'integer');
+				$systemOrderCase->when(['id' => $data['id']])->then($data['systemOrder'], 'integer');
 			}
 
 			return [
-				'media_folder_id' => $lo_folderCase,
-				'system_order' => $lo_systemOrderCase,
+				'media_folder_id' => $folderCase,
+				'system_order' => $systemOrderCase,
 			];
 		}, [
-			'id IN' => array_column($la_orderData, 'id'),
+			'id IN' => array_column($orderData, 'id'),
 		]);
 
 
-		return $li_affectedRows;
+		return $affectedRows;
 	}
 
 
@@ -928,49 +925,49 @@ class MediaController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function _deleteMultiple(): Response {
-		$li_ids = $this->request->getData('ids');
-		$li_mediaFolderId = $this->request->getData('media_folder_id');
+		$ids = $this->request->getData('ids');
+		$mediaFolderId = $this->request->getData('media_folder_id');
 
-		$ls_error = null;
-		if (!$li_ids) {
-			$ls_error = __('no_records_selected');
+		$error = null;
+		if (!$ids) {
+			$error = __('no_records_selected');
 		}
 		else {
-			$lo_query = $this->Media->find()->where([
-				'id IN' => $li_ids,
-				'media_folder_id' => (int)$li_mediaFolderId,
+			$query = $this->Media->find()->where([
+				'id IN' => $ids,
+				'media_folder_id' => (int)$mediaFolderId,
 			]);
-			$lo_media = $lo_query->all();
+			$media = $query->all();
 
 			if (
-				!$lo_media->count() ||
-				!$this->Media->deleteMany($lo_media, [
+				!$media->count() ||
+				!$this->Media->deleteMany($media, [
 					'atomic' => false,
-					'systemOrder' => ['skip' => $lo_media->count() > 1],
+					'systemOrder' => ['skip' => $media->count() > 1],
 				])
 			) {
-				$ls_error = __('delete_failed');
+				$error = __('delete_failed');
 			}
-			elseif ($lo_media->count() > 1) {
+			elseif ($media->count() > 1) {
 				// Rebuild the system order if multiple records were deleted
 				$this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
-					'media_folder_id' => (int)$li_mediaFolderId,
+					'media_folder_id' => (int)$mediaFolderId,
 				]);
 			}
 		}
 
 		if ($this->request->is('ajax')) {
-			$la_response = [
-				'message' => $ls_error ?: __('delete_succeeded'),
-				'success' => $ls_error === null,
+			$response = [
+				'message' => $error ?: __('delete_succeeded'),
+				'success' => $error === null,
 			];
 
-			return $this->response->withStatus($ls_error ? 400 : 200, $ls_error ? 'Bad Request' : 'OK')
+			return $this->response->withStatus($error ? 400 : 200, $error ? 'Bad Request' : 'OK')
 				->withType('application/json')
-				->withStringBody(json_encode($la_response));
+				->withStringBody(json_encode($response));
 		}
 
-		if ($ls_error) {
+		if ($error) {
 			$this->Flash->error(__('no_records_selected'));
 		}
 		else {
@@ -1025,54 +1022,54 @@ class MediaController extends Controller {
 	 * @return void
 	 */
 	protected function patchEntity(Media $media): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->Media->hasAttributes()) {
-			$la_associated[] = $this->Media->getAttributesTableName(true);
+			$associated[] = $this->Media->getAttributesTableName(true);
 			$media->setAccess('attributes', true);
 		}
 
-		$la_data = $this->request->getData();
+		$requestData = $this->request->getData();
 
-		/** @var \Laminas\Diactoros\UploadedFile $lo_uploadedFile */
-		$lo_uploadedFile = $this->request->getData('file');
+		/** @var \Laminas\Diactoros\UploadedFile $uploadedFile */
+		$uploadedFile = $this->request->getData('file');
 
-		$ls_extension = null;
-		if ($lo_uploadedFile && !$lo_uploadedFile->getError()) {
-			if (empty($la_data['name'])) {
-				$la_data['name'] = $lo_uploadedFile->getClientFilename();
+		$extension = null;
+		if ($uploadedFile && !$uploadedFile->getError()) {
+			if (empty($requestData['name'])) {
+				$requestData['name'] = $uploadedFile->getClientFilename();
 			}
 
-			$li_dotPos = strrpos($la_data['name'], '.');
-			$ls_extension = substr($la_data['name'], $li_dotPos + 1);
+			$dotPos = strrpos($requestData['name'], '.');
+			$extension = substr($requestData['name'], $dotPos + 1);
 
-			$la_data['mimeType'] = $this->Media->detectMimeType($lo_uploadedFile, $ls_extension);
+			$requestData['mimeType'] = $this->Media->detectMimeType($uploadedFile, $extension);
 		}
-		elseif (!empty($la_data['name'])) {
-			$ls_extension = $media->extension;
-		}
-
-		if ($ls_extension && !str_ends_with($la_data['name'], $ls_extension)) {
-			$la_data['name'] .= '.' . $ls_extension;
+		elseif (!empty($requestData['name'])) {
+			$extension = $media->extension;
 		}
 
-		$la_data['crop'] = array_filter($la_data['crop'] ?? [], 'is_numeric');
-		if (count($la_data['crop']) !== 6 || $this->request->getData('reload_form')) {
-			$la_data['crop'] = null;
+		if ($extension && !str_ends_with($requestData['name'], $extension)) {
+			$requestData['name'] .= '.' . $extension;
+		}
+
+		$requestData['crop'] = array_filter($requestData['crop'] ?? [], 'is_numeric');
+		if (count($requestData['crop']) !== 6 || $this->request->getData('reload_form')) {
+			$requestData['crop'] = null;
 		}
 		else {
 			// If crop values and resize values are the same as the original values, set crop to null
 			if (
-				$media->width === (float)$la_data['crop']['width'] &&
-				$media->width === (float)$la_data['crop']['resize_width'] &&
-				$media->height === (float)$la_data['crop']['height'] &&
-				$media->height === (float)$la_data['crop']['resize_height']
+				$media->width === (float)$requestData['crop']['width'] &&
+				$media->width === (float)$requestData['crop']['resize_width'] &&
+				$media->height === (float)$requestData['crop']['height'] &&
+				$media->height === (float)$requestData['crop']['resize_height']
 			) {
-				$la_data['crop'] = null;
+				$requestData['crop'] = null;
 			}
 		}
 
-		$this->Media->patchEntity($media, $la_data, [
-			'associated' => $la_associated,
+		$this->Media->patchEntity($media, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 	}
@@ -1087,15 +1084,15 @@ class MediaController extends Controller {
 			return null;
 		}
 
-		$la_errors = $media->getErrors();
+		$errors = $media->getErrors();
 		//First key will be the field name
-		$ls_field = key($la_errors);
+		$field = key($errors);
 
-		$la_errors = $la_errors[ $ls_field ];
-		$ls_errorMessage = __(Inflector::underscore($ls_field)) . ': ';
-		$ls_errorMessage .= array_values($la_errors)[0];
+		$errors = $errors[ $field ];
+		$errorMessage = __(Inflector::underscore($field)) . ': ';
+		$errorMessage .= array_values($errors)[0];
 
-		return $ls_errorMessage;
+		return $errorMessage;
 	}
 
 
@@ -1109,13 +1106,13 @@ class MediaController extends Controller {
 	 */
 	protected function groupAssignmentsByPageRole(array &$mediaAssignments, array &$usedScopes, array &$inaccessibleAssignments, array $pageRoles): void {
 		// Contents need to be grouped by their page's role
-		$la_contentIds = array_column($mediaAssignments['contents'], 'foreign_key');
+		$contentIds = array_column($mediaAssignments['contents'], 'foreign_key');
 
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_contentsTable */
-		$lo_contentsTable = $this->fetchTable('Contents');
-		$lo_contentsTable->forPageRole($pageRoles['pages']);
-		$la_contents = $lo_contentsTable->find('mediaAssignments', useMediaEntity: true)->where([
-			'id IN' => $la_contentIds,
+		/** @var \Awyiss\Model\Table\ContentsTable $contentsTable */
+		$contentsTable = $this->fetchTable('Contents');
+		$contentsTable->forPageRole($pageRoles['pages']);
+		$contents = $contentsTable->find('mediaAssignments', useMediaEntity: true)->where([
+			'id IN' => $contentIds,
 		])->contain([
 			'Pages' => [
 				'finder' => [
@@ -1127,58 +1124,51 @@ class MediaController extends Controller {
 			],
 		])->all()->indexBy('id')->toArray();
 
-		$la_groupedAssignments = [];
+		$groupedAssignments = [];
 		/**
 		 * For each content, group the media assignments by their page's role
 		 *
-		 * @var \Awyiss\Model\Entity\MediaAssignment $lo_assignment
+		 * @var \Awyiss\Model\Entity\MediaAssignment $assignment
 		 */
-		foreach ($mediaAssignments['contents'] as $lo_assignment) {
-			/** @var \Awyiss\Model\Entity\Content $lo_content */
-			$lo_content = $la_contents[ $lo_assignment->foreignKey ];
-			$le_pageRole = $lo_content->page->pageRoleId;
-			$ls_pageRole = Inflector::underscore(Inflector::pluralize($le_pageRole->name));
+		foreach ($mediaAssignments['contents'] as $assignment) {
+			/** @var \Awyiss\Model\Entity\Content $content */
+			$content = $contents[ $assignment->foreignKey ];
+			$pageRole = $content->page->pageRoleId;
+			$pageRole = Inflector::underscore(Inflector::pluralize($pageRole->name));
 
-			if (!isset($usedScopes[ $ls_pageRole ])) {
-				$ls_translation = __d($ls_pageRole, 'headline_overview');
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$usedScopes[ $ls_pageRole ] = !str_contains($ls_translation, '::') ? $ls_translation : $pageRoles[ $ls_pageRole ]->label;
+			if (!isset($usedScopes[ $pageRole ])) {
+				$translation = __d($pageRole, 'headline_overview');
+				$usedScopes[ $pageRole ] = !str_contains($translation, '::') ? $translation : $pageRoles[ $pageRole ]->label;
 			}
 
 			/** @noinspection PhpUndefinedFieldInspection */
-			$lo_assignment->entity = $lo_content;
+			$assignment->entity = $content;
 
-			$la_groupedAssignments[ $ls_pageRole ][] = $lo_assignment;
+			$groupedAssignments[ $pageRole ][] = $assignment;
 		}
 
-		foreach ($la_groupedAssignments as $ls_scope => $la_assignments) {
-			$lb_isAccessible = $this->Authorization->scopeIsAccessible($ls_scope, [], ['contents']);
+		foreach ($groupedAssignments as $scope => $assignments) {
+			$isAccessible = $this->Authorization->scopeIsAccessible($scope, [], ['contents']);
 
-			if ($lb_isAccessible) {
+			if ($isAccessible) {
 				continue;
 			}
 
-			if (empty($mediaAssignments[ $ls_scope ])) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				unset($usedScopes[ $ls_scope ], $mediaAssignments[ $ls_scope ]);
+			if (empty($mediaAssignments[ $scope ])) {
+				unset($usedScopes[ $scope ], $mediaAssignments[ $scope ]);
 			}
 
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$inaccessibleAssignments = array_merge($inaccessibleAssignments, $la_assignments);
+			$inaccessibleAssignments = array_merge($inaccessibleAssignments, $assignments);
 
-			unset($la_groupedAssignments[ $ls_scope ]);
+			unset($groupedAssignments[ $scope ]);
 		}
 
-		if (!$la_groupedAssignments) {
-			/** @noinspection PhpVariableNamingConventionInspection */
+		if (!$groupedAssignments) {
 			unset($usedScopes['contents'], $mediaAssignments['contents']);
-
-
 			return;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
-		$mediaAssignments['contents'] = $la_groupedAssignments;
+		$mediaAssignments['contents'] = $groupedAssignments;
 	}
 
 
@@ -1189,32 +1179,32 @@ class MediaController extends Controller {
 	 * @return array
 	 */
 	protected function getUsedScopes(Media $media, array $pageRoles, array $datatables): array {
-		$la_usedScopes = [];
+		$usedScopes = [];
 
 		// Build the list of scopes that are used by the media assignments
-		foreach (array_column($media->mediaAssignments ?? [], 'scope') as $ls_scope) {
-			if (isset($la_usedScopes[ $ls_scope ])) {
+		foreach (array_column($media->mediaAssignments ?? [], 'scope') as $scope) {
+			if (isset($usedScopes[ $scope ])) {
 				continue;
 			}
 
-			if (isset($pageRoles[ $ls_scope ]) && $ls_scope !== 'page') {
-				$ls_translation = __d($ls_scope, 'headline_overview');
-				$la_usedScopes[ $ls_scope ] = !str_contains($ls_translation, '::') ? $ls_translation : $pageRoles[ $ls_scope ]->label;
-
-				continue;
-			}
-
-			if (isset($datatables[ $ls_scope ])) {
-				$ls_translation = __d($ls_scope, 'headline_overview');
-				$la_usedScopes[ $ls_scope ] = !str_contains($ls_translation, '::') ? $ls_translation : $datatables[ $ls_scope ]->label;
+			if (isset($pageRoles[ $scope ]) && $scope !== 'page') {
+				$translation = __d($scope, 'headline_overview');
+				$usedScopes[ $scope ] = !str_contains($translation, '::') ? $translation : $pageRoles[ $scope ]->label;
 
 				continue;
 			}
 
-			$la_usedScopes[ $ls_scope ] = __d($ls_scope, 'headline_overview');
+			if (isset($datatables[ $scope ])) {
+				$translation = __d($scope, 'headline_overview');
+				$usedScopes[ $scope ] = !str_contains($translation, '::') ? $translation : $datatables[ $scope ]->label;
+
+				continue;
+			}
+
+			$usedScopes[ $scope ] = __d($scope, 'headline_overview');
 		}
 
-		return $la_usedScopes;
+		return $usedScopes;
 	}
 
 
@@ -1226,46 +1216,43 @@ class MediaController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function setInaccessibleScopes(array &$inaccessibleAssignments, array &$usedScopes, array &$mediaAssignments): array {
-		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $mediaAssignmentsTable */
+		$mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
 
-		foreach ($usedScopes as $ls_scope => $ls_label) {
-			if ($ls_scope === 'contents') {
+		foreach ($usedScopes as $scope => $label) {
+			if ($scope === 'contents') {
 				continue;
 			}
 
-			$lb_isAccessible = $this->Authorization->scopeIsAccessible($ls_scope, [], ['read', 'update']);
+			$isAccessible = $this->Authorization->scopeIsAccessible($scope, [], ['read', 'update']);
 
-			if (!$lb_isAccessible) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$inaccessibleAssignments = array_merge($inaccessibleAssignments, $mediaAssignments[ $ls_scope ]);
-				/** @noinspection PhpVariableNamingConventionInspection */
-				unset($usedScopes[ $ls_scope ], $mediaAssignments[ $ls_scope ]);
+			if (!$isAccessible) {
+				$inaccessibleAssignments = array_merge($inaccessibleAssignments, $mediaAssignments[ $scope ]);
+				unset($usedScopes[ $scope ], $mediaAssignments[ $scope ]);
 
-				if (isset($mediaAssignments['contents'][ $ls_scope ])) {
-					/** @noinspection PhpVariableNamingConventionInspection */
-					$inaccessibleAssignments = array_merge($inaccessibleAssignments, $mediaAssignments['contents'][ $ls_scope ]);
-					/** @noinspection PhpVariableNamingConventionInspection */
-					unset($mediaAssignments['contents'][ $ls_scope ]);
+				if (isset($mediaAssignments['contents'][ $scope ])) {
+					$inaccessibleAssignments = array_merge($inaccessibleAssignments, $mediaAssignments['contents'][ $scope ]);
+					unset($mediaAssignments['contents'][ $scope ]);
 				}
 
 				continue;
 			}
 
-			if (empty($mediaAssignments[ $ls_scope ])) {
+			if (empty($mediaAssignments[ $scope ])) {
 				continue;
 			}
 
-			$ls_tableName = Inflector::camelize($ls_scope);
+			$tableName = Inflector::camelize($scope);
 
-			$lo_mediaAssignmentsTable->belongsTo($ls_tableName, [
+			$mediaAssignmentsTable->belongsTo($tableName, [
 				'foreignKey' => 'foreign_key',
 				'conditions' => [
-					'MediaAssignments.scope' => $ls_scope,
+					'MediaAssignments.scope' => $scope,
 				],
 				'propertyName' => 'entity',
 			]);
 
-			$lo_mediaAssignmentsTable->loadInto($mediaAssignments[ $ls_scope ], [$ls_tableName]);
+			$mediaAssignmentsTable->loadInto($mediaAssignments[ $scope ], [$tableName]);
 		}
 
 		return $inaccessibleAssignments;

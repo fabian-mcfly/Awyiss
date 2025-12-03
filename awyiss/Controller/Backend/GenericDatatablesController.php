@@ -63,17 +63,17 @@ abstract class GenericDatatablesController extends Controller {
 	public function getOverviewQuery(): ?SelectQuery {
 		if ($this->splitIntoLanguages) {
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-			$lo_query = $this->Datatable->find('forCurrentLanguage');
+			$query = $this->Datatable->find('forCurrentLanguage');
 		}
 		else {
-			$lo_query = $this->Datatable->find();
+			$query = $this->Datatable->find();
 		}
 
-		$lo_query->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
-		$this->Search->filterQuery($lo_query);
+		$query->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -85,7 +85,7 @@ abstract class GenericDatatablesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery()->find('mediaAssignments');
+		$query = $this->getOverviewQuery()->find('mediaAssignments');
 
 		// Disable sorting if the current category is the aggregation category or the unassigned category
 		if (
@@ -95,23 +95,23 @@ abstract class GenericDatatablesController extends Controller {
 			$this->sortable = false;
 		}
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_records = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$records = $this->paginate($query);
 		}
 		elseif ($this->nestable) {
 			$this->isNestableWithCategoriesEnabled();
 
-			$lo_records = $lo_query->find('threaded')->all();
+			$records = $query->find('threaded')->all();
 		}
 		else {
-			$lo_records = $lo_query->all();
+			$records = $query->all();
 		}
 
 		$this->set([
-			'records' => $lo_records,
+			'records' => $records,
 			'datatable' => $this->datatable,
-			'paginated' => $lb_paginated,
+			'paginated' => $paginated,
 			'nestable' => $this->nestable,
 			'sortable' => $this->sortable,
 			'splitIntoLanguages' => $this->splitIntoLanguages,
@@ -131,15 +131,15 @@ abstract class GenericDatatablesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_record = $this->Datatable->newDefaultEntity([
+		$entity = $this->Datatable->newDefaultEntity([
 			'languageShortcode' => $this->splitIntoLanguages ? LocaleMiddleware::getLanguage()->shortcode : null,
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_record);
+			$this->save($entity);
 		}
 
-		$this->setViewVars($lo_record);
+		$this->setViewVars($entity);
 	}
 
 
@@ -153,33 +153,33 @@ abstract class GenericDatatablesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity $lo_entity
+		 * @var \Awyiss\Model\Entity $entity
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_entity = $this->Datatable->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$entity = $this->Datatable->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 
-		if (!$lo_entity) {
+		if (!$entity) {
 			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_entity, 'edit');
+			$this->save($entity, 'edit');
 		}
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		elseif ($this->splitIntoLanguages && $lo_entity->languageShortcode && $lo_entity->languageShortcode != LocaleMiddleware::getLanguage()->shortcode) {
+		elseif ($this->splitIntoLanguages && $entity->languageShortcode && $entity->languageShortcode != LocaleMiddleware::getLanguage()->shortcode) {
 			//Don't allow modifying a record in another language
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			throw new RedirectException(Router::url([
-				'lang' => $lo_entity->languageShortcode,
-				'id' => $lo_entity->id,
+				'lang' => $entity->languageShortcode,
+				'id' => $entity->id,
 			], true), 302);
 		}
 
-		$this->setViewVars($lo_entity);
+		$this->setViewVars($entity);
 	}
 
 
@@ -195,15 +195,15 @@ abstract class GenericDatatablesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Datatable $lo_datatable */
-		$lo_datatable = $this->Datatable->findById($id)->first();
-		if (!$lo_datatable) {
+		/** @var \Awyiss\Model\Entity\Datatable $datatable */
+		$datatable = $this->Datatable->findById($id)->first();
+		if (!$datatable) {
 			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Datatable->delete($lo_datatable)) {
+		if ($this->Datatable->delete($datatable)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', 'delete_succeeded'));
 			}
@@ -211,8 +211,8 @@ abstract class GenericDatatablesController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'delete_failed'));
-				foreach ($lo_datatable->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($datatable->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -228,14 +228,14 @@ abstract class GenericDatatablesController extends Controller {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function save(Entity $entity, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->Datatable->hasAttributes()) {
-			$la_associated[] = $this->Datatable->getAttributesTableName(true);
+			$associated[] = $this->Datatable->getAttributesTableName(true);
 			$entity->setAccess('attributes', true);
 		}
 
 		$this->Datatable->patchEntity($entity, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
@@ -254,9 +254,9 @@ abstract class GenericDatatablesController extends Controller {
 		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Datatable->save($entity, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->Datatable->save($entity, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', $method . '_succeeded'));
 				}
@@ -282,9 +282,9 @@ abstract class GenericDatatablesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', ($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($entity->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', ($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($entity->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -299,19 +299,19 @@ abstract class GenericDatatablesController extends Controller {
 		$this->Categories->ensurePossibleCategory($entity);
 
 		if ($this->nestable) {
-			$lo_threadedRecords = $this->getThreadedRecords($entity);
+			$threadedRecords = $this->getThreadedRecords($entity);
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_possibleParentRecords = $this->Datatable->getPossibleParents($entity, $lo_threadedRecords);
-			$this->ensurePossibleParentId($entity, $lo_possibleParentRecords);
+			$possibleParentRecords = $this->Datatable->getPossibleParents($entity, $threadedRecords);
+			$this->ensurePossibleParentId($entity, $possibleParentRecords);
 		}
 		else {
-			$lo_possibleParentRecords = null;
+			$possibleParentRecords = null;
 		}
 
 		$this->set([
 			'record' => $entity,
-			'possibleParentRecords' => $lo_possibleParentRecords,
+			'possibleParentRecords' => $possibleParentRecords,
 			'datatable' => $this->datatable,
 			'nestable' => $this->nestable,
 			'sortable' => $this->sortable,
@@ -319,7 +319,6 @@ abstract class GenericDatatablesController extends Controller {
 			'translatable' => $this->translatable,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 			'isGenericDatatable' => true,
-			//'localConfig' => LocalConfig::read(),
 		]);
 	}
 
@@ -336,15 +335,15 @@ abstract class GenericDatatablesController extends Controller {
 			return;
 		}
 
-		$la_possibleParentIds = $threadedRecords->extract('id')->toList();
+		$possibleParentIds = $threadedRecords->extract('id')->toList();
 
-		if (!empty($entity->parentId) && !in_array($entity->parentId, $la_possibleParentIds)) {
-			$la_errors = $entity->getError('parentId');
+		if (!empty($entity->parentId) && !in_array($entity->parentId, $possibleParentIds)) {
+			$errors = $entity->getError('parentId');
 
-			$entity->parentId = reset($la_possibleParentIds);
+			$entity->parentId = reset($possibleParentIds);
 
-			if ($la_errors) {
-				$entity->setError('parentId', $la_errors, true);
+			if ($errors) {
+				$entity->setError('parentId', $errors, true);
 			}
 		}
 	}
@@ -375,16 +374,16 @@ abstract class GenericDatatablesController extends Controller {
 		$this->splitIntoLanguages = LocalConfig::read('splitIntoLanguages');
 		$this->translatable = LocalConfig::read('translatable');
 
-		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
-		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
-		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
+		/** @var \Awyiss\Authorization\AuthorizationService $authorizationService */
+		$authorizationService = $this->getRequest()->getAttribute('authorization');
+		$policyClass = $authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
 
 		$this->Authorization->setScope($identifier);
 
 		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($identifier)));
 
 		$this->set([
-			'policyClass' => $ls_policyClass,
+			'policyClass' => $policyClass,
 		]);
 
 
@@ -406,13 +405,13 @@ abstract class GenericDatatablesController extends Controller {
 			 * @uses \Awyiss\Model\Table::findForCurrentLanguage()
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
-			$lo_query = $this->Datatable->find('forCurrentLanguage', languageShortcode: $entity->languageShortcode, includeGlobal: false)->where(
+			$query = $this->Datatable->find('forCurrentLanguage', languageShortcode: $entity->languageShortcode, includeGlobal: false)->where(
 				$this->getOverviewWhere() + $this->Categories->getQueryConditions(
 					$this->Categories->getSelectedCategory($entity)
 				)
 			);
 
-			$this->threadedRecords = $this->Datatable->listNested($lo_query);
+			$this->threadedRecords = $this->Datatable->listNested($query);
 		}
 
 
@@ -430,25 +429,25 @@ abstract class GenericDatatablesController extends Controller {
 			return;
 		}
 
-		$la_categories = [];
+		$categories = [];
 
-		$ls_field = $this->Categories->getConfig('field');
-		if ($entity->get($ls_field)) {
-			$la_categories[ $entity->get($ls_field) ] = $ls_field;
+		$field = $this->Categories->getConfig('field');
+		if ($entity->get($field)) {
+			$categories[ $entity->get($field) ] = $field;
 
 			if ($this->Categories->getConfig('allowAggregation')) {
-				$la_categories += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
+				$categories += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
 			}
 		}
 		elseif ($this->Categories->getConfig('allowUnassigned')) {
-			$la_categories += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
+			$categories += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
 		}
 
 		/*
 		 * Make sure the currently selected category is still part of the entity.
 		 * Otherwise the next redirect to the overview would show a site without the modified entity, which could be a bit confusing.
 		 */
-		$this->Categories->verifySelection(null, $la_categories, true);
+		$this->Categories->verifySelection(null, $categories, true);
 	}
 
 
@@ -458,34 +457,34 @@ abstract class GenericDatatablesController extends Controller {
 	 * in templates/Backend/GenericDatatables
 	 */
 	public function render(?string $template = null, ?string $layout = null): Response {
-		$lo_viewBuilder = $this->viewBuilder();
+		$viewBuilder = $this->viewBuilder();
 
-		$ls_entitiesName = Inflector::variable($this->getName());
-		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
-		$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
-		$ls_parentName = Inflector::variable('parent ' . $this->getName());
+		$entitiesName = Inflector::variable($this->getName());
+		$entityName = Inflector::variable(Inflector::singularize($this->getName()));
+		$threadedName = Inflector::variable('threaded ' . $this->getName());
+		$parentName = Inflector::variable('parent ' . $this->getName());
 
-		$lo_viewBuilder->setVars([
-			$ls_entitiesName => $lo_viewBuilder->getVar('records'),
-			$ls_entityName => $lo_viewBuilder->getVar('record'),
-			$ls_threadedName => $lo_viewBuilder->getVar('threadedRecords'),
-			$ls_parentName => $lo_viewBuilder->getVar('parentRecords'),
+		$viewBuilder->setVars([
+			$entitiesName => $viewBuilder->getVar('records'),
+			$entityName => $viewBuilder->getVar('record'),
+			$threadedName => $viewBuilder->getVar('threadedRecords'),
+			$parentName => $viewBuilder->getVar('parentRecords'),
 		]);
 
 		try {
-			$ls_contents = parent::render($template, $layout);
+			$contents = parent::render($template, $layout);
 		}
 		catch (MissingTemplateException) {
-			$la_templatePathParts = explode('/', $lo_viewBuilder->getTemplatePath());
-			array_pop($la_templatePathParts);
+			$templatePathParts = explode('/', $viewBuilder->getTemplatePath());
+			array_pop($templatePathParts);
 
-			$lo_viewBuilder->setTemplatePath(implode('/', $la_templatePathParts) . '/GenericDatatables');
+			$viewBuilder->setTemplatePath(implode('/', $templatePathParts) . '/GenericDatatables');
 
-			$ls_contents = parent::render($template, $layout);
+			$contents = parent::render($template, $layout);
 		}
 
 
-		return $ls_contents;
+		return $contents;
 	}
 
 
@@ -497,10 +496,11 @@ abstract class GenericDatatablesController extends Controller {
 			return;
 		}
 
-		$lo_categoriesBehavior = $this->Datatable->getBehavior('Categories');
+		$categoriesBehavior = $this->Datatable->getBehavior('Categories');
 
 		if (
-			$lo_categoriesBehavior->getConfig('enabled') && $lo_categoriesBehavior->getConfig('foreignKey') === 'parent_id'
+			$categoriesBehavior->getConfig('enabled') &&
+			$categoriesBehavior->getConfig('foreignKey') === 'parent_id'
 		) {
 			throw new RuntimeException('Cannot use nesting with categories that uses `parent_id` as the foreign key.');
 		}

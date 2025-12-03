@@ -66,9 +66,9 @@ class RouteController extends AppController {
 
 		$this->accessCheck();
 
-		$lo_addresses = $this->routingService->findCoordinates($search, $this->request->getParam('lang'));
+		$addresses = $this->routingService->findCoordinates($search, $this->request->getParam('lang'));
 
-		if ($lo_addresses === false) {
+		if ($addresses === false) {
 			$this->set([
 				'status' => 'error',
 				'message' => __d('route', 'geocode_error_address'),
@@ -81,12 +81,12 @@ class RouteController extends AppController {
 			return;
 		}
 
-		if (count($lo_addresses) > 1) {
+		if (count($addresses) > 1) {
 			$this->set([
 				'status' => 'notice',
 				'message' => __d('route', 'geocode_multiple_results_found'),
 				'title' => __d('route', 'geocode_multiple_results_found_title'),
-				'addresses' => $lo_addresses->toArray(),
+				'addresses' => $addresses->toArray(),
 			]);
 
 			$this->response = $this->response->withStatus(300);
@@ -98,7 +98,7 @@ class RouteController extends AppController {
 			'status' => 'success',
 			'message' => __d('route', 'geocode_address_found'),
 			'title' => null,
-			'addresses' => $lo_addresses->toArray(),
+			'addresses' => $addresses->toArray(),
 		]);
 	}
 
@@ -120,13 +120,13 @@ class RouteController extends AppController {
 
 		$this->accessCheck();
 
-		$la_end = explode(',', $end);
-		$la_end = array_map('trim', $la_end);
+		$endCoordinates = explode(',', $end);
+		$endCoordinates = array_map('trim', $endCoordinates);
 
 		if (
-			count($la_end) !== 2 ||
-			!preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $la_end[0]) ||
-			!preg_match('/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/', $la_end[1])
+			count($endCoordinates) !== 2 ||
+			!preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $endCoordinates[0]) ||
+			!preg_match('/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/', $endCoordinates[1])
 		) {
 			$this->set([
 				'status' => 'error',
@@ -140,22 +140,22 @@ class RouteController extends AppController {
 			return;
 		}
 
-		$lo_end = new Address(
-			lat: (float)$la_end[0],
-			lng: (float)$la_end[1],
+		$endAddress = new Address(
+			lat: (float)$endCoordinates[0],
+			lng: (float)$endCoordinates[1],
 		);
 
-		$la_start = explode(',', $start);
-		$la_start = array_map('trim', $la_start);
+		$startCoordinates = explode(',', $start);
+		$startCoordinates = array_map('trim', $startCoordinates);
 
 		if (
-			count($la_start) !== 2 ||
-			!preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $la_start[0]) ||
-			!preg_match('/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/', $la_start[1])
+			count($startCoordinates) !== 2 ||
+			!preg_match('/^-?(90(\.0{1,6})?|[1-8]?\d(\.\d{1,6})?)$/', $startCoordinates[0]) ||
+			!preg_match('/^-?(180(\.0{1,6})?|1[0-7]\d(\.\d{1,6})?|\d{1,2}(\.\d{1,6})?)$/', $startCoordinates[1])
 		) {
-			$lo_addresses = $this->routingService->findCoordinates($start, $this->request->getParam('lang'));
+			$addresses = $this->routingService->findCoordinates($start, $this->request->getParam('lang'));
 
-			if ($lo_addresses === false) {
+			if ($addresses === false) {
 				$this->set([
 					'status' => 'error',
 					'message' => __d('route', 'route_planner_error_start_coordinates'),
@@ -168,11 +168,11 @@ class RouteController extends AppController {
 				return;
 			}
 
-			if (count($lo_addresses) > 1) {
+			if (count($addresses) > 1) {
 				$this->set([
 					'status' => 'notice',
 					'message' => __d('route', 'route_planner_multiple_results_found'),
-					'addresses' => $lo_addresses->toArray(),
+					'addresses' => $addresses->toArray(),
 					'route' => null,
 				]);
 
@@ -181,22 +181,22 @@ class RouteController extends AppController {
 				return;
 			}
 
-			$lo_start = $lo_addresses->get(0);
+			$startAddress = $addresses->get(0);
 		}
 		else {
-			$lo_start = new Address(
-				lat: (float)$la_start[0],
-				lng: (float)$la_start[1],
+			$startAddress = new Address(
+				lat: (float)$startCoordinates[0],
+				lng: (float)$startCoordinates[1],
 			);
 		}
 
-		$ls_transportationMode = match ($this->request->getParam('transportationMode')) {
+		$transportationMode = match ($this->request->getParam('transportationMode')) {
 			'bike' => 'cycling-regular',
 			'foot' => 'foot-walking',
 			default => 'driving-car',
 		};
 
-		$la_params = [
+		$params = [
 			'preference' => match ($this->request->getParam('routePreference')) {
 				self::ROUTE_PREFERENCE_FASTEST => self::ROUTE_PREFERENCE_FASTEST,
 				self::ROUTE_PREFERENCE_SHORTEST => self::ROUTE_PREFERENCE_SHORTEST,
@@ -205,14 +205,14 @@ class RouteController extends AppController {
 			},
 		];
 
-		$lo_route = $this->routingService->getRoute($lo_start, $lo_end, $ls_transportationMode, $this->request->getParam('lang'), $la_params);
-		$ls_message = __d('route', $lo_route !== false ? 'route_planner_directions_found' : 'route_planner_no_directions_found');
+		$route = $this->routingService->getRoute($startAddress, $endAddress, $transportationMode, $this->request->getParam('lang'), $params);
+		$message = __d('route', $route !== false ? 'route_planner_directions_found' : 'route_planner_no_directions_found');
 
 		$this->set([
-			'status' => $lo_route !== false ? 'success' : 'error',
-			'message' => $ls_message,
+			'status' => $route !== false ? 'success' : 'error',
+			'message' => $message,
 			'addresses' => null,
-			'route' => $lo_route !== false ? $lo_route->toArray() : null,
+			'route' => $route !== false ? $route->toArray() : null,
 		]);
 
 		$this->response = $this->response->withStatus(200);
@@ -223,17 +223,17 @@ class RouteController extends AppController {
 	 * @return void
 	 */
 	protected function accessCheck(): void {
-		$ls_referer = $this->request->getHeaderLine('Referer');
-		if (!str_starts_with($ls_referer, Router::fullBaseUrl())) {
+		$referer = $this->request->getHeaderLine('Referer');
+		if (!str_starts_with($referer, Router::fullBaseUrl())) {
 			throw new ForbiddenException(
 				__d('route', 'route_planner_error_access')
 			);
 		}
 
-		$ls_userAgent = $this->getRequest()->getHeaderLine('User-Agent');
-		$lo_crawlerDetect = new CrawlerDetect();
+		$userAgent = $this->getRequest()->getHeaderLine('User-Agent');
+		$crawlerDetect = new CrawlerDetect();
 
-		if ($lo_crawlerDetect->isCrawler($ls_userAgent)) {
+		if ($crawlerDetect->isCrawler($userAgent)) {
 			throw new ForbiddenException(
 				__d('route', 'route_planner_error_access')
 			);

@@ -25,12 +25,12 @@ class SitemapController extends AppController {
 	 * @return void
 	 */
 	public function index(): void {
-		$lo_pagesTable = $this->fetchTable('Pages');
+		$pagesTable = $this->fetchTable('Pages');
 
 		/**
 		 * @see \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 		 */
-		$lo_query = $lo_pagesTable->find('threaded', skipPageRoleCheck: true)->find('published')->where([
+		$query = $pagesTable->find('threaded', skipPageRoleCheck: true)->find('published')->where([
 			'active' => true,
 			'parents_active' => true,
 		])->contain([
@@ -42,7 +42,7 @@ class SitemapController extends AppController {
 			},
 		]);
 
-		$lo_pages = $lo_query->all();
+		$pages = $query->all();
 
 		/**
 		 * Filter out all records with a parent_id that is not null
@@ -50,69 +50,70 @@ class SitemapController extends AppController {
 		 * returns all records in the tree, even if a record's
 		 * parent is not active or not published.
 		 */
-		$lo_pages = $lo_pages->filter(function (Page $page): bool {
+		$pages = $pages->filter(function (Page $page): bool {
 			return $page->parentId === null;
 		});
 
-		$lo_pages = $lo_pages->listNested()->indexBy('id');
+		$pages = $pages->listNested()->indexBy('id');
 
 		// Get the first language
-		$la_languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
-		/** @var \Awyiss\Model\Entity\Language $lo_firstLanguage */
-		$lo_firstLanguage = reset($la_languages);
+		$languages = LocaleMiddleware::getLanguages(Awyiss::REALM_FRONTEND);
+		/** @var \Awyiss\Model\Entity\Language $firstLanguage */
+		$firstLanguage = reset($languages);
 
-		$lb_includeLanguageShortcode = Configure::read('Route.includeLanguageShortcode');
-		$la_firstPagesOfLanguage = [];
+		$includeLanguageShortcode = Configure::read('Route.includeLanguageShortcode');
+		$firstPagesOfLanguage = [];
 
-		$la_urls = [];
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		foreach ($lo_pages as $lo_page) {
+		$urls = [];
+		/** @var \Awyiss\Model\Entity\Page $page */
+		foreach ($pages as $page) {
 			// Skip pages that are not indexable
-			if (!$lo_page->robotsIndex) {
+			if (!$page->robotsIndex) {
 				continue;
 			}
 
-			$lo_lastMod = $lo_page->changedOn ?? $lo_page->createdOn;
+			$lastMod = $page->changedOn ?? $page->createdOn;
 
-			if (isset($lo_page->contents[0])) {
-				$lo_lastMod = max($lo_lastMod, $lo_page->contents[0]->changedOn ?? $lo_page->contents[0]->createdOn);
+			if (isset($page->contents[0])) {
+				$lastMod = max($lastMod, $page->contents[0]->changedOn ?? $page->contents[0]->createdOn);
 			}
 
-			if (isset($la_firstPagesOfLanguage[ $lo_page->languageShortcode ])) {
-				if ($lb_includeLanguageShortcode) {
-					$ls_url = Router::url(['lang' => $lo_page->languageShortcode, 'slug' => $lo_page->slug, '_full' => true]);
+			if (isset($firstPagesOfLanguage[ $page->languageShortcode ])) {
+				if ($includeLanguageShortcode) {
+					$url = Router::url(['lang' => $page->languageShortcode, 'slug' => $page->slug, '_full' => true]);
 				}
 				else {
-					$ls_url = Router::url(['slug' => $lo_page->slug, '_full' => true]);
+					$url = Router::url(['slug' => $page->slug, '_full' => true]);
 				}
 			}
 			else {
-				$la_firstPagesOfLanguage[ $lo_page->languageShortcode ] = true;
+				$firstPagesOfLanguage[ $page->languageShortcode ] = true;
 
-				if ($lo_page->languageShortcode === $lo_firstLanguage->shortcode) {
-					$ls_url = Router::url(['_full' => true, '_name' => 'FrontendRoot']);
+				if ($page->languageShortcode === $firstLanguage->shortcode) {
+					$url = Router::url(['_full' => true, '_name' => 'FrontendRoot']);
 				}
-				elseif ($lb_includeLanguageShortcode) {
-					$ls_url = Router::url(['lang' => $lo_page->languageShortcode, '_full' => true, '_name' => 'FrontendLanguageRoot']);
+				elseif ($includeLanguageShortcode) {
+					$url = Router::url(['lang' => $page->languageShortcode, '_full' => true, '_name' => 'FrontendLanguageRoot']);
 				}
 				else {
-					$ls_url = Router::url(['slug' => $lo_page->slug, '_full' => true]);
+					$url = Router::url(['slug' => $page->slug, '_full' => true]);
 				}
 			}
 
-			$la_urls[] = [
-				'loc' => $ls_url,
-				'lastmod' => $lo_lastMod->format('Y-m-d'),
-				'changefreq' => $lo_page->sitemapChangefreq ?? 'weekly',
-				'priority' => $lo_page->sitemapPriority ?? '0.5',
+			$urls[] = [
+				'loc' => $url,
+				'lastmod' => $lastMod->format('Y-m-d'),
+				'changefreq' => $page->sitemapChangefreq ?? 'weekly',
+				'priority' => $page->sitemapPriority ?? '0.5',
 			];
 		}
 
 		// Define a custom root node in the generated document.
 		$this->viewBuilder()->setOption('rootNode', 'urlset')->setOption('serialize', ['xmlns:', 'url']);
+		/** @noinspection HttpUrlsUsage */
 		$this->set([
 			// Define an attribute on the root node.
-			'url' => $la_urls,
+			'url' => $urls,
 			'xmlns:' => 'http://www.sitemaps.org/schemas/sitemap/0.9',
 		]);
 	}
@@ -122,17 +123,18 @@ class SitemapController extends AppController {
 	 * Create the robots.txt
 	 *
 	 * @return \Cake\Http\Response
+	 * @noinspection PhpUnused
 	 */
 	public function robots(): Response {
 		// Generate absolute sitemap URL based on routing
-		$ls_sitemapUrl = $this->request->getAttribute('webroot') . 'sitemap.xml';
-		$ls_sitemapUrl = $this->request->getUri()->withPath($ls_sitemapUrl)->__toString();
+		$sitemapUrl = $this->request->getAttribute('webroot') . 'sitemap.xml';
+		$sitemapUrl = $this->request->getUri()->withPath($sitemapUrl)->__toString();
 
-		$ls_content = "User-agent: *\n";
-		$ls_content .= "Disallow:\n";
-		$ls_content .= "Sitemap: $ls_sitemapUrl\n";
+		$content = "User-agent: *\n";
+		$content .= "Disallow:\n";
+		$content .= "Sitemap: $sitemapUrl\n";
 
-		$this->response = $this->response->withType('text/plain')->withStringBody($ls_content);
+		$this->response = $this->response->withType('text/plain')->withStringBody($content);
 
 		return $this->response;
 	}

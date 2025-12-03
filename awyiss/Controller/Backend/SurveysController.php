@@ -65,10 +65,10 @@ class SurveysController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Surveys->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->Surveys->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -80,11 +80,11 @@ class SurveysController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_surveys = $this->paginate($lo_query);
+		$query = $this->getOverviewQuery();
+		$surveys = $this->paginate($query);
 
 		$this->set([
-			'surveys' => $lo_surveys,
+			'surveys' => $surveys,
 			'attributes' => $this->Surveys->getAttributes(),
 		]);
 	}
@@ -99,13 +99,13 @@ class SurveysController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_survey = $this->Surveys->newDefaultEntity();
+		$survey = $this->Surveys->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_survey);
+			$this->save($survey);
 		}
 
-		$this->setViewVars($lo_survey);
+		$this->setViewVars($survey);
 	}
 
 
@@ -120,12 +120,12 @@ class SurveysController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\Survey $lo_survey
+		 * @var \Awyiss\Model\Entity\Survey $survey
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_survey = $this->Surveys->findById($id)
+		$survey = $this->Surveys->findById($id)
 			->find('translations')
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
@@ -141,17 +141,17 @@ class SurveysController extends Controller {
 			])
 			->first();
 
-		if (!$lo_survey) {
+		if (!$survey) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_survey, 'edit');
+			$this->save($survey, 'edit');
 		}
 
-		$this->setViewVars($lo_survey);
+		$this->setViewVars($survey);
 	}
 
 
@@ -167,15 +167,16 @@ class SurveysController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Survey $lo_survey */
-		$lo_survey = $this->Surveys->findById($id)->first();
-		if (!$lo_survey) {
+		/** @var \Awyiss\Model\Entity\Survey $survey */
+		$survey = $this->Surveys->findById($id)->first();
+
+		if (!$survey) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Surveys->delete($lo_survey)) {
+		if ($this->Surveys->delete($survey)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -183,8 +184,8 @@ class SurveysController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_survey->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($survey->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -203,19 +204,19 @@ class SurveysController extends Controller {
 	public function diagram(): void {
 		$this->Authorization->ensure('read');
 
-		$li_id = (int)$this->request->getParam('id');
+		$id = (int)$this->request->getParam('id');
 
-		if (!$li_id) {
+		if (!$id) {
 			$this->Flash->error(__('record_not_found'));
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
 		/**
-		 * @var \Awyiss\Model\Entity\Survey $lo_survey
+		 * @var \Awyiss\Model\Entity\Survey $survey
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 */
-		$lo_survey = $this->Surveys->findById($li_id)
+		$survey = $this->Surveys->findById($id)
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
 			->contain([
@@ -230,51 +231,51 @@ class SurveysController extends Controller {
 			])
 			->first();
 
-		if (!$lo_survey) {
+		if (!$survey) {
 			$this->Flash->error(__('record_not_found'));
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
-		$li_entryId = (int)$this->request->getParam('entryId');
-		if ($li_entryId) {
-			$lo_surveyEntriesTable = $this->fetchTable('SurveyEntries');
-			$lo_entry = $lo_surveyEntriesTable->find()->where([
-				'id' => $li_entryId,
-				'survey_id' => $li_id,
+		$entryId = (int)$this->request->getParam('entryId');
+		if ($entryId) {
+			$surveyEntriesTable = $this->fetchTable('SurveyEntries');
+			$entry = $surveyEntriesTable->find()->where([
+				'id' => $entryId,
+				'survey_id' => $id,
 			])->first();
 
-			if ($lo_entry) {
-				$la_postData = $this->decodeEntryData($lo_entry->data);
-				$this->set('entryData', $la_postData);
+			if ($entry) {
+				$postData = $this->decodeEntryData($entry->data);
+				$this->set('entryData', $postData);
 			}
 		}
 
-		$this->setViewVars($lo_survey);
+		$this->setViewVars($survey);
 	}
 
 
 	/**
 	 * Analysis method - Shows detailed analysis and statistics for a survey
 	 *
-	 * @return \Cake\Http\Response|void
+	 * @return void
 	 * @throws \Exception
 	 */
-	public function analyze() {
+	public function analyze(): void {
 		$this->Authorization->ensure('analyze');
 
-		$li_id = (int)$this->request->getParam('id');
+		$id = (int)$this->request->getParam('id');
 
-		if (!$li_id) {
+		if (!$id) {
 			$this->Flash->error(__('record_not_found'));
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
 		/**
-		 * @var \Awyiss\Model\Entity\Survey $lo_survey
+		 * @var \Awyiss\Model\Entity\Survey $survey
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 */
-		$lo_survey = $this->Surveys->findById($li_id)
+		$survey = $this->Surveys->findById($id)
 			->find('mediaAssignments')
 			->find('mediaElementAssignments')
 			->contain([
@@ -288,25 +289,25 @@ class SurveysController extends Controller {
 				],
 			])->first();
 
-		if (!$lo_survey) {
+		if (!$survey) {
 			$this->Flash->error(__('record_not_found'));
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
 		// Fetch all entries for this survey
-		$lo_surveyEntriesTable = $this->fetchTable('SurveyEntries');
-		$lo_entries = $lo_surveyEntriesTable->find()->where([
-			'survey_id' => $li_id,
+		$surveyEntriesTable = $this->fetchTable('SurveyEntries');
+		$entries = $surveyEntriesTable->find()->where([
+			'survey_id' => $id,
 		])->orderBy(['created_on' => 'DESC'])->all();
 
 		// Analyze the data
-		$la_analysis = $this->analyzeEntries($lo_survey, $lo_entries);
+		$analysis = $this->analyzeEntries($survey, $entries);
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_questionTypeEnum */
-		$ls_questionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $questionTypeEnum */
+		$questionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 
-		$lo_entries = $this->paginate($lo_surveyEntriesTable->find()->where([
-			'survey_id' => $li_id,
+		$entries = $this->paginate($surveyEntriesTable->find()->where([
+			'survey_id' => $id,
 		]), [
 			'limit' => 20,
 			'order' => [
@@ -315,10 +316,10 @@ class SurveysController extends Controller {
 		]);
 
 		$this->set([
-			'survey' => $lo_survey,
-			'entries' => $lo_entries,
-			'analysis' => $la_analysis,
-			'questionTypeEnum' => $ls_questionTypeEnum,
+			'survey' => $survey,
+			'entries' => $entries,
+			'analysis' => $analysis,
+			'questionTypeEnum' => $questionTypeEnum,
 		]);
 	}
 
@@ -331,97 +332,97 @@ class SurveysController extends Controller {
 	 * @return array
 	 */
 	protected function analyzeEntries(Survey $survey, CollectionInterface $entries): array {
-		$la_analysis = [
+		$analysis = [
 			'questions' => [],
 			'customAnswers' => [],
 		];
 
 		// Initialize question statistics
-		foreach ($survey->surveySurveyQuestions as $lo_question) {
-			$ls_identifier = $lo_question->identifier;
+		foreach ($survey->surveySurveyQuestions as $question) {
+			$identifier = $question->identifier;
 
-			$la_analysis['questions'][ $ls_identifier ] = [
-				'question' => $lo_question,
-				'title' => $lo_question->title ?? $lo_question->surveyQuestion->title,
-				'type' => $lo_question->surveyQuestion->type,
+			$analysis['questions'][ $identifier ] = [
+				'question' => $question,
+				'title' => $question->title ?? $question->surveyQuestion->title,
+				'type' => $question->surveyQuestion->type,
 				'answers' => [],
 				'customAnswerCount' => 0,
 				'totalResponses' => 0,
 			];
 
 			// Initialize answer counts
-			foreach ($lo_question->surveySurveyAnswers as $lo_surveyAnswer) {
-				$la_analysis['questions'][ $ls_identifier ]['answers'][ $lo_surveyAnswer->id ] = [
-					'answer' => $lo_surveyAnswer,
-					'title' => $lo_surveyAnswer->title ?? $lo_surveyAnswer->surveyAnswer->title,
+			foreach ($question->surveySurveyAnswers as $surveyAnswer) {
+				$analysis['questions'][ $identifier ]['answers'][ $surveyAnswer->id ] = [
+					'answer' => $surveyAnswer,
+					'title' => $surveyAnswer->title ?? $surveyAnswer->surveyAnswer->title,
 					'count' => 0,
 				];
 			}
 		}
 
 		// Process each entry
-		foreach ($entries as $lo_surveyEntry) {
+		foreach ($entries as $surveyEntry) {
 			// Decode the entry data
-			$la_postData = $this->decodeEntryData($lo_surveyEntry->data);
+			$postData = $this->decodeEntryData($surveyEntry->data);
 
-			if (!$la_postData || !isset($la_postData['progress'])) {
+			if (!$postData || !isset($postData['progress'])) {
 				continue;
 			}
 
 			// Ensure customAnswers key exists
-			$la_postData['customAnswers'] ??= [];
+			$postData['customAnswers'] ??= [];
 
 			// Process each answer in the progress data
-			foreach ($la_postData['progress'] as $ls_identifier => $lx_answer) {
+			foreach ($postData['progress'] as $identifier => $answer) {
 				// Skip if the question is unknown, e.g., deleted question
-				if (!isset($la_analysis['questions'][ $ls_identifier ])) {
+				if (!isset($analysis['questions'][ $identifier ])) {
 					continue;
 				}
 
-				$la_analysis['questions'][ $ls_identifier ]['totalResponses']++;
+				$analysis['questions'][ $identifier ]['totalResponses']++;
 
 				// Unify answers to an array to simplify processing
-				$la_answer = !is_array($lx_answer) ? [$lx_answer] : $lx_answer;
+				$answer = !is_array($answer) ? [$answer] : $answer;
 
-				foreach ($la_answer as $lx_answerId) {
-					if ($lx_answerId === 'custom') {
-						$la_analysis['questions'][ $ls_identifier ]['customAnswerCount']++;
+				foreach ($answer as $answerId) {
+					if ($answerId === 'custom') {
+						$analysis['questions'][ $identifier ]['customAnswerCount']++;
 
 						// Store custom answers
-						if (isset($la_postData['customAnswers'][ $ls_identifier ])) {
-							$la_analysis['customAnswers'][ $ls_identifier ] ??= [];
-							$la_analysis['customAnswers'][ $ls_identifier ][] = $la_postData['customAnswers'][ $ls_identifier ];
+						if (isset($postData['customAnswers'][ $identifier ])) {
+							$analysis['customAnswers'][ $identifier ] ??= [];
+							$analysis['customAnswers'][ $identifier ][] = $postData['customAnswers'][ $identifier ];
 						}
 
 						continue;
 					}
 
-					$li_answerId = (int)$lx_answerId;
-					if (isset($la_analysis['questions'][ $ls_identifier ]['answers'][ $li_answerId ])) {
-						$la_analysis['questions'][ $ls_identifier ]['answers'][ $li_answerId ]['count']++;
+					$answerId = (int)$answerId;
+					if (isset($analysis['questions'][ $identifier ]['answers'][ $answerId ])) {
+						$analysis['questions'][ $identifier ]['answers'][ $answerId ]['count']++;
 					}
 				}
 			}
 		}
 
 		// Calculate percentages
-		foreach ($la_analysis['questions'] as &$la_questionData) {
-			$li_total = $la_questionData['totalResponses'];
+		foreach ($analysis['questions'] as &$questionData) {
+			$total = $questionData['totalResponses'];
 
-			if ($li_total === 0) {
+			if ($total === 0) {
 				continue;
 			}
 
-			foreach ($la_questionData['answers'] as &$la_answerData) {
-				$la_answerData['percentage'] = round($la_answerData['count'] / $li_total * 100, 2);
+			foreach ($questionData['answers'] as &$answerData) {
+				$answerData['percentage'] = round($answerData['count'] / $total * 100, 2);
 			}
-			unset($la_answerData);
+			unset($answerData);
 
-			$la_questionData['customAnswerPercentage'] = round($la_questionData['customAnswerCount'] / $li_total * 100, 2);
+			$questionData['customAnswerPercentage'] = round($questionData['customAnswerCount'] / $total * 100, 2);
 		}
-		unset($la_questionData);
+		unset($questionData);
 
-		return $la_analysis;
+		return $analysis;
 	}
 
 
@@ -437,17 +438,17 @@ class SurveysController extends Controller {
 		}
 
 		try {
-			$ls_decompressed = gzuncompress(base64_decode($encodedData));
-			if ($ls_decompressed === false) {
+			$decompressed = gzuncompress(base64_decode($encodedData));
+			if ($decompressed === false) {
 				return null;
 			}
 
-			$la_data = json_decode($ls_decompressed, true);
+			$data = json_decode($decompressed, true);
 			if (json_last_error() !== JSON_ERROR_NONE) {
 				return null;
 			}
 
-			return $la_data ?: [];
+			return $data ?: [];
 		}
 		catch (Exception) {
 			return null;
@@ -462,7 +463,7 @@ class SurveysController extends Controller {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function save(Survey $survey, string $method = 'add'): void {
-		$la_associated = [
+		$associated = [
 			'SurveySurveyQuestions' => [
 				'accessibleFields' => [
 					'surveySurveyAnswers' => true,
@@ -474,23 +475,23 @@ class SurveysController extends Controller {
 		];
 		$survey->setAccess('surveySurveyQuestions', true);
 		if ($this->Surveys->hasAttributes()) {
-			$la_associated[] = $this->Surveys->getAttributesTableName(true);
+			$associated[] = $this->Surveys->getAttributesTableName(true);
 			$survey->setAccess('attributes', true);
 		}
 
-		$la_data = $this->request->getData();
-		$la_data = $this->buildQuestionsData($la_data);
-		$this->Surveys->patchEntity($survey, $la_data, [
-			'associated' => $la_associated,
+		$requestData = $this->buildQuestionsData($this->request->getData());
+
+		$this->Surveys->patchEntity($survey, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Surveys->save($survey, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->Surveys->save($survey, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -504,42 +505,42 @@ class SurveysController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($survey->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($survey->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
 
 		if ($survey->surveySurveyQuestions) {
-			$la_surveyQuestionIds = array_column($survey->surveySurveyQuestions, 'surveyQuestionId');
+			$surveyQuestionIds = array_column($survey->surveySurveyQuestions, 'surveyQuestionId');
 
-			/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
-			$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
-			foreach ($survey->surveySurveyQuestions as $li_key => $lo_surveySurveyQuestion) {
-				$survey->surveySurveyQuestions[ $li_key ]->surveyQuestion = $this->surveyQuestions[ $lo_surveySurveyQuestion->surveyQuestionId ] ?? null;
+			/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $surveyTypeEnum */
+			$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
+			foreach ($survey->surveySurveyQuestions as $key => $surveySurveyQuestion) {
+				$survey->surveySurveyQuestions[ $key ]->surveyQuestion = $this->surveyQuestions[ $surveySurveyQuestion->surveyQuestionId ] ?? null;
 
 				// If any question is repeated in a linear survey, set an error.
 				if (
-					$survey->type === $ls_surveyTypeEnum::Linear &&
-					array_count_values($la_surveyQuestionIds)[ $lo_surveySurveyQuestion->surveyQuestionId ] > 1
+					$survey->type === $surveyTypeEnum::Linear &&
+					array_count_values($surveyQuestionIds)[ $surveySurveyQuestion->surveyQuestionId ] > 1
 				) {
 					$survey->setError('surveySurveyQuestions', __('error_no_repeated_questions_in_linear_survey'));
-					$lo_surveySurveyQuestion->setError('surveyQuestionId', __('error_no_repeated_questions_in_linear_survey'));
+					$surveySurveyQuestion->setError('surveyQuestionId', __('error_no_repeated_questions_in_linear_survey'));
 				}
 
 				// Build the answers array for each question
-				$la_answers = $survey->surveySurveyQuestions[ $li_key ]->surveyQuestion?->surveyAnswers ?? [];
-				$la_answers = array_column($la_answers, null, 'id');
+				$answers = $survey->surveySurveyQuestions[ $key ]->surveyQuestion?->surveyAnswers ?? [];
+				$answers = array_column($answers, null, 'id');
 
 				// Ensure that each surveySurveyAnswer has a surveyAnswer set. It gets lost in the patchEntity process.
 				// since it is not part of the request data.
-				foreach ($lo_surveySurveyQuestion->surveySurveyAnswers as $lo_surveySurveyAnswer) {
-					$lo_surveySurveyAnswer->surveyAnswer = $la_answers[ $lo_surveySurveyAnswer->surveyAnswerId ] ?? null;
+				foreach ($surveySurveyQuestion->surveySurveyAnswers as $surveySurveyAnswer) {
+					$surveySurveyAnswer->surveyAnswer = $answers[ $surveySurveyAnswer->surveyAnswerId ] ?? null;
 				}
 			}
 
-			$la_errors = $survey->getError('surveySurveyQuestions');
+			$errors = $survey->getError('surveySurveyQuestions');
 
 			// Remove empty questions
 			$survey->surveySurveyQuestions = array_filter($survey->surveySurveyQuestions ?? []);
@@ -549,8 +550,8 @@ class SurveysController extends Controller {
 				return $a->systemOrder <=> $b->systemOrder;
 			});
 
-			if ($la_errors) {
-				$survey->setError('surveySurveyQuestions', $la_errors);
+			if ($errors) {
+				$survey->setError('surveySurveyQuestions', $errors);
 			}
 		}
 	}
@@ -561,37 +562,37 @@ class SurveysController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(Survey $survey): void {
-		$la_specifyQuestionOptions = [];
+		$specifyQuestionOptions = [];
 		if ($survey->surveySurveyQuestions) {
-			foreach ($survey->surveySurveyQuestions as $lo_question) {
-				$la_specifyQuestionOptions[] = [
-					'text' => $lo_question->label,
-					'value' => $lo_question->identifier,
+			foreach ($survey->surveySurveyQuestions as $question) {
+				$specifyQuestionOptions[] = [
+					'text' => $question->label,
+					'value' => $question->identifier,
 				];
 
 				if (
-					!$lo_question->surveySurveyAnswers ||
-					!$lo_question->surveyQuestion?->surveyAnswers
+					!$question->surveySurveyAnswers ||
+					!$question->surveyQuestion?->surveyAnswers
 				) {
 					continue;
 				}
 
-				$this->sortAnswers($lo_question);
+				$this->sortAnswers($question);
 			}
 
-			/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $ls_surveyTypeEnum */
-			$ls_surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
+			/** @var class-string<\Awyiss\Model\Enum\Survey\Type> $surveyTypeEnum */
+			$surveyTypeEnum = App::className('Type', 'Model/Enum/Survey');
 
-			if ($survey->type !== $ls_surveyTypeEnum::Linear) {
+			if ($survey->type !== $surveyTypeEnum::Linear) {
 				$this->markUnreachableQuestions($survey->surveySurveyQuestions, $survey);
 			}
 		}
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $ls_surveyNextActionEnum */
-		$ls_surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\NextAction> $surveyNextActionEnum */
+		$surveyNextActionEnum = App::className('NextAction', 'Model/Enum/Survey');
 
-		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $ls_questionTypeEnum */
-		$ls_questionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
+		/** @var class-string<\Awyiss\Model\Enum\Survey\QuestionType> $questionTypeEnum */
+		$questionTypeEnum = App::className('QuestionType', 'Model/Enum/Survey');
 
 		$this->set([
 			'survey' => $survey,
@@ -599,9 +600,9 @@ class SurveysController extends Controller {
 			'availableActions' => $this->Surveys->availableNextActions(),
 			'availableForms' => $this->fetchTable('Forms')->find()->all()->indexBy('id')->toArray(),
 			'finalActions' => $this->Surveys->availableFinalActions(),
-			'specifyQuestionOptions' => $la_specifyQuestionOptions,
-			'questionTypeEnum' => $ls_questionTypeEnum,
-			'nextActionEnum' => $ls_surveyNextActionEnum,
+			'specifyQuestionOptions' => $specifyQuestionOptions,
+			'questionTypeEnum' => $questionTypeEnum,
+			'nextActionEnum' => $surveyNextActionEnum,
 		]);
 	}
 
@@ -610,50 +611,47 @@ class SurveysController extends Controller {
 	 * @param array $data
 	 * @return array
 	 */
-	protected function buildQuestionsData(array &$data): array {
-		$li_count = 0;
+	protected function buildQuestionsData(array $data): array {
+		$count = 0;
 
 		if (
 			!isset($data['survey_survey_questions']) ||
 			!is_array($data['survey_survey_questions'])
 		) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$data['survey_survey_questions'] = [];
 		}
 
-		foreach ($data['survey_survey_questions'] as $lx_key => $la_questionData) {
+		foreach ($data['survey_survey_questions'] as $key => $questionData) {
 			if (
-				!is_array($la_questionData) ||
-				!isset($la_questionData['survey_question_id'])
+				!is_array($questionData) ||
+				!isset($questionData['survey_question_id'])
 			) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				unset($data['survey_survey_questions'][$lx_key]);
+				unset($data['survey_survey_questions'][$key]);
 				continue;
 			}
 
-			$la_questionData = $this->buildAnswersData($la_questionData);
+			$questionData = $this->buildAnswersData($questionData);
 
-			$ls_identifier = $la_questionData['identifier'] ?? null;
-			if (!$ls_identifier) {
+			$identifier = $questionData['identifier'] ?? null;
+			if (!$identifier) {
 				// Create a random hexadecimal identifier with 8 characters
-				$ls_identifier = Security::randomBytes(4);
-				$ls_identifier = bin2hex($ls_identifier);
+				$identifier = Security::randomBytes(4);
+				$identifier = bin2hex($identifier);
 			}
 
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$data['survey_survey_questions'][ $lx_key ] = [
-				'id' => $la_questionData['id'] ?? null,
-				'active' => $la_questionData['active'] ?? true,
-				'surveyQuestionId' => $la_questionData['survey_question_id'],
-				'identifier' => $ls_identifier,
-				'nextAction' => $la_questionData['next_action'] ?? null,
-				'nextActionTarget' => $la_questionData['next_action_target'] ?? null,
-				'allowCustomAnswer' => $la_questionData['allow_custom_answer'] ?? null,
-				'systemOrder' => $li_count + 1,
-				'surveySurveyAnswers' => $la_questionData['survey_survey_answers'] ?? [],
+			$data['survey_survey_questions'][ $key ] = [
+				'id' => $questionData['id'] ?? null,
+				'active' => $questionData['active'] ?? true,
+				'surveyQuestionId' => $questionData['survey_question_id'],
+				'identifier' => $identifier,
+				'nextAction' => $questionData['next_action'] ?? null,
+				'nextActionTarget' => $questionData['next_action_target'] ?? null,
+				'allowCustomAnswer' => $questionData['allow_custom_answer'] ?? null,
+				'systemOrder' => $count + 1,
+				'surveySurveyAnswers' => $questionData['survey_survey_answers'] ?? [],
 			];
 
-			$li_count++;
+			$count++;
 		}
 
 		return $data;
@@ -664,38 +662,35 @@ class SurveysController extends Controller {
 	 * @param array $data
 	 * @return array
 	 */
-	protected function buildAnswersData(array &$data): array {
-		$li_count = 0;
+	protected function buildAnswersData(array $data): array {
+		$count = 0;
 
 		if (
 			!isset($data['survey_survey_answers']) ||
 			!is_array($data['survey_survey_answers'])
 		) {
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$data['survey_survey_answers'] = [];
 		}
 
-		foreach ($data['survey_survey_answers'] as $lx_key => $la_answerData) {
+		foreach ($data['survey_survey_answers'] as $key => $answerData) {
 			if (
-				!is_array($la_answerData) ||
-				!isset($la_answerData['survey_answer_id'])
+				!is_array($answerData) ||
+				!isset($answerData['survey_answer_id'])
 			) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				unset($data['survey_survey_answers'][ $lx_key ]);
+				unset($data['survey_survey_answers'][ $key ]);
 				continue;
 			}
 
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$data['survey_survey_answers'][ $lx_key ] = [
-				'id' => $la_answerData['id'] ?? null,
-				'surveyAnswerId' => $la_answerData['survey_answer_id'],
-				'nextAction' => $la_answerData['next_action'] ?? null,
-				'nextActionTarget' => $la_answerData['next_action_target'] ?? null,
-				'systemOrder' => $li_count + 1,
-				'active' => $la_answerData['active'] ?? false,
+			$data['survey_survey_answers'][ $key ] = [
+				'id' => $answerData['id'] ?? null,
+				'surveyAnswerId' => $answerData['survey_answer_id'],
+				'nextAction' => $answerData['next_action'] ?? null,
+				'nextActionTarget' => $answerData['next_action_target'] ?? null,
+				'systemOrder' => $count + 1,
+				'active' => $answerData['active'] ?? false,
 			];
 
-			$li_count++;
+			$count++;
 		}
 
 		return $data;
@@ -722,9 +717,7 @@ class SurveysController extends Controller {
 			return;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$visited[] = $startId;
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$reachable[] = $startId;
 
 		// If this node has outgoing edges
@@ -732,9 +725,8 @@ class SurveysController extends Controller {
 			return;
 		}
 
-		foreach ($graph[ $startId ] as $ls_nextId) {
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$this->findReachableNodes($ls_nextId, $graph, $reachable, $visited);
+		foreach ($graph[ $startId ] as $nextId) {
+			$this->findReachableNodes($nextId, $graph, $reachable, $visited);
 		}
 	}
 
@@ -752,22 +744,22 @@ class SurveysController extends Controller {
 			return $a->systemOrder <=> $b->systemOrder;
 		});
 
-		$la_answerKeys = array_keys($question->surveySurveyAnswers);
-		$la_defaultAnswers = $question->surveyQuestion->surveyAnswers;
+		$answerKeys = array_keys($question->surveySurveyAnswers);
+		$defaultAnswers = $question->surveyQuestion->surveyAnswers;
 
-		usort($la_defaultAnswers, function (SurveyAnswer $a, SurveyAnswer $b) use ($la_answerKeys): int {
-			$li_posA = array_search($a->id, $la_answerKeys);
-			$li_posB = array_search($b->id, $la_answerKeys);
+		usort($defaultAnswers, function (SurveyAnswer $a, SurveyAnswer $b) use ($answerKeys): int {
+			$posA = array_search($a->id, $answerKeys);
+			$posB = array_search($b->id, $answerKeys);
 
 			return match (true) {
-				$li_posA === false && $li_posB === false => 0,
-				$li_posA === false => 1,
-				$li_posB === false => -1,
-				default => $li_posA <=> $li_posB,
+				$posA === false && $posB === false => 0,
+				$posA === false => 1,
+				$posB === false => -1,
+				default => $posA <=> $posB,
 			};
 		});
 
-		$question->surveyQuestion->surveyAnswers = $la_defaultAnswers;
+		$question->surveyQuestion->surveyAnswers = $defaultAnswers;
 	}
 
 
@@ -777,54 +769,54 @@ class SurveysController extends Controller {
 	 * @return void
 	 */
 	protected function markUnreachableQuestions(array $surveySurveyQuestions, Survey $survey): void {
-		$la_entryPoints = $la_unusedQuestions = [];
-		$la_questionsGraph = $survey->buildQuestionsGraph();
+		$entryPoints = $unusedQuestions = [];
+		$questionsGraph = $survey->buildQuestionsGraph();
 
-		foreach ($surveySurveyQuestions as $li_key => $lo_question) {
-			if ($li_key === 0) {
-				$la_entryPoints[] = $lo_question->identifier;
+		foreach ($surveySurveyQuestions as $key => $question) {
+			if ($key === 0) {
+				$entryPoints[] = $question->identifier;
 			}
 			else {
 				// Check if the question is somewhere used in the graph
-				$lb_usedInGraph = false;
+				$usedInGraph = false;
 
-				foreach ($la_questionsGraph as $la_nextQuestions) {
-					if (in_array($lo_question->identifier, $la_nextQuestions, true)) {
-						$lb_usedInGraph = true;
+				foreach ($questionsGraph as $nextQuestions) {
+					if (in_array($question->identifier, $nextQuestions, true)) {
+						$usedInGraph = true;
 						break;
 					}
 				}
 
-				$lo_question->set('unused', !$lb_usedInGraph);
-				$lo_question->setVirtual(['unused'], true);
+				$question->set('unused', !$usedInGraph);
+				$question->setVirtual(['unused'], true);
 
-				if (!$lb_usedInGraph) {
-					$la_unusedQuestions[] = $lo_question->identifier;
+				if (!$usedInGraph) {
+					$unusedQuestions[] = $question->identifier;
 				}
 			}
 		}
 
-		$la_reachableFromEntryPoints = [];
-		$la_reachableFromUnused = [];
+		$reachableFromEntryPoints = [];
+		$reachableFromUnused = [];
 
 		// Find all nodes reachable from valid entry points
-		foreach ($la_entryPoints as $ls_entryPoint) {
-			$this->findReachableNodes($ls_entryPoint, $la_questionsGraph, $la_reachableFromEntryPoints);
+		foreach ($entryPoints as $entryPoint) {
+			$this->findReachableNodes($entryPoint, $questionsGraph, $reachableFromEntryPoints);
 		}
 
 		// Find all nodes reachable from unused questions
-		foreach ($la_unusedQuestions as $ls_unusedId) {
-			$this->findReachableNodes($ls_unusedId, $la_questionsGraph, $la_reachableFromUnused);
+		foreach ($unusedQuestions as $unusedId) {
+			$this->findReachableNodes($unusedId, $questionsGraph, $reachableFromUnused);
 		}
 
 		// Find nodes only reachable from unused questions
-		$la_onlyReachableFromUnused = array_diff($la_reachableFromUnused, $la_reachableFromEntryPoints);
+		$onlyReachableFromUnused = array_diff($reachableFromUnused, $reachableFromEntryPoints);
 
 		// Mark questions that are only reachable from unused questions
-		foreach ($survey->surveySurveyQuestions as $lo_question) {
-			if (in_array($lo_question->identifier, $la_onlyReachableFromUnused, true)) {
-				$lo_question->set('onlyReachableFromUnused', true);
-				$lo_question->setVirtual(['onlyReachableFromUnused'], true);
+		foreach ($survey->surveySurveyQuestions as $question) {
+			if (in_array($question->identifier, $onlyReachableFromUnused, true)) {
+				$question->set('onlyReachableFromUnused', true);
+				$question->setVirtual(['onlyReachableFromUnused'], true);
 			}
 		}
 	}

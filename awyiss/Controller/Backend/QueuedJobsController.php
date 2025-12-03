@@ -76,10 +76,11 @@ class QueuedJobsController extends BackendController {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_queuedJobs = $this->paginate($lo_query);
+		$query = $this->getOverviewQuery();
+		$queuedJobs = $this->paginate($query);
 
-		$lo_queuedJobs->items()->each(function (QueuedJob $queuedJob) {
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$queuedJobs->items()->each(function (QueuedJob $queuedJob) {
 			// If the reference is not empty, check if '::' is in the reference
 			// If it is, we try to translate it, using the first part as the domain name and the second part as the key
 
@@ -87,7 +88,7 @@ class QueuedJobsController extends BackendController {
 		});
 
 		$this->set([
-			'queuedJobs' => $lo_queuedJobs,
+			'queuedJobs' => $queuedJobs,
 		]);
 	}
 
@@ -104,24 +105,26 @@ class QueuedJobsController extends BackendController {
 
 		$this->request->allowMethod(['get', 'post']);
 
-		/** @var \Queue\Model\Entity\QueuedJob $lo_queuedJob */
-		$lo_queuedJob = $this->QueuedJobs->findById($id)->first();
-		if (!$lo_queuedJob) {
+		/** @var \Queue\Model\Entity\QueuedJob $queuedJob */
+		/** @noinspection PhpUndefinedMethodInspection */
+		$queuedJob = $this->QueuedJobs->findById($id)->first();
+		if (!$queuedJob) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		$this->setJobProperties($lo_queuedJob);
+		$this->setJobProperties($queuedJob);
 
-		if (!$lo_queuedJob->failed) {
+		/** @noinspection PhpUndefinedFieldInspection */
+		if (!$queuedJob->failed) {
 			$this->Flash->error(__('restart_failed_not_failed'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->QueuedJobs->reset($lo_queuedJob->id)) {
+		if ($this->QueuedJobs->reset($queuedJob->id)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('restart_succeeded'));
 			}
@@ -149,28 +152,30 @@ class QueuedJobsController extends BackendController {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Queue\Model\Entity\QueuedJob $lo_queuedJob */
-		$lo_queuedJob = $this->QueuedJobs->findById($id)->first();
-		if (!$lo_queuedJob) {
+		/** @var \Queue\Model\Entity\QueuedJob $queuedJob */
+		/** @noinspection PhpUndefinedMethodInspection */
+		$queuedJob = $this->QueuedJobs->findById($id)->first();
+		if (!$queuedJob) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		$this->setJobProperties($lo_queuedJob);
+		$this->setJobProperties($queuedJob);
 
+		/** @noinspection PhpUndefinedFieldInspection */
 		if (
-			$lo_queuedJob->fetched &&
-			!$lo_queuedJob->completed &&
-			!$lo_queuedJob->failed
+			$queuedJob->fetched &&
+			!$queuedJob->completed &&
+			!$queuedJob->failed
 		) {
 			$this->Flash->error(__('delete_failed_in_progress'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->QueuedJobs->delete($lo_queuedJob)) {
+		if ($this->QueuedJobs->delete($queuedJob)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -178,8 +183,8 @@ class QueuedJobsController extends BackendController {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_queuedJob->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($queuedJob->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -194,17 +199,17 @@ class QueuedJobsController extends BackendController {
 	 * @return bool
 	 */
 	protected function taskFailed(QueuedJob $queuedJob): bool {
-		$la_taskConfig = $this->taskConfig[ $queuedJob->job_task ] ?? null;
+		$taskConfig = $this->taskConfig[ $queuedJob->job_task ] ?? null;
 
 		if (!$queuedJob->failure_message) {
 			return false;
 		}
 
-		if (!$la_taskConfig) {
+		if (!$taskConfig) {
 			return true;
 		}
 
-		return $queuedJob->attempts > $la_taskConfig['retries'];
+		return $queuedJob->attempts > $taskConfig['retries'];
 	}
 
 
@@ -212,8 +217,8 @@ class QueuedJobsController extends BackendController {
 	 * @return void
 	 */
 	protected function loadTaskConfig(): void {
-		$lo_tasks = (new TaskFinder())->all();
-		$this->taskConfig = Config::taskConfig($lo_tasks);
+		$tasks = new TaskFinder()->all();
+		$this->taskConfig = Config::taskConfig($tasks);
 	}
 
 
@@ -223,24 +228,26 @@ class QueuedJobsController extends BackendController {
 	 */
 	protected function setJobProperties(QueuedJob $queuedJob): void {
 		$queuedJob->setVirtual(['failed', 'scope'], true);
+		/** @noinspection PhpUndefinedFieldInspection */
 		$queuedJob->failed = $this->taskFailed($queuedJob);
 
+		/** @noinspection PhpUndefinedFieldInspection */
 		$queuedJob->scope = '';
 		if (!$queuedJob->reference || !str_contains($queuedJob->reference, '::')) {
 			return;
 		}
 
-		$la_referenceParts = explode('::', $queuedJob->reference);
-		$queuedJob->scope = __d($la_referenceParts[0], 'headline_overview');
-		if ($la_referenceParts[0] === 'system') {
+		$referenceParts = explode('::', $queuedJob->reference);
+		$queuedJob->scope = __d($referenceParts[0], 'headline_overview');
+		if ($referenceParts[0] === 'system') {
 			$queuedJob->scope = 'System';
 		}
 
-		$la_arguments = [];
-		if (count($la_referenceParts) > 2) {
-			$la_arguments = array_slice($la_referenceParts, 2);
+		$arguments = [];
+		if (count($referenceParts) > 2) {
+			$arguments = array_slice($referenceParts, 2);
 		}
 
-		$queuedJob->reference = __d($la_referenceParts[0], $la_referenceParts[1], ...$la_arguments);
+		$queuedJob->reference = __d($referenceParts[0], $referenceParts[1], ...$arguments);
 	}
 }

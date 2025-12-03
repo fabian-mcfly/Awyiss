@@ -58,29 +58,29 @@ class MediaFoldersController extends Controller {
 			return;
 		}
 
-		$lo_session = $this->request->getSession();
+		$session = $this->request->getSession();
 
 		//Is there a request parameter with the name 'language'?
-		$ls_language = $this->request->getParam('language');
+		$language = $this->request->getParam('language');
 
-		if ($ls_language) {
-			$lo_session->write($this->selectedLanguageSessionIdentifier, $ls_language);
+		if ($language) {
+			$session->write($this->selectedLanguageSessionIdentifier, $language);
 		}
 		else {
-			$ls_language = $lo_session->read($this->selectedLanguageSessionIdentifier, 'all');
+			$language = $session->read($this->selectedLanguageSessionIdentifier, 'all');
 		}
 
 		//If the selected scope is not inside the available configuration scopes, reset it to the first available one.
-		if (!array_key_exists($ls_language, $this->languages) && $ls_language !== 'all') {
-			$ls_language = array_key_first($this->languages);
+		if (!array_key_exists($language, $this->languages) && $language !== 'all') {
+			$language = array_key_first($this->languages);
 
-			$lo_session->write($this->selectedLanguageSessionIdentifier, $ls_language);
+			$session->write($this->selectedLanguageSessionIdentifier, $language);
 
 			//Redirect to remove the invalid scope parameter from the URL
 			$this->redirect(['action' => 'overview']);
 		}
 
-		$this->setOverviewWhere('language_shortcode', $ls_language);
+		$this->setOverviewWhere('language_shortcode', $language);
 	}
 
 
@@ -90,21 +90,21 @@ class MediaFoldersController extends Controller {
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-		$lo_query = $this->MediaFolders->find('forCurrentLanguage')->where(['hidden' => false]);
+		$query = $this->MediaFolders->find('forCurrentLanguage')->where(['hidden' => false]);
 
 		if ($this->getOverviewWhere('language_shortcode') !== 'all') {
-			$la_overviewWhere = $this->getOverviewWhere();
-			if (($la_overviewWhere['language_shortcode'] ?? null) === 'global') {
-				$la_overviewWhere['language_shortcode IS'] = null;
-				unset($la_overviewWhere['language_shortcode']);
+			$overviewWhere = $this->getOverviewWhere();
+			if (($overviewWhere['language_shortcode'] ?? null) === 'global') {
+				$overviewWhere['language_shortcode IS'] = null;
+				unset($overviewWhere['language_shortcode']);
 			}
 
-			$lo_query->where($la_overviewWhere);
+			$query->where($overviewWhere);
 		}
 
-		$this->Search->filterQuery($lo_query);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -116,25 +116,25 @@ class MediaFoldersController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_mediaFolders = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$mediaFolders = $this->paginate($query);
 		}
 		else {
-			$lo_query->orderBy('language_shortcode');
+			$query->orderBy('language_shortcode');
 
-			$lo_mediaFolders = $lo_query->find('threaded')->all()->groupBy(function (MediaFolder $mediaFolder) {
+			$mediaFolders = $query->find('threaded')->all()->groupBy(function (MediaFolder $mediaFolder) {
 				return $mediaFolder->languageShortcode ?? '_global';
 			});
 		}
 
 		$this->set([
-			'mediaFolders' => $lo_mediaFolders,
+			'mediaFolders' => $mediaFolders,
 			'languages' => $this->languages,
 			'selectedLanguage' => $this->getOverviewWhere('language_shortcode'),
-			'paginated' => $lb_paginated,
+			'paginated' => $paginated,
 			'attributes' => $this->MediaFolders->getAttributes(),
 		]);
 	}
@@ -149,21 +149,21 @@ class MediaFoldersController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_session = $this->request->getSession();
-		$ls_languageShortcode = $lo_session->read($this->selectedLanguageSessionIdentifier, 'all');
-		if (strlen($ls_languageShortcode) !== 2) {
-			$ls_languageShortcode = null;
+		$session = $this->request->getSession();
+		$languageShortcode = $session->read($this->selectedLanguageSessionIdentifier, 'all');
+		if (strlen($languageShortcode) !== 2) {
+			$languageShortcode = null;
 		}
 
-		$lo_mediaFolder = $this->MediaFolders->newDefaultEntity([
-			'languageShortcode' => $ls_languageShortcode,
+		$mediaFolder = $this->MediaFolders->newDefaultEntity([
+			'languageShortcode' => $languageShortcode,
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_mediaFolder);
+			$this->save($mediaFolder);
 		}
 
-		$this->setViewVars($lo_mediaFolder);
+		$this->setViewVars($mediaFolder);
 	}
 
 
@@ -177,12 +177,12 @@ class MediaFoldersController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder
+		 * @var \Awyiss\Model\Entity\MediaFolder $mediaFolder
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_mediaFolder = $this->MediaFolders->findById($id)->find('translations')->first();
+		$mediaFolder = $this->MediaFolders->findById($id)->find('translations')->first();
 
-		if (!$lo_mediaFolder) {
+		if (!$mediaFolder) {
 			$this->Flash->error(__('record_not_found'));
 
 
@@ -190,17 +190,17 @@ class MediaFoldersController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_mediaFolder, 'edit');
+			$this->save($mediaFolder, 'edit');
 		}
-		elseif ($lo_mediaFolder->language_shortcode !== null && $lo_mediaFolder->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {
+		elseif ($mediaFolder->languageShortcode !== null && $mediaFolder->languageShortcode != LocaleMiddleware::getLanguage()->shortcode) {
 			//Don't allow modifying a media folder in another language
 			throw new RedirectException(Router::url([
-				'lang' => $lo_mediaFolder->languageShortcode,
-				'id' => $lo_mediaFolder->id,
+				'lang' => $mediaFolder->languageShortcode,
+				'id' => $mediaFolder->id,
 			], true), 302);
 		}
 
-		$this->setViewVars($lo_mediaFolder);
+		$this->setViewVars($mediaFolder);
 	}
 
 
@@ -216,28 +216,28 @@ class MediaFoldersController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder */
-		$lo_mediaFolder = $this->MediaFolders->findById($id)->first();
-		if (!$lo_mediaFolder) {
+		/** @var \Awyiss\Model\Entity\MediaFolder $mediaFolder */
+		$mediaFolder = $this->MediaFolders->findById($id)->first();
+		if (!$mediaFolder) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		$lo_children = $this->MediaFolders->getNestedChildren($lo_mediaFolder);
+		$children = $this->MediaFolders->getNestedChildren($mediaFolder);
 
 		// Check if any of the subfolders is hidden
-		$la_hiddenSubfolders = $lo_children->filter(function (MediaFolder $mediaFolder) {
+		$hiddenSubfolders = $children->filter(function (MediaFolder $mediaFolder) {
 			return $mediaFolder->hidden;
 		})->extract('id')->toArray();
-		if ($lo_mediaFolder->hidden || $la_hiddenSubfolders) {
+		if ($mediaFolder->hidden || $hiddenSubfolders) {
 			$this->Flash->error(__('error_subfolders_hidden'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->MediaFolders->delete($lo_mediaFolder)) {
+		if ($this->MediaFolders->delete($mediaFolder)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -245,8 +245,8 @@ class MediaFoldersController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_mediaFolder->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($mediaFolder->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -262,29 +262,29 @@ class MediaFoldersController extends Controller {
 	 * @return void
 	 */
 	protected function save(MediaFolder $mediaFolder, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->MediaFolders->hasAttributes()) {
-			$la_associated[] = $this->MediaFolders->getAttributesTableName(true);
+			$associated[] = $this->MediaFolders->getAttributesTableName(true);
 			$mediaFolder->setAccess('attributes', true);
 		}
 
 		$this->MediaFolders->patchEntity($mediaFolder, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->MediaFolders->save($mediaFolder, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->MediaFolders->save($mediaFolder, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
-				$lo_session = $this->request->getSession();
-				$ls_languageShortcode = $mediaFolder->languageShortcode ?? 'global';
-				if ($lo_session->read($this->selectedLanguageSessionIdentifier, 'all') !== 'all') {
-					$lo_session->write($this->selectedLanguageSessionIdentifier, $ls_languageShortcode);
+				$session = $this->request->getSession();
+				$languageShortcode = $mediaFolder->languageShortcode ?? 'global';
+				if ($session->read($this->selectedLanguageSessionIdentifier, 'all') !== 'all') {
+					$session->write($this->selectedLanguageSessionIdentifier, $languageShortcode);
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -299,9 +299,9 @@ class MediaFoldersController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($mediaFolder->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($mediaFolder->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -313,21 +313,21 @@ class MediaFoldersController extends Controller {
 	 * or items in them, are used in the system.
 	 *
 	 * @param \Awyiss\Model\Entity\MediaFolder|null $mediaFolder
-	 * @return bool
+	 * @return \Cake\Http\Response|bool
+	 * @noinspection PhpUnused
 	 */
 	public function checkUsage(?MediaFolder $mediaFolder = null): bool|Response {
-		$lo_mediaFolder = $mediaFolder;
-		if (!$lo_mediaFolder) {
+		if (!$mediaFolder) {
 			// Check if the request contains a media folder ID
-			$li_mediaFolderId = $this->request->getParam('id');
+			$mediaFolderId = $this->request->getParam('id');
 
-			if ($li_mediaFolderId) {
-				$lo_mediaFolder = $this->MediaFolders->findById($li_mediaFolderId)->first();
+			if ($mediaFolderId) {
+				$mediaFolder = $this->MediaFolders->findById($mediaFolderId)->first();
 			}
 		}
 
 		// Still no media folder? Throw an error
-		if (!$lo_mediaFolder) {
+		if (!$mediaFolder) {
 			if (!$this->request->is('ajax')) {
 				throw new InvalidArgumentException('No media folder was provided');
 			}
@@ -345,14 +345,14 @@ class MediaFoldersController extends Controller {
 			return $this->render()->withStatus(404);
 		}
 
-		$lo_children = $this->MediaFolders->getNestedChildren($lo_mediaFolder);
+		$children = $this->MediaFolders->getNestedChildren($mediaFolder);
 
 		// Check if any of the subfolders is hidden
-		$la_hiddenSubfolders = $lo_children->filter(function (MediaFolder $mediaFolder) {
+		$hiddenSubfolders = $children->filter(function (MediaFolder $mediaFolder) {
 			return $mediaFolder->hidden;
 		})->extract('id')->toArray();
 
-		if ($lo_mediaFolder->hidden || $la_hiddenSubfolders) {
+		if ($mediaFolder->hidden || $hiddenSubfolders) {
 			if (!$this->request->is('ajax')) {
 				return true;
 			}
@@ -371,13 +371,13 @@ class MediaFoldersController extends Controller {
 		}
 
 
-		$la_mediaFolderIds = [$lo_mediaFolder->id, ...array_column($lo_children->toArray(), 'id')];
+		$mediaFolderIds = [$mediaFolder->id, ...array_column($children->toArray(), 'id')];
 
-		$li_mediaFolderAssignments = $this->MediaFolders->MediaAssignments->find()->where([
-			'media_folder_id IN' => $la_mediaFolderIds,
+		$mediaFolderAssignments = $this->MediaFolders->MediaAssignments->find()->where([
+			'media_folder_id IN' => $mediaFolderIds,
 		])->count();
 
-		if ($li_mediaFolderAssignments) {
+		if ($mediaFolderAssignments) {
 			if (!$this->request->is('ajax')) {
 				return true;
 			}
@@ -396,18 +396,18 @@ class MediaFoldersController extends Controller {
 		}
 
 		// Check if any of the files inside the media folders are used
-		$li_files = $this->MediaFolders->Media->find()->where([
-			'media_folder_id IN' => $la_mediaFolderIds,
+		$files = $this->MediaFolders->Media->find()->where([
+			'media_folder_id IN' => $mediaFolderIds,
 		])->contain(['MediaAssignments'])->matching('MediaAssignments')->count();
 
 		if (!$this->request->is('ajax')) {
-			return $li_files > 0;
+			return $files > 0;
 		}
 
 		$this->viewBuilder()->setOption('serialize', ['success', 'message', 'inUse', 'hiddenChildren']);
 
 		$this->set('success', true);
-		$this->set('inUse', $li_files > 0);
+		$this->set('inUse', $files > 0);
 		$this->set('hiddenChildren', false);
 		$this->set('message', __('error_files_in_use'));
 
@@ -425,41 +425,39 @@ class MediaFoldersController extends Controller {
 	 */
 	protected function _saveSystemOrder(array $requestData, Table $table): int {
 		// Create a flat array of all order data
-		$la_orderData = [];
-		foreach ($requestData as $la_itemsByLanguageShortcode) {
-			foreach ($la_itemsByLanguageShortcode as $la_items) {
-				array_map(function (array $item) use (&$la_orderData) {
-					$la_data = $item;
-
-					if ($la_data['languageShortcode'] === '_global') {
-						$la_data['languageShortcode'] = null;
+		$orderData = [];
+		foreach ($requestData as $itemsByLanguageShortcode) {
+			foreach ($itemsByLanguageShortcode as $items) {
+				array_map(function (array $item) use (&$orderData) {
+					if ($item['languageShortcode'] === '_global') {
+						$item['languageShortcode'] = null;
 					}
 
-					$la_orderData[] = $la_data;
-				}, $la_items);
+					$orderData[] = $item;
+				}, $items);
 			}
 		}
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$li_affectedRows = $table->updateAll(function (QueryExpression $expression) use ($la_orderData) {
-			$lo_languageShortcodeCase = $expression->case();
-			$lo_systemOrderCase = $expression->case();
+		$affectedRows = $table->updateAll(function (QueryExpression $expression) use ($orderData) {
+			$languageShortcodeCase = $expression->case();
+			$systemOrderCase = $expression->case();
 
-			foreach ($la_orderData as $la_data) {
-				$lo_languageShortcodeCase->when(['id' => $la_data['id']])->then($la_data['languageShortcode'], 'string');
-				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
+			foreach ($orderData as $data) {
+				$languageShortcodeCase->when(['id' => $data['id']])->then($data['languageShortcode'], 'string');
+				$systemOrderCase->when(['id' => $data['id']])->then($data['systemOrder'], 'integer');
 			}
 
 			return [
-				'language_shortcode' => $lo_languageShortcodeCase,
-				'system_order' => $lo_systemOrderCase,
+				'language_shortcode' => $languageShortcodeCase,
+				'system_order' => $systemOrderCase,
 			];
 		}, [
-			'id IN' => array_column($la_orderData, 'id'),
+			'id IN' => array_column($orderData, 'id'),
 		]);
 
 
-		return $li_affectedRows;
+		return $affectedRows;
 	}
 
 
@@ -474,11 +472,11 @@ class MediaFoldersController extends Controller {
 	protected function getThreadedMediaFolders(MediaFolder $mediaFolder): CollectionInterface {
 		if (!isset($this->threadedMediaFolders)) {
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-			$lo_query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $mediaFolder->languageShortcode ?? false, includeGlobal: false)
+			$query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $mediaFolder->languageShortcode ?? false, includeGlobal: false)
 			->where($this->getOverviewWhere())
 			->where(['hidden' => $mediaFolder->hidden]);
 
-			$this->threadedMediaFolders = $this->MediaFolders->listNested($lo_query);
+			$this->threadedMediaFolders = $this->MediaFolders->listNested($query);
 		}
 
 		return $this->threadedMediaFolders;
@@ -491,27 +489,27 @@ class MediaFoldersController extends Controller {
 	 * @return void
 	 */
 	protected function ensurePossibleParentId(MediaFolder $mediaFolder, CollectionInterface $threadedMediaFolders): void {
-		$la_possibleParentIds = $threadedMediaFolders->extract('id')->toList();
+		$possibleParentIds = $threadedMediaFolders->extract('id')->toList();
 
-		if (!empty($mediaFolder->parentId) && !in_array($mediaFolder->parentId, $la_possibleParentIds)) {
-			$la_errors = $mediaFolder->getError('parentId');
+		if (!empty($mediaFolder->parentId) && !in_array($mediaFolder->parentId, $possibleParentIds)) {
+			$errors = $mediaFolder->getError('parentId');
 
-			$mediaFolder->parentId = reset($la_possibleParentIds);
+			$mediaFolder->parentId = reset($possibleParentIds);
 
 			if ($mediaFolder->parentId === 1) {
 				$mediaFolder->parentId = null;
 			}
 
-			if ($la_errors) {
-				$mediaFolder->setError('parentId', $la_errors, true);
+			if ($errors) {
+				$mediaFolder->setError('parentId', $errors, true);
 			}
 		}
 
-		$lo_request = $this->getRequest();
+		$request = $this->getRequest();
 		//When the field is part of the request data, overwrite it since it might be outdated
-		if ($lo_request->getData('parent_id') !== null) {
-			$lo_request = $lo_request->withData('parent_id', $mediaFolder->parentId);
-			$this->setRequest($lo_request);
+		if ($request->getData('parent_id') !== null) {
+			$request = $request->withData('parent_id', $mediaFolder->parentId);
+			$this->setRequest($request);
 		}
 	}
 
@@ -521,22 +519,22 @@ class MediaFoldersController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(MediaFolder $mediaFolder): void {
-		$lo_threadedMediaFolders = $this->getThreadedMediaFolders($mediaFolder);
+		$threadedMediaFolders = $this->getThreadedMediaFolders($mediaFolder);
 
-		$lo_possibleParentMediaFolders = $this->MediaFolders->getPossibleParents($mediaFolder, $lo_threadedMediaFolders);
-		$this->ensurePossibleParentId($mediaFolder, $lo_possibleParentMediaFolders);
+		$possibleParentMediaFolders = $this->MediaFolders->getPossibleParents($mediaFolder, $threadedMediaFolders);
+		$this->ensurePossibleParentId($mediaFolder, $possibleParentMediaFolders);
 
 		// Get the parent media folder if it exists
 		if ($mediaFolder->parentId) {
-			$lo_parentFolder = $this->MediaFolders->findById($mediaFolder->parentId)->first();
+			$parentFolder = $this->MediaFolders->findById($mediaFolder->parentId)->first();
 		}
 
 		$this->set([
 			'mediaFolder' => $mediaFolder,
-			'threadedMediaFolders' => $lo_threadedMediaFolders,
-			'possibleParentMediaFolders' => $lo_possibleParentMediaFolders,
+			'threadedMediaFolders' => $threadedMediaFolders,
+			'possibleParentMediaFolders' => $possibleParentMediaFolders,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
-			'parentFolder' => $lo_parentFolder ?? null,
+			'parentFolder' => $parentFolder ?? null,
 		]);
 	}
 }

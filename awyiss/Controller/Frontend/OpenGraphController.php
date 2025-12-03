@@ -36,39 +36,38 @@ class OpenGraphController extends AppController {
 	 * @return \Cake\Http\Response
 	 */
 	public function image(int $pageId): Response {
-		$lo_page = $this->getPage($pageId);
+		$page = $this->getPage($pageId);
 
-		if (!$lo_page) {
+		if (!$page) {
 			return $this->renderLoginLogo();
 		}
 
-		$la_pageData = $lo_page->extract();
+		$pageData = $page->extract();
 
-		if (isset($la_pageData['attributes'])) {
-			$la_pageData['attributes'] = $la_pageData['attributes']->extract();
+		if (isset($pageData['attributes'])) {
+			$pageData['attributes'] = $pageData['attributes']->extract();
 		}
 
-		$ls_hash = md5(json_encode($la_pageData));
+		$hash = md5(json_encode($pageData));
 
-		$ls_image = Cache::read('og_image_' . $ls_hash . '.png', 'persistent');
-		if ($ls_image) {
-			$lo_response = $this->getResponse()->withType('jpg');
-			$lo_response = $lo_response->withStringBody($ls_image);
+		$image = Cache::read('og_image_' . $hash . '.png', 'persistent');
+		if ($image) {
+			$response = $this->getResponse()->withType('jpg');
 
-			return $lo_response;
+			return $response->withStringBody($image);
 		}
 
-		$lx_success = $this->fetchOgImageScreenshot($lo_page);
+		$success = $this->fetchOgImageScreenshot($page);
 
-		if ($lx_success === false) {
+		if ($success === false) {
 			return $this->renderLoginLogo();
 		}
 
-		Cache::write('og_image_' . $ls_hash . '.png', $lx_success, 'persistent');
+		Cache::write('og_image_' . $hash . '.png', $success, 'persistent');
 
-		$lo_response = $this->getResponse()->withType('jpg');
-		$lo_response = $lo_response->withStringBody($lx_success);
-		return $lo_response;
+		$response = $this->getResponse()->withType('jpg');
+
+		return $response->withStringBody($success);
 	}
 
 
@@ -77,23 +76,23 @@ class OpenGraphController extends AppController {
 	 * @return void
 	 */
 	public function template(int $pageId): void {
-		$lo_page = $this->getPage($pageId);
+		$page = $this->getPage($pageId);
 
-		if (!$lo_page) {
+		if (!$page) {
 			throw new NotFoundException();
 		}
 
-		/** @var class-string<\Awyiss\Utility\Media\MediaRenderOptions> $ls_className */
-		$ls_className = App::className('MediaRenderOptions', 'Utility/Media');
-		$lo_mediaRenderOptions = new $ls_className();
+		/** @var class-string<\Awyiss\Utility\Media\MediaRenderOptions> $className */
+		$className = App::className('MediaRenderOptions', 'Utility/Media');
+		$mediaRenderOptions = new $className();
 
 		$this->set([
-			'page' => $lo_page,
-			'mediaRenderOptions' => $lo_mediaRenderOptions,
+			'page' => $page,
+			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
 
 		$this->viewBuilder()
-			->setTemplate($lo_page->pageRole->identifier)
+			->setTemplate($page->pageRole->identifier)
 			->setTemplatePath('Frontend/open_graph')
 			->setLayout('open_graph');
 	}
@@ -119,18 +118,16 @@ class OpenGraphController extends AppController {
 	 */
 	protected function renderLoginLogo(): Response {
 		// Find the customer logo
-		$ls_logoPath = $this->getLoginLogoPath();
-		if (!$ls_logoPath) {
-			$ls_logoPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'img' . DS . 'logo-awyiss.png';
+		$logoPath = $this->getLoginLogoPath();
+		if (!$logoPath) {
+			$logoPath = ROOT . DS . 'awyiss' . DS . 'assets' . DS . 'img' . DS . 'logo-awyiss.png';
 		}
 
 		// Return the logo as response
-		$lo_response = $this->getResponse()->withFile(
-			$ls_logoPath,
+		return $this->getResponse()->withFile(
+			$logoPath,
 			['download' => false, 'name' => 'login-logo']
 		);
-
-		return $lo_response;
 	}
 
 
@@ -142,14 +139,14 @@ class OpenGraphController extends AppController {
 	 * @return string|null
 	 */
 	protected function getLoginLogoPath(): ?string {
-		$ls_extensions = ['svg', 'png', 'jpg'];
-		$ls_basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
+		$extensions = ['svg', 'png', 'jpg'];
+		$basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
 
 		// For each extension, check if the file exists
-		foreach ($ls_extensions as $ls_extension) {
-			$ls_tempPath = $ls_basePath . $ls_extension;
-			if (file_exists($ls_tempPath)) {
-				return $ls_tempPath;
+		foreach ($extensions as $extension) {
+			$tempPath = $basePath . $extension;
+			if (file_exists($tempPath)) {
+				return $tempPath;
 			}
 		}
 
@@ -163,42 +160,42 @@ class OpenGraphController extends AppController {
 	 * @return string|false
 	 */
 	protected function fetchOgImageScreenshot(Page $page): string|false {
-		$ls_url = 'https://screenshots.2f.media/api?';
-		$ls_url .= http_build_query(['url' => Router::url('/_open-graph-template/id:' . $page->id . '/', true)]);
+		$url = 'https://screenshots.2f.media/api?';
+		$url .= http_build_query(['url' => Router::url('/_open-graph-template/id:' . $page->id . '/', true)]);
 
-		$lo_client = new Client([
+		$client = new Client([
 			'timeout' => 30,
 			'http_errors' => false,
 		]);
 
-		$lo_response = $lo_client->get($ls_url);
-		$la_data = $lo_response->getJson();
+		$response = $client->get($url);
+		$data = $response->getJson();
 
 		if (
-			!isset($la_data['screenshot']) ||
-			!isset($la_data['hash']) ||
-			!isset($la_data['signature'])
+			!isset($data['screenshot']) ||
+			!isset($data['hash']) ||
+			!isset($data['signature'])
 		) {
 			return false;
 		}
 
-		$ls_pubPem = file_get_contents(ROOT . DS . 'awyiss' . DS . 'config' . DS . 'screenshots.2f.media.pem');
-		if ($ls_pubPem === false) {
+		$pubPem = file_get_contents(ROOT . DS . 'awyiss' . DS . 'config' . DS . 'screenshots.2f.media.pem');
+		if ($pubPem === false) {
 			return false;
 		}
 
-		$ls_sig = base64_decode($la_data['signature']);
-		if ($ls_sig === false) {
+		$sig = base64_decode($data['signature']);
+		if ($sig === false) {
 			return false;
 		}
 
-		$li_status = openssl_verify(base64_decode($la_data['hash']), $ls_sig, $ls_pubPem, OPENSSL_ALGO_SHA256);
+		$status = openssl_verify(base64_decode($data['hash']), $sig, $pubPem, OPENSSL_ALGO_SHA256);
 
-		if ($li_status !== 1) {
+		if ($status !== 1) {
 			return false;
 		}
 
-		return base64_decode($la_data['screenshot']);
+		return base64_decode($data['screenshot']);
 	}
 
 

@@ -35,10 +35,10 @@ class EmailTemplatesController extends Controller {
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		/** @uses \Awyiss\Model\Table\EmailTemplatesTable::findWithUsages() */
-		$lo_query = $this->EmailTemplates->find('withUsages')->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->EmailTemplates->find('withUsages')->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -50,11 +50,11 @@ class EmailTemplatesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
-		$lo_emailTemplates = $this->paginate($lo_query);
+		$query = $this->getOverviewQuery();
+		$emailTemplates = $this->paginate($query);
 
 		$this->set([
-			'emailTemplates' => $lo_emailTemplates,
+			'emailTemplates' => $emailTemplates,
 			'attributes' => $this->EmailTemplates->getAttributes(),
 		]);
 	}
@@ -69,13 +69,13 @@ class EmailTemplatesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_emailTemplate = $this->EmailTemplates->newDefaultEntity();
+		$emailTemplate = $this->EmailTemplates->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_emailTemplate);
+			$this->save($emailTemplate);
 		}
 
-		$this->setViewVars($lo_emailTemplate);
+		$this->setViewVars($emailTemplate);
 	}
 
 
@@ -90,23 +90,23 @@ class EmailTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\EmailTemplate $lo_emailTemplate
+		 * @var \Awyiss\Model\Entity\EmailTemplate $emailTemplate
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_emailTemplate = $this->EmailTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_emailTemplate) {
+		$emailTemplate = $this->EmailTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$emailTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_emailTemplate, 'edit');
+			$this->save($emailTemplate, 'edit');
 		}
 
-		$this->setViewVars($lo_emailTemplate);
+		$this->setViewVars($emailTemplate);
 	}
 
 
@@ -122,22 +122,22 @@ class EmailTemplatesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var EmailTemplate $lo_emailTemplate */
-		$lo_emailTemplate = $this->EmailTemplates->findById($id)->first();
-		if (!$lo_emailTemplate) {
+		/** @var \Awyiss\Model\Entity\EmailTemplate $emailTemplate */
+		$emailTemplate = $this->EmailTemplates->findById($id)->first();
+		if (!$emailTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->EmailTemplates->delete($lo_emailTemplate)) {
+		if ($this->EmailTemplates->delete($emailTemplate)) {
 			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_emailTemplate->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($emailTemplate->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -154,50 +154,50 @@ class EmailTemplatesController extends Controller {
 	public function preview(): void {
 		$this->Authorization->ensure('read');
 
-		$li_id = (int)$this->request->getParam('id');
+		$id = (int)$this->request->getParam('id');
 
-		/** @var EmailTemplate $lo_emailTemplate */
-		$lo_emailTemplate = $this->EmailTemplates->findById($li_id)->first();
-		if (!$lo_emailTemplate) {
+		/** @var \Awyiss\Model\Entity\EmailTemplate $emailTemplate */
+		$emailTemplate = $this->EmailTemplates->findById($id)->first();
+		if (!$emailTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
-		$lo_view = $this->createView();
+		$view = $this->createView();
 		// The view uses the prefix (Backend, in this case) to determine the correct view path
 		// We need to set the correct view path manually
-		$lo_view->setRequest($this->getRequest()->withParam('prefix', 'Frontend'));
+		$view->setRequest($this->getRequest()->withParam('prefix', 'Frontend'));
 
 		$this->viewBuilder()->setClassName('Frontend');
 
-		$lo_view
+		$view
 		->setTemplatePath('Frontend/email')
 		->setLayoutPath('email')
-		->setLayout(str_replace('.twig', '', $lo_emailTemplate->layout));
+		->setLayout(str_replace('.twig', '', $emailTemplate->layout));
 
-		/** @var \Cake\View\HelperRegistry $lo_helpersRegistry */
-		$lo_helperRegistry = $lo_view->helpers();
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_helperRegistry->get('Asset')->setRealm(Awyiss::REALM_FRONTEND);
+		/** @var \Cake\View\HelperRegistry $helpersRegistry */
+		$helperRegistry = $view->helpers();
+		/** @var \Awyiss\View\Helper\AssetHelper $assetHelper */
+		$assetHelper = $helperRegistry->get('Asset');
+		$assetHelper->setRealm(Awyiss::REALM_FRONTEND);
 
-		$lo_view->set([
-			'textHtml' => $lo_emailTemplate->textHtml,
-			'textPlain' => $lo_emailTemplate->textPlain,
-			'emailTemplate' => $lo_emailTemplate,
+		$view->set([
+			'textHtml' => $emailTemplate->textHtml,
+			'textPlain' => $emailTemplate->textPlain,
+			'emailTemplate' => $emailTemplate,
 		]);
 
-		$ls_body = $lo_view->render($lo_emailTemplate->fileName);
+		$body = $view->render($emailTemplate->fileName);
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_helperRegistry->get('Asset')->setRealm(Awyiss::REALM_BACKEND);
+		$assetHelper->setRealm(Awyiss::REALM_BACKEND);
 
 		$this->viewBuilder()->setClassName('Backend');
 
 		$this->set([
-			'emailTemplate' => $lo_emailTemplate,
-			'bodyHtml' => $ls_body,
-			'bodyText' => '<pre>' . $lo_emailTemplate->textPlain . '</pre>',
+			'emailTemplate' => $emailTemplate,
+			'bodyHtml' => $body,
+			'bodyText' => '<pre>' . $emailTemplate->textPlain . '</pre>',
 		]);
 	}
 
@@ -209,23 +209,23 @@ class EmailTemplatesController extends Controller {
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
 	protected function save(EmailTemplate $emailTemplate, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->EmailTemplates->hasAttributes()) {
-			$la_associated[] = $this->EmailTemplates->getAttributesTableName(true);
+			$associated[] = $this->EmailTemplates->getAttributesTableName(true);
 			$emailTemplate->setAccess('attributes', true);
 		}
 
 		$this->EmailTemplates->patchEntity($emailTemplate, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->EmailTemplates->save($emailTemplate, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->EmailTemplates->save($emailTemplate, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -239,9 +239,9 @@ class EmailTemplatesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($emailTemplate->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($emailTemplate->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -253,26 +253,26 @@ class EmailTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(EmailTemplate $emailTemplate): void {
-		$la_placeholders = [];
+		$placeholders = [];
 
-		$la_forms = $this->fetchTable('Forms')->find()->contain(['FormElements'])->toArray();
-		foreach ($la_forms as $lo_form) {
-			/** @var \Awyiss\Model\Entity\Form $lo_form */
-			foreach ($lo_form->formElements as $lo_formElement) {
-				if (in_array($lo_formElement->type, ['fieldset', 'hidden', 'submit'])) {
+		$forms = $this->fetchTable('Forms')->find()->contain(['FormElements'])->toArray();
+		foreach ($forms as $form) {
+			/** @var \Awyiss\Model\Entity\Form $form */
+			foreach ($form->formElements as $formElement) {
+				if (in_array($formElement->type, ['fieldset', 'hidden', 'submit'])) {
 					continue;
 				}
-				$la_placeholders[ $lo_form->label ][ $lo_formElement->identifier ] = $lo_formElement->label . ' ($' . $lo_formElement->identifier . ')';
+				$placeholders[ $form->label ][ $formElement->identifier ] = $formElement->label . ' ($' . $formElement->identifier . ')';
 			}
 		}
 
-		$la_placeholders['data'] = __('placeholder_data') . ' ($data)';
-		$la_placeholders['salutation'] = __d('forms', 'salutation') . ' ($salutation)';
+		$placeholders['data'] = __('placeholder_data') . ' ($data)';
+		$placeholders['salutation'] = __d('forms', 'salutation') . ' ($salutation)';
 
 		$this->set([
 			'emailTemplate' => $emailTemplate,
 			'availableLayouts' => $this->EmailTemplates->getAvailableLayouts(),
-			'availablePlaceholders' => $la_placeholders,
+			'availablePlaceholders' => $placeholders,
 		]);
 	}
 }

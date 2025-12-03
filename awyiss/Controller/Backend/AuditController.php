@@ -43,10 +43,10 @@ class AuditController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Audit->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->Audit->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -57,11 +57,11 @@ class AuditController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function history(): void {
-		$li_id = $this->request->getParam('id');
-		$ls_scope = $this->request->getParam('scope');
-		$ls_realScope = $ls_scope;
+		$id = $this->request->getParam('id');
+		$scope = $this->request->getParam('scope');
+		$realScope = $scope;
 
-		if ($li_id === null || $ls_scope === null) {
+		if ($id === null || $scope === null) {
 			if ($this->request->is('ajax')) {
 				throw new InvalidArgumentException(__('error_invalid_request'));
 			}
@@ -71,17 +71,17 @@ class AuditController extends Controller {
 			}
 		}
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $this->fetchTable(Inflector::camelize($ls_scope));
+		/** @var \Awyiss\Model\Table $table */
+		$table = $this->fetchTable(Inflector::camelize($scope));
 
 		/**
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_entity = $lo_table->findById($li_id)->find('translations')->find('mediaAssignments')->first();
+		$entity = $table->findById($id)->find('translations')->find('mediaAssignments')->first();
 
-		if (!$lo_entity) {
+		if (!$entity) {
 			if ($this->request->is('ajax')) {
 				throw new RuntimeException(__('error_record_not_found'));
 			}
@@ -95,41 +95,41 @@ class AuditController extends Controller {
 		 * Check if the scope is accessible
 		 * For all scopes except 'contents', the scope must be accessible for the 'update' action
 		 */
-		if ($ls_scope === 'contents') {
+		if ($scope === 'contents') {
 			// Ensure that the user has access to the `content`-permission of the page-role of the content's page.
-			$this->ensurePageRoleAccess($lo_entity);
+			$this->ensurePageRoleAccess($entity);
 		}
-		elseif ($ls_scope === 'configuration') {
-			$this->Authorization->scopeIsAccessible($ls_scope, [
-				'scope' => $lo_entity->scope,
+		elseif ($scope === 'configuration') {
+			$this->Authorization->scopeIsAccessible($scope, [
+				'scope' => $entity->scope,
 			], 'update');
 		}
 		else {
-			$this->Authorization->scopeIsAccessible($ls_scope, [], 'update');
+			$this->Authorization->scopeIsAccessible($scope, [], 'update');
 		}
 
-		$la_historyFields = $lo_table->getAuditHistoryFields();
+		$historyFields = $table->getAuditHistoryFields();
 		// Deleted field is tracked but not displayed
-		$la_historyFields = array_diff($la_historyFields, ['deleted']);
+		$historyFields = array_diff($historyFields, ['deleted']);
 
-		$la_associations = $this->getAssociations($lo_table, $la_historyFields);
+		$associations = $this->getAssociations($table, $historyFields);
 
-		if ($la_associations) {
-			$lo_table->loadInto($lo_entity, array_values(array_map(fn($lo_association) => $lo_association->getName(), $la_associations)));
+		if ($associations) {
+			$table->loadInto($entity, array_values(array_map(fn($lo_association) => $lo_association->getName(), $associations)));
 		}
 
-		$lb_isPageRole = false;
-		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
-		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-		if ($ls_pageRoleEnum::tryFromName($ls_scope)) {
-			$lb_isPageRole = true;
-			$ls_realScope = 'pages';
+		$isPageRole = false;
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		if ($pageRoleEnum::tryFromName($scope)) {
+			$isPageRole = true;
+			$realScope = 'pages';
 		}
 
 		// Get the audit history of the record
-		$lo_audits = $this->Audit->find()->where([
-			'foreign_key' => $li_id,
-			'scope' => $ls_realScope,
+		$audits = $this->Audit->find()->where([
+			'foreign_key' => $id,
+			'scope' => $realScope,
 		])->contain(['Users'])->orderBy(['Audit.created_on' => 'desc'])
 		->formatResults(function (ResultSetInterface $results): CollectionInterface {
 			return $results->map(function (Audit $audit) {
@@ -143,67 +143,67 @@ class AuditController extends Controller {
 		->compile();
 
 		// Check audits for changes in the associations and load the associated entities
-		$this->loadOldAssociationEntities($lo_entity, $lo_audits, $la_associations);
+		$this->loadOldAssociationEntities($entity, $audits, $associations);
 
-		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = $lo_table->getEntityClass();
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = $table->getEntityClass();
 
-		/** @var array<\Awyiss\Model\Entity\Attribute> $la_attributes */
-		$la_attributes = $lo_table->hasAttributes() ? $lo_table->getAttributes() : [];
-		if ($la_attributes) {
-			/** @var \Awyiss\Attribute\AttributeOptionsCollection $lo_attributeOptions */
-			$lo_attributeOptions = AttributeOptionsProvider::getAttributeOptionsFile($ls_scope, true);
+		/** @var array<\Awyiss\Model\Entity\Attribute> $attributes */
+		$attributes = $table->hasAttributes() ? $table->getAttributes() : [];
+		if ($attributes) {
+			/** @var \Awyiss\Attribute\AttributeOptionsCollection $attributeOptions */
+			$attributeOptions = AttributeOptionsProvider::getAttributeOptionsFile($scope, true);
 		}
 
-		if (in_array($ls_scope, ['contents', 'widgets'], true)) {
-			$lo_audits = $this->setColumnData($lo_table, $lo_audits);
+		if (in_array($scope, ['contents', 'widgets'], true)) {
+			$audits = $this->setColumnData($table, $audits);
 		}
 
-		$lo_media = $this->getMedia($lo_entity, $lo_audits);
-		$lo_mediaElements = $this->getMediaElements($lo_entity, $lo_audits);
+		$media = $this->getMedia($entity, $audits);
+		$mediaElements = $this->getMediaElements($entity, $audits);
 
-		$la_translatableFields = [];
-		$la_languages = [];
-		if ($lo_table->hasBehavior('Translate')) {
-			/** @var \Awyiss\Model\Behavior\TranslateBehavior $lo_behavior */
-			$lo_behavior = $lo_table->getBehavior('Translate');
-			$la_translatableFields = $lo_behavior->getConfig('fields');
+		$translatableFields = [];
+		$languages = [];
+		if ($table->hasBehavior('Translate')) {
+			/** @var \Awyiss\Model\Behavior\TranslateBehavior $behavior */
+			$behavior = $table->getBehavior('Translate');
+			$translatableFields = $behavior->getConfig('fields');
 
-			$ls_realm = $lo_behavior->getConfig('realm');
-			$la_languages = LocaleMiddleware::getLanguages($ls_realm);
+			$realm = $behavior->getConfig('realm');
+			$languages = LocaleMiddleware::getLanguages($realm);
 
 			// Filter out inactive languages
-			$la_languages = array_filter($la_languages, fn($lo_language) => $lo_language->active);
+			$languages = array_filter($languages, fn($lo_language) => $lo_language->active);
 		}
 
-		$la_translatableAttributes = [];
-		if ($lo_table->hasAttributes()) {
+		$translatableAttributes = [];
+		if ($table->hasAttributes()) {
 			// Get all identifiers of translatable attributes
-			$la_translatableAttributes = array_column($la_attributes, null, 'identifier');
-			$la_translatableAttributes = array_keys(array_filter($la_translatableAttributes, fn($lo_attribute) => $lo_attribute->translatable));
+			$translatableAttributes = array_column($attributes, null, 'identifier');
+			$translatableAttributes = array_keys(array_filter($translatableAttributes, fn($lo_attribute) => $lo_attribute->translatable));
 		}
 
 		$this->set([
-			'entity' => $lo_entity,
-			'audits' => $lo_audits->compile(),
-			'schema' => $lo_table->getSchema(),
-			'scope' => $ls_scope,
-			'historyFields' => $la_historyFields,
-			'attributes' => $la_attributes,
-			'attributeOptionsCollection' => $lo_attributeOptions ?? null,
-			'attributesSchema' => $lo_table->hasAttributes() ? $lo_table->getAttributesTable()->getSchema() : null,
+			'entity' => $entity,
+			'audits' => $audits->compile(),
+			'schema' => $table->getSchema(),
+			'scope' => $scope,
+			'historyFields' => $historyFields,
+			'attributes' => $attributes,
+			'attributeOptionsCollection' => $attributeOptions ?? null,
+			'attributesSchema' => $table->hasAttributes() ? $table->getAttributesTable()->getSchema() : null,
 			'associations' => array_map(fn (Association $association) => [
 				'name' => $association->getName(),
-				'property' => $ls_entityClass::mapField($association->getProperty()),
-			], $la_associations),
-			'media' => $lo_media->toArray(),
-			'mediaElements' => $lo_mediaElements,
+				'property' => $entityClass::mapField($association->getProperty()),
+			], $associations),
+			'media' => $media->toArray(),
+			'mediaElements' => $mediaElements,
 			'isAjax' => $this->request->is('ajax'),
-			'isPageRole' => $lb_isPageRole,
-			'publicationDataEnabled' => LocalConfig::read('publicationData.enabled', null, Inflector::camelize($ls_scope)),
-			'languages' => $la_languages,
-			'translatableFields' => $la_translatableFields,
-			'translatableAttributes' => $la_translatableAttributes,
+			'isPageRole' => $isPageRole,
+			'publicationDataEnabled' => LocalConfig::read('publicationData.enabled', null, Inflector::camelize($scope)),
+			'languages' => $languages,
+			'translatableFields' => $translatableFields,
+			'translatableAttributes' => $translatableAttributes,
 		]);
 
 		if ($this->request->is('ajax')) {
@@ -228,11 +228,11 @@ class AuditController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function info(): void {
-		$la_parts = $this->request->getParam('parts');
-		$li_id = $la_parts['id'] ?? null;
-		$ls_scope = $la_parts['scope'] ?? null;
+		$parts = $this->request->getParam('parts');
+		$id = $parts['id'] ?? null;
+		$scope = $parts['scope'] ?? null;
 
-		if ($li_id === null || $ls_scope === null) {
+		if ($id === null || $scope === null) {
 			throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'index']));
 		}
 
@@ -240,8 +240,8 @@ class AuditController extends Controller {
 		 * @uses \Awyiss\Model\Behavior\AuditBehavior::findWithAuditUsers()
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_record = $this->fetchTable(Inflector::camelize($ls_scope))->findById($li_id)->find('withAuditUsers')->first($li_id);
-		if (!$lo_record) {
+		$record = $this->fetchTable(Inflector::camelize($scope))->findById($id)->find('withAuditUsers')->first($id);
+		if (!$record) {
 			throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'index']));
 		}
 
@@ -250,30 +250,30 @@ class AuditController extends Controller {
 			$this->viewBuilder()->setOption('serialize', ['createdBy', 'createdOn', 'changedBy', 'changedOn', 'created', 'changed']);
 
 			// Get the createdBy and changedBy users
-			$ls_createdByUser = $lo_record->get('createdByUser');
-			$ls_changedByUser = $lo_record->get('changedByUser');
+			$createdByUser = $record->get('createdByUser');
+			$changedByUser = $record->get('changedByUser');
 
 			// If createdBy is empty, set it to 'System' if createdBy is empty, otherwise to "Unknown"
-			if (empty($ls_createdByUser)) {
-				$ls_createdByUser = $lo_record->get('createdBy') ? __('user_unknown') : __('user_system');
+			if (empty($createdByUser)) {
+				$createdByUser = $record->get('createdBy') ? __('user_unknown') : __('user_system');
 			}
 
 			// If changedBy is empty, set it to 'System' if createdBy is empty, otherwise to "Unknown"
-			if (empty($ls_changedByUser)) {
-				$ls_changedByUser = $lo_record->get('changedBy') ? __('user_unknown') : __('user_system');
+			if (empty($changedByUser)) {
+				$changedByUser = $record->get('changedBy') ? __('user_unknown') : __('user_system');
 			}
 
-			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
-			if ($ls_timezone === 'auto') {
-				$ls_timezone = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->timezone;
+			$timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+			if ($timezone === 'auto') {
+				$timezone = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->timezone;
 			}
 
 			// Set the data to be serialized
 			$this->set([
-				'createdBy' => $ls_createdByUser,
-				'createdOn' => $lo_record->get('createdOn')?->nice($ls_timezone),
-				'changedBy' => $ls_changedByUser,
-				'changedOn' => $lo_record->get('changedOn')?->nice($ls_timezone),
+				'createdBy' => $createdByUser,
+				'createdOn' => $record->get('createdOn')?->nice($timezone),
+				'changedBy' => $changedByUser,
+				'changedOn' => $record->get('changedOn')?->nice($timezone),
 				'created' => __('created_info_label'),
 				'changed' => __('changed_info_label'),
 			]);
@@ -286,8 +286,8 @@ class AuditController extends Controller {
 		}
 
 		$this->set([
-			'record' => $lo_record,
-			'scope' => $ls_scope,
+			'record' => $record,
+			'scope' => $scope,
 		]);
 	}
 
@@ -301,11 +301,11 @@ class AuditController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function ensurePageRoleAccess(Content $entity): void {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = $this->fetchTable('Contents');
+		/** @var \Awyiss\Model\Table\ContentsTable $table */
+		$table = $this->fetchTable('Contents');
 
 		try {
-			$lo_page = $lo_table->getPage($entity->pageId);
+			$page = $table->getPage($entity->pageId);
 		}
 		catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 			if ($this->request->is('ajax')) {
@@ -317,10 +317,10 @@ class AuditController extends Controller {
 			}
 		}
 
-		$lo_table->forPageRole($lo_page->pageRoleId);
-		$this->Authorization->scopeIsAccessible($lo_table->getForScope(), [], 'contents');
+		$table->forPageRole($page->pageRoleId);
+		$this->Authorization->scopeIsAccessible($table->getForScope(), [], 'contents');
 
-		$entity->page = $lo_page;
+		$entity->page = $page;
 	}
 
 
@@ -330,36 +330,36 @@ class AuditController extends Controller {
 	 * @return array
 	 */
 	protected function getAssociations(Table $table, array $historyFields): array {
-		$ls_tableName = Inflector::camelize($table->getTable());
+		$tableName = Inflector::camelize($table->getTable());
 
-		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = $table->getEntityClass();
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = $table->getEntityClass();
 
-		$la_blocklistAssociations = [
-			'Attributes' . $ls_tableName,
-			'Child' . $ls_tableName,
-			'Duplicating' . $ls_tableName,
-			'Parent' . $ls_tableName,
-			$ls_tableName . 'PublicationDataStart',
-			$ls_tableName . 'PublicationDataEnd',
+		$blocklistAssociations = [
+			'Attributes' . $tableName,
+			'Child' . $tableName,
+			'Duplicating' . $tableName,
+			'Parent' . $tableName,
+			$tableName . 'PublicationDataStart',
+			$tableName . 'PublicationDataEnd',
 			'PublicationData',
 		];
 
-		$la_associations = [];
-		foreach ($table->associations() as $lo_association) {
-			if (in_array($lo_association->getName(), $la_blocklistAssociations)) {
+		$associations = [];
+		foreach ($table->associations() as $association) {
+			if (in_array($association->getName(), $blocklistAssociations)) {
 				continue;
 			}
 
-			$ls_foreignKey = $ls_entityClass::mapFields((array)$lo_association->getForeignKey())[0];
+			$foreignKey = $entityClass::mapFields((array)$association->getForeignKey())[0];
 
 			// If the key of the association is in the history fields, add it to the associations using the key as the key
-			if (in_array($ls_foreignKey, $historyFields)) {
-				$la_associations[ $ls_foreignKey ] = $lo_association;
+			if (in_array($foreignKey, $historyFields)) {
+				$associations[ $foreignKey ] = $association;
 			}
 		}
 
-		return $la_associations;
+		return $associations;
 	}
 
 
@@ -369,21 +369,21 @@ class AuditController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getMedia(Entity $entity, CollectionInterface $audits): CollectionInterface {
-		$la_mediaIds = array_merge(
+		$mediaIds = array_merge(
 			Hash::extract($entity->mediaAssignments, '{s}.{n}.mediaId'),
 			Hash::extract($entity->mediaAssignments, '{s}.{s}.mediaId'),
 			Hash::extract($entity->mediaAssignments, '{s}.{s}.{n}.mediaId')
 		);
-		$la_mediaAssignments = Hash::extract($audits->toList(), '{n}.dataOld.mediaAssignments');
+		$mediaAssignments = Hash::extract($audits->toList(), '{n}.dataOld.mediaAssignments');
 
-		$la_mediaIds = array_merge($la_mediaIds, Hash::extract($la_mediaAssignments, '{n}.{s}.{*}.mediaId'), Hash::extract($la_mediaAssignments, '{n}.{s}.{s}.{n}.mediaId'));
-		$la_mediaIds = array_unique($la_mediaIds);
+		$mediaIds = array_merge($mediaIds, Hash::extract($mediaAssignments, '{n}.{s}.{*}.mediaId'), Hash::extract($mediaAssignments, '{n}.{s}.{s}.{n}.mediaId'));
+		$mediaIds = array_unique($mediaIds);
 
-		if (!$la_mediaIds) {
+		if (!$mediaIds) {
 			return new Collection([]);
 		}
 
-		return $this->fetchTable('Media')->find()->where(['id IN' => $la_mediaIds])->all()->indexBy('id');
+		return $this->fetchTable('Media')->find()->where(['id IN' => $mediaIds])->all()->indexBy('id');
 	}
 
 
@@ -393,19 +393,19 @@ class AuditController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getMediaElements(Entity $entity, CollectionInterface $audits): CollectionInterface {
-		$lo_mediaElements = $this->fetchTable('MediaElements')->find()->contain([
+		$mediaElements = $this->fetchTable('MediaElements')->find()->contain([
 			'MediaElementSelectors.MediaSelectors',
 		])->all()->indexBy('identifier');
 
-		$la_oldMediaElements = Hash::extract($audits->toList(), '{n}.diff.old.mediaAssignments');
-		$la_oldMediaElements = array_unique(array_merge(...array_map('array_keys', $la_oldMediaElements)));
+		$oldMediaElements = Hash::extract($audits->toList(), '{n}.diff.old.mediaAssignments');
+		$oldMediaElements = array_unique(array_merge(...array_map('array_keys', $oldMediaElements)));
 
-		$la_currentMediaElements = array_keys($entity->mediaAssignments ?? []);
+		$currentMediaElements = array_keys($entity->mediaAssignments ?? []);
 
-		return $lo_mediaElements->filter(function (MediaElement $mediaElement) use ($la_oldMediaElements, $la_currentMediaElements) {
-			$ls_identifier = Inflector::variable($mediaElement->identifier);
+		return $mediaElements->filter(function (MediaElement $mediaElement) use ($oldMediaElements, $currentMediaElements) {
+			$identifier = Inflector::variable($mediaElement->identifier);
 
-			return in_array($ls_identifier, $la_oldMediaElements, true) || in_array($ls_identifier, $la_currentMediaElements, true);
+			return in_array($identifier, $oldMediaElements, true) || in_array($identifier, $currentMediaElements, true);
 		})->indexBy('identifier')->compile();
 	}
 
@@ -417,57 +417,57 @@ class AuditController extends Controller {
 	 * @return void
 	 */
 	protected function loadOldAssociationEntities(Entity $entity, CollectionInterface $audits, array $associations): void {
-		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = get_class($entity);
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = get_class($entity);
 
-		$la_associationProperties = array_map(fn (Association $association) => [
+		$associationProperties = array_map(fn (Association $association) => [
 			'name' => $association->getName(),
-			'property' => $ls_entityClass::mapField($association->getProperty()),
+			'property' => $entityClass::mapField($association->getProperty()),
 		], $associations);
 
-		$la_diffData = Hash::extract($audits->toList(), '{n}.diff.old');
+		$diffData = Hash::extract($audits->toList(), '{n}.diff.old');
 
-		$la_oldEntities = [];
+		$oldEntities = [];
 
-		foreach ($la_associationProperties as $ls_foreignKey => $la_association) {
-			$la_foreignKeys = array_column($la_diffData, $ls_foreignKey);
-			$la_foreignKeys = array_unique(array_filter($la_foreignKeys));
+		foreach ($associationProperties as $foreignKey => $association) {
+			$foreignKeys = array_column($diffData, $foreignKey);
+			$foreignKeys = array_unique(array_filter($foreignKeys));
 
 			// Get the current value of the entity
-			$lx_currentValue = $entity->get($ls_foreignKey);
+			$currentValue = $entity->get($foreignKey);
 
 			// Remove the current value from the foreign keys
-			if ($lx_currentValue) {
-				$la_foreignKeys = array_diff($la_foreignKeys, [$lx_currentValue]);
+			if ($currentValue) {
+				$foreignKeys = array_diff($foreignKeys, [$currentValue]);
 			}
 
-			if (!$la_foreignKeys) {
+			if (!$foreignKeys) {
 				continue;
 			}
 
 			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-			$la_oldEntities[ $ls_foreignKey ] = $associations[ $ls_foreignKey ]->find('withDeleted', skipPageRoleCheck: true)->where([
-				$associations[ $ls_foreignKey ]->getBindingKey() . ' IN' => $la_foreignKeys,
+			$oldEntities[ $foreignKey ] = $associations[ $foreignKey ]->find('withDeleted', skipPageRoleCheck: true)->where([
+				$associations[ $foreignKey ]->getBindingKey() . ' IN' => $foreignKeys,
 			])->all()->indexBy('id')->toArray();
 		}
 
-		if (!$la_oldEntities) {
+		if (!$oldEntities) {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Entity\Audit $lo_audit */
-		foreach ($audits as $lo_audit) {
-			$la_oldData = $lo_audit->dataOld;
+		/** @var \Awyiss\Model\Entity\Audit $audit */
+		foreach ($audits as $audit) {
+			$oldData = $audit->dataOld;
 
-			foreach ($la_associationProperties as $ls_foreignKey => $la_association) {
-				$li_id = $la_oldData[ $ls_foreignKey ] ?? null;
+			foreach ($associationProperties as $foreignKey => $association) {
+				$id = $oldData[ $foreignKey ] ?? null;
 
-				if (!isset($la_oldEntities[ $ls_foreignKey ][ $li_id ])) {
+				if (!isset($oldEntities[ $foreignKey ][ $id ])) {
 					continue;
 				}
 
-				$lo_audit->dataOld[ $la_association['property'] ] = $la_oldEntities[ $ls_foreignKey ][ $li_id ];
-				$lo_audit->diff['old'][ $la_association['property'] ] = $la_oldEntities[ $ls_foreignKey ][ $li_id ];
+				$audit->dataOld[ $association['property'] ] = $oldEntities[ $foreignKey ][ $id ];
+				$audit->diff['old'][ $association['property'] ] = $oldEntities[ $foreignKey ][ $id ];
 			}
 		}
 	}
@@ -480,14 +480,14 @@ class AuditController extends Controller {
 	 */
 	protected function setColumnData(Table $table, CollectionInterface $audits): CollectionInterface {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$la_columnWidths = $table->getColumnWidths();
+		$columnWidths = $table->getColumnWidths();
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$la_columnIndents = $table->getColumnIndents();
+		$columnIndents = $table->getColumnIndents();
 
-		return $audits->map(function (Audit $audit) use ($la_columnWidths, $la_columnIndents) {
+		return $audits->map(function (Audit $audit) use ($columnWidths, $columnIndents) {
 			$audit->dataOld['column'] = [
-				'width' => $la_columnWidths[ $audit->dataOld['columnWidth'] ] ?? null,
-				'indent' => $la_columnIndents[ $audit->dataOld['columnIndent'] ] ?? null,
+				'width' => $columnWidths[ $audit->dataOld['columnWidth'] ] ?? null,
+				'indent' => $columnIndents[ $audit->dataOld['columnIndent'] ] ?? null,
 			];
 
 			return $audit;

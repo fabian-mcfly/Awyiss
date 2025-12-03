@@ -33,23 +33,22 @@ class AttributesController extends Controller {
 	/**
 	 * Called after the `__construct()` method
 	 *
-	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	public function initialize(): void {
 		$this->attributeScopes = $this->Attributes->getAvailableScopes();
 
-		$la_inputTypes = $this->Attributes->getAvailableInputTypes();
+		$inputTypes = $this->Attributes->getAvailableInputTypes();
 		$this->paginate['fieldTranslations'] = [
-			'input_type' => array_combine($la_inputTypes, array_map(function ($type) {
+			'input_type' => array_combine($inputTypes, array_map(function ($type) {
 				return Text::slug(__('input_type_' . $type));
 			}, $this->Attributes->getAvailableInputTypes())),
 		];
 
-		$la_fieldsets = $this->Attributes->getAvailableFieldsets();
-		$this->paginate['fieldTranslations']['fieldset'] = array_combine($la_fieldsets, array_map(function ($fieldset) {
+		$fieldsets = $this->Attributes->getAvailableFieldsets();
+		$this->paginate['fieldTranslations']['fieldset'] = array_combine($fieldsets, array_map(function ($fieldset) {
 			return Text::slug(__('fieldset_' . $fieldset));
-		}, $la_fieldsets));
+		}, $fieldsets));
 
 		parent::initialize();
 	}
@@ -60,11 +59,11 @@ class AttributesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Attributes->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
-		$this->Search->filterQuery($lo_query);
+		$query = $this->Attributes->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -76,31 +75,31 @@ class AttributesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_attributes = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$attributes = $this->paginate($query);
 		}
 		else {
-			$lo_attributes = $lo_query->all();
-			$la_attributesGroupedByFieldset = $lo_query->all()->groupBy('fieldset')->toArray();
+			$attributes = $query->all();
+			$attributesGroupedByFieldset = $query->all()->groupBy('fieldset')->toArray();
 		}
 
-		$ls_selectedScope = $this->Categories->getSelectedCategory();
+		$selectedScope = $this->Categories->getSelectedCategory();
 
-		$la_availableFieldsets = [''];
-		if (!in_array($ls_selectedScope, ['contents', 'widgets'])) {
-			$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($ls_selectedScope);
+		$availableFieldsets = [''];
+		if (!in_array($selectedScope, ['contents', 'widgets'])) {
+			$availableFieldsets = $this->Attributes->getAvailableFieldsets($selectedScope);
 		}
 
 		$this->set([
-			'attributes' => $lo_attributes,
-			'attributesGroupedByFieldset' => $la_attributesGroupedByFieldset ?? [],
-			'availableFieldsets' => $la_availableFieldsets,
+			'attributes' => $attributes,
+			'attributesGroupedByFieldset' => $attributesGroupedByFieldset ?? [],
+			'availableFieldsets' => $availableFieldsets,
 			'availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
-			'paginated' => $lb_paginated,
-			'selectedScope' => $ls_selectedScope,
+			'paginated' => $paginated,
+			'selectedScope' => $selectedScope,
 		]);
 	}
 
@@ -114,19 +113,19 @@ class AttributesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_attribute = $this->Attributes->newDefaultEntity([
+		$attribute = $this->Attributes->newDefaultEntity([
 			'scope' => $this->request->getParam('scope') ?? $this->Categories->getSelectedCategory(),
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_attribute);
+			$this->save($attribute);
 		}
 
-		if (!$lo_attribute->scope) {
-			$lo_attribute->scope = key($this->Categories->getCategories());
+		if (!$attribute->scope) {
+			$attribute->scope = key($this->Categories->getCategories());
 		}
 
-		$this->setViewVars($lo_attribute);
+		$this->setViewVars($attribute);
 	}
 
 
@@ -140,13 +139,13 @@ class AttributesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\Attribute $lo_attribute
+		 * @var \Awyiss\Model\Entity\Attribute $attribute
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_attribute = $this->Attributes->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_attribute) {
+		$attribute = $this->Attributes->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$attribute) {
 			$this->Flash->error(__('record_not_found'));
 
 
@@ -154,10 +153,10 @@ class AttributesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_attribute, 'edit');
+			$this->save($attribute, 'edit');
 		}
 
-		$this->setViewVars($lo_attribute);
+		$this->setViewVars($attribute);
 	}
 
 
@@ -173,16 +172,16 @@ class AttributesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Attribute $lo_attribute */
-		$lo_attribute = $this->Attributes->findById($id)->first();
-		if (!$lo_attribute) {
+		/** @var Attribute $attribute */
+		$attribute = $this->Attributes->findById($id)->first();
+		if (!$attribute) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Attributes->delete($lo_attribute)) {
+		if ($this->Attributes->delete($attribute)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -191,8 +190,8 @@ class AttributesController extends Controller {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
 
-				foreach ($lo_attribute->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($attribute->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -208,23 +207,23 @@ class AttributesController extends Controller {
 	 * @return void
 	 */
 	protected function save(Attribute $attribute, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->Attributes->hasAttributes()) {
-			$la_associated[] = $this->Attributes->getAttributesTableName(true);
+			$associated[] = $this->Attributes->getAttributesTableName(true);
 			$attribute->setAccess('attributes', true);
 		}
 
 		$this->Attributes->patchEntity($attribute, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Attributes->save($attribute, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->Attributes->save($attribute, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -239,9 +238,9 @@ class AttributesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($attribute->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($attribute->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -257,20 +256,19 @@ class AttributesController extends Controller {
 	 */
 	protected function ensurePossibleFieldset(Attribute $attribute, array $availableFieldsets): void {
 		if (empty($attribute->fieldset) || !in_array($attribute->fieldset, $availableFieldsets)) {
-			$la_errors = $attribute->getError('fieldset');
+			$errors = $attribute->getError('fieldset');
 
-			/** @noinspection PhpVariableNamingConventionInspection */
 			$attribute->fieldset = reset($availableFieldsets);
 
-			if ($la_errors) {
-				$attribute->setError('fieldset', $la_errors);
+			if ($errors) {
+				$attribute->setError('fieldset', $errors);
 			}
 
-			$lo_request = $this->getRequest();
+			$request = $this->getRequest();
 			//When fieldset is part of the request data, overwrite it since it might be outdated
-			if ($lo_request->getData('fieldset') !== null) {
-				$lo_request = $lo_request->withData('fieldset', $attribute->fieldset);
-				$this->setRequest($lo_request);
+			if ($request->getData('fieldset') !== null) {
+				$request = $request->withData('fieldset', $attribute->fieldset);
+				$this->setRequest($request);
 			}
 		}
 	}
@@ -287,37 +285,37 @@ class AttributesController extends Controller {
 		 * In the first level, the key is the fieldset, the value is an array of the child ids.
 		 * In the second level, the value is the child id, the key is the order, offset by -1.
 		 */
-		$la_orderData = [];
-		foreach ($requestData as $ls_fieldset => $la_children) {
-			foreach ($la_children as $li_order => $li_id) {
-				$la_orderData[] = [
-					'id' => $li_id,
-					'fieldset' => $ls_fieldset,
-					'systemOrder' => $li_order + 1,
+		$orderData = [];
+		foreach ($requestData as $fieldset => $children) {
+			foreach ($children as $order => $id) {
+				$orderData[] = [
+					'id' => $id,
+					'fieldset' => $fieldset,
+					'systemOrder' => $order + 1,
 				];
 			}
 		}
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$li_affectedRows = $table->updateAll(function (QueryExpression $expression) use ($la_orderData) {
-			$lo_fieldsetCase = $expression->case();
-			$lo_systemOrderCase = $expression->case();
+		$affectedRows = $table->updateAll(function (QueryExpression $expression) use ($orderData) {
+			$fieldsetCase = $expression->case();
+			$systemOrderCase = $expression->case();
 
-			foreach ($la_orderData as $la_data) {
-				$lo_fieldsetCase->when(['id' => $la_data['id']])->then($la_data['fieldset'], 'string');
-				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
+			foreach ($orderData as $data) {
+				$fieldsetCase->when(['id' => $data['id']])->then($data['fieldset'], 'string');
+				$systemOrderCase->when(['id' => $data['id']])->then($data['systemOrder'], 'integer');
 			}
 
 			return [
-				'fieldset' => $lo_fieldsetCase,
-				'system_order' => $lo_systemOrderCase,
+				'fieldset' => $fieldsetCase,
+				'system_order' => $systemOrderCase,
 			];
 		}, [
-			'id IN' => array_column($la_orderData, 'id'),
+			'id IN' => array_column($orderData, 'id'),
 		]);
 
 
-		return $li_affectedRows;
+		return $affectedRows;
 	}
 
 
@@ -326,44 +324,44 @@ class AttributesController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(Attribute $attribute): void {
-		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($attribute->scope);
-		$this->ensurePossibleFieldset($attribute, $la_availableFieldsets);
+		$availableFieldsets = $this->Attributes->getAvailableFieldsets($attribute->scope);
+		$this->ensurePossibleFieldset($attribute, $availableFieldsets);
 
 		if (in_array($attribute->scope, ['contents', 'widgets'])) {
 			$attribute->fieldset = '';
 		}
 
-		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function ($table) {
+		$pageRoles = array_keys(array_filter($this->attributeScopes, function ($table) {
 			return !is_string($table);
 		}));
 
-		$lb_isInputList = in_array($attribute->inputType, ['input_list', 'input_key_value_list']);
-		$lb_translatableDisabled = in_array($attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages'])) || $lb_isInputList;
-		$lb_requiredDisabled = in_array($attribute->scope, ['contents', 'widgets']) || $lb_isInputList;
-		$lb_columnSpanDisabled = in_array($attribute->scope, ['contents', 'widgets']);
+		$isInputList = in_array($attribute->inputType, ['input_list', 'input_key_value_list']);
+		$translatableDisabled = in_array($attribute->scope, array_merge($pageRoles, ['contents', 'menu_entries', 'pages'])) || $isInputList;
+		$requiredDisabled = in_array($attribute->scope, ['contents', 'widgets']) || $isInputList;
+		$columnSpanDisabled = in_array($attribute->scope, ['contents', 'widgets']);
 
-		if (!$lb_translatableDisabled) {
-			$lo_table = $this->fetchTable(Inflector::camelize($attribute->scope));
+		if (!$translatableDisabled) {
+			$table = $this->fetchTable(Inflector::camelize($attribute->scope));
 			// If table is a generic data one and the records are not translatable, disable the translatable option
-			if ($lo_table instanceof GenericDatatablesTable && !$lo_table->hasBehavior('Translate')) {
-				$lb_translatableDisabled = true;
+			if ($table instanceof GenericDatatablesTable && !$table->hasBehavior('Translate')) {
+				$translatableDisabled = true;
 			}
 		}
 
-		$la_columnSpans = $this->Attributes->getColumnSpans();
-		$la_columnSpans = array_map(function (ColumnInterface $column): string {
+		$columnSpans = $this->Attributes->getColumnSpans();
+		$columnSpans = array_map(function (ColumnInterface $column): string {
 			return $column->getLabel();
-		}, $la_columnSpans);
+		}, $columnSpans);
 
 		$this->set([
 			'attribute' => $attribute,
-			'availableFieldsets' => $la_availableFieldsets,
+			'availableFieldsets' => $availableFieldsets,
 			'availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
-			'pageRoles' => $la_pageRoles,
-			'translatableDisabled' => $lb_translatableDisabled,
-			'requiredDisabled' => $lb_requiredDisabled,
-			'columnSpans' => $la_columnSpans,
-			'columnSpanDisabled' => $lb_columnSpanDisabled,
+			'pageRoles' => $pageRoles,
+			'translatableDisabled' => $translatableDisabled,
+			'requiredDisabled' => $requiredDisabled,
+			'columnSpans' => $columnSpans,
+			'columnSpanDisabled' => $columnSpanDisabled,
 		]);
 	}
 }

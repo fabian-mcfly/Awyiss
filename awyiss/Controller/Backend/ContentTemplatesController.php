@@ -36,10 +36,10 @@ class ContentTemplatesController extends Controller {
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		/** @uses \Awyiss\Model\Table\ContentTemplatesTable::findWithUsages() */
-		$lo_query = $this->ContentTemplates->find('withUsages')->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->ContentTemplates->find('withUsages')->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -51,20 +51,20 @@ class ContentTemplatesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_contentTemplates = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$contentTemplates = $this->paginate($query);
 		}
 		else {
-			$lo_contentTemplates = $lo_query->all();
+			$contentTemplates = $query->all();
 		}
 
 		$this->set([
-			'contentTemplates' => $lo_contentTemplates,
+			'contentTemplates' => $contentTemplates,
 			'attributes' => $this->ContentTemplates->getAttributes(),
-			'paginated' => $lb_paginated,
+			'paginated' => $paginated,
 		]);
 	}
 
@@ -78,15 +78,15 @@ class ContentTemplatesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_contentTemplate = $this->ContentTemplates->newDefaultEntity([
+		$contentTemplate = $this->ContentTemplates->newDefaultEntity([
 			'mediaElementAssignments' => [],
 		]);
 
 		if ($this->request->is('post')) {
-			$this->save($lo_contentTemplate);
+			$this->save($contentTemplate);
 		}
 
-		$this->setViewVars($lo_contentTemplate);
+		$this->setViewVars($contentTemplate);
 	}
 
 
@@ -100,12 +100,12 @@ class ContentTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\ContentTemplate $lo_contentTemplate
+		 * @var \Awyiss\Model\Entity\ContentTemplate $contentTemplate
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain([
+		$contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain([
 			'ContentAreas',
 			'ContentTemplateElements' => [
 				'queryBuilder' => function (SelectQuery $query) {
@@ -115,17 +115,17 @@ class ContentTemplatesController extends Controller {
 			],
 		])->first();
 
-		if (!$lo_contentTemplate) {
+		if (!$contentTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_contentTemplate, 'edit');
+			$this->save($contentTemplate, 'edit');
 		}
 
-		$this->setViewVars($lo_contentTemplate);
+		$this->setViewVars($contentTemplate);
 	}
 
 
@@ -141,16 +141,16 @@ class ContentTemplatesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->ContentTemplates->findById($id)->first();
-		if (!$lo_contentTemplate) {
+		/** @var \Awyiss\Model\Entity\ContentTemplate $contentTemplate */
+		$contentTemplate = $this->ContentTemplates->findById($id)->first();
+		if (!$contentTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->ContentTemplates->delete($lo_contentTemplate)) {
+		if ($this->ContentTemplates->delete($contentTemplate)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -158,8 +158,8 @@ class ContentTemplatesController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_contentTemplate->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($contentTemplate->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -170,73 +170,72 @@ class ContentTemplatesController extends Controller {
 
 
 	/**
-	 * @param ContentTemplate $contentTemplate
+	 * @param \Awyiss\Model\Entity\ContentTemplate $contentTemplate
 	 * @param string $method
 	 * @return void
 	 */
 	protected function save(ContentTemplate $contentTemplate, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->ContentTemplates->hasAttributes()) {
-			$la_associated[] = $this->ContentTemplates->getAttributesTableName(true);
+			$associated[] = $this->ContentTemplates->getAttributesTableName(true);
 			$contentTemplate->setAccess('attributes', true);
 		}
 
-		$la_requestData = $this->request->getData() + ['content_template_elements' => []];
+		$requestData = $this->request->getData() + ['content_template_elements' => []];
 
-		if (!empty($la_requestData['content_template_elements'])) {
-			$la_requestData['content_template_elements'] = array_filter($la_requestData['content_template_elements'], function ($element) {
+		if (!empty($requestData['content_template_elements'])) {
+			$requestData['content_template_elements'] = array_filter($requestData['content_template_elements'], function ($element) {
 				return !empty($element['identifier']);
 			});
 
-			$la_requestData['content_template_elements'] = array_map(function ($element) {
-				static $li_systemOrder = 1;
+			$requestData['content_template_elements'] = array_map(function ($element) {
+				static $systemOrder = 1;
 
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$element['system_order'] = $li_systemOrder++;
+				$element['system_order'] = $systemOrder++;
 
 				return $element;
-			}, $la_requestData['content_template_elements']);
+			}, $requestData['content_template_elements']);
 
-			$lo_request = $this->request->withData('content_template_elements', $la_requestData['content_template_elements']);
-			$this->setRequest($lo_request);
+			$request = $this->request->withData('content_template_elements', $requestData['content_template_elements']);
+			$this->setRequest($request);
 
-			$la_associated[] = 'ContentTemplateElements';
+			$associated[] = 'ContentTemplateElements';
 		}
 
-		$this->ContentTemplates->patchEntity($contentTemplate, $la_requestData, [
-			'associated' => $la_associated,
+		$this->ContentTemplates->patchEntity($contentTemplate, $requestData, [
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		$contentTemplate->set('contentAreas', []);
-		if (!empty($la_requestData['content_areas'])) {
-			$la_contentAreas = collection(array_column($this->getPageTemplates(false), 'contentAreas'))->unfold();
-			$la_contentAreas = $la_contentAreas->indexBy('id')->toArray();
+		if (!empty($requestData['content_areas'])) {
+			$contentAreas = collection(array_column($this->getPageTemplates(false), 'contentAreas'))->unfold();
+			$contentAreas = $contentAreas->indexBy('id')->toArray();
 
-			$ls_throughTable = $this->ContentTemplates->ContentAreas->getThrough();
-			$lo_throughTable = $this->fetchTable($ls_throughTable);
+			$throughTable = $this->ContentTemplates->ContentAreas->getThrough();
+			$throughTable = $this->fetchTable($throughTable);
 
-			foreach ($la_requestData['content_areas'] as $la_contentAreaData) {
-				if (empty($la_contentAreaData['content_area_id'])) {
+			foreach ($requestData['content_areas'] as $contentAreaData) {
+				if (empty($contentAreaData['content_area_id'])) {
 					continue;
 				}
 
-				$lo_contentArea = clone $la_contentAreas[ $la_contentAreaData['content_area_id'] ];
-				unset($lo_contentArea->_joinData);
-				$lo_contentArea->_joinData = $lo_throughTable->newEntity([
-					'page_template_id' => $la_contentAreaData['page_template_id'],
+				$contentArea = clone $contentAreas[ $contentAreaData['content_area_id'] ];
+				unset($contentArea->_joinData);
+				$contentArea->_joinData = $throughTable->newEntity([
+					'page_template_id' => $contentAreaData['page_template_id'],
 				]);
 
-				$contentTemplate->contentAreas[] = $lo_contentArea;
+				$contentTemplate->contentAreas[] = $contentArea;
 			}
 		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->ContentTemplates->save($contentTemplate, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->ContentTemplates->save($contentTemplate, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -250,9 +249,9 @@ class ContentTemplatesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($contentTemplate->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($contentTemplate->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -264,24 +263,24 @@ class ContentTemplatesController extends Controller {
 	 * @return array
 	 */
 	protected function getPageTemplates(bool $returnGrouped = true): array {
-		static $lo_pageTemplates;
+		static $pageTemplates;
 
-		if (!isset($lo_pageTemplates)) {
-			$lo_pageTemplates = $this->fetchTable('PageTemplates')->find()->contain(['ContentAreas', 'PageRoles'])->all()->sortBy('pageRole.systemOrder', SORT_ASC);
+		if (!isset($pageTemplates)) {
+			$pageTemplates = $this->fetchTable('PageTemplates')->find()->contain(['ContentAreas', 'PageRoles'])->all()->sortBy('pageRole.systemOrder', SORT_ASC);
 		}
 
 		if ($returnGrouped) {
-			$lo_groupedPageTemplates = $lo_pageTemplates->filter(function (PageTemplate $entity) {
+			$groupedPageTemplates = $pageTemplates->filter(function (PageTemplate $entity) {
 				return !empty($entity->contentAreas);
 			})->groupBy(function (PageTemplate $entity) {
 				return $entity->pageRole->label;
 			});
 
-			return $lo_groupedPageTemplates->toArray();
+			return $groupedPageTemplates->toArray();
 		}
 
 
-		return $lo_pageTemplates->toArray();
+		return $pageTemplates->toArray();
 	}
 
 
@@ -290,66 +289,64 @@ class ContentTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(ContentTemplate $contentTemplate): void {
-		$lo_contentTemplate = $contentTemplate;
-
 		// Sort the available content elements by the order of the assigned content template elements
-		$la_availableContentElements = $this->ContentTemplates->getAvailableContentElements();
-		uksort($la_availableContentElements, function ($a, $b) use ($lo_contentTemplate) {
-			$la_keys = array_keys($lo_contentTemplate->contentTemplateElements ?? []);
-			$lx_aPos = array_search($a, $la_keys);
-			$lx_bPos = array_search($b, $la_keys);
+		$availableContentElements = $this->ContentTemplates->getAvailableContentElements();
+		uksort($availableContentElements, function ($a, $b) use ($contentTemplate) {
+			$keys = array_keys($contentTemplate->contentTemplateElements ?? []);
+			$aPos = array_search($a, $keys);
+			$bPos = array_search($b, $keys);
 
 			// If $a is not found in the keys, set its position to a high value to sort it at the end
-			if ($lx_aPos === false) {
-				$lx_aPos = PHP_INT_MAX;
+			if ($aPos === false) {
+				$aPos = PHP_INT_MAX;
 			}
 
 			// Do the same for $b
-			if ($lx_bPos === false) {
-				$lx_bPos = PHP_INT_MAX;
+			if ($bPos === false) {
+				$bPos = PHP_INT_MAX;
 			}
 
 			// Compare the positions
-			return $lx_aPos <=> $lx_bPos;
+			return $aPos <=> $bPos;
 		});
 
 		// Sort the available content attributes by the order of the assigned content template elements
-		$la_availableContentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
-		uasort($la_availableContentAttributes, function ($a, $b) use ($lo_contentTemplate) {
-			$la_keys = array_keys($lo_contentTemplate->contentTemplateElements ?? []);
-			$ls_aIdentifier = 'attributes.' . $a['identifier'];
-			$ls_bIdentifier = 'attributes.' . $b['identifier'];
+		$availableContentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
+		uasort($availableContentAttributes, function ($a, $b) use ($contentTemplate) {
+			$keys = array_keys($contentTemplate->contentTemplateElements ?? []);
+			$aIdentifier = 'attributes.' . $a['identifier'];
+			$bIdentifier = 'attributes.' . $b['identifier'];
 
-			$lx_aPos = array_search($ls_aIdentifier, $la_keys);
-			$lx_bPos = array_search($ls_bIdentifier, $la_keys);
+			$aPos = array_search($aIdentifier, $keys);
+			$bPos = array_search($bIdentifier, $keys);
 
 			// If $a is not found in the keys, set its position to a high value to sort it at the end
-			if ($lx_aPos === false) {
-				$lx_aPos = PHP_INT_MAX;
+			if ($aPos === false) {
+				$aPos = PHP_INT_MAX;
 			}
 
 			// Do the same for $b
-			if ($lx_bPos === false) {
-				$lx_bPos = PHP_INT_MAX;
+			if ($bPos === false) {
+				$bPos = PHP_INT_MAX;
 			}
 
 			// Compare the positions
-			return $lx_aPos <=> $lx_bPos;
+			return $aPos <=> $bPos;
 		});
-		$la_availableContentAttributes = array_column($la_availableContentAttributes, null, 'identifier');
+		$availableContentAttributes = array_column($availableContentAttributes, null, 'identifier');
 
-		$la_columnSpans = $this->ContentTemplates->ContentTemplateElements->getColumnSpans();
-		$la_columnSpans = array_map(function (ColumnInterface $column): string {
+		$columnSpans = $this->ContentTemplates->ContentTemplateElements->getColumnSpans();
+		$columnSpans = array_map(function (ColumnInterface $column): string {
 			return $column->getLabel();
-		}, $la_columnSpans);
+		}, $columnSpans);
 
 
 		$this->set([
 			'contentTemplate' => $contentTemplate,
-			'availableContentElements' => $la_availableContentElements,
-			'availableContentAttributes' => $la_availableContentAttributes,
+			'availableContentElements' => $availableContentElements,
+			'availableContentAttributes' => $availableContentAttributes,
 			'availableFieldsets' => $this->ContentTemplates->getAvailableFieldsets(),
-			'columnSpans' => $la_columnSpans,
+			'columnSpans' => $columnSpans,
 			'pageTemplates' => $this->getPageTemplates(),
 		]);
 	}

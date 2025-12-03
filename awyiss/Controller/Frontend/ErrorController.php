@@ -26,10 +26,9 @@ class ErrorController extends AppController {
 			return;
 		}
 
-		$lo_builder = $this->viewBuilder();
-
-		$lo_builder->setClassName('Frontend');
-		$lo_builder->setLayout('error');
-		$lo_builder->setTemplatePath('Frontend/Error');
+		$this->viewBuilder()
+			->setClassName('Frontend')
+			->setLayout('error')
+			->setTemplatePath('Frontend/Error');
 	}
 }

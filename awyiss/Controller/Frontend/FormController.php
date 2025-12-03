@@ -55,18 +55,19 @@ class FormController extends AppController {
 	 *
 	 * @return void
 	 * @throws \ReflectionException
+	 * @noinspection PhpUnused
 	 */
 	public function antiSpam(): void {
 		$this->viewBuilder()->setClassName('Frontend');
 
 		if ($this->request->is('post')) {
-			$ls_identifier = $this->request->getData('_form_identifier');
+			$identifier = $this->request->getData('_form_identifier');
 
-			if (!$ls_identifier) {
+			if (!$identifier) {
 				throw new InvalidArgumentException('No form identifier provided.');
 			}
 
-			$this->handleFormSubmission($ls_identifier);
+			$this->handleFormSubmission($identifier);
 		}
 		elseif ($this->request->getParam('formEntry')) {
 			$this->handleFormEntry($this->request->getParam('formEntry'));
@@ -81,59 +82,61 @@ class FormController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function handleFormEntry(string $formEntryHash): void {
-		$la_options = $this->getOptions();
+		$options = $this->getOptions();
 
-		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $ls_className */
-		$ls_className = App::className('FormRenderer', 'Utility/Form');
-		$lo_formRenderer = new $ls_className($this->createView('Frontend'));
+		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $className */
+		$className = App::className('FormRenderer', 'Utility/Form');
+		$formRenderer = new $className($this->createView('Frontend'));
 
-		$lo_formEntry = $lo_formRenderer->loadFormEntryFromHash($formEntryHash);
+		$formEntry = $formRenderer->loadFormEntryFromHash($formEntryHash);
 
-		if (!$lo_formEntry) {
+		if (!$formEntry) {
 			throw new NotFoundException('Form entry not found');
 		}
 
 		/**
 		 * @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted()
-		 * @var \Awyiss\Model\Entity\Page $lo_page
+		 * @var \Awyiss\Model\Entity\Page $page
 		 */
-		$lo_page = $this->getTableLocator()->get('Pages')->find('withDeleted', ['skipPageRoleCheck' => true])
-		->where(['id' => $lo_formEntry->pageId])->first();
+		$page = $this->fetchTable('Pages')
+			->find('withDeleted', ['skipPageRoleCheck' => true])
+			->where(['id' => $formEntry->pageId])
+			->first();
 
-		if (!$lo_page) {
-			$ls_languageShortcode = $this->request->getParam('lang');
+		if (!$page) {
+			$languageShortcode = $this->request->getParam('lang');
 
 			/**
-			 * @var \Awyiss\Model\Entity\Page $lo_page
+			 * @var \Awyiss\Model\Entity\Page $page
 			 * @uses \Awyiss\Model\Table::findActive()
 			 */
-			$lo_page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
+			$page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
 				'parent_id IS' => null,
-				'language_shortcode' => $ls_languageShortcode,
+				'language_shortcode' => $languageShortcode,
 			])->first();
 		}
 
-		$lo_formRenderer->initForm($lo_formEntry->formId, $this->request->getData(), $lo_page);
+		$formRenderer->initForm($formEntry->formId, $this->request->getData(), $page);
 
-		$lo_form = $lo_formRenderer->getForm();
+		$form = $formRenderer->getForm();
 
-		if (!$lo_form) {
+		if (!$form) {
 			return;
 		}
 
-		$lo_formRenderer->processFormEntry($lo_formEntry, $la_options);
+		$formRenderer->processFormEntry($formEntry, $options);
 
 		// Set the view variables
 		$this->set([
 			'captcha' => '',
-			'contents' => $lo_formRenderer->getFormBody($la_options),
-			'form' => $lo_form,
-			'formElements' => $lo_form->getFormElements(),
-			'formElementsChecksum' => $lo_form->getFormElementsChecksum(),
-			'formData' => $lo_form->getFormData(),
+			'contents' => $formRenderer->getFormBody($options),
+			'form' => $form,
+			'formElements' => $form->getFormElements(),
+			'formElementsChecksum' => $form->getFormElementsChecksum(),
+			'formData' => $form->getFormData(),
 			'formErrors' => [],
-			'sent' => $lo_formRenderer->isSent(),
-			'submitted' => $lo_form->isSubmitted(),
+			'sent' => $formRenderer->isSent(),
+			'submitted' => $form->isSubmitted(),
 		]);
 	}
 
@@ -145,73 +148,73 @@ class FormController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function handleFormSubmission(string $identifier): void {
-		$la_options = $this->getOptions();
+		$options = $this->getOptions();
 
-		$li_pageId = $this->request->getData('_page_id');
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		$lo_page = $this->getTableLocator()->get('Pages')->find('all', ['skipPageRoleCheck' => true])->where(['id' => $li_pageId])->first();
+		$pageId = $this->request->getData('_page_id');
+		/** @var \Awyiss\Model\Entity\Page $page */
+		$page = $this->getTableLocator()->get('Pages')->find('all', ['skipPageRoleCheck' => true])->where(['id' => $pageId])->first();
 
-		if (!$lo_page) {
-			$ls_languageShortcode = $this->request->getParam('lang');
+		if (!$page) {
+			$languageShortcode = $this->request->getParam('lang');
 
 			/**
-			 * @var \Awyiss\Model\Entity\Page $lo_page
+			 * @var \Awyiss\Model\Entity\Page $page
 			 * @uses \Awyiss\Model\Table::findActive()
 			 */
-			$lo_page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
+			$page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
 				'parent_id IS' => null,
-				'language_shortcode' => $ls_languageShortcode,
+				'language_shortcode' => $languageShortcode,
 			])->first();
 		}
 
-		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $ls_className */
-		$ls_className = App::className('FormRenderer', 'Utility/Form');
-		$lo_formRenderer = new $ls_className($this->createView('Frontend'));
-		$lo_formRenderer->initForm($identifier, $this->request->getData(), $lo_page);
+		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $className */
+		$className = App::className('FormRenderer', 'Utility/Form');
+		$formRenderer = new $className($this->createView('Frontend'));
+		$formRenderer->initForm($identifier, $this->request->getData(), $page);
 
-		$lo_form = $lo_formRenderer->getForm();
-		if (!$lo_form) {
+		$form = $formRenderer->getForm();
+		if (!$form) {
 			return;
 		}
 
 		// Validate the form using the form's and form options' validator
-		$lo_form->validate();
+		$form->validate();
 
-		if ($lo_form->isValid()) {
-			$lx_validateCaptcha = $this->validateCaptcha($identifier, $this->request->getData());
+		if ($form->isValid()) {
+			$validateCaptcha = $this->validateCaptcha($identifier, $this->request->getData());
 
-			if ($lx_validateCaptcha === true) {
-				$lo_formRenderer->sendAndRedirect();
-				$la_formErrors = $lo_form->getErrors();
+			if ($validateCaptcha === true) {
+				$formRenderer->sendAndRedirect();
+				$formErrors = $form->getErrors();
 			}
 			else {
-				$ls_captcha = $this->buildCaptcha($identifier, $lo_page->languageShortcode);
+				$captcha = $this->buildCaptcha($identifier, $page->languageShortcode);
 
-				if (is_string($lx_validateCaptcha)) {
-					$la_formErrors = [
+				if (is_string($validateCaptcha)) {
+					$formErrors = [
 						'_general' => [
-							'captcha' => $lx_validateCaptcha,
+							'captcha' => $validateCaptcha,
 						],
 					];
 				}
 			}
 		}
 		else {
-			$la_formErrors = $lo_form->getErrors();
+			$formErrors = $form->getErrors();
 		}
 
 		// Set the view variables
 		$this->set([
-			'captcha' => $ls_captcha ?? '',
-			'contents' => $lo_formRenderer->getFormBody($la_options),
-			'form' => $lo_formRenderer->getForm(),
-			'formElements' => $lo_form->getLinearFormElements(),
-			'formElementsChecksum' => $lo_formRenderer->getForm()->getFormElementsChecksum(),
-			'formData' => $lo_form->getFormData(),
-			'formErrors' => $la_formErrors ?? [],
-			'page' => $lo_page,
-			'sent' => $lo_formRenderer->isSent(),
-			'submitted' => $lo_form->isSubmitted(),
+			'captcha' => $captcha ?? '',
+			'contents' => $formRenderer->getFormBody($options),
+			'form' => $formRenderer->getForm(),
+			'formElements' => $form->getLinearFormElements(),
+			'formElementsChecksum' => $formRenderer->getForm()->getFormElementsChecksum(),
+			'formData' => $form->getFormData(),
+			'formErrors' => $formErrors ?? [],
+			'page' => $page,
+			'sent' => $formRenderer->isSent(),
+			'submitted' => $form->isSubmitted(),
 		]);
 	}
 
@@ -222,29 +225,29 @@ class FormController extends AppController {
 	 * @return string
 	 */
 	protected function buildCaptcha(string $identifier, string $languageShortcode): string {
-		$la_words = $this->getRandomWikipediaWords($languageShortcode);
+		$words = $this->getRandomWikipediaWords($languageShortcode);
 
-		if (!$la_words || count($la_words) < 6) {
+		if (!$words || count($words) < 6) {
 			// Generate 6 random words
-			$la_words = $this->generateRandomWords(6);
+			$words = $this->generateRandomWords(6);
 		}
 
-		$lo_session = $this->getRequest()->getSession();
-		$lo_session->write('awyiss_captcha.' . $identifier . '.words', $la_words);
+		$session = $this->getRequest()->getSession();
+		$session->write('awyiss_captcha.' . $identifier . '.words', $words);
 
-		$ls_ipAddress = $this->getRequest()->clientIp();
-		$li_crossSum = array_sum(array_map('intval', str_split($ls_ipAddress)));
-		$li_randomWord = ($li_crossSum + time() * mt_rand(0, 5)) % 6;
+		$ipAddress = $this->getRequest()->clientIp();
+		$crossSum = array_sum(array_map('intval', str_split($ipAddress)));
+		$randomWord = ($crossSum + time() * mt_rand(0, 5)) % 6;
 
-		$lo_session->write('awyiss_captcha.' . $identifier . '.word', $li_randomWord);
+		$session->write('awyiss_captcha.' . $identifier . '.word', $randomWord);
 
-		$ls_fieldName = md5(json_encode($la_words));
-		$lo_session->write('awyiss_captcha.' . $identifier . '.fieldName', $ls_fieldName);
+		$fieldName = md5(json_encode($words));
+		$session->write('awyiss_captcha.' . $identifier . '.fieldName', $fieldName);
 
 		return $this->View->element('form/form_captcha', [
-			'words' => $la_words,
-			'word' => $li_randomWord,
-			'fieldName' => $ls_fieldName,
+			'words' => $words,
+			'word' => $randomWord,
+			'fieldName' => $fieldName,
 		]);
 	}
 
@@ -255,22 +258,22 @@ class FormController extends AppController {
 	 * @return string|true|null
 	 */
 	protected function validateCaptcha(string $identifier, array $requestData): string|true|null {
-		$lo_session = $this->getRequest()->getSession();
-		$la_words = $lo_session->read('awyiss_captcha.' . $identifier . '.words');
-		$li_word = $lo_session->read('awyiss_captcha.' . $identifier . '.word');
-		$ls_fieldName = $lo_session->read('awyiss_captcha.' . $identifier . '.fieldName');
+		$session = $this->getRequest()->getSession();
+		$words = $session->read('awyiss_captcha.' . $identifier . '.words');
+		$word = $session->read('awyiss_captcha.' . $identifier . '.word');
+		$fieldName = $session->read('awyiss_captcha.' . $identifier . '.fieldName');
 
-		if (!isset($requestData[ $ls_fieldName ])) {
+		if (!isset($requestData[ $fieldName ])) {
 			return null;
 		}
 
-		$ls_input = $requestData[ $ls_fieldName ];
+		$input = $requestData[ $fieldName ];
 
-		if (empty($ls_input)) {
+		if (empty($input)) {
 			return false;
 		}
 
-		if ($ls_input !== $la_words[ $li_word ]) {
+		if ($input !== $words[ $word ]) {
 			return __d('form', 'error_valid_captcha');
 		}
 
@@ -322,15 +325,15 @@ class FormController extends AppController {
 	 * @return array
 	 */
 	protected function getOptions(): array {
-		$la_options = [
+		$options = [
 			'columnWidth' => 60.00,
 			'viewVars' => $this->View->getTwig()->getGlobals(),
 		];
 
-		$la_options['fullWidth'] = $this->findFullWidth($la_options);
-		$la_options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($la_options);
+		$options['fullWidth'] = $this->findFullWidth($options);
+		$options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($options);
 
-		return $la_options;
+		return $options;
 	}
 
 
@@ -339,13 +342,13 @@ class FormController extends AppController {
 	 * @return array
 	 */
 	protected function generateRandomWords(int $amount): array {
-		$la_words = [];
+		$words = [];
 
-		for ($li_i = 0; $li_i < $amount; $li_i++) {
-			$la_words[] = $this->readableRandomString(rand(6, 10));
+		for ($i = 0; $i < $amount; $i++) {
+			$words[] = $this->readableRandomString(rand(6, 10));
 		}
 
-		return $la_words;
+		return $words;
 	}
 
 
@@ -354,21 +357,21 @@ class FormController extends AppController {
 	 * @return string
 	 */
 	public function readableRandomString(int $length = 6): string {
-		static $la_vowels = ['a', 'e', 'i', 'o', 'u'];
-		static $la_consonants = [
+		static $vowels = ['a', 'e', 'i', 'o', 'u'];
+		static $consonants = [
 			'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
 			'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',
 		];
 
-		$ls_string = '';
+		$string = '';
 
-		$la_max = $length / 2;
-		for ($li_i = 1; $li_i <= $la_max; $li_i++) {
-			$ls_string .= $la_consonants[ rand(0, 19) ];
-			$ls_string .= $la_vowels[ rand(0, 4) ];
+		$max = $length / 2;
+		for ($i = 1; $i <= $max; $i++) {
+			$string .= $consonants[ rand(0, 19) ];
+			$string .= $vowels[ rand(0, 4) ];
 		}
 
-		return $ls_string;
+		return $string;
 	}
 
 
@@ -377,28 +380,27 @@ class FormController extends AppController {
 	 * @param int $limit
 	 * @param int $minLength
 	 * @return array
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function extractWordsFromText(string $html, int $limit, int $minLength = 6): array {
 		// Remove all style tags
-		$ls_html = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $html);
-		$ls_html = html_entity_decode(strip_tags($ls_html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+		$html = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', '', $html);
+		$html = html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-		$la_words = preg_split('/\s+/', $ls_html);
+		$words = preg_split('/\s+/', $html);
 
 		// Filter out all words that are too short or have non-alphabetic characters
-		$la_words = array_filter($la_words, function (string $word) use ($minLength): bool {
+		$words = array_filter($words, function (string $word) use ($minLength): bool {
 			return strlen($word) >= $minLength && ctype_alpha($word);
 		});
 
 		// Remove duplicates
-		$la_words = array_unique($la_words);
+		$words = array_unique($words);
 
 		// Shuffle the words to get a random selection
-		shuffle($la_words);
+		shuffle($words);
 
 		// Limit the number of words to the specified limit
-		return array_slice($la_words, 0, $limit);
+		return array_slice($words, 0, $limit);
 	}
 
 
@@ -407,34 +409,34 @@ class FormController extends AppController {
 	 * @return array
 	 */
 	protected function getRandomWikipediaWords(string $languageShortcode): array {
-		$lo_client = new Client([
+		$client = new Client([
 			'timeout' => 30,
 			'http_errors' => false,
 		]);
 
-		$lo_randomResponse = $lo_client->get('https://' . $languageShortcode . '.wikipedia.org/w/api.php', [
+		$randomResponse = $client->get('https://' . $languageShortcode . '.wikipedia.org/w/api.php', [
 			'action' => 'query',
 			'list' => 'random',
 			'rnnamespace' => 0,
 			'format' => 'json',
 		]);
-		$la_randomData = $lo_randomResponse->getJson();
+		$randomData = $randomResponse->getJson();
 
-		$ls_title = $la_randomData['query']['random'][0]['title'] ?? null;
+		$title = $randomData['query']['random'][0]['title'] ?? null;
 
-		if (!$ls_title) {
+		if (!$title) {
 			return [];
 		}
 
 		// Step 2: Get the article content
-		$lo_articleResponse = $lo_client->get('https://' . $languageShortcode . '.wikipedia.org/w/api.php', [
+		$articleResponse = $client->get('https://' . $languageShortcode . '.wikipedia.org/w/api.php', [
 			'action' => 'parse',
-			'page' => $ls_title,
+			'page' => $title,
 			'format' => 'json',
 			'prop' => 'text',
 		]);
-		$la_parseData = $lo_articleResponse->getJson();
+		$parseData = $articleResponse->getJson();
 
-		return $this->extractWordsFromText($la_parseData['parse']['text']['*'] ?? '', 6);
+		return $this->extractWordsFromText($parseData['parse']['text']['*'] ?? '', 6);
 	}
 }

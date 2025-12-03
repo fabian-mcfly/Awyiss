@@ -25,10 +25,10 @@ class LanguagesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Languages->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->Languages->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -40,21 +40,21 @@ class LanguagesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_languages = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$languages = $this->paginate($query);
 		}
 		else {
-			$lo_languages = $lo_query->all();
-			$lo_languagesByRealm = $lo_languages->groupBy('realm');
+			$languages = $query->all();
+			$languagesByRealm = $languages->groupBy('realm');
 		}
 
 		$this->set([
-			'languages' => $lo_languages,
-			'languagesByRealm' => $lo_languagesByRealm ?? null,
-			'paginated' => $lb_paginated,
+			'languages' => $languages,
+			'languagesByRealm' => $languagesByRealm ?? null,
+			'paginated' => $paginated,
 			'realms' => Awyiss::getRealms(),
 			'attributes' => $this->Languages->getAttributes(),
 		]);
@@ -70,14 +70,14 @@ class LanguagesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_language = $this->Languages->newDefaultEntity();
+		$language = $this->Languages->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_language);
+			$this->save($language);
 		}
 
 		$this->set([
-			'language' => $lo_language,
+			'language' => $language,
 			'realms' => Awyiss::getRealms(),
 		]);
 	}
@@ -93,13 +93,13 @@ class LanguagesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\Language $lo_language
+		 * @var \Awyiss\Model\Entity\Language $language
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_language = $this->Languages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_language) {
+		$language = $this->Languages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!$language) {
 			$this->Flash->error(__('record_not_found'));
 
 
@@ -107,11 +107,11 @@ class LanguagesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_language, 'edit');
+			$this->save($language, 'edit');
 		}
 
 		$this->set([
-			'language' => $lo_language,
+			'language' => $language,
 			'realms' => Awyiss::getRealms(),
 		]);
 	}
@@ -129,16 +129,16 @@ class LanguagesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Language $lo_language */
-		$lo_language = $this->Languages->findById($id)->first();
-		if (!$lo_language) {
+		/** @var \Awyiss\Model\Entity\Language $language */
+		$language = $this->Languages->findById($id)->first();
+		if (!$language) {
 			$this->Flash->error(__('record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->Languages->delete($lo_language)) {
+		if ($this->Languages->delete($language)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -146,8 +146,8 @@ class LanguagesController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_language->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($language->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -163,23 +163,23 @@ class LanguagesController extends Controller {
 	 * @return void
 	 */
 	protected function save(Language $language, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->Languages->hasAttributes()) {
-			$la_associated[] = $this->Languages->getAttributesTableName(true);
+			$associated[] = $this->Languages->getAttributesTableName(true);
 			$language->setAccess('attributes', true);
 		}
 
 		$this->Languages->patchEntity($language, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->Languages->save($language, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->Languages->save($language, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -193,9 +193,9 @@ class LanguagesController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($language->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($language->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}

@@ -33,10 +33,10 @@ class UrlsNotFoundController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->UrlsNotFound->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->UrlsNotFound->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -48,47 +48,47 @@ class UrlsNotFoundController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_pagesTable = $this->fetchTable('Pages');
+		$pagesTable = $this->fetchTable('Pages');
 		/**
 		 * @uses \Awyiss\Model\Table::findActive()
 		 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 		 */
-		$lo_pagesQuery = $lo_pagesTable->find('active', skipPageRoleCheck: true)
-		->disableAutoFields()
-		->find('published')
-		->select(function ($query) {
-			return ['slug' => $query->func()->concat(['/', 'language_shortcode' => 'identifier', '/', 'slug' => 'identifier'])];
-		});
+		$pagesQuery = $pagesTable->find('active', skipPageRoleCheck: true)
+			->disableAutoFields()
+			->find('published')
+			->select(function ($query) {
+				return ['slug' => $query->func()->concat(['/', 'language_shortcode' => 'identifier', '/', 'slug' => 'identifier'])];
+			});
 
-		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
-		$lo_urlHistoryQuery = $lo_urlHistoryTable->find()
-		->disableAutoFields()
-		->select(function ($query) {
-			return ['url' => $query->func()->concat(['/', 'url' => 'identifier'])];
-		});
+		$urlHistoryTable = $this->fetchTable('UrlHistory');
+		$urlHistoryQuery = $urlHistoryTable->find()
+			->disableAutoFields()
+			->select(function ($query) {
+				return ['url' => $query->func()->concat(['/', 'url' => 'identifier'])];
+			});
 
-		$lo_query = $this->getOverviewQuery()
-		->where(function ($exp) use ($lo_pagesQuery, $lo_urlHistoryQuery) {
-			return $exp->notIn('url', $lo_pagesQuery)->notIn('url', $lo_urlHistoryQuery);
-		});
+		$query = $this->getOverviewQuery()
+			->where(function ($exp) use ($pagesQuery, $urlHistoryQuery) {
+				return $exp->notIn('url', $pagesQuery)->notIn('url', $urlHistoryQuery);
+			});
 
-		$lb_grouped = $this->request->getParam('grouped', false) === 'true';
-		if ($lb_grouped) {
-			$lo_query->select([
-				'occurrences' => $lo_query->func()->count('*'),
-				'first_occurrence' => $lo_query->func()->min('created_on', ['datetime']),
-				'last_occurrence' => $lo_query->func()->max('created_on', ['datetime']),
+		$grouped = $this->request->getParam('grouped', false) === 'true';
+		if ($grouped) {
+			$query->select([
+				'occurrences' => $query->func()->count('*'),
+				'first_occurrence' => $query->func()->min('created_on', ['datetime']),
+				'last_occurrence' => $query->func()->max('created_on', ['datetime']),
 			])
 			->enableAutoFields()
 			->groupBy('url');
 
 			array_unshift($this->paginate['order'], 'occurrences');
 
-			/** @var \Awyiss\Model\Entity\UrlsNotFound $ls_entityClass */
-			$ls_entityClass = $this->UrlsNotFound->getEntityClass();
-			$ls_entityClass::addFieldMapping('first_occurrence', 'firstOccurrence');
-			$ls_entityClass::addFieldMapping('last_occurrence', 'lastOccurrence');
-			$lo_urlsNotFound = $this->paginate($lo_query, [
+			/** @var \Awyiss\Model\Entity\UrlsNotFound $entityClass */
+			$entityClass = $this->UrlsNotFound->getEntityClass();
+			$entityClass::addFieldMapping('first_occurrence', 'firstOccurrence');
+			$entityClass::addFieldMapping('last_occurrence', 'lastOccurrence');
+			$urlsNotFound = $this->paginate($query, [
 				'order' => [
 					'occurrences' => 'desc',
 				],
@@ -100,13 +100,13 @@ class UrlsNotFoundController extends Controller {
 			]);
 		}
 		else {
-			$lo_urlsNotFound = $this->paginate($lo_query);
+			$urlsNotFound = $this->paginate($query);
 		}
 
 		$this->set([
-			'urlsNotFound' => $lo_urlsNotFound,
+			'urlsNotFound' => $urlsNotFound,
 			'attributes' => $this->UrlsNotFound->getAttributes(),
-			'grouped' => $lb_grouped,
+			'grouped' => $grouped,
 		]);
 	}
 
@@ -123,15 +123,15 @@ class UrlsNotFoundController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Awyiss\Model\Entity\UrlsNotFound $lo_urlsNotFound */
-		$lo_urlsNotFound = $this->UrlsNotFound->findById($id)->first();
-		if (!$lo_urlsNotFound) {
+		/** @var \Awyiss\Model\Entity\UrlsNotFound $urlsNotFound */
+		$urlsNotFound = $this->UrlsNotFound->findById($id)->first();
+		if (!$urlsNotFound) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->UrlsNotFound->delete($lo_urlsNotFound)) {
+		if ($this->UrlsNotFound->delete($urlsNotFound)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -140,8 +140,8 @@ class UrlsNotFoundController extends Controller {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
 
-				foreach ($lo_urlsNotFound->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($urlsNotFound->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}

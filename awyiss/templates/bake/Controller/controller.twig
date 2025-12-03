@@ -69,10 +69,10 @@ class {{ name }}Controller extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->{{ name }}->find()->where($this->getOverviewWhere());
-		$this->Search->filterQuery($lo_query);
+		$query = $this->{{ name }}->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 {% if actions|length %}{{ "\n" }}{% endif %}
 {%- for action in actions %}

@@ -109,11 +109,11 @@ class AuthorizationComponent extends Component {
 	 * @noinspection PhpUnused
 	 */
 	public function withAdditionalData(array $data): static {
-		$lo_new = clone $this;
-		$lo_new->setConfig('additionalData', $data);
+		$new = clone $this;
+		$new->setConfig('additionalData', $data);
 
 
-		return $lo_new;
+		return $new;
 	}
 
 
@@ -123,15 +123,15 @@ class AuthorizationComponent extends Component {
 	 * @return \Awyiss\Authorization\IdentityPermissionsInterface
 	 */
 	public function getIdentity(): IdentityPermissionsInterface {
-		$lo_identity = $this->getConfig('identity');
+		$identity = $this->getConfig('identity');
 
-		if (!$lo_identity) {
-			$lo_identity = $this->_getIdentity();
-			$this->setConfig('identity', $lo_identity);
+		if (!$identity) {
+			$identity = $this->_getIdentity();
+			$this->setConfig('identity', $identity);
 		}
 
 
-		return $lo_identity;
+		return $identity;
 	}
 
 
@@ -163,11 +163,11 @@ class AuthorizationComponent extends Component {
 	public function withIdentity(IdentityPermissionsInterface $identity): static {
 		$this->resetIdentity();
 
-		$lo_new = clone $this;
-		$lo_new->setConfig('identity', $identity);
+		$new = clone $this;
+		$new->setConfig('identity', $identity);
 
 
-		return $lo_new;
+		return $new;
 	}
 
 
@@ -195,16 +195,16 @@ class AuthorizationComponent extends Component {
 	 * @return string
 	 */
 	public function getScope(): string {
-		$ls_scope = $this->getConfig('scope');
+		$scope = $this->getConfig('scope');
 
-		if (!$ls_scope) {
-			$ls_scope = $this->defaultScope ?? Inflector::underscore($this->getController()->getName());
+		if (!$scope) {
+			$scope = $this->defaultScope ?? Inflector::underscore($this->getController()->getName());
 
-			$this->setConfig('scope', $ls_scope);
+			$this->setConfig('scope', $scope);
 		}
 
 
-		return $ls_scope;
+		return $scope;
 	}
 
 
@@ -215,11 +215,11 @@ class AuthorizationComponent extends Component {
 	 * @return $this
 	 */
 	public function setScope(string $scope): static {
-		$ls_scope = Inflector::underscore($scope);
-		$ls_scope = Inflector::singularize($ls_scope);
-		$ls_scope = Inflector::pluralize($ls_scope);
+		$scope = Inflector::underscore($scope);
+		$scope = Inflector::singularize($scope);
+		$scope = Inflector::pluralize($scope);
 
-		$this->setConfig('scope', $ls_scope);
+		$this->setConfig('scope', $scope);
 
 
 		return $this;
@@ -240,20 +240,20 @@ class AuthorizationComponent extends Component {
 		$this->resetScope();
 
 		//Remember the defaultScope
-		$ls_defaultScope = $this->defaultScope;
+		$defaultScope = $this->defaultScope;
 
 		//Set defaultScope to null since we can't do this after cloning the component
 		$this->defaultScope = null;
 
 		//Clone the current instance and set the scope to the provided value
-		$lo_new = clone $this;
-		$lo_new->setScope($scope);
+		$new = clone $this;
+		$new->setScope($scope);
 
 		//Reset the defaultScope for the current instance
-		$this->defaultScope = $ls_defaultScope;
+		$this->defaultScope = $defaultScope;
 
 
-		return $lo_new;
+		return $new;
 	}
 
 
@@ -314,15 +314,14 @@ class AuthorizationComponent extends Component {
 	 *
 	 * @param array|string ...$identifier
 	 * @return void
-	 * @throws ForbiddenException
-	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
+	 * @throws \Cake\Http\Exception\ForbiddenException|\Exception
 	 */
 	public function ensure(string|array ...$identifier): void {
-		$ls_scope = $this->getScope();
+		$scope = $this->getScope();
 
-		$ls_isAccessible = $this->scopeIsAccessible($ls_scope, [], ...$identifier);
-		if (!$ls_isAccessible) {
+		$isAccessible = $this->scopeIsAccessible($scope, [], ...$identifier);
+		if (!$isAccessible) {
 			throw new ForbiddenException();
 		}
 	}
@@ -358,13 +357,13 @@ class AuthorizationComponent extends Component {
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
 	public function scopeIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): bool {
-		//Get the currently assigned permissions from the identity object, resp. their permissions collection
-		$lo_identity = $this->getIdentity();
+		// Get the currently assigned permissions from the identity object, resp. their permissions collection
+		$identity = $this->getIdentity();
 
-		$la_additionalData = $additionalData ?: $this->getConfig('additionalData');
+		$additionalData = $additionalData ?: $this->getConfig('additionalData');
 
 
-		return $lo_identity->scopeIsAccessible($scope, $la_additionalData, ...$identifier);
+		return $identity->scopeIsAccessible($scope, $additionalData, ...$identifier);
 	}
 
 
@@ -372,13 +371,13 @@ class AuthorizationComponent extends Component {
 	 * Retrieve the IdentityInterface from the request.
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
-		/** @var IdentityPermissionsInterface $lo_identity */
-		$lo_identity = $this->getController()->getRequest()->getAttribute('identity');
-		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
-			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
+		/** @var IdentityPermissionsInterface $identity */
+		$identity = $this->getController()->getRequest()->getAttribute('identity');
+		if (!($identity instanceof IdentityPermissionsInterface)) {
+			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
 		}
 
 
-		return $lo_identity;
+		return $identity;
 	}
 }

@@ -12,23 +12,23 @@
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \{{ namespace }}\Model\Entity\{{ entityClassName }} $lo_{{ singularName }}
+		 * @var \{{ namespace }}\Model\Entity\{{ entityClassName }} ${{ singularName }}
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (!$lo_{{ singularName }}) {
+		${{ singularName }} = $this->{{ currentModelName }}->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (!${{ singularName }}) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_{{ singularName }}, 'edit');
+			$this->save(${{ singularName }}, 'edit');
 		}
 
 		$this->set([
-			'{{ singularName }}' => $lo_{{ singularName }},
+			'{{ singularName }}' => ${{ singularName }},
 		]);
 	}

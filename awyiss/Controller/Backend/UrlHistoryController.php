@@ -42,10 +42,10 @@ class UrlHistoryController extends Controller {
 	 * @inheritDoc
 	 */
 	public function initialize(): void {
-		$la_scopes = $this->UrlHistory->getAvailableScopes();
-		$this->paginate['fieldTranslations']['scope'] = array_combine($la_scopes, array_map(function ($scope) {
+		$scopes = $this->UrlHistory->getAvailableScopes();
+		$this->paginate['fieldTranslations']['scope'] = array_combine($scopes, array_map(function ($scope) {
 			return Text::slug(__('scope_' . $scope));
-		}, $la_scopes));
+		}, $scopes));
 
 		parent::initialize();
 	}
@@ -56,14 +56,14 @@ class UrlHistoryController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->UrlHistory->find()->contain([
+		$query = $this->UrlHistory->find()->contain([
 			'Media',
 			'Pages',
 		]);
 
-		$this->Search->filterQuery($lo_query);
+		$this->Search->filterQuery($query);
 
-		return $lo_query;
+		return $query;
 	}
 
 
@@ -75,19 +75,19 @@ class UrlHistoryController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$query = $this->getOverviewQuery();
 
-		$lb_paginated = $this->paginate['enabled'];
-		if ($lb_paginated) {
-			$lo_urlHistory = $this->paginate($lo_query);
+		$paginated = $this->paginate['enabled'];
+		if ($paginated) {
+			$urlHistory = $this->paginate($query);
 		}
 		else {
-			$lo_urlHistory = $lo_query->all();
+			$urlHistory = $query->all();
 		}
 
 		$this->set([
-			'urlHistory' => $lo_urlHistory,
-			'paginated' => $lb_paginated,
+			'urlHistory' => $urlHistory,
+			'paginated' => $paginated,
 		]);
 	}
 
@@ -101,13 +101,13 @@ class UrlHistoryController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_urlHistory = $this->UrlHistory->newDefaultEntity();
+		$urlHistory = $this->UrlHistory->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_urlHistory);
+			$this->save($urlHistory);
 		}
 
-		$this->setViewVars($lo_urlHistory);
+		$this->setViewVars($urlHistory);
 	}
 
 
@@ -122,23 +122,23 @@ class UrlHistoryController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/**
-		 * @var \Awyiss\Model\Entity\UrlHistory $lo_urlHistory
+		 * @var \Awyiss\Model\Entity\UrlHistory $urlHistory
 		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
 		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$lo_urlHistory = $this->UrlHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (! $lo_urlHistory) {
+		$urlHistory = $this->UrlHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (! $urlHistory) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_urlHistory, 'edit');
+			$this->save($urlHistory, 'edit');
 		}
 
-		$this->setViewVars($lo_urlHistory);
+		$this->setViewVars($urlHistory);
 	}
 
 
@@ -154,15 +154,15 @@ class UrlHistoryController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Awyiss\Model\Entity\UrlHistory $lo_urlHistory */
-		$lo_urlHistory = $this->UrlHistory->findById($id)->first();
-		if (! $lo_urlHistory) {
+		/** @var \Awyiss\Model\Entity\UrlHistory $urlHistory */
+		$urlHistory = $this->UrlHistory->findById($id)->first();
+		if (! $urlHistory) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->UrlHistory->delete($lo_urlHistory)) {
+		if ($this->UrlHistory->delete($urlHistory)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -170,8 +170,8 @@ class UrlHistoryController extends Controller {
 		else {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->error(__('delete_failed'));
-				foreach ($lo_urlHistory->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				foreach ($urlHistory->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -188,23 +188,23 @@ class UrlHistoryController extends Controller {
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
 	protected function save(UrlHistory $urlHistory, string $method = 'add'): void {
-		$la_associated = [];
+		$associated = [];
 		if ($this->UrlHistory->hasAttributes()) {
-			$la_associated[] = $this->UrlHistory->getAttributesTableName(true);
+			$associated[] = $this->UrlHistory->getAttributesTableName(true);
 			$urlHistory->setAccess('attributes', true);
 		}
 
 		$this->UrlHistory->patchEntity($urlHistory, $this->request->getData(), [
-			'associated' => $la_associated,
+			'associated' => $associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+			$saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->UrlHistory->save($urlHistory, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->UrlHistory->save($urlHistory, ['asCopy' => $saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
+					$this->Flash->success(__(($saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit_type') == 'submit_close') {
@@ -218,9 +218,9 @@ class UrlHistoryController extends Controller {
 			}
 
 			if (!$this->request->is('ajax')) {
-				$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-				foreach ($urlHistory->getError('_general') as $ls_error) {
-					$this->Flash->error($ls_error);
+				$this->Flash->error(__(($saveAsCopy ? 'add' : $method) . '_failed'));
+				foreach ($urlHistory->getError('_general') as $error) {
+					$this->Flash->error($error);
 				}
 			}
 		}
@@ -236,13 +236,13 @@ class UrlHistoryController extends Controller {
 	 */
 	protected function getThreadedPages(): CollectionInterface {
 		if (!isset($this->threadedPages)) {
-			/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
-			$lo_pagesTable = $this->fetchTable('Pages');
+			/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
+			$pagesTable = $this->fetchTable('Pages');
 
 			/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
-			$lo_query = $lo_pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true);
+			$query = $pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true);
 
-			$this->threadedPages = $lo_pagesTable->listNested($lo_query);
+			$this->threadedPages = $pagesTable->listNested($query);
 		}
 
 
@@ -256,25 +256,25 @@ class UrlHistoryController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getDeletedPages(): CollectionInterface {
-		$lo_historyPageIdQuery = $this->UrlHistory->find()->select('foreign_key')->where(['scope' => 'pages']);
-		$lo_pagesSlugQuery = $this->UrlHistory->find('all')->disableAutoFields()->select('url');
+		$historyPageIdQuery = $this->UrlHistory->find()->select('foreign_key')->where(['scope' => 'pages']);
+		$pagesSlugQuery = $this->UrlHistory->find('all')->disableAutoFields()->select('url');
 
-		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
-		$lo_pagesTable = $this->fetchTable('Pages');
+		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
+		$pagesTable = $this->fetchTable('Pages');
 
 		/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findDeleted() */
-		$lo_query = $lo_pagesTable->find('deleted', skipPageRoleCheck: true);
+		$query = $pagesTable->find('deleted', skipPageRoleCheck: true);
 
-		$lo_pages = $lo_query->where(function (QueryExpression $exp) use ($lo_historyPageIdQuery, $lo_pagesSlugQuery, $lo_query) {
-			return $exp->notIn('id', $lo_historyPageIdQuery)
+		$pages = $query->where(function (QueryExpression $exp) use ($historyPageIdQuery, $pagesSlugQuery, $query) {
+			return $exp->notIn('id', $historyPageIdQuery)
 			->notIn(
-				$lo_query->func()->concat(['language_shortcode' => 'identifier', '/', 'slug' => 'identifier']),
-				$lo_pagesSlugQuery,
+				$query->func()->concat(['language_shortcode' => 'identifier', '/', 'slug' => 'identifier']),
+				$pagesSlugQuery,
 				'string'
 			);
 		})->orderBy('title')->all();
 
-		return $lo_pages->each(function (Page $page) {
+		return $pages->each(function (Page $page) {
 			$page->set('title', $page->label . ' (' . $page->languageShortcode . '/' . $page->slug . ')');
 		});
 	}
@@ -285,13 +285,13 @@ class UrlHistoryController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(UrlHistory $urlHistory): void {
-		$lo_deletedPages = $this->getDeletedPages();
+		$deletedPages = $this->getDeletedPages();
 
-		$lo_threadedPages = $this->getThreadedPages();
+		$threadedPages = $this->getThreadedPages();
 
-		$la_scopes = [];
-		foreach ($this->UrlHistory->getAvailableScopes() as $ls_scope) {
-			$la_scopes[ $ls_scope ] = __('scope_' . $ls_scope);
+		$scopes = [];
+		foreach ($this->UrlHistory->getAvailableScopes() as $scope) {
+			$scopes[ $scope ] = __('scope_' . $scope);
 		}
 
 		if ($urlHistory->scope === 'media' && !$this->request->getData('foreign_key')) {
@@ -300,9 +300,9 @@ class UrlHistoryController extends Controller {
 
 		$this->set([
 			'urlHistory' => $urlHistory,
-			'deletedPages' => $lo_deletedPages,
-			'scopes' => $la_scopes,
-			'threadedPages' => $lo_threadedPages->toList(),
+			'deletedPages' => $deletedPages,
+			'scopes' => $scopes,
+			'threadedPages' => $threadedPages->toList(),
 		]);
 	}
 }
