@@ -49,7 +49,6 @@ class RoutingMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
@@ -67,7 +66,6 @@ class RoutingMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\RoutingMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessSetsParamsAsQueryParams(): void {
 		$this->get('/zu/users/overview/foo:bar/baz:qux');

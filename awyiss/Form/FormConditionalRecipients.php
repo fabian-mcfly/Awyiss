@@ -89,9 +89,9 @@ class FormConditionalRecipients {
 	 * @return string|null
 	 */
 	public function getFirstMatchingRecipient(array $conditionalRecipients, array $requestData): ?string {
-		foreach ($conditionalRecipients as $lo_conditionalRecipient) {
-			if ($this->ruleMatches($lo_conditionalRecipient, $requestData)) {
-				return $lo_conditionalRecipient->recipient;
+		foreach ($conditionalRecipients as $conditionalRecipient) {
+			if ($this->ruleMatches($conditionalRecipient, $requestData)) {
+				return $conditionalRecipient->recipient;
 			}
 		}
 
@@ -105,11 +105,11 @@ class FormConditionalRecipients {
 	 * @return string|null
 	 */
 	public function getLastMatchingRecipient(array $conditionalRecipients, array $requestData): ?string {
-		$la_conditionalRecipients = array_reverse($conditionalRecipients);
+		$conditionalRecipients = array_reverse($conditionalRecipients);
 
-		foreach ($la_conditionalRecipients as $lo_conditionalRecipient) {
-			if ($this->ruleMatches($lo_conditionalRecipient, $requestData)) {
-				return $lo_conditionalRecipient->recipient;
+		foreach ($conditionalRecipients as $conditionalRecipient) {
+			if ($this->ruleMatches($conditionalRecipient, $requestData)) {
+				return $conditionalRecipient->recipient;
 			}
 		}
 
@@ -123,17 +123,17 @@ class FormConditionalRecipients {
 	 * @return string|null
 	 */
 	public function getAllMatchingRecipient(array $conditionalRecipients, array $requestData): ?string {
-		$ls_recipient = '';
+		$recipient = '';
 
-		foreach ($conditionalRecipients as $lo_conditionalRecipient) {
-			if (!$this->ruleMatches($lo_conditionalRecipient, $requestData)) {
+		foreach ($conditionalRecipients as $conditionalRecipient) {
+			if (!$this->ruleMatches($conditionalRecipient, $requestData)) {
 				return null;
 			}
 
-			$ls_recipient = $lo_conditionalRecipient->recipient;
+			$recipient = $conditionalRecipient->recipient;
 		}
 
-		return $ls_recipient;
+		return $recipient;
 	}
 
 
@@ -144,38 +144,38 @@ class FormConditionalRecipients {
 	 */
 	protected function ruleMatches(FormConditionalRecipient $conditionalRecipient, array $requestData): bool {
 		try {
-			$lx_value = $this->getFieldValue($conditionalRecipient->type, $conditionalRecipient->field, $requestData);
+			$value = $this->getFieldValue($conditionalRecipient->type, $conditionalRecipient->field, $requestData);
 		}
 		catch (OutOfBoundsException) {
 			return false;
 		}
 
-		[$lx_compareValue, $lx_value] = $this->alignTypes($conditionalRecipient, $lx_value);
+		[$compareValue, $value] = $this->alignTypes($conditionalRecipient, $value);
 
 		return match ($conditionalRecipient->operator->value) {
-			'=' => $this->compareEqualTo($lx_value, $lx_compareValue),
-			'!=' => $this->compareEqualTo($lx_value, $lx_compareValue, true),
-			'<' => $this->compareGreaterThan($lx_value, $lx_compareValue, false, true),
-			'<=' => $this->compareGreaterThan($lx_value, $lx_compareValue, true, true),
-			'>' => $this->compareGreaterThan($lx_value, $lx_compareValue),
-			'>=' => $this->compareGreaterThan($lx_value, $lx_compareValue, true),
-			'between' => $this->compareBetween($lx_value, $lx_compareValue),
-			'not_between' => $this->compareBetween($lx_value, $lx_compareValue, true),
-			'length_equal' => $this->compareLengthEqualTo($lx_value, $lx_compareValue),
-			'length_not_equal' => $this->compareLengthEqualTo($lx_value, $lx_compareValue, true),
-			'shorter_than' => $this->compareLongerThan($lx_value, $lx_compareValue, false, true),
-			'shorter_than_or_equal' => $this->compareLongerThan($lx_value, $lx_compareValue, true, true),
-			'longer_than' => $this->compareLongerThan($lx_value, $lx_compareValue),
-			'longer_than_or_equal' => $this->compareLongerThan($lx_value, $lx_compareValue, true),
-			'in' => $this->compareIn($lx_value, $lx_compareValue),
-			'not_in' => $this->compareIn($lx_value, $lx_compareValue, true),
-			'contains' => $this->compareContains($lx_value, $lx_compareValue),
-			'not_contains' => $this->compareContains($lx_value, $lx_compareValue, true),
-			'starts_with' => $this->compareStartsWith($lx_value, $lx_compareValue),
-			'not_starts_with' => $this->compareStartsWith($lx_value, $lx_compareValue, true),
-			'ends_with' => $this->compareEndsWith($lx_value, $lx_compareValue),
-			'not_ends_with' => $this->compareEndsWith($lx_value, $lx_compareValue, true),
-			'regexp' => $this->compareRegexp($lx_value, $lx_compareValue),
+			'=' => $this->compareEqualTo($value, $compareValue),
+			'!=' => $this->compareEqualTo($value, $compareValue, true),
+			'<' => $this->compareGreaterThan($value, $compareValue, false, true),
+			'<=' => $this->compareGreaterThan($value, $compareValue, true, true),
+			'>' => $this->compareGreaterThan($value, $compareValue),
+			'>=' => $this->compareGreaterThan($value, $compareValue, true),
+			'between' => $this->compareBetween($value, $compareValue),
+			'not_between' => $this->compareBetween($value, $compareValue, true),
+			'length_equal' => $this->compareLengthEqualTo($value, $compareValue),
+			'length_not_equal' => $this->compareLengthEqualTo($value, $compareValue, true),
+			'shorter_than' => $this->compareLongerThan($value, $compareValue, false, true),
+			'shorter_than_or_equal' => $this->compareLongerThan($value, $compareValue, true, true),
+			'longer_than' => $this->compareLongerThan($value, $compareValue),
+			'longer_than_or_equal' => $this->compareLongerThan($value, $compareValue, true),
+			'in' => $this->compareIn($value, $compareValue),
+			'not_in' => $this->compareIn($value, $compareValue, true),
+			'contains' => $this->compareContains($value, $compareValue),
+			'not_contains' => $this->compareContains($value, $compareValue, true),
+			'starts_with' => $this->compareStartsWith($value, $compareValue),
+			'not_starts_with' => $this->compareStartsWith($value, $compareValue, true),
+			'ends_with' => $this->compareEndsWith($value, $compareValue),
+			'not_ends_with' => $this->compareEndsWith($value, $compareValue, true),
+			'regexp' => $this->compareRegexp($value, $compareValue),
 		};
 	}
 
@@ -196,23 +196,23 @@ class FormConditionalRecipients {
 				throw new OutOfBoundsException('Form elements not found');
 			}
 
-			$la_elements = $this->form->formElements->listNested()->filter(function ($formElement) {
+			$elements = $this->form->formElements->listNested()->filter(function ($formElement) {
 				return !in_array($formElement->type, ['fieldset', 'hidden', 'free_text', 'submit']);
 			})->indexBy('identifier')->toArray();
 
-			if (!array_key_exists($field, $la_elements)) {
+			if (!array_key_exists($field, $elements)) {
 				throw new OutOfBoundsException('Field not found in form elements');
 			}
 
-			/** @var \Awyiss\Model\Entity\FormElement $lo_formElement */
-			$lo_formElement = $la_elements[ $field ];
-			if ($lo_formElement->type === 'date') {
+			/** @var \Awyiss\Model\Entity\FormElement $formElement */
+			$formElement = $elements[ $field ];
+			if ($formElement->type === 'date') {
 				return !empty($requestData[ $field ]) ? new Date($requestData[ $field ]) : null;
 			}
-			elseif ($lo_formElement->type === 'time') {
+			elseif ($formElement->type === 'time') {
 				return !empty($requestData[ $field ]) ? new Time($requestData[ $field ]) : null;
 			}
-			elseif ($lo_formElement->type === 'datetime') {
+			elseif ($formElement->type === 'datetime') {
 				return !empty($requestData[ $field ]) ? new DateTime($requestData[ $field ]) : null;
 			}
 
@@ -258,14 +258,20 @@ class FormConditionalRecipients {
 		}
 
 		if (is_string($value) && is_string($compareValue)) {
+			$value = strtolower($value);
+			$compareValue = strtolower($compareValue);
+
 			if ($not) {
-				return strtolower($value) != strtolower($compareValue);
+				return $value != $compareValue;
 			}
 
-			return strtolower($value) == strtolower($compareValue);
+			return $value == $compareValue;
 		}
 
 		if (is_array($value) && is_array($compareValue)) {
+			$value = array_map('strtolower', $value);
+			$compareValue = array_map('strtolower', $compareValue);
+
 			if ($not) {
 				return array_diff($value, $compareValue) != [];
 			}
@@ -334,12 +340,12 @@ class FormConditionalRecipients {
 			return false;
 		}
 
-		$la_compareValues = array_values($compareValue);
+		$compareValues = array_values($compareValue);
 
 		// If any value of the compare values is not numeric and not a date, time or datetime instance, the rule is invalid
 		if (
 			array_filter(
-				$la_compareValues,
+				$compareValues,
 				function (mixed $value): bool {
 					return !(is_numeric($value) || $this->isDateOrTime($value));
 				}
@@ -353,10 +359,10 @@ class FormConditionalRecipients {
 		}
 
 		if ($not) {
-			return $value < $la_compareValues[0] || $value > $la_compareValues[1];
+			return $value < $compareValues[0] || $value > $compareValues[1];
 		}
 
-		return $value >= $la_compareValues[0] && $value <= $la_compareValues[1];
+		return $value >= $compareValues[0] && $value <= $compareValues[1];
 	}
 
 
@@ -373,14 +379,14 @@ class FormConditionalRecipients {
 			return false;
 		}
 
-		$li_valueLength = is_array($value) ? count($value) : strlen((string)$value);
-		$li_compareValueLength = (int)$compareValue;
+		$valueLength = is_array($value) ? count($value) : strlen((string)$value);
+		$compareValueLength = (int)$compareValue;
 
 		if ($not) {
-			return $li_valueLength != $li_compareValueLength;
+			return $valueLength != $compareValueLength;
 		}
 
-		return $li_valueLength == $li_compareValueLength;
+		return $valueLength == $compareValueLength;
 	}
 
 
@@ -398,22 +404,22 @@ class FormConditionalRecipients {
 			return false;
 		}
 
-		$li_valueLength = is_array($value) ? count($value) : strlen((string)$value);
-		$li_compareValueLength = (int)$compareValue;
+		$valueLength = is_array($value) ? count($value) : strlen((string)$value);
+		$compareValueLength = (int)$compareValue;
 
 		if ($orEqual) {
 			if ($not) {
-				return $li_valueLength <= $li_compareValueLength;
+				return $valueLength <= $compareValueLength;
 			}
 
-			return $li_valueLength >= $li_compareValueLength;
+			return $valueLength >= $compareValueLength;
 		}
 
 		if ($not) {
-			return $li_valueLength < $li_compareValueLength;
+			return $valueLength < $compareValueLength;
 		}
 
-		return $li_valueLength > $li_compareValueLength;
+		return $valueLength > $compareValueLength;
 	}
 
 
@@ -437,22 +443,25 @@ class FormConditionalRecipients {
 			return false;
 		}
 
-		$lx_value = is_scalar($value) ? strtolower($value) : array_map('strtolower', $value);
-		$la_compareValues = array_map('strtolower', $compareValue);
+		$compareValues = array_map('strtolower', $compareValue);
 
 		if (is_scalar($value)) {
+			$value = strtolower((string)$value);
+
 			if ($not) {
-				return !in_array($lx_value, $la_compareValues);
+				return !in_array($value, $compareValues);
 			}
 
-			return in_array($lx_value, $la_compareValues);
+			return in_array($value, $compareValues);
 		}
+
+		$value = array_map('strtolower', $value);
 
 		if ($not) {
-			return array_intersect($lx_value, $la_compareValues) != $lx_value;
+			return array_intersect($value, $compareValues) != $value;
 		}
 
-		return array_intersect($lx_value, $la_compareValues) == $lx_value;
+		return array_intersect($value, $compareValues) == $value;
 	}
 
 
@@ -477,22 +486,25 @@ class FormConditionalRecipients {
 			return false;
 		}
 
-		$lx_value = is_scalar($value) ? strtolower($value) : array_map('strtolower', $value);
-		$lx_compareValue = strtolower($compareValue);
+		$compareValue = strtolower($compareValue);
 
 		if (is_scalar($value)) {
+			$value = strtolower((string)$value);
+
 			if ($not) {
-				return !str_contains($lx_value, $lx_compareValue);
+				return !str_contains($value, $compareValue);
 			}
 
-			return str_contains($lx_value, $lx_compareValue);
+			return str_contains($value, $compareValue);
 		}
+
+		$value = array_map('strtolower', $value);
 
 		if ($not) {
-			return !in_array($lx_compareValue, $lx_value);
+			return !in_array($compareValue, $value);
 		}
 
-		return in_array($lx_compareValue, $lx_value);
+		return in_array($compareValue, $value);
 	}
 
 
@@ -512,14 +524,14 @@ class FormConditionalRecipients {
 			return false;
 		}
 
-		$lx_value = strtolower($value);
-		$lx_compareValue = strtolower($compareValue);
+		$value = strtolower((string)$value);
+		$compareValue = strtolower((string)$compareValue);
 
 		if ($not) {
-			return !str_starts_with($lx_value, $lx_compareValue);
+			return !str_starts_with($value, $compareValue);
 		}
 
-		return str_starts_with($lx_value, $lx_compareValue);
+		return str_starts_with($value, $compareValue);
 	}
 
 
@@ -539,14 +551,14 @@ class FormConditionalRecipients {
 			return false;
 		}
 
-		$lx_value = strtolower($value);
-		$lx_compareValue = strtolower($compareValue);
+		$value = strtolower((string)$value);
+		$compareValue = strtolower((string)$compareValue);
 
 		if ($not) {
-			return !str_ends_with($lx_value, $lx_compareValue);
+			return !str_ends_with($value, $compareValue);
 		}
 
-		return str_ends_with($lx_value, $lx_compareValue);
+		return str_ends_with($value, $compareValue);
 	}
 
 
@@ -598,9 +610,7 @@ class FormConditionalRecipients {
 	 * @return array
 	 */
 	protected function alignTypes(FormConditionalRecipient $conditionalRecipient, mixed $value): array {
-		$lx_value = $value;
-
-		$lx_compareValue = $conditionalRecipient->value;
+		$compareValue = $conditionalRecipient->value;
 
 		if (
 			in_array($conditionalRecipient->operator, [
@@ -610,76 +620,76 @@ class FormConditionalRecipients {
 				ComparisonOperator::NotIn,
 			]) ||
 			(
-				is_array($lx_value) &&
+				is_array($value) &&
 				in_array($conditionalRecipient->operator, [
 					ComparisonOperator::Equal,
 					ComparisonOperator::NotEqual,
 				])
 			)
 		) {
-			$lx_compareValue ??= [];
-			$lx_compareValue = !is_array($lx_compareValue) ? explode(',', $lx_compareValue) : $lx_compareValue;
+			$compareValue ??= [];
+			$compareValue = !is_array($compareValue) ? explode(',', $compareValue) : $compareValue;
 
 			// Trim all values
-			$lx_compareValue = array_map(function (mixed $value): mixed {
+			$compareValue = array_map(function (mixed $value): mixed {
 				return is_string($value) ? trim($value) : $value;
-			}, $lx_compareValue);
+			}, $compareValue);
 		}
 
-		if (!is_object($lx_value)) {
-			return [$lx_compareValue, $lx_value];
+		if (!is_object($value)) {
+			return [$compareValue, $value];
 		}
 
-		if ($lx_value instanceof BackedEnum) {
-			$lx_value = (string)$lx_value->value;
+		if ($value instanceof BackedEnum) {
+			$value = (string)$value->value;
 		}
-		elseif ($lx_value instanceof Date && $lx_compareValue) {
-			if (is_array($lx_compareValue)) {
+		elseif ($value instanceof Date && $compareValue) {
+			if (is_array($compareValue)) {
 				// Convert all values to Date instances
-				$lx_compareValue = array_map(function (mixed $value): Date {
+				$compareValue = array_map(function (mixed $value): Date {
 					if ($value instanceof Date) {
 						return $value;
 					}
 
 					return new Date($value);
-				}, $lx_compareValue);
+				}, $compareValue);
 			}
-			elseif (!$lx_compareValue instanceof Date) {
-				$lx_compareValue = new Date($lx_compareValue);
+			elseif (!$compareValue instanceof Date) {
+				$compareValue = new Date($compareValue);
 			}
 		}
-		elseif ($lx_value instanceof Time && $lx_compareValue) {
-			if (is_array($lx_compareValue)) {
+		elseif ($value instanceof Time && $compareValue) {
+			if (is_array($compareValue)) {
 				// Convert all values to Time instances
-				$lx_compareValue = array_map(function (mixed $value): Time {
+				$compareValue = array_map(function (mixed $value): Time {
 					if ($value instanceof Time) {
 						return $value;
 					}
 
 					return new Time($value);
-				}, $lx_compareValue);
+				}, $compareValue);
 			}
-			elseif (!$lx_compareValue instanceof Time) {
-				$lx_compareValue = new Time($lx_compareValue);
+			elseif (!$compareValue instanceof Time) {
+				$compareValue = new Time($compareValue);
 			}
 		}
-		elseif ($lx_value instanceof DateTime && $lx_compareValue) {
-			if (is_array($lx_compareValue)) {
+		elseif ($value instanceof DateTime && $compareValue) {
+			if (is_array($compareValue)) {
 				// Convert all values to DateTime instances
-				$lx_compareValue = array_map(function (mixed $value): DateTime {
+				$compareValue = array_map(function (mixed $value): DateTime {
 					if ($value instanceof DateTime) {
 						return $value;
 					}
 
 					return new DateTime($value);
-				}, $lx_compareValue);
+				}, $compareValue);
 			}
-			elseif (!$lx_compareValue instanceof DateTime) {
-				$lx_compareValue = new DateTime($lx_compareValue);
+			elseif (!$compareValue instanceof DateTime) {
+				$compareValue = new DateTime($compareValue);
 			}
 		}
 
-		return [$lx_compareValue, $lx_value];
+		return [$compareValue, $value];
 	}
 
 
@@ -696,7 +706,6 @@ class FormConditionalRecipients {
 			return false;
 		}
 
-		/** @noinspection PhpVariableNamingConventionInspection */
 		$value = (string)$value;
 
 		// If the value matches \d{4}-\d{2}-\d{2} it is a date

@@ -49,7 +49,6 @@ class EventListenersMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
@@ -67,7 +66,6 @@ class EventListenersMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\EventListenersMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessLoadsGeneralEventListener(): void {
 		Awyiss::setRealm(Awyiss::REALM_FRONTEND);

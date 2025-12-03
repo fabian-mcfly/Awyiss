@@ -60,7 +60,6 @@ class DesignMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
@@ -105,7 +104,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessSetsDesignAttribute(): void {
 		$this->get('/zu/users/overview/foo:bar/baz:qux');
@@ -118,7 +116,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessCallsDesignAllowCompileCallable(): void {
 		$callableCalled = false;
@@ -138,7 +135,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNotCompilesUpToDateFiles(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -182,7 +178,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNotCompilesOutdatedFilesWhenConfigAutoCompileNotTrue(): void {
 		Configure::write('Design.autoCompile', false);
@@ -228,7 +223,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessCompilesOutdatedFiles(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -277,7 +271,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNotCompilesOutdatedFilesFromDifferentRealm(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -324,7 +317,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessCompilesOutdatedFilesWhenConfigAutoCompileNotTrueAndQueryContainsCompileScssTrue(): void {
 		Configure::write('Design.autoCompile', false);
@@ -370,7 +362,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessCompilesOutdatedFilesWhenConfigAutoCompileNotTrueAndQueryContainsCompileScssTrueAndAllowCompileReturnsTrue(): void {
 		Configure::write('Design.autoCompile', false);
@@ -417,7 +408,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNotCompilesOutdatedFilesWhenConfigAutoCompileNotTrueAndQueryContainsCompileScssTrueAndAllowCompileNotTrue(): void {
 		Configure::write('Design.autoCompile', false);
@@ -464,7 +454,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNotCompilesOutdatedFilesWhenConfigAutoCompileNotTrueAndQueryContainsCompileScssTrueAndAllowCompileNotReturnsTrue(): void {
 		Configure::write('Design.autoCompile', false);
@@ -511,7 +500,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessCompilesAllFilesWhenQueryContainsCompileScssTrue(): void {
 		Configure::write('Design.autoCompile', false);
@@ -550,7 +538,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessShowsErrorWhenConfigAutoCompileNotTrue(): void {
 		Configure::write('Design.autoCompile', true);
@@ -599,7 +586,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessNotShowsErrorWhenConfigAutoCompileNotTrue(): void {
 		Configure::write('Design.autoCompile', false);
@@ -649,7 +635,6 @@ class DesignMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssCompilesOutdatedFiles(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -693,7 +678,6 @@ class DesignMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssNotCompilesUpToDateFiles(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -733,7 +717,6 @@ class DesignMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssCompilesUpToDateFilesWhenMustCompile(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -777,7 +760,6 @@ class DesignMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssNotShowsErrorWhenFileInvalidAndShowExceptionsFalseAndDebugFalse(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -820,7 +802,6 @@ class DesignMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssShowsErrorWhenFileInvalidAndShowExceptionsTrueAndDebugFalse(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -863,7 +844,6 @@ class DesignMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssNotShowsExceptionWhenFileInvalidAndShowExceptionsFalseAndDebugTrue(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -907,7 +887,6 @@ class DesignMiddlewareTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::compileScss()
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testCompileScssShowsExceptionWhenFileInvalidAndShowExceptionsTrueAndDebugTrue(): void {
 		$assetsPath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
@@ -939,7 +918,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::getDesignVariables()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDesignVariablesForBackend(): void {
 		Awyiss::setRealm(Awyiss::REALM_BACKEND);
@@ -951,7 +929,6 @@ class DesignMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\DesignMiddleware::getDesignVariables()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetDesignVariablesForFrontend(): void {
 		Awyiss::setRealm(Awyiss::REALM_FRONTEND);

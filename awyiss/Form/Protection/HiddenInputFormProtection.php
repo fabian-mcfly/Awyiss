@@ -51,17 +51,17 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 	 * @return string
 	 */
 	public function getFieldName(): string {
-		$ls_elementName = $this->options['elementName'];
+		$elementName = $this->options['elementName'];
 
 		// 'emailConfirmation' is the last resort since form elements are all underscored
-		$la_alternatives = ['email_confirmation', 'mail_confirmation', 'e_mail_confirmation', 'mail', 'e_mail', 'emailConfirmation'];
+		$alternatives = ['email_confirmation', 'mail_confirmation', 'e_mail_confirmation', 'mail', 'e_mail', 'emailConfirmation'];
 
 		// Check if the name is already used by form elements and try alternatives until a free name is found
-		while (!$ls_elementName || array_key_exists($ls_elementName, $this->formElements)) {
-			$ls_elementName = array_shift($la_alternatives);
+		while (!$elementName || array_key_exists($elementName, $this->formElements)) {
+			$elementName = array_shift($alternatives);
 		}
 
-		return $ls_elementName;
+		return $elementName;
 	}
 
 
@@ -89,13 +89,13 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 	public function getHtml(string $templatePosition): ?string {
 		if ($templatePosition === static::POSITION_BEFORE) {
 			/** @noinspection PhpUnhandledExceptionInspection */
-			$ls_randomString = 'c' . bin2hex(random_bytes(8));
+			$randomString = 'c' . bin2hex(random_bytes(8));
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$ls_nonce = $this->view->helpers()->get('Asset')->getStyleNonce();
-			$ls_css = '<style nonce="' . $ls_nonce . '">.c' . $ls_randomString . ' { position:absolute; visibility:hidden; }</style>';
+			$nonce = $this->view->helpers()->get('Asset')->getStyleNonce();
+			$css = '<style nonce="' . $nonce . '">.c' . $randomString . ' { position:absolute; visibility:hidden; }</style>';
 
-			return $ls_css . '<input type="email" name="' . $this->getFieldName() . '" value="" class="c' . $ls_randomString . '">';
+			return $css . '<input type="email" name="' . $this->getFieldName() . '" value="" class="c' . $randomString . '">';
 		}
 
 		return null;
@@ -106,9 +106,9 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 	 * @inheritDoc
 	 */
 	public function validateData(array $data): string|true {
-		$ls_fieldName = $this->getFieldName();
+		$fieldName = $this->getFieldName();
 
-		return empty($data[ $ls_fieldName ]) ? true : __d('form', 'protection_method_hidden_input_error_field_empty');
+		return empty($data[ $fieldName ]) ? true : __d('form', 'protection_method_hidden_input_error_field_empty');
 	}
 
 

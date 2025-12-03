@@ -69,7 +69,6 @@ class AltchaFormProtectionTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	protected function tearDown(): void {
 		parent::tearDown();
@@ -83,7 +82,6 @@ class AltchaFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::initialize()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInitialize(): void {
 		$result = $this->altchaFormProtection->initialize(
@@ -100,7 +98,6 @@ class AltchaFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::getHtml()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHtml(): void {
 		$this->altchaFormProtection->initialize(
@@ -127,7 +124,6 @@ class AltchaFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::getHtml()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHtmlBeforeAddsScriptToAssetHelper(): void {
 		$this->altchaFormProtection->initialize(
@@ -166,7 +162,6 @@ class AltchaFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::getHtml()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetHtmlWithCustomComplexityAndMaxNumber(): void {
 		// Mock form options with custom complexity and maxNumber
@@ -192,7 +187,6 @@ class AltchaFormProtectionTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::validateData()
 	 * @throws \JsonException
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithValidAltchaResponse(): void {
 		$this->altchaFormProtection->initialize(
@@ -240,7 +234,6 @@ class AltchaFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithInvalidAltchaResponse(): void {
 		$this->altchaFormProtection->initialize(
@@ -273,7 +266,6 @@ class AltchaFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::validateData()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateDataWithMissingAltchaResponse(): void {
 		$this->altchaFormProtection->initialize(
@@ -299,7 +291,6 @@ class AltchaFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::modifyForm()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyForm(): void {
 		$this->altchaFormProtection->initialize(
@@ -319,7 +310,6 @@ class AltchaFormProtectionTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Form\Protection\AltchaFormProtection::modifyFormEntry()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testModifyFormEntry(): void {
 		$this->altchaFormProtection->initialize(

@@ -24,8 +24,8 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 	/**
 	 * Re-implemented to add the following lines to use the parts from AwyissRoute as QueryParams
 	 *
-	 *        $la_queryParams = $la_params['parts'] ?? [];
-	 *        $lo_request = $lo_request->withQueryParams($la_queryParams);
+	 *        $queryParams = $params['parts'] ?? [];
+	 *        $request = $request->withQueryParams($queryParams);
 	 *
 	 * @inheritDoc
 	 */
@@ -34,41 +34,38 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 		try {
 			assert($request instanceof ServerRequest);
 			Router::setRequest($request);
-			$la_params = (array)$request->getAttribute('params', []);
-			$la_middlewareNames = [];
-			if (empty($la_params['controller'])) {
-				$la_params = Router::parseRequest($request) + $la_params;
-				if (isset($la_params['_middleware'])) {
-					$la_middlewareNames = $la_params['_middleware'];
+			$params = (array)$request->getAttribute('params', []);
+			$middlewareNames = [];
+			if (empty($params['controller'])) {
+				$params = Router::parseRequest($request) + $params;
+				if (isset($params['_middleware'])) {
+					$middlewareNames = $params['_middleware'];
 				}
-				$lo_route = $la_params['_route'];
-				unset($la_params['_middleware'], $la_params['_route']);
+				$route = $params['_route'];
+				unset($params['_middleware'], $params['_route']);
 
-				$lo_request = $request->withAttribute('route', $lo_route);
-				$lo_request = $lo_request->withAttribute('params', $la_params);
+				$request = $request->withAttribute('route', $route);
+				$request = $request->withAttribute('params', $params);
 
-				$la_queryParams = $la_params['parts'] ?? [];
-				$lo_request = $lo_request->withQueryParams($la_queryParams);
+				$queryParams = $params['parts'] ?? [];
+				$request = $request->withQueryParams($queryParams);
 
-				Router::setRequest($lo_request);
+				Router::setRequest($request);
 			}
 		}
-			/** @noinspection PhpVariableNamingConventionInspection */
 		catch (RedirectException $e) {
 			return new RedirectResponse($e->getMessage(), $e->getCode(), $e->getHeaders());
 		}
 
-		$la_matchingMiddlewares = Router::getRouteCollection()->getMiddleware($la_middlewareNames);
-		if (!$la_matchingMiddlewares) {
-			return $handler->handle($lo_request ?? $request);
+		$matchingMiddlewares = Router::getRouteCollection()->getMiddleware($middlewareNames);
+		if (!$matchingMiddlewares) {
+			return $handler->handle($request);
 		}
 
-		$lo_container = $this->app instanceof ContainerApplicationInterface ? $this->app->getContainer() : null;
-		$lo_middlewareQueue = new MiddlewareQueue($la_matchingMiddlewares, $lo_container);
-		$lo_runner = new Runner();
+		$container = $this->app instanceof ContainerApplicationInterface ? $this->app->getContainer() : null;
+		$middlewareQueue = new MiddlewareQueue($matchingMiddlewares, $container);
+		$runner = new Runner();
 
-
-		/** @noinspection PhpUndefinedVariableInspection */
-		return $lo_runner->run($lo_middlewareQueue, $lo_request, $handler);
+		return $runner->run($middlewareQueue, $request, $handler);
 	}
 }

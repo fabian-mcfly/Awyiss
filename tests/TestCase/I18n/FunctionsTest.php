@@ -57,7 +57,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__UsesCurrentRealmAndSystemFallbackAsDomain(): void { // phpcs:ignore
 		$message = __('dummy_string');
@@ -72,7 +71,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__NotUsesSystemFallbackAsDomainForBlocklistedString(): void { // phpcs:ignore
 		$message = __('meta_title_overview');
@@ -89,7 +87,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__UsesCurrentRealmAndControllerFromRequestAsDomain(): void { // phpcs:ignore
 		$message = __('field_name');
@@ -113,7 +110,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__AddsDomainToIdentifierWhenNotFound(): void { // phpcs:ignore
 		$request = new ServerRequest([
@@ -134,7 +130,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __d()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__dAddsCurrentRealmToDomain(): void { // phpcs:ignore
 		$message = __d('TestDomain', 'headline_overview');
@@ -150,7 +145,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __d()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__dNotAddsCurrentRealmToDomainWhenSlashInDomain(): void { // phpcs:ignore
 		$message = __d('Frontend/TestDomain', 'headline_overview');
@@ -166,7 +160,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __d()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__dNotUsesSystemFallbackAsDomainForBlocklistedString(): void { // phpcs:ignore
 		$message = __d('TestDomain', 'meta_title_overview');
@@ -192,7 +185,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __df()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__dfUsesFallbackDomainWhenNotFound(): void { // phpcs:ignore
 		$message = __df('TestDomain', 'system', 'meta_title_overview');
@@ -212,7 +204,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __df()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__dfPrefixedWithMainDomainWhenNotFoundInFallback(): void { // phpcs:ignore
 		$message = __df('TestDomain', 'validation', 'unknown_string');
@@ -223,7 +214,6 @@ class FunctionsTest extends TestCase {
 	/**
 	 * @return void
 	 * @see __df()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function test__dfUnderscoresFallbackDomain(): void { // phpcs:ignore
 		$message = __df('system', 'TestDomain', 'field_name');

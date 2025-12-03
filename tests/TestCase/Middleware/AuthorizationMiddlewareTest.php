@@ -40,7 +40,6 @@ class AuthorizationMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function setUpBeforeClass(): void {
 		parent::setUpBeforeClass();
@@ -51,7 +50,6 @@ class AuthorizationMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();
@@ -69,7 +67,6 @@ class AuthorizationMiddlewareTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Middleware\AuthorizationMiddleware::process()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testProcessSetsAuthenticationService(): void {
 		$this->get('/backend/');

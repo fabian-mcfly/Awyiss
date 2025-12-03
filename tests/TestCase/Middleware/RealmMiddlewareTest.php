@@ -49,7 +49,6 @@ class RealmMiddlewareTest extends TestCase {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public static function tearDownAfterClass(): void {
 		parent::tearDownAfterClass();

@@ -54,11 +54,10 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 * @inheritDoc
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		$lo_service = $this->getAuthorizationService($request);
-		$lo_service->setAuthenticationService($request->getAttribute('authentication'));
+		$authorizationService = $this->getAuthorizationService($request);
+		$authorizationService->setAuthenticationService($request->getAttribute('authentication'));
 
-		/** @noinspection PhpVariableNamingConventionInspection */
-		$request = $request->withAttribute('authorization', $lo_service);
+		$request = $request->withAttribute('authorization', $authorizationService);
 
 		return $handler->handle($request);
 	}
@@ -72,19 +71,19 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 * @throws RuntimeException When authentication method has not been defined.
 	 */
 	protected function getAuthorizationService(ServerRequestInterface $request): AuthorizationServiceInterface {
-		$lo_subject = $this->subject;
+		$subject = $this->subject;
 
-		if ($lo_subject instanceof AuthorizationServiceProviderInterface) {
-			$lo_subject = $lo_subject->getAuthorizationService($request);
+		if ($subject instanceof AuthorizationServiceProviderInterface) {
+			$subject = $subject->getAuthorizationService($request);
 		}
 
-		if (!$lo_subject instanceof AuthorizationServiceInterface) {
+		if (!$subject instanceof AuthorizationServiceInterface) {
 			throw new RuntimeException(
-				sprintf('Service provided by a subject must be an instance of `%s`, `%s` given.', AuthorizationServiceInterface::class, gettype($lo_subject))
+				sprintf('Service provided by a subject must be an instance of `%s`, `%s` given.', AuthorizationServiceInterface::class, gettype($subject))
 			);
 		}
 
 
-		return $lo_subject;
+		return $subject;
 	}
 }

@@ -20,15 +20,15 @@ interface FormProtectionInterface {
 	/**
 	 * To place the protection before the form elements
 	 */
-	public const POSITION_BEFORE = 'before';
+	public const string POSITION_BEFORE = 'before';
 	/**
 	 * To place the protection before the submit button
 	 */
-	public const POSITION_BEFORE_SUBMIT = 'before_submit';
+	public const string POSITION_BEFORE_SUBMIT = 'before_submit';
 	/**
 	 * To place the protection after all form elements
 	 */
-	public const POSITION_AFTER = 'after';
+	public const string POSITION_AFTER = 'after';
 
 
 	/**

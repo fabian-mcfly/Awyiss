@@ -57,13 +57,13 @@ class FormProtectionProvider {
 	 * @return class-string<\Awyiss\Form\Protection\FormProtectionInterface>|null
 	 */
 	public static function getFormProtectionFile(string $identifier): ?string {
-		$ls_identifier = static::sanitizeIdentifier($identifier);
+		$identifier = static::sanitizeIdentifier($identifier);
 
-		if (!isset(static::$classes[ $ls_identifier ])) {
-			static::findFormProtectionFile($ls_identifier);
+		if (!isset(static::$classes[ $identifier ])) {
+			static::findFormProtectionFile($identifier);
 		}
 
-		return static::$classes[ $ls_identifier ] ?? null;
+		return static::$classes[ $identifier ] ?? null;
 	}
 
 
@@ -90,13 +90,13 @@ class FormProtectionProvider {
 	 * @return void
 	 */
 	protected static function findFormProtectionFile(string $identifier): void {
-		$ls_classes = App::classes($identifier, 'Form/Protection', 'FormProtection', FormProtectionInterface::class);
+		$classes = App::classes($identifier, 'Form/Protection', 'FormProtection', FormProtectionInterface::class);
 
-		/** @var class-string<\Awyiss\Form\Protection\FormProtectionInterface> $ls_className */
-		foreach ($ls_classes as $ls_protectionName => $ls_className) {
-			$ls_identifier = static::sanitizeIdentifier(substr($ls_protectionName, 0, -14));
+		/** @var class-string<\Awyiss\Form\Protection\FormProtectionInterface> $className */
+		foreach ($classes as $protectionName => $className) {
+			$identifier = static::sanitizeIdentifier(substr($protectionName, 0, -14));
 
-			static::$classes[ $ls_identifier ] = $ls_className;
+			static::$classes[ $identifier ] = $className;
 		}
 	}
 }

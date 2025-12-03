@@ -19,7 +19,6 @@ class MessageFileLoaderTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\I18n\MessagesFileLoader::__invoke()
-	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testInvokeAddsFilesFromMultiplePaths(): void {
 		Awyiss::setRealm(Awyiss::REALM_BACKEND);

@@ -18,10 +18,7 @@ class Contact4FormOptions extends FormOptions {
 	 * @inheritDoc
 	 */
 	public function setValidationRules(Validator $validator): Validator {
-		/** @noinspection PhpVariableNamingConventionInspection */
-		$validator = parent::setValidationRules($validator);
-
-		return $validator;
+		return parent::setValidationRules($validator);
 	}
 
 

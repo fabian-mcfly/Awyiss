@@ -84,18 +84,18 @@ class DuplicateCheckFormProtection implements FormProtectionInterface {
 	 * @inheritDoc
 	 */
 	public function validateData(array $data): string|true {
-		$ls_dataHash = Security::hash(serialize($data));
+		$dataHash = Security::hash(serialize($data));
 
 		// Check if the data exists in the database already
-		$lo_formEntriesTable = $this->fetchTable('FormEntries');
+		$formEntriesTable = $this->fetchTable('FormEntries');
 
-		$li_timeout = $this->options['checkTimeout'];
-		$lo_timeoutDate = new DateTime();
+		$timeout = $this->options['checkTimeout'];
+		$timeoutDate = new DateTime();
 
 		if (
-			$lo_formEntriesTable->exists([
-				'post_hash' => $ls_dataHash,
-				'created_on >=' => $lo_timeoutDate->subSeconds($li_timeout),
+			$formEntriesTable->exists([
+				'post_hash' => $dataHash,
+				'created_on >=' => $timeoutDate->subSeconds($timeout),
 			])
 		) {
 			return __d('form', 'protection_method_duplicate_check_error_duplicate_found');
