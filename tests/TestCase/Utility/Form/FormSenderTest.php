@@ -2576,4 +2576,127 @@ class FormSenderTest extends TestCase {
 		$this->assertIsArray($sender->getErrors());
 		$this->assertEquals(['form::error_email_send'], $sender->getErrors());
 	}
+
+
+	/**
+	 * Test unwrapDataString removes phrasing-only tags around {{$data}} placeholder
+	 *
+	 * @return void
+	 * @see \Awyiss\Utility\Form\FormSender::unwrapDataString()
+	 * @throws \ReflectionException
+	 * @throws \Exception
+	 * @noinspection PhpConditionAlreadyCheckedInspection
+	 */
+	public function testUnwrapDataString(): void {
+		$form = $this->form;
+		$sender = new FormSender($form);
+
+		// Scenario 1: Simple p tag with only {{$data}}
+		$input = '<p>{{$data}}</p>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap simple p tag with only {{$data}}');
+
+		// Scenario 2: P tag with attributes and only {{$data}}
+		$input = '<p class="foo" id="bar">{{$data}}</p>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap p tag with attributes');
+
+		// Scenario 3: Nested phrasing tags with only {{$data}}
+		$input = '<p><span class="highlight"><strong>{{$data}}</strong></span></p>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap nested phrasing tags');
+
+		// Scenario 4: Span tag with only {{$data}}
+		$input = '<span class="wrapper">{{$data}}</span>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap span tag');
+
+		// Scenario 5: Multiple levels of nested tags
+		$input = '<p><em><i><b><span>{{$data}}</span></b></i></em></p>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap multiple nested levels');
+
+		// Scenario 6: P tag with text before {{$data}}
+		$input = '<p>Some text before {{$data}}</p>';
+		$expected = '<p>Some text before</p>' . PHP_EOL . '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to handle text before {{$data}}');
+
+		// Scenario 7: P tag with text after {{$data}}
+		$input = '<p>{{$data}} and text after</p>';
+		$expected = '{{$data}}' . PHP_EOL . '<p>and text after</p>' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to handle text after {{$data}}');
+
+		// Scenario 8: P tag with text before and after {{$data}}
+		$input = '<p>Text before {{$data}} text after</p>';
+		$expected = '<p>Text before</p>' . PHP_EOL . '{{$data}}' . PHP_EOL . '<p>text after</p>' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to handle text before and after {{$data}}');
+
+		// Scenario 9: P tag with nested tags and text
+		$input = '<p><strong>Bold text</strong> {{$data}} <em>italic</em></p>';
+		$expected = '<p><strong>Bold text</strong></p>' . PHP_EOL . '{{$data}}' . PHP_EOL . '<p><em>italic</em></p>' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to handle nested tags with text');
+
+		// Scenario 10: Nested span within p with content
+		$input = '<p><span class="wrapper">Text {{$data}}</span></p>';
+		$expected = '<p><span class="wrapper">Text</span></p>' . PHP_EOL . '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to handle nested span with content');
+
+		// Scenario 11: Label tag with only {{$data}}
+		$input = '<label for="input">{{$data}}</label>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap label tag');
+
+		// Scenario 12: Multiple {{$data}} placeholders (should handle each independently)
+		$input = '<p>{{$data}}</p> Some text <span>{{$data}}</span>';
+		$expected = '{{$data}}' . PHP_EOL . ' Some text {{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to handle multiple {{$data}} placeholders');
+
+		// Scenario 13: Whitespace only around {{$data}}
+		$input = '<p>   {{$data}}   </p>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to handle whitespace-only content');
+
+		// Scenario 14: Empty nested tags around {{$data}}
+		$input = '<p><span></span>{{$data}}<em></em></p>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to handle empty nested tags');
+
+		// Scenario 15: Button tag (phrasing-only) with only {{$data}}
+		$input = '<button type="button" class="btn">{{$data}}</button>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap button tag');
+
+		// Scenario 16: Caption tag with only {{$data}}
+		$input = '<caption>{{$data}}</caption>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap caption tag');
+
+		// Scenario 17: Complex nested structure with only {{$data}}
+		$input = '<p class="outer"><span class="middle"><strong class="inner">{{$data}}</strong></span></p>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap complex nested structure');
+
+		// Scenario 18: Mixed phrasing tags with attributes
+		$input = '<p id="p1"><em class="emphasis"><code data-lang="php">{{$data}}</code></em></p>';
+		$expected = '{{$data}}' . PHP_EOL;
+		$result = $this->callProtectedMethod($sender, 'unwrapDataString', $input);
+		$this->assertEquals($expected, $result, 'Failed to unwrap mixed phrasing tags with attributes');
+	}
 }

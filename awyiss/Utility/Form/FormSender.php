@@ -63,6 +63,18 @@ class FormSender {
 	 */
 	protected readonly ?Page $page;
 	/**
+	 * Elements that allows text but not `<table>`.
+	 *
+	 * @var array<string>
+	 */
+	protected array $phrasingOnlyTags = [
+		// Phrasing-only
+		'a','abbr','b','bdi','bdo','cite','code','data','dfn','em','i','kbd',
+		'label','mark','output','q','ruby','rp','rt','s','samp','small','span',
+		'strong','sub','sup','time','u','var','button',
+		'p', 'legend', 'caption', 'summary',
+	];
+	/**
 	 * @var \Awyiss\View\FrontendView $view
 	 */
 	protected FrontendView $view;
@@ -434,12 +446,13 @@ class FormSender {
 
 		if ($type === 'html') {
 			/**
-			 * {{$data}} needs a special treatment: it must never be inside a <p> tag
-			 * because it will be replaced by the `<table>` containing all data.
+			 * {{$data}} needs a special treatment: it must never be inside an element
+			 * that does not allow `<table>` as child element, because it will be
+			 * replaced by the `<table>` containing all data.
 			 *
 			 * @noinspection RegExpRedundantEscape
 			 */
-			$body = preg_replace_callback('/<p([^>]*)>(.*?)(\{\{\$data\}\})(.*?)<\/p>/Um', $this->unwrapDataString(...), $body);
+			$body = $this->unwrapDataString($body);
 		}
 
 		$body = $this->replacePlaceholders($body, $data, ['data']);
@@ -734,26 +747,52 @@ class FormSender {
 
 
 	/**
+	 * @param string $body
+	 * @return string
+	 */
+	protected function unwrapDataString(string $body): string {
+		// Recursively unwrap {{$data}} from phrasingOnlyTags parents
+		$phrasingTagsPattern = implode('|', array_map('preg_quote', $this->phrasingOnlyTags));
+		$previous = '';
+		/** @noinspection RegExpRedundantEscape */
+		$pattern = '/<(' . $phrasingTagsPattern . ')([^>]*)>(.*?)(\{\{\$data\}\})(.*?)<\/\1>/m';
+
+		while ($previous !== $body) {
+			$previous = $body;
+			$body = preg_replace_callback(
+				$pattern,
+				$this->_unwrapDataString(...),
+				$body
+			);
+		}
+
+		return $body;
+	}
+
+
+	/**
 	 * Adjusts and rewraps a string containing HTML content around a specified placeholder to ensure
 	 * proper HTML tag closure and maintain a valid structure. This function processes tags before and after
 	 * a placeholder to close and reopen those tags, while recursively removing any empty tags.
 	 *
 	 * @param array $matches An array containing matches from a regular expression. It should include:
-	 *                       - `$matches[1]`: Attributes for a wrapping `<p>` tag.
-	 *                       - `$matches[2]`: Content before the `{{$data}}` placeholder.
-	 *                       - `$matches[3]`: The `{{$data}}` placeholder itself.
-	 *                       - `$matches[4]`: Content after the `{{$data}}` placeholder.
+	 *                       - `$matches[1]`: Tag name (e.g., 'p', 'span', etc.)
+	 *                       - `$matches[2]`: Attributes for the wrapping tag.
+	 *                       - `$matches[3]`: Content before the `{{$data}}` placeholder.
+	 *                       - `$matches[4]`: The `{{$data}}` placeholder itself.
+	 *                       - `$matches[5]`: Content after the `{{$data}}` placeholder.
 	 * @return string The restructured and cleaned HTML string with proper wrapping and placeholder integration.
 	 */
-	protected function unwrapDataString(array $matches): string {
-		$attributes = $matches[1]; // p tag attributes
-		$beforeContent = $matches[2]; // content before {{$data}}
-		$dataPlaceholder = $matches[3]; // the {{$data}} placeholder
-		$afterContent = $matches[4]; // content after {{$data}}
+	protected function _unwrapDataString(array $matches): string {
+		$tagName = $matches[1]; // tag name (e.g., 'p', 'span')
+		$attributes = $matches[2]; // tag attributes
+		$beforeContent = $matches[3]; // content before {{$data}}
+		$dataPlaceholder = $matches[4]; // the {{$data}} placeholder
+		$afterContent = $matches[5]; // content after {{$data}}
 
 		// If there's no other content, just return the placeholder
 		if (trim($beforeContent) === '' && trim($afterContent) === '') {
-			return $dataPlaceholder;
+			return $dataPlaceholder . PHP_EOL;
 		}
 
 		// Find all opened tags that need to be closed before dataPlaceholder
@@ -782,21 +821,21 @@ class FormSender {
 		}
 
 		// Build the result
-		$result = '<p' . $attributes . '>' . $beforeContent;
+		$result = '<' . $tagName . $attributes . '>' . trim($beforeContent);
 
 		// Close all open tags before the dataPlaceholder
 		foreach ($openedTags as $tag) {
 			$result .= '</' . $tag . '>';
 		}
 
-		$result .= '</p>' . $dataPlaceholder . ' <p' . $attributes . '>';
+		$result .= '</' . $tagName . '>' . PHP_EOL . $dataPlaceholder . PHP_EOL . '<' . $tagName . $attributes . '>';
 
 		// Reopen all closed tags in the original order
 		foreach (array_reverse($openedTags) as $tag) {
 			$result .= '<' . $tag . '>';
 		}
 
-		$result .= $afterContent . '</p>';
+		$result .= trim($afterContent) . '</' . $tagName . '>';
 
 		// Filter out empty tags recursively
 		$previous = '';
@@ -806,7 +845,7 @@ class FormSender {
 			$result = preg_replace('/<([a-z0-9]+)(?:\s[^>]*)?><\/\1>/', '', $result);
 		}
 
-		return $result;
+		return trim($result) . PHP_EOL;
 	}
 
 
