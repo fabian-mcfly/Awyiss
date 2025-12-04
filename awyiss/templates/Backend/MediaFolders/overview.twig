@@ -74,7 +74,10 @@
 
 	{% if paginated %}
 		{% block paginatedOverview %}
-			{% include '@Backend/MediaFolders/overview_paginated_list.twig' with _context|merge({records: mediaFolders.items().toArray()}) %}
+			{% include '@Backend/MediaFolders/overview_paginated_list.twig' with _context|merge({
+				records: mediaFolders.items().toArray(),
+				displayedFields: localConfig.overview.displayedFields,
+			}) %}
 		{% endblock %}
 	{% else %}
 		{% from '@Backend/macro/nested_list.twig' import nestedList %}

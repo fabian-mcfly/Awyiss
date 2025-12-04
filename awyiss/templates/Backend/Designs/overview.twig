@@ -158,7 +158,10 @@
 	{% block paginatedOverview %}
 		{% if designs.count > 1 %}
 			<h2>{{ __('headline_saved_designs') }}</h2>
-			{% include '@Backend/Designs/overview_paginated_list.twig' with _context|merge({records: designs.items().toArray()}) %}
+			{% include '@Backend/Designs/overview_paginated_list.twig' with _context|merge({
+				records: designs.items().toArray(),
+				displayedFields: localConfig.overview.displayedFields,
+			}) %}
 		{% endif %}
 	{% endblock %}
 </div>

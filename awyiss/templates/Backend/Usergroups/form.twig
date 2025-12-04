@@ -173,6 +173,7 @@
 						{% block userUsergroups %}
 							{% include '@Backend/Usergroups/users_overview_paginated_list.twig' with _context|merge({
 								localConfig: config.Awyiss.Users.Backend,
+								displayedFields: config.Awyiss.Users.Backend.overview.displayedFields,
 							}) %}
 						{% endblock %}
 					{% endblock %}

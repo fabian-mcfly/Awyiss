@@ -105,4 +105,4 @@
 	{% endif %}
 {% endblock %}
 
-{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 + (canCreateUrlHistory ? 1 : 0) }}{% endblock %}
+{% block tableOverviewFootColSpan %}{{ displayedFields|length + 5 + (canCreateUrlHistory ? 1 : 0) }}{% endblock %}

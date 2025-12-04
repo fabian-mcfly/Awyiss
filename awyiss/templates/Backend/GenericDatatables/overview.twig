@@ -84,7 +84,10 @@
 
 	{% if paginated %}
 		{% block paginatedOverview %}
-			{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: records.items().toArray()}) %}
+			{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({
+				records: records.items().toArray(),
+				displayedFields: localConfig.overview.displayedFields,
+			}) %}
 		{% endblock %}
 	{% else %}
 		{% block listOverview %}

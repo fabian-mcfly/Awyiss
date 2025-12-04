@@ -67,7 +67,10 @@
 
 	{% if paginated %}
 		{% block paginatedOverview %}
-			{% include '@Backend/MediaElements/overview_paginated_list.twig' with _context|merge({records: mediaElements.items().toArray()}) %}
+			{% include '@Backend/MediaElements/overview_paginated_list.twig' with _context|merge({
+				records: mediaElements.items().toArray(),
+				displayedFields: localConfig.overview.displayedFields,
+			}) %}
 		{% endblock %}
 	{% else %}
 			{% block fieldsetOverview %}

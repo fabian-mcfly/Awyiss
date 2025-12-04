@@ -140,7 +140,10 @@
 			{% endblock %}
 		{% endblock %}
 		{% block paginatedOverview %}
-			{% include '@Backend/Media/overview_paginated_list.twig' with _context|merge({records: media.items().toArray()}) %}
+			{% include '@Backend/Media/overview_paginated_list.twig' with _context|merge({
+				records: media.items().toArray(),
+				displayedFields: localConfig.overview.displayedFields,
+			}) %}
 		{% endblock %}
 	{% else %}
 		{% if isAjax %}

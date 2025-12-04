@@ -45,7 +45,10 @@
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/UrlsNotFound/overview_paginated_list.twig' with _context|merge({records: urlsNotFound.items().toArray()}) %}
+		{% include '@Backend/UrlsNotFound/overview_paginated_list.twig' with _context|merge({
+			records: urlsNotFound.items().toArray(),
+			displayedFields: localConfig.overview.displayedFields,
+		}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

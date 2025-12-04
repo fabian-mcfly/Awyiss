@@ -47,7 +47,10 @@
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/EmailTemplates/overview_paginated_list.twig' with _context|merge({records: emailTemplates.items().toArray()}) %}
+		{% include '@Backend/EmailTemplates/overview_paginated_list.twig' with _context|merge({
+			records: emailTemplates.items().toArray(),
+			displayedFields: localConfig.overview.displayedFields,
+		}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

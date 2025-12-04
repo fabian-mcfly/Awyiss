@@ -46,7 +46,10 @@
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: usergroups.items().toArray()}) %}
+		{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({
+			records: usergroups.items().toArray(),
+			displayedFields: localConfig.overview.displayedFields,
+		}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

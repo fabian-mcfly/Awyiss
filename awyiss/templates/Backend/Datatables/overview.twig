@@ -46,7 +46,10 @@
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/Datatables/overview_paginated_list.twig' with _context|merge({records: datatables.items().toArray()}) %}
+		{% include '@Backend/Datatables/overview_paginated_list.twig' with _context|merge({
+			records: datatables.items().toArray(),
+			displayedFields: localConfig.overview.displayedFields,
+		}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

@@ -46,7 +46,10 @@
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/Surveys/overview_paginated_list.twig' with _context|merge({records: surveys.items().toArray()}) %}
+		{% include '@Backend/Surveys/overview_paginated_list.twig' with _context|merge({
+			records: surveys.items().toArray(),
+			displayedFields: localConfig.overview.displayedFields,
+		}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

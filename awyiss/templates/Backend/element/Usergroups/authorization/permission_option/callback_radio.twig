@@ -1,5 +1,8 @@
 {#
-@var queuedJobs \Queue\Model\Entity\QueuedJob[]
+@var permission \Awyiss\Authorization\PermissionOptions\SimplePermissionOption
+@var entity \Awyiss\Model\Entity\Usergroup|null
+@var identifier string
+@var scope string
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -16,19 +19,4 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-<div class="QueuedJobs Overview">
-	{% block headlinesOverview %}
-		<div class="Headlines">
-			{% block headlineOverview %}
-				<h1>{{ __('headline_overview') }}</h1>
-			{% endblock %}
-		</div>
-	{% endblock %}
-
-	{% block paginatedOverview %}
-		{% include '@Backend/QueuedJobs/overview_paginated_list.twig' with _context|merge({
-			records: queuedJobs.items().toArray(),
-			displayedFields: localConfig.overview.displayedFields,
-		}) %}
-	{% endblock %}
-</div>
+{% extends '@Backend/element/Usergroups/authorization/permission_option/simple_radio.twig' %}

@@ -16,7 +16,7 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{% set tableFootColSpan = localConfig.overview.displayedFields|length + 3 %}
+{% set tableFootColSpan = displayedFields|length + 3 %}
 
 {% block tableOverview %}
 	<table class="Overview-Table Responsive-Table" style="--columns:{{ tableFootColSpan }}; --rows:{{ max(1, users|length) }};">
@@ -42,7 +42,7 @@
 							{% endblock %}
 
 							{% block tableOverviewHeaderDisplayedFields %}
-								{% for field in localConfig.overview.displayedFields %}
+								{% for field in displayedFields %}
 									{% block tableOverviewHeaderDisplayedField %}
 										{% if field starts with 'attributes.' %}
 											{% set field = field|slice(11)|underscore %}
@@ -103,7 +103,7 @@
 								{% endblock %}
 
 								{% block tableOverviewCellDisplayedFields %}
-									{% for field in localConfig.overview.displayedFields %}
+									{% for field in displayedFields %}
 										{% block tableOverviewCellDisplayedField %}
 											<td class="TableCell-{{ field|camelize }}">
 												{% if field starts with 'attributes.' %}

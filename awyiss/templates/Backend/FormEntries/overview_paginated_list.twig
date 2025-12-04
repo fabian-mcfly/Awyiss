@@ -91,4 +91,4 @@
 	</td>
 {% endblock %}
 
-{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + (CategoriesHelper.selectedCategory('form') == 'all' ? 7 : 6) }}{% endblock %}
+{% block tableOverviewFootColSpan %}{{ displayedFields|length + (CategoriesHelper.selectedCategory('form') == 'all' ? 7 : 6) }}{% endblock %}

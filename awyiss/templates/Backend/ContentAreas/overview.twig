@@ -54,7 +54,10 @@
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/ContentAreas/overview_paginated_list.twig' with _context|merge({records: contentAreas.items().toArray()}) %}
+		{% include '@Backend/ContentAreas/overview_paginated_list.twig' with _context|merge({
+			records: contentAreas.items().toArray(),
+			displayedFields: localConfig.overview.displayedFields,
+		}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

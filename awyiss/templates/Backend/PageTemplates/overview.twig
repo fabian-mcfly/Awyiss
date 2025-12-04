@@ -75,7 +75,10 @@
 
 	{% if paginated %}
 		{% block paginatedOverview %}
-			{% include '@Backend/PageTemplates/overview_paginated_list.twig' with _context|merge({records: pageTemplates.items().toArray()}) %}
+			{% include '@Backend/PageTemplates/overview_paginated_list.twig' with _context|merge({
+				records: pageTemplates.items().toArray(),
+				displayedFields: localConfig.overview.displayedFields,
+			}) %}
 		{% endblock %}
 	{% else %}
 		{% for pageRoleId, pageRole in _categories.pageRoles.simple %}

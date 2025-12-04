@@ -20,7 +20,7 @@
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
-{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}
+{% block tableOverviewFootColSpan %}{{ displayedFields|length + 5 }}{% endblock %}
 
 {% block tableOverview %}
 	<table class="Overview-Table Responsive-Table Responsive-TableGrid" style="--columns:{{ tableFootColSpan }}; --rows:{{ max(1, min(records|length, paginate.limit)) }};" data-media-folder-id="{{ selectedMediaFolderId }}">

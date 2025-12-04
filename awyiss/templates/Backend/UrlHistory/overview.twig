@@ -47,7 +47,10 @@
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/UrlHistory/overview_paginated_list.twig' with _context|merge({records: urlHistory.items().toArray()}) %}
+		{% include '@Backend/UrlHistory/overview_paginated_list.twig' with _context|merge({
+			records: urlHistory.items().toArray(),
+			displayedFields: localConfig.overview.displayedFields,
+		}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

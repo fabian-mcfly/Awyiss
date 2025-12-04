@@ -89,6 +89,7 @@
 			{% include '@Backend/GenericPages/overview_paginated_list.twig' with _context|merge({
 				i18nDomain: 'generic_pages',
 				records: pages.items().toArray(),
+				displayedFields: localConfig.overview.displayedFields,
 			}) %}
 		{% endblock %}
 	{% else %}
