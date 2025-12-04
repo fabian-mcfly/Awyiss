@@ -541,7 +541,7 @@ msgstr "Route-Planer Service"
 msgid "configuration_category_frontend_publication"
 msgstr "Publication"
 
-msgid "configuration_identifier_frontend_publication_check_ancestor_pages_publication_status"
+msgid "configuration_identifier_frontend_publication_data_check_ancestor_pages_publication_status"
 msgstr "Check Ancestor Pages' Publication Status"
 
 msgid "button_area_toggle"
