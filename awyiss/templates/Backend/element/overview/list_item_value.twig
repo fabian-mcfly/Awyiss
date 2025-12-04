@@ -5,6 +5,7 @@
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuditHelper \Awyiss\View\Helper\AuditHelper
 @var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
 @var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
 @var FlashHelper \Awyiss\View\Helper\FlashHelper
@@ -53,7 +54,9 @@
 		-
 	{% endif %}
 {% elseif field in ['created_on', 'changed_on'] %}
-	{{ entity.has(field) ? TimeHelper.nice(entity.get(field)) ?: '-' }}
+	{{ entity.has(field) ? TimeHelper.nice(entity.get(field)) : '-' }}
+{% elseif field in ['created_by', 'changed_by'] %}
+	{{ entity.has(field) ? AuditHelper.getUsername(entity.get(field)) : '' }}
 {% elseif _categoriesIdentifier is defined and _categoriesIdentifier|underscore == field %}
 	{{ entity.has(field) ? (categories.simple[ entity.get(field) ] ?? '-') : '-' }}
 {% else %}

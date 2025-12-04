@@ -42,6 +42,8 @@ class BackendView extends AppView {
 
 		$this->addHelper('Attributes');
 
+		$this->addHelper('Audit');
+
 		$this->addHelper('Authentication.Identity');
 
 		$this->addHelper('Authorization');
