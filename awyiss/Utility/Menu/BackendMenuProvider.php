@@ -8,6 +8,7 @@ use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Utility\Menu\Exception\MenuValidationException;
+use Cake\Core\Plugin;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 
@@ -104,27 +105,11 @@ class BackendMenuProvider {
 	 * @throws \ReflectionException
 	 */
 	protected function createCustomMenu(): void {
-		$filePath = realpath(CUSTOM_CONFIG . 'menu.json');
-		if (!$filePath) {
-			return;
+		foreach (Plugin::getCollection() as $plugin) {
+			$this->appendMenuExtension($plugin->getConfigPath() . 'menu.json');
 		}
 
-		$customMenuData = MenuLoader::loadJsonFile($filePath);
-		$valid = MenuLoader::validateData($customMenuData, [
-			'schemaPath' => CONFIG . 'menu-extension.schema.json',
-			'uniqueIdentifiers' => true,
-		]);
-
-		if (!$valid) {
-			throw new MenuValidationException('The data is not valid according to menu-extension.schema.json');
-		}
-
-		/**
-		 * Serialize and unserialize to ensure that the menu is a new instance
-		 * since cloning will not clone nested objects
-		 */
-		$this->customMenu = unserialize(serialize($this->getMenu()));
-		$this->customMenu?->extend($customMenuData);
+		$this->appendMenuExtension(realpath(CUSTOM_CONFIG . 'menu.json'));
 	}
 
 
@@ -150,5 +135,33 @@ class BackendMenuProvider {
 		 */
 		$this->dynamicMenu = unserialize(serialize($this->getCustomMenu() ?? $this->getMenu()));
 		$this->dynamicMenu->extend($menuEntries);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \ReflectionException
+	 */
+	protected function appendMenuExtension(string $filePath): void {
+		if (!$filePath || !file_exists($filePath)) {
+			return;
+		}
+
+		$customMenuData = MenuLoader::loadJsonFile($filePath);
+		$valid = MenuLoader::validateData($customMenuData, [
+			'schemaPath' => CONFIG . 'menu-extension.schema.json',
+			'uniqueIdentifiers' => true,
+		]);
+
+		if (!$valid) {
+			throw new MenuValidationException('The data is not valid according to menu-extension.schema.json');
+		}
+
+		/**
+		 * Serialize and unserialize to ensure that the menu is a new instance
+		 * since cloning will not clone nested objects
+		 */
+		$this->customMenu ??= unserialize(serialize($this->getMenu()));
+		$this->customMenu?->extend($customMenuData);
 	}
 }
