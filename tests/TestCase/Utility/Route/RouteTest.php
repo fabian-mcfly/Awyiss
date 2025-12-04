@@ -18,15 +18,15 @@ class RouteTest extends TestCase {
 	/**
 	 * @var \Awyiss\Utility\Route\AddressInterface&\PHPUnit\Framework\MockObject\MockObject
 	 */
-	private AddressInterface $start;
+	protected AddressInterface $start;
 	/**
 	 * @var \Awyiss\Utility\Route\AddressInterface&\PHPUnit\Framework\MockObject\MockObject
 	 */
-	private AddressInterface $end;
+	protected AddressInterface $end;
 	/**
 	 * @var array
 	 */
-	private array $geoJson;
+	protected array $geoJson;
 
 
 	/**

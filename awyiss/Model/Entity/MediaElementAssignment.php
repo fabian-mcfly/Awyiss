@@ -30,7 +30,7 @@ class MediaElementAssignment extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'mediaElementId' => true,
 		'mediaElement' => true,
 		'scope' => true,

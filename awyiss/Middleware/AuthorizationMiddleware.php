@@ -34,7 +34,7 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [];
+	protected array $_defaultConfig = []; // phpcs:ignore
 
 
 	/**

@@ -44,7 +44,7 @@ class Language extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'realm' => true,
 		'shortcode' => true,
 		'timezone' => true,

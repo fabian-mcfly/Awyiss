@@ -25,7 +25,7 @@ class SingleChoiceSetting implements SettingInterface {
 	 *
 	 * @var array
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'options' => [-1, 0, 1],
 		'preferredInput' => self::TYPE_RADIO,
 	];

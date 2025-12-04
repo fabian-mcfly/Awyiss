@@ -35,7 +35,7 @@ class AttributesCar extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'carId' => true,
 		'freeText' => true,
 		'dropdownSelect' => true,

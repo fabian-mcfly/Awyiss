@@ -54,7 +54,7 @@ class SurveySurveyQuestion extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'surveyId' => true,
 		'surveyQuestionId' => true,
 		'identifier' => true,

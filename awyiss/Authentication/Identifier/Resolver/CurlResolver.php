@@ -41,7 +41,7 @@ class CurlResolver implements ResolverInterface {
 	 *
 	 * @var array
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'acceptType' => self::ACCEPT_JSON,
 		'modifyResult' => null,
 		'requestData' => [],

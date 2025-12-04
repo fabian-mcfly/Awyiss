@@ -926,7 +926,7 @@ class AuditBehaviorTest extends TestCase {
 			/**
 			 * @inheritDoc
 			 */
-			protected bool $_audit = false;
+			protected bool $_audit = false; // phpcs:ignore
 		};
 		$entity->title = 'Test Employer';
 		$entity->languageShortcode = 'de';

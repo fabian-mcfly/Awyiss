@@ -62,7 +62,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'enabled' => true,
 		'implementedEvents' => [
 			'beforeSave',

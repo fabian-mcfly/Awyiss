@@ -1202,7 +1202,7 @@ HTML;
 			/**
 			 * @inheritDoc
 			 */
-			protected ?string $_entityClass = DummyUser::class;
+			protected ?string $_entityClass = DummyUser::class; // phpcs:ignore
 		};
 
 		$this->assertSame(DummyUser::class, $table->getEntityClass());

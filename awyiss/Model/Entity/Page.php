@@ -87,7 +87,7 @@ class Page extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'parentId' => true,
 		'slug' => true,
 		'languageShortcode' => true,
@@ -109,7 +109,7 @@ class Page extends Entity {
 	/**
 	 * @inheritdoc
 	 */
-	protected array $_virtual = ['link', 'label'];
+	protected array $_virtual = ['link', 'label']; // phpcs:ignore
 
 
 	/**

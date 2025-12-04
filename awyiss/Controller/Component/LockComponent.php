@@ -33,7 +33,7 @@ class LockComponent extends Component {
 	 * @inheritDoc
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'autoload' => ['edit'], //can be a boolean value or an array containing all action names for which the locks should get set automatically
 		'enabled' => true,
 		'urlParam' => 'id', //the url parameter that contains the id of the entity

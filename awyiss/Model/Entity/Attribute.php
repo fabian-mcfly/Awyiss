@@ -55,7 +55,7 @@ class Attribute extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'scope' => true,
 		'title' => true,
 		'identifier' => true,
@@ -73,7 +73,7 @@ class Attribute extends Entity {
 	/**
 	 * @inheritdoc
 	 */
-	protected array $_virtual = ['column', 'label'];
+	protected array $_virtual = ['column', 'label']; // phpcs:ignore
 
 
 	/**

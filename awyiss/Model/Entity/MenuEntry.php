@@ -49,7 +49,7 @@ class MenuEntry extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'menuId' => true,
 		'languageShortcode' => true,
 		'parentId' => true,

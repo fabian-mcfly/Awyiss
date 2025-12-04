@@ -39,7 +39,7 @@ class Configuration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'realm' => true,
 		'scope' => true,
 		'identifier' => true,
@@ -57,7 +57,7 @@ class Configuration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_virtual = [
+	protected array $_virtual = [ // phpcs:ignore
 		'printableValue',
 	];
 

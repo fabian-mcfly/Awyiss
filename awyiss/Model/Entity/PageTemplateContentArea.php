@@ -33,7 +33,7 @@ class PageTemplateContentArea extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'pageTemplateId' => true,
 		'contentAreaId' => true,
 		'systemOrder' => true,
@@ -41,5 +41,5 @@ class PageTemplateContentArea extends Entity {
 	/**
 	 * @var array|array<string>
 	 */
-	protected array $_virtual = [];
+	protected array $_virtual = []; // phpcs:ignore
 }

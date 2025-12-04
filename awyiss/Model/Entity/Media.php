@@ -73,7 +73,7 @@ class Media extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'mediaFolderId' => true,
 		'name' => true,
 		'path' => true,
@@ -110,7 +110,7 @@ class Media extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_virtual = [
+	protected array $_virtual = [ // phpcs:ignore
 		'label',
 		'isAudio',
 		'isImage',

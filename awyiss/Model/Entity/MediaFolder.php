@@ -50,7 +50,7 @@ class MediaFolder extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'parentId' => true,
 		'path' => true,
 		'languageShortcode' => true,

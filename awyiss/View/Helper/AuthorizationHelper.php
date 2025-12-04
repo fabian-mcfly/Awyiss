@@ -20,7 +20,7 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'additionalData' => [],
 		'identity' => null,
 		'policiesRealm' => null,

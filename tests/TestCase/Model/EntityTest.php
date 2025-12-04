@@ -92,7 +92,7 @@ class EntityTest extends TestCase {
 		$this->assertTrue($entity->isAccessible('mediaElementAssignments'));
 
 		$entity = new class extends Entity {
-			protected array $_accessible = [
+			protected array $_accessible = [ // phpcs:ignore
 				'_translations' => false,
 				'_publicationData' => false,
 				'mediaAssignments' => false,

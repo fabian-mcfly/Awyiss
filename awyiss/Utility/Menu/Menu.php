@@ -22,7 +22,7 @@ abstract class Menu {
 	 *
 	 * @var array
 	 */
-	protected array $_defaultConfig = [];
+	protected array $_defaultConfig = []; // phpcs:ignore
 	/**
 	 * The identity of the user
 	 *

@@ -22,7 +22,7 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 	 *
 	 * @var \Awyiss\Authentication\Identifier\IdentifierCollection
 	 */
-	protected IdentifierInterface $_identifier;
+	protected IdentifierInterface $_identifier; // phpcs:ignore
 
 
 	/**

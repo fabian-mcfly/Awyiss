@@ -34,7 +34,7 @@ class CategoriesHelper extends Helper {
 	 * @inheritDoc
 	 * @noinspection HtmlUnknownTarget
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'templateClass' => StringTemplate::class,
 		'templates' => [],
 	];

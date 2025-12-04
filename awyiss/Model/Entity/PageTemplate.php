@@ -48,7 +48,7 @@ class PageTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'pageRoleId' => true,
 		'title' => true,
 		'fileName' => true,

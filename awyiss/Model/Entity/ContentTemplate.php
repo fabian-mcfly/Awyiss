@@ -45,7 +45,7 @@ class ContentTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'title' => true,
 		'fileName' => true,
 		'inContentRow' => true,

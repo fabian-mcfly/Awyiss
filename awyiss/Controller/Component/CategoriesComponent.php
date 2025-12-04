@@ -30,7 +30,7 @@ use Cake\Utility\Hash;
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class CategoriesComponent extends Component {
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'redirectOnInvalidSelection' => true,
 		'startupMethods' => ['overview'],
 		'uriParam' => null,

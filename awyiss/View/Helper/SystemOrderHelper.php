@@ -28,7 +28,7 @@ class SystemOrderHelper extends Helper {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'after' => null,
 		'empty' => false,
 		'field' => 'systemOrder',

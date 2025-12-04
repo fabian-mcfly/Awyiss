@@ -23,7 +23,7 @@ class SearchComponent extends Component {
 	 * @inheritDoc
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'autoload' => ['overview'], //can be a boolean value or an array containing all action names for which the settings should get autoloaded
 		'blocklistedColumns' => [], //columns that should not be included in the filter form
 	];

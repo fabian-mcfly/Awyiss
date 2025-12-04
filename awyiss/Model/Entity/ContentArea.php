@@ -39,7 +39,7 @@ class ContentArea extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'identifier' => true,
 		'title' => true,
 		'active' => true,

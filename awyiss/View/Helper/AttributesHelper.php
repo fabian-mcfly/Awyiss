@@ -31,7 +31,7 @@ class AttributesHelper extends Helper {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'attributeOptionsProviderClass' => AttributeOptionsProvider::class,
 	];
 	/**

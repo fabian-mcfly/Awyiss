@@ -37,7 +37,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'enabled' => false,
 		'implementedFinders' => [
 			'published' => 'findPublished',

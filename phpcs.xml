@@ -125,6 +125,15 @@
 			<property name="equalsSpacing" value="1"/>
 		</properties>
 	</rule>
+	<rule ref="Squiz.NamingConventions.ValidVariableName">
+		<exclude name="Squiz.NamingConventions.ValidVariableName.PrivateNoUnderscore"/>
+		<exclude name="Squiz.NamingConventions.ValidVariableName.ContainsNumbers"/>
+		<exclude name="Squiz.NamingConventions.ValidVariableName.MemberNotCamelCaps"/>
+		<exclude-pattern>tests/customer/Model/Entity/AttributesContent.php</exclude-pattern>
+		<exclude-pattern>tests/customer/Model/Entity/AttributesNews.php</exclude-pattern>
+		<exclude-pattern>tests/customer/Model/Entity/DummyUser.php</exclude-pattern>
+		<exclude-pattern>tests/customer/Model/Entity/Employer.php</exclude-pattern>
+	</rule>
 	<rule ref="Squiz.Operators.ValidLogicalOperators"/>
 	<rule ref="Squiz.PHP.DisallowSizeFunctionsInLoops"/>
 	<rule ref="Squiz.PHP.Eval"/>

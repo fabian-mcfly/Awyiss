@@ -37,7 +37,7 @@ class SurveyEntry extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'surveyId' => true,
 		'pageId' => true,
 		'data' => true,

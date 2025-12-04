@@ -127,7 +127,7 @@ class Table extends BaseTable {
 	 *
 	 * @var array
 	 */
-	protected array $_defaultConfig = [];
+	protected array $_defaultConfig = []; // phpcs:ignore
 	/**
 	 * This array contains all implemented events and their corresponding method names
 	 * that will get called when the event is fired.
@@ -170,7 +170,7 @@ class Table extends BaseTable {
 	 *
 	 * @var string
 	 */
-	protected string $_validatorClass = Validator::class;
+	protected string $_validatorClass = Validator::class; // phpcs:ignore
 	/**
 	 * @var string
 	 */

@@ -33,7 +33,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'usergroupId' => true,
 		'scope' => true,
 		'identifier' => true,

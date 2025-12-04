@@ -30,7 +30,7 @@ class AttributesWidget extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'widgetId' => true,
 		'teaser' => true,
 		'freeText' => true,

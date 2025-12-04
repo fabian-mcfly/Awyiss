@@ -47,7 +47,7 @@ class CategoriesBehavior extends Behavior {
 	 *
 	 * @var array
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'aggregationKey' => 'all',
 		'allowAggregation' => true,
 		'allowUnassigned' => false,

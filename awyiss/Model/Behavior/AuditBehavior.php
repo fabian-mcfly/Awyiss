@@ -44,7 +44,7 @@ class AuditBehavior extends Behavior {
 	 *
 	 * @var array
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'enabled' => true,
 		'historyFields' => null,
 		'implementedEvents' => [

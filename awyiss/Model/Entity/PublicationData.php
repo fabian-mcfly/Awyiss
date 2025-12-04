@@ -29,7 +29,7 @@ class PublicationData extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'scope' => true,
 		'foreignKey' => true,
 		'type' => true,

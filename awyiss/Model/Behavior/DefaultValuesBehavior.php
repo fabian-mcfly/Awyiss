@@ -50,7 +50,7 @@ class DefaultValuesBehavior extends Behavior {
 	 *
 	 * @var array
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'enabled' => true,
 		'implementedEvents' => [
 			'beforeMarshal',

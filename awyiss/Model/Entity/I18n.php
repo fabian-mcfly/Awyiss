@@ -29,7 +29,7 @@ class I18n extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'locale' => true,
 		'model' => true,
 		'foreignKey' => true,

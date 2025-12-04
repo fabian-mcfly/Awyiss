@@ -18,7 +18,7 @@ class SettingCollection extends ObjectRegistry {
 	 *
 	 * @var array<SettingInterface>
 	 */
-	protected array $_loaded = [];
+	protected array $_loaded = []; // phpcs:ignore
 
 
 	/**

@@ -29,7 +29,7 @@ class UsergroupsUser extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'usergroupId' => true,
 		'userId' => true,
 		'usergroup' => true,

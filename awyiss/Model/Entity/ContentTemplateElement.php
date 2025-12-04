@@ -41,7 +41,7 @@ class ContentTemplateElement extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'contentTemplateId' => true,
 		'identifier' => true,
 		'title' => true,
@@ -53,7 +53,7 @@ class ContentTemplateElement extends Entity {
 	/**
 	 * @inheritdoc
 	 */
-	protected array $_virtual = ['column', 'label'];
+	protected array $_virtual = ['column', 'label']; // phpcs:ignore
 
 
 	/**

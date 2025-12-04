@@ -31,7 +31,7 @@ class UserConfiguration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'scope' => true,
 		'identifier' => true,
 		'value' => true,
@@ -46,7 +46,7 @@ class UserConfiguration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_virtual = [
+	protected array $_virtual = [ // phpcs:ignore
 		'printableValue',
 	];
 

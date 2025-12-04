@@ -36,7 +36,7 @@ class Menu extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'title' => true,
 		'identifier' => true,
 		'active' => true,

@@ -28,7 +28,7 @@ class SystemOrderComponent extends Component {
 	 * @inheritDoc
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'autoload' => ['add', 'edit'], //can be a boolean value or an array containing all action names for which the records should get autoloaded
 		'entityName' => null, //singularized variable name of the entity that's used to autoload records
 		'field' => 'systemOrder',

@@ -39,7 +39,7 @@ class MediaResizedImage extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'mediaId' => true,
 		'name' => true,
 		'path' => true,
@@ -53,7 +53,7 @@ class MediaResizedImage extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_virtual = [
+	protected array $_virtual = [ // phpcs:ignore
 		'extension',
 		'filemtime',
 		'pathAbsolute',

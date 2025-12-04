@@ -34,7 +34,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'preferredInput' => PermissionOptionType::Radio,
 		'identifier' => null,
 	];

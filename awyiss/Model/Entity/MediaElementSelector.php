@@ -44,7 +44,7 @@ class MediaElementSelector extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'mediaElementId' => true,
 		'mediaSelectorId' => true,
 		'title' => true,
@@ -56,7 +56,7 @@ class MediaElementSelector extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_virtual = [
+	protected array $_virtual = [ // phpcs:ignore
 		'column',
 		'label',
 	];

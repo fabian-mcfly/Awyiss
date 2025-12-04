@@ -37,7 +37,7 @@ class DashboardElement extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'scope' => true,
 		'title' => true,
 		'access' => true,

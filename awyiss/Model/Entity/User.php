@@ -57,7 +57,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'username' => true,
 		'password' => true,
 		'firstname' => true,
@@ -69,7 +69,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_hidden = [
+	protected array $_hidden = [ // phpcs:ignore
 		'password',
 	];
 	/**

@@ -51,7 +51,7 @@ class MediaElement extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'title' => true,
 		'identifier' => true,
 		'columnSpan' => true,
@@ -64,7 +64,7 @@ class MediaElement extends Entity {
 	/**
 	 * @inheritdoc
 	 */
-	protected array $_virtual = ['column', 'label'];
+	protected array $_virtual = ['column', 'label']; // phpcs:ignore
 
 
 	/**

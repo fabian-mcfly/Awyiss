@@ -36,7 +36,7 @@ class Entity extends BaseEntity {
 	/**
 	 * @var bool Whether the entity allows tracking changes by AuditBehavior
 	 */
-	protected bool $_audit = true;
+	protected bool $_audit = true; // phpcs:ignore
 	/**
 	 * @var array Default values for the entity
 	 */
@@ -44,7 +44,7 @@ class Entity extends BaseEntity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_virtual = ['label'];
+	protected array $_virtual = ['label']; // phpcs:ignore
 
 
 	/**

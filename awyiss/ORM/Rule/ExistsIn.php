@@ -22,7 +22,7 @@ class ExistsIn extends BaseExistsIn {
 	 *
 	 * @var BaseTable|Association|Table|string
 	 */
-	protected string|Association|Table|BaseTable $_repository;
+	protected string|Association|Table|BaseTable $_repository; // phpcs:ignore
 
 
 	/**

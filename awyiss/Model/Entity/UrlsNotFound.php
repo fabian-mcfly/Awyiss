@@ -28,7 +28,7 @@ class UrlsNotFound extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'url' => true,
 		'referrer' => true,
 		'isRobot' => true,

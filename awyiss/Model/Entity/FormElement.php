@@ -77,7 +77,7 @@ class FormElement extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'formId' => true,
 		'parentId' => true,
 		'type' => true,
@@ -99,7 +99,7 @@ class FormElement extends Entity {
 	/**
 	 * @inheritdoc
 	 */
-	protected array $_virtual = ['column', 'label'];
+	protected array $_virtual = ['column', 'label']; // phpcs:ignore
 
 
 	/**

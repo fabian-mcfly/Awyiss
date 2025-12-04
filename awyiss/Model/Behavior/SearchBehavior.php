@@ -32,7 +32,7 @@ class SearchBehavior extends Behavior {
 	 *
 	 * @var array
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'blocklistedColumns' => [],
 		'handleNulls' => true,
 		'implementedMethods' => [

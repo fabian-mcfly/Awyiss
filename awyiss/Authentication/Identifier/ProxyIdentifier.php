@@ -19,7 +19,7 @@ class ProxyIdentifier extends AbstractIdentifier {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'fields' => [
 			self::CREDENTIAL_USERNAME => 'username',
 			self::CREDENTIAL_PASSWORD => 'password',

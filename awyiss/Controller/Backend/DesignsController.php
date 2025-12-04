@@ -160,6 +160,7 @@ class DesignsController extends Controller {
 	 * @return void
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 * @throws \Cake\Http\Exception\ForbiddenException
+	 * @throws \Exception
 	 */
 	protected function save(Design $design, array $internalVariables, array $webfonts): void {
 		$requestData = $this->request->getData();

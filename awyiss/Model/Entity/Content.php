@@ -98,7 +98,7 @@ class Content extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
+	protected array $_accessible = [ // phpcs:ignore
 		'pageId' => true,
 		'parentId' => true,
 		'title' => true,
@@ -125,7 +125,7 @@ class Content extends Entity {
 	/**
 	 * @inheritdoc
 	 */
-	protected array $_virtual = ['column', 'label'];
+	protected array $_virtual = ['column', 'label']; // phpcs:ignore
 
 
 	/**

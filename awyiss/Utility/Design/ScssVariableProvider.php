@@ -36,7 +36,7 @@ class ScssVariableProvider {
 	/**
 	 * @var array $_defaultConfig Default configuration
 	 */
-	protected array $_defaultConfig = [];
+	protected array $_defaultConfig = []; // phpcs:ignore
 	/**
 	 * The SCSS files to be read and parsed for variables.
 	 *

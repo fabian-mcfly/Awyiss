@@ -41,7 +41,7 @@ abstract class MenuItem implements ArrayAccess {
 	/**
 	 * @var array
 	 */
-	protected array $_defaultConfig = [];
+	protected array $_defaultConfig = []; // phpcs:ignore
 	/**
 	 * @var string|int|null
 	 */

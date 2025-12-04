@@ -25,7 +25,7 @@ class MenuRenderer {
 	 * @var array
 	 * @noinspection HtmlUnknownAttribute
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'activeOnly' => true,
 		'escapeTitle' => true,
 		'formatters' => [

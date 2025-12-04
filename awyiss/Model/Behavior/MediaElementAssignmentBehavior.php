@@ -33,7 +33,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'assignable' => [
 			'entityLevel' => false,
 			'modelLevel' => false,

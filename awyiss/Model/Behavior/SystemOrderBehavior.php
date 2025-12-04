@@ -47,7 +47,7 @@ class SystemOrderBehavior extends Behavior {
 	 *
 	 * @var array
 	 */
-	protected array $_defaultConfig = [
+	protected array $_defaultConfig = [ // phpcs:ignore
 		'direction' => SORT_ASC,
 		'enabled' => true,
 		'field' => 'systemOrder',
