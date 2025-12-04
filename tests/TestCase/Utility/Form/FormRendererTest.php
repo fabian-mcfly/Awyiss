@@ -404,12 +404,22 @@ class FormRendererTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testProcessFormNotSubmitted(): void {
-		$renderer = new FormRenderer($this->view);
-		$renderer->initForm(1, []);
+		// Mock sendAndRedirect to avoid RedirectException
+		$renderer = $this->getMockBuilder(FormRenderer::class)->setConstructorArgs([$this->view])->onlyMethods(['processFormEntryFromHash', 'sendAndRedirect'])->getMock();
 
-		$result = $renderer->process();
+		$renderer->expects($this->never())->method('processFormEntryFromHash');
+		$renderer->expects($this->never())->method('sendAndRedirect');
 
-		$this->assertNull($result);
+		$renderer->initForm(1, [
+			'_form_identifier' => 'contact2', // Other Form's identifier to simulate not submitted
+			'email' => 'awyiss@cms.de',
+			'vorname' => 'Max',
+			'nachname' => 'Mustermann',
+			'nachricht' => 'This is a test message.',
+			'datenschutz_akzeptiert' => 'Ja',
+		]);
+
+		$renderer->process();
 	}
 
 
@@ -421,18 +431,23 @@ class FormRendererTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testProcessInvalidSubmission(): void {
-		$renderer = new FormRenderer($this->view);
+		// Mock sendAndRedirect to avoid RedirectException
+		$renderer = $this->getMockBuilder(FormRenderer::class)->setConstructorArgs([$this->view])->onlyMethods(['processFormEntryFromHash', 'sendAndRedirect'])->getMock();
+
+		$renderer->expects($this->never())->method('processFormEntryFromHash');
+		$renderer->expects($this->never())->method('sendAndRedirect');
+
 		$renderer->initForm(1, [
 			'_form_identifier' => 'contact',
-			'email' => 'invalid-email',
+			'email' => 'no-email',
 			'vorname' => 'Max',
 			'nachname' => 'Mustermann',
 			'nachricht' => 'This is a test message.',
+			'datenschutz_akzeptiert' => 'Ja',
 		]);
 
-		$result = $renderer->process();
+		$renderer->process();
 
-		$this->assertNull($result);
 		$this->assertFalse($renderer->getForm()->isValid());
 	}
 
