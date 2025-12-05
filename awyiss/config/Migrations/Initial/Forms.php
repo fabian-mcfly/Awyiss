@@ -166,6 +166,18 @@ class Forms {
 			]
 		)->addIndex(
 			[
+				'email_template_id',
+			], [
+				'name' => 'FORMS_EMAIL_TEMPLATE_ID',
+			]
+		)->addIndex(
+			[
+				'confirmation_email_template_id',
+			], [
+				'name' => 'FORMS_CONFIRMATION_EMAIL_TEMPLATE_ID',
+			]
+		)->addIndex(
+			[
 				'active',
 			], [
 				'name' => 'FORMS_ACTIVE',

@@ -139,6 +139,19 @@ class MediaFolders {
 			], [
 				'name' => 'MEDIA_FOLDERS_DELETED',
 			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'MEDIA_FOLDERS_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'MEDIA_FOLDERS_DELETED_ORDER',
+			]
 		)->create();
 	}
 

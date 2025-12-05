@@ -112,6 +112,19 @@ class MediaElements {
 			], [
 				'name' => 'MEDIA_ELEMENTS_DELETED',
 			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'MEDIA_ELEMENTS_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'MEDIA_ELEMENTS_DELETED_ORDER',
+			]
 		)->create();
 
 		// Insert a dummy record with id 10 and then delete it

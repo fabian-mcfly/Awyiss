@@ -133,6 +133,12 @@ class SurveySurveyQuestions {
 			]
 		)->addIndex(
 			[
+				'identifier',
+			], [
+				'name' => 'SURVEY_SURVEY_QUESTIONS_IDENTIFIER',
+			]
+		)->addIndex(
+			[
 				'system_order',
 			], [
 				'name' => 'SURVEY_SURVEY_QUESTIONS_SYSTEM_ORDER',
@@ -148,6 +154,13 @@ class SurveySurveyQuestions {
 				'deleted',
 			], [
 				'name' => 'SURVEY_SURVEY_QUESTIONS_DELETED',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'SURVEY_SURVEY_QUESTIONS_DELETED_ORDER',
 			]
 		)->create();
 	}

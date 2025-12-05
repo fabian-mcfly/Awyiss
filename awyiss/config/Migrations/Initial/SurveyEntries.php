@@ -86,6 +86,12 @@ class SurveyEntries {
 			]
 		)->addIndex(
 			[
+				'page_id',
+			], [
+				'name' => 'SURVEY_ENTRIES_PAGE_ID',
+			]
+		)->addIndex(
+			[
 				'identifier',
 			], [
 				'name' => 'SURVEY_ENTRIES_IDENTIFIER',

@@ -134,6 +134,19 @@ class MenuEntries {
 			], [
 				'name' => 'MENU_ENTRIES_DELETED',
 			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'MENU_ENTRIES_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'MENU_ENTRIES_DELETED_ORDER',
+			]
 		)->create();
 	}
 

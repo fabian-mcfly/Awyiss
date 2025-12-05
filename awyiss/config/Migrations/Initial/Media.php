@@ -168,6 +168,12 @@ class Media {
 			], [
 				'name' => 'MEDIA_WEBP',
 			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'MEDIA_SYSTEM_ORDER',
+			]
 		)->create();
 	}
 

@@ -185,6 +185,18 @@ class Contents {
 			]
 		)->addIndex(
 			[
+				'form_id',
+			], [
+				'name' => 'CONTENTS_FORM_ID',
+			]
+		)->addIndex(
+			[
+				'survey_id',
+			], [
+				'name' => 'CONTENTS_SURVEY_ID',
+			]
+		)->addIndex(
+			[
 				'active',
 			], [
 				'name' => 'CONTENTS_ACTIVE',
@@ -194,6 +206,19 @@ class Contents {
 				'deleted',
 			], [
 				'name' => 'CONTENTS_DELETED',
+			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'CONTENTS_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'CONTENTS_DELETED_ORDER',
 			]
 		)->create();
 	}

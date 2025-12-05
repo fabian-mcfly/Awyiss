@@ -130,6 +130,27 @@ class Languages {
 			], [
 				'name' => 'LANGUAGES_DELETED',
 			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'LANGUAGES_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'LANGUAGES_DELETED_ORDER',
+			]
+		)->addIndex(
+			[
+				'active',
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'LANGUAGES_ACTIVE_DELETED_ORDER',
+			]
 		)->create();
 	}
 

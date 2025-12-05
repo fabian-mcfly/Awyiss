@@ -80,6 +80,18 @@ class WidgetTemplateElements {
 			], [
 				'name' => 'WIDGET_TEMPLATE_ELEMENTS_IDENTIFIER',
 			]
+		)->addIndex(
+			[
+				'fieldset',
+			], [
+				'name' => 'WIDGET_TEMPLATE_ELEMENTS_FIELDSET',
+			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'WIDGET_TEMPLATE_ELEMENTS_SYSTEM_ORDER',
+			]
 		)->create();
 	}
 

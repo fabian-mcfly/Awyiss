@@ -80,6 +80,18 @@ class ContentTemplateElements {
 			], [
 				'name' => 'CONTENT_TEMPLATE_ELEMENTS_IDENTIFIER',
 			]
+		)->addIndex(
+			[
+				'fieldset',
+			], [
+				'name' => 'CONTENT_TEMPLATE_ELEMENTS_FIELDSET',
+			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'CONTENT_TEMPLATE_ELEMENTS_SYSTEM_ORDER',
+			]
 		)->create();
 	}
 

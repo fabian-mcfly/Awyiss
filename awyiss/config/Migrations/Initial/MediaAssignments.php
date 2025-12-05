@@ -132,6 +132,25 @@ class MediaAssignments {
 			], [
 				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_FOLDER_ID',
 			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'MEDIA_ASSIGNMENTS_DELETED',
+			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'MEDIA_ASSIGNMENTS_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'MEDIA_ASSIGNMENTS_DELETED_ORDER',
+			]
 		)->create();
 	}
 

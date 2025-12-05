@@ -174,6 +174,18 @@ class Pages {
 			]
 		)->addIndex(
 			[
+				'form_id',
+			], [
+				'name' => 'PAGES_FORM_ID',
+			]
+		)->addIndex(
+			[
+				'survey_id',
+			], [
+				'name' => 'PAGES_SURVEY_ID',
+			]
+		)->addIndex(
+			[
 				'active',
 			], [
 				'name' => 'PAGES_ACTIVE',
@@ -195,6 +207,13 @@ class Pages {
 				'system_order',
 			], [
 				'name' => 'PAGES_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'PAGES_DELETED_ORDER',
 			]
 		)->create();
 	}

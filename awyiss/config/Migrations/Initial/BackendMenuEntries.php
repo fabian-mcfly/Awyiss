@@ -104,6 +104,18 @@ class BackendMenuEntries {
 			'null' => true,
 		])->addIndex(
 			[
+				'parent_id',
+			], [
+				'name' => 'BACKEND_MENU_ENTRIES_PARENT_ID',
+			]
+		)->addIndex(
+			[
+				'insert_after_id',
+			], [
+				'name' => 'BACKEND_MENU_ENTRIES_INSERT_AFTER_ID',
+			]
+		)->addIndex(
+			[
 				'active',
 			], [
 				'name' => 'BACKEND_MENU_ENTRIES_ACTIVE',
@@ -113,6 +125,19 @@ class BackendMenuEntries {
 				'deleted',
 			], [
 				'name' => 'BACKEND_MENU_ENTRIES_DELETED',
+			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'BACKEND_MENU_ENTRIES_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'BACKEND_MENU_ENTRIES_DELETED_ORDER',
 			]
 		)->create();
 	}

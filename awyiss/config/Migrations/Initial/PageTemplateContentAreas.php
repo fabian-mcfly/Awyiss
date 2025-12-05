@@ -65,6 +65,12 @@ class PageTemplateContentAreas {
 			], [
 				'name' => 'PAGE_TEMPLATE_CONTENT_AREAS_CONTENT_AREA_ID',
 			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'PAGE_TEMPLATE_CONTENT_AREAS_SYSTEM_ORDER',
+			]
 		)->create();
 	}
 

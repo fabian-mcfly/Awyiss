@@ -83,6 +83,12 @@ class MediaElementSelectors {
 			], [
 				'name' => 'MEDIA_ELEMENT_SELECTORS_MEDIA_SELECTOR_ID',
 			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'MEDIA_ELEMENT_SELECTORS_SYSTEM_ORDER',
+			]
 		)->create();
 
 		// Insert a dummy record with id 10 and then delete it

@@ -135,6 +135,12 @@ class Attributes  {
 			]
 		)->addIndex(
 			[
+				'fieldset',
+			], [
+				'name' => 'ATTRIBUTES_FIELDSET',
+			]
+		)->addIndex(
+			[
 				'active',
 			], [
 				'name' => 'ATTRIBUTES_ACTIVE',
@@ -150,6 +156,19 @@ class Attributes  {
 				'scope',
 			], [
 				'name' => 'ATTRIBUTES_SCOPE',
+			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'ATTRIBUTES_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'ATTRIBUTES_DELETED_ORDER',
 			]
 		)->create();
 

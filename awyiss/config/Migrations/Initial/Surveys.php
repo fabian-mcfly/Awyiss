@@ -103,6 +103,18 @@ class Surveys {
 			'null' => true,
 		])->addIndex(
 			[
+				'identifier',
+			], [
+				'name' => 'SURVEYS_IDENTIFIER',
+			]
+		)->addIndex(
+			[
+				'form_id',
+			], [
+				'name' => 'SURVEYS_FORM_ID',
+			]
+		)->addIndex(
+			[
 				'active',
 			], [
 				'name' => 'SURVEYS_ACTIVE',

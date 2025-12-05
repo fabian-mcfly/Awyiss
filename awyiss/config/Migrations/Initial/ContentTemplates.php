@@ -102,6 +102,19 @@ class ContentTemplates {
 			], [
 				'name' => 'CONTENT_TEMPLATES_DELETED',
 			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'CONTENT_TEMPLATES_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'CONTENT_TEMPLATES_DELETED_ORDER',
+			]
 		)->create();
 	}
 

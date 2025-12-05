@@ -79,9 +79,21 @@ class Audit {
 		])->addIndex(
 			[
 				'scope',
-				'foreign_key',
 			], [
 				'name' => 'AUDIT_SCOPE',
+			]
+		)->addIndex(
+			[
+				'foreign_key',
+			], [
+				'name' => 'AUDIT_FOREIGN_KEY',
+			]
+		)->addIndex(
+			[
+				'scope',
+				'foreign_key',
+			], [
+				'name' => 'AUDIT_SCOPE_KEY',
 			]
 		)->addIndex(
 			[

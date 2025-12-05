@@ -118,6 +118,13 @@ class SurveyAnswers {
 			], [
 				'name' => 'SURVEY_ANSWERS_DELETED',
 			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'SURVEY_ANSWERS_DELETED_ORDER',
+			]
 		)->create();
 	}
 

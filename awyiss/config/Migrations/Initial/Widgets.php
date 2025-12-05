@@ -167,6 +167,18 @@ class Widgets {
 			]
 		)->addIndex(
 			[
+				'form_id',
+			], [
+				'name' => 'WIDGETS_FORM_ID',
+			]
+		)->addIndex(
+			[
+				'survey_id',
+			], [
+				'name' => 'WIDGETS_SURVEY_ID',
+			]
+		)->addIndex(
+			[
 				'active',
 			], [
 				'name' => 'WIDGETS_ACTIVE',
@@ -176,6 +188,36 @@ class Widgets {
 				'deleted',
 			], [
 				'name' => 'WIDGETS_DELETED',
+			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'WIDGETS_SYSTEM_ORDER',
+			]
+		)->addIndex(
+			[
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'WIDGETS_DELETED_ORDER',
+			]
+		)->addIndex(
+			[
+				'active',
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'WIDGETS_ACTIVE_DELETED_ORDER',
+			]
+		)->addIndex(
+			[
+				'identifier',
+				'active',
+				'deleted',
+				'system_order',
+			], [
+				'name' => 'WIDGETS_IDENTIFIER_ACTIVE_DELETED_ORDER',
 			]
 		)->create();
 	}

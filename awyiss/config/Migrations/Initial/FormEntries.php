@@ -102,6 +102,12 @@ class FormEntries {
 			]
 		)->addIndex(
 			[
+				'page_id',
+			], [
+				'name' => 'FORM_ENTRIES_PAGE_ID',
+			]
+		)->addIndex(
+			[
 				'identifier',
 			], [
 				'name' => 'FORM_ENTRIES_IDENTIFIER',
