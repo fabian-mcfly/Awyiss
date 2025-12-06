@@ -163,7 +163,11 @@ class FrontendController extends AppController {
 			->find(!$this->previewMode ? 'published' : 'all', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true)
 			->find('mediaAssignments', useMediaEntity: true);
 
-		// Add additional where conditions
+		/**
+		 * Add additional where conditions but don't add defaults.
+		 * When we would add a default condition here, like 'active' => true,
+		 * we wouldn't find deleted pages when a slug is provided.
+		 */
 		if ($where) {
 			$query->where($where);
 		}
@@ -185,9 +189,18 @@ class FrontendController extends AppController {
 			]);
 		}
 		else {
-			// Order all by deleted, parents_active, active, system_order
+			if ($slug) {
+				/*
+				 * Order by `deleted` only when a slug is provided (to find deleted pages with a slug), otherwise
+				 * deleted pages are not fetched at all, so no need to order by deleted
+				 */
+				$query->orderBy([
+					'Pages.deleted' => 'ASC',
+				]);
+			}
+
+			// Order all by `parents_active`, `active`
 			$query->orderBy([
-				'Pages.deleted' => 'ASC',
 				'Pages.parents_active' => 'DESC',
 				'Pages.active' => 'DESC',
 			]);
