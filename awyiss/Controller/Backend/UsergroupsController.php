@@ -185,7 +185,8 @@ class UsergroupsController extends Controller {
 			$usergroup->setAccess('attributes', true);
 		}
 
-		$requestData['usergroup_permissions'] = $this->reformatPermissionsData($this->request->getData());
+		$requestData = $this->request->getData();
+		$requestData['usergroup_permissions'] = $this->reformatPermissionsData($requestData);
 
 		$associated[] = 'UsergroupPermissions';
 		$usergroup->setAccess('usergroupPermissions', true);
