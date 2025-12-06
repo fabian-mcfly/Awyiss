@@ -103,7 +103,11 @@ class AutoPrefixBehavior extends Behavior {
 		}
 
 		//The expression is an instance of QueryExpression. So iterate all parts
-		$expression->iterateParts(function (ExpressionInterface $expression) {
+		$expression->iterateParts(function (ExpressionInterface|string $expression) {
+			if (is_string($expression)) {
+				return $expression;
+			}
+
 			//If the expression is an instance of ComparisonExpression, set the prefixed field if it does not contain '.'
 			if ($expression instanceof ComparisonExpression) {
 				$fields = $expression->getField();
