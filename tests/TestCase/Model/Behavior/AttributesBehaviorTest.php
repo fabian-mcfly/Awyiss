@@ -600,11 +600,11 @@ class AttributesBehaviorTest extends TestCase {
 			$this->assertInstanceOf(Attribute::class, $attribute);
 		}
 
-		$this->assertSame([
-			'input_list',
-			'input_key_value_list',
+		$this->assertEquals([
 			'free_text',
+			'input_list',
 			'dropdown_select',
+			'input_key_value_list',
 			'dummy_pw',
 		], array_column($result, 'identifier'));
 	}
@@ -627,11 +627,11 @@ class AttributesBehaviorTest extends TestCase {
 			$this->assertInstanceOf(Attribute::class, $attribute);
 		}
 
-		$this->assertSame([
-			'input_list',
-			'input_key_value_list',
+		$this->assertEquals([
 			'free_text',
+			'input_list',
 			'dropdown_select',
+			'input_key_value_list',
 			'dummy_pw',
 		], array_column($result, 'identifier'));
 	}

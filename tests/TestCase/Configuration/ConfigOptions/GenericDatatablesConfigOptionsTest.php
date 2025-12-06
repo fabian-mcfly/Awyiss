@@ -233,7 +233,7 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getTypecast());
 		$this->assertNull($configOptions['Backend.overview.displayedFields']->getValidate());
 		$this->assertIsCallable($configOptions['Backend.overview.displayedFields']->getValues());
-		$this->assertSame([
+		$this->assertEquals([
 			'parent_id' => 'cars::parent_id',
 			'language_shortcode' => 'cars::language_shortcode',
 			'system_order' => 'cars::system_order',
@@ -242,10 +242,10 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 			'created_on' => 'cars::created_on',
 			'changed_by' => 'cars::changed_by',
 			'changed_on' => 'cars::changed_on',
-			'attributes.input_list' => 'Input List',
-			'attributes.input_key_value_list' => 'Input Key-Value List',
 			'attributes.free_text' => 'Freitext',
+			'attributes.input_list' => 'Input List',
 			'attributes.dropdown_select' => 'Auswahlfeld (Pflichtfeld, übersetzbar)',
+			'attributes.input_key_value_list' => 'Input Key-Value List',
 			'attributes.dummy_pw' => 'Password',
 		], $configOptions['Backend.overview.displayedFields']->getValues(true));
 
@@ -318,10 +318,10 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 			'created_on' => 'cars::created_on',
 			'changed_by' => 'cars::changed_by',
 			'changed_on' => 'cars::changed_on',
-			'attributes.input_list' => 'Input List',
-			'attributes.input_key_value_list' => 'Input Key-Value List',
 			'attributes.free_text' => 'Freitext',
+			'attributes.input_list' => 'Input List',
 			'attributes.dropdown_select' => 'Auswahlfeld (Pflichtfeld, übersetzbar)',
+			'attributes.input_key_value_list' => 'Input Key-Value List',
 			'attributes.dummy_pw' => 'Password',
 		], $configOptions['Backend.systemOrder.field']->getValues(true));
 

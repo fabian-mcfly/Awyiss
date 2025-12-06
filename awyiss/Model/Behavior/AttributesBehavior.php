@@ -22,8 +22,6 @@ use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Inflector;
 use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
-use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
@@ -274,8 +272,6 @@ class AttributesBehavior extends Behavior {
 		$attributesTable = FactoryLocator::get('Table')->get('Attributes');
 		$attributesQuery = $attributesTable->find('all');
 
-		$attributesQuery = $this->addOrderByFieldset($attributesQuery, $attributesTable);
-
 		static::$attributes = $attributesQuery->all()->groupBy('scope')->map(function (array $attributes): array {
 			return collection($attributes)->indexBy('identifier')->toArray();
 		})->toArray();
@@ -441,12 +437,10 @@ class AttributesBehavior extends Behavior {
 			}
 
 			/**
-			 * @noinspection PhpUndefinedMethodInspection
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
 			if ($entity->attributes && !$entity->attributes->getEntity()) {
 				/**
-				 * @noinspection PhpUndefinedMethodInspection
 				 * @noinspection PhpPossiblePolymorphicInvocationInspection
 				 */
 				$entity->attributes->setEntity($entity);
@@ -657,48 +651,5 @@ class AttributesBehavior extends Behavior {
 		throw new BadMethodCallException(
 			sprintf('Unknown method `%s` called on `%s`', $method, static::class)
 		);
-	}
-
-
-	/**
-	 * @param \Cake\ORM\Query\SelectQuery $attributesQuery
-	 * @param \Awyiss\Model\Table\AttributesTable $attributesTable
-	 * @return \Cake\ORM\Query\SelectQuery
-	 */
-	protected function addOrderByFieldset(SelectQuery $attributesQuery, Table\AttributesTable $attributesTable): SelectQuery {
-		$dialect = $attributesQuery->getConnection()->getDriver()->schemaDialect();
-
-		/**
-		 * SQLite does not support FIELD(),
-		 * so ordering using CASE WHEN is used instead
-		 */
-		if ($dialect instanceof SqliteSchemaDialect) {
-			$fieldsets = $attributesTable->getAvailableFieldsets();
-
-			$attributesQuery->orderBy(function (QueryExpression $exp) use ($fieldsets) {
-				$index = 0;
-
-				$case = $exp->case();
-				foreach ($fieldsets as $fieldset) {
-					$case->when(['fieldset' => $fieldset])->then($index, 'integer');
-
-					$index++;
-				}
-
-				$case->else(999, 'integer');
-
-				return $case;
-			});
-
-			return $attributesQuery;
-		}
-
-		/** @noinspection PhpUndefinedMethodInspection */
-		$attributesQuery->orderByAsc($attributesQuery->newExpr($attributesQuery->func()->FIELD([
-			'fieldset' => 'identifier',
-			...$attributesTable->getAvailableFieldsets(),
-		])));
-
-		return $attributesQuery;
 	}
 }
