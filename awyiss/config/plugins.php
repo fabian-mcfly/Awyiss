@@ -1,9 +1,7 @@
 <?php declare(strict_types=1);
 
 return [
-	'DebugKit' => [
-		'onlyDebug' => true,
-	],
+	'Authentication' => [],
 	'Bake' => [
 		'onlyCli' => true,
 	],
@@ -11,11 +9,7 @@ return [
 	'Migrations' => [
 		'onlyCli' => true,
 	],
-	'Authentication' => [],
 	'Queue' => [
 		'routes' => false,
-	],
-	'IdeHelper' => [
-		'onlyCli' => true,
 	],
 ];
