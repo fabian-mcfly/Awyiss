@@ -43,7 +43,7 @@ class EavStrategy extends BaseEavStrategy {
 	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void {
 		$queryOptions = Hash::get($options, 'translate', []);
 
-		if (($queryOptions['skip'] ?? false) === true) {
+		if (($queryOptions['skip'] ?? false) === true || !$this->getConfig('fields')) {
 			return;
 		}
 
