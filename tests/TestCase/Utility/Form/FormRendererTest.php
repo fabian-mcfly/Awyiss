@@ -694,7 +694,7 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
-	 * @see \Awyiss\Utility\Form\FormRenderer::parseModule()
+	 * @see \Awyiss\Utility\Form\FormRenderer::parseModules()
 	 * @throws \Exception
 	 * @throws \ReflectionException
 	 * @noinspection HtmlUnknownTarget

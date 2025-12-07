@@ -12,6 +12,7 @@ use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\FormEntriesTable;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\FrontendView;
 use Cake\Core\Configure;
@@ -121,6 +122,8 @@ class FormSender {
 	 * @return bool
 	 */
 	public function handle(): bool {
+		DebugTimer::start('FormSender::handle', sprintf('FormSender::handle: Handling form "%s"', $this->form->identifier));
+
 		$this->replacePlaceholdersInForm();
 
 		$eventManager = EventManager::instance();
@@ -130,6 +133,7 @@ class FormSender {
 		$eventManager->dispatch($event);
 
 		if ($event->isStopped()) {
+			DebugTimer::stop('FormSender::handle');
 			return false;
 		}
 
@@ -148,8 +152,12 @@ class FormSender {
 			(!$this->form->sendEmail || $sentEmail) &&
 			(!$this->form->sendConfirmationEmail || $sentConfirmationEmail)
 		) {
-			return $this->saveFormEntry();
+			$result = $this->saveFormEntry();
+			DebugTimer::stop('FormSender::handle');
+			return $result;
 		}
+
+		DebugTimer::stop('FormSender::handle');
 
 		return false;
 	}
@@ -172,11 +180,14 @@ class FormSender {
 	 * @return bool
 	 */
 	protected function sendEmail(): bool {
+		DebugTimer::start('FormSender::sendEmail', sprintf('FormSender::sendEmail: Sending email for form "%s"', $this->form->identifier));
+
 		// Build the mail body
 		$bodyHtml = $this->createBody($this->form->emailTemplate);
 		$bodyPlain = $this->createBody($this->form->emailTemplate, 'text');
 
 		if (empty($bodyPlain) && empty($bodyHtml)) {
+			DebugTimer::stop('FormSender::sendEmail');
 			return false;
 		}
 
@@ -188,11 +199,13 @@ class FormSender {
 				'bodyPlain' => &$bodyPlain,
 			])
 		) {
+			DebugTimer::stop('FormSender::sendEmail');
 			return false;
 		}
 
 		// Check again if both body parts are empty.
 		if (empty($bodyPlain) && empty($bodyHtml)) {
+			DebugTimer::stop('FormSender::sendEmail');
 			return false;
 		}
 
@@ -236,11 +249,13 @@ class FormSender {
 				'mailer' => $mailer,
 			])
 		) {
+			DebugTimer::stop('FormSender::sendEmail');
 			return false;
 		}
 
 		// Check again if both body parts are empty.
 		if (empty($bodyPlain) && empty($bodyHtml)) {
+			DebugTimer::stop('FormSender::sendEmail');
 			return false;
 		}
 
@@ -259,6 +274,8 @@ class FormSender {
 			'sent' => $sent,
 		]);
 
+		DebugTimer::stop('FormSender::sendEmail');
+
 		return $sent;
 	}
 
@@ -269,11 +286,14 @@ class FormSender {
 	 * @return bool
 	 */
 	protected function sendConfirmationEmail(): bool {
+		DebugTimer::start('FormSender::sendConfirmationEmail', sprintf('FormSender::sendConfirmationEmail: Sending confirmation email for form "%s"', $this->form->identifier));
+
 		// Build the mail body
 		$bodyHtml = $this->createBody($this->form->confirmationEmailTemplate, 'html', 'confirmation');
 		$bodyPlain = $this->createBody($this->form->confirmationEmailTemplate, 'text', 'confirmation');
 
 		if (empty($bodyPlain) && empty($bodyHtml)) {
+			DebugTimer::stop('FormSender::sendConfirmationEmail');
 			return false;
 		}
 
@@ -285,11 +305,13 @@ class FormSender {
 				'bodyPlain' => &$bodyPlain,
 			])
 		) {
+			DebugTimer::stop('FormSender::sendConfirmationEmail');
 			return false;
 		}
 
 		// Check again if both body parts are empty.
 		if (empty($bodyPlain) && empty($bodyHtml)) {
+			DebugTimer::stop('FormSender::sendConfirmationEmail');
 			return false;
 		}
 
@@ -319,11 +341,13 @@ class FormSender {
 				'mailer' => $mailer,
 			])
 		) {
+			DebugTimer::stop('FormSender::sendConfirmationEmail');
 			return false;
 		}
 
 		// Check again if both body parts are empty.
 		if (empty($bodyPlain) && empty($bodyHtml)) {
+			DebugTimer::stop('FormSender::sendConfirmationEmail');
 			return false;
 		}
 
@@ -342,6 +366,8 @@ class FormSender {
 			'sent' => $sent,
 		]);
 
+		DebugTimer::stop('FormSender::sendConfirmationEmail');
+
 		return $sent;
 	}
 
@@ -352,6 +378,8 @@ class FormSender {
 	 * @return bool
 	 */
 	protected function saveFormEntry(): bool {
+		DebugTimer::start('FormSender::saveFormEntry', sprintf('FormSender::saveFormEntry: Saving form entry for form "%s"', $this->form->identifier));
+
 		$formData = $this->getFormData();
 		$formData = array_filter($formData, function (mixed $key): bool {
 			return !str_starts_with((string)$key, '_');
@@ -392,6 +420,8 @@ class FormSender {
 
 			// If the modify method decides to intervene, return the desired status.
 			if (is_bool($formEntry)) {
+				DebugTimer::stop('FormSender::saveFormEntry');
+
 				return $formEntry;
 			}
 		}
@@ -400,8 +430,12 @@ class FormSender {
 		if ($this->formEntriesTable->save($formEntry, ['allowFrontendSave' => true])) {
 			$this->formEntryIdentifier = $formEntry->identifier;
 
+			DebugTimer::stop('FormSender::saveFormEntry');
+
 			return true;
 		}
+
+		DebugTimer::stop('FormSender::saveFormEntry');
 
 		return false;
 	}
@@ -521,6 +555,8 @@ class FormSender {
 	 * @return void
 	 */
 	public function replacePlaceholdersInForm(): void {
+		DebugTimer::start('FormSender::replacePlaceholdersInForm', sprintf('FormSender::replacePlaceholdersInForm: Replacing placeholders in form "%s"', $this->form->identifier));
+
 		$blocklistedFields = ['active', '_translations', '_publicationData', 'mediaAssignments', 'mediaElementAssignments'];
 		$formFields = array_keys(array_filter($this->form->getAccessible()));
 
@@ -541,6 +577,8 @@ class FormSender {
 
 			$this->form->set($field, $value);
 		}
+
+		DebugTimer::stop('FormSender::replacePlaceholdersInForm');
 	}
 
 
@@ -751,6 +789,8 @@ class FormSender {
 	 * @return string
 	 */
 	protected function unwrapDataString(string $body): string {
+		DebugTimer::start('FormSender::unwrapDataString', sprintf('FormSender::unwrapDataString: Unwrapping {{$data}} in form "%s"', $this->form->identifier));
+
 		// Recursively unwrap {{$data}} from phrasingOnlyTags parents
 		$phrasingTagsPattern = implode('|', array_map('preg_quote', $this->phrasingOnlyTags));
 		$previous = '';
@@ -765,6 +805,8 @@ class FormSender {
 				$body
 			);
 		}
+
+		DebugTimer::stop('FormSender::unwrapDataString');
 
 		return $body;
 	}

@@ -7,6 +7,7 @@ namespace Awyiss\View\Cell\Frontend;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
@@ -37,6 +38,8 @@ class WidgetsCell extends Cell {
 	 * @throws \ReflectionException
 	 */
 	public function display(string $identifier, FrontendView $view, array $options = []): void {
+		DebugTimer::start('WidgetsCell::display', sprintf('WidgetsCell::display: Rendering widget area "%s"', $identifier));
+
 		$this->View = $view;
 
 		$options = $this->initCellOptions($options);
@@ -68,6 +71,8 @@ class WidgetsCell extends Cell {
 
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Widgets');
+
+		DebugTimer::stop('WidgetsCell::display');
 	}
 
 
@@ -80,6 +85,8 @@ class WidgetsCell extends Cell {
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
+		DebugTimer::start('WidgetsCell::renderElement' . $entity->id, sprintf('WidgetsCell::renderElement: Rendering widget #%d with template "%s"', $entity->id, $entity->widgetTemplate->fileName));
+
 		/**
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
@@ -96,7 +103,7 @@ class WidgetsCell extends Cell {
 		$this->parseAwyissImageTags($entity, $mediaRenderOptions);
 
 		// Parse the module
-		$this->parseModule($entity, $mediaRenderOptions);
+		$this->parseModules($entity, $mediaRenderOptions);
 
 		$fullWidthMissingWarning = '';
 		if (!$this->getView()->get('fullWidth')) {
@@ -104,11 +111,15 @@ class WidgetsCell extends Cell {
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $fullWidthMissingWarning . $this->getView()->widget($entity->widgetTemplate->fileName, [
+		$result = $fullWidthMissingWarning . $this->getView()->widget($entity->widgetTemplate->fileName, [
 			'widget' => $entity,
 			'children' => $children,
 			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
+
+		DebugTimer::stop('WidgetsCell::renderElement' . $entity->id);
+
+		return $result;
 	}
 
 
@@ -118,6 +129,8 @@ class WidgetsCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getThreadedWidgets(string $identifier, bool $isPreview = false): CollectionInterface {
+		DebugTimer::start('WidgetsCell::getThreadedWidgets', sprintf('WidgetsCell::getThreadedWidgets: Loading widgets for identifier "%s"', $identifier));
+
 		/** @var \Awyiss\Model\Table\WidgetsTable $widgetsTable */
 		$widgetsTable = $this->fetchTable('Widgets');
 
@@ -152,8 +165,12 @@ class WidgetsCell extends Cell {
 		 * Either because it's not active (allowed to happen)
 		 * or because it's not part of the same page. (shouldn't happen)
 		 */
-		return $widgets->filter(function (Widget $widget) {
+		$widgets = $widgets->filter(function (Widget $widget) {
 			return $widget->parentId === null;
 		})->compile();
+
+		DebugTimer::stop('WidgetsCell::getThreadedWidgets');
+
+		return $widgets;
 	}
 }

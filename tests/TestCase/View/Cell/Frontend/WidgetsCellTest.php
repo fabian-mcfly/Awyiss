@@ -864,7 +864,7 @@ class WidgetsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
+	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
@@ -874,7 +874,7 @@ class WidgetsCellTest extends TestCase {
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModule($entity, $mediaRenderOptions);
+		$this->cell->parseModules($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div>Rendered Output (and key is `value`)<div>Some other content</div>', $entity->text);
 	}
@@ -882,7 +882,7 @@ class WidgetsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
+	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
@@ -892,7 +892,7 @@ class WidgetsCellTest extends TestCase {
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModule($entity, $mediaRenderOptions);
+		$this->cell->parseModules($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div>', $entity->text);
 	}
@@ -900,7 +900,7 @@ class WidgetsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
+	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
@@ -910,7 +910,7 @@ class WidgetsCellTest extends TestCase {
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModule($entity, $mediaRenderOptions);
+		$this->cell->parseModules($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div><module data-identifier="missingModule">{"key":"value"}</module><div>Some other content</div>', $entity->text);
 	}
@@ -918,7 +918,7 @@ class WidgetsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
+	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
@@ -928,7 +928,7 @@ class WidgetsCellTest extends TestCase {
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModule($entity, $mediaRenderOptions);
+		$this->cell->parseModules($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div><div>Some other content</div>', $entity->text);
 	}
@@ -936,7 +936,7 @@ class WidgetsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModule()
+	 * @see \Awyiss\View\Cell\Frontend\WidgetsCell::parseModules()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
@@ -946,7 +946,7 @@ class WidgetsCellTest extends TestCase {
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModule($entity, $mediaRenderOptions);
+		$this->cell->parseModules($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div><p>Rendered Output (and key is `other_value`)e other content</p>', $entity->text);
 	}

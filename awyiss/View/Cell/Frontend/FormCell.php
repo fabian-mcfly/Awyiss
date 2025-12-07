@@ -7,6 +7,7 @@ namespace Awyiss\View\Cell\Frontend;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
 use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
@@ -39,6 +40,8 @@ class FormCell extends Cell {
 	 * @throws \Exception
 	 */
 	public function display(string|int $identifier, Page $page, FrontendView $view, array $options = []): void {
+		DebugTimer::start('FormCell::display', sprintf('FormCell::display: Rendering form "%s" on page %d', $identifier, $page->id));
+
 		$this->View = $view;
 
 		// Set the template for the view
@@ -62,6 +65,7 @@ class FormCell extends Cell {
 
 		$form = $formRenderer->getForm();
 		if (!$form) {
+			DebugTimer::stop('FormCell::display');
 			return;
 		}
 
@@ -82,6 +86,8 @@ class FormCell extends Cell {
 			'includeWrapper' => $options['includeWrapper'],
 			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
 		]);
+
+		DebugTimer::stop('FormCell::display');
 	}
 
 

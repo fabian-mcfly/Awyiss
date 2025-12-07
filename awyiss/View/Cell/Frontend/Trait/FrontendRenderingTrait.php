@@ -8,6 +8,7 @@ use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Module\ModulesProvider;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
@@ -63,10 +64,13 @@ trait FrontendRenderingTrait {
 	 * @return array<\Awyiss\Model\Entity\Media>
 	 */
 	protected function cacheAssignedMediaItems(CollectionInterface $entities, string $scope): array {
+		DebugTimer::start('FrontendRenderingTrait::cacheAssignedMediaItems', sprintf('FrontendRenderingTrait::cacheAssignedMediaItems: Caching %d %s media items', $entities->count(), $scope));
+
 		$entities = $entities->listNested()->compile(false);
 		$entityIds = $entities->extract('id')->toArray();
 
 		if (!$entityIds) {
+			DebugTimer::stop('FrontendRenderingTrait::cacheAssignedMediaItems');
 			return [];
 		}
 
@@ -85,6 +89,7 @@ trait FrontendRenderingTrait {
 
 		ResizedImageManager::setMediaItems($media);
 
+		DebugTimer::stop('FrontendRenderingTrait::cacheAssignedMediaItems');
 		return $media;
 	}
 
@@ -137,6 +142,8 @@ trait FrontendRenderingTrait {
 	 * @throws \Exception
 	 */
 	public function parseAwyissImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
+		DebugTimer::start('FrontendRenderingTrait::parseAwyissImageTags' . $entity->id, sprintf('FrontendRenderingTrait::parseAwyissImageTags: Parsing image tags for entity #%d', $entity->id));
+
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $imageHandlerClass */
 		static $imageHandlerClass;
 
@@ -145,6 +152,8 @@ trait FrontendRenderingTrait {
 		}
 
 		$imageHandlerClass::replaceCustomImageTags($entity, $this->View, $mediaRenderOptions, $fields);
+
+		DebugTimer::stop('FrontendRenderingTrait::parseAwyissImageTags' . $entity->id);
 	}
 
 
@@ -156,12 +165,14 @@ trait FrontendRenderingTrait {
 	 * @throws \Exception
 	 * @noinspection PhpDocSignatureInspection
 	 */
-	public function parseModule(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field = 'text'): void {
+	public function parseModules(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field = 'text'): void {
 		static $modules;
 
 		if (!str_contains($entity->get($field) ?? '', '<module')) {
 			return;
 		}
+
+		DebugTimer::start('FrontendRenderingTrait::parseModules' . $entity->id, sprintf('FrontendRenderingTrait::parseModules: Parsing modules for entity #%d field "%s"', $entity->id, $field));
 
 		if (!isset($modules)) {
 			$modules = ModulesProvider::getModuleFiles();
@@ -188,8 +199,12 @@ trait FrontendRenderingTrait {
 			/** @var class-string<\Awyiss\Module\ModuleInterface> $moduleClass */
 			$moduleClass = $modules[ $identifier ];
 
+			DebugTimer::start('FrontendRenderingTrait::parseModule' . $identifier, sprintf('FrontendRenderingTrait::parseModule: Rendering module "%s" in entity #%d', $identifier, $entity->id));
+
 			/** @noinspection PhpParamsInspection */
 			$moduleOutput = $moduleClass::render($settings, $this->getView(), $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
+
+			DebugTimer::stop('FrontendRenderingTrait::parseModule' . $identifier);
 
 			// Replace the <module> tag with the rendered output
 			if (!empty($moduleOutput)) {
@@ -203,6 +218,8 @@ trait FrontendRenderingTrait {
 		}
 
 		$entity->set($field, $this->getBody($dom));
+
+		DebugTimer::stop('FrontendRenderingTrait::parseModules' . $entity->id);
 	}
 
 

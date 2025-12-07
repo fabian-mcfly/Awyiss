@@ -389,7 +389,7 @@ class SurveyRenderer {
 		]);
 
 		// Parse the module
-		$this->parseModule($this->survey, $mediaRenderOptions, 'failureMessage');
+		$this->parseModules($this->survey, $mediaRenderOptions, 'failureMessage');
 
 		$successMessage = null;
 		if (
@@ -398,7 +398,7 @@ class SurveyRenderer {
 				$this->survey->getNextActionEnum()::SaveAndShowForm,
 			])
 		) {
-			$this->parseModule($this->survey, $mediaRenderOptions, 'successMessage');
+			$this->parseModules($this->survey, $mediaRenderOptions, 'successMessage');
 			$successMessage = $this->results?->getFinalResult($this->survey->successMessage, $mediaRenderOptions) ?? $this->survey->successMessage;
 		}
 
@@ -792,7 +792,7 @@ class SurveyRenderer {
 		}
 
 		// Parse the module
-		$this->parseModule($this->currentAction->surveyQuestion, $mediaRenderOptions);
+		$this->parseModules($this->currentAction->surveyQuestion, $mediaRenderOptions);
 
 		return $this->getView()->element('survey/' . $element, [
 			'survey' => $this->survey,

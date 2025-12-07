@@ -8,6 +8,7 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity\Menu as MenuEntity;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
@@ -78,6 +79,8 @@ class MenuCell extends Cell {
 	 * @return void
 	 */
 	public function display(string $identifier, string $languageShortcode, FrontendView $view, array $options = []): void {
+		DebugTimer::start('MenuCell::display', sprintf('MenuCell::display: Rendering menu "%s" for language "%s"', $identifier, $languageShortcode));
+
 		$this->View = $view;
 
 		$options += [
@@ -146,6 +149,8 @@ class MenuCell extends Cell {
 			'includeWrapper' => !!$options['includeWrapper'],
 			...$options['viewVars'],
 		]);
+
+		DebugTimer::stop('MenuCell::display');
 	}
 
 
@@ -154,6 +159,8 @@ class MenuCell extends Cell {
 	 * @return \Awyiss\Model\Entity\Menu|null
 	 */
 	protected function getMenu(string $identifier): ?MenuEntity {
+		DebugTimer::start('MenuCell::getMenu', sprintf('MenuCell::getMenu: Loading menu "%s"', $identifier));
+
 		/** @var \Awyiss\Model\Table\MenusTable $menusTable */
 		$menusTable = FactoryLocator::get('Table')->get('Menus');
 
@@ -180,6 +187,8 @@ class MenuCell extends Cell {
 			'identifier' => $identifier,
 		])->first();
 
+		DebugTimer::stop('MenuCell::getMenu');
+
 		return $menu;
 	}
 
@@ -190,6 +199,8 @@ class MenuCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getMenuEntries(MenuEntity $menu, string $languageShortcode): CollectionInterface {
+		DebugTimer::start('MenuCell::getMenuEntries', sprintf('MenuCell::getMenuEntries: Loading menu entries for menu "%s" and language "%s"', $menu->identifier, $languageShortcode));
+
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $menuEntriesTable */
 		$menuEntriesTable = FactoryLocator::get('Table')->get('MenuEntries');
 
@@ -209,9 +220,13 @@ class MenuCell extends Cell {
 			'language_shortcode' => $languageShortcode,
 		])->all();
 
-		return $menuEntries->filter(function (MenuEntry $menuEntry) {
+		$menuEntries = $menuEntries->filter(function (MenuEntry $menuEntry) {
 			return $menuEntry->parentId === null;
 		})->compile();
+
+		DebugTimer::stop('MenuCell::getMenuEntries');
+
+		return $menuEntries;
 	}
 
 
@@ -221,10 +236,16 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderList(array $data, StringTemplate $template): string {
+		DebugTimer::start('MenuCell::renderList', sprintf('MenuCell::renderList: Rendering menu list at level %d', $data['level']));
+
 		$isPreview = $data['level'] === 1 && $this->isPreview() && ($data['menuConfig']['active'] ?? true) === false;
 		$data['isPreview'] = $isPreview ? ' ' . FrontendView::getPreviewModeElementClass() : '';
 
-		return $template->format('list', $data);
+		$list = $template->format('list', $data);
+
+		DebugTimer::stop('MenuCell::renderList');
+
+		return $list;
 	}
 
 
@@ -234,6 +255,8 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderItem(array $data, StringTemplate $template): string {
+		DebugTimer::start('MenuCell::renderItem', sprintf('MenuCell::renderItem: Rendering menu item "%s" at level %d', $data['title'], $data['level']));
+
 		$data['id'] = $data['item']->identifier;
 		$data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);
 
@@ -247,7 +270,11 @@ class MenuCell extends Cell {
 			$data['isPreview'] = ' ' . FrontendView::getPreviewModeElementClass();
 		}
 
-		return $template->format('item', $data);
+		$item = $template->format('item', $data);
+
+		DebugTimer::stop('MenuCell::renderItem');
+
+		return $item;
 	}
 
 
@@ -257,6 +284,8 @@ class MenuCell extends Cell {
 	 * @return string
 	 */
 	public function renderContent(array $data, StringTemplate $template): string {
+		DebugTimer::start('MenuCell::renderContent', sprintf('MenuCell::renderContent: Rendering menu content "%s"', $data['title']));
+
 		$data['tabindex'] = '';
 		if (!empty($data['url'])) {
 			$templateName = 'link';
@@ -274,6 +303,10 @@ class MenuCell extends Cell {
 
 		$data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);
 
-		return $template->format($templateName, $data);
+		$content = $template->format($templateName, $data);
+
+		DebugTimer::stop('MenuCell::renderContent');
+
+		return $content;
 	}
 }

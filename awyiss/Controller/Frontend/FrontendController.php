@@ -12,6 +12,7 @@ use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Core\Configure;
@@ -58,6 +59,8 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	public function initialize(): void {
+		DebugTimer::start('FrontendController::initialize');
+
 		AppController::initialize();
 
 		// Load event listeners for the current controller in the "Frontend"-folder
@@ -66,6 +69,8 @@ class FrontendController extends AppController {
 		$this->viewBuilder()->setClassName('Frontend');
 
 		$this->previewMode = !!$this->getRequest()->getSession()->read('previewMode.enabled', false);
+
+		DebugTimer::stop('FrontendController::initialize');
 	}
 
 
@@ -82,6 +87,8 @@ class FrontendController extends AppController {
 	 * @return void
 	 */
 	public function news(Page $page): void {
+		DebugTimer::start('FrontendController::news');
+
 		/** @var \Awyiss\Model\Table\PagesTable $newsTable */
 		$newsTable = $this->fetchTable('News');
 
@@ -132,6 +139,8 @@ class FrontendController extends AppController {
 			'newer' => $newer,
 			'older' => $older,
 		]);
+
+		DebugTimer::stop('FrontendController::news');
 	}
 
 
@@ -146,12 +155,20 @@ class FrontendController extends AppController {
 		$slug = $slug ? rtrim($slug, '/') : null;
 
 		if ($slug) {
+			DebugTimer::start('FrontendController::index: findPageBySlug');
+
 			// Find the page with the provided slug
 			$page = $this->findPage($language, $slug);
+
+			DebugTimer::stop('FrontendController::index: findPageBySlug');
 		}
 		else {
+			DebugTimer::start('FrontendController::index: findFirstPage');
+
 			// Find the first page for the current language
 			$page = $this->findPage($language);
+
+			DebugTimer::stop('FrontendController::index: findFirstPage');
 		}
 
 		$this->handlePage($page);
@@ -166,6 +183,8 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function findPage(?string $languageShortcode = null, ?string $slug = null, array $where = []): ?Page {
+		DebugTimer::start('FrontendController::findPage');
+
 		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
 		$pagesTable = $this->fetchTable('Pages');
 
@@ -300,6 +319,8 @@ class FrontendController extends AppController {
 			$page->language = $languages[ Awyiss::REALM_FRONTEND ];
 		}
 
+		DebugTimer::stop('FrontendController::findPage');
+
 		return $page;
 	}
 
@@ -310,6 +331,8 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function handlePage(?Page $page): void {
+		DebugTimer::start('FrontendController::handlePage');
+
 		$errorCode = null;
 		$request = $this->getRequest();
 
@@ -402,6 +425,8 @@ class FrontendController extends AppController {
 				throw new RedirectException($url, 303);
 			}
 
+			DebugTimer::start('FrontendController::handlePage: url-normalization');
+
 			// Redirect to a normalized URL if the current URL does not match the normalized URL
 			if (Configure::read('Route.includeLanguageShortcode')) {
 				$this->redirectIfNotNormalized($page);
@@ -410,10 +435,14 @@ class FrontendController extends AppController {
 				// Redirect to a normalized URL if the current URL does not match the normalized URL
 				$this->redirectIfNotNormalizedNoLanguage($page);
 			}
+
+			DebugTimer::stop('FrontendController::handlePage: url-normalization');
 		}
 
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
 		$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+		DebugTimer::start('FrontendController::handlePage: entity-type-check');
 
 		// Make sure the page is of the correct entity class (page role specific)
 		$page = $this->ensureCorrectEntityType($page, $pageRoleEnum);
@@ -429,6 +458,8 @@ class FrontendController extends AppController {
 				throw new NotFoundException();
 			}
 		}
+
+		DebugTimer::stop('FrontendController::handlePage: entity-type-check');
 
 		ResizedImageManager::addMediaItemsFromEntity($page);
 
@@ -478,6 +509,8 @@ class FrontendController extends AppController {
 		}
 
 		static::$currentPage = $page;
+
+		DebugTimer::stop('FrontendController::handlePage');
 	}
 
 
@@ -501,6 +534,8 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function redirectIfNotNormalized(Page $page): void {
+		DebugTimer::start('FrontendController::redirectIfNotNormalized');
+
 		$languageShortcode = $this->getRequest()->getParam('lang');
 		$slug = $this->getRequest()->getParam('slug');
 		$params = $this->getRequest()->getQueryParams();
@@ -538,6 +573,7 @@ class FrontendController extends AppController {
 
 				static::$firstPage ??= $page;
 
+				DebugTimer::stop('FrontendController::redirectIfNotNormalized');
 				return;
 			}
 			else {
@@ -603,6 +639,8 @@ class FrontendController extends AppController {
 		if ($testUrl !== $currentUrl) {
 			static::$firstPage ??= $page;
 		}
+
+		DebugTimer::stop('FrontendController::redirectIfNotNormalized');
 	}
 
 
@@ -619,6 +657,8 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function redirectIfNotNormalizedNoLanguage(Page $page): void {
+		DebugTimer::start('FrontendController::redirectIfNotNormalizedNoLanguage');
+
 		$slug = $this->getRequest()->getParam('slug');
 		$params = $this->getRequest()->getQueryParams();
 
@@ -637,6 +677,7 @@ class FrontendController extends AppController {
 				throw new RedirectException($url, 301);
 			}
 
+			DebugTimer::stop('FrontendController::redirectIfNotNormalizedNoLanguage');
 			return;
 		}
 
@@ -651,6 +692,8 @@ class FrontendController extends AppController {
 
 			throw new RedirectException(Router::url($redirectUrl, true), 301);
 		}
+
+		DebugTimer::stop('FrontendController::redirectIfNotNormalizedNoLanguage');
 	}
 
 
@@ -661,6 +704,8 @@ class FrontendController extends AppController {
 	 * @return void
 	 */
 	protected function historyRedirect(string $url): void {
+		DebugTimer::start('FrontendController::historyRedirect');
+
 		$historyTable = $this->fetchTable('UrlHistory');
 
 		$url = preg_replace('/[^a-zA-Z0-9\/:\-.]/', '', $url);
@@ -696,6 +741,7 @@ class FrontendController extends AppController {
 		$record = $query->first();
 
 		if (!$record) {
+			DebugTimer::stop('FrontendController::historyRedirect');
 			return;
 		}
 
@@ -719,6 +765,8 @@ class FrontendController extends AppController {
 
 			throw new RedirectException($realUrl, $record->status ?? 307);
 		}
+
+		DebugTimer::stop('FrontendController::historyRedirect');
 	}
 
 
@@ -731,7 +779,10 @@ class FrontendController extends AppController {
 	 * @return \Awyiss\Model\Entity\Page|null
 	 */
 	protected function ensureCorrectEntityType(Page $page, string $pageRoleEnum): ?Page {
+		DebugTimer::start('FrontendController::ensureCorrectEntityType');
+
 		if ($page->pageRoleId === $pageRoleEnum::Page) {
+			DebugTimer::stop('FrontendController::ensureCorrectEntityType');
 			return $page;
 		}
 
@@ -762,7 +813,9 @@ class FrontendController extends AppController {
 
 		$page = $query->first();
 
-		return $query->first();
+		DebugTimer::stop('FrontendController::ensureCorrectEntityType');
+
+		return $page;
 	}
 
 
@@ -772,6 +825,8 @@ class FrontendController extends AppController {
 	 * @return array
 	 */
 	protected function loadDesignPreview(): array {
+		DebugTimer::start('FrontendController::loadDesignPreview');
+
 		if ($this->getRequest()->getParam('designPreview')) {
 			$this->getRequest()->getSession()->write('designPreviewIdentifier', $this->getRequest()->getParam('designPreview'));
 		}
@@ -779,6 +834,7 @@ class FrontendController extends AppController {
 		$designPreviewIdentifier = $this->getRequest()->getSession()->read('designPreviewIdentifier');
 
 		if (!$designPreviewIdentifier) {
+			DebugTimer::stop('FrontendController::loadDesignPreview');
 			return [];
 		}
 
@@ -795,6 +851,7 @@ class FrontendController extends AppController {
 		])->first();
 
 		if (!$design) {
+			DebugTimer::stop('FrontendController::loadDesignPreview');
 			return [];
 		}
 
@@ -814,7 +871,11 @@ class FrontendController extends AppController {
 
 		$this->set('designPreviewWebfonts', $webfontData);
 
-		return $design->settings ?? [];
+		$designSettings = $design->settings ?? [];
+
+		DebugTimer::stop('FrontendController::loadDesignPreview');
+
+		return $designSettings;
 	}
 
 
@@ -823,13 +884,17 @@ class FrontendController extends AppController {
 	 * @return void
 	 */
 	protected function loadFrontendEditor(Page $page): void {
+		DebugTimer::start('FrontendController::loadFrontendEditor');
+
 		if (!Configure::read('Awyiss.System.Frontend.editor')) {
+			DebugTimer::stop('FrontendController::loadFrontendEditor');
 			return;
 		}
 
 		$identity = $this->getRequest()->getSession()->read('Auth');
 
 		if (!$identity instanceof IdentityPermissionsInterface) {
+			DebugTimer::stop('FrontendController::loadFrontendEditor');
 			return;
 		}
 
@@ -845,6 +910,7 @@ class FrontendController extends AppController {
 			!$menuEntriesEditable &&
 			!$widgetsEditable
 		) {
+			DebugTimer::stop('FrontendController::loadFrontendEditor');
 			return;
 		}
 
@@ -856,6 +922,8 @@ class FrontendController extends AppController {
 				'widgets' => ['enabled' => $widgetsEditable],
 			],
 		]);
+
+		DebugTimer::stop('FrontendController::loadFrontendEditor');
 	}
 
 
@@ -889,12 +957,15 @@ class FrontendController extends AppController {
 	 * @return void
 	 */
 	protected function track404(): void {
+		DebugTimer::start('FrontendController::track404');
+
 		static $tracked;
 
 		if (!isset($tracked)) {
 			$tracked = true;
 		}
 		else {
+			DebugTimer::stop('FrontendController::track404');
 			return;
 		}
 
@@ -922,6 +993,7 @@ class FrontendController extends AppController {
 			str_starts_with($slug, '/wordpress') ||
 			str_starts_with($slug, '/wp-admin')
 		) {
+			DebugTimer::stop('FrontendController::track404');
 			return;
 		}
 
@@ -937,6 +1009,7 @@ class FrontendController extends AppController {
 			}
 
 			if (preg_match('/' . $pattern . '/', trim($slug, '/'))) {
+				DebugTimer::stop('FrontendController::track404');
 				return;
 			}
 		}
@@ -949,6 +1022,7 @@ class FrontendController extends AppController {
 		 */
 		$urlsNotFoundTable = $this->fetchTable('UrlsNotFound');
 		if ($urlsNotFoundTable->exists(['url' => $slug, 'created_on >' => new DateTime('-5 minutes')])) {
+			DebugTimer::stop('FrontendController::track404');
 			return;
 		}
 
@@ -959,6 +1033,8 @@ class FrontendController extends AppController {
 		]);
 
 		$urlsNotFoundTable->save($notFound, ['allowFrontendSave' => true]);
+
+		DebugTimer::stop('FrontendController::track404');
 	}
 
 
@@ -979,12 +1055,16 @@ class FrontendController extends AppController {
 	 * @return bool
 	 */
 	protected function parentsArePublished(Page $page): bool {
+		DebugTimer::start('FrontendController::parentsArePublished');
+
 		if (!$page->parentId) {
+			DebugTimer::stop('FrontendController::parentsArePublished');
 			return true;
 		}
 
 		$checkAncestorPagesPublicationStatus = Configure::read('Awyiss.System.Frontend.publicationData.checkAncestorPagesPublicationStatus', true);
 		if (!$checkAncestorPagesPublicationStatus) {
+			DebugTimer::stop('FrontendController::parentsArePublished');
 			return true;
 		}
 
@@ -1010,7 +1090,11 @@ class FrontendController extends AppController {
 			'language_shortcode' => $page->languageShortcode,
 		]);
 
-		return $query->count() === count($slugs);
+		$parentsArePublished = $query->count() === count($slugs);
+
+		DebugTimer::stop('FrontendController::parentsArePublished');
+
+		return $parentsArePublished;
 	}
 
 

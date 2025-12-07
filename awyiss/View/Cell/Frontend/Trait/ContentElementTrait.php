@@ -8,6 +8,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\Widget;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
@@ -28,7 +29,11 @@ trait ContentElementTrait {
 	 * @param float $columnWidth
 	 */
 	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00): void {
-		if (!$entities->count()) {
+		$count = $entities->count();
+		DebugTimer::start('ContentElementTrait::prepareEntities', sprintf('ContentElementTrait::prepareEntities: Preparing %d entities', $count));
+
+		if (!$count) {
+			DebugTimer::stop('ContentElementTrait::prepareEntities');
 			return;
 		}
 
@@ -79,6 +84,8 @@ trait ContentElementTrait {
 
 			$lastEntity = $entity;
 		}
+
+		DebugTimer::stop('ContentElementTrait::prepareEntities');
 	}
 
 
@@ -92,8 +99,13 @@ trait ContentElementTrait {
 	 * @return string
 	 * @throws \ReflectionException
 	 */
-	protected function buildContents(array $entities, bool $noContentRow = false, bool $autoSection = false): string {
-		if (!$entities) {
+	protected function buildContents(array $entities, bool $noContentRow = false, bool $autoSection = false, int $level = 0): string {
+		$count = count($entities);
+		DebugTimer::start('ContentElementTrait::buildContents' . $level, sprintf('ContentElementTrait::buildContents: Building %d entities for level %d', $count, $level));
+
+		if (!$count) {
+			DebugTimer::stop('ContentElementTrait::buildContents' . $level);
+
 			return '';
 		}
 
@@ -121,8 +133,17 @@ trait ContentElementTrait {
 			$children = '';
 
 			if ($entity->children) {
-				$children = $this->buildContents($entity->children, $initialNoContentRow);
+				$children = $this->buildContents($entity->children, $initialNoContentRow, false, $level + 1);
 			}
+
+			$entityType ??= match (true) {
+				$entity instanceof Content => 'Content',
+				$entity instanceof FormElement => 'FormElement',
+				$entity instanceof Widget => 'Widget',
+			};
+
+			$timerName = sprintf('ContentElementTrait::buildContent%s#%d', $entityType, $entity->id);
+			DebugTimer::start($timerName, sprintf('ContentElementTrait::buildContents: Building %s #%d', $entityType, $entity->id));
 
 			// Render the content before determining if it should be rendered in a content row
 			// This allows the template to modify the content row setting
@@ -161,6 +182,7 @@ trait ContentElementTrait {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$this->getView()->setRowClass('');
 
+				DebugTimer::stop($timerName);
 				continue;
 			}
 
@@ -215,6 +237,8 @@ trait ContentElementTrait {
 			// Clear the row class for the next content element
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$this->getView()->setRowClass('');
+
+			DebugTimer::stop($timerName);
 		}
 
 		// Render the last row
@@ -225,6 +249,8 @@ trait ContentElementTrait {
 		// Unset the row class.
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$this->getView()->setRowClass('');
+
+		DebugTimer::stop('ContentElementTrait::buildContents' . $level);
 
 		return $contentElements;
 	}

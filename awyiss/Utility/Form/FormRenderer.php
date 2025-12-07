@@ -12,6 +12,7 @@ use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\FormEntry;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
@@ -64,6 +65,8 @@ class FormRenderer {
 	 * @return \Awyiss\Model\Entity\Form|null
 	 */
 	public function getFormByIdentifier(string|int $identifier): ?Form {
+		DebugTimer::start('FormRenderer::getFormByIdentifier', sprintf('FormRenderer::getFormByIdentifier: Fetching form "%s"', $identifier));
+
 		/** @var \Awyiss\Model\Table\FormsTable $formsTable */
 		$formsTable = $this->fetchTable('Forms');
 
@@ -87,7 +90,12 @@ class FormRenderer {
 			$query = $query->where(['Forms.identifier' => $identifier]);
 		}
 
-		return $query->first();
+		/** @var \Awyiss\Model\Entity\Form|null $form */
+		$form = $query->first();
+
+		DebugTimer::stop('FormRenderer::getFormByIdentifier');
+
+		return $form;
 	}
 
 
@@ -99,10 +107,13 @@ class FormRenderer {
 	 * @throws \Exception
 	 */
 	public function initForm(Form|string|int $form, array $requestData, ?Page $page = null): static {
+		DebugTimer::start('FormRenderer::initForm', sprintf('FormRenderer::initForm: Initializing form "%s"', $form instanceof Form ? $form->identifier : $form));
+
 		$this->form = $form instanceof Form ? $form : $this->getFormByIdentifier($form);
 		$this->page = $page;
 
 		if (!$this->form) {
+			DebugTimer::stop('FormRenderer::initForm');
 			return $this;
 		}
 
@@ -124,6 +135,7 @@ class FormRenderer {
 			$this->form->getFormOptions()->setConditionalRecipient();
 		}
 
+		DebugTimer::stop('FormRenderer::initForm');
 		return $this;
 	}
 
@@ -142,7 +154,10 @@ class FormRenderer {
 	 * @throws \ReflectionException
 	 */
 	public function getFormBody(array $options): string {
+		DebugTimer::start('FormRenderer::getFormBody', sprintf('FormRenderer::getFormBody: Building body for form "%s"', $this->form?->identifier ?? 'unknown'));
+
 		if (!$this->form || $this->formSent) {
+			DebugTimer::stop('FormRenderer::getFormBody');
 			return '';
 		}
 
@@ -159,6 +174,7 @@ class FormRenderer {
 		$formElements = $this->form->getFormElements();
 
 		if (!$formElements) {
+			DebugTimer::stop('FormRenderer::getFormBody');
 			return '';
 		}
 
@@ -183,7 +199,11 @@ class FormRenderer {
 			}, false) ? 'multipart/form-data' : null
 		);
 
-		return $this->buildContents($formElements->toArray());
+		$formBody = $this->buildContents($formElements->toArray());
+
+		DebugTimer::stop('FormRenderer::getFormBody');
+
+		return $formBody;
 	}
 
 
@@ -220,7 +240,10 @@ class FormRenderer {
 	 * @throws \Exception
 	 */
 	public function process(?string $entryHash = null, array $options = []): void {
+		DebugTimer::start('FormRenderer::process', sprintf('FormRenderer::process: Processing form "%s"', $this->form?->identifier ?? 'unknown'));
+
 		if (!$this->form) {
+			DebugTimer::stop('FormRenderer::process');
 			throw new RuntimeException('No form was initialized.');
 		}
 
@@ -230,6 +253,7 @@ class FormRenderer {
 				$this->processFormEntryFromHash($entryHash, $options);
 			}
 
+			DebugTimer::stop('FormRenderer::process');
 			return;
 		}
 
@@ -239,6 +263,8 @@ class FormRenderer {
 		if ($this->form->isValid()) {
 			$this->sendAndRedirect();
 		}
+
+		DebugTimer::stop('FormRenderer::process');
 	}
 
 
@@ -296,6 +322,8 @@ class FormRenderer {
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
+		DebugTimer::start('FormRenderer::renderElement' . $entity->id, sprintf('FormRenderer::renderElement: Rendering form element #%d type "%s"', $entity->id, $entity->type));
+
 		/**
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
@@ -313,7 +341,7 @@ class FormRenderer {
 			$this->parseAwyissImageTags($entity, $mediaRenderOptions);
 
 			// Parse the module
-			$this->parseModule($entity, $mediaRenderOptions);
+			$this->parseModules($entity, $mediaRenderOptions);
 		}
 
 		$fullWidthMissingWarning = '';
@@ -322,7 +350,7 @@ class FormRenderer {
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $fullWidthMissingWarning . $this->View->element('form/form_elements', [
+		$renderedElement = $fullWidthMissingWarning . $this->View->element('form/form_elements', [
 			'form' => $this->form,
 			'formData' => $this->form->getFormData(),
 			'formElement' => $entity,
@@ -330,6 +358,10 @@ class FormRenderer {
 			'children' => $children,
 			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
+
+		DebugTimer::stop('FormRenderer::renderElement' . $entity->id);
+
+		return $renderedElement;
 	}
 
 
@@ -337,12 +369,16 @@ class FormRenderer {
 	 * @return string|false
 	 */
 	public function sendForm(): string|false {
+		DebugTimer::start('FormRenderer::sendForm', sprintf('FormRenderer::sendForm: Sending form "%s"', $this->form?->identifier ?? 'unknown'));
+
 		if (!$this->form) {
+			DebugTimer::stop('FormRenderer::sendForm');
 			throw new RuntimeException('No form was initialized.');
 		}
 
 		// Make sure the form is submitted
 		if (!$this->form->isSubmitted()) {
+			DebugTimer::stop('FormRenderer::sendForm');
 			return false;
 		}
 
@@ -353,10 +389,15 @@ class FormRenderer {
 		$this->formSent = $formSender->handle();
 
 		if (!$this->formSent) {
+			DebugTimer::stop('FormRenderer::sendForm');
 			return false;
 		}
 
-		return $formSender->getFormEntryIdentifier();
+		$formEntryIdentifier = $formSender->getFormEntryIdentifier();
+
+		DebugTimer::stop('FormRenderer::sendForm');
+
+		return $formEntryIdentifier;
 	}
 
 
@@ -452,7 +493,7 @@ class FormRenderer {
 		$this->parseAwyissImageTags($this->form, $mediaRenderOptions);
 
 		// Parse the module
-		$this->parseModule($this->form, $mediaRenderOptions);
+		$this->parseModules($this->form, $mediaRenderOptions);
 
 		return $this;
 	}

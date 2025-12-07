@@ -8,6 +8,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
@@ -40,6 +41,8 @@ class ContentsCell extends Cell {
 	 * @throws \ReflectionException
 	 */
 	public function display(string $contentArea, Page $page, FrontendView $view, array $options = []): void {
+		DebugTimer::start('ContentsCell::display', sprintf('ContentsCell::display: Rendering content area "%s" on page %d', $contentArea, $page->id));
+
 		$this->View = $view;
 
 		$options = $this->initCellOptions($options);
@@ -84,6 +87,8 @@ class ContentsCell extends Cell {
 
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Contents');
+
+		DebugTimer::stop('ContentsCell::display');
 	}
 
 
@@ -96,6 +101,8 @@ class ContentsCell extends Cell {
 	 * @throws \Exception
 	 */
 	protected function renderElement(Entity $entity, string $children): string {
+		DebugTimer::start('ContentsCell::renderElement' . $entity->id, sprintf('ContentsCell::renderElement: Rendering content #%d with template "%s"', $entity->id, $entity->contentTemplate->fileName));
+
 		/**
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
@@ -112,7 +119,7 @@ class ContentsCell extends Cell {
 		$this->parseAwyissImageTags($entity, $mediaRenderOptions);
 
 		// Parse the module
-		$this->parseModule($entity, $mediaRenderOptions);
+		$this->parseModules($entity, $mediaRenderOptions);
 
 		$fullWidthMissingWarning = '';
 		if (!$this->getView()->get('fullWidth')) {
@@ -120,11 +127,14 @@ class ContentsCell extends Cell {
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $fullWidthMissingWarning . $this->getView()->content($entity->contentTemplate->fileName, [
+		$result = $fullWidthMissingWarning . $this->getView()->content($entity->contentTemplate->fileName, [
 			'content' => $entity,
 			'children' => $children,
 			'mediaRenderOptions' => $mediaRenderOptions,
 		]);
+
+		DebugTimer::stop('ContentsCell::renderElement' . $entity->id);
+		return $result;
 	}
 
 
@@ -136,6 +146,8 @@ class ContentsCell extends Cell {
 	 * @return void
 	 */
 	protected function addDuplicates(CollectionInterface $contents, bool $isPreview = false): void {
+		DebugTimer::start('ContentsCell::addDuplicates');
+
 		$contents = $contents->listNested();
 
 		$duplicatingEntities = [];
@@ -147,6 +159,7 @@ class ContentsCell extends Cell {
 		}
 
 		if (!$duplicatingEntities) {
+			DebugTimer::stop('ContentsCell::addDuplicates');
 			return;
 		}
 
@@ -203,6 +216,8 @@ class ContentsCell extends Cell {
 
 			$entity->set('children', $children->toList());
 		}
+
+		DebugTimer::stop('ContentsCell::addDuplicates');
 	}
 
 
@@ -252,6 +267,7 @@ class ContentsCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getThreadedContents(Page $page, string $contentArea, bool $isPreview = false): CollectionInterface {
+		DebugTimer::start('ContentsCell::getThreadedContents', sprintf('ContentsCell::getThreadedContents: Fetching threaded contents for content area "%s" on page %d', $contentArea, $page->id));
 		$query = $this->getContentsQuery($isPreview);
 
 		$query->where([
@@ -275,9 +291,13 @@ class ContentsCell extends Cell {
 		 * Either because it's not active (allowed to happen)
 		 * or because it's not part of the same page. (shouldn't happen)
 		 */
-		return $contents->filter(function (Content $content) {
+		$contents = $contents->filter(function (Content $content) {
 			return $content->parentId === null;
 		})->compile();
+
+		DebugTimer::stop('ContentsCell::getThreadedContents');
+
+		return $contents;
 	}
 
 
@@ -317,6 +337,7 @@ class ContentsCell extends Cell {
 	 * @return void
 	 */
 	protected function addDynamicCss(CollectionInterface $contents): void {
+		DebugTimer::start('ContentsCell::addDynamicCss', 'ContentsCell::addDynamicCss: Adding dynamic CSS for contents');
 		/** @var \Awyiss\View\Helper\AssetHelper $assetHelper */
 		$assetHelper = $this->View->helpers()->get('Asset');
 
@@ -328,5 +349,7 @@ class ContentsCell extends Cell {
 
 			$assetHelper->addContentStyleBlock('#Content' . $content->id, $content->css);
 		}
+
+		DebugTimer::stop('ContentsCell::addDynamicCss');
 	}
 }

@@ -6,6 +6,7 @@ namespace Awyiss\View\Cell\Frontend;
 
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Utility\DebugTimer;
 use Awyiss\View\Cell\Frontend\Trait\FrontendRenderingTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RedirectAwareTrait;
@@ -40,6 +41,8 @@ class SurveyCell extends Cell {
 	 * @throws \ReflectionException
 	 */
 	public function display(string|int $identifier, Page $page, FrontendView $view, array $options = []): void {
+		DebugTimer::start('SurveyCell::display', sprintf('SurveyCell::display: Rendering survey "%s" on page %d', $identifier, $page->id));
+
 		$this->View = $view;
 
 		// Set the template for the view
@@ -63,6 +66,7 @@ class SurveyCell extends Cell {
 
 		$survey = $surveyRenderer->getSurvey();
 		if (!$survey) {
+			DebugTimer::stop('SurveyCell::display');
 			return;
 		}
 
@@ -79,5 +83,7 @@ class SurveyCell extends Cell {
 			'contents' => $surveyRenderer->getSurveyBody($options),
 			'survey' => $survey,
 		] + $options);
+
+		DebugTimer::stop('SurveyCell::display');
 	}
 }
