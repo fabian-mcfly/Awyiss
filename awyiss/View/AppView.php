@@ -49,9 +49,10 @@ class AppView extends TwigView {
 	 */
 	public function initialize(): void {
 		$this->setConfig('environment', [
-			'auto_reload' => true,
-			//'cache' => false,
-			//'debug' => Configure::read('debug'),
+			'auto_reload' => Configure::read('debug'),
+			'cache' => !Configure::read('debug'),
+			'debug' => Configure::read('debug'),
+			'use_yield' => true,
 			'strict_variables' => false,
 		]);
 
