@@ -67,6 +67,7 @@ return [
 		'vendor/cakephp/cakephp/src/Validation/Validator.php' => 'eb933c06c0450def106ee1f6f45fa113',
 		'vendor/cakephp/cakephp/src/View/CellTrait.php' => 'a9d845015878e48b9795fbfb6c9c3686',
 		'vendor/cakephp/cakephp/src/View/Helper/PaginatorHelper.php' => '9d7415cd682fceae0328eb42cf2475f6',
+		'vendor/cakephp/debug_kit/src/Model/Table/SqlTraceTrait.php' => '600b7803c12b4af71b9db9fb7d17794d',
 		'vendor/cakephp/migrations/src/Util/UtilTrait.php' => '08b2d6ed51d61bd97879177b36dfaf0e',
 		'vendor/cakephp/migrations/templates/bake/Seed/seed.twig' => 'f62067c639a1473dcd5a5884fdf1e247',
 		'vendor/cakephp/migrations/templates/bake/config/skeleton.twig' => '6270e4397ec247cc125c3ca50e6b12c2',

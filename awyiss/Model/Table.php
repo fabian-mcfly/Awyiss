@@ -12,6 +12,7 @@ use Awyiss\Event\EventManager;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
 use Awyiss\Model\Entity\Language;
+use Awyiss\Model\Trait\SqlTraceTrait;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
@@ -73,6 +74,7 @@ use RuntimeException;
 class Table extends BaseTable {
 	use IdentityAwareTrait;
 	use InstanceConfigTrait;
+	use SqlTraceTrait;
 
 
 	/**
