@@ -35,6 +35,16 @@ class FrontendController extends AppController {
 
 
 	/**
+	 * @var \Awyiss\Model\Entity\Page|null $firstPage Cache for the first page per language
+	 */
+	protected static ?Page $firstPage = null;
+	/**
+	 * @var \Awyiss\Model\Entity\Page|null $currentPage The current page being viewed
+	 */
+	protected static ?Page $currentPage = null;
+
+
+	/**
 	 * Whether the current request is in preview mode
 	 * If true, the page will be rendered, even if it's not published or inactive,
 	 * and the same goes for the page's contents.
@@ -293,7 +303,7 @@ class FrontendController extends AppController {
 			(
 				$page->deleted ||
 				$page->pageRole->deleted ||
-				$page->language->deleted
+				$page->language?->deleted
 			)
 		) {
 			// Try to find an entry in the slug history
@@ -332,7 +342,7 @@ class FrontendController extends AppController {
 					!$page->active ||
 					!$page->parentsActive ||
 					!$page->pageRole->active ||
-					!$page->language->active ||
+					!$page->language?->active ||
 					!$this->parentsArePublished($page)
 				) &&
 				!$this->previewMode
@@ -434,6 +444,8 @@ class FrontendController extends AppController {
 		if (method_exists($this, $methodName)) {
 			$this->{$methodName}($page);
 		}
+
+		static::$currentPage = $page;
 	}
 
 
@@ -492,15 +504,18 @@ class FrontendController extends AppController {
 					throw new RedirectException($url, 301);
 				}
 
+				static::$firstPage ??= $page;
+
 				return;
 			}
 			else {
-				$firstPage = $this->findPage($languageShortcode);
+				static::$firstPage ??= $this->findPage($languageShortcode);
+
 				/*
 				 * If there is a slug and the slug is the first page of the language,
 				 * redirect to the domain without the slug
 				 */
-				if ($firstPage->id === $page->id) {
+				if (static::$firstPage->id === $page->id) {
 					$redirectUrl = [
 						'_name' => 'FrontendLanguageRoot',
 						'lang' => $languageShortcode,
@@ -551,6 +566,11 @@ class FrontendController extends AppController {
 
 			throw new RedirectException($realUrl, 301);
 		}
+
+		// Cache the first page
+		if ($testUrl !== $currentUrl) {
+			static::$firstPage ??= $page;
+		}
 	}
 
 
@@ -588,9 +608,9 @@ class FrontendController extends AppController {
 			return;
 		}
 
-		$firstPage = $this->findPage();
+		static::$firstPage ??= $this->findPage();
 
-		if ($firstPage->id === $page->id) {
+		if (static::$firstPage->id === $page->id) {
 			$redirectUrl = [
 				'?' => $this->getRequest()->getParam('?'),
 				...$this->getRequest()->getQueryParams(),
@@ -944,5 +964,23 @@ class FrontendController extends AppController {
 		]);
 
 		return $query->count() === count($slugs);
+	}
+
+
+	/**
+	 * @return \Awyiss\Model\Entity\Page|null
+	 * @throws \Exception
+	 */
+	public static function getCurrentPage(): ?Page {
+		return static::$currentPage;
+	}
+
+
+	/**
+	 * @return \Awyiss\Model\Entity\Page|null
+	 * @throws \Exception
+	 */
+	public static function getFirstPage(): ?Page {
+		return static::$firstPage;
 	}
 }
