@@ -313,11 +313,11 @@ class LocaleMiddleware implements MiddlewareInterface {
 	 * @return void
 	 */
 	protected static function loadLanguages(): void {
-		$tableLocator = FactoryLocator::get('Table');
-
 		if (static::$languagesLoaded) {
 			return;
 		}
+
+		$tableLocator = FactoryLocator::get('Table');
 
 		/** @var \Awyiss\Model\Table\LanguagesTable $languagesTable */
 		$languagesTable = $tableLocator->get('Languages');
