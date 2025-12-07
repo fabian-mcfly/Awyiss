@@ -4,6 +4,7 @@
 namespace Awyiss\Module;
 
 
+use Awyiss\Controller\Frontend\FrontendController;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Language;
@@ -186,16 +187,40 @@ class BreadcrumbsModule extends AbstractModule {
 	 * @throws \Exception
 	 */
 	protected static function findHomepage(PagesTable $pagesTable, ?string $languageShortcode = null): ?Page {
+		$firstPage = FrontendController::getFirstPage();
+
+		if ($firstPage) {
+			return $firstPage;
+		}
+
 		$query = $pagesTable->find(!static::isPreview() ? 'published' : 'all', skipPageRoleCheck: true);
 
 		// Include the languages in the query, including deleted languages
 		$query->contain([
-			'DuplicateOfPage',
 			'Languages' => [
-				'finder' => $languageShortcode ? 'withDeleted' : 'all',
+				'fields' => ['id', 'active', 'deleted'],
+				'finder' => [
+					$languageShortcode ? 'withDeleted' : 'all' => [
+						'translate' => ['skip' => true],
+					],
+				],
 			],
-			'PageRoles',
-			'PageTemplates',
+			'PageRoles' => [
+				'fields' => ['id', 'active', 'deleted'],
+				'finder' => [
+					$languageShortcode ? 'withDeleted' : 'all' => [
+						'translate' => ['skip' => true],
+					],
+				],
+			],
+			'PageTemplates' => [
+				'fields' => ['id', 'file_name'],
+				'finder' => [
+					$languageShortcode ? 'withDeleted' : 'all' => [
+						'translate' => ['skip' => true],
+					],
+				],
+			],
 		]);
 
 		if (static::$isPreview) {
