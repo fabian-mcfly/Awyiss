@@ -184,12 +184,30 @@ class FrontendController extends AppController {
 
 		// Include the languages in the query, including deleted languages
 		$query->contain([
-			'DuplicateOfPage',
 			'Languages' => [
-				'finder' => $languageShortcode ? 'withDeleted' : 'all',
+				'fields' => ['id', 'active', 'deleted'],
+				'finder' => [
+					$languageShortcode ? 'withDeleted' : 'all' => [
+						'translate' => ['skip' => true],
+					],
+				],
 			],
-			'PageRoles',
-			'PageTemplates',
+			'PageRoles' => [
+				'fields' => ['id', 'active', 'deleted'],
+				'finder' => [
+					$languageShortcode ? 'withDeleted' : 'all' => [
+						'translate' => ['skip' => true],
+					],
+				],
+			],
+			'PageTemplates' => [
+				'fields' => ['id', 'file_name'],
+				'finder' => [
+					$languageShortcode ? 'withDeleted' : 'all' => [
+						'translate' => ['skip' => true],
+					],
+				],
+			],
 		]);
 
 		if ($this->previewMode) {
@@ -256,6 +274,20 @@ class FrontendController extends AppController {
 
 		if (!$page) {
 			return null;
+		}
+
+		if ($page->duplicateOf) {
+			// Load the duplicated Page into the entity
+			$pagesTable->loadInto($page, [
+				'DuplicateOfPage' => [
+					'fields' => ['id', 'language_shortcode', 'slug'],
+					'finder' => [
+						$languageShortcode ? 'withDeleted' : 'all' => [
+							'translate' => ['skip' => true],
+						],
+					],
+				],
+			]);
 		}
 
 		if (!$page->language || !$page->language->deleted) {
@@ -708,12 +740,27 @@ class FrontendController extends AppController {
 
 		$query = $pageRoleTable->find(!$this->previewMode ? 'published' : 'all')->find('mediaAssignments', useMediaEntity: true)->where(['id' => $page->id])->limit(1);
 
-		// Include the languages in the query, including deleted languages
-		$query->contain([
-			'DuplicateOf' . $page->pageRoleId->name,
+		$contain = [
 			'Languages',
 			'PageTemplates',
-		]);
+		];
+
+		// Only contain the DuplicateOf relation when the page is a duplicate
+		if ($page->duplicateOf) {
+			$contain['DuplicateOf' . $page->pageRoleId->name ] = [
+				'fields' => ['id', 'language_shortcode', 'slug'],
+				'finder' => [
+					'withDeleted' => [
+						'translate' => ['skip' => true],
+					],
+				],
+			];
+		}
+
+		// Include the languages in the query, including deleted languages
+		$query->contain($contain);
+
+		$page = $query->first();
 
 		return $query->first();
 	}
