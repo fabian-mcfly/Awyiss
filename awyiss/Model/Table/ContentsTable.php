@@ -621,7 +621,7 @@ class ContentsTable extends Table {
 				$tempFileName = tempnam(sys_get_temp_dir(), 'awyiss_scss_');
 				rename($tempFileName, $tempFileName . '.scss');
 				$tempFileName .= '.scss';
-				file_put_contents($tempFileName, '#Content { ' . $entity->css . ' }');
+				file_put_contents($tempFileName, '#Content { ' . PHP_EOL . $entity->css . PHP_EOL . ' }');
 				$tempFile = new SplFileInfo($tempFileName);
 
 				ob_start();
