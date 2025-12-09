@@ -527,10 +527,11 @@ class FormElementTest extends TestCase {
 			'type' => 'free_text',
 			'text' => '',
 		]);
+		$entity->setSource('FormElements');
 
 		$label = $entity->label;
 
-		$this->assertEquals('', $label);
+		$this->assertEquals('FormElement', $label);
 	}
 
 
@@ -543,10 +544,11 @@ class FormElementTest extends TestCase {
 			'type' => 'free_text',
 			'text' => null,
 		]);
+		$entity->setSource('FormElements');
 
 		$label = $entity->label;
 
-		$this->assertEquals('', $label);
+		$this->assertEquals('FormElement', $label);
 	}
 
 
@@ -559,10 +561,11 @@ class FormElementTest extends TestCase {
 			'type' => 'free_text',
 			'text' => '<p>Form element with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4"}</awyiss-responsive-image></p><p>between two paragraphs</p>',
 		]);
+		$entity->setSource('FormElements');
 
 		$label = $entity->label;
 
-		$this->assertEquals('Form element with inline img tag{"mediaId":"4"}between two paragraphs', $label);
+		$this->assertEquals('Form element with inline img tagbetween two paragraphs', $label);
 	}
 
 
@@ -575,6 +578,7 @@ class FormElementTest extends TestCase {
 			'type' => 'text',
 			'title' => 'Text Input Field',
 		]);
+		$entity->setSource('FormElements');
 
 		$label = $entity->label;
 

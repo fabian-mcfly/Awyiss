@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Trait\ForcedTitleTrait;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Text;
@@ -50,6 +51,9 @@ use Cake\Utility\Text;
  * @property int $realSystemOrder
  */
 class FormElement extends Entity {
+	use ForcedTitleTrait;
+
+
 	/**
 	 * @var array The column widths
 	 */
@@ -231,11 +235,7 @@ class FormElement extends Entity {
 	 * @inheritDoc
 	 */
 	protected function _getLabel(): string {
-		if ($this->type === 'free_text') {
-			return $this->cleanTitle($this->text ?? '');
-		}
-
-		return parent::_getLabel();
+		return $this->getForcedTitle(false);
 	}
 
 
@@ -288,30 +288,5 @@ class FormElement extends Entity {
 
 
 		return $options;
-	}
-
-
-	/**
-	 * @param string $title
-	 * @return string
-	 * @noinspection DuplicatedCode
-	 */
-	protected function cleanTitle(string $title): string {
-		// If there is a <module> tag in the title, replace it with the module identifier (data-identifier attribute)
-		if (str_contains($title, '<module')) {
-			$title = preg_replace('/<module[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/module>/', 'Module: <em>$1</em>', $title);
-		}
-
-		$title = trim(strip_tags(html_entity_decode(str_replace(['&nbsp;', '<br>'], ' ', (string)$title))));
-
-		// Multiline titles should only show the first line
-		if (str_contains($title, PHP_EOL)) {
-			$title = substr($title, 0, strpos($title, PHP_EOL));
-		}
-
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$title = mb_strlen($title) > 100 ? mb_substr($title, 0, 100) . '...' : $title;
-
-		return $title;
 	}
 }

@@ -44,6 +44,9 @@ trait ForcedTitleTrait {
 			$fields[] = 'widgetTemplateId';
 			$defaultTitle = 'Widget';
 		}
+		elseif ($this->_registryAlias === 'FormElements') {
+			$defaultTitle = 'FormElement';
+		}
 		else {
 			$fields[] = 'contentTemplateId';
 			$defaultTitle = 'Content';

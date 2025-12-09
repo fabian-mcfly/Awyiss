@@ -92,7 +92,12 @@ class FormElementsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$query = $this->getOverviewQuery();
+		/**
+		 * @uses \Awyiss\Model\Behavior\MediaAssignmentBehavior::findMediaAssignments()
+		 * @uses \Awyiss\Model\Behavior\MediaElementAssignmentBehavior::findMediaElementAssignments()
+		 * @uses \Awyiss\Model\Table::findTranslations()
+		 */
+		$query = $this->getOverviewQuery()->find('mediaAssignments');
 
 		$formElements = $query->formatResults(function (CollectionInterface $result): CollectionInterface {
 			/** @var \Awyiss\Model\Entity\FormElement $formElement */
@@ -304,7 +309,7 @@ class FormElementsController extends Controller {
 	 */
 	protected function getPossibleParentFormElements(FormElement $formElement): CollectionInterface {
 		if (!isset($this->threadedFormElements)) {
-			$query = $this->FormElements->find()->where([
+			$query = $this->FormElements->find('mediaAssignments')->where([
 				'form_id' => $formElement->formId,
 			]);
 

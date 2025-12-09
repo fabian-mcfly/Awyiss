@@ -22,7 +22,7 @@
 
 {% block nestedListItemDataTitle %}
 	<li class="Title">
-		{{- entity.type == 'free_text' ? entity.label|raw : entity.title -}}
+		{{- entity.label -}}
 		{%- if localConfig.overview.columnView.enabled and entity.type not in ['free_text', 'submit'] %}
 			<span class="Identifier">({{ entity.identifier }})</span>
 		{%- endif -%}
@@ -54,7 +54,7 @@
 		{% block nestedListItemInner %}
 			<div
 				{{ block('nestedListItemInnerClass') }}
-				title="{{ entity.title }} ({{ entity.column.width.label -}}
+				title="{{ entity.label }} ({{ entity.column.width.label -}}
 				{%- if entity.column.indent.label %} / {{ entity.column.indent.label }}{% endif %})"
 				>
 

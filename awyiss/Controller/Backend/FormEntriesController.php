@@ -58,7 +58,6 @@ class FormEntriesController extends Controller {
 		$query = $this->FormEntries->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($query, null, !$this->paginate['enabled']);
 		$this->Search->filterQuery($query);
-		$query->contain(['Languages']);
 
 		return $query;
 	}
@@ -76,9 +75,9 @@ class FormEntriesController extends Controller {
 			$form = $this->fetchTable('Forms')->findById($this->Categories->getSelectedCategory())->first();
 		}
 
-		$query = $this->getOverviewQuery();
-		$query->contain([
+		$query = $this->getOverviewQuery()->contain([
 			'Forms',
+			'Languages',
 		]);
 		$formEntries = $this->paginate($query);
 
