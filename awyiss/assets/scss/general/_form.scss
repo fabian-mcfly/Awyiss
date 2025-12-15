@@ -410,13 +410,20 @@ input {
 			+ select[data-options-for],
 			~ .CustomSelect .CustomSelect-Button {
 				--backgroundColor:var(--colorBright);
-
-				border-color:var(--colorSuccess);
-				box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 				background-color:var(--backgroundColor);
 
 				html.🌚 & {
 					--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
+				}
+			}
+		}
+
+		&:not(.Error) {
+			&:focus-visible {
+				+ select[data-options-for],
+				~ .CustomSelect .CustomSelect-Button {
+					border-color:var(--colorSuccess);
+					box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 				}
 			}
 		}
@@ -428,11 +435,18 @@ input {
 		~ .CustomSelect:focus-within {
 			--backgroundColor:var(--colorBright);
 
-			border-color:var(--colorSuccess);
 			background-color:var(--backgroundColor);
 
 			html.🌚 & {
 				--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
+			}
+		}
+
+		&:not(.Error) {
+			&,
+			+ select[data-options-for]:focus,
+			~ .CustomSelect:focus-within {
+				border-color:var(--colorSuccess);
 			}
 		}
 	}
@@ -521,6 +535,13 @@ textarea {
 		) {
 			border-color:var(--colorError);
 			box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
+		}
+
+		> .CustomSelect {
+			.CustomSelect-Button {
+				border-color:var(--colorError);
+				box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
+			}
 		}
 	}
 
