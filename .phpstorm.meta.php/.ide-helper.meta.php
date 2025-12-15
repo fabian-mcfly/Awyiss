@@ -160,6 +160,7 @@ namespace PHPSTORM_META {
 			'Authentication' => \Cake\Http\BaseApplication::class,
 			'Bake' => \Cake\Http\BaseApplication::class,
 			'Cake/TwigView' => \Cake\Http\BaseApplication::class,
+			'CsvView' => \Cake\Http\BaseApplication::class,
 			'DebugKit' => \Cake\Http\BaseApplication::class,
 			'IdeHelper' => \Cake\Http\BaseApplication::class,
 			'Migrations' => \Cake\Http\BaseApplication::class,
@@ -250,6 +251,7 @@ namespace PHPSTORM_META {
 			'ContentTemplateElements' => \Awyiss\Model\Table\ContentTemplateElementsTable::class,
 			'ContentTemplates' => \Awyiss\Model\Table\ContentTemplatesTable::class,
 			'Contents' => \Awyiss\Model\Table\ContentsTable::class,
+			'DashboardElements' => \Awyiss\Model\Table\DashboardElementsTable::class,
 			'Datatables' => \Awyiss\Model\Table\DatatablesTable::class,
 			'DebugKit.Panels' => \DebugKit\Model\Table\PanelsTable::class,
 			'DebugKit.Requests' => \DebugKit\Model\Table\RequestsTable::class,
@@ -259,6 +261,9 @@ namespace PHPSTORM_META {
 			'FormElements' => \Awyiss\Model\Table\FormElementsTable::class,
 			'FormEntries' => \Awyiss\Model\Table\FormEntriesTable::class,
 			'Forms' => \Awyiss\Model\Table\FormsTable::class,
+			'GlobalContentTemplateElements' => \Awyiss\Model\Table\GlobalContentTemplateElementsTable::class,
+			'GlobalContentTemplates' => \Awyiss\Model\Table\GlobalContentTemplatesTable::class,
+			'GlobalContents' => \Awyiss\Model\Table\GlobalContentsTable::class,
 			'I18n' => \Awyiss\Model\Table\I18nTable::class,
 			'Languages' => \Awyiss\Model\Table\LanguagesTable::class,
 			'Locks' => \Awyiss\Model\Table\LocksTable::class,
@@ -293,9 +298,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Awyiss\Model\Table\UsergroupsTable::class,
 			'UsergroupsUsers' => \Awyiss\Model\Table\UsergroupsUsersTable::class,
 			'Users' => \Awyiss\Model\Table\UsersTable::class,
-			'WidgetTemplateElements' => \Awyiss\Model\Table\WidgetTemplateElementsTable::class,
-			'WidgetTemplates' => \Awyiss\Model\Table\WidgetTemplatesTable::class,
-			'Widgets' => \Awyiss\Model\Table\WidgetsTable::class,
 		]),
 	);
 
@@ -397,6 +399,7 @@ namespace PHPSTORM_META {
 			'ContentTemplateElements' => \Awyiss\Model\Table\ContentTemplateElementsTable::class,
 			'ContentTemplates' => \Awyiss\Model\Table\ContentTemplatesTable::class,
 			'Contents' => \Awyiss\Model\Table\ContentsTable::class,
+			'DashboardElements' => \Awyiss\Model\Table\DashboardElementsTable::class,
 			'Datatables' => \Awyiss\Model\Table\DatatablesTable::class,
 			'DebugKit.Panels' => \DebugKit\Model\Table\PanelsTable::class,
 			'DebugKit.Requests' => \DebugKit\Model\Table\RequestsTable::class,
@@ -406,6 +409,9 @@ namespace PHPSTORM_META {
 			'FormElements' => \Awyiss\Model\Table\FormElementsTable::class,
 			'FormEntries' => \Awyiss\Model\Table\FormEntriesTable::class,
 			'Forms' => \Awyiss\Model\Table\FormsTable::class,
+			'GlobalContentTemplateElements' => \Awyiss\Model\Table\GlobalContentTemplateElementsTable::class,
+			'GlobalContentTemplates' => \Awyiss\Model\Table\GlobalContentTemplatesTable::class,
+			'GlobalContents' => \Awyiss\Model\Table\GlobalContentsTable::class,
 			'I18n' => \Awyiss\Model\Table\I18nTable::class,
 			'Languages' => \Awyiss\Model\Table\LanguagesTable::class,
 			'Locks' => \Awyiss\Model\Table\LocksTable::class,
@@ -440,9 +446,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Awyiss\Model\Table\UsergroupsTable::class,
 			'UsergroupsUsers' => \Awyiss\Model\Table\UsergroupsUsersTable::class,
 			'Users' => \Awyiss\Model\Table\UsersTable::class,
-			'WidgetTemplateElements' => \Awyiss\Model\Table\WidgetTemplateElementsTable::class,
-			'WidgetTemplates' => \Awyiss\Model\Table\WidgetTemplatesTable::class,
-			'Widgets' => \Awyiss\Model\Table\WidgetsTable::class,
 		]),
 	);
 
@@ -458,6 +461,7 @@ namespace PHPSTORM_META {
 			'ContentTemplateElements' => \Awyiss\Model\Table\ContentTemplateElementsTable::class,
 			'ContentTemplates' => \Awyiss\Model\Table\ContentTemplatesTable::class,
 			'Contents' => \Awyiss\Model\Table\ContentsTable::class,
+			'DashboardElements' => \Awyiss\Model\Table\DashboardElementsTable::class,
 			'Datatables' => \Awyiss\Model\Table\DatatablesTable::class,
 			'DebugKit.Panels' => \DebugKit\Model\Table\PanelsTable::class,
 			'DebugKit.Requests' => \DebugKit\Model\Table\RequestsTable::class,
@@ -467,6 +471,9 @@ namespace PHPSTORM_META {
 			'FormElements' => \Awyiss\Model\Table\FormElementsTable::class,
 			'FormEntries' => \Awyiss\Model\Table\FormEntriesTable::class,
 			'Forms' => \Awyiss\Model\Table\FormsTable::class,
+			'GlobalContentTemplateElements' => \Awyiss\Model\Table\GlobalContentTemplateElementsTable::class,
+			'GlobalContentTemplates' => \Awyiss\Model\Table\GlobalContentTemplatesTable::class,
+			'GlobalContents' => \Awyiss\Model\Table\GlobalContentsTable::class,
 			'I18n' => \Awyiss\Model\Table\I18nTable::class,
 			'Languages' => \Awyiss\Model\Table\LanguagesTable::class,
 			'Locks' => \Awyiss\Model\Table\LocksTable::class,
@@ -501,9 +508,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Awyiss\Model\Table\UsergroupsTable::class,
 			'UsergroupsUsers' => \Awyiss\Model\Table\UsergroupsUsersTable::class,
 			'Users' => \Awyiss\Model\Table\UsersTable::class,
-			'WidgetTemplateElements' => \Awyiss\Model\Table\WidgetTemplateElementsTable::class,
-			'WidgetTemplates' => \Awyiss\Model\Table\WidgetTemplatesTable::class,
-			'Widgets' => \Awyiss\Model\Table\WidgetsTable::class,
 		]),
 	);
 
@@ -542,6 +546,7 @@ namespace PHPSTORM_META {
 			'ContentTemplateElements' => \Cake\ORM\Association\BelongsToMany::class,
 			'ContentTemplates' => \Cake\ORM\Association\BelongsToMany::class,
 			'Contents' => \Cake\ORM\Association\BelongsToMany::class,
+			'DashboardElements' => \Cake\ORM\Association\BelongsToMany::class,
 			'Datatables' => \Cake\ORM\Association\BelongsToMany::class,
 			'DebugKit.Panels' => \Cake\ORM\Association\BelongsToMany::class,
 			'DebugKit.Requests' => \Cake\ORM\Association\BelongsToMany::class,
@@ -551,6 +556,9 @@ namespace PHPSTORM_META {
 			'FormElements' => \Cake\ORM\Association\BelongsToMany::class,
 			'FormEntries' => \Cake\ORM\Association\BelongsToMany::class,
 			'Forms' => \Cake\ORM\Association\BelongsToMany::class,
+			'GlobalContentTemplateElements' => \Cake\ORM\Association\BelongsToMany::class,
+			'GlobalContentTemplates' => \Cake\ORM\Association\BelongsToMany::class,
+			'GlobalContents' => \Cake\ORM\Association\BelongsToMany::class,
 			'I18n' => \Cake\ORM\Association\BelongsToMany::class,
 			'Languages' => \Cake\ORM\Association\BelongsToMany::class,
 			'Locks' => \Cake\ORM\Association\BelongsToMany::class,
@@ -585,9 +593,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Cake\ORM\Association\BelongsToMany::class,
 			'UsergroupsUsers' => \Cake\ORM\Association\BelongsToMany::class,
 			'Users' => \Cake\ORM\Association\BelongsToMany::class,
-			'WidgetTemplateElements' => \Cake\ORM\Association\BelongsToMany::class,
-			'WidgetTemplates' => \Cake\ORM\Association\BelongsToMany::class,
-			'Widgets' => \Cake\ORM\Association\BelongsToMany::class,
 		]),
 	);
 
@@ -603,6 +608,7 @@ namespace PHPSTORM_META {
 			'ContentTemplateElements' => \Cake\ORM\Association\BelongsTo::class,
 			'ContentTemplates' => \Cake\ORM\Association\BelongsTo::class,
 			'Contents' => \Cake\ORM\Association\BelongsTo::class,
+			'DashboardElements' => \Cake\ORM\Association\BelongsTo::class,
 			'Datatables' => \Cake\ORM\Association\BelongsTo::class,
 			'DebugKit.Panels' => \Cake\ORM\Association\BelongsTo::class,
 			'DebugKit.Requests' => \Cake\ORM\Association\BelongsTo::class,
@@ -612,6 +618,9 @@ namespace PHPSTORM_META {
 			'FormElements' => \Cake\ORM\Association\BelongsTo::class,
 			'FormEntries' => \Cake\ORM\Association\BelongsTo::class,
 			'Forms' => \Cake\ORM\Association\BelongsTo::class,
+			'GlobalContentTemplateElements' => \Cake\ORM\Association\BelongsTo::class,
+			'GlobalContentTemplates' => \Cake\ORM\Association\BelongsTo::class,
+			'GlobalContents' => \Cake\ORM\Association\BelongsTo::class,
 			'I18n' => \Cake\ORM\Association\BelongsTo::class,
 			'Languages' => \Cake\ORM\Association\BelongsTo::class,
 			'Locks' => \Cake\ORM\Association\BelongsTo::class,
@@ -646,9 +655,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Cake\ORM\Association\BelongsTo::class,
 			'UsergroupsUsers' => \Cake\ORM\Association\BelongsTo::class,
 			'Users' => \Cake\ORM\Association\BelongsTo::class,
-			'WidgetTemplateElements' => \Cake\ORM\Association\BelongsTo::class,
-			'WidgetTemplates' => \Cake\ORM\Association\BelongsTo::class,
-			'Widgets' => \Cake\ORM\Association\BelongsTo::class,
 		]),
 	);
 
@@ -738,6 +744,7 @@ namespace PHPSTORM_META {
 			'ContentTemplateElements' => \Cake\ORM\Association\HasMany::class,
 			'ContentTemplates' => \Cake\ORM\Association\HasMany::class,
 			'Contents' => \Cake\ORM\Association\HasMany::class,
+			'DashboardElements' => \Cake\ORM\Association\HasMany::class,
 			'Datatables' => \Cake\ORM\Association\HasMany::class,
 			'DebugKit.Panels' => \Cake\ORM\Association\HasMany::class,
 			'DebugKit.Requests' => \Cake\ORM\Association\HasMany::class,
@@ -747,6 +754,9 @@ namespace PHPSTORM_META {
 			'FormElements' => \Cake\ORM\Association\HasMany::class,
 			'FormEntries' => \Cake\ORM\Association\HasMany::class,
 			'Forms' => \Cake\ORM\Association\HasMany::class,
+			'GlobalContentTemplateElements' => \Cake\ORM\Association\HasMany::class,
+			'GlobalContentTemplates' => \Cake\ORM\Association\HasMany::class,
+			'GlobalContents' => \Cake\ORM\Association\HasMany::class,
 			'I18n' => \Cake\ORM\Association\HasMany::class,
 			'Languages' => \Cake\ORM\Association\HasMany::class,
 			'Locks' => \Cake\ORM\Association\HasMany::class,
@@ -781,9 +791,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Cake\ORM\Association\HasMany::class,
 			'UsergroupsUsers' => \Cake\ORM\Association\HasMany::class,
 			'Users' => \Cake\ORM\Association\HasMany::class,
-			'WidgetTemplateElements' => \Cake\ORM\Association\HasMany::class,
-			'WidgetTemplates' => \Cake\ORM\Association\HasMany::class,
-			'Widgets' => \Cake\ORM\Association\HasMany::class,
 		]),
 	);
 
@@ -799,6 +806,7 @@ namespace PHPSTORM_META {
 			'ContentTemplateElements' => \Cake\ORM\Association\HasOne::class,
 			'ContentTemplates' => \Cake\ORM\Association\HasOne::class,
 			'Contents' => \Cake\ORM\Association\HasOne::class,
+			'DashboardElements' => \Cake\ORM\Association\HasOne::class,
 			'Datatables' => \Cake\ORM\Association\HasOne::class,
 			'DebugKit.Panels' => \Cake\ORM\Association\HasOne::class,
 			'DebugKit.Requests' => \Cake\ORM\Association\HasOne::class,
@@ -808,6 +816,9 @@ namespace PHPSTORM_META {
 			'FormElements' => \Cake\ORM\Association\HasOne::class,
 			'FormEntries' => \Cake\ORM\Association\HasOne::class,
 			'Forms' => \Cake\ORM\Association\HasOne::class,
+			'GlobalContentTemplateElements' => \Cake\ORM\Association\HasOne::class,
+			'GlobalContentTemplates' => \Cake\ORM\Association\HasOne::class,
+			'GlobalContents' => \Cake\ORM\Association\HasOne::class,
 			'I18n' => \Cake\ORM\Association\HasOne::class,
 			'Languages' => \Cake\ORM\Association\HasOne::class,
 			'Locks' => \Cake\ORM\Association\HasOne::class,
@@ -842,9 +853,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Cake\ORM\Association\HasOne::class,
 			'UsergroupsUsers' => \Cake\ORM\Association\HasOne::class,
 			'Users' => \Cake\ORM\Association\HasOne::class,
-			'WidgetTemplateElements' => \Cake\ORM\Association\HasOne::class,
-			'WidgetTemplates' => \Cake\ORM\Association\HasOne::class,
-			'Widgets' => \Cake\ORM\Association\HasOne::class,
 		]),
 	);
 
@@ -1132,6 +1140,7 @@ namespace PHPSTORM_META {
 		'focus_point',
 		'foreign_key',
 		'form_id',
+		'global_content_template_id',
 		'has_index',
 		'height',
 		'hidden',
@@ -1250,7 +1259,6 @@ namespace PHPSTORM_META {
 		'username',
 		'value',
 		'webp',
-		'widget_template_id',
 		'width',
 		'workerkey',
 	);
@@ -1272,6 +1280,7 @@ namespace PHPSTORM_META {
 		map([
 			'Asset' => \Awyiss\View\Helper\AssetHelper::class,
 			'Attributes' => \Awyiss\View\Helper\AttributesHelper::class,
+			'Audit' => \Awyiss\View\Helper\AuditHelper::class,
 			'Authentication.Identity' => \Authentication\View\Helper\IdentityHelper::class,
 			'Authorization' => \Awyiss\View\Helper\AuthorizationHelper::class,
 			'Bake.Bake' => \Bake\View\Helper\BakeHelper::class,
@@ -1328,6 +1337,7 @@ namespace PHPSTORM_META {
 		map([
 			'Asset' => \Awyiss\View\Helper\AssetHelper::class,
 			'Attributes' => \Awyiss\View\Helper\AttributesHelper::class,
+			'Audit' => \Awyiss\View\Helper\AuditHelper::class,
 			'Authentication.Identity' => \Authentication\View\Helper\IdentityHelper::class,
 			'Authorization' => \Awyiss\View\Helper\AuthorizationHelper::class,
 			'Bake.Bake' => \Bake\View\Helper\BakeHelper::class,
@@ -1361,6 +1371,7 @@ namespace PHPSTORM_META {
 		0,
 		'Asset',
 		'Attributes',
+		'Audit',
 		'Authentication.Identity',
 		'Authorization',
 		'Bake.Bake',
@@ -1702,6 +1713,7 @@ namespace PHPSTORM_META {
 		0,
 		'Attributes/Delete',
 		'Attributes/Upsert',
+		'AutoTranslate',
 		'Design/WebfontDownload',
 		'Queue.CostsExample',
 		'Queue.Email',
@@ -1721,6 +1733,7 @@ namespace PHPSTORM_META {
 		1,
 		'Attributes/Delete',
 		'Attributes/Upsert',
+		'AutoTranslate',
 		'Design/WebfontDownload',
 		'Queue.CostsExample',
 		'Queue.Email',
@@ -2276,6 +2289,66 @@ namespace PHPSTORM_META {
 	);
 
 	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\DashboardElement::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\DashboardElement'),
+	);
+
+	expectedArguments(
 		\Awyiss\Model\Entity\Datatable::get(),
 		0,
 		argumentsSet('entityFields:\Awyiss\Model\Entity\Datatable'),
@@ -2693,6 +2766,186 @@ namespace PHPSTORM_META {
 		\Awyiss\Model\Entity\FormEntry::setError(),
 		0,
 		argumentsSet('entityFields:\Awyiss\Model\Entity\FormEntry'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContent::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContent'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplate::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplate'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::get(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::getError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::getInvalidField(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::getOriginal(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::has(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::hasValue(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::isDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::isEmpty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::setDirty(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
+	);
+
+	expectedArguments(
+		\Awyiss\Model\Entity\GlobalContentTemplateElement::setError(),
+		0,
+		argumentsSet('entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement'),
 	);
 
 	expectedArguments(
@@ -4616,186 +4869,6 @@ namespace PHPSTORM_META {
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\Widget::get(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::getError(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::getInvalidField(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::getOriginal(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::has(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::hasValue(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::isDirty(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::isEmpty(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::setDirty(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\Widget::setError(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\Widget'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::get(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::getError(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::getInvalidField(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::getOriginal(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::has(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::hasValue(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::isDirty(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::isEmpty(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::setDirty(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplate::setError(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplate'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::get(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::getError(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::getInvalidField(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::getOriginal(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::has(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::hasValue(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::isDirty(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::isEmpty(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::setDirty(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\WidgetTemplateElement::setError(),
-		0,
-		argumentsSet('entityFields:\Awyiss\Model\Entity\WidgetTemplateElement'),
-	);
-
-	expectedArguments(
 		\__d(),
 		0,
 		'attributes',
@@ -4808,9 +4881,12 @@ namespace PHPSTORM_META {
 		'cake/twig_view',
 		'column_system',
 		'configuration',
+		'content_areas',
 		'content_templates',
 		'contents',
+		'csv_view',
 		'dashboard',
+		'dashboard_elements',
 		'datatables',
 		'debug_kit',
 		'designs',
@@ -4823,14 +4899,18 @@ namespace PHPSTORM_META {
 		'frontend',
 		'generic_datatables',
 		'generic_pages',
+		'global_content_templates',
+		'global_contents',
 		'ide_helper',
 		'languages',
 		'locks',
 		'media',
+		'media_assignments',
 		'media_element_assignments',
 		'media_element_selectors',
 		'media_elements',
 		'media_folders',
+		'media_resized_images',
 		'media_selectors',
 		'menu_entries',
 		'menus',
@@ -4848,22 +4928,24 @@ namespace PHPSTORM_META {
 		'search',
 		'seo',
 		'survey_answers',
+		'survey_entries',
 		'survey_questions',
 		'surveys',
 		'system',
+		'third_party_consents',
 		'url_history',
 		'urls_not_found',
 		'user_configuration',
 		'usergroups',
 		'users',
 		'validation',
-		'widget_templates',
-		'widgets',
 	);
 
 	expectedArguments(
 		\__d(),
 		1,
+		'accept_type',
+		'accepted_categories',
 		'access',
 		'access_helper_button_text',
 		'access_helper_dialog_confirm_apply',
@@ -4881,9 +4963,20 @@ namespace PHPSTORM_META {
 		'additional_email_settings',
 		'address',
 		'all',
+		'all_answers',
 		'allow_custom_answer',
 		'alt',
 		'altcha_error',
+		'analysis_answer',
+		'analysis_count',
+		'analysis_custom_answers',
+		'analysis_percentage',
+		'analysis_question_analysis',
+		'analysis_total_answers',
+		'analysis_total_entries',
+		'analysis_total_questions',
+		'analysis_visualization',
+		'analyze',
 		'analyze_assets_css_writable',
 		'analyze_assets_css_writable_error_message',
 		'analyze_assets_font_writable',
@@ -4911,14 +5004,24 @@ namespace PHPSTORM_META {
 		'apply',
 		'as_copy',
 		'assigned_page_templates',
+		'auto_translate_automatic',
+		'auto_translate_disabled',
+		'auto_translate_manual',
+		'auto_translate_system',
+		'auto_translation',
 		'average_color',
+		'avif',
 		'back',
 		'back_to_overview',
 		'bake_page_roles_seed',
 		'bake_seed',
+		'batch_edit_failed',
+		'batch_edit_succeeded',
 		'bcc',
 		'bcc_email',
 		'bcc_name',
+		'body',
+		'body_confirmation',
 		'button_area_toggle',
 		'button_request_extension',
 		'button_request_lock',
@@ -4941,9 +5044,13 @@ namespace PHPSTORM_META {
 		'changed_info_label',
 		'changed_on',
 		'characters',
+		'clear_awyiss_cache',
 		'clear_cache',
 		'clear_cache_completed',
 		'clear_cache_running',
+		'clear_full_cache',
+		'clear_media_cache',
+		'clear_twig_cache',
 		'close',
 		'color',
 		'column_indent',
@@ -4959,9 +5066,11 @@ namespace PHPSTORM_META {
 		'conditional_recipients_strategy_match_all',
 		'conditional_recipients_strategy_match_first',
 		'conditional_recipients_strategy_match_last',
+		'configuration_category_backend_auto_translate',
 		'configuration_category_backend_categories',
 		'configuration_category_backend_column_system',
 		'configuration_category_backend_contents',
+		'configuration_category_backend_forms',
 		'configuration_category_backend_interface',
 		'configuration_category_backend_lock',
 		'configuration_category_backend_media_folders',
@@ -4979,7 +5088,14 @@ namespace PHPSTORM_META {
 		'configuration_category_frontend_protection',
 		'configuration_category_frontend_publication',
 		'configuration_category_frontend_resizing',
+		'configuration_category_frontend_route',
 		'configuration_identifier_backend_auto_create_menu_entries',
+		'configuration_identifier_backend_auto_translate_deepl_api_key',
+		'configuration_identifier_backend_auto_translate_google_api_key',
+		'configuration_identifier_backend_auto_translate_mode',
+		'configuration_identifier_backend_auto_translate_open_ai_api_key',
+		'configuration_identifier_backend_auto_translate_open_ai_model',
+		'configuration_identifier_backend_auto_translate_translation_service',
 		'configuration_identifier_backend_categories_allow_aggregation',
 		'configuration_identifier_backend_categories_allow_unassigned',
 		'configuration_identifier_backend_categories_association_name',
@@ -4993,6 +5109,7 @@ namespace PHPSTORM_META {
 		'configuration_identifier_backend_column_system_max_columns',
 		'configuration_identifier_backend_contents_enabled',
 		'configuration_identifier_backend_create_historical_paths',
+		'configuration_identifier_backend_forms_enabled',
 		'configuration_identifier_backend_handle_images_in_html',
 		'configuration_identifier_backend_html_cleaning',
 		'configuration_identifier_backend_interface_dark_mode',
@@ -5001,7 +5118,9 @@ namespace PHPSTORM_META {
 		'configuration_identifier_backend_interface_highlight_color',
 		'configuration_identifier_backend_interface_scale',
 		'configuration_identifier_backend_interface_sidebar_mode',
+		'configuration_identifier_backend_known_identifiers',
 		'configuration_identifier_backend_lock_enabled',
+		'configuration_identifier_backend_lock_session_based',
 		'configuration_identifier_backend_lock_timeout',
 		'configuration_identifier_backend_media_folders_auto_create',
 		'configuration_identifier_backend_meta_title_appendix',
@@ -5024,12 +5143,13 @@ namespace PHPSTORM_META {
 		'configuration_identifier_frontend_media_folders_parent_folder_id',
 		'configuration_identifier_frontend_meta_title_appendix',
 		'configuration_identifier_frontend_meta_title_separator',
-		'configuration_identifier_frontend_ors_api_key',
 		'configuration_identifier_frontend_protection_methods',
-		'configuration_identifier_frontend_publication_check_ancestor_pages_publication_status',
+		'configuration_identifier_frontend_publication_data_check_ancestor_pages_publication_status',
 		'configuration_identifier_frontend_resizing_driver',
 		'configuration_identifier_frontend_resizing_file_type',
 		'configuration_identifier_frontend_resizing_quality',
+		'configuration_identifier_frontend_route_ors_api_key',
+		'configuration_identifier_frontend_route_routing_service',
 		'confirm_apply',
 		'confirm_apply_no',
 		'confirm_apply_title',
@@ -5043,6 +5163,7 @@ namespace PHPSTORM_META {
 		'confirm_in_use',
 		'confirm_multiple_in_use',
 		'confirmation_email_template_id',
+		'consent_id',
 		'content_area_id',
 		'content_areas[new][identifier][0]',
 		'content_areas[new][title][0]',
@@ -5073,7 +5194,11 @@ namespace PHPSTORM_META {
 		'crop_height',
 		'crop_width',
 		'cropping_in_progress',
+		'css',
 		'css_class',
+		'css_dialog_close',
+		'css_dialog_info',
+		'css_dialog_title',
 		'current_settings',
 		'current_value',
 		'custom_answer',
@@ -5083,6 +5208,16 @@ namespace PHPSTORM_META {
 		'dark_mode_switch_on',
 		'data',
 		'date_format',
+		'date_operator_last_24_hours',
+		'date_operator_last_month',
+		'date_operator_last_week',
+		'date_operator_last_year',
+		'date_operator_since_last_login',
+		'date_operator_this_month',
+		'date_operator_this_week',
+		'date_operator_this_year',
+		'date_operator_today',
+		'date_operator_yesterday',
 		'date_time_end',
 		'date_time_format_help_text',
 		'date_time_start',
@@ -5107,6 +5242,7 @@ namespace PHPSTORM_META {
 		'duplicate_of',
 		'duplicate_of_page_id',
 		'edit',
+		'edit_css',
 		'edit_failed',
 		'edit_succeeded',
 		'email',
@@ -5152,11 +5288,11 @@ namespace PHPSTORM_META {
 		'error_linked_contents',
 		'error_linked_form_confirmation_emails',
 		'error_linked_form_emails',
+		'error_linked_global_contents',
 		'error_linked_media_assignments',
 		'error_linked_media_element_selectors',
 		'error_linked_pages',
 		'error_linked_surveys',
-		'error_linked_widgets',
 		'error_max_file_size',
 		'error_max_length',
 		'error_media_element_unique_for_scope',
@@ -5183,6 +5319,8 @@ namespace PHPSTORM_META {
 		'error_not_duplicating_duplicating',
 		'error_not_empty',
 		'error_not_in_use',
+		'error_not_last_active_language_in_realm_on_deactivate',
+		'error_not_last_active_language_in_realm_on_realm_change',
 		'error_not_last_language_in_realm',
 		'error_not_nested_under_root',
 		'error_not_page_role_page_deletion',
@@ -5195,6 +5333,7 @@ namespace PHPSTORM_META {
 		'error_option_when_split_into_languages_when_translatable',
 		'error_page_template_content_area_exists',
 		'error_page_template_exists',
+		'error_record_not_found',
 		'error_required',
 		'error_reserved_identifier',
 		'error_root_active_unchanged',
@@ -5243,6 +5382,10 @@ namespace PHPSTORM_META {
 		'error_valid_timezone',
 		'error_valid_value',
 		'error_valid_width_indent_combination',
+		'export',
+		'export_entries',
+		'export_format',
+		'export_languages',
 		'external',
 		'failed_attempts',
 		'failure_message',
@@ -5261,9 +5404,12 @@ namespace PHPSTORM_META {
 		'fieldset_data',
 		'fieldset_details',
 		'fieldset_email',
+		'fieldset_filter_settings',
 		'fieldset_fonts',
 		'fieldset_frontend',
 		'fieldset_general',
+		'fieldset_list_fields',
+		'fieldset_list_sort',
 		'fieldset_media',
 		'fieldset_media_selectors',
 		'fieldset_menus',
@@ -5290,6 +5436,7 @@ namespace PHPSTORM_META {
 		'filter_operator',
 		'filter_remove_column',
 		'filter_reset',
+		'filter_settings',
 		'filter_show',
 		'filter_submit',
 		'final_action',
@@ -5351,6 +5498,9 @@ namespace PHPSTORM_META {
 		'geocode_multiple_results_found',
 		'geocode_multiple_results_found_title',
 		'global',
+		'global_content_elements_assigned',
+		'global_content_elements_available',
+		'global_content_template_id',
 		'global_language',
 		'global_value',
 		'group_entries',
@@ -5358,6 +5508,7 @@ namespace PHPSTORM_META {
 		'headline_add',
 		'headline_add_batch',
 		'headline_analyze',
+		'headline_batch_edit',
 		'headline_clear_cache',
 		'headline_diagram',
 		'headline_duplicate_configuration',
@@ -5385,6 +5536,7 @@ namespace PHPSTORM_META {
 		'headline_structure_warning_wrong_headline_order',
 		'headline_usages',
 		'height',
+		'hidden',
 		'history_entry_info',
 		'homepage_id',
 		'html_cleaning_moderate',
@@ -5402,6 +5554,7 @@ namespace PHPSTORM_META {
 		'input_type',
 		'input_type_bool_label',
 		'input_type_checkbox',
+		'input_type_color',
 		'input_type_date',
 		'input_type_datetime',
 		'input_type_hidden',
@@ -5422,6 +5575,9 @@ namespace PHPSTORM_META {
 		'interface_scale_medium',
 		'interface_scale_regular',
 		'interface_scale_small',
+		'internal',
+		'ip_hash',
+		'is_preview',
 		'is_robot',
 		'italic',
 		'items_per_page',
@@ -5452,10 +5608,12 @@ namespace PHPSTORM_META {
 		'link_helper_dialog_label_url_param_remove',
 		'link_helper_dialog_label_url_params',
 		'link_helper_dialog_title',
+		'list_fields',
 		'list_item_add',
 		'list_item_remove',
 		'list_nested',
 		'list_paginated',
+		'list_sort',
 		'lng',
 		'load_settings',
 		'locale',
@@ -5470,7 +5628,9 @@ namespace PHPSTORM_META {
 		'login_logo',
 		'logout',
 		'media_element',
+		'media_element_id',
 		'media_element_inline_img_tag',
+		'media_element_selector_identifier',
 		'media_elements_assigned',
 		'media_elements_available',
 		'media_folder_filter_label',
@@ -5478,11 +5638,13 @@ namespace PHPSTORM_META {
 		'media_folder_hidden',
 		'media_folder_id',
 		'media_folders_toggle',
+		'media_id',
 		'media_selector_id',
 		'media_usages_inaccessible',
 		'menu_add',
 		'menu_add_batch',
 		'menu_analyze',
+		'menu_batch_edit',
 		'menu_breakpoint',
 		'menu_configure',
 		'menu_filter_label',
@@ -5505,6 +5667,7 @@ namespace PHPSTORM_META {
 		'meta_title_add_batch',
 		'meta_title_analyze',
 		'meta_title_auto',
+		'meta_title_batch_edit',
 		'meta_title_clear_cache',
 		'meta_title_diagram',
 		'meta_title_duplicate_configuration',
@@ -5520,11 +5683,13 @@ namespace PHPSTORM_META {
 		'meta_title_preview',
 		'meta_title_summary_error',
 		'meta_title_summary_warning',
+		'meta_title_unique_warning',
 		'meta_title_usages',
 		'meta_title_view',
 		'meta_title_view_confirmation',
 		'mime_type',
 		'module_identifier',
+		'mostly_used_words',
 		'multistep',
 		'name',
 		'next',
@@ -5539,6 +5704,7 @@ namespace PHPSTORM_META {
 		'next_action_show_form',
 		'next_action_show_form_and_save',
 		'next_action_specific_question',
+		'no_audit_entries',
 		'no_records',
 		'normal',
 		'number_of_items',
@@ -5610,6 +5776,7 @@ namespace PHPSTORM_META {
 		'placeholder',
 		'placeholder_data',
 		'placeholder_help_text',
+		'post_hash',
 		'preview',
 		'preview_mode',
 		'preview_mode_disable',
@@ -5635,6 +5802,8 @@ namespace PHPSTORM_META {
 		'quick_action_add_page',
 		'quick_action_user_configuration',
 		'read_more',
+		'real_height',
+		'real_width',
 		'realm',
 		'realm_backend',
 		'realm_frontend',
@@ -5643,6 +5812,7 @@ namespace PHPSTORM_META {
 		'redirect_link',
 		'reference',
 		'referrer',
+		'rejected_categories',
 		'remove_answer',
 		'remove_file',
 		'remove_question',
@@ -5696,9 +5866,13 @@ namespace PHPSTORM_META {
 		'scope_filter_label',
 		'scope_media',
 		'scope_pages',
+		'select_empty_label',
 		'select_file',
+		'select_filter_placeholder',
 		'send_confirmation_email',
 		'send_email',
+		'seo_analyze',
+		'settings',
 		'shortcode',
 		'show_diagram',
 		'show_history',
@@ -5718,6 +5892,7 @@ namespace PHPSTORM_META {
 		'status_302',
 		'status_307',
 		'status_308',
+		'strategy',
 		'subject',
 		'subject_confirmation',
 		'subject_confirmation_placeholder',
@@ -5751,6 +5926,16 @@ namespace PHPSTORM_META {
 		'task_failed',
 		'text',
 		'text_html',
+		'text_length',
+		'text_length_error_too_few_words',
+		'text_length_error_too_many_words',
+		'text_length_status_error',
+		'text_length_status_ok',
+		'text_length_status_warning',
+		'text_length_summary_error',
+		'text_length_summary_warning',
+		'text_length_warning_too_few_words',
+		'text_length_warning_too_many_words',
 		'text_plain',
 		'time_format',
 		'timezone',
@@ -5796,6 +5981,8 @@ namespace PHPSTORM_META {
 		'type_textarea',
 		'type_time',
 		'type_url',
+		'unassigned',
+		'unique_respondents',
 		'unknown_content_area',
 		'unknown_entity',
 		'unknown_file',
@@ -5813,8 +6000,8 @@ namespace PHPSTORM_META {
 		'used_for_confirmation_emails',
 		'used_for_contents',
 		'used_for_emails',
+		'used_for_global_contents',
 		'used_for_pages',
-		'used_for_widgets',
 		'user_email',
 		'user_email_placeholder',
 		'user_name',
@@ -5837,9 +6024,6 @@ namespace PHPSTORM_META {
 		'view_gallery',
 		'webfont_download',
 		'webp',
-		'widget_elements_assigned',
-		'widget_elements_available',
-		'widget_template_id',
 		'width',
 		'zoom_in',
 		'zoom_out',
@@ -5890,6 +6074,7 @@ namespace PHPSTORM_META {
 		'SHELL',
 		'SUDO_COMMAND',
 		'SUDO_GID',
+		'SUDO_HOME',
 		'SUDO_UID',
 		'SUDO_USER',
 		'TERM',
@@ -5935,6 +6120,7 @@ namespace PHPSTORM_META {
 		'cc',
 		'changed_by',
 		'changed_on',
+		'checkbox_attribut',
 		'column_indent',
 		'column_last',
 		'column_rtl',
@@ -5987,6 +6173,8 @@ namespace PHPSTORM_META {
 		'foreign_key',
 		'form_id',
 		'free_text',
+		'global_content_id',
+		'global_content_template_id',
 		'has_index',
 		'height',
 		'hidden',
@@ -6105,8 +6293,6 @@ namespace PHPSTORM_META {
 		'username',
 		'value',
 		'webp',
-		'widget_id',
-		'widget_template_id',
 		'width',
 		'wine_id',
 		'workerkey',
@@ -6434,6 +6620,13 @@ namespace PHPSTORM_META {
 		'Route',
 		'Route.includeLanguageShortcode',
 		'Security',
+		'Seo',
+		'Seo.stopWords',
+		'Seo.stopWords.de',
+		'Seo.stopWords.en',
+		'Seo.stopWords.es',
+		'Seo.stopWords.fr',
+		'Seo.stopWords.it',
 		'Session',
 		'Session.cookie',
 		'Session.defaults',
@@ -6448,6 +6641,7 @@ namespace PHPSTORM_META {
 		'plugins.Authentication',
 		'plugins.Bake',
 		'plugins.Cake/TwigView',
+		'plugins.CsvView',
 		'plugins.DebugKit',
 		'plugins.IdeHelper',
 		'plugins.Migrations',
@@ -6627,6 +6821,7 @@ namespace PHPSTORM_META {
 		'created_by',
 		'created_by_user',
 		'created_on',
+		'css',
 		'css_class',
 		'data',
 		'deleted',
@@ -6732,6 +6927,29 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
+		'entityFields:\Awyiss\Model\Entity\DashboardElement',
+		'access',
+		'active',
+		'changed_by',
+		'changed_by_user',
+		'changed_on',
+		'created_by',
+		'created_by_user',
+		'created_on',
+		'deleted',
+		'deleted_by',
+		'deleted_by_user',
+		'deleted_on',
+		'id',
+		'label',
+		'mediaAssignments',
+		'scope',
+		'settings',
+		'system_order',
+		'title',
+	);
+
+	registerArgumentsSet(
 		'entityFields:\Awyiss\Model\Entity\Datatable',
 		'active',
 		'changed_by',
@@ -6824,6 +7042,7 @@ namespace PHPSTORM_META {
 		'form_conditional_recipients',
 		'form_elements',
 		'form_entries',
+		'global_contents',
 		'id',
 		'identifier',
 		'label',
@@ -6845,7 +7064,6 @@ namespace PHPSTORM_META {
 		'transport_profile',
 		'user_email',
 		'user_name',
-		'widgets',
 	);
 
 	registerArgumentsSet(
@@ -6926,12 +7144,98 @@ namespace PHPSTORM_META {
 		'identifier',
 		'ip_hash',
 		'label',
+		'language',
+		'language_shortcode',
 		'mediaAssignments',
 		'page',
 		'page_id',
 		'post_hash',
 		'subject',
 		'subject_confirmation',
+	);
+
+	registerArgumentsSet(
+		'entityFields:\Awyiss\Model\Entity\GlobalContent',
+		'active',
+		'attributes',
+		'changed_by',
+		'changed_by_user',
+		'changed_on',
+		'child_global_contents',
+		'column',
+		'column_indent',
+		'column_last',
+		'column_rtl',
+		'column_width',
+		'created_by',
+		'created_by_user',
+		'created_on',
+		'css',
+		'css_class',
+		'data',
+		'deleted',
+		'deleted_by',
+		'deleted_by_user',
+		'deleted_on',
+		'form',
+		'form_id',
+		'global_content_template',
+		'global_content_template_id',
+		'id',
+		'identifier',
+		'label',
+		'link',
+		'mediaAssignments',
+		'parent_global_content',
+		'parent_id',
+		'subtitle',
+		'subtitle_tag',
+		'survey',
+		'survey_id',
+		'system_order',
+		'text',
+		'title',
+		'title_tag',
+	);
+
+	registerArgumentsSet(
+		'entityFields:\Awyiss\Model\Entity\GlobalContentTemplate',
+		'active',
+		'changed_by',
+		'changed_by_user',
+		'changed_on',
+		'created_by',
+		'created_by_user',
+		'created_on',
+		'deleted',
+		'deleted_by',
+		'deleted_by_user',
+		'deleted_on',
+		'file_name',
+		'global_content_template_elements',
+		'global_contents',
+		'id',
+		'in_content_row',
+		'label',
+		'mediaAssignments',
+		'system_order',
+		'title',
+	);
+
+	registerArgumentsSet(
+		'entityFields:\Awyiss\Model\Entity\GlobalContentTemplateElement',
+		'column',
+		'column_span',
+		'fieldset',
+		'global_content_template',
+		'global_content_template_id',
+		'id',
+		'identifier',
+		'label',
+		'mediaAssignments',
+		'required',
+		'system_order',
+		'title',
 	);
 
 	registerArgumentsSet(
@@ -6961,6 +7265,7 @@ namespace PHPSTORM_META {
 		'deleted_by',
 		'deleted_by_user',
 		'deleted_on',
+		'form_entries',
 		'id',
 		'label',
 		'locale',
@@ -7008,6 +7313,7 @@ namespace PHPSTORM_META {
 		'deleted_by_user',
 		'deleted_on',
 		'extension',
+		'filemtime',
 		'focus_point',
 		'height',
 		'id',
@@ -7037,11 +7343,13 @@ namespace PHPSTORM_META {
 		'path',
 		'pathAbsolute',
 		'preview',
+		'previewFilemtime',
 		'previewName',
 		'previewPath',
 		'previewPathAbsolute',
 		'system_order',
 		'url_history',
+		'usageCount',
 		'webp',
 		'webpName',
 		'webpPath',
@@ -7164,6 +7472,7 @@ namespace PHPSTORM_META {
 	registerArgumentsSet(
 		'entityFields:\Awyiss\Model\Entity\MediaResizedImage',
 		'extension',
+		'filemtime',
 		'height',
 		'id',
 		'media',
@@ -7386,6 +7695,7 @@ namespace PHPSTORM_META {
 		'final_action',
 		'form',
 		'form_id',
+		'global_contents',
 		'id',
 		'identifier',
 		'label',
@@ -7396,7 +7706,6 @@ namespace PHPSTORM_META {
 		'survey_survey_questions',
 		'title',
 		'type',
-		'widgets',
 	);
 
 	registerArgumentsSet(
@@ -7660,87 +7969,6 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:\Awyiss\Model\Entity\Widget',
-		'active',
-		'attributes',
-		'changed_by',
-		'changed_by_user',
-		'changed_on',
-		'child_widgets',
-		'column',
-		'column_indent',
-		'column_last',
-		'column_rtl',
-		'column_width',
-		'created_by',
-		'created_by_user',
-		'created_on',
-		'css_class',
-		'data',
-		'deleted',
-		'deleted_by',
-		'deleted_by_user',
-		'deleted_on',
-		'form',
-		'form_id',
-		'id',
-		'identifier',
-		'label',
-		'link',
-		'mediaAssignments',
-		'parent_id',
-		'parent_widget',
-		'subtitle',
-		'survey',
-		'survey_id',
-		'system_order',
-		'text',
-		'title',
-		'widget_template',
-		'widget_template_id',
-	);
-
-	registerArgumentsSet(
-		'entityFields:\Awyiss\Model\Entity\WidgetTemplate',
-		'active',
-		'changed_by',
-		'changed_by_user',
-		'changed_on',
-		'created_by',
-		'created_by_user',
-		'created_on',
-		'deleted',
-		'deleted_by',
-		'deleted_by_user',
-		'deleted_on',
-		'file_name',
-		'id',
-		'in_content_row',
-		'label',
-		'mediaAssignments',
-		'system_order',
-		'title',
-		'widget_template_elements',
-		'widgets',
-	);
-
-	registerArgumentsSet(
-		'entityFields:\Awyiss\Model\Entity\WidgetTemplateElement',
-		'column',
-		'column_span',
-		'fieldset',
-		'id',
-		'identifier',
-		'label',
-		'mediaAssignments',
-		'required',
-		'system_order',
-		'title',
-		'widget_template',
-		'widget_template_id',
-	);
-
-	registerArgumentsSet(
 		'routePaths',
 
 	);
@@ -7751,11 +7979,11 @@ namespace PHPSTORM_META {
 		'attributes_cars',
 		'attributes_contents',
 		'attributes_employers',
+		'attributes_global_contents',
 		'attributes_media_folders',
 		'attributes_news',
 		'attributes_newscategories',
 		'attributes_pages',
-		'attributes_widgets',
 		'attributes_wines',
 		'audit',
 		'backend_menu_entries',
@@ -7766,6 +7994,7 @@ namespace PHPSTORM_META {
 		'content_template_elements',
 		'content_templates',
 		'contents',
+		'dashboard_elements',
 		'datatables',
 		'designs',
 		'email_templates',
@@ -7775,6 +8004,9 @@ namespace PHPSTORM_META {
 		'form_elements',
 		'form_entries',
 		'forms',
+		'global_content_template_elements',
+		'global_content_templates',
+		'global_contents',
 		'languages',
 		'locks',
 		'media',
@@ -7808,9 +8040,6 @@ namespace PHPSTORM_META {
 		'usergroups',
 		'usergroups_users',
 		'users',
-		'widget_template_elements',
-		'widget_templates',
-		'widgets',
 		'wines',
 	);
 
