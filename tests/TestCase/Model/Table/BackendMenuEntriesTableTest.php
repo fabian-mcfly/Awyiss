@@ -438,7 +438,7 @@ class BackendMenuEntriesTableTest extends TestCase {
 		// Create a mock entity with title
 		/** @var \Awyiss\Model\Entity\BackendMenuEntry $mockEntity */
 		$mockEntity = $this->backendMenuEntriesTable->newEntity([
-			'title' => 'Test Module',
+			'title' => 'Test Widget',
 		]);
 
 		// Test creating entries
@@ -446,14 +446,14 @@ class BackendMenuEntriesTableTest extends TestCase {
 		$this->backendMenuEntriesTable->createEntries($mockEntity, 'TestController', 'test_scope', 'pages');
 
 		// Verify that entries were created
-		$entries = $this->backendMenuEntriesTable->find()->where(['title' => 'Test Module'])->contain(['ChildBackendMenuEntries'])->first();
+		$entries = $this->backendMenuEntriesTable->find()->where(['title' => 'Test Widget'])->contain(['ChildBackendMenuEntries'])->first();
 
 		$this->backendMenuEntriesTable->deleteAll([
 			'id >' => 5,
 		]);
 
 		$this->assertNotNull($entries);
-		$this->assertEquals('Test Module', $entries->title);
+		$this->assertEquals('Test Widget', $entries->title);
 		$this->assertEquals('pages', $entries->insertAfterId);
 		$this->assertEquals('TestController::overview', $entries->link);
 		$this->assertNotNull($entries->access);

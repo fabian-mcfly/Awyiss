@@ -1,0 +1,21 @@
+#WidgetConfigurationOverlay {
+	@extend %DialogNoTitle;
+
+	max-width:860px;
+
+	&[open] {
+		display:block;
+	}
+
+	&:not(:has(.Form)) {
+		@extend %LoaderIcon;
+	}
+
+	.Form.WidgetConfiguration {
+		@extend %OverlayForm;
+
+		&::after {
+			content:attr(data-title, 'Widget Configuration');
+		}
+	}
+}

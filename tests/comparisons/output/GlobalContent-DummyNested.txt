@@ -1,7 +1,7 @@
 <div class="ContentRow">
 <div class="GlobalContentElement Template-Standard Column-100 GlobalContent-DummyNested AwyissFrontendPreview-InactiveElement" id="GlobalContent4">
 <div class="Text">
-<div class="Module-Breadcrumbs">
+<div class="Widget-Breadcrumbs">
 <ol class="Breadcrumbs">
 <li class="Breadcrumb">
 <a href="/de/startseite/">Startseite</a>

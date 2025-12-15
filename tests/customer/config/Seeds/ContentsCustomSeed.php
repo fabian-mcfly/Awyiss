@@ -53,7 +53,7 @@ class ContentsCustomSeed extends AbstractSeed {
 				'title_tag' => null,
 				'subtitle' => null,
 				'subtitle_tag' => null,
-				'text' => '<module class="mceNonEditable" data-identifier="test" data-label="Testmodul">{"key":"value"}</module>',
+				'text' => '<widget class="mceNonEditable" data-identifier="test" data-label="Testwidget">{"key":"value"}</widget>',
 				'link' => null,
 				'column_width' => '1/1',
 				'column_indent' => null,
@@ -205,7 +205,7 @@ class ContentsCustomSeed extends AbstractSeed {
 				'title_tag' => 'h2',
 				'subtitle' => null,
 				'subtitle_tag' => null,
-				'text' => '<module class="mceNonEditable" data-identifier="newsListing" data-label="News-Listing">{"paginate":false,"items":3,"offset":null}</module>
+				'text' => '<widget class="mceNonEditable" data-identifier="newsListing" data-label="News-Listing">{"paginate":false,"items":3,"offset":null}</widget>
 ',
 				'link' => null,
 				'column_width' => '1/1',
@@ -393,7 +393,7 @@ class ContentsCustomSeed extends AbstractSeed {
 				'title_tag' => 'h1',
 				'subtitle' => null,
 				'subtitle_tag' => null,
-				'text' => '<module class="mceNonEditable" data-identifier="newsListing" data-label="News-Listing">{"titleTag":"h2","paginate":true,"itemsPerPage":3}</module>
+				'text' => '<widget class="mceNonEditable" data-identifier="newsListing" data-label="News-Listing">{"titleTag":"h2","paginate":true,"itemsPerPage":3}</widget>
 ',
 				'link' => null,
 				'column_width' => '1/1',

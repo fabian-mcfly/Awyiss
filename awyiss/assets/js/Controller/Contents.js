@@ -248,7 +248,7 @@ export class DuplicateOfConfiguration {
 
 		if (this.duplicateOfInput) {
 			this.duplicateOfInput.instantUpdate = true;
-			this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
+			this.duplicateOfInput.addEventListener('click', event => this.openDuplicateContentOverlay(event));
 		}
 
 		this.observer.addObserver(this.observeMutations.bind(this), form);
@@ -335,14 +335,14 @@ export class DuplicateOfConfiguration {
 
 
 	/**
-	 * Open the overlay to configure the module.
+	 * Open the overlay to select the content to duplicate.
 	 *
 	 * @param {Event} event
 	 * @param {tinymce.Editor} editor
 	 * @param {HTMLElement} node
 	 * @returns {Promise<void>}
 	 */
-	async openOverlay(event, editor, node) {
+	async openDuplicateContentOverlay(event, editor, node) {
 		this.isFormChanged = window.formLeaveConfirmation.isFormChanged;
 
 		if (!this.dialog) {
@@ -423,14 +423,14 @@ export class DuplicateOfConfiguration {
 				if (node.matches(selector)) {
 					this.duplicateOfInput = node;
 					this.duplicateOfInput.instantUpdate = true;
-					this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
+					this.duplicateOfInput.addEventListener('click', event => this.openDuplicateContentOverlay(event));
 				}
 
 				const elements = node.querySelectorAll(selector);
 				elements.forEach((element) => {
 					this.duplicateOfInput = element;
 					this.duplicateOfInput.instantUpdate = true;
-					this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
+					this.duplicateOfInput.addEventListener('click', event => this.openDuplicateContentOverlay(event));
 				});
 			}
 		});

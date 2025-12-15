@@ -1,0 +1,98 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var frontendLanguage \Awyiss\Model\Entity\Language
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
+@var news \Cake\Collection\Collection
+@var paginate bool
+@var items int|null
+@var itemsPerPage int|null
+@var offset int|null
+@var settings array
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block widgetNewsListing %}
+	<div class="Widget-NewsListing">
+		{% if news.count %}
+			{% block newsListingList %}
+				<ul class="{% block newsListClass %}List{% endblock %}">
+					{# @var newsItem \Awyiss\Model\Entity\Page #}
+					{% for newsItem in news %}
+						{% block newsListingItem %}
+							{% set link = UrlHelper.build({lang: newsItem.languageShortcode, slug: newsItem.slug}) %}
+							<li class="{% block newsItemClass %}Item NewsItem{{ newsItem.active == false and previewMode.enabled == true ? ' ' ~ previewMode.inactiveElementClass : ''}}{% endblock %}" id="NewsItem{{ newsItem.id }}">
+								{% block newsListingItemImage %}
+									{% if newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia %}
+										<div class="Image">
+											{{ MediaHelper.htmlTag(
+												newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia,
+												mediaRenderOptions
+													.withColumnWidth(25)
+													.withAspectRatio(1)
+													.withResizeStrategy('crop')
+													.withBreakpoint(mediaRenderOptions.singleColumnBreakpoint, {
+														aspectRatio: 2,
+													})
+													.withBreakpoint(480, {
+														aspectRatio: null,
+														resizeStrategy: 'contain'
+													})
+											) }}
+										</div>
+									{% endif %}
+								{% endblock %}
+
+								{% block newsListingItemTitle %}
+									{% if settings.titleTag and settings.titleTag != 'h3' %}
+										<{{ settings.titleTag }} class="Title">{{ newsItem.title }}</{{ settings.titleTag }}>
+									{% else %}
+										<h3 class="Title">{{ newsItem.title }}</h3>
+									{% endif %}
+								{% endblock %}
+
+								{% block newsListingItemDate %}
+									<p class="Date">{{ newsItem.date.i18nFormat(0) }}</p>
+								{% endblock %}
+
+								{% block newsListingItemTeaser %}
+									{% if newsItem.teaser %}
+										{% if '<' in newsItem.teaser %}
+											<div class="Teaser">{{ newsItem.teaser|raw }}</div>
+										{% else %}
+											<p class="Teaser">{{ newsItem.teaser|nl2br }}</p>
+										{% endif %}
+									{% endif %}
+								{% endblock %}
+
+								{% block newsListingItemLink %}
+									<p class="Link">
+										<a href="{{ link }}" class="Button">
+											{{ __df('news', 'widgets', 'read_more') }}
+										</a>
+									</p>
+								{% endblock %}
+							</li>
+						{% endblock %}
+					{% endfor %}
+				</ul>
+			{% endblock %}
+			{% block newsListingPagination %}
+				{% if paginate %}
+					{% do PaginatorHelper.setPaginated(news) %}
+					{{ PaginatorHelper.render()|raw }}
+				{% endif %}
+			{% endblock %}
+		{% else %}
+			{% block newsListingEmpty %}
+				{{ __df('news', 'widgets', 'no_records') }}
+			{% endblock %}
+		{% endif %}
+	</div>
+{% endblock %}

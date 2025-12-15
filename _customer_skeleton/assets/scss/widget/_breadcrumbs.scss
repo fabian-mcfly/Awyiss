@@ -1,0 +1,45 @@
+.Widget-Breadcrumbs {
+	@extend %ContentRow;
+
+	.Breadcrumbs {
+		display:flex;
+		margin:0;
+		padding-bottom:calc(var(--lineHeightMain) * .5);
+		border-bottom:3px solid;
+		transition:opacity .3s ease-in-out;
+		overflow:auto;
+		scrollbar-width:thin;
+	}
+
+	.Breadcrumb {
+		margin:0 0 0 30px;
+		list-style-type:none;
+		position:relative;
+		flex:0 0 auto;
+
+		&:first-child {
+			margin-left:0;
+
+			&::before {
+				display:none;
+			}
+		}
+
+		&::before {
+			content:'/';
+			font-size:.875rem;
+			position:absolute;
+			top:0;
+			left:-17px;
+		}
+	}
+
+	a {
+		color:inherit;
+		font-size:.875rem;
+
+		&:hover {
+			color:var(--colorMain);
+		}
+	}
+}

@@ -1,0 +1,39 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var frontendLanguage \Awyiss\Model\Entity\Language
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
+@var includeHomepage bool
+@var includeCurrentPage bool
+@var showOnHomepage bool
+@var homepageId int
+@var homepage \Awyiss\Model\Entity\Page
+@var pages \Awyiss\Model\Entity\Page[]
+@var settings array
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block widgetBreadcrumbs %}
+	{% set currentPage = page %}
+	{% if homepageId != page.id or showOnHomepage %}
+		<div class="Widget-Breadcrumbs">
+			{% block breadcrumbsList %}
+				<ol class="Breadcrumbs">
+					{% for page in pages %}
+						{% block breadcrumbsItem %}
+							<li class="Breadcrumb">
+								<a href="{{ UrlHelper.build({lang: page.languageShortcode, slug: page.slug}) }}">{{ page.title }}</a>
+							</li>
+						{% endblock %}
+					{% endfor %}
+				</ol>
+			{% endblock %}
+		</div>
+	{% endif %}
+{% endblock %}

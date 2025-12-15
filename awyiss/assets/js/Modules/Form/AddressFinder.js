@@ -158,7 +158,7 @@ export default class AddressFinder {
 
 		document.body.appendChild(dialog);
 
-		const helpingDialog = document.querySelector('#ModuleConfigurationOverlay, #OverlayForm');
+		const helpingDialog = document.querySelector('#WidgetConfigurationOverlay, #OverlayForm');
 		let closeButton;
 		if (helpingDialog) {
 			// Borrow the close button from the dialog

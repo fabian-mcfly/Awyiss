@@ -13,10 +13,10 @@
  */
 export default class Loader {
 	/**
-	 * If the custom settings module is currently loading
+	 * If the custom settings widget is currently loading
 	 * @type {boolean}
 	 */
-	isModuleLoading = false;
+	isWidgetLoading = false;
 	/**
 	 * The link list for the TinyMCE editor
 	 * @type {Object}
@@ -44,11 +44,11 @@ export default class Loader {
 		charmap_append: [
 			[173, 'soft hyphen']
 		],
-		custom_elements: 'module',
+		custom_elements: 'widget',
 		document_base_url: baseUrl,
-		extended_valid_elements: 'module[class]',
+		extended_valid_elements: 'widget[class]',
 		external_plugins: {
-			awyissModule: '../awyiss_module.js'
+			awyissWidget: '../AwyissWidget.js'
 		},
 		fix_list_elements: true,
 		branding: false,
@@ -73,7 +73,7 @@ export default class Loader {
 		paste_as_text: true,
 		paste_block_drop: false,
 		paste_data_images: false,
-		plugins: 'anchor autolink autoresize awyissModule charmap code fullscreen image link lists nonbreaking table visualblocks visualchars wordcount',
+		plugins: 'anchor autolink autoresize awyissWidget charmap code fullscreen image link lists nonbreaking table visualblocks visualchars wordcount',
 		preview_styles: 'font-family font-size font-weight font-style line-height text-decoration text-transform color background-color border border-radius outline text-shadow',
 		relative_urls: true,
 		setup: (editor) => this.setup(editor),
@@ -94,7 +94,7 @@ export default class Loader {
 		table_sizing_mode: 'responsive',
 		table_use_colgroups: false,
 		toolbar: 'bold italic underline strikethrough styles removeformat | undo redo | link unlink anchor | blockquote bullist numlist'
-		+ ' | image | awyissModule | hr subscript superscript nonbreaking charmap | table | aligncenter alignright alignjustify outdent indent'
+		+ ' | image | awyissWidget | hr subscript superscript nonbreaking charmap | table | aligncenter alignright alignjustify outdent indent'
 		+ ' | copy cut paste pastetext | visualblocks visualchars | wordcount code | fullscreen',
 		toolbar_sticky: true,
 		toolbar_sticky_offset: document.documentElement.classList.contains('👀')
@@ -243,11 +243,11 @@ export default class Loader {
 	 * @returns {Promise<void>}
 	 */
 	async initSettings(element) {
-		if (this.isModuleLoading || this.settingsSet) {
+		if (this.isWidgetLoading || this.settingsSet) {
 			return;
 		}
 
-		this.isModuleLoading = true;
+		this.isWidgetLoading = true;
 
 		if (['de_DE', 'fr_FR', 'es_ES'].includes(userLanguage.locale)) {
 			this.settings.language = userLanguage.locale;
@@ -270,11 +270,11 @@ export default class Loader {
 			console.error(e);
 		}
 		finally {
-			this.isModuleLoading = false;
+			this.isWidgetLoading = false;
 		}
 
 		if (document.body.classList.contains('EmailTemplatesController')) {
-			this.settings.toolbar = this.settings.toolbar.replace('awyissModule', '');
+			this.settings.toolbar = this.settings.toolbar.replace('awyissWidget', '');
 			this.settings.toolbar = this.settings.toolbar.replace(' styles ', '');
 			this.settings.toolbar = 'formPlaceholders | ' + this.settings.toolbar;
 		}

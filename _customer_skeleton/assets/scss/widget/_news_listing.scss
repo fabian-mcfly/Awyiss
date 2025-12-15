@@ -1,0 +1,52 @@
+.Widget-NewsListing {
+	margin-top:calc(var(--lineHeightMain) * 2);
+
+	.List {
+		display:grid;
+		gap:calc(var(--lineHeightMain) * 2) 20px;
+		grid-template-columns:repeat(auto-fill, minmax(360px,1fr));
+	}
+
+	.Item {
+		--backgroundColor:var(--colorMedium);
+		--textColor:var(--colorBright);
+
+		margin:0;
+		padding:var(--elementPadding);
+		border-radius:5px;
+		background-color:var(--backgroundColor);
+		color:var(--textColor);
+		list-style-type:none;
+
+		.BackgroundColor & {
+			--backgroundColor:var(--colorBright);
+			--textColor:var(--colorText);
+		}
+	}
+
+	.Image {
+		margin-bottom:var(--lineHeightMain);
+
+		overflow:hidden;
+	}
+
+	img {
+		border-radius:5px;
+	}
+
+	.Title {
+		max-inline-size:none;
+	}
+
+	.Date {
+		margin-top:calc(var(--lineHeightMain) * -1);
+	}
+
+	.Link {
+		margin-top:var(--lineHeightMain);
+	}
+
+	.Pagination-List {
+		margin-top:calc(var(--lineHeightMain) * 2);
+	}
+}

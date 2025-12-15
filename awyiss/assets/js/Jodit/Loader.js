@@ -5,10 +5,10 @@
  */
 export default class Loader {
 	/**
-	 * If the custom settings module is currently loading
+	 * If the custom settings widget is currently loading
 	 * @type {boolean}
 	 */
-	isModuleLoading = false;
+	isWidgetLoading = false;
 	/**
 	 * The observer instance.
 	 * @type {Observer}
@@ -26,7 +26,7 @@ export default class Loader {
 	 */
 	settings = {
 		allowTags: {
-			module: true // Allow "module" as a valid tag
+			widget: true // Allow "widget" as a valid tag
 		},
 		beautifyHTML: false,
 		buttons: [
@@ -60,7 +60,7 @@ export default class Loader {
 					});
 				}
 			},
-			'center', 'right', 'justify', 'outdent', 'indent', '|', 'awyissModuleConfig', '\n',
+			'center', 'right', 'justify', 'outdent', 'indent', '|', 'awyissWidgetConfig', '\n',
 			'link', 'unlink', '|', 'image', '|', 'ul', 'ol', '|', 'hr', 'superscript', 'subscript',
 			{
 				icon: 'insertNbsp',
@@ -134,7 +134,7 @@ export default class Loader {
 		toolbarStickyOffset: document.documentElement.classList.contains('👀') ? 0 : 100,
 		uploader: {url: 'none'},
 		wrapNodes: {
-			exclude: new Set(['hr', 'module']),
+			exclude: new Set(['hr', 'widget']),
 			emptyBlockAfterInit: true,
 		}
 	}
@@ -214,11 +214,11 @@ export default class Loader {
 	 * @returns {Promise<void>}
 	 */
 	async initSettings(element) {
-		if (this.isModuleLoading || this.settingsSet) {
+		if (this.isWidgetLoading || this.settingsSet) {
 			return;
 		}
 
-		this.isModuleLoading = true;
+		this.isWidgetLoading = true;
 
 		this.settings.language = userLanguage.locale.slice(0, 2);
 
@@ -241,15 +241,15 @@ export default class Loader {
 		} catch (e) {
 			console.error(e);
 		} finally {
-			this.isModuleLoading = false;
+			this.isWidgetLoading = false;
 		}
 
 		// noinspection NpmUsedModulesInstalled
-		await import('Jodit/awyiss_module');
+		await import('Jodit/AwyissWidget');
 
 		if (document.body.classList.contains('EmailTemplatesController')) {
-			// Remove the awyissModule for email templates
-			this.settings.buttons = this.settings.buttons.filter(button => button !== 'awyissModuleConfig');
+			// Remove the Awyiss Widget for email templates
+			this.settings.buttons = this.settings.buttons.filter(button => button !== 'awyissWidgetConfig');
 		}
 
 		this.settingsSet = true;

@@ -423,6 +423,6 @@ tinymce.addI18n("es_ES", {
 	"{0} characters": "{0} caracteres",
 	"{0} columns, {1} rows": "{0} columnas, {1} filas",
 	"{0} words": "{0} palabras",
-	"Module": "M\xf3dulo",
+	"Widget": "Widget",
 	"Placeholders": "Marcador de posici\xf3n",
 });

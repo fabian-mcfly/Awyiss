@@ -337,11 +337,11 @@ class FormRenderer {
 		);
 
 		if ($entity->type === 'free_text') {
-			// Parse the custom image tags
+			// Parse the Awyiss image tags
 			$this->parseAwyissImageTags($entity, $mediaRenderOptions);
 
-			// Parse the module
-			$this->parseModules($entity, $mediaRenderOptions);
+			// Parse the widgets
+			$this->parseWidgets($entity, $mediaRenderOptions);
 		}
 
 		$fullWidthMissingWarning = '';
@@ -489,11 +489,11 @@ class FormRenderer {
 			singleColumnBreakpoint: $options['mediaRenderOptions']['singleColumnBreakpoint']
 		);
 
-		// Parse the custom image tags
+		// Parse the Awyiss image tags
 		$this->parseAwyissImageTags($this->form, $mediaRenderOptions);
 
-		// Parse the module
-		$this->parseModules($this->form, $mediaRenderOptions);
+		// Parse the widgets
+		$this->parseWidgets($this->form, $mediaRenderOptions);
 
 		return $this;
 	}

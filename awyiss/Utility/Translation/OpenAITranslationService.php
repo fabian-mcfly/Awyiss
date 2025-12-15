@@ -201,7 +201,7 @@ class OpenAITranslationService extends AbstractTranslationService {
 		$fromLanguage = $sourceLanguage ? ' from language with code `' . $sourceLanguage : '`';
 
 		$message = 'You are a professional translator. Translate all user messages' . $fromLanguage . ' into the language with code `' . $targetLanguage . '`';
-		$message .= ' accurately and fluently, but ignore `<module>` tags and their content. Ignoring `<module>` tags means that you should not translate or alter any text within these tags,';
+		$message .= ' accurately and fluently, but ignore `<widget>` tags and their content. Ignoring `<widget>` tags means that you should not translate or alter any text within these tags,';
 		$message .= ' and the tags themselves should remain unchanged in the output. THIS IS IMPORTANT.';
 		$message .= ' Keep the HTML structure intact. Only translate the text content, do not modify any HTML tags or attributes.';
 		$message .= ' Respond only with the translated text, without any additional explanations or comments.';

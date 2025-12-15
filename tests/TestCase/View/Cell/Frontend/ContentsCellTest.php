@@ -1036,17 +1036,17 @@ class ContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleReplacesModuleTagsWithRenderedOutput(): void {
+	public function testParseWidgetReplacesWidgetTagsWithRenderedOutput(): void {
 		$entity = new Content();
-		$entity->text = '<div>Some content</div><module data-identifier="test">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><widget data-identifier="test">{"key":"value"}</widget><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div>Rendered Output (and key is `value`)<div>Some other content</div>', $entity->text);
 	}
@@ -1054,17 +1054,17 @@ class ContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleIgnoresNonModuleTags(): void {
+	public function testParseWidgetIgnoresNonWidgetTags(): void {
 		$entity = new Content();
 		$entity->text = '<div>Some content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div>', $entity->text);
 	}
@@ -1072,35 +1072,35 @@ class ContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleHandlesMissingModulesGracefully(): void {
+	public function testParseWidgetHandlesMissingWidgetsGracefully(): void {
 		$entity = new Content();
-		$entity->text = '<div>Some content</div><module data-identifier="missingModule">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><widget data-identifier="missingWidget">{"key":"value"}</widget><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
-		$this->assertSame('<div>Some content</div><module data-identifier="missingModule">{"key":"value"}</module><div>Some other content</div>', $entity->text);
+		$this->assertSame('<div>Some content</div><widget data-identifier="missingWidget">{"key":"value"}</widget><div>Some other content</div>', $entity->text);
 	}
 
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleRemovesModuleTagsWithEmptyOutput(): void {
+	public function testParseWidgetRemovesWidgetTagsWithEmptyOutput(): void {
 		$entity = new Content();
-		$entity->text = '<div>Some content</div><module data-identifier="empty">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><widget data-identifier="empty">{"key":"value"}</widget><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div><div>Some other content</div>', $entity->text);
 	}
@@ -1108,17 +1108,17 @@ class ContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleHandlesMalformedHtmlGracefully(): void {
+	public function testParseWidgetHandlesMalformedHtmlGracefully(): void {
 		$entity = new Content();
-		$entity->text = '<div>Some content</div><p><module data-identifier="test">{"key":"other_value"}</module>e other content</p>';
+		$entity->text = '<div>Some content</div><p><widget data-identifier="test">{"key":"other_value"}</widget>e other content</p>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div><p>Rendered Output (and key is `other_value`)e other content</p>', $entity->text);
 	}
@@ -1204,7 +1204,7 @@ class ContentsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\ContentsCell::renderElement()
 	 * @throws \ReflectionException
 	 */
-	public function testRenderElementRendersParsesModule(): void {
+	public function testRenderElementRendersParsesWidget(): void {
 		/** @var \Cake\Collection\Collection $contents */
 		$page = $this->getTableLocator()->get('Pages')->get(1);
 
@@ -1214,7 +1214,7 @@ class ContentsCellTest extends TestCase {
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $contents);
 
 		$entity = $contents->firstMatch(['id' => 9]);
-		$entity->text = '<div>Some content</div><module data-identifier="test">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><widget data-identifier="test">{"key":"value"}</widget><div>Some other content</div>';
 
 		$output = $this->callProtectedMethod($this->cell, 'renderElement', $entity, '');
 

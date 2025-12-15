@@ -440,15 +440,15 @@ class FormElementTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Entity\FormElement::_getLabel()
 	 */
-	public function testLabelVirtualPropertyWithFreeTextModuleTags(): void {
+	public function testLabelVirtualPropertyWithFreeTextWidgetTags(): void {
 		$entity = new FormElement([
 			'type' => 'free_text',
-			'text' => '<p>Content with <module data-identifier="test-module">Module Content</module> inside</p>',
+			'text' => '<p>Content with <widget data-identifier="test-widget">Widget Content</widget> inside</p>',
 		]);
 
 		$label = $entity->label;
 
-		$this->assertEquals('Content with Module: test-module inside', $label);
+		$this->assertEquals('Content with Widget: test-widget inside', $label);
 	}
 
 

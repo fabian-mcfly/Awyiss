@@ -23,8 +23,8 @@ msgstr "Inhalt bearbeiten"
 msgid "meta_title_duplicate_configuration"
 msgstr "Inhalt duplizieren"
 
-msgid "meta_title_module_configuration"
-msgstr "Modul-Konfiguration"
+msgid "meta_title_widget_configuration"
+msgstr "Widget-Konfiguration"
 
 msgid "menu_title"
 msgstr "Inhalte"
@@ -62,8 +62,8 @@ msgstr "Der Inhalt konnte nicht aktualisiert werden"
 msgid "headline_duplicate_configuration"
 msgstr "Inhalt duplizieren"
 
-msgid "headline_module_configuration"
-msgstr "Modul-Konfiguration"
+msgid "headline_widget_configuration"
+msgstr "Widget-Konfiguration"
 
 msgid "record_not_found"
 msgstr "Der Inhalt wurde nicht gefunden"
@@ -134,8 +134,8 @@ msgstr "Data-Attribute"
 msgid "duplicate_of_page_id"
 msgstr "Quellseite"
 
-msgid "module_identifier"
-msgstr "Modul"
+msgid "widget_identifier"
+msgstr "Widget"
 
 msgid "title_tag"
 msgstr "Titel-Tag"

@@ -13,10 +13,10 @@ use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\ContentTemplateElement;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
-use Awyiss\Module\ModulesProvider;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnInterface;
 use Awyiss\Utility\Inflector;
+use Awyiss\Widget\WidgetsProvider;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
@@ -470,7 +470,7 @@ class ContentsController extends Controller {
 
 
 	/**
-	 * Show a form to configure a module
+	 * Show a form to configure a widget
 	 *
 	 * @return void
 	 * @throws \ReflectionException
@@ -478,27 +478,27 @@ class ContentsController extends Controller {
 	 * @noinspection PhpUnused
 	 */
 	#[NoDirectAccess]
-	public function moduleConfiguration(): void {
+	public function widgetConfiguration(): void {
 		$this->Categories->disable();
 
-		/** @var array<string, class-string<\Awyiss\Module\ModuleInterface>> $moduleFiles */
-		$moduleFiles = ModulesProvider::getModuleFiles();
+		/** @var array<string, class-string<\Awyiss\Widget\WidgetInterface>> $widgetFiles */
+		$widgetFiles = WidgetsProvider::getWidgetFiles();
 
-		// Get the title of each module
-		$modules = array_map(function (string $moduleClass) {
-			return $moduleClass::getTitle();
-		}, $moduleFiles);
+		// Get the title of each widget
+		$widgets = array_map(function (string $widgetClass) {
+			return $widgetClass::getTitle();
+		}, $widgetFiles);
 
 
 		$frontendLanguage = LocaleMiddleware::getLanguage();
 		$backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
 
 		$this->set([
-			'module_identifier' => $this->request->getData('module_identifier'),
+			'widget_identifier' => $this->request->getData('widget_identifier'),
 			'frontendLanguage' => $frontendLanguage,
 			'userLanguage' => $backendLanguage,
-			'modules' => $modules,
-			'moduleClass' => $moduleFiles[ $this->request->getData('module_identifier') ] ?? null,
+			'widgets' => $widgets,
+			'widgetClass' => $widgetFiles[ $this->request->getData('widget_identifier') ] ?? null,
 			'settings' => $this->request->getData('settings') ?? [],
 		]);
 

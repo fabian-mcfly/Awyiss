@@ -99,11 +99,11 @@ class GlobalContentsCell extends Cell {
 			singleColumnBreakpoint: $this->getView()->get('singleColumnBreakpoint'),
 		);
 
-		// Parse the module
+		// Parse the Awyiss image tags
 		$this->parseAwyissImageTags($entity, $mediaRenderOptions);
 
-		// Parse the module
-		$this->parseModules($entity, $mediaRenderOptions);
+		// Parse the widgets
+		$this->parseWidgets($entity, $mediaRenderOptions);
 
 		$fullWidthMissingWarning = '';
 		if (!$this->getView()->get('fullWidth')) {

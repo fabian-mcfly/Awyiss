@@ -13,15 +13,15 @@
 </div>
 <div class="GlobalContentElement Template-Standard Column-40 GlobalContent-DummyMultiRow" id="GlobalContent10">
 <div class="Text">
-<p>Element 3 with module</p>
-<div class="Module-Breadcrumbs">
+<p>Element 3 with widget</p>
+<div class="Widget-Breadcrumbs">
 <ol class="Breadcrumbs">
 <li class="Breadcrumb">
 <a href="/de/startseite/">Startseite</a>
 </li>
 </ol>
 </div>
-<p>And Text after Module</p>
+<p>And Text after Widget</p>
 </div>
 </div>
 </div>

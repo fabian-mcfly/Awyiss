@@ -87,7 +87,7 @@ import mapLibreLocale from 'Frontend/MapLibre/locale';
 
 export default class RoutePlanner {
 	defaults = {
-		selector: '.Module-RoutePlanner',
+		selector: '.Widget-RoutePlanner',
 		mapSelector: ':scope > .RoutePlanner-Map',
 		formSelector: ':scope > .RoutePlanner-Form',
 		messageAreaSelector: '.RoutePlanner-Message',

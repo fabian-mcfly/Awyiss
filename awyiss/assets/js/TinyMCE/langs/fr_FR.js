@@ -423,6 +423,6 @@ tinymce.addI18n("fr_FR", {
 	"{0} characters": "{0}\xa0caract\xe8res",
 	"{0} columns, {1} rows": "\xa0{0}\xa0colonnes,\xa0{1}\xa0lignes",
 	"{0} words": "{0} mots",
-	"Module": "Module",
+	"Widget": "Widget",
 	"Placeholders": "Espace r\xe9serv\xe9",
 });

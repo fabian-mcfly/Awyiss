@@ -382,14 +382,14 @@ class SurveyRenderer {
 
 		$mediaRenderOptions = $mediaRenderOptions->withSelector('#Survey-' . Inflector::ucparts($this->survey->identifier));
 
-		// Parse the module
+		// Parse the Awyiss image tags
 		$this->parseAwyissImageTags($this->survey, $mediaRenderOptions, [
 			'successMessage',
 			'failureMessage',
 		]);
 
-		// Parse the module
-		$this->parseModules($this->survey, $mediaRenderOptions, 'failureMessage');
+		// Parse the widgets
+		$this->parseWidgets($this->survey, $mediaRenderOptions, 'failureMessage');
 
 		$successMessage = null;
 		if (
@@ -398,7 +398,7 @@ class SurveyRenderer {
 				$this->survey->getNextActionEnum()::SaveAndShowForm,
 			])
 		) {
-			$this->parseModules($this->survey, $mediaRenderOptions, 'successMessage');
+			$this->parseWidgets($this->survey, $mediaRenderOptions, 'successMessage');
 			$successMessage = $this->results?->getFinalResult($this->survey->successMessage, $mediaRenderOptions) ?? $this->survey->successMessage;
 		}
 
@@ -783,7 +783,7 @@ class SurveyRenderer {
 
 		$mediaRenderOptions = $mediaRenderOptions->withSelector('#SurveyQuestion-' . Inflector::ucparts($this->currentAction->identifier));
 
-		// Parse the module
+		// Parse the Awyiss image tags
 		$this->parseAwyissImageTags($this->currentAction->surveyQuestion, $mediaRenderOptions);
 
 		$result = null;
@@ -791,8 +791,8 @@ class SurveyRenderer {
 			$result = $this->results?->getStepResult($this->currentAction->identifier, $mediaRenderOptions);
 		}
 
-		// Parse the module
-		$this->parseModules($this->currentAction->surveyQuestion, $mediaRenderOptions);
+		// Parse the widgets
+		$this->parseWidgets($this->currentAction->surveyQuestion, $mediaRenderOptions);
 
 		return $this->getView()->element('survey/' . $element, [
 			'survey' => $this->survey,

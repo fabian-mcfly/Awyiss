@@ -600,7 +600,7 @@ class SeoController extends BackendController {
 
 		// Remove unwanted nodes
 		$unwantedNodeNames = [
-			'.Module-Breadcrumbs', 'footer', 'header', 'nav', 'template', 'style', 'script', 'nav', 'form', 'noscript',
+			'.Widget-Breadcrumbs', 'footer', 'header', 'nav', 'template', 'style', 'script', 'nav', 'form', 'noscript',
 			'link', 'meta', 'picture', 'video', 'audio', 'img', 'input', 'select', 'textarea', 'button', 'canvas', 'iframe', 'svg',
 		];
 		foreach ($unwantedNodeNames as $unwantedNodeName) {

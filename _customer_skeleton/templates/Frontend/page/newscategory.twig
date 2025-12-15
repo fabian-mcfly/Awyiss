@@ -24,7 +24,7 @@
 			<div class="ContentElement Template-Standard">
 				<div class="Text">
 					<h1 class="Title">{{ page.title }}</h1>
-					{{ module('newsListing', {
+					{{ widget('newsListing', {
 						paginate: true,
 						entity: page,
 					}) }}

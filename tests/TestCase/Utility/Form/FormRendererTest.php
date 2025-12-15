@@ -694,12 +694,12 @@ class FormRendererTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Form\FormRenderer::getFormBody()
-	 * @see \Awyiss\Utility\Form\FormRenderer::parseModules()
+	 * @see \Awyiss\Utility\Form\FormRenderer::parseWidgets()
 	 * @throws \Exception
 	 * @throws \ReflectionException
 	 * @noinspection HtmlUnknownTarget
 	 */
-	public function testGetFormBodyParsesModuleInFreeTextElement(): void {
+	public function testGetFormBodyParsesWidgetInFreeTextElement(): void {
 		// Free text in form 1 is inactive. So force preview mode
 		$renderer = new FormRenderer($this->view);
 
@@ -708,13 +708,13 @@ class FormRendererTest extends TestCase {
 		$form = $renderer->getForm();
 		$formElements = $form->getFormElements();
 		$freeText = $formElements->first();
-		$freeText->text = '<p>Content with module:</p><module class="mceNonEditable" data-identifier="test" data-label="Testmodul">{"key":"value"}</module>';
+		$freeText->text = '<p>Content with widget:</p><widget class="mceNonEditable" data-identifier="test" data-label="Testwidget">{"key":"value"}</widget>';
 
 		$renderer->process();
 
 		$formBody = $renderer->getFormBody([]);
 
-		$this->assertStringNotContainsString('<module', $formBody);
+		$this->assertStringNotContainsString('<widget', $formBody);
 		$this->assertStringContainsString('Rendered Output (and key is `value`)', $formBody);
 	}
 

@@ -7,11 +7,11 @@ namespace Awyiss\View\Cell\Frontend\Trait;
 use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
-use Awyiss\Module\ModulesProvider;
 use Awyiss\Utility\DebugTimer;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
+use Awyiss\Widget\WidgetsProvider;
 use Cake\Collection\CollectionInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\View;
@@ -165,61 +165,61 @@ trait FrontendRenderingTrait {
 	 * @throws \Exception
 	 * @noinspection PhpDocSignatureInspection
 	 */
-	public function parseModules(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field = 'text'): void {
-		static $modules;
+	public function parseWidgets(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field = 'text'): void {
+		static $widgets;
 
-		if (!str_contains($entity->get($field) ?? '', '<module')) {
+		if (!str_contains($entity->get($field) ?? '', '<widget')) {
 			return;
 		}
 
-		DebugTimer::start('FrontendRenderingTrait::parseModules' . $entity->id, sprintf('FrontendRenderingTrait::parseModules: Parsing modules for entity #%d field "%s"', $entity->id, $field));
+		DebugTimer::start('FrontendRenderingTrait::parseWidgets' . $entity->id, sprintf('FrontendRenderingTrait::parseWidgets: Parsing widgets for entity #%d field "%s"', $entity->id, $field));
 
-		if (!isset($modules)) {
-			$modules = ModulesProvider::getModuleFiles();
+		if (!isset($widgets)) {
+			$widgets = WidgetsProvider::getWidgetFiles();
 		}
 
 		$dom = $this->getDom($entity->get($field));
 
-		// Find all <module> tags
-		$moduleTags = $dom->querySelectorAll('module');
+		// Find all <widget> tags
+		$widgetTags = $dom->querySelectorAll('widget');
 
-		// Iterate over the <module> tags
-		/** @var \Dom\HTMLElement $moduleTag */
-		foreach ($moduleTags as $moduleTag) {
+		// Iterate over the <widget> tags
+		/** @var \Dom\HTMLElement $widgetTag */
+		foreach ($widgetTags as $widgetTag) {
 			// Get the value of the data-identifier attribute
-			$identifier = Inflector::variable($moduleTag->getAttribute('data-identifier'));
+			$identifier = Inflector::variable($widgetTag->getAttribute('data-identifier'));
 
-			// Get the text content of the <module> tag
-			$settings = json_decode($moduleTag->textContent ?? '', true);
+			// Get the text content of the <widget> tag
+			$settings = json_decode($widgetTag->textContent ?? '', true);
 
-			if (!isset($modules[ $identifier ])) {
+			if (!isset($widgets[ $identifier ])) {
 				continue;
 			}
 
-			/** @var class-string<\Awyiss\Module\ModuleInterface> $moduleClass */
-			$moduleClass = $modules[ $identifier ];
+			/** @var class-string<\Awyiss\Widget\WidgetInterface> $widgetClass */
+			$widgetClass = $widgets[ $identifier ];
 
-			DebugTimer::start('FrontendRenderingTrait::parseModule' . $identifier, sprintf('FrontendRenderingTrait::parseModule: Rendering module "%s" in entity #%d', $identifier, $entity->id));
+			DebugTimer::start('FrontendRenderingTrait::parseWidget' . $identifier, sprintf('FrontendRenderingTrait::parseWidget: Rendering widget "%s" in entity #%d', $identifier, $entity->id));
 
 			/** @noinspection PhpParamsInspection */
-			$moduleOutput = $moduleClass::render($settings, $this->getView(), $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
+			$widgetOutput = $widgetClass::render($settings, $this->getView(), $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
 
-			DebugTimer::stop('FrontendRenderingTrait::parseModule' . $identifier);
+			DebugTimer::stop('FrontendRenderingTrait::parseWidget' . $identifier);
 
-			// Replace the <module> tag with the rendered output
-			if (!empty($moduleOutput)) {
-				$moduleTag->innerHTML = $moduleOutput;
-				while ($moduleTag->firstChild) {
-					$moduleTag->parentNode->insertBefore($moduleTag->firstChild, $moduleTag);
+			// Replace the <widget> tag with the rendered output
+			if (!empty($widgetOutput)) {
+				$widgetTag->innerHTML = $widgetOutput;
+				while ($widgetTag->firstChild) {
+					$widgetTag->parentNode->insertBefore($widgetTag->firstChild, $widgetTag);
 				}
 			}
 
-			$moduleTag->remove();
+			$widgetTag->remove();
 		}
 
 		$entity->set($field, $this->getBody($dom));
 
-		DebugTimer::stop('FrontendRenderingTrait::parseModules' . $entity->id);
+		DebugTimer::stop('FrontendRenderingTrait::parseWidgets' . $entity->id);
 	}
 
 

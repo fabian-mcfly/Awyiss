@@ -8,10 +8,10 @@ use Awyiss\Core\App;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
-use Awyiss\Module\ModulesProvider;
 use Awyiss\Twig\NodeVisitor\ExtendsNodeVisitor;
 use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Inflector;
+use Awyiss\Widget\WidgetsProvider;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Http\Exception\RedirectException;
@@ -215,8 +215,6 @@ class AwyissExtension extends AbstractExtension {
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
 
-			new TwigFunction('module', $this->moduleFunction(...), ['needs_context' => true, 'is_safe' => ['all']]),
-
 			new TwigFunction('naturalSort', function (array $data, int|string|null $key = null): array {
 				Arrays::naturalSort($data, $key);
 
@@ -241,7 +239,7 @@ class AwyissExtension extends AbstractExtension {
 				'survey',
 				function (array $context, string|int $identifier, array $options = []): ?string {
 					if (!($context['page'] ?? null) instanceof Page) {
-						throw new InvalidArgumentException('The "content" function requires a Page entity in the context.');
+						throw new InvalidArgumentException('The "survey" function requires a Page entity in the context.');
 					}
 
 					$options = Hash::merge(['viewVars' => $context], $options);
@@ -263,6 +261,8 @@ class AwyissExtension extends AbstractExtension {
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
 
+			new TwigFunction('widget', $this->widgetFunction(...), ['needs_context' => true, 'is_safe' => ['all']]),
+
 			new TwigFunction(
 				'wordCount',
 				function (array $context, string $contents): int {
@@ -274,7 +274,7 @@ class AwyissExtension extends AbstractExtension {
 
 					// Remove unwanted nodes
 					$unwantedNodeNames = [
-						'.Module-Breadcrumbs', 'footer', 'header', 'nav', 'template', 'style', 'script', 'nav', 'form', 'noscript',
+						'.Widget-Breadcrumbs', 'footer', 'header', 'nav', 'template', 'style', 'script', 'nav', 'form', 'noscript',
 						'link', 'meta', 'picture', 'video', 'audio', 'img', 'input', 'select', 'textarea', 'button', 'canvas', 'iframe', 'svg',
 					];
 					foreach ($unwantedNodeNames as $unwantedNodeName) {
@@ -396,26 +396,26 @@ class AwyissExtension extends AbstractExtension {
 	 * @return string
 	 * @throws \Exception
 	 */
-	public function moduleFunction(array $context, string $name, array $options = []): string {
-		static $modules;
+	public function widgetFunction(array $context, string $name, array $options = []): string {
+		static $widgets;
 
 		if (empty($context['_view'])) {
-			throw new InvalidArgumentException('The "module" function requires a View object in the context.');
+			throw new InvalidArgumentException('The "widget" function requires a View object in the context.');
 		}
 
-		if (!isset($modules)) {
-			$modules = ModulesProvider::getModuleFiles();
+		if (!isset($widgets)) {
+			$widgets = WidgetsProvider::getWidgetFiles();
 		}
 
 		// Get the value of the data-identifier attribute
 		$identifier = Inflector::variable($name);
 
-		if (!isset($modules[ $identifier ])) {
+		if (!isset($widgets[ $identifier ])) {
 			return '';
 		}
 
-		/** @var class-string<\Awyiss\Module\ModuleInterface> $moduleClass */
-		$moduleClass = $modules[ $identifier ];
+		/** @var class-string<\Awyiss\Widget\WidgetInterface> $widgetClass */
+		$widgetClass = $widgets[ $identifier ];
 
 		$mediaRenderOptions = $context['mediaRenderOptions'] ?? null;
 		if (!$mediaRenderOptions && !empty($context['designSettings'])) {
@@ -435,6 +435,6 @@ class AwyissExtension extends AbstractExtension {
 
 		$language = $context['language'] ?? $context['currentLanguage'] ?? LocaleMiddleware::getLanguage();
 
-		return $moduleClass::render($options, $context['_view'], $mediaRenderOptions, $entity, $language);
+		return $widgetClass::render($options, $context['_view'], $mediaRenderOptions, $entity, $language);
 	}
 }

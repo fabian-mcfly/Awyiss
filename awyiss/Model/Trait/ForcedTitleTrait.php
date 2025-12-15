@@ -210,9 +210,9 @@ trait ForcedTitleTrait {
 			}
 		}
 
-		// If there is a <module> tag in the title, replace it with the module identifier (data-identifier attribute)
-		if (str_contains($title, '<module')) {
-			$title = preg_replace('/<module[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/module>/', 'Module: <em>$1</em>', $title);
+		// If there is a <widget> tag in the title, replace it with the widget identifier (data-identifier attribute)
+		if (str_contains($title, '<widget')) {
+			$title = preg_replace('/<widget[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/widget>/', 'Widget: <em>$1</em>', $title);
 		}
 
 		$title = trim(strip_tags(html_entity_decode(str_replace(['&nbsp;', '<br>'], ' ', (string)$title))));

@@ -864,17 +864,17 @@ class GlobalContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleReplacesModuleTagsWithRenderedOutput() {
+	public function testParseWidgetReplacesWidgetTagsWithRenderedOutput() {
 		$entity = new GlobalContent();
-		$entity->text = '<div>Some content</div><module data-identifier="test">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><widget data-identifier="test">{"key":"value"}</widget><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div>Rendered Output (and key is `value`)<div>Some other content</div>', $entity->text);
 	}
@@ -882,17 +882,17 @@ class GlobalContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleIgnoresNonModuleTags() {
+	public function testParseWidgetIgnoresNonWidgetTags() {
 		$entity = new GlobalContent();
 		$entity->text = '<div>Some content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div>', $entity->text);
 	}
@@ -900,35 +900,35 @@ class GlobalContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleHandlesMissingModulesGracefully() {
+	public function testParseWidgetHandlesMissingWidgetsGracefully() {
 		$entity = new GlobalContent();
-		$entity->text = '<div>Some content</div><module data-identifier="missingModule">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><widget data-identifier="missingWidget">{"key":"value"}</widget><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
-		$this->assertSame('<div>Some content</div><module data-identifier="missingModule">{"key":"value"}</module><div>Some other content</div>', $entity->text);
+		$this->assertSame('<div>Some content</div><widget data-identifier="missingWidget">{"key":"value"}</widget><div>Some other content</div>', $entity->text);
 	}
 
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleRemovesModuleTagsWithEmptyOutput() {
+	public function testParseWidgetRemovesWidgetTagsWithEmptyOutput() {
 		$entity = new GlobalContent();
-		$entity->text = '<div>Some content</div><module data-identifier="empty">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><widget data-identifier="empty">{"key":"value"}</widget><div>Some other content</div>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div><div>Some other content</div>', $entity->text);
 	}
@@ -936,17 +936,17 @@ class GlobalContentsCellTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseModules()
+	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::parseWidgets()
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \Exception
 	 */
-	public function testParseModuleHandlesMalformedHtmlGracefully() {
+	public function testParseWidgetHandlesMalformedHtmlGracefully() {
 		$entity = new GlobalContent();
-		$entity->text = '<div>Some content</div><p><module data-identifier="test">{"key":"other_value"}</module>e other content</p>';
+		$entity->text = '<div>Some content</div><p><widget data-identifier="test">{"key":"other_value"}</widget>e other content</p>';
 
 		$mediaRenderOptions = $this->createMock(MediaRenderOptions::class);
 
-		$this->cell->parseModules($entity, $mediaRenderOptions);
+		$this->cell->parseWidgets($entity, $mediaRenderOptions);
 
 		$this->assertSame('<div>Some content</div><p>Rendered Output (and key is `other_value`)e other content</p>', $entity->text);
 	}
@@ -1022,13 +1022,13 @@ class GlobalContentsCellTest extends TestCase {
 	 * @see \Awyiss\View\Cell\Frontend\GlobalContentsCell::renderElement()
 	 * @throws \ReflectionException
 	 */
-	public function testRenderElementRendersParsesModule() {
+	public function testRenderElementRendersParsesWidget() {
 		/** @var \Cake\Collection\Collection $globalContents */
 		$globalContents = $this->callProtectedMethod($this->cell, 'getThreadedGlobalContents', 'dummy_single_row');
 		$this->callProtectedMethod($this->cell, 'prepareEntities', $globalContents);
 
 		$entity = $globalContents->firstMatch(['id' => 13]);
-		$entity->text = '<div>Some content</div><module data-identifier="test">{"key":"value"}</module><div>Some other content</div>';
+		$entity->text = '<div>Some content</div><widget data-identifier="test">{"key":"value"}</widget><div>Some other content</div>';
 
 		$output = $this->callProtectedMethod($this->cell, 'renderElement', $entity, '');
 

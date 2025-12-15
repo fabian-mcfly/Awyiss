@@ -1,0 +1,74 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var frontendLanguage \Awyiss\Model\Entity\Language
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
+@var credentialsSet bool
+@var items int
+@var media array<\Instagram\Model\Media>
+@var profileName string
+@var profile int|null
+@var settings array
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block widgetInstagramFeed %}
+	<div class="Widget-InstagramFeed">
+		{% if errorMessage %}
+			{% block errorMessage %}
+				<p class="Error"><strong><em>{{ errorMessage }}</em></strong></p>
+			{% endblock %}
+		{% elseif credentialsSet %}
+			{% block instagramFeed %}
+				{% block instagramFeedHeadline %}
+					<h2>Instagram</h2>
+				{% endblock %}
+				{% block instagramFeedList %}
+					<ul class="List">
+						{% for feedItem in media %}
+							{% block instagramFeedItem %}
+								<li class="Item" id="InstagramFeed-Item{{ feedItem.shortcode ?? feedItem.getShortCode() }}">
+									{% block instagramFeedItemImage %}
+										<div class="Image">
+											{{ MediaHelper.htmlTag(feedItem.mediaEntity, mediaRenderOptions.withColumnWidth(33.33)) }}
+										</div>
+									{% endblock %}
+
+									{% block instagramFeedItemLink %}
+										<a href="{{ feedItem.link }}" class="Link NoExternalLinkIcon" target="_blank" rel="noopener"></a>
+									{% endblock %}
+
+									{% block instagramFeedItemTexts %}
+										<div class="Texts">
+											{% block instagramFeedItemCaption %}
+												<div class="Caption">{{ feedItem.caption|nl2br }}</div>
+											{% endblock %}
+
+											{% block instagramFeedItemLikes %}
+												<span class="Likes">{{ feedItem.likes }}</span>
+											{% endblock %}
+
+											{% block instagramFeedItemComments %}
+												<span class="Comments">{{ feedItem.comments }}</span>
+											{% endblock %}
+										</div>
+									{% endblock %}
+								</li>
+							{% endblock %}
+						{% endfor %}
+					</ul>
+				{% endblock %}
+			{% endblock %}
+		{% else %}
+			{% block instagramFeedCredentialsMissing %}
+				<p class="Error"><strong><em>{{ __df('instagram_feed', 'widgets', 'credentials_missing') }}</em></strong></p>
+			{% endblock %}
+		{% endif %}
+	</div>
+{% endblock %}

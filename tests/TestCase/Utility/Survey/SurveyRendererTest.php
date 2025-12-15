@@ -990,7 +990,7 @@ class SurveyRendererTest extends TestCase {
 	 * @throws \ReflectionException
 	 * @noinspection HtmlUnknownTarget
 	 */
-	public function testParseModuleInSuccessMessage(): void {
+	public function testParseWidgetInSuccessMessage(): void {
 		$view = new FrontendView($this->view->getRequest());
 		$view->set('fullWidth', 1440);
 
@@ -1006,7 +1006,7 @@ class SurveyRendererTest extends TestCase {
 		]);
 
 		$survey = $renderer->getSurvey();
-		$survey->successMessage = '<p><module data-identifier="test" data-label="Testmodul">{"key":"value"}</module></p>';
+		$survey->successMessage = '<p><widget data-identifier="test" data-label="Testwidget">{"key":"value"}</widget></p>';
 
 		$this->assertEquals([
 			'9f8b2c3d' => 13,
@@ -1032,7 +1032,7 @@ class SurveyRendererTest extends TestCase {
 	 * @throws \ReflectionException
 	 * @noinspection HtmlUnknownTarget
 	 */
-	public function testParseModuleInErrorMessage(): void {
+	public function testParseWidgetInErrorMessage(): void {
 		$view = new FrontendView($this->view->getRequest());
 		$view->set('fullWidth', 1440);
 
@@ -1048,7 +1048,7 @@ class SurveyRendererTest extends TestCase {
 		]);
 
 		$survey = $renderer->getSurvey();
-		$survey->failureMessage = '<p><module data-identifier="test" data-label="Testmodul">{"key":"value"}</module></p>';
+		$survey->failureMessage = '<p><widget data-identifier="test" data-label="Testwidget">{"key":"value"}</widget></p>';
 
 		$this->assertEquals([
 			'9f8b2c3d' => 14,
@@ -1069,7 +1069,7 @@ class SurveyRendererTest extends TestCase {
 	 * @throws \Exception
 	 * @throws \ReflectionException
 	 */
-	public function testParseModuleInInfoTextQuestion(): void {
+	public function testParseWidgetInInfoTextQuestion(): void {
 		$view = new FrontendView($this->view->getRequest());
 		$view->set('fullWidth', 1440);
 
@@ -1089,7 +1089,7 @@ class SurveyRendererTest extends TestCase {
 		]);
 
 		$question = $survey->getCurrentAction();
-		$question->surveyQuestion->text = '<p><module data-identifier="test" data-label="Testmodul">{"key":"value"}</module></p>';
+		$question->surveyQuestion->text = '<p><widget data-identifier="test" data-label="Testwidget">{"key":"value"}</widget></p>';
 
 		$renderer->process();
 

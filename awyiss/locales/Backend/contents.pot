@@ -23,8 +23,8 @@ msgstr "Edit Content"
 msgid "meta_title_duplicate_configuration"
 msgstr "Duplicate Content"
 
-msgid "meta_title_module_configuration"
-msgstr "Module Configuration"
+msgid "meta_title_widget_configuration"
+msgstr "Widget Configuration"
 
 msgid "menu_title"
 msgstr "Contents"
@@ -62,8 +62,8 @@ msgstr "The Content could not be updated"
 msgid "headline_duplicate_configuration"
 msgstr "Duplicate Content"
 
-msgid "headline_module_configuration"
-msgstr "Module Configuration"
+msgid "headline_widget_configuration"
+msgstr "Widget Configuration"
 
 msgid "record_not_found"
 msgstr "The Content was not found"
@@ -134,8 +134,8 @@ msgstr "Data Attributes"
 msgid "data"
 msgstr "Data Attributes"
 
-msgid "module_identifier"
-msgstr "Module"
+msgid "widget_identifier"
+msgstr "Widget"
 
 msgid "title_tag"
 msgstr "Title-Tag"

@@ -563,12 +563,12 @@ class OpenAITranslationServiceTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Utility\Translation\OpenAITranslationService::translateText()
 	 */
-	public function testTranslateTextHandlesModuleTags(): void {
+	public function testTranslateTextHandlesWidgetTags(): void {
 		$responseBody = json_encode([
 			'choices' => [
 				[
 					'message' => [
-						'content' => 'Hello <module>ignored content</module> World',
+						'content' => 'Hello <widget>ignored content</widget> World',
 					],
 				],
 			],
@@ -581,9 +581,9 @@ class OpenAITranslationServiceTest extends TestCase {
 		);
 
 		$service = new OpenAITranslationService();
-		$result = $service->translateText('Hallo <module>ignored content</module> Welt', 'en', 'de');
+		$result = $service->translateText('Hallo <widget>ignored content</widget> Welt', 'en', 'de');
 
 		$this->assertInstanceOf(TranslationResult::class, $result);
-		$this->assertEquals('Hello <module>ignored content</module> World', $result->getTranslatedText());
+		$this->assertEquals('Hello <widget>ignored content</widget> World', $result->getTranslatedText());
 	}
 }

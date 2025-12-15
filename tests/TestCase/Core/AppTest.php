@@ -7,14 +7,14 @@ namespace Awyiss\Test\TestCase\Core;
 use Awyiss\Authorization\Policy\Backend\GenericDatatablesPolicy;
 use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
 use Awyiss\Core\App;
-use Awyiss\Module\ModuleInterface;
-use Awyiss\Module\RoutePlannerModule;
 use Awyiss\Test\TestSuite\TestCase;
+use Awyiss\Widget\RoutePlannerWidget;
+use Awyiss\Widget\WidgetInterface;
 use Cake\Http\ServerRequest;
 use Customer\Authorization\Policy\Backend\_IgnoredTestPolicy;
 use Customer\Authorization\Policy\Backend\AbstractTestPolicy;
 use Customer\Model\Enum\PageRole;
-use Customer\Module\NewsListingModule;
+use Customer\Widget\NewsListingWidget;
 use RuntimeException;
 
 
@@ -32,11 +32,11 @@ class AppTest extends TestCase {
 		$result = App::className('ServerRequest', 'Http');
 		$this->assertSame(ServerRequest::class, trim($result, '\\'));
 
-		$result = App::className('RoutePlanner', 'Module', 'Module');
-		$this->assertSame(RoutePlannerModule::class, trim($result, '\\'));
+		$result = App::className('RoutePlanner', 'Widget', 'Widget');
+		$this->assertSame(RoutePlannerWidget::class, trim($result, '\\'));
 
-		$result = App::className('NewsListing', 'Module', 'Module');
-		$this->assertSame(NewsListingModule::class, trim($result, '\\'));
+		$result = App::className('NewsListing', 'Widget', 'Widget');
+		$this->assertSame(NewsListingWidget::class, trim($result, '\\'));
 
 		$result = App::className('PageRole', 'Model/Enum');
 		$this->assertSame(PageRole::class, trim($result, '\\'));
@@ -64,14 +64,14 @@ class AppTest extends TestCase {
 	 * @see \Awyiss\Core\App::classes()
 	 */
 	public function testClassesWithExistingClasses(): void {
-		$result = App::classes('NewsListing', 'Module', 'Module');
+		$result = App::classes('NewsListing', 'Widget', 'Widget');
 		$this->assertSame([
-			'NewsListingModule' => '\Customer\Module\NewsListingModule',
+			'NewsListingWidget' => '\Customer\Widget\NewsListingWidget',
 		], $result);
 
-		$result = App::classes('NewsListingModule', 'Module');
+		$result = App::classes('NewsListingWidget', 'Widget');
 		$this->assertSame([
-			'NewsListingModule' => '\Customer\Module\NewsListingModule',
+			'NewsListingWidget' => '\Customer\Widget\NewsListingWidget',
 		], $result);
 	}
 
@@ -82,8 +82,8 @@ class AppTest extends TestCase {
 	 */
 	public function testClassesWithExistingClassesChecksForInterface(): void {
 		$this->expectException(RuntimeException::class);
-		$this->expectExceptionMessage('The provided class `\Awyiss\Module\ModuleInterface` does not implement `Awyiss\Module\ModuleInterface`');
-		App::classes('ModuleInterface', 'Module', '', ModuleInterface::class);
+		$this->expectExceptionMessage('The provided class `\Awyiss\Widget\WidgetInterface` does not implement `Awyiss\Widget\WidgetInterface`');
+		App::classes('WidgetInterface', 'Widget', '', WidgetInterface::class);
 	}
 
 
@@ -92,10 +92,10 @@ class AppTest extends TestCase {
 	 * @see \Awyiss\Core\App::classes()
 	 */
 	public function testClassesWithNonExistingClasses(): void {
-		$result = App::classes('NonExistingClass', 'Module', 'Module');
+		$result = App::classes('NonExistingClass', 'Widget', 'Widget');
 		$this->assertSame([], $result);
 
-		$result = App::classes('NonExistingClassModule', 'Module');
+		$result = App::classes('NonExistingClassWidget', 'Widget');
 		$this->assertSame([], $result);
 	}
 
@@ -105,26 +105,26 @@ class AppTest extends TestCase {
 	 * @see \Awyiss\Core\App::classes()
 	 */
 	public function testClassesWithExistingClassesWithPlaceholder(): void {
-		$result = App::classes('*', 'Module', 'Module');
+		$result = App::classes('*', 'Widget', 'Widget');
 		$this->assertSame([
-			'EmptyModule' => '\Customer\Module\EmptyModule',
-			'NewsListingModule' => '\Customer\Module\NewsListingModule',
-			'TestModule' => '\Customer\Module\TestModule',
-			'BreadcrumbsModule' => '\Awyiss\Module\BreadcrumbsModule',
-			'InstagramFeedModule' => '\Awyiss\Module\InstagramFeedModule',
-			'RoutePlannerModule' => '\Awyiss\Module\RoutePlannerModule',
+			'EmptyWidget' => '\Customer\Widget\EmptyWidget',
+			'NewsListingWidget' => '\Customer\Widget\NewsListingWidget',
+			'TestWidget' => '\Customer\Widget\TestWidget',
+			'BreadcrumbsWidget' => '\Awyiss\Widget\BreadcrumbsWidget',
+			'InstagramFeedWidget' => '\Awyiss\Widget\InstagramFeedWidget',
+			'RoutePlannerWidget' => '\Awyiss\Widget\RoutePlannerWidget',
 		], $result);
 
-		$result = App::classes('*', 'Module');
+		$result = App::classes('*', 'Widget');
 		$this->assertSame([
-			'EmptyModule' => '\Customer\Module\EmptyModule',
-			'NewsListingModule' => '\Customer\Module\NewsListingModule',
-			'TestModule' => '\Customer\Module\TestModule',
-			'BreadcrumbsModule' => '\Awyiss\Module\BreadcrumbsModule',
-			'InstagramFeedModule' => '\Awyiss\Module\InstagramFeedModule',
-			'ModuleInterface' => '\Awyiss\Module\ModuleInterface',
-			'ModulesProvider' => '\Awyiss\Module\ModulesProvider',
-			'RoutePlannerModule' => '\Awyiss\Module\RoutePlannerModule',
+			'EmptyWidget' => '\Customer\Widget\EmptyWidget',
+			'NewsListingWidget' => '\Customer\Widget\NewsListingWidget',
+			'TestWidget' => '\Customer\Widget\TestWidget',
+			'BreadcrumbsWidget' => '\Awyiss\Widget\BreadcrumbsWidget',
+			'InstagramFeedWidget' => '\Awyiss\Widget\InstagramFeedWidget',
+			'RoutePlannerWidget' => '\Awyiss\Widget\RoutePlannerWidget',
+			'WidgetInterface' => '\Awyiss\Widget\WidgetInterface',
+			'WidgetsProvider' => '\Awyiss\Widget\WidgetsProvider',
 		], $result);
 	}
 
@@ -134,14 +134,14 @@ class AppTest extends TestCase {
 	 * @see \Awyiss\Core\App::classes()
 	 */
 	public function testClassesWithExistingClassesWithPlaceholderChecksForInterface(): void {
-		$result = App::classes('*', 'Module', '', ModuleInterface::class);
+		$result = App::classes('*', 'Widget', '', WidgetInterface::class);
 		$this->assertSame([
-			'EmptyModule' => '\Customer\Module\EmptyModule',
-			'NewsListingModule' => '\Customer\Module\NewsListingModule',
-			'TestModule' => '\Customer\Module\TestModule',
-			'BreadcrumbsModule' => '\Awyiss\Module\BreadcrumbsModule',
-			'InstagramFeedModule' => '\Awyiss\Module\InstagramFeedModule',
-			'RoutePlannerModule' => '\Awyiss\Module\RoutePlannerModule',
+			'EmptyWidget' => '\Customer\Widget\EmptyWidget',
+			'NewsListingWidget' => '\Customer\Widget\NewsListingWidget',
+			'TestWidget' => '\Customer\Widget\TestWidget',
+			'BreadcrumbsWidget' => '\Awyiss\Widget\BreadcrumbsWidget',
+			'InstagramFeedWidget' => '\Awyiss\Widget\InstagramFeedWidget',
+			'RoutePlannerWidget' => '\Awyiss\Widget\RoutePlannerWidget',
 		], $result);
 	}
 
