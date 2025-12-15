@@ -196,28 +196,30 @@ a {
 	}
 }
 
-h1, p.Textsize-LikeH1 {
+// Using :is() will give h1 a higher specificity than just targeting h1 alone since it adds the
+// specificity of the most specific selector in the list (here .Textsize-LikeH1)
+:is(h1, p.Textsize-LikeH1) {
 	font-size:3rem;
 	font-weight:700;
 	letter-spacing:-1px;
 	line-height:1.2;
 }
 
-h2, p.Textsize-LikeH2 {
+:is(h2, p.Textsize-LikeH2) {
 	font-size:2.25rem;
 	font-weight:700;
 	letter-spacing:-1px;
 	line-height:1.2;
 }
 
-h3, p.Textsize-LikeH3 {
+:is(h3, p.Textsize-LikeH3) {
 	font-size:1.75rem;
 	font-weight:400;
 	letter-spacing:-1px;
 	line-height:1.2;
 }
 
-h4, p.Textsize-LikeH4 {
+:is(h4, p.Textsize-LikeH4) {
 	font-size:1.25rem;
 	font-weight:700;
 	letter-spacing:-1px;
