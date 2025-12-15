@@ -242,7 +242,7 @@ class BreadcrumbsModuleTest extends TestCase {
 		$mockHomepage->id = 5;
 
 		$mockRequest = $this->createMock(ServerRequest::class);
-		$mockRequest->method('getPath')->willReturn('/products/widgets');
+		$mockRequest->method('getPath')->willReturn('/products/global_contents');
 		Router::setRequest($mockRequest);
 
 		$this->mockPagesTable->method('get')->with(5)->willReturn($mockHomepage);

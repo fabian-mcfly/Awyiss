@@ -94,7 +94,7 @@ class FormsTable extends Table {
 
 		$this->hasMany('Surveys');
 
-		$this->hasMany('Widgets');
+		$this->hasMany('GlobalContents');
 	}
 
 
@@ -435,11 +435,11 @@ class FormsTable extends Table {
 		);
 
 		$rules->addDelete(
-			$rules->isNotLinkedTo('Widgets', 'widgets'),
-			'noLinkedWidgets',
+			$rules->isNotLinkedTo('GlobalContents', 'global_contents'),
+			'noLinkedGlobalContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_widgets'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_global_contents'),
 			]
 		);
 

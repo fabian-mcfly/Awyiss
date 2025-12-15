@@ -160,7 +160,7 @@ class MediaElementsTableTest extends TestCase {
 	 *           ["employees", false, true]
 	 *           ["employers", false, true]
 	 *           ["page_templates", true, false]
-	 *           ["widget_templates", true, false]
+	 *           ["global_content_templates", true, false]
 	 * @param string $model
 	 * @param bool $entityLevel
 	 * @param bool $modelLevel
@@ -195,7 +195,7 @@ class MediaElementsTableTest extends TestCase {
 	 *           ["employees", false]
 	 *           ["employers", false]
 	 *           ["page_templates", true]
-	 *           ["widget_templates", true]
+	 *           ["global_content_templates", true]
 	 * @param string $model
 	 * @param bool $hasEntities
 	 * @return void

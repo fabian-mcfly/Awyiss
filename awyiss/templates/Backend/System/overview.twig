@@ -109,7 +109,7 @@
 					{scope: 'page_templates', identifier: 'read'},
 					{scope: 'content_templates', identifier: 'read'},
 					{scope: 'email_templates', identifier: 'read'},
-					{scope: 'widget_templates', identifier: 'read'}
+					{scope: 'global_content_templates', identifier: 'read'}
 				)) %}
 					<fieldset class="Fieldset-Templates ColumnSpan-4">
 						<legend>{{ __('system_overview_category_templates') }}</legend>
@@ -148,10 +148,10 @@
 									{% endif %}
 								{% endblock %}
 
-								{% block listItemWidgetTemplatesOverview %}
-									{% if AuthorizationHelper.scopeIsAccessible('widget_templates', [], 'read') %}
-										<li class="ListItem-WidgetTemplates">
-											{{ HtmlHelper.link(__d('widget_templates', 'headline_overview'), {controller: 'WidgetTemplates', action: 'overview'}) }}
+								{% block listItemGlobalContentTemplatesOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('global_content_templates', [], 'read') %}
+										<li class="ListItem-GlobalContentTemplates">
+											{{ HtmlHelper.link(__d('global_content_templates', 'headline_overview'), {controller: 'GlobalContentTemplates', action: 'overview'}) }}
 										</li>
 									{% endif %}
 								{% endblock %}

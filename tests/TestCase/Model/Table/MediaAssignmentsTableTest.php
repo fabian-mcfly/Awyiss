@@ -158,7 +158,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 			'systemOrder' => 1,
 		];
@@ -179,7 +179,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaFolderId' => 1,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 			'systemOrder' => 1,
 		];
@@ -223,7 +223,7 @@ class MediaAssignmentsTableTest extends TestCase {
 		$data = [
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		];
 
 		$entity = $this->mediaAssignmentsTable->newEntity($data);
@@ -325,7 +325,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => null, // Should be allowed
 			'systemOrder' => 1,
 		];
@@ -347,7 +347,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 		];
 
@@ -367,7 +367,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 99999,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 		];
 
@@ -392,7 +392,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 		];
 
@@ -412,7 +412,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 99999,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 		];
 
@@ -438,7 +438,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => null,
 			'mediaFolderId' => 1,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 		];
 
@@ -458,7 +458,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaFolderId' => 1,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 		];
 
@@ -478,7 +478,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementId' => 2,
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaFolderId' => 99999,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 		];
 
@@ -504,7 +504,7 @@ class MediaAssignmentsTableTest extends TestCase {
 			'mediaElementSelectorIdentifier' => 'media',
 			'mediaId' => 1,
 			'mediaFolderId' => null,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'foreignKey' => 1,
 		];
 

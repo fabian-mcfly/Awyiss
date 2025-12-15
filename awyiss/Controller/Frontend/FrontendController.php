@@ -901,14 +901,14 @@ class FrontendController extends AppController {
 		$permissionCollection = $identity->getPermissionCollection();
 		$contentsEditable = $permissionCollection->scopeIsAccessible($page->pageRoleId->name, [], 'contents');
 		$formElementsEditable = $permissionCollection->scopeIsAccessible('Forms', [], 'update');
+		$globalContentsEditable = $permissionCollection->scopeIsAccessible('GlobalContents', [], 'update');
 		$menuEntriesEditable = $permissionCollection->scopeIsAccessible('Menus', [], 'read');
-		$widgetsEditable = $permissionCollection->scopeIsAccessible('Widgets', [], 'update');
 
 		if (
 			!$contentsEditable &&
 			!$formElementsEditable &&
-			!$menuEntriesEditable &&
-			!$widgetsEditable
+			!$globalContentsEditable &&
+			!$menuEntriesEditable
 		) {
 			DebugTimer::stop('FrontendController::loadFrontendEditor');
 			return;
@@ -918,8 +918,8 @@ class FrontendController extends AppController {
 			'frontendEditorConfig' => [
 				'contents' => ['enabled' => $contentsEditable],
 				'formElements' => ['enabled' => $formElementsEditable],
+				'globalContents' => ['enabled' => $globalContentsEditable],
 				'menuEntries' => ['enabled' => $menuEntriesEditable],
-				'widgets' => ['enabled' => $widgetsEditable],
 			],
 		]);
 

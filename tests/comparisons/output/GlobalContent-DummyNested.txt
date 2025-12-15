@@ -1,0 +1,47 @@
+<div class="ContentRow">
+<div class="GlobalContentElement Template-Standard Column-100 GlobalContent-DummyNested AwyissFrontendPreview-InactiveElement" id="GlobalContent4">
+<div class="Text">
+<div class="Module-Breadcrumbs">
+<ol class="Breadcrumbs">
+<li class="Breadcrumb">
+<a href="/de/startseite/">Startseite</a>
+</li>
+</ol>
+</div>
+</div>
+<div class="Children">
+<div class="ContentRow">
+<section class="GlobalContentElement Template-Standard Column-40 GlobalContent-DummyNested" id="GlobalContent7">
+<div class="Image">
+<picture>
+<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg" id="Image-d7471931697d389" aria-hidden="true" width="1080" height="1920" class="Lazyload">
+<noscript><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg" id="Image-d7471931697d389-NoScript" aria-hidden="true" width="1080" height="1920"></noscript>
+<style>#Image-d7471931697d389, #Image-d7471931697d389-NoScript { --imageAspectRatio: 0.56; }</style>
+</picture>
+</div>
+<div class="Title" id="TranslatedTitle">
+Translated title </div>
+<div class="Text">
+<p>Child of inactive</p>
+</div>
+<div class="Children">
+<div class="ContentRow">
+<div class="GlobalContentElement Template-Standard Column-67 GlobalContent-DummyNested" id="GlobalContent15">
+<div class="Text">
+<p>Child of child of inactive</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+</div>
+<div class="ContentRow">
+<div class="GlobalContentElement Template-Standard Column-100 GlobalContent-DummyNested" id="GlobalContent6">
+<div class="Text">
+<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.</p>
+</div>
+</div>
+</div>

@@ -1,0 +1,59 @@
+{#
+@var globalContent \Awyiss\Model\Entity\GlobalContent
+@var children string
+@var page \Awyiss\Model\Entity\Page
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
+
+// In case you need to set a class for the row, you can do it like this:
+{%- do _view.setRowClass('FlexRow') -%}
+
+#}
+
+<section class="{{ globalContent.cssClass }}" {{ globalContent.data|data_attr|raw }} id="GlobalContent{{ globalContent.id }}">
+	{{ MediaHelper.element('standard', globalContent.mediaAssignments, mediaRenderOptions, {link: globalContent.link}) }}
+
+	{% if globalContent.title %}
+		{% set tag = globalContent.titleTag ?? 'div' %}
+		<{{ tag }} class="Title" id="{{ globalContent.title|ucparts(false) }}">
+			{{ globalContent.title|raw }}
+		</{{ tag }}>
+	{% endif %}
+
+	{% if globalContent.subtitle %}
+		{% set tag = globalContent.subtitleTag ?? 'div' %}
+		<{{ tag }} class="Subtitle" id="{{ globalContent.subtitle|ucparts(false) }}">
+			{{ globalContent.subtitle|raw }}
+		</{{ tag }}>
+	{% endif %}
+
+	{% if globalContent.text %}
+		<div class="Text">
+			{{ globalContent.text|raw }}
+		</div>
+	{% endif %}
+
+	{% if globalContent.formId %}
+		{{ form(globalContent.formId, {columnWidth: globalContent.realColumnWidth}) }}
+	{% endif %}
+
+	{% if children %}
+		<div class="Children">
+			{{ children|raw }}
+		</div>
+	{% endif %}
+</section>

@@ -6,8 +6,8 @@ namespace Awyiss\Test\TestCase\Model\Behavior;
 
 use ArrayObject;
 use Awyiss\Model\Behavior\NestBehavior;
+use Awyiss\Model\Entity\GlobalContent;
 use Awyiss\Model\Entity\MediaAssignment;
-use Awyiss\Model\Entity\Widget;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
@@ -1253,7 +1253,7 @@ class NestBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
 	 */
 	public function testBeforeCopyLoadsMediaAssignmentsOfChildren(): void {
-		$table = $this->fetchTable('Widgets');
+		$table = $this->fetchTable('GlobalContents');
 		$behavior = $table->getBehavior('Nest');
 		$entity = $table->get(4);
 
@@ -1261,11 +1261,11 @@ class NestBehaviorTest extends TestCase {
 		$options = new ArrayObject(['_primary' => true]);
 		$behavior->beforeCopy($event, $entity, $options);
 
-		$this->assertNotNull($entity->get('childWidgets'));
-		$this->assertCount(1, $entity->get('childWidgets'));
+		$this->assertNotNull($entity->get('childGlobalContents'));
+		$this->assertCount(1, $entity->get('childGlobalContents'));
 
-		$child = $entity->get('childWidgets')[0];
-		$this->assertInstanceOf(Widget::class, $child);
+		$child = $entity->get('childGlobalContents')[0];
+		$this->assertInstanceOf(GlobalContent::class, $child);
 		$this->assertIsArray($child->mediaAssignments);
 		$this->assertArrayHasKey(0, $child->mediaAssignments);
 		$this->assertInstanceOf(MediaAssignment::class, $child->mediaAssignments[0]);
@@ -1277,7 +1277,7 @@ class NestBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\NestBehavior::beforeCopy()
 	 */
 	public function testBeforeCopyLoadsTranslationsOfChildren(): void {
-		$table = $this->fetchTable('Widgets');
+		$table = $this->fetchTable('GlobalContents');
 		$behavior = $table->getBehavior('Nest');
 		$entity = $table->get(4);
 
@@ -1285,14 +1285,14 @@ class NestBehaviorTest extends TestCase {
 		$options = new ArrayObject(['_primary' => true]);
 		$behavior->beforeCopy($event, $entity, $options);
 
-		$this->assertNotNull($entity->get('childWidgets'));
-		$this->assertCount(1, $entity->get('childWidgets'));
+		$this->assertNotNull($entity->get('childGlobalContents'));
+		$this->assertCount(1, $entity->get('childGlobalContents'));
 
-		$child = $entity->get('childWidgets')[0];
-		$this->assertInstanceOf(Widget::class, $child);
+		$child = $entity->get('childGlobalContents')[0];
+		$this->assertInstanceOf(GlobalContent::class, $child);
 		$this->assertIsArray($child->_translations);
 		$this->assertArrayHasKey('de', $child->_translations);
-		$this->assertInstanceOf(Widget::class, $child->_translations['de']);
+		$this->assertInstanceOf(GlobalContent::class, $child->_translations['de']);
 	}
 
 

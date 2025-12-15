@@ -98,7 +98,7 @@ class MediaFolder extends Entity {
 	 * Get the parent entity of the current entity
 	 *
 	 * @param array $options
-	 * @return \Awyiss\Model\Entity\Widget|null
+	 * @return \Awyiss\Model\Entity\GlobalContent|null
 	 * @see \Awyiss\Model\Behavior\NestBehavior::getParent()
 	 */
 	public function getParent(array $options = []): ?self {

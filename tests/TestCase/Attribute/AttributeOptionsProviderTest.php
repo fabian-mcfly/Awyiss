@@ -26,7 +26,7 @@ class AttributeOptionsProviderTest extends TestCase {
 		$this->assertEquals([
 			'Contents' => '\Customer\Attribute\AttributeOptions\ContentsAttributeOptions',
 			'Empties' => '\Customer\Attribute\AttributeOptions\EmptyAttributeOptions',
-			'Widgets' => '\Customer\Attribute\AttributeOptions\WidgetsAttributeOptions',
+			'GlobalContents' => '\Customer\Attribute\AttributeOptions\GlobalContentsAttributeOptions',
 			'Cars' => '\Customer\Attribute\AttributeOptions\CarsAttributeOptions',
 		], $files);
 	}

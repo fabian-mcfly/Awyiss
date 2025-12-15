@@ -196,7 +196,7 @@ class SearchBehavior extends Behavior {
 				$query = $table->find('all');
 
 				if (
-					in_array($table->getAlias(), ['Contents', 'Widgets']) &&
+					in_array($table->getAlias(), ['Contents', 'GlobalContents']) &&
 					$table->hasAssociation('MediaAssignments')
 				) {
 					$query->find('mediaAssignments', useMediaEntity: true);

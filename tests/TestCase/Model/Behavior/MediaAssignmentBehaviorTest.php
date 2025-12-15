@@ -30,7 +30,7 @@ use Cake\ORM\TableRegistry;
  */
 class MediaAssignmentBehaviorTest extends TestCase {
 	/**
-	 * @var \Awyiss\Model\Table\WidgetsTable
+	 * @var \Awyiss\Model\Table\GlobalContentsTable
 	 */
 	protected Table $table;
 	/**
@@ -49,7 +49,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->table = TableRegistry::getTableLocator()->get('Widgets');
+		$this->table = TableRegistry::getTableLocator()->get('GlobalContents');
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->behavior = $this->table->getBehavior('MediaAssignment');
@@ -76,7 +76,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'rebuildMediaAssignments' => 'rebuildMediaAssignments',
 		], $config['implementedMethods']);
 
-		$this->assertSame('widgets', $config['referenceName']);
+		$this->assertSame('global_contents', $config['referenceName']);
 		$this->assertSame('select', $config['strategy']);
 
 		$this->assertTrue($this->table->hasAssociation('MediaAssignments'));
@@ -326,8 +326,8 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @see \Awyiss\Model\Behavior\MediaAssignmentBehavior::rebuildMediaAssignments()
 	 */
 	public function testRebuildMediaAssignmentsWithAlreadyRebuiltAssignments(): void {
-		$widget = $this->table->newDefaultEntity([
-			'title' => 'Test Widget',
+		$globalContent = $this->table->newDefaultEntity([
+			'title' => 'Test GlobalContent',
 			'mediaAssignments' => [
 				'testElement' => [
 					'media' => 'already_rebuilt',
@@ -335,10 +335,10 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			],
 		]);
 
-		/** @var \Awyiss\Model\Entity\Widget $result */
-		$result = $this->table->rebuildMediaAssignments($widget);
+		/** @var \Awyiss\Model\Entity\GlobalContent $result */
+		$result = $this->table->rebuildMediaAssignments($globalContent);
 
-		$this->assertSame($widget, $result);
+		$this->assertSame($globalContent, $result);
 		$this->assertSame('already_rebuilt', $result->mediaAssignments['testElement']['media']);
 	}
 
@@ -380,7 +380,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(2, $entity->mediaAssignments[0]->mediaElementId);
 		$this->assertSame('media', $entity->mediaAssignments[0]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[0]->mediaFolderId);
-		$this->assertSame('widgets', $entity->mediaAssignments[0]->scope);
+		$this->assertSame('global_contents', $entity->mediaAssignments[0]->scope);
 		$this->assertSame(1, $entity->mediaAssignments[0]->systemOrder);
 
 		$this->assertInstanceOf(MediaAssignment::class, $entity->mediaAssignments[1]);
@@ -388,7 +388,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(10, $entity->mediaAssignments[1]->mediaId);
 		$this->assertSame('lightbox_media', $entity->mediaAssignments[1]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[1]->mediaFolderId);
-		$this->assertSame('widgets', $entity->mediaAssignments[1]->scope);
+		$this->assertSame('global_contents', $entity->mediaAssignments[1]->scope);
 		$this->assertSame(1, $entity->mediaAssignments[0]->systemOrder);
 	}
 
@@ -426,7 +426,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(2, $entity->mediaAssignments[0]->mediaId);
 		$this->assertSame('media', $entity->mediaAssignments[0]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[0]->mediaFolderId);
-		$this->assertSame('widgets', $entity->mediaAssignments[0]->scope);
+		$this->assertSame('global_contents', $entity->mediaAssignments[0]->scope);
 		$this->assertSame(1, $entity->mediaAssignments[0]->systemOrder);
 
 		$this->assertArrayHasKey(1, $entity->mediaAssignments);
@@ -435,7 +435,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(4, $entity->mediaAssignments[1]->mediaId);
 		$this->assertSame('media', $entity->mediaAssignments[1]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[1]->mediaFolderId);
-		$this->assertSame('widgets', $entity->mediaAssignments[1]->scope);
+		$this->assertSame('global_contents', $entity->mediaAssignments[1]->scope);
 		$this->assertSame(2, $entity->mediaAssignments[1]->systemOrder);
 		$this->assertArrayNotHasKey('lightbox_media', $entity->mediaAssignments[1]);
 
@@ -445,7 +445,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertSame(10, $entity->mediaAssignments[2]->mediaId);
 		$this->assertSame('media', $entity->mediaAssignments[2]->mediaElementSelectorIdentifier);
 		$this->assertNull($entity->mediaAssignments[2]->mediaFolderId);
-		$this->assertSame('widgets', $entity->mediaAssignments[2]->scope);
+		$this->assertSame('global_contents', $entity->mediaAssignments[2]->scope);
 		$this->assertSame(3, $entity->mediaAssignments[2]->systemOrder);
 	}
 
@@ -483,7 +483,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertNull($entity->mediaAssignments[0]->mediaId);
 		$this->assertSame('hidden_folder', $entity->mediaAssignments[0]->mediaElementSelectorIdentifier);
 		$this->assertSame(2, $entity->mediaAssignments[0]->mediaFolderId);
-		$this->assertSame('widgets', $entity->mediaAssignments[0]->scope);
+		$this->assertSame('global_contents', $entity->mediaAssignments[0]->scope);
 		$this->assertSame(1, $entity->mediaAssignments[0]->systemOrder);
 	}
 
@@ -615,7 +615,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$this->login(1);
 
-		/** @var \Awyiss\Model\Entity\Widget $entity */
+		/** @var \Awyiss\Model\Entity\GlobalContent $entity */
 		$entity = $this->table->newEmptyEntity();
 
 		$data = [
@@ -682,7 +682,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$this->login(1);
 
-		$entity = $this->table->newDefaultEntity(['title' => 'Test Widget']);
+		$entity = $this->table->newDefaultEntity(['title' => 'Test GlobalContent']);
 		$event = new Event('Model.beforeSave');
 		$options = new ArrayObject();
 
@@ -702,7 +702,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->login(1);
 
 		$entity = $this->table->newDefaultEntity([
-			'title' => 'Test Widget',
+			'title' => 'Test GlobalContent',
 		]);
 		$entity->set('mediaAssignments', ['test']);
 
@@ -730,11 +730,11 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$validAssignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 2,
 			'mediaId' => 4,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		]);
 
 		$entity = $this->table->newDefaultEntity([
-			'title' => 'Test Widget',
+			'title' => 'Test GlobalContent',
 		]);
 
 		$entity->set('mediaAssignments', [$validAssignment]);
@@ -760,11 +760,11 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$validAssignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 2,
 			'mediaId' => 4,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		]);
 
 		$entity = $this->table->newDefaultEntity([
-			'title' => 'Test Widget',
+			'title' => 'Test GlobalContent',
 		]);
 
 		$entity->set('mediaAssignments', [
@@ -795,7 +795,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$assignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 2,
 			'mediaId' => 4,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		]);
 		$assignment->set('id', 123);
 		$assignment->setNew(false);
@@ -804,7 +804,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertFalse($assignment->isNew());
 
 		$entity = $this->table->newDefaultEntity([
-			'title' => 'Test Widget',
+			'title' => 'Test GlobalContent',
 		]);
 
 		$entity->set('mediaAssignments', [
@@ -841,7 +841,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'foreign_key' => 23,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		])->count();
 
 		$this->assertSame(0, $existingAssignments);
@@ -854,11 +854,11 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterSaveWithAutoCreateConfig(): void {
-		/** @var \Awyiss\Model\Entity\Widget $entity */
+		/** @var \Awyiss\Model\Entity\GlobalContent $entity */
 		$entity = $this->table->get(23);
 		$entity->title = 'Dummy Title';
 
-		Configure::write('Awyiss.Widgets.Backend.mediaFolders.autoCreate', true);
+		Configure::write('Awyiss.GlobalContents.Backend.mediaFolders.autoCreate', true);
 
 		$event = new Event('Model.afterSave');
 		$options = new ArrayObject();
@@ -869,7 +869,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'foreign_key' => 23,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		]);
 
 		$this->assertCount(1, $existingAssignments);
@@ -891,7 +891,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterSaveWithAutoCreateConfigUsesExistingHiddenFolderAssignment(): void {
-		/** @var \Awyiss\Model\Entity\Widget $entity */
+		/** @var \Awyiss\Model\Entity\GlobalContent $entity */
 		$entity = $this->table->get(23);
 		$entity->title = 'Testfolder1';
 
@@ -899,14 +899,14 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'foreign_key' => 23,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		]);
 
 		$assignment = $this->mediaAssignmentsTable->newDefaultEntity([
 			'mediaElementId' => 1,
 			'mediaElementSelectorIdentifier' => 'hidden_folder',
 			'foreignKey' => 23,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'mediaFolderId' => 2,
 		]);
 		$result = $this->mediaAssignmentsTable->save($assignment);
@@ -914,7 +914,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$this->assertNotFalse($result);
 		$existingAssignment = $result;
 
-		Configure::write('Awyiss.Widgets.Backend.mediaFolders.autoCreate', true);
+		Configure::write('Awyiss.GlobalContents.Backend.mediaFolders.autoCreate', true);
 
 		$event = new Event('Model.afterSave');
 		$options = new ArrayObject();
@@ -925,7 +925,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'foreign_key' => 23,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		]);
 		$this->assertCount(1, $existingAssignments);
 
@@ -942,7 +942,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$this->login(1);
 
-		/** @var \Awyiss\Model\Entity\Widget $entity */
+		/** @var \Awyiss\Model\Entity\GlobalContent $entity */
 		$entity = $this->table->get(23);
 		$entity->title = 'Testfolder1';
 
@@ -950,7 +950,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'foreign_key' => 23,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		]);
 
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -967,7 +967,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'mediaElementId' => 1,
 			'mediaElementSelectorIdentifier' => 'hidden_folder',
 			'foreignKey' => 23,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'mediaFolderId' => $mediaFolderId,
 		]);
 		$result = $this->mediaAssignmentsTable->save($assignment);
@@ -993,7 +993,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$this->login(1);
 
-		/** @var \Awyiss\Model\Entity\Widget $entity */
+		/** @var \Awyiss\Model\Entity\GlobalContent $entity */
 		$entity = $this->table->get(23);
 		$entity->title = 'Testfolder1';
 
@@ -1001,7 +1001,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'foreign_key' => 23,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 		]);
 
 		$mediaFoldersTable = $this->fetchTable('MediaFolders');
@@ -1018,7 +1018,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 			'mediaElementId' => 1,
 			'mediaElementSelectorIdentifier' => 'hidden_folder',
 			'foreignKey' => 23,
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'mediaFolderId' => $mediaFolderId,
 		]);
 		$result = $this->mediaAssignmentsTable->save($assignment);

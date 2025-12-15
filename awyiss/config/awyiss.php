@@ -56,8 +56,6 @@ return [
 
 	'AvailableCommands' => null,
 
-	'debug' => false,
-
 	'Cache' => [
 		'default' => [
 			'className' => FileEngine::class,
@@ -119,6 +117,8 @@ return [
 			'timezone' => 'UTC',
 		],
 	],
+
+	'debug' => false,
 
 	'Debugger' => [
 		'editor' => 'phpstorm',

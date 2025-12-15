@@ -107,7 +107,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	public function testEntityValidationSuccess(): void {
 		$data = [
 			'mediaElementId' => 2,
-			'scope' => 'widget_templates',
+			'scope' => 'global_content_templates',
 			'foreignKey' => 1,
 		];
 
@@ -220,7 +220,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 	public function testEntityValidationForeignKeyAllowEmpty(): void {
 		$data = [
 			'mediaElementId' => 2,
-			'scope' => 'widget_templates',
+			'scope' => 'global_content_templates',
 			'foreignKey' => null, // Should be allowed
 		];
 
@@ -239,7 +239,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test with existing media element
 		$data = [
 			'mediaElementId' => 3,
-			'scope' => 'widget_templates',
+			'scope' => 'global_content_templates',
 			'foreignKey' => 1,
 		];
 
@@ -257,7 +257,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test with non-existing media element
 		$data = [
 			'mediaElementId' => 99999,
-			'scope' => 'widget_templates',
+			'scope' => 'global_content_templates',
 			'foreignKey' => 1,
 		];
 
@@ -279,7 +279,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test with valid assignable scope
 		$data = [
 			'mediaElementId' => 3,
-			'scope' => 'widget_templates',
+			'scope' => 'global_content_templates',
 			'foreignKey' => 1,
 		];
 
@@ -359,7 +359,7 @@ class MediaElementAssignmentsTableTest extends TestCase {
 		// Test with non-existing entity
 		$data = [
 			'mediaElementId' => 2,
-			'scope' => 'widget_templates',
+			'scope' => 'global_content_templates',
 			'foreignKey' => 99999,
 		];
 

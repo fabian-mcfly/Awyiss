@@ -88,7 +88,7 @@ class MediaElementAssignmentsListenerTest extends TestCase {
 				'mediaElementSelectorIdentifier' => 'identifier',
 				'mediaId' => 11,
 				'mediaFolderId' => 1,
-				'scope' => 'widgets',
+				'scope' => 'global_contents',
 				'foreignKey' => 124,
 				'systemOrder' => 1,
 			]),

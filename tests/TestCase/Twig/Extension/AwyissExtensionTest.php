@@ -129,6 +129,7 @@ class AwyissExtensionTest extends TestCase {
 			'dump',
 			'form',
 			'getClass',
+			'globalContent',
 			'__',
 			'__f',
 			'__n',
@@ -149,7 +150,6 @@ class AwyissExtensionTest extends TestCase {
 			'naturalSort',
 			'staticCall',
 			'survey',
-			'widget',
 			'wordCount',
 		];
 
@@ -457,7 +457,7 @@ class AwyissExtensionTest extends TestCase {
 		$translationFunctions = ['__', '__f', '__n', '__d', '__dn', '__x', '__xn', '__dx', '__dxn', '__df', '__dfx', '__l', '__ld'];
 
 		foreach ($translationFunctions as $index => $funcName) {
-			$function = $functions[ 5 + $index ]; // Translation functions start at index 5
+			$function = $functions[ 6 + $index ]; // Translation functions start at index 5
 			$this->assertEquals($funcName, $function->getName());
 			$this->assertEquals($funcName, $function->getCallable());
 		}
@@ -469,7 +469,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testHashPrinterFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$hashPrinterFunction = $functions[18];
+		$hashPrinterFunction = $functions[19];
 		$callable = $hashPrinterFunction->getCallable();
 
 		$data = [
@@ -512,7 +512,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testMenuFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$menuFunction = $functions[20];
+		$menuFunction = $functions[21];
 		$callable = $menuFunction->getCallable();
 
 		$output = $callable(
@@ -535,7 +535,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testMenuFunctionWithoutLanguageShortcode(): void {
 		$functions = $this->extension->getFunctions();
-		$menuFunction = $functions[20];
+		$menuFunction = $functions[21];
 		$callable = $menuFunction->getCallable();
 
 		$this->expectException(InvalidArgumentException::class);
@@ -550,7 +550,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testModuleFunctionCallsModuleFunctionMethod(): void {
 		$functions = $this->extension->getFunctions();
-		$moduleFunction = $functions[21];
+		$moduleFunction = $functions[22];
 		$callable = $moduleFunction->getCallable();
 
 		$result = $callable(['_view' => $this->view], 'test', ['key' => 'some_value']);
@@ -564,7 +564,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testNaturalSortFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$naturalSortFunction = $functions[22];
+		$naturalSortFunction = $functions[23];
 		$callable = $naturalSortFunction->getCallable();
 
 		$data = ['item10', 'item2', 'item1'];
@@ -595,7 +595,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testStaticCallFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$staticCallFunction = $functions[23];
+		$staticCallFunction = $functions[24];
 		$callable = $staticCallFunction->getCallable();
 
 		$result = $callable('DateTime', 'createFromFormat', 'Y-m-d', '2020-02-02');
@@ -625,7 +625,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testSurveyFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$surveyFunction = $functions[24];
+		$surveyFunction = $functions[25];
 		$callable = $surveyFunction->getCallable();
 
 		$output = $callable(
@@ -656,7 +656,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testSurveyFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
-		$surveyFunction = $functions[24];
+		$surveyFunction = $functions[25];
 		$callable = $surveyFunction->getCallable();
 
 		$surveyQuestionsTable = $this->getTableLocator()->get('SurveyQuestions');
@@ -705,7 +705,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testSurveyFunctionWithoutPage(): void {
 		$functions = $this->extension->getFunctions();
-		$surveyFunction = $functions[24];
+		$surveyFunction = $functions[25];
 		$callable = $surveyFunction->getCallable();
 
 		$this->expectException(InvalidArgumentException::class);
@@ -718,10 +718,10 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testWidgetFunction(): void {
+	public function testGlobalContentFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$widgetFunction = $functions[25];
-		$callable = $widgetFunction->getCallable();
+		$globalContentFunction = $functions[5];
+		$callable = $globalContentFunction->getCallable();
 
 		$output = $callable(['_view' => $this->view], 'dummy_row_overflow', [
 			'fullWidth' => 1440.00,
@@ -731,7 +731,7 @@ class AwyissExtensionTest extends TestCase {
 		$output = trim(preg_replace('/\s+/', ' ', $output));
 		$output = str_replace('> ', '>' . PHP_EOL, $output);
 
-		$this->assertStringEqualsFile(ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'output' . DS . 'Widget-DummyRowOverflow.txt', $output);
+		$this->assertStringEqualsFile(ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'output' . DS . 'GlobalContent-DummyRowOverflow.txt', $output);
 	}
 
 
@@ -739,10 +739,10 @@ class AwyissExtensionTest extends TestCase {
 	 * @return void
 	 * @noinspection HtmlRequiredAltAttribute, HtmlUnknownTarget
 	 */
-	public function testWidgetFunctionWithArguments(): void {
+	public function testGlobalContentFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
-		$widgetFunction = $functions[25];
-		$callable = $widgetFunction->getCallable();
+		$globalContentFunction = $functions[5];
+		$callable = $globalContentFunction->getCallable();
 
 		$output = $callable(
 			['_view' => $this->view],
@@ -753,7 +753,7 @@ class AwyissExtensionTest extends TestCase {
 			]
 		);
 
-		$this->assertStringContainsString('<p>Widget with inline img tag</p><p><picture>', $output);
+		$this->assertStringContainsString('<p>Global Content with inline img tag</p><p><picture>', $output);
 		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1152].avif"', $output);
 		$this->assertStringContainsString('<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">', $output);
 		$this->assertStringContainsString('<source media="(width <= 1280px)" data-srcset="_resized/dummypath/logo-awyiss-[w1024].avif 1x, _resized/dummypath/logo-awyiss-[w2048].avif 2x" type="image/avif">', $output);

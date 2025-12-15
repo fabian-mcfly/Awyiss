@@ -709,6 +709,8 @@ class DashboardElementsTableTest extends TestCase {
 			'form_elements::headline_overview',
 			'form_entries::headline_overview',
 			'forms::headline_overview',
+			'global_content_templates::headline_overview',
+			'global_contents::headline_overview',
 			'languages::headline_overview',
 			'media_assignments::headline_overview',
 			'media_element_assignments::headline_overview',
@@ -736,8 +738,6 @@ class DashboardElementsTableTest extends TestCase {
 			'urls_not_found::headline_overview',
 			'usergroups::headline_overview',
 			'users::headline_overview',
-			'widget_templates::headline_overview',
-			'widgets::headline_overview',
 		], $scopeLabels);
 	}
 }

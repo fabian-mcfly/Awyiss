@@ -45,11 +45,11 @@
 	{% else %}
 		-
 	{% endif %}
-{% elseif field == 'widget_template_id' %}
-	{% if entity.widgetTemplate is defined %}
-		{{ entity.widgetTemplate.label }}
-	{% elseif widgetTemplates[ entity.get(field) ] is defined %}
-		{{ widgetTemplates[ entity.get(field) ].label }}
+{% elseif field == 'global_content_template_id' %}
+	{% if entity.globalContentTemplate is defined %}
+		{{ entity.globalContentTemplate.label }}
+	{% elseif globalContentTemplates[ entity.get(field) ] is defined %}
+		{{ globalContentTemplates[ entity.get(field) ].label }}
 	{% else %}
 		-
 	{% endif %}

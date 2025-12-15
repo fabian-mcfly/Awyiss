@@ -432,7 +432,7 @@ class AttributesTableTest extends TestCase {
 	public function testBuildRulesValidIdentifier(): void {
 		// Test with valid identifier that doesn't conflict with table columns or reserved words
 		$data = [
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'title' => 'Test Attribute',
 			'identifier' => 'custom_field',
 			'fieldset' => 'general',
@@ -452,7 +452,7 @@ class AttributesTableTest extends TestCase {
 	public function testBuildRulesReservedIdentifier(): void {
 		// Test with MySQL reserved word
 		$data = [
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'title' => 'Test Attribute',
 			'identifier' => 'select', // MySQL reserved word
 			'fieldset' => 'general',
@@ -519,7 +519,7 @@ class AttributesTableTest extends TestCase {
 		/** @var \Awyiss\Model\Entity\Attribute $entity */
 		$entity = $this->attributesTable->get(1);
 		$entity->unset('id');
-		$entity->scope = 'widgets';
+		$entity->scope = 'global_contents';
 		$entity->setNew(true);
 
 		$result = $this->attributesTable->checkRules($entity);
@@ -566,8 +566,8 @@ class AttributesTableTest extends TestCase {
 
 		$this->assertTrue($result);
 
-		// Test with special scopes (contents, widgets) - should always be valid
-		$specialScopes = ['contents', 'widgets'];
+		// Test with special scopes (contents, global_contents) - should always be valid
+		$specialScopes = ['contents', 'global_contents'];
 		foreach ($specialScopes as $scope) {
 			$data = [
 				'scope' => $scope,
@@ -671,6 +671,8 @@ class AttributesTableTest extends TestCase {
 			'content_templates' => 'content_templates::menu_title',
 			'contents' => 'contents::menu_title',
 			'dummy_users' => 'dummy_users::menu_title',
+			'global_content_templates' => 'global_content_templates::menu_title',
+			'global_contents' => 'global_contents::menu_title',
 			'languages' => 'languages::menu_title',
 			'media_folders' => 'media_folders::menu_title',
 			'media' => 'media::menu_title',
@@ -689,8 +691,6 @@ class AttributesTableTest extends TestCase {
 			'urls_not_found' => 'urls_not_found::menu_title',
 			'usergroups' => 'usergroups::menu_title',
 			'users' => 'users::menu_title',
-			'widget_templates' => 'widget_templates::menu_title',
-			'widgets' => 'widgets::menu_title',
 		], $categories);
 	}
 
@@ -761,6 +761,8 @@ class AttributesTableTest extends TestCase {
 			'dummy_users',
 			'employees',
 			'employers',
+			'global_content_templates',
+			'global_contents',
 			'languages',
 			'media',
 			'media_folders',
@@ -778,8 +780,6 @@ class AttributesTableTest extends TestCase {
 			'urls_not_found',
 			'usergroups',
 			'users',
-			'widget_templates',
-			'widgets',
 		], array_keys($scopes));
 	}
 

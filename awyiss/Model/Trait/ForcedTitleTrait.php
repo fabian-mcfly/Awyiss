@@ -7,17 +7,17 @@ namespace Awyiss\Model\Trait;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Form;
+use Awyiss\Model\Entity\GlobalContentTemplate;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaAssignment;
 use Awyiss\Model\Entity\Survey;
-use Awyiss\Model\Entity\WidgetTemplate;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\FactoryLocator;
 
 
 /**
  * Trait ForcedTitleTrait
- * This trait provides functionality to generate a forced title for entities such as Content and Widget
+ * This trait provides functionality to generate a forced title for entities such as Content and Global Content
  * so that a title is always available, even if the title field is empty.
  */
 trait ForcedTitleTrait {
@@ -26,23 +26,23 @@ trait ForcedTitleTrait {
 	 */
 	protected static array $contentTemplates;
 	/**
-	 * @var array $widgetTemplates All widget templates
+	 * @var array $globalContentTemplates All global content templates
 	 */
-	protected static array $widgetTemplates;
+	protected static array $globalContentTemplates;
 
 
 	/**
 	 * @param bool $includeHtml
-	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $this
 	 * @return string
 	 * @noinspection DuplicatedCode
+	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\GlobalContent $this
 	 */
 	public function getForcedTitle(bool $includeHtml = true): string {
 		$fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'mediaAssignments', 'formId', 'surveyId', 'cssClass'];
 
-		if ($this->_registryAlias === 'Widgets') {
-			$fields[] = 'widgetTemplateId';
-			$defaultTitle = 'Widget';
+		if ($this->_registryAlias === 'GlobalContents') {
+			$fields[] = 'globalContentTemplateId';
+			$defaultTitle = 'GlobalContent';
 		}
 		elseif ($this->_registryAlias === 'FormElements') {
 			$defaultTitle = 'FormElement';
@@ -61,7 +61,7 @@ trait ForcedTitleTrait {
 
 		$inactive = '';
 		if (key_exists('active', $this->_fields) && empty($this->active)) {
-			$inactive = __d($this->_registryAlias !== 'Widgets' ? 'contents' : 'widgets', 'inactive') . ' ';
+			$inactive = __d($this->_registryAlias !== 'GlobalContents' ? 'contents' : 'global_contents', 'inactive') . ' ';
 		}
 
 		return $inactive . ($title ?: $defaultTitle);
@@ -71,8 +71,8 @@ trait ForcedTitleTrait {
 	/**
 	 * @param string $column
 	 * @param bool $includeHtml
-	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $this
 	 * @return string|null
+	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\GlobalContent $this
 	 */
 	protected function processField(string $column, bool $includeHtml): ?string {
 		if ($this->fieldIsEmpty($column)) {
@@ -85,7 +85,7 @@ trait ForcedTitleTrait {
 			'surveyId' => $this->processSurveyId($includeHtml),
 			'duplicateOf' => $this->processDuplicateOf(),
 			'contentTemplateId' => $this->processContentTemplateId($includeHtml),
-			'widgetTemplateId' => $this->processWidgetTemplateId($includeHtml),
+			'globalContentTemplateId' => $this->processGlobalContentTemplateId($includeHtml),
 			'cssClass' => $includeHtml ? '<em>' . $this->$column . '</em>' : $this->$column,
 			default => $this->processDefaultField($column),
 		};
@@ -98,7 +98,7 @@ trait ForcedTitleTrait {
 	 */
 	protected function fieldIsEmpty(string $column): bool {
 		return empty($this->$column) || (
-			!in_array($column, ['duplicateOf', 'mediaAssignments', 'cssClass', 'contentTemplateId', 'widgetTemplateId']) &&
+			!in_array($column, ['duplicateOf', 'mediaAssignments', 'cssClass', 'contentTemplateId', 'globalContentTemplateId']) &&
 			strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$column)))) === 0
 		);
 	}
@@ -159,8 +159,8 @@ trait ForcedTitleTrait {
 	 * @param bool $includeHtml
 	 * @return string|null
 	 */
-	protected function processWidgetTemplateId(bool $includeHtml): ?string {
-		$template = $this->widgetTemplate ?? $this->loadWidgetTemplate();
+	protected function processGlobalContentTemplateId(bool $includeHtml): ?string {
+		$template = $this->globalContentTemplate ?? $this->loadGlobalContentTemplate();
 
 		return $template ? 'Template: ' . ($includeHtml ? '<em>' . $template->label . '</em>' : $template->label) : null;
 	}
@@ -243,15 +243,15 @@ trait ForcedTitleTrait {
 
 
 	/**
-	 * @return \Awyiss\Model\Entity\WidgetTemplate|null
+	 * @return \Awyiss\Model\Entity\GlobalContentTemplate|null
 	 */
-	protected function loadWidgetTemplate(): ?WidgetTemplate {
-		if (!isset(static::$widgetTemplates)) {
-			$table = FactoryLocator::get('Table')->get('WidgetTemplates');
-			static::$widgetTemplates = $table->find()->all()->indexBy('id')->toArray();
+	protected function loadGlobalContentTemplate(): ?GlobalContentTemplate {
+		if (!isset(static::$globalContentTemplates)) {
+			$table = FactoryLocator::get('Table')->get('GlobalContentTemplates');
+			static::$globalContentTemplates = $table->find()->all()->indexBy('id')->toArray();
 		}
 
-		return $this->widgetTemplate = static::$widgetTemplates[ $this->widgetTemplateId ] ?? null;
+		return $this->globalContentTemplate = static::$globalContentTemplates[ $this->globalContentTemplateId ] ?? null;
 	}
 
 
@@ -273,8 +273,8 @@ trait ForcedTitleTrait {
 
 
 	/**
-	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $this
 	 * @return string|null
+	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\GlobalContent $this
 	 */
 	protected function getFirstMediaElementTitle(): ?string {
 		// Get the first media element
@@ -298,8 +298,8 @@ trait ForcedTitleTrait {
 
 
 	/**
-	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $this
 	 * @return \Awyiss\Model\Entity\Form|null
+	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\GlobalContent $this
 	 */
 	protected function getForm(): ?Form {
 		if (!$this->formId) {
@@ -319,8 +319,8 @@ trait ForcedTitleTrait {
 
 
 	/**
-	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $this
 	 * @return \Awyiss\Model\Entity\Survey|null
+	 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\GlobalContent $this
 	 */
 	protected function getSurvey(): ?Survey {
 		if (!$this->surveyId) {

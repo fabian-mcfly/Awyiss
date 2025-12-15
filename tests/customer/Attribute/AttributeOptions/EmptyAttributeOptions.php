@@ -8,7 +8,7 @@ use Awyiss\Attribute\AttributeOptionsCollection;
 
 
 /**
- * Provides attribute options for the Widgets scope.
+ * Provides attribute options for the an empty scope.
  */
 class EmptyAttributeOptions extends AttributeOptionsCollection {
 	/**

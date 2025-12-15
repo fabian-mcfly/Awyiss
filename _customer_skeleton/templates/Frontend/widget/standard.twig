@@ -1,5 +1,5 @@
 {#
-@var widget \Awyiss\Model\Entity\Content
+@var globalContent \Awyiss\Model\Entity\Content
 @var children string
 @var page \Awyiss\Model\Entity\Page
 @var baseUrl string
@@ -23,35 +23,35 @@
 {%- do _view.setRowClass('FlexRow') -%}
 #}
 
-<div class="{{ widget.cssClass }}" {{ widget.data|data_attr|raw }} id="Widget{{ widget.id }}">
-	{{ MediaHelper.element('standard', widget.mediaAssignments, mediaRenderOptions, {link: widget.link}) }}
+<div class="{{ globalContent.cssClass }}" {{ globalContent.data|data_attr|raw }} id="GlobalContent{{ globalContent.id }}">
+	{{ MediaHelper.element('standard', globalContent.mediaAssignments, mediaRenderOptions, {link: globalContent.link}) }}
 
-	{% if widget.title %}
-		{% set tag = widget.titleTag ?? 'div' %}
-		<{{ tag }} class="Title" id="{{ widget.title|ucparts(false) }}">
-			{{ widget.title|raw }}
+	{% if globalContent.title %}
+		{% set tag = globalContent.titleTag ?? 'div' %}
+		<{{ tag }} class="Title" id="{{ globalContent.title|ucparts(false) }}">
+			{{ globalContent.title|raw }}
 		</{{ tag }}>
 	{% endif %}
 
-	{% if widget.subtitle %}
-		{% set tag = widget.subtitleTag ?? 'div' %}
-		<{{ tag }} class="Subtitle" id="{{ widget.subtitle|ucparts(false) }}">
-			{{ widget.subtitle|raw }}
+	{% if globalContent.subtitle %}
+		{% set tag = globalContent.subtitleTag ?? 'div' %}
+		<{{ tag }} class="Subtitle" id="{{ globalContent.subtitle|ucparts(false) }}">
+			{{ globalContent.subtitle|raw }}
 		</{{ tag }}>
 	{% endif %}
 
-	{% if widget.text %}
+	{% if globalContent.text %}
 		<div class="Text">
-			{{ widget.text|raw }}
+			{{ globalContent.text|raw }}
 		</div>
 	{% endif %}
 
-	{% if widget.formId %}
-		{{ form(widget.formId, {columnWidth: widget.realColumnWidth}) }}
+	{% if globalContent.formId %}
+		{{ form(globalContent.formId, {columnWidth: globalContent.realColumnWidth}) }}
 	{% endif %}
 
-	{% if widget.surveyId %}
-		{{ survey(widget.surveyId, {columnWidth: widget.realColumnWidth}) }}
+	{% if globalContent.surveyId %}
+		{{ survey(globalContent.surveyId, {columnWidth: globalContent.realColumnWidth}) }}
 	{% endif %}
 
 	{% if children %}

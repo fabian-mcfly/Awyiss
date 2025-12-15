@@ -94,9 +94,9 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 			'Attributes' => 'Attributes',
 			'AttributesCars' => 'AttributesCars',
 			'AttributesContents' => 'AttributesContents',
+			'AttributesGlobalContents' => 'AttributesGlobalContents',
 			'AttributesNews' => 'AttributesNews',
 			'AttributesPages' => 'AttributesPages',
-			'AttributesWidgets' => 'AttributesWidgets',
 			'Audit' => 'Audit',
 			'BackendMenuEntries' => 'BackendMenuEntries',
 			'Cars' => 'Cars',
@@ -117,6 +117,9 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 			'FormElements' => 'FormElements',
 			'FormEntries' => 'FormEntries',
 			'Forms' => 'Forms',
+			'GlobalContentTemplateElements' => 'GlobalContentTemplateElements',
+			'GlobalContentTemplates' => 'GlobalContentTemplates',
+			'GlobalContents' => 'GlobalContents',
 			'I18n' => 'I18n',
 			'Languages' => 'Languages',
 			'Locks' => 'Locks',
@@ -152,9 +155,6 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 			'Usergroups' => 'Usergroups',
 			'UsergroupsUsers' => 'UsergroupsUsers',
 			'Users' => 'Users',
-			'WidgetTemplateElements' => 'WidgetTemplateElements',
-			'WidgetTemplates' => 'WidgetTemplates',
-			'Widgets' => 'Widgets',
 		], $configOptions['Backend.categories.associationName']->getValues(true));
 
 		$this->assertArrayHasKey('Backend.categories.categories', $configOptions);

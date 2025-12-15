@@ -242,7 +242,7 @@ class ConfigurationListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'column_system.max_columns',
 			'value' => 10,
@@ -1257,7 +1257,7 @@ class ConfigurationListenerTest extends TestCase {
 		$configTable = $this->fetchTable('Configuration');
 
 		$entity = $configTable->newDefaultEntity([
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'realm' => Awyiss::REALM_BACKEND,
 			'identifier' => 'column_system.max_columns',
 			'value' => 10,

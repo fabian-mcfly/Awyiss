@@ -351,6 +351,69 @@
 		"link": null,
 		"access": null,
 		"children": {
+			"global_contents": {
+				"title": {
+					"translate": ["global_contents", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "GlobalContents",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "global_contents",
+					"identifier": "read"
+				},
+				"children": {
+					"global_contents_overview": {
+						"title": {
+							"translate": ["global_contents", "menu_overview"]
+						},
+						"link": {
+							"url": {
+								"controller": "GlobalContents",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "global_contents",
+							"identifier": "read"
+						}
+					},
+					"global_contents_add": {
+						"title": {
+							"translate": ["global_contents", "menu_add"]
+						},
+						"link": {
+							"url": {
+								"controller": "GlobalContents",
+								"action": "add"
+							}
+						},
+						"access": {
+							"scope": "global_contents",
+							"identifier": "create"
+						}
+					},
+					"global_contents_configure": {
+						"title": {
+							"translate": ["global_contents", "menu_configure"]
+						},
+						"link": {
+							"url": {
+								"controller": "Configuration",
+								"action": "overview",
+								"scope": "global-contents"
+							}
+						},
+						"access": {
+							"scope": "global_contents",
+							"identifier": "configure"
+						}
+					}
+				}
+			},
 			"menus": {
 				"title": {
 					"translate": ["menus", "menu_title"]
@@ -583,69 +646,6 @@
 						},
 						"access": {
 							"scope": "surveys",
-							"identifier": "configure"
-						}
-					}
-				}
-			},
-			"widgets": {
-				"title": {
-					"translate": ["widgets", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "Widgets",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "widgets",
-					"identifier": "read"
-				},
-				"children": {
-					"widgets_overview": {
-						"title": {
-							"translate": ["widgets", "menu_overview"]
-						},
-						"link": {
-							"url": {
-								"controller": "Widgets",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "widgets",
-							"identifier": "read"
-						}
-					},
-					"widgets_add": {
-						"title": {
-							"translate": ["widgets", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "Widgets",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "widgets",
-							"identifier": "create"
-						}
-					},
-					"widgets_configure": {
-						"title": {
-							"translate": ["widgets", "menu_configure"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview",
-								"scope": "widgets"
-							}
-						},
-						"access": {
-							"scope": "widgets",
 							"identifier": "configure"
 						}
 					}

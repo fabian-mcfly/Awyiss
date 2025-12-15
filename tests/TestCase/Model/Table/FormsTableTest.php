@@ -121,10 +121,10 @@ class FormsTableTest extends TestCase {
 		$surveysAssociation = $this->formsTable->getAssociation('Surveys');
 		$this->assertInstanceOf(HasMany::class, $surveysAssociation);
 
-		// Test Widgets association (HasMany)
-		$this->assertTrue($this->formsTable->hasAssociation('Widgets'));
-		$widgetsAssociation = $this->formsTable->getAssociation('Widgets');
-		$this->assertInstanceOf(HasMany::class, $widgetsAssociation);
+		// Test GlobalContents association (HasMany)
+		$this->assertTrue($this->formsTable->hasAssociation('GlobalContents'));
+		$globalContentsAssociation = $this->formsTable->getAssociation('GlobalContents');
+		$this->assertInstanceOf(HasMany::class, $globalContentsAssociation);
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->formsTable->hasAssociation('MediaAssignments'));
@@ -825,17 +825,17 @@ class FormsTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\FormsTable::buildRules()
 	 */
-	public function testBuildDeleteRulesNoLinkedWidgets(): void {
+	public function testBuildDeleteRulesNoLinkedGlobalContents(): void {
 		/** @var \Awyiss\Model\Entity\Form $form */
-		$form = $this->formsTable->get(2); // Form that has linked widgets
+		$form = $this->formsTable->get(2); // Form that has linked global_contents
 
 		$result = $this->formsTable->checkRules($form, RulesChecker::DELETE);
 		$this->assertFalse($result);
 
 		$errors = $form->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
-		$this->assertArrayHasKey('noLinkedWidgets', $errors['_general']);
-		$this->assertSame('forms::error_linked_widgets', $errors['_general']['noLinkedWidgets']);
+		$this->assertArrayHasKey('noLinkedGlobalContents', $errors['_general']);
+		$this->assertSame('forms::error_linked_global_contents', $errors['_general']['noLinkedGlobalContents']);
 	}
 
 

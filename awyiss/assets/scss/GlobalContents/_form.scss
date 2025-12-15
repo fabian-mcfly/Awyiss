@@ -1,0 +1,14 @@
+.GlobalContents.Form {
+	&.EditFrontendEditor {
+		&:not(.ExpertMode) {
+			:is(
+				.FormInputName-Identifier,
+				.FormInputName-GlobalContentTemplateId
+			) {
+				display:none;
+			}
+		}
+	}
+
+	@extend %ContentFormElements;
+}

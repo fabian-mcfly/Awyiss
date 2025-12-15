@@ -1,0 +1,85 @@
+# GlobalContentTemplates translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-06-14 20:05+0000\n"
+"PO-Revision-Date: 2024-06-14 20:05+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Globale Inhalte-Templates"
+
+msgid "meta_title_add"
+msgstr "Globale Inhalte-Template hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Globale Inhalte-Template bearbeiten"
+
+msgid "menu_title"
+msgstr "Globale Inhalte-Templates"
+
+msgid "menu_add"
+msgstr "Neues Globale Inhalte-Template"
+
+msgid "headline_overview"
+msgstr "Globale Inhalte-Templates"
+
+msgid "create"
+msgstr "Neues Globale Inhalte-Template"
+
+msgid "headline_add"
+msgstr "Globale Inhalte-Template hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Das Globale Inhalte-Template wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Das Globale Inhalte-Template konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Globale Inhalte-Template bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Das Globale Inhalte-Template wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Das Globale Inhalte-Template konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Das Globale Inhalte-Template wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diesen Globale Inhalte-Template (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Das Globale Inhalte-Template wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Das Globale Inhalte-Template konnte nicht gelöscht werden"
+
+msgid "file_changes_in_progress"
+msgstr "Es ist aktuell eine Dateiänderung in Bearbeitung. Bitte warten Sie, bis diese abgeschlossen ist."
+
+msgid "file_name"
+msgstr "Dateiname"
+
+msgid "in_content_row"
+msgstr "In Content Row"
+
+msgid "column_span"
+msgstr "Spaltenbreite"
+
+msgid "global_content_elements_available"
+msgstr "Verfügbare Inhaltselemente"
+
+msgid "global_content_elements_assigned"
+msgstr "Zugewiesene Inhaltselemente"
+
+msgid "used_for_global_contents"
+msgstr "Verwendungen"
+

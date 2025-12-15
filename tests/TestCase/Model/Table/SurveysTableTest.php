@@ -80,9 +80,9 @@ class SurveysTableTest extends TestCase {
 		$pagesAssociation = $this->surveysTable->getAssociation('Pages');
 		$this->assertInstanceOf(HasMany::class, $pagesAssociation);
 
-		$this->assertTrue($this->surveysTable->hasAssociation('Widgets'));
-		$widgetsAssociation = $this->surveysTable->getAssociation('Widgets');
-		$this->assertInstanceOf(HasMany::class, $widgetsAssociation);
+		$this->assertTrue($this->surveysTable->hasAssociation('GlobalContents'));
+		$globalContentsAssociation = $this->surveysTable->getAssociation('GlobalContents');
+		$this->assertInstanceOf(HasMany::class, $globalContentsAssociation);
 
 		$this->assertTrue($this->surveysTable->hasAssociation('SurveyEntries'));
 		$surveyEntriesAssociation = $this->surveysTable->getAssociation('SurveyEntries');
@@ -1128,9 +1128,9 @@ class SurveysTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveysTable::buildRules()
 	 */
-	public function testBuildRulesDeleteNoLinkedWidgets(): void {
-		// Survey without linked widgets should allow deletion
-		$survey = $this->surveysTable->get(4); // Survey without widgets
+	public function testBuildRulesDeleteNoLinkedGlobalContents(): void {
+		// Survey without linked global contents should allow deletion
+		$survey = $this->surveysTable->get(4); // Survey without global contents
 
 		$result = $this->surveysTable->checkRules($survey, RulesChecker::DELETE);
 		$this->assertTrue($result);
@@ -1141,9 +1141,9 @@ class SurveysTableTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Model\Table\SurveysTable::buildRules()
 	 */
-	public function testBuildRulesDeleteWithLinkedWidgets(): void {
-		// Survey with linked widgets should prevent deletion
-		$survey = $this->surveysTable->get(3); // Survey with widgets
+	public function testBuildRulesDeleteWithLinkedGlobalContents(): void {
+		// Survey with linked global contents should prevent deletion
+		$survey = $this->surveysTable->get(3); // Survey with global contents
 
 		$result = $this->surveysTable->checkRules($survey, RulesChecker::DELETE);
 
@@ -1151,8 +1151,8 @@ class SurveysTableTest extends TestCase {
 
 		$errors = $survey->getErrors();
 		$this->assertArrayHasKey('_general', $errors);
-		$this->assertArrayHasKey('noLinkedWidgets', $errors['_general']);
-		$this->assertSame('surveys::error_linked_widgets', $errors['_general']['noLinkedWidgets']);
+		$this->assertArrayHasKey('noLinkedGlobalContents', $errors['_general']);
+		$this->assertSame('surveys::error_linked_global_contents', $errors['_general']['noLinkedGlobalContents']);
 	}
 
 

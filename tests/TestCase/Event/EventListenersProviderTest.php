@@ -250,6 +250,8 @@ class EventListenersProviderTest extends TestCase {
 			'EmailTemplates' => '\Awyiss\Event\Backend\EmailTemplatesListener',
 			'FormElements' => '\Awyiss\Event\Backend\FormElementsListener',
 			'GeneralEvents' => '\Awyiss\Event\Backend\GeneralEventsListener',
+			'GlobalContentTemplates' => '\Awyiss\Event\Backend\GlobalContentTemplatesListener',
+			'GlobalContents' => '\Awyiss\Event\Backend\GlobalContentsListener',
 			'Languages' => '\Awyiss\Event\Backend\LanguagesListener',
 			'MediaElementAssignments' => '\Awyiss\Event\Backend\MediaElementAssignmentsListener',
 			'MediaElementSelectors' => '\Awyiss\Event\Backend\MediaElementSelectorsListener',
@@ -262,8 +264,6 @@ class EventListenersProviderTest extends TestCase {
 			'UrlHistory' => '\Awyiss\Event\Backend\UrlHistoryListener',
 			'UserConfiguration' => '\Awyiss\Event\Backend\UserConfigurationListener',
 			'Usergroups' => '\Awyiss\Event\Backend\UsergroupsListener',
-			'WidgetTemplates' => '\Awyiss\Event\Backend\WidgetTemplatesListener',
-			'Widgets' => '\Awyiss\Event\Backend\WidgetsListener',
 		], $result);
 	}
 }

@@ -8,7 +8,7 @@
 
 :is(
 	.ContentElement,
-	.WidgetElement
+	.GlobalContentElement
 ) {
 	@media screen and (width <= #{$singleColumnBreakpoint}) {
 		margin-top:var(--contentRowGap);
@@ -18,7 +18,7 @@
 :is(
 	.ContentElement,
 	.FormElement,
-	.WidgetElement
+	.GlobalContentElement
 ) {
 	&.BackgroundColor {
 		padding:var(--elementPadding);
@@ -64,7 +64,7 @@
 	&:where(
 		:nth-child(1 of .ContentElement),
 		:nth-child(1 of .FormElement),
-		:nth-child(1 of .WidgetElement)
+		:nth-child(1 of .GlobalContentElement)
 	) {
 		@media screen and (width <= #{$singleColumnBreakpoint}) {
 			margin-top:0;

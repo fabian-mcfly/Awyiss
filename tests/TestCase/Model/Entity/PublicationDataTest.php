@@ -102,13 +102,13 @@ class PublicationDataTest extends TestCase {
 	 */
 	public function testEntityWithPublicationStartType(): void {
 		$entity = new PublicationData([
-			'scope' => 'Widgets',
+			'scope' => 'GlobalContents',
 			'foreignKey' => 789,
 			'type' => PublicationDataType::Start,
 			'dateTime' => new DateTime('2023-06-15 09:00:00'),
 		]);
 
-		$this->assertEquals('Widgets', $entity->scope);
+		$this->assertEquals('GlobalContents', $entity->scope);
 		$this->assertEquals(789, $entity->foreignKey);
 		$this->assertEquals(PublicationDataType::Start, $entity->type);
 		$this->assertInstanceOf(DateTime::class, $entity->dateTime);

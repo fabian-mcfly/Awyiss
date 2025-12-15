@@ -158,7 +158,7 @@ trait FrontendRenderingTrait {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
+	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\GlobalContent $entity
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param string $field
 	 * @return void

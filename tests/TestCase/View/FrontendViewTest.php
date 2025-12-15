@@ -9,7 +9,7 @@ use Awyiss\Middleware\DesignMiddleware;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\Exception\MissingContentException;
-use Awyiss\View\Exception\MissingWidgetException;
+use Awyiss\View\Exception\MissingGlobalContentException;
 use Awyiss\View\FrontendView;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
@@ -337,10 +337,10 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\FrontendView::widget()
+	 * @see \Awyiss\View\FrontendView::globalContent()
 	 */
-	public function testWidget(): void {
-		$result = $this->view->widget('test_widget', ['key' => 'value']);
+	public function testGlobalContent(): void {
+		$result = $this->view->globalContent('test_global_content', ['key' => 'value']);
 
 		$this->assertIsString($result);
 		$this->assertSame('value', $result);
@@ -349,20 +349,20 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\FrontendView::widget()
+	 * @see \Awyiss\View\FrontendView::globalContent()
 	 */
-	public function testWidgetThrowsExceptionForMissingWidget(): void {
-		$this->expectException(MissingWidgetException::class);
-		$this->view->widget('not_existing_test_widget', ['key' => 'value'], ['ignoreMissing' => false]);
+	public function testGlobalContentThrowsExceptionForMissingGlobalContent(): void {
+		$this->expectException(MissingGlobalContentException::class);
+		$this->view->globalContent('not_existing_test_global_content', ['key' => 'value'], ['ignoreMissing' => false]);
 	}
 
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\FrontendView::widget()
+	 * @see \Awyiss\View\FrontendView::globalContent()
 	 */
-	public function testWidgetThrowsNoExceptionForMissingWidgetWhenIgnoring(): void {
-		$result = $this->view->widget('not_existing_test_widget', ['key' => 'value'], ['ignoreMissing' => true]);
+	public function testGlobalContentThrowsNoExceptionForMissingGlobalContentWhenIgnoring(): void {
+		$result = $this->view->globalContent('not_existing_test_global_content', ['key' => 'value'], ['ignoreMissing' => true]);
 
 		$this->assertSame('', $result);
 	}
@@ -370,25 +370,25 @@ class FrontendViewTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\View\FrontendView::widget()
+	 * @see \Awyiss\View\FrontendView::globalContent()
 	 */
-	public function testWidgetCache(): void {
-		$name = 'test_widget';
+	public function testGlobalContentCache(): void {
+		$name = 'test_global_content';
 		$data = ['key' => 'value'];
 		$options = ['cache' => ['key' => 'test_key', 'config' => 'default']];
 
-		$result = $this->view->widget($name, $data, $options);
+		$result = $this->view->globalContent($name, $data, $options);
 
 		$this->assertIsString($result);
 		$this->assertSame('value', $result);
 
 		$data = ['key' => 'new_value'];
-		$result = $this->view->widget($name, $data);
+		$result = $this->view->globalContent($name, $data);
 
 		$this->assertIsString($result);
 		$this->assertSame('new_value', $result);
 
-		$result = $this->view->widget($name, $data, $options);
+		$result = $this->view->globalContent($name, $data, $options);
 
 		$this->assertIsString($result);
 		$this->assertSame('value', $result);
@@ -452,9 +452,9 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetWidgetFileName(): void {
-		$name = 'test_widget';
-		$result = $this->view->widget($name);
+	public function testGetGlobalContentFileName(): void {
+		$name = 'test_global_content';
+		$result = $this->view->globalContent($name);
 		$this->assertSame('', $result);
 	}
 
@@ -462,9 +462,9 @@ class FrontendViewTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testGetWidgetFileNameWithData(): void {
-		$name = 'test_widget';
-		$result = $this->view->widget($name, ['key' => 'value']);
+	public function testGetGlobalContentFileNameWithData(): void {
+		$name = 'test_global_content';
+		$result = $this->view->globalContent($name, ['key' => 'value']);
 		$this->assertSame('value', $result);
 	}
 }

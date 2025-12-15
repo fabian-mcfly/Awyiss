@@ -137,6 +137,27 @@ class AwyissExtension extends AbstractExtension {
 				return get_class($class);
 			}),
 
+			new TwigFunction(
+				'globalContent',
+				function (array $context, string $name, array $options = []): ?string {
+					$options = Hash::merge(['viewVars' => $context], $options);
+
+					try {
+						return $context['_view']->cell('Frontend/GlobalContents', [
+							'identifier' => $name,
+							'view' => $context['_view'],
+							'options' => $options,
+						])->render() ?: null;
+					}
+					catch (RedirectException $ex) {
+						// Redirects are handled by the middleware
+						header('Location: ' . $ex->getMessage(), true, $ex->getCode());
+						exit;
+					}
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
+
 			new TwigFunction('__', '__'),
 			new TwigFunction('__f', '__f'),
 			new TwigFunction('__n', '__n'),
@@ -229,27 +250,6 @@ class AwyissExtension extends AbstractExtension {
 						return $context['_view']->cell('Frontend/Survey', [
 							'identifier' => $identifier,
 							'page' => $context['page'],
-							'view' => $context['_view'],
-							'options' => $options,
-						])->render() ?: null;
-					}
-					catch (RedirectException $ex) {
-						// Redirects are handled by the middleware
-						header('Location: ' . $ex->getMessage(), true, $ex->getCode());
-						exit;
-					}
-				},
-				['needs_context' => true, 'is_safe' => ['all']]
-			),
-
-			new TwigFunction(
-				'widget',
-				function (array $context, string $name, array $options = []): ?string {
-					$options = Hash::merge(['viewVars' => $context], $options);
-
-					try {
-						return $context['_view']->cell('Frontend/Widgets', [
-							'identifier' => $name,
 							'view' => $context['_view'],
 							'options' => $options,
 						])->render() ?: null;

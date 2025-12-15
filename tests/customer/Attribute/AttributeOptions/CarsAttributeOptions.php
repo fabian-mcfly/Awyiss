@@ -9,7 +9,7 @@ use Cake\Datasource\EntityInterface;
 
 
 /**
- * Provides attribute options for the Widgets scope.
+ * Provides attribute options for the Cars scope.
  */
 class CarsAttributeOptions extends AttributeOptionsCollection {
 	/**

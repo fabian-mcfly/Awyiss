@@ -759,24 +759,24 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testRebuildSimpleImageTagsInTranslations(): void {
 		/**
-		 * @var \Awyiss\Model\Entity\Widget $widget
+		 * @var \Awyiss\Model\Entity\GlobalContent $globalContent
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('translations')->find('mediaAssignments')->where(['id' => 18])->first();
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('translations')->find('mediaAssignments')->where(['id' => 18])->first();
 
-		ImageHandler::rebuildSimpleImageTags($widget, ['title', 'text']);
+		ImageHandler::rebuildSimpleImageTags($globalContent, ['title', 'text']);
 
 		// Replace in the main entity
 		$this->assertSame(
-			'<p>Widget with inline img tag</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>between two paragraphs</p>',
-			$widget->text
+			'<p>Global Content with inline img tag</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>between two paragraphs</p>',
+			$globalContent->text
 		);
 
 		// Replace in the translation
 		/** @noinspection PhpUndefinedFieldInspection */
 		$this->assertSame(
-			'<p>Widget with inline img tag</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p><p>between two paragraphs</p>',
-			$widget->_translations['es']->text
+			'<p>Global Content with inline img tag</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p><p>between two paragraphs</p>',
+			$globalContent->_translations['es']->text
 		);
 	}
 
@@ -787,14 +787,14 @@ class ImageHandlerTest extends TestCase {
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsMultipleInOneField(): void {
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 22])->first();
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 22])->first();
 
-		ImageHandler::rebuildSimpleImageTags($widget);
+		ImageHandler::rebuildSimpleImageTags($globalContent);
 
 		$this->assertSame(
-			'<p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>Widget with two inline img</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p>',
-			$widget->text
+			'<p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>Global Content with two inline img</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p>',
+			$globalContent->text
 		);
 	}
 
@@ -855,18 +855,18 @@ class ImageHandlerTest extends TestCase {
 	 * @noinspection HtmlUnknownTarget, HtmlRequiredAltAttribute
 	 */
 	public function testRebuildSimpleImageTagsInFieldMultipleInOneField(): void {
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 22])->first();
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 22])->first();
 
-		$text = ImageHandler::rebuildSimpleImageTagsInField($widget, 'text');
+		$text = ImageHandler::rebuildSimpleImageTagsInField($globalContent, 'text');
 
 		$this->assertSame(
-			'<p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>Widget with two inline img</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p>',
+			'<p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>Global Content with two inline img</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p>',
 			$text
 		);
 		$this->assertSame(
-			'<p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>Widget with two inline img</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p>',
-			$widget->text
+			'<p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>Global Content with two inline img</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p>',
+			$globalContent->text
 		);
 	}
 
@@ -911,13 +911,13 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testRebuildSimpleImageTagsInTextMultipleInOneField(): void {
 		$media = $this->getMediaArray();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 22])->first();
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 22])->first();
 
-		$text = ImageHandler::rebuildSimpleImageTagsInText($widget->text, $media);
+		$text = ImageHandler::rebuildSimpleImageTagsInText($globalContent->text, $media);
 
 		$this->assertSame(
-			'<p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>Widget with two inline img</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p>',
+			'<p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.png"></p><p>Global Content with two inline img</p><p><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg"></p>',
 			$text
 		);
 	}
@@ -931,17 +931,17 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testReplaceCustomImageTags(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
-		ImageHandler::replaceCustomImageTags($widget, $view, $mediaRenderOptions);
+		ImageHandler::replaceCustomImageTags($globalContent, $view, $mediaRenderOptions);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertStringContainsString('<picture>', $widget->text);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('</picture>', $widget->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertStringContainsString('<picture>', $globalContent->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString('</picture>', $globalContent->text);
 	}
 
 
@@ -953,31 +953,31 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testReplaceCustomImageTagsWithMediaRenderOptions(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
-		ImageHandler::replaceCustomImageTags($widget, $view, $mediaRenderOptions->withWidth(768)->withResponsive(false));
+		ImageHandler::replaceCustomImageTags($globalContent, $view, $mediaRenderOptions->withWidth(768)->withResponsive(false));
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w768].avif" data-srcset="_resized/dummypath/logo-awyiss-[w1536].avif 2x"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w768].avif" srcset="_resized/dummypath/logo-awyiss-[w1536].avif 2x"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.2; }</style>', $widget->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w768].avif" data-srcset="_resized/dummypath/logo-awyiss-[w1536].avif 2x"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w768].avif" srcset="_resized/dummypath/logo-awyiss-[w1536].avif 2x"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.2; }</style>', $globalContent->text);
 
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
-		ImageHandler::replaceCustomImageTags($widget, $view, $mediaRenderOptions->withBreakpoint(768));
+		ImageHandler::replaceCustomImageTags($globalContent, $view, $mediaRenderOptions->withBreakpoint(768));
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertStringContainsString('<picture>', $widget->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertStringContainsString('<picture>', $globalContent->text);
 		$this->assertStringContainsString(
 			'<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">',
-			$widget->text
+			$globalContent->text
 		);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('</picture>', $widget->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString('</picture>', $globalContent->text);
 	}
 
 
@@ -989,15 +989,15 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testReplaceCustomImageTagsWithUnknownImage(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
-		$widget->text = '<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		$globalContent->text = '<p>Global Content with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
 
-		ImageHandler::replaceCustomImageTags($widget, $view, $mediaRenderOptions);
+		ImageHandler::replaceCustomImageTags($globalContent, $view, $mediaRenderOptions);
 
 		$this->assertSame(
-			'<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>',
-			$widget->text
+			'<p>Global Content with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>',
+			$globalContent->text
 		);
 	}
 
@@ -1010,18 +1010,18 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testReplaceCustomImageTagsWithTagAttributes(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
-		$widget->text = '<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4","alt":"Test Image","class":"Dummyclass"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		$globalContent->text = '<p>Global Content with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4","alt":"Test Image","class":"Dummyclass"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
 
-		ImageHandler::replaceCustomImageTags($widget, $view, $mediaRenderOptions);
+		ImageHandler::replaceCustomImageTags($globalContent, $view, $mediaRenderOptions);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertStringContainsString('<picture>', $widget->text);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="Test Image" class="Lazyload Dummyclass"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="Test Image" class="Dummyclass"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('</picture>', $widget->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertStringContainsString('<picture>', $globalContent->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="Test Image" class="Lazyload Dummyclass"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="Test Image" class="Dummyclass"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString('</picture>', $globalContent->text);
 	}
 
 
@@ -1033,31 +1033,31 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testReplaceCustomImageTagsWithFields(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
-		$widget->title = $widget->text;
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		$globalContent->title = $globalContent->text;
 
-		ImageHandler::replaceCustomImageTags($widget, $view, $mediaRenderOptions, ['title', 'text']);
+		ImageHandler::replaceCustomImageTags($globalContent, $view, $mediaRenderOptions, ['title', 'text']);
 
-		$this->assertSame($widget->title, $widget->text);
+		$this->assertSame($globalContent->title, $globalContent->text);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertStringContainsString('<picture>', $widget->text);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('</picture>', $widget->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertStringContainsString('<picture>', $globalContent->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString('</picture>', $globalContent->text);
 
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
-		$widget->title = $widget->text;
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		$globalContent->title = $globalContent->text;
 
-		ImageHandler::replaceCustomImageTags($widget, $view, $mediaRenderOptions, ['title']);
+		ImageHandler::replaceCustomImageTags($globalContent, $view, $mediaRenderOptions, ['title']);
 
-		$this->assertNotSame($widget->title, $widget->text);
+		$this->assertNotSame($globalContent->title, $globalContent->text);
 
 		// The `text` field should not be modified
-		$this->assertSame('<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4"}</awyiss-responsive-image></p><p>between two paragraphs</p>', $widget->text);
+		$this->assertSame('<p>Global Content with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4"}</awyiss-responsive-image></p><p>between two paragraphs</p>', $globalContent->text);
 	}
 
 
@@ -1095,16 +1095,16 @@ class ImageHandlerTest extends TestCase {
 		 * @var \Awyiss\Model\Entity\Page $news
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('translations')->find('mediaAssignments')->where(['id' => 18])->first();
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('translations')->find('mediaAssignments')->where(['id' => 18])->first();
 
-		ImageHandler::replaceCustomImageTags($widget, $view, $mediaRenderOptions);
+		ImageHandler::replaceCustomImageTags($globalContent, $view, $mediaRenderOptions);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->_translations['it']->text);
-		$this->assertStringContainsString('<picture>', $widget->_translations['it']->text);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->_translations['it']->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->_translations['it']->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->_translations['it']->text);
-		$this->assertStringContainsString('</picture>', $widget->_translations['it']->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->_translations['it']->text);
+		$this->assertStringContainsString('<picture>', $globalContent->_translations['it']->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->_translations['it']->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->_translations['it']->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->_translations['it']->text);
+		$this->assertStringContainsString('</picture>', $globalContent->_translations['it']->text);
 	}
 
 
@@ -1120,19 +1120,19 @@ class ImageHandlerTest extends TestCase {
 		 * @var \Awyiss\Model\Entity\Page $news
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('translations')->find('mediaAssignments')->where(['id' => 22])->first();
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('translations')->find('mediaAssignments')->where(['id' => 22])->first();
 
-		ImageHandler::replaceCustomImageTags($widget, $view, $mediaRenderOptions);
+		ImageHandler::replaceCustomImageTags($globalContent, $view, $mediaRenderOptions);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertEquals(2, mb_substr_count($widget->text, '<picture>'));
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertEquals(2, mb_substr_count($widget->text, '</picture>'));
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertEquals(2, mb_substr_count($globalContent->text, '<picture>'));
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertEquals(2, mb_substr_count($globalContent->text, '</picture>'));
 	}
 
 
@@ -1144,19 +1144,19 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testReplaceCustomImageTagsInField(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
-		$text = ImageHandler::replaceCustomImageTagsInField($widget, $view, $mediaRenderOptions, 'text');
+		$text = ImageHandler::replaceCustomImageTagsInField($globalContent, $view, $mediaRenderOptions, 'text');
 
-		$this->assertSame($text, $widget->text);
+		$this->assertSame($text, $globalContent->text);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertStringContainsString('<picture>', $widget->text);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('</picture>', $widget->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertStringContainsString('<picture>', $globalContent->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString('</picture>', $globalContent->text);
 	}
 
 
@@ -1168,35 +1168,35 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testReplaceCustomImageTagsInFieldWithMediaRenderOptions(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
-		$text = ImageHandler::replaceCustomImageTagsInField($widget, $view, $mediaRenderOptions->withWidth(768)->withResponsive(false), 'text');
+		$text = ImageHandler::replaceCustomImageTagsInField($globalContent, $view, $mediaRenderOptions->withWidth(768)->withResponsive(false), 'text');
 
-		$this->assertSame($text, $widget->text);
+		$this->assertSame($text, $globalContent->text);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w768].avif" data-srcset="_resized/dummypath/logo-awyiss-[w1536].avif 2x"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w768].avif" srcset="_resized/dummypath/logo-awyiss-[w1536].avif 2x"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.2; }</style>', $widget->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w768].avif" data-srcset="_resized/dummypath/logo-awyiss-[w1536].avif 2x"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w768].avif" srcset="_resized/dummypath/logo-awyiss-[w1536].avif 2x"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.2; }</style>', $globalContent->text);
 
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
 
-		$text = ImageHandler::replaceCustomImageTagsInField($widget, $view, $mediaRenderOptions->withBreakpoint(768), 'text');
+		$text = ImageHandler::replaceCustomImageTagsInField($globalContent, $view, $mediaRenderOptions->withBreakpoint(768), 'text');
 
-		$this->assertSame($text, $widget->text);
+		$this->assertSame($text, $globalContent->text);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertStringContainsString('<picture>', $widget->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertStringContainsString('<picture>', $globalContent->text);
 		$this->assertStringContainsString(
 			'<source media="(width <= 768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].avif 1x, _resized/dummypath/logo-awyiss-[w1536].avif 2x" type="image/avif">',
-			$widget->text
+			$globalContent->text
 		);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('</picture>', $widget->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString('</picture>', $globalContent->text);
 	}
 
 
@@ -1208,17 +1208,17 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testReplaceCustomImageTagsInFieldWithUnknownImage(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
-		$widget->text = '<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		$globalContent->text = '<p>Global Content with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
 
-		$text = ImageHandler::replaceCustomImageTagsInField($widget, $view, $mediaRenderOptions, 'text');
+		$text = ImageHandler::replaceCustomImageTagsInField($globalContent, $view, $mediaRenderOptions, 'text');
 
-		$this->assertSame($text, $widget->text);
+		$this->assertSame($text, $globalContent->text);
 
 		$this->assertSame(
-			'<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>',
-			$widget->text
+			'<p>Global Content with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"200"}</awyiss-responsive-image></p><p>between two paragraphs</p>',
+			$globalContent->text
 		);
 	}
 
@@ -1231,20 +1231,20 @@ class ImageHandlerTest extends TestCase {
 	 */
 	public function testReplaceCustomImageTagsInFieldWithTagAttributes(): void {
 		[$view, $mediaRenderOptions] = $this->getViewAndRenderOptions();
-		/** @var \Awyiss\Model\Entity\Widget $widget */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
-		$widget->text = '<p>Widget with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4","alt":"Test Image","class":"Dummyclass"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
+		/** @var \Awyiss\Model\Entity\GlobalContent $globalContent */
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('mediaAssignments')->where(['id' => 18])->first();
+		$globalContent->text = '<p>Global Content with inline img tag</p><p><awyiss-responsive-image>{"mediaId":"4","alt":"Test Image","class":"Dummyclass"}</awyiss-responsive-image></p><p>between two paragraphs</p>';
 
-		$text = ImageHandler::replaceCustomImageTagsInField($widget, $view, $mediaRenderOptions, 'text');
+		$text = ImageHandler::replaceCustomImageTagsInField($globalContent, $view, $mediaRenderOptions, 'text');
 
-		$this->assertSame($text, $widget->text);
+		$this->assertSame($text, $globalContent->text);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertStringContainsString('<picture>', $widget->text);
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="Test Image" class="Lazyload Dummyclass"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="Test Image" class="Dummyclass"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('</picture>', $widget->text);
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertStringContainsString('<picture>', $globalContent->text);
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="Test Image" class="Lazyload Dummyclass"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="Test Image" class="Dummyclass"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString('</picture>', $globalContent->text);
 	}
 
 
@@ -1284,20 +1284,20 @@ class ImageHandlerTest extends TestCase {
 		 * @var \Awyiss\Model\Entity\Page $news
 		 * @uses \Awyiss\Model\Table::findTranslations()
 		 */
-		$widget = $this->fetchTable('Widgets')->find('all')->find('translations')->find('mediaAssignments')->where(['id' => 22])->first();
+		$globalContent = $this->fetchTable('GlobalContents')->find('all')->find('translations')->find('mediaAssignments')->where(['id' => 22])->first();
 
-		$text = ImageHandler::replaceCustomImageTagsInField($widget, $view, $mediaRenderOptions, 'text');
+		$text = ImageHandler::replaceCustomImageTagsInField($globalContent, $view, $mediaRenderOptions, 'text');
 
-		$this->assertSame($text, $widget->text);
+		$this->assertSame($text, $globalContent->text);
 
-		$this->assertStringNotContainsString('<awyiss-responsive-image>', $widget->text);
-		$this->assertEquals(2, mb_substr_count($widget->text, '<picture>'));
-		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $widget->text);
-		$this->assertStringContainsString('<noscript><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $widget->text);
-		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $widget->text);
-		$this->assertEquals(2, mb_substr_count($widget->text, '</picture>'));
+		$this->assertStringNotContainsString('<awyiss-responsive-image>', $globalContent->text);
+		$this->assertEquals(2, mb_substr_count($globalContent->text, '<picture>'));
+		$this->assertStringContainsString('<img data-src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].avif" alt="logo-awyiss.png"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertStringContainsString('<img data-src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $globalContent->text);
+		$this->assertStringContainsString('<noscript><img src="../awyiss/Command/Media/TestFiles/logo-awyiss.jpg" alt="logo-awyiss.jpg"', $globalContent->text);
+		$this->assertStringContainsString(' { --imageAspectRatio: 1.78; }</style>', $globalContent->text);
+		$this->assertEquals(2, mb_substr_count($globalContent->text, '</picture>'));
 	}
 }

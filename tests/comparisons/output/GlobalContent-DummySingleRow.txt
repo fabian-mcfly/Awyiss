@@ -1,0 +1,12 @@
+<div class="ContentRow">
+<div class="GlobalContentElement Template-Standard Column-50 GlobalContent-DummySingleRow" id="GlobalContent14">
+<div class="Text">
+<p>Element 1</p>
+</div>
+</div>
+<div class="GlobalContentElement Template-Standard Column-50 GlobalContent-DummySingleRow" id="GlobalContent13">
+<div class="Text">
+<p>Element 2</p>
+</div>
+</div>
+</div>

@@ -107,11 +107,11 @@ class TemplateCommandTest extends TestCase {
 	/**
 	 * @return void
 	 */
-	public function testWidgetTemplateCommand(): void {
-		$generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS . 'widget' . DS . 'standard.twig';
-		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'templates' . DS . 'Frontend' . DS . 'widget' . DS . 'standard.twig';
+	public function testGlobalContentTemplateCommand(): void {
+		$generatedFile = ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS . 'global_content' . DS . 'standard.twig';
+		$comparisonEntityFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'templates' . DS . 'Frontend' . DS . 'global_content' . DS . 'standard.twig';
 
-		$this->exec('bake template widget_templates widget_template standard --prefix Frontend --controller widget', ['a']);
+		$this->exec('bake template global_content_templates global_content_template standard --prefix Frontend --controller global_content', ['a']);
 
 		$this->assertExitSuccess();
 

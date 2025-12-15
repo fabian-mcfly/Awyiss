@@ -10,7 +10,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Exception\MissingContentException;
-use Awyiss\View\Exception\MissingWidgetException;
+use Awyiss\View\Exception\MissingGlobalContentException;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Generator;
@@ -31,7 +31,7 @@ class FrontendView extends AppView {
 	 *
 	 * @var string
 	 */
-	final public const string TYPE_WIDGET = 'widget';
+	final public const string TYPE_GLOBAL_CONTENT = 'global_content';
 
 
 
@@ -57,14 +57,14 @@ class FrontendView extends AppView {
 	 */
 	protected string $contentCache = 'default';
 	/**
-	 * The Cache configuration View will use to store cached widgets. Changing this will change
-	 * the default configuration widgets are stored under. You can also choose a cache config
+	 * The Cache configuration View will use to store cached global_contents. Changing this will change
+	 * the default configuration global_contents are stored under. You can also choose a cache config
 	 * per element.
 	 *
-	 * @see \Cake\View\View::widget()
+	 * @see \Cake\View\View::globalContent()
 	 * @var string
 	 */
-	protected string $widgetCache = 'default';
+	protected string $globalContentCache = 'default';
 
 
 	/**
@@ -301,34 +301,34 @@ class FrontendView extends AppView {
 	 * @triggers View.afterRender $this, [$file, $content]
 	 */
 	protected function _renderContent(string $file, array $data, array $options): string {
-		return $this->renderContentOrWidget('content', $options['callbacks'], $file, $data);
+		return $this->renderContentOrGlobalContent('content', $options['callbacks'], $file, $data);
 	}
 
 
 	/**
 	 * 1:1 implementation of \Cake\View\View::element() with the only difference being the template path
 	 *
-	 * @param string $name Name of template file in the `templates/widget/` folder
-	 * @param array $data Array of data to be made available to the rendered view (i.e. the Widget)
+	 * @param string $name Name of template file in the `templates/global_content/` folder
+	 * @param array $data Array of data to be made available to the rendered view (i.e. the GlobalContent)
 	 * @param array<string, mixed> $options Array of options. Possible keys are:
-	 * - `cache` - Can either be `true`, to enable caching using the config in View::$widgetCache. Or an array
+	 * - `cache` - Can either be `true`, to enable caching using the config in View::$globalContentCache. Or an array
 	 *   If an array, the following keys can be used:
-	 *   - `config` - Used to store the cached widget in a custom cache configuration.
-	 *   - `key` - Used to define the key used in the Cache::write(). It will be prefixed with `widget_`
-	 * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this widget.
+	 *   - `config` - Used to store the cached global content in a custom cache configuration.
+	 *   - `key` - Used to define the key used in the Cache::write(). It will be prefixed with `global_content_`
+	 * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this global content.
 	 *   Defaults to false.
-	 * - `ignoreMissing` - Used to allow missing widgets. Set to true to not throw exceptions.
-	 * - `plugin` - setting to false will force to use the application's widget from plugin templates, when the
-	 *   plugin has widget with same name. Defaults to true
-	 * @return string Rendered Widget
-	 * @throws \Awyiss\View\Exception\MissingWidgetException When a widget is missing and `ignoreMissing`
+	 * - `ignoreMissing` - Used to allow missing global_contents. Set to true to not throw exceptions.
+	 * - `plugin` - setting to false will force to use the application's global content from plugin templates, when the
+	 *   plugin has global content with same name. Defaults to true
+	 * @return string Rendered GlobalContent
+	 * @throws \Awyiss\View\Exception\MissingGlobalContentException When a global content is missing and `ignoreMissing`
 	 *   is false.
 	 * @psalm-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
 	 */
-	public function widget(string $name, array $data = [], array $options = []): string {
+	public function globalContent(string $name, array $data = [], array $options = []): string {
 		$options += ['callbacks' => false, 'cache' => null, 'plugin' => null, 'ignoreMissing' => false];
 		if (isset($options['cache'])) {
-			$options['cache'] = $this->_widgetCache(
+			$options['cache'] = $this->_globalContentCache(
 				$name,
 				$data,
 				array_diff_key($options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null])
@@ -336,41 +336,41 @@ class FrontendView extends AppView {
 		}
 
 		$pluginCheck = $options['plugin'] !== false;
-		$file = $this->_getWidgetFileName($name, $pluginCheck);
+		$file = $this->_getGlobalContentFileName($name, $pluginCheck);
 		if ($file && $options['cache']) {
 			return $this->cache(function () use ($file, $data, $options): void {
-				echo $this->_renderWidget($file, $data, $options);
+				echo $this->_renderGlobalContent($file, $data, $options);
 			}, $options['cache']);
 		}
 		if ($file) {
-			return $this->_renderWidget($file, $data, $options);
+			return $this->_renderGlobalContent($file, $data, $options);
 		}
 
 		if ($options['ignoreMissing']) {
 			return '';
 		}
 
-		[$plugin, $widgetName] = $this->pluginSplit($name, $pluginCheck);
-		$paths = iterator_to_array($this->getWidgetPaths($plugin));
-		throw new MissingWidgetException([$name . $this->_ext, $widgetName . $this->_ext], $paths);
+		[$plugin, $globalContentName] = $this->pluginSplit($name, $pluginCheck);
+		$paths = iterator_to_array($this->getGlobalContentPaths($plugin));
+		throw new MissingGlobalContentException([$name . $this->_ext, $globalContentName . $this->_ext], $paths);
 	}
 
 
 	/**
-	 * Generate the cache configuration options for a widget.
+	 * Generate the cache configuration options for a global content.
 	 *
-	 * @param string $name Widget name
+	 * @param string $name GlobalContent name
 	 * @param array $data Data
-	 * @param array<string, mixed> $options Widget options
-	 * @return array<string, mixed> Widget Cache configuration.
+	 * @param array<string, mixed> $options GlobalContent options
+	 * @return array<string, mixed> GlobalContent Cache configuration.
 	 * @psalm-return array{key:string, config:string}
 	 * @noinspection DuplicatedCode
 	 */
-	protected function _widgetCache(string $name, array $data, array $options): array {
+	protected function _globalContentCache(string $name, array $data, array $options): array {
 		if (isset($options['cache']['key'], $options['cache']['config'])) {
 			/** @psalm-var array{key:string, config:string} $cache */
 			$cache = $options['cache'];
-			$cache['key'] = 'widget_' . $cache['key'];
+			$cache['key'] = 'global_content_' . $cache['key'];
 
 			return $cache;
 		}
@@ -381,23 +381,23 @@ class FrontendView extends AppView {
 		if ($plugin) {
 			$pluginKey = str_replace('/', '_', Inflector::underscore($plugin));
 		}
-		$widgetKey = str_replace(['\\', '/'], '_', $name);
+		$globalContentKey = str_replace(['\\', '/'], '_', $name);
 
 		$cache = $options['cache'];
 		unset($options['cache']);
 		$keys = array_merge(
-			[$pluginKey, $widgetKey],
+			[$pluginKey, $globalContentKey],
 			array_keys($options),
 			array_keys($data)
 		);
 		$config = [
-			'config' => $this->widgetCache,
+			'config' => $this->globalContentCache,
 			'key' => implode('_', $keys),
 		];
 		if (is_array($cache)) {
 			$config = $cache + $config;
 		}
-		$config['key'] = 'widget_' . $config['key'];
+		$config['key'] = 'global_content_' . $config['key'];
 
 		/** @var array{config: string, key: string} */
 		return $config;
@@ -405,17 +405,17 @@ class FrontendView extends AppView {
 
 
 	/**
-	 * Finds a widget filename, returns false on failure.
+	 * Finds a global content filename, returns false on failure.
 	 *
-	 * @param string $name The name of the widget to find.
+	 * @param string $name The name of the global content to find.
 	 * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
-	 * @return string|false Either a string to the widget filename or false when one can't be found.
+	 * @return string|false Either a string to the global content filename or false when one can't be found.
 	 */
-	protected function _getWidgetFileName(string $name, bool $pluginCheck = true): string|false {
+	protected function _getGlobalContentFileName(string $name, bool $pluginCheck = true): string|false {
 		[$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
 		$name .= $this->_ext;
-		foreach ($this->getWidgetPaths($plugin) as $path) {
+		foreach ($this->getGlobalContentPaths($plugin) as $path) {
 			if (is_file($path . $name)) {
 				return $path . $name;
 			}
@@ -426,15 +426,15 @@ class FrontendView extends AppView {
 
 
 	/**
-	 * Get an iterator for widget paths.
+	 * Get an iterator for global content paths.
 	 *
 	 * @param string|null $plugin The plugin to fetch paths for.
 	 * @return \Generator
 	 */
-	protected function getWidgetPaths(?string $plugin): Generator {
-		$widgetPaths = $this->_getSubPaths(static::TYPE_WIDGET);
+	protected function getGlobalContentPaths(?string $plugin): Generator {
+		$globalContentPaths = $this->_getSubPaths(static::TYPE_GLOBAL_CONTENT);
 		foreach ($this->_paths($plugin) as $path) {
-			foreach ($widgetPaths as $subdir) {
+			foreach ($globalContentPaths as $subdir) {
 				yield $path . $subdir . DIRECTORY_SEPARATOR;
 			}
 		}
@@ -442,18 +442,18 @@ class FrontendView extends AppView {
 
 
 	/**
-	 * Renders a widget and fires the before and afterRender callbacks for it
+	 * Renders a global content and fires the before and afterRender callbacks for it
 	 * and writes to the cache if a cache is used
 	 *
-	 * @param string $file Widget file path
+	 * @param string $file GlobalContent file path
 	 * @param array $data Data to render
-	 * @param array<string, mixed> $options Widget options
+	 * @param array<string, mixed> $options GlobalContent options
 	 * @return string
 	 * @triggers View.beforeRender $this, [$file]
-	 * @triggers View.afterRender $this, [$file, $widget]
+	 * @triggers View.afterRender $this, [$file, $globalContent]
 	 */
-	protected function _renderWidget(string $file, array $data, array $options): string {
-		return $this->renderContentOrWidget('widget', $options['callbacks'], $file, $data);
+	protected function _renderGlobalContent(string $file, array $data, array $options): string {
+		return $this->renderContentOrGlobalContent('globalContent', $options['callbacks'], $file, $data);
 	}
 
 
@@ -464,25 +464,25 @@ class FrontendView extends AppView {
 	 * @param array $data
 	 * @return string
 	 */
-	protected function renderContentOrWidget(string $type, bool $callbacks, string $file, array $data): string {
+	protected function renderContentOrGlobalContent(string $type, bool $callbacks, string $file, array $data): string {
 		$current = $this->_current;
 		$restore = $this->_currentType;
-		$this->_currentType = $type === 'widget' ? static::TYPE_WIDGET : static::TYPE_CONTENT;
+		$this->_currentType = $type === 'globalContent' ? static::TYPE_GLOBAL_CONTENT : static::TYPE_CONTENT;
 
 		if ($callbacks) {
 			$this->dispatchEvent('View.beforeRender', [$file]);
 		}
 
-		$widget = $this->_render($file, array_merge($this->viewVars, $data));
+		$renderedContent = $this->_render($file, array_merge($this->viewVars, $data));
 
 		if ($callbacks) {
-			$this->dispatchEvent('View.afterRender', [$file, $widget]);
+			$this->dispatchEvent('View.afterRender', [$file, $renderedContent]);
 		}
 
 		$this->_currentType = $restore;
 		$this->_current = $current;
 
-		return $widget;
+		return $renderedContent;
 	}
 
 

@@ -198,14 +198,14 @@ class UserConfigurationCustomSeed extends AbstractSeed {
 			[
 				'id' => 49,
 				'user_id' => 1,
-				'scope' => 'widget_templates',
+				'scope' => 'global_content_templates',
 				'identifier' => 'paginate.enabled',
 				'value' => '0',
 			],
 			[
 				'id' => 50,
 				'user_id' => 1,
-				'scope' => 'widgets',
+				'scope' => 'global_contents',
 				'identifier' => 'overview.column_view.enabled',
 				'value' => '1',
 			],

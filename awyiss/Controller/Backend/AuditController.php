@@ -157,7 +157,7 @@ class AuditController extends Controller {
 			$attributeOptions = AttributeOptionsProvider::getAttributeOptionsFile($scope, true);
 		}
 
-		if (in_array($scope, ['contents', 'widgets'], true)) {
+		if (in_array($scope, ['contents', 'global_contents'], true)) {
 			$audits = $this->setColumnData($table, $audits);
 		}
 

@@ -1,0 +1,80 @@
+{#
+@var entity \Awyiss\Model\Entity\GlobalContent
+@var settings array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuditHelper \Awyiss\View\Helper\AuditHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemDataTitle %}
+	<li class="Title">{{ entity.forcedTitle|raw }}</li>
+{% endblock %}
+
+{% block nestedListItemDataDisplayedFieldDefaultValue %}
+	{% if field == 'global_content_template_id' %}
+		{{ entity.globalContentTemplate.label }}
+	{% elseif field == 'column_width' %}
+		{{ entity.column.width.label }}
+	{% elseif field == 'column_indent' %}
+		{{ entity.column.indent.label }}
+	{% elseif field == 'data' %}
+		{%- for key, value in entity.get(field) %}
+			{{- key }}: {{ value }}{% if loop.last == false %}, {% endif %}
+		{% endfor %}
+	{% else %}
+		{{ parent() }}
+	{% endif %}
+{% endblock %}
+
+{% block nestedListItem %}
+	{% set globalContentTemplate = settings.globalContentTemplates[ entity.globalContentTemplateId ] ?? null %}
+	<li
+		{{ block('nestedListItemId') }}
+		{{ block('nestedListItemClass') }}
+		{%- if globalContentTemplate.globalContentTemplateElements.parent_id is not defined %}
+			data-nestable="false"
+		{%- elseif globalContentTemplate.globalContentTemplateElements.parent_id.required %}
+			data-disallow-top-level="true"
+		{%- endif %}
+		{%- if globalContentTemplate.globalContentTemplateElements.column_width is not defined %}
+			data-resizable="false"
+		{%- endif %}
+		data-column-width-class="{{ entity.column.width.cssClass }}"
+		data-max-column-width="{{ 1 - entity.column.indent.percentage }}"
+		>
+		{% block nestedListItemInner %}
+			<div
+				{{ block('nestedListItemInnerClass') }}
+				title="{{ entity.forcedTitle }} ({{ entity.column.width.label -}}
+				{%- if entity.column.indent.label %} / {{ entity.column.indent.label }}{% endif %})"
+				>
+
+				{% block nestedListItemData %}
+					{{ parent() }}
+				{% endblock %}
+
+				{{ block('nestedListItemAuditInfo') }}
+
+				{{ block('nestedListActions') }}
+			</div>
+		{% endblock %}
+
+		{% block nestedListChildren %}
+			{{ parent() }}
+		{% endblock %}
+	</li>
+{% endblock %}

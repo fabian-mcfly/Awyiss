@@ -7,7 +7,7 @@ namespace Awyiss\View\Cell\Frontend\Trait;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\FormElement;
-use Awyiss\Model\Entity\Widget;
+use Awyiss\Model\Entity\GlobalContent;
 use Awyiss\Utility\DebugTimer;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\FrontendView;
@@ -18,7 +18,7 @@ use Cake\I18n\DateTime;
 
 /**
  * ContentElementTrait to be used in Cells
- * for Frontend content elements (content, form elements and widgets)
+ * for Frontend content elements (content, form elements and global_contents)
  */
 trait ContentElementTrait {
 	use FrontendRenderingTrait;
@@ -42,7 +42,7 @@ trait ContentElementTrait {
 		$parentEntities = [];
 
 		/**
-		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
+		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\GlobalContent $entity
 		 */
 		foreach ($entities as $entity) {
 			$this->applyDuplicateData($entity);
@@ -69,7 +69,7 @@ trait ContentElementTrait {
 				$entity->parentFormElements = $parentEntities;
 			}
 			else {
-				$entity->parentWidgets = $parentEntities;
+				$entity->parentGlobalContents = $parentEntities;
 			}
 
 			// Set the cssClass property
@@ -79,7 +79,7 @@ trait ContentElementTrait {
 			$this->setRealColumnWidth($entity, $columnWidth);
 
 			// Set the template for the entity
-			// Will use a custom template named "Content/Widget<id>.twig", if it exists.
+			// Will use a custom template named "Content/GlobalContent<id>.twig", if it exists.
 			$this->setTemplate($entity);
 
 			$lastEntity = $entity;
@@ -119,13 +119,13 @@ trait ContentElementTrait {
 		if ($entities[0] instanceof FormElement) {
 			$type = 'form_element';
 		}
-		elseif ($entities[0] instanceof Widget) {
-			$type = 'widget';
+		elseif ($entities[0] instanceof GlobalContent) {
+			$type = 'global_content';
 		}
 
 		$initialNoContentRow = $noContentRow;
 		/**
-		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
+		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\GlobalContent $entity
 		 */
 		foreach ($entities as $entity) {
 			$entity->realSystemOrder = ++$realSystemOrder;
@@ -139,7 +139,7 @@ trait ContentElementTrait {
 			$entityType ??= match (true) {
 				$entity instanceof Content => 'Content',
 				$entity instanceof FormElement => 'FormElement',
-				$entity instanceof Widget => 'Widget',
+				$entity instanceof GlobalContent => 'GlobalContent',
 			};
 
 			$timerName = sprintf('ContentElementTrait::buildContent%s#%d', $entityType, $entity->id);
@@ -151,7 +151,7 @@ trait ContentElementTrait {
 
 			$noContentRow = $initialNoContentRow;
 			if (!$noContentRow && !$entity instanceof FormElement) {
-				$template = $entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
+				$template = $entity instanceof GlobalContent ? 'globalContentTemplate' : 'contentTemplate';
 
 				$noContentRow = !$entity->$template->inContentRow;
 				if ($entity->has('inContentRow')) {
@@ -305,13 +305,13 @@ trait ContentElementTrait {
 		$template = match (true) {
 			$entity instanceof Content => 'contentTemplate',
 			$entity instanceof FormElement => null,
-			$entity instanceof Widget => 'widgetTemplate',
+			$entity instanceof GlobalContent => 'globalContentTemplate',
 		};
 
 		$entity->cssClass = match (true) {
 			$entity instanceof Content => 'Content',
 			$entity instanceof FormElement => 'Form',
-			$entity instanceof Widget => 'Widget',
+			$entity instanceof GlobalContent => 'GlobalContent',
 		};
 		$entity->cssClass .= 'Element';
 		$entity->cssClass .= ($template ? ' Template-' . Inflector::ucparts($entity->$template->fileName, false) : '');
@@ -321,8 +321,8 @@ trait ContentElementTrait {
 			$entity->cssClass .= ' FormElementType-' . Inflector::ucparts($entity->type, false);
 			$entity->cssClass .= ' FormElement-' . Inflector::ucparts($entity->identifier ?? (string)$entity->id, false);
 		}
-		elseif ($entity instanceof Widget) {
-			$entity->cssClass .= ' Widget-' . Inflector::ucparts($entity->identifier, false);
+		elseif ($entity instanceof GlobalContent) {
+			$entity->cssClass .= ' GlobalContent-' . Inflector::ucparts($entity->identifier, false);
 		}
 
 		if ($entity->column['indent']) {
@@ -357,7 +357,7 @@ trait ContentElementTrait {
 	 * Set the real column width of an entity,
 	 * based on the width of its parent entities.
 	 *
-	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
+	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\GlobalContent $entity
 	 * @param float $columnWidth
 	 * @return void
 	 * @noinspection PhpDocSignatureInspection
@@ -368,7 +368,7 @@ trait ContentElementTrait {
 		$property = match (true) {
 			$entity instanceof Content => 'parentContents',
 			$entity instanceof FormElement => 'parentFormElements',
-			$entity instanceof Widget => 'parentWidgets',
+			$entity instanceof GlobalContent => 'parentGlobalContents',
 		};
 
 		if (!$entity->$property) {
@@ -377,7 +377,7 @@ trait ContentElementTrait {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $parent */
+		/** @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\GlobalContent $parent */
 		$parent = end($entity->$property);
 
 		$entity->realColumnWidth = round($parent->realColumnWidth * $entity->column['width']->getFactor(), 4);
@@ -388,7 +388,7 @@ trait ContentElementTrait {
 	 * Check if a custom template exists for a content element,
 	 * based on the id.
 	 *
-	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
+	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\GlobalContent $entity
 	 * @return void
 	 * @noinspection PhpDocSignatureInspection
 	 */
@@ -404,17 +404,17 @@ trait ContentElementTrait {
 			$templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);
 		}
 
-		$fileName = ($entity instanceof Widget ? 'Widget' : 'Content') . $entity->id;
+		$fileName = ($entity instanceof GlobalContent ? 'GlobalContent' : 'Content') . $entity->id;
 
 		$filePath = implode(DS, [
 			$templatePath,
 			'Frontend',
-			$entity instanceof Widget ? 'widget' : 'content',
+			$entity instanceof GlobalContent ? 'global_content' : 'content',
 			$fileName . '.twig',
 		]);
 
 		if (file_exists($filePath)) {
-			$template = $entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
+			$template = $entity instanceof GlobalContent ? 'globalContentTemplate' : 'contentTemplate';
 			$entity->$template->set('fileName', $fileName, ['setter' => false]);
 		}
 	}

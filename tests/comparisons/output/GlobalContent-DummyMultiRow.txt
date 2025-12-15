@@ -1,0 +1,41 @@
+<div class="ContentRow">
+<div class="GlobalContentElement Template-Standard Column-50 GlobalContent-DummyMultiRow ColumnIndent-50 AwyissFrontendPreview-InactiveElement" data-ak="av" data-ck="cv" id="GlobalContent9">
+<div class="Text">
+<p>Element 1 - first (half indented) and last</p>
+</div>
+</div>
+</div>
+<div class="ContentRow">
+<div class="GlobalContentElement Template-Standard Column-60 GlobalContent-DummyMultiRow" id="GlobalContent8">
+<div class="Text">
+<p>Element 2</p>
+</div>
+</div>
+<div class="GlobalContentElement Template-Standard Column-40 GlobalContent-DummyMultiRow" id="GlobalContent10">
+<div class="Text">
+<p>Element 3 with module</p>
+<div class="Module-Breadcrumbs">
+<ol class="Breadcrumbs">
+<li class="Breadcrumb">
+<a href="/de/startseite/">Startseite</a>
+</li>
+</ol>
+</div>
+<p>And Text after Module</p>
+</div>
+</div>
+</div>
+<div class="ContentRow">
+<div class="GlobalContentElement Template-Standard Column-25 GlobalContent-DummyMultiRow AwyissFrontendPreview-InactiveElement" id="GlobalContent11">
+<div class="Text">
+<p>Element 4 (last in row)</p>
+</div>
+</div>
+</div>
+<div class="ContentRow">
+<div class="GlobalContentElement Template-Standard Column-25 GlobalContent-DummyMultiRow Column-Rtl AdditionalClass" id="GlobalContent12">
+<div class="Text">
+<p>Element 5 (RTL)</p>
+</div>
+</div>
+</div>

@@ -294,7 +294,7 @@ class DashboardElementsTable extends Table {
 					'user_configuration',
 					'usergroup_permissions',
 					'usergroups_users',
-					'widget_template_elements',
+					'global_content_template_elements',
 				])
 			) {
 				continue;

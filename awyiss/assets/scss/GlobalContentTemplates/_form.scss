@@ -1,0 +1,119 @@
+.GlobalContentTemplates.Form {
+	.Fieldset-GlobalContentElements {
+		padding:0;
+		box-shadow:none;
+		background-color:transparent;
+		gap:var(--rowGap) var(--lineHeightMain);
+		grid-template-columns:1fr 2fr;
+
+		@media screen and (width <= 1080px) {
+			grid-template-columns:1fr;
+		}
+
+		@media screen and (width <= 768px) {
+			padding:0;
+		}
+
+		@media screen and (width <= 640px) {
+			row-gap:calc(var(--lineHeightMain) * 1.5);
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding:0;
+			}
+		}
+
+		.Fieldset-GlobalContentElements-Available {
+			@media screen and (width <= 1080px) {
+				position:relative;
+				top:auto;
+			}
+
+			.List {
+				@media screen and (width <= 1080px) {
+					max-height:none;
+				}
+			}
+		}
+
+		.GlobalContentElements-List {
+			.Button-AddRemove {
+				@media screen and (width <= 1080px) {
+					display:inline-block;
+				}
+			}
+		}
+	}
+
+	.Fieldset-GlobalContentElements-Assigned {
+		padding-inline:20px;
+		//box-shadow:none;
+		//background-color:transparent;
+		row-gap:var(--rowGap);
+		grid-template-columns:1fr;
+
+		@media screen and (width <= 768px) {
+			padding-top:40px;
+		}
+
+		@media screen and (width <= 640px) {
+			row-gap:var(--lineHeightMain);
+		}
+
+		@media screen and (width <= 540px) {
+			padding-inline:10px;
+		}
+
+		> legend {
+			pointer-events:none;
+		}
+	}
+
+	:is(
+		.Fieldset-GlobalContentElements-Available,
+		.Fieldset-Fieldset
+	) {
+		display:block;
+		padding-inline:0;
+		padding-bottom:0;
+
+		@media screen and (width <= 768px) {
+			padding-top:40px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-top:30px;
+		}
+
+		> ul {
+			padding-bottom:20px;
+
+			@media screen and (width <= 540px) {
+				padding-bottom:10px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-bottom:10px;
+				}
+			}
+		}
+	}
+
+	.Fieldset-GlobalContentElements-Available {
+		@extend %AvailableTemplateElementsList;
+	}
+
+	.GlobalContentElement {
+		@extend %AvailableTemplateElementsListItem;
+	}
+
+	.Fieldset-Fieldset {
+		@extend %AvailableTemplateElementsFieldset;
+
+		legend {
+			top:-10px;
+		}
+	}
+}

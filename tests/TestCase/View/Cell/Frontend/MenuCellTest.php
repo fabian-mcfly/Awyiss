@@ -193,8 +193,8 @@ class MenuCellTest extends TestCase {
 		$this->assertInstanceOf(CollectionInterface::class, $entries);
 
 		// Check if all first level items have no parent id
-		$entries->each(function (MenuEntry $widget) {
-			$this->assertEmpty($widget->parentId);
+		$entries->each(function (MenuEntry $menuEntry) {
+			$this->assertEmpty($menuEntry->parentId);
 		});
 
 		$this->assertCount($firstLevelEntries, $entries);

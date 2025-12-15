@@ -585,7 +585,7 @@ class NestBehavior extends Behavior {
 			 * If the nesting has related columns, need to set them on the child entity with the
 			 * same values as the copied entity.
 			 *
-			 * Copying a widget to another identifier, ort form elements lto another page:
+			 * Copying a global content to another identifier, ort form elements lto another page:
 			 * the new values of the entity have to be used for the copied children as well.
 			 */
 			if ($relatedColumns) {

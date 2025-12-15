@@ -16,7 +16,7 @@
 	:is(
 		.ContentElement,
 		.FormElement,
-		.WidgetElement
+		.GlobalContentElement
 	) {
 		width:var(--elementWidth, 100%);
 		margin-left:var(--elementMargin);

@@ -104,8 +104,8 @@ msgstr "Ungültige Inhaltselemente"
 msgid "error_linked_contents"
 msgstr "Es existieren noch Inhalte, die dieses Element verwenden"
 
-msgid "error_linked_widgets"
-msgstr "Es existieren noch Widgets, die dieses Element verwenden"
+msgid "error_linked_global_contents"
+msgstr "Es existieren noch GlobalContents, die dieses Element verwenden"
 
 msgid "error_linked_surveys"
 msgstr "Es existieren noch Umfragen, die dieses Element verwenden"

@@ -72,7 +72,7 @@ class SurveysTable extends Table {
 			'saveStrategy' => 'replace',
 		]);
 
-		$this->hasMany('Widgets');
+		$this->hasMany('GlobalContents');
 	}
 
 
@@ -402,11 +402,11 @@ class SurveysTable extends Table {
 
 
 		$rules->addDelete(
-			$rules->isNotLinkedTo('Widgets', 'widgets'),
-			'noLinkedWidgets',
+			$rules->isNotLinkedTo('GlobalContents', 'global_contents'),
+			'noLinkedGlobalContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_widgets'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_global_contents'),
 			]
 		);
 

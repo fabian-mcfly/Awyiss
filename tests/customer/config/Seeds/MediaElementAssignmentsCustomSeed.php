@@ -22,7 +22,7 @@ class MediaElementAssignmentsCustomSeed extends AbstractSeed {
 			[
 				'id' => 2,
 				'media_element_id' => 2,
-				'scope' => 'widget_templates',
+				'scope' => 'global_content_templates',
 				'foreign_key' => 1,
 			],
 			[

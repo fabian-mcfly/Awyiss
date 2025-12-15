@@ -803,6 +803,8 @@ class ConfigurationTableTest extends TestCase {
 			'email_templates' => 'email_templates::menu_title',
 			'form_elements' => 'form_elements::menu_title',
 			'forms' => 'forms::menu_title',
+			'global_content_templates' => 'global_content_templates::menu_title',
+			'global_contents' => 'global_contents::menu_title',
 			'languages' => 'languages::menu_title',
 			'media_elements' => 'media_elements::menu_title',
 			'media_folders' => 'media_folders::menu_title',
@@ -824,8 +826,6 @@ class ConfigurationTableTest extends TestCase {
 			'urls_not_found' => 'urls_not_found::menu_title',
 			'usergroups' => 'usergroups::menu_title',
 			'users' => 'users::menu_title',
-			'widget_templates' => 'widget_templates::menu_title',
-			'widgets' => 'widgets::menu_title',
 		], $categories);
 	}
 
@@ -867,6 +867,8 @@ class ConfigurationTableTest extends TestCase {
 			'Employers',
 			'FormElements',
 			'Forms',
+			'GlobalContentTemplates',
+			'GlobalContents',
 			'Languages',
 			'Media',
 			'MediaElements',
@@ -887,8 +889,6 @@ class ConfigurationTableTest extends TestCase {
 			'UrlsNotFound',
 			'Usergroups',
 			'Users',
-			'WidgetTemplates',
-			'Widgets',
 		], array_keys($scopes));
 	}
 

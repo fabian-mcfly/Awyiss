@@ -151,9 +151,9 @@ class AttributesListenerTest extends TestCase {
 	 * @return void
 	 * @see \Awyiss\Event\Backend\AttributesListener::beforeSave()
 	 */
-	public function testBeforeSaveWithWidgetsScope(): void {
+	public function testBeforeSaveWithGlobalContentsScope(): void {
 		$entity = $this->fetchTable('Attributes')->newDefaultEntity([
-			'scope' => 'widgets',
+			'scope' => 'global_contents',
 			'fieldset' => 'general',
 			'required' => true,
 			'translatable' => true,

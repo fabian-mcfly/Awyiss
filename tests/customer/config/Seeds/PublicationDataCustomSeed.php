@@ -15,14 +15,14 @@ class PublicationDataCustomSeed extends AbstractSeed {
 		$data = [
 			[
 				'id' => 1,
-				'scope' => 'widgets',
+				'scope' => 'global_contents',
 				'foreign_key' => 9,
 				'type' => 'end',
 				'date_time' => '2022-06-01 18:59:59',
 			],
 			[
 				'id' => 2,
-				'scope' => 'widgets',
+				'scope' => 'global_contents',
 				'foreign_key' => 11,
 				'type' => 'start',
 				'date_time' => '2057-07-18 04:04:04',

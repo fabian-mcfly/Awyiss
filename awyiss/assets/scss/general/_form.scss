@@ -1814,7 +1814,7 @@ textarea {
 :is(
 	.ContentsController,
 	.FormElementsController,
-	.WidgetsController
+	.GlobalContentsController
 ) {
 	&:has(.EditFrontendEditor) {
 		padding-block:0;

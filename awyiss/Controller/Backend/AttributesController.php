@@ -89,7 +89,7 @@ class AttributesController extends Controller {
 		$selectedScope = $this->Categories->getSelectedCategory();
 
 		$availableFieldsets = [''];
-		if (!in_array($selectedScope, ['contents', 'widgets'])) {
+		if (!in_array($selectedScope, ['contents', 'global_contents'])) {
 			$availableFieldsets = $this->Attributes->getAvailableFieldsets($selectedScope);
 		}
 
@@ -327,7 +327,7 @@ class AttributesController extends Controller {
 		$availableFieldsets = $this->Attributes->getAvailableFieldsets($attribute->scope);
 		$this->ensurePossibleFieldset($attribute, $availableFieldsets);
 
-		if (in_array($attribute->scope, ['contents', 'widgets'])) {
+		if (in_array($attribute->scope, ['contents', 'global_contents'])) {
 			$attribute->fieldset = '';
 		}
 
@@ -337,8 +337,8 @@ class AttributesController extends Controller {
 
 		$isInputList = in_array($attribute->inputType, ['input_list', 'input_key_value_list']);
 		$translatableDisabled = in_array($attribute->scope, array_merge($pageRoles, ['contents', 'menu_entries', 'pages'])) || $isInputList;
-		$requiredDisabled = in_array($attribute->scope, ['contents', 'widgets']) || $isInputList;
-		$columnSpanDisabled = in_array($attribute->scope, ['contents', 'widgets']);
+		$requiredDisabled = in_array($attribute->scope, ['contents', 'global_contents']) || $isInputList;
+		$columnSpanDisabled = in_array($attribute->scope, ['contents', 'global_contents']);
 
 		if (!$translatableDisabled) {
 			$table = $this->fetchTable(Inflector::camelize($attribute->scope));

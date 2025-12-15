@@ -1,0 +1,255 @@
+{#
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuditHelper \Awyiss\View\Helper\AuditHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+{% block formControlActive %}
+	{{ FormHelper.control('active', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+	}) }}
+{% endblock %}
+
+
+{% block formControlIdentifier %}
+	{% set knownIdentifiers = localConfig('knownIdentifiers') %}
+	{%
+		set helperFormControl = knownIdentifiers is not empty ? FormHelper.select(
+			'identifier_helper_options',
+			combine(knownIdentifiers|values, knownIdentifiers|values),
+			{
+				'data-options-for': 'GlobalContent-Identifier',
+			}
+		) : ''
+	%}
+
+	{{ FormHelper.control('identifier', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		templateVars: {
+			additionalContent: helperFormControl
+		},
+		'data-form-updater': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlGlobalContentTemplateId %}
+	{% set globalContentTemplateAddButton %}
+		{% if AuthorizationHelper.scopeIsAccessible('GlobalContentTemplates', [], 'create') %}
+			{{ HtmlHelper.link(__d('global_content_templates', 'create'), {controller: 'GlobalContentTemplates', action: 'add'}, {class: 'Button Button-Add InFieldButton OverlayForm'}) }}
+		{% endif %}
+	{% endset %}
+
+	{% set globalContentTemplateEditButton %}
+		{% if AuthorizationHelper.scopeIsAccessible('GlobalContentTemplates', [], 'update') %}
+			{{ HtmlHelper.link(__('edit'), {controller: 'GlobalContentTemplates', action: 'edit', id: settings.globalContent.globalContentTemplateId}, {class: 'Button Button-Edit InFieldButton OverlayForm'}) }}
+		{% endif %}
+	{% endset %}
+
+	{{ FormHelper.control('global_content_template_id', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		empty: false,
+		label: globalContentTemplateElement.title,
+		options: settings.globalContentTemplates.combine('id', 'title'),
+		templateVars: {
+			additionalContent: globalContentTemplateAddButton ~ globalContentTemplateEditButton
+		},
+		'data-form-updater': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlLanguageShortcode %}
+	{{ LocaleHelper.control('language_shortcode', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		languageRealm: settings.languageRealm,
+		val: settings.languageShortcode,
+		'data-form-updater': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlSystemOrder %}
+	{{ SystemOrderHelper.control('system_order', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		entity: settings.globalContent,
+		label: globalContentTemplateElement.title,
+	}) }}
+{% endblock %}
+
+
+{% block formControlColumnWidth %}
+	{{ FormHelper.control('column_width', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		empty: false,
+		label: globalContentTemplateElement.title,
+		options: settings.columnWidths,
+		required: globalContentTemplateElement.required,
+		type: 'select'}
+	) }}
+{% endblock %}
+
+
+{% block formControlColumnIndent %}
+	{{ FormHelper.control('column_indent', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		options: settings.columnIndents,
+		required: globalContentTemplateElement.required,
+		type: 'select'}) }}
+{% endblock %}
+
+
+{% block formControlColumnLast %}
+	{{ FormHelper.control('column_last', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		required: globalContentTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlColumnRtl %}
+	{{ FormHelper.control('column_rtl', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		required: globalContentTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlParentId %}
+	{{ FormHelper.control('parent_id', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		options: hashPrinter(settings.possibleParentGlobalContents, 'label', 'id', '- '),
+		label: globalContentTemplateElement.title,
+		required: globalContentTemplateElement.required,
+		'data-form-updater': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlTitle %}
+	{% set titleTag = '' %}
+	{% if assignedGlobalContentTemplateElements.titleTag is defined %}
+		{% set titleTag %}
+			{{ FormHelper.control('title_tag', {
+				options: {
+					'h1': 'h1',
+					'h2': 'h2',
+					'h3': 'h3',
+					'h4': 'h4',
+					'h5': 'h5',
+					'h6': 'h6',
+					'p': 'p',
+				},
+			}) }}
+		{% endset %}
+	{% endif %}
+
+	{{ FormHelper.control('title', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		required: globalContentTemplateElement.required,
+		templateVars: {
+			additionalContent: titleTag,
+		}
+	}) }}
+{% endblock %}
+
+
+{% block formControlTitleTag %}{% endblock %}
+
+
+{% block formControlSubtitle %}
+	{% set subtitleTag = '' %}
+	{% if assignedGlobalContentTemplateElements.subtitleTag is defined %}
+		{% set subtitleTag %}
+			{{ FormHelper.control('subtitle_tag', {
+				options: {
+					'h1': 'h1',
+					'h2': 'h2',
+					'h3': 'h3',
+					'h4': 'h4',
+					'h5': 'h5',
+					'h6': 'h6',
+					'p': 'p',
+				},
+			}) }}
+		{% endset %}
+	{% endif %}
+
+	{{ FormHelper.control('subtitle', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		required: globalContentTemplateElement.required,
+		templateVars: {
+			additionalContent: subtitleTag,
+		}
+	}) }}
+{% endblock %}
+
+
+{% block formControlSubtitleTag %}{% endblock %}
+
+
+{% block formControlText %}
+	{{ FormHelper.control('text', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		required: globalContentTemplateElement.required,
+		'data-editor': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlLink %}
+	{{ FormHelper.control('link', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		required: globalContentTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlCssClass %}
+	{{ FormHelper.control('css_class', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		required: globalContentTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlFormId %}
+	{{ FormHelper.control('form_id', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		options: hashPrinter(settings.forms, 'label', 'id', '- '),
+		required: globalContentTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlSurveyId %}
+	{{ FormHelper.control('survey_id', {
+		columnSpan: globalContentTemplateElement.column.span.numerator,
+		label: globalContentTemplateElement.title,
+		options: hashPrinter(settings.surveys, 'label', 'id', '- '),
+		required: globalContentTemplateElement.required,
+	}) }}
+{% endblock %}

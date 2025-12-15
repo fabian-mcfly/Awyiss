@@ -176,7 +176,7 @@ class AttributesCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 8,
-				'scope' => 'widgets',
+				'scope' => 'global_contents',
 				'identifier' => 'free_text',
 				'title' => 'Freitext',
 				'type' => 'longtext',
@@ -199,7 +199,7 @@ class AttributesCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 9,
-				'scope' => 'widgets',
+				'scope' => 'global_contents',
 				'identifier' => 'free_text_inactive',
 				'title' => 'Freitext',
 				'type' => 'longtext',
@@ -222,7 +222,7 @@ class AttributesCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 10,
-				'scope' => 'widgets',
+				'scope' => 'global_contents',
 				'identifier' => 'teaser',
 				'title' => 'Teaser',
 				'type' => 'longtext',

@@ -27,7 +27,7 @@
   }
   :is(.ContentElement,
   .FormElement,
-  .WidgetElement) {
+  .GlobalContentElement) {
     width: var(--elementWidth, 100%);
     margin-left: var(--elementMargin);
     position: relative;
@@ -36,86 +36,86 @@
   }
   :is(.ContentElement,
   .FormElement,
-  .WidgetElement).FlexAlign-Top, :is(.ContentElement,
+  .GlobalContentElement).FlexAlign-Top, :is(.ContentElement,
   .FormElement,
-  .WidgetElement).FlexAlign-FlexStart {
+  .GlobalContentElement).FlexAlign-FlexStart {
     align-self: flex-start;
   }
   :is(.ContentElement,
   .FormElement,
-  .WidgetElement).FlexAlign-Center {
+  .GlobalContentElement).FlexAlign-Center {
     align-self: center;
   }
   :is(.ContentElement,
   .FormElement,
-  .WidgetElement).FlexAlign-Bottom, :is(.ContentElement,
+  .GlobalContentElement).FlexAlign-Bottom, :is(.ContentElement,
   .FormElement,
-  .WidgetElement).FlexAlign-FlexEnd {
+  .GlobalContentElement).FlexAlign-FlexEnd {
     align-self: flex-end;
   }
   :is(.ContentElement,
   .FormElement,
-  .WidgetElement).FlexAlign-Stretch {
+  .GlobalContentElement).FlexAlign-Stretch {
     align-self: stretch;
   }
   :is(.ContentElement,
   .FormElement,
-  .WidgetElement).Centered:last-of-type :is(.ContentElement,
+  .GlobalContentElement).Centered:last-of-type :is(.ContentElement,
   .FormElement,
-  .WidgetElement).Centered:first-of-type {
+  .GlobalContentElement).Centered:first-of-type {
     margin-inline: auto;
   }
   :is(.ContentElement,
   .FormElement,
-  .WidgetElement):not([class*=ColumnIndent-]):first-child {
+  .GlobalContentElement):not([class*=ColumnIndent-]):first-child {
     margin-left: 0;
   }
   @media screen and (width > 860px) {
     :is(.ContentElement,
     .FormElement,
-    .WidgetElement).Column-Rtl:nth-child(1) {
+    .GlobalContentElement).Column-Rtl:nth-child(1) {
       order: 5;
     }
   }
   @media screen and (width > 860px) {
     :is(.ContentElement,
     .FormElement,
-    .WidgetElement).Column-Rtl:nth-child(2) {
+    .GlobalContentElement).Column-Rtl:nth-child(2) {
       order: 4;
     }
   }
   @media screen and (width > 860px) {
     :is(.ContentElement,
     .FormElement,
-    .WidgetElement).Column-Rtl:nth-child(3) {
+    .GlobalContentElement).Column-Rtl:nth-child(3) {
       order: 3;
     }
   }
   @media screen and (width > 860px) {
     :is(.ContentElement,
     .FormElement,
-    .WidgetElement).Column-Rtl:nth-child(4) {
+    .GlobalContentElement).Column-Rtl:nth-child(4) {
       order: 2;
     }
   }
   @media screen and (width > 860px) {
     :is(.ContentElement,
     .FormElement,
-    .WidgetElement).Column-Rtl:nth-child(5) {
+    .GlobalContentElement).Column-Rtl:nth-child(5) {
       order: 1;
     }
   }
   @media screen and (width > 860px) {
     :is(.ContentElement,
     .FormElement,
-    .WidgetElement).Column-Rtl:first-child {
+    .GlobalContentElement).Column-Rtl:first-child {
       margin-left: var(--columnMargin, 0);
     }
   }
   @media screen and (width > 860px) {
     :is(.ContentElement,
     .FormElement,
-    .WidgetElement).Column-Rtl ~ .ContentElement:last-child {
+    .GlobalContentElement).Column-Rtl ~ .ContentElement:last-child {
       margin-left: 0;
     }
   }

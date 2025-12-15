@@ -95,9 +95,9 @@ class MediaElementsCellTest extends TestCase {
 			[fn() => $tableLocator->get('Pages')->newDefaultEntity(), false],
 			[fn() => $tableLocator->get('News')->get(21, 'mediaAssignments'), 'hidden_folder'],
 			[fn() => $tableLocator->get('News')->newDefaultEntity(), 'false'],
-			[fn() => $tableLocator->get('Widgets')->get(1, 'mediaAssignments'), 'single'],
-			[fn() => $tableLocator->get('Widgets')->get(13, 'mediaAssignments'), 'single'],
-			[fn() => $tableLocator->get('Widgets')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('GlobalContents')->get(1, 'mediaAssignments'), 'single'],
+			[fn() => $tableLocator->get('GlobalContents')->get(13, 'mediaAssignments'), 'single'],
+			[fn() => $tableLocator->get('GlobalContents')->newDefaultEntity(), false],
 		];
 	}
 
@@ -231,8 +231,8 @@ class MediaElementsCellTest extends TestCase {
 			[fn() => $tableLocator->get('PageTemplates')->get(1, 'mediaElementAssignments'), true],
 			[fn() => $tableLocator->get('PageTemplates')->get(2, 'mediaElementAssignments'), true],
 			[fn() => $tableLocator->get('PageTemplates')->newDefaultEntity(), false],
-			[fn() => $tableLocator->get('WidgetTemplates')->get(1, 'mediaElementAssignments'), true],
-			[fn() => $tableLocator->get('WidgetTemplates')->newDefaultEntity(), false],
+			[fn() => $tableLocator->get('GlobalContentTemplates')->get(1, 'mediaElementAssignments'), true],
+			[fn() => $tableLocator->get('GlobalContentTemplates')->newDefaultEntity(), false],
 		];
 	}
 

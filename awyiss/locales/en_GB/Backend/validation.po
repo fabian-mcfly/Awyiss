@@ -104,8 +104,8 @@ msgstr "Invalid Content Elements"
 msgid "error_linked_contents"
 msgstr "There are still Contents that use this element"
 
-msgid "error_linked_widgets"
-msgstr "There are still Widgets that use this element"
+msgid "error_linked_global_contents"
+msgstr "There are still GlobalContents that use this element"
 
 msgid "error_linked_surveys"
 msgstr "There are still surveys that use this element"

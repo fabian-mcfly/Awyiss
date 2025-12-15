@@ -50,7 +50,7 @@ class Editor {
 	 * 		selector: string,
 	 * 		uri: string,
 	 * 	},
-	 * 	widgets: {
+	 * 	global_contents: {
 	 * 		enabled: boolean,
 	 * 		overlayForm: boolean,
 	 * 		selector: string,
@@ -77,11 +77,11 @@ class Editor {
 			selector: 'ul.Level1[class*="Menu-"]',
 			uri: 'menu-entries/overview/menu-identifier:'
 		},
-		widgets: {
+		global_contents: {
 			enabled: false,
 			overlayForm: true,
-			selector: '.WidgetElement[id^="Widget"]',
-			uri: 'widgets/edit/id:'
+			selector: '.GlobalContentElement[id^="GlobalContent"]',
+			uri: 'global_contents/edit/id:'
 		},
 	};
 
