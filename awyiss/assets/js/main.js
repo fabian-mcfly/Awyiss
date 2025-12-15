@@ -20,6 +20,7 @@ import GenericDialog from 'GenericDialog';
 import IdentifierAutofill from 'Form/IdentifierAutofill';
 import InputListManager from 'Form/InputListManager';
 import LinkHelperDialog from 'Form/LinkHelperDialog';
+import MediaElements from 'Media/Elements';
 import MediaOverlay from 'Media/Overlay';
 import MediaProgressChecker from 'Media/ProgressChecker';
 import NestedListHandler from 'NestedListHandler';
@@ -402,6 +403,12 @@ export async function initMainOnReady() {
 	 * @type {InputListManager}
 	 */
 	window.inputListManager = new InputListManager();
+
+	/**
+	 * @global
+	 * @type {MediaElements}
+	 */
+	window.mediaElements = new MediaElements();
 
 	/**
 	 * @global
