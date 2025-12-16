@@ -26,8 +26,14 @@ return [
 		],
 		'frameSrc' => [
 			'allow' => [
+				'https://www.instagram.com',
 				'https://player.vimeo.com',
 				'https://www.youtube-nocookie.com',
+			],
+		],
+		'scriptSrc' => [
+			'allow' => [
+				'https://www.instagram.com',
 			],
 		],
 		'styleSrcElem' => [

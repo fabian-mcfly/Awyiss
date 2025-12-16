@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1.0\n"
 "POT-Creation-Date: 2024-07-12 22:19+0000\n"
-"PO-Revision-Date: 2024-07-12 22:19+0000\n"
+"PO-Revision-Date: 2025-12-16 15:22+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -52,3 +52,39 @@ msgstr "Profilname"
 
 msgid "credentials_missing"
 msgstr "Zugangsdaten fehlen"
+
+msgid "service"
+msgstr "Dienst"
+
+msgid "service_youtube"
+msgstr "YouTube"
+
+msgid "service_vimeo"
+msgstr "Vimeo"
+
+msgid "service_instagram"
+msgstr "Instagram"
+
+msgid "embed_id"
+msgstr "Embed-ID (oder Link)"
+
+msgid "view_on_youtube"
+msgstr "Auf YouTube ansehen"
+
+msgid "view_on_vimeo"
+msgstr "Auf Vimeo ansehen"
+
+msgid "view_on_instagram"
+msgstr "Auf Instagram ansehen"
+
+msgid "javascript_is_required_to_display_this_content"
+msgstr "JavaScript ist erforderlich, um diesen Inhalt anzuzeigen"
+
+msgid "content_from_external_provider"
+msgstr "Dieser Inhalt wird von einem externen Anbieter bereitgestellt. Durch das Laden des Inhalts stimmen Sie der Datenschutzrichtlinie und den Nutzungsbedingungen des Anbieters zu."
+
+msgid "load_content"
+msgstr "Inhalt laden"
+
+msgid "remember_consent"
+msgstr "Zustimmung merken"

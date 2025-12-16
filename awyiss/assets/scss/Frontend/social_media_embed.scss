@@ -1,0 +1,85 @@
+.Widget-SocialMediaEmbed {
+	--bgColor:var(--colorSocialMediaEmbed, var(--colorBackground, rgba(0, 0, 0, .8)));
+	--textColor:var(--backgroundColorSocialMediaEmbed, #FFFFFF);
+
+	padding:40px;
+	border-radius:5px;
+	background-color:var(--bgColor);
+	color:var(--textColor);
+	position:relative;
+	overflow:hidden;
+
+	&:not(:has(.ConsentInfo)) {
+		padding:0;
+	}
+
+	&.SocialMediaService-Instagram {
+		iframe {
+			display:block;
+			width:100%;
+			aspect-ratio:auto;
+			margin:0 !important;
+		}
+
+		blockquote {
+			> :first-child {
+				&::before {
+					display:none;
+				}
+			}
+
+			> :last-child {
+				&::after {
+					display:none;
+				}
+			}
+		}
+	}
+
+	.ConsentInfo {
+		--bgColor:var(--backgroundColorSocialMediaEmbedInfo, var(--colorBackground, #FFFFFF));
+		--textColor:var(--colorSocialMediaEmbedInfo, var(--colorText, inherit));
+
+		max-width:640px;
+		height:fit-content;
+		max-height:480px;
+		margin:auto;
+		box-shadow:0 0 10px rgba(0, 0, 0, .1);
+		background-color:var(--bgColor);
+		color:var(--textColor);
+		padding:40px;
+		border-radius:5px;
+		text-align:center;
+		align-content:center;
+
+		@media (scripting:none) {
+			display:none;
+		}
+	}
+
+	.SocialMediaEmbed-Iframe {
+		display:block;
+		width:100%;
+		aspect-ratio:16 / 9;
+		border:0 none;
+	}
+
+	noscript {
+		--bgColor:var(--backgroundColorSocialMediaEmbedNoScript, var(--colorBackground, #FFFFFF));
+		--textColor:var(--colorSocialMediaEmbedNoScript, var(--colorText, inherit));
+
+		display:none;
+		margin:40px;
+		padding:calc(var(--lineHeightMain) * 2) var(--elementPadding);
+		border-radius:5px;
+		box-shadow:0 0 10px rgba(0, 0, 0, .1);
+		background-color:var(--bgColor);
+		color:var(--textColor);
+		text-align:center;
+
+		@media (scripting:none) {
+			display:block;
+		}
+	}
+}
+

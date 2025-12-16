@@ -113,6 +113,7 @@ class AppTest extends TestCase {
 			'BreadcrumbsWidget' => '\Awyiss\Widget\BreadcrumbsWidget',
 			'InstagramFeedWidget' => '\Awyiss\Widget\InstagramFeedWidget',
 			'RoutePlannerWidget' => '\Awyiss\Widget\RoutePlannerWidget',
+			'SocialMediaEmbedWidget' => '\Awyiss\Widget\SocialMediaEmbedWidget',
 		], $result);
 
 		$result = App::classes('*', 'Widget');
@@ -123,6 +124,7 @@ class AppTest extends TestCase {
 			'BreadcrumbsWidget' => '\Awyiss\Widget\BreadcrumbsWidget',
 			'InstagramFeedWidget' => '\Awyiss\Widget\InstagramFeedWidget',
 			'RoutePlannerWidget' => '\Awyiss\Widget\RoutePlannerWidget',
+			'SocialMediaEmbedWidget' => '\Awyiss\Widget\SocialMediaEmbedWidget',
 			'WidgetInterface' => '\Awyiss\Widget\WidgetInterface',
 			'WidgetsProvider' => '\Awyiss\Widget\WidgetsProvider',
 		], $result);
@@ -142,6 +144,7 @@ class AppTest extends TestCase {
 			'BreadcrumbsWidget' => '\Awyiss\Widget\BreadcrumbsWidget',
 			'InstagramFeedWidget' => '\Awyiss\Widget\InstagramFeedWidget',
 			'RoutePlannerWidget' => '\Awyiss\Widget\RoutePlannerWidget',
+			'SocialMediaEmbedWidget' => '\Awyiss\Widget\SocialMediaEmbedWidget',
 		], $result);
 	}
 
