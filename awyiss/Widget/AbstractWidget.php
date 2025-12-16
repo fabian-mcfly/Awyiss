@@ -79,7 +79,7 @@ abstract class AbstractWidget implements WidgetInterface {
 	public static function render(
 		array $settings,
 		FrontendView $view,
-		?MediaRenderOptions $mediaRenderOptions,
+		?MediaRenderOptions $mediaRenderOptions = null,
 		?Entity $entity = null,
 		?Language $frontendLanguage = null
 	): string {

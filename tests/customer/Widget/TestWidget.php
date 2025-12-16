@@ -44,7 +44,7 @@ class TestWidget implements WidgetInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public static function render(array $settings, FrontendView $view, ?MediaRenderOptions $mediaRenderOptions, ?Entity $entity = null, ?Language $frontendLanguage = null): string {
+	public static function render(array $settings, FrontendView $view, ?MediaRenderOptions $mediaRenderOptions = null, ?Entity $entity = null, ?Language $frontendLanguage = null): string {
 		return sprintf('Rendered Output (and key is `%s`)', $settings['key'] ?? 'false');
 	}
 }

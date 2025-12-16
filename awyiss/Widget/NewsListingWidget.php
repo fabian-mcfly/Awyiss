@@ -126,7 +126,7 @@ class NewsListingWidget extends AbstractWidget {
 	/**
 	 * @inheritDoc
 	 */
-	public static function render(array $settings, FrontendView $view, ?MediaRenderOptions $mediaRenderOptions, ?Entity $entity = null, ?Language $frontendLanguage = null): string {
+	public static function render(array $settings, FrontendView $view, ?MediaRenderOptions $mediaRenderOptions = null, ?Entity $entity = null, ?Language $frontendLanguage = null): string {
 		$paginate = isset($settings['paginate']) && $settings['paginate'] === true;
 		$itemsLimit = $settings['items'] ?? 3;
 		$itemsPerPage = $settings['itemsPerPage'] ?? 9;
