@@ -26,6 +26,12 @@ export default class SocialMediaEmbed {
 	 */
 	loadedScripts = new Set();
 	/**
+	 * MutationObserver instance for watching new widgets
+	 *
+	 * @type {MutationObserver|null}
+	 */
+	observer = null;
+	/**
 	 * CSS selector for widgets
 	 * @type {string}
 	 */
@@ -35,7 +41,6 @@ export default class SocialMediaEmbed {
 	 * @type {string}
 	 */
 	storageKey = 'social_media_embed_consents';
-
 	/**
 	 * Service configurations for script loading
 	 * @type {Object}
@@ -45,13 +50,22 @@ export default class SocialMediaEmbed {
 	};
 
 	/**
-	 * Constructor - initializes all consent containers on the page
+	 * Constructor - initializes all consent containers on the page and watches for new ones
 	 */
 	constructor() {
 		const widgets = document.querySelectorAll(this.selector);
 		widgets.forEach((widget) => {
 			this.initWidget(widget);
 		});
+
+		// Create a new MutationObserver instance and set its callback
+		this.observer = new MutationObserver((mutationsList, observer) => {
+			for (let mutation of mutationsList) {
+				this.observeMutations(mutation);
+			}
+		});
+
+		this.observer.observe(document.body, {childList: true, subtree: true});
 	}
 
 	/**
@@ -194,10 +208,34 @@ export default class SocialMediaEmbed {
 
 		document.body.appendChild(script);
 	}
+
+	/**
+	 * Handle mutations from MutationObserver
+	 * @param {MutationRecord} mutation
+	 */
+	observeMutations(mutation) {
+		if (mutation.addedNodes.length === 0) {
+			return;
+		}
+
+		mutation.addedNodes.forEach((node) => {
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				return;
+			}
+
+			if (node.matches(this.selector)) {
+				this.initWidget(node);
+			}
+
+			const widgets = node.querySelectorAll(this.selector);
+			widgets.forEach((widget) => {
+				this.initWidget(widget);
+			});
+		});
+	}
 }
 
 // Automatically initialize the Social Media Embed if the window object is available
 if (typeof window !== 'undefined' && !window.socialMediaEmbed) {
 	window.socialMediaEmbed = new SocialMediaEmbed();
 }
-
