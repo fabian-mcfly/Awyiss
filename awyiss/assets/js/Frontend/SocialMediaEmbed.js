@@ -234,8 +234,3 @@ export default class SocialMediaEmbed {
 		});
 	}
 }
-
-// Automatically initialize the Social Media Embed if the window object is available
-if (typeof window !== 'undefined' && !window.socialMediaEmbed) {
-	window.socialMediaEmbed = new SocialMediaEmbed();
-}

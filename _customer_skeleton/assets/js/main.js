@@ -61,18 +61,6 @@ window.lightbox = new Lightbox({
 });
 
 
-try {
-	const Survey = (await import('Survey')).default;
-
-	/**
-	 * Set up the survey functionality
-	 */
-	window.survey = new Survey()
-} catch (e) {
-	// Module not found or failed to load; handle gracefully
-}
-
-
 /**
  * Awyiss!
  */

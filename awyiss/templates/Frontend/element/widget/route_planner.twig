@@ -24,7 +24,8 @@
 			},
 		}) %}
 		{% do AssetHelper.add(['Frontend/route_planner.css'], {realm: 'Backend'}) %}
-		{% do AssetHelper.add(['Frontend/RoutePlanner.js'], {realm: 'Backend', type: 'module'}, true) %}
+		{% do AssetHelper.addJsModule({'Frontend/RoutePlanner.js': {realm: 'Backend'}}) %}
+		{% do AssetHelper.add(['Frontend/route_planner_loader.js'], {realm: 'Backend', type: 'module'}, true) %}
 	{% endblock %}
 
 	<div class="Widget-RoutePlanner Lazyload">

@@ -839,8 +839,3 @@ export default class RoutePlanner {
 		return result.trim();
 	}
 }
-
-// Automatically initialize the RoutePlanner if the window object is available
-if (typeof window !== 'undefined' && !window.routePlanner) {
-	window.routePlanner = new RoutePlanner();
-}

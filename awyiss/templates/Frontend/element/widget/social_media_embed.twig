@@ -12,7 +12,8 @@
 {% block widgetSocialMediaEmbed %}
 	{% block socialMediaEmbedScripts %}
 		{% do AssetHelper.add(['Frontend/social_media_embed.css'], {realm: 'Backend'}) %}
-		{% do AssetHelper.add(['Frontend/SocialMediaEmbed.js'], {realm: 'Backend', type: 'module'}, true) %}
+		{% do AssetHelper.addJsModule({'Frontend/SocialMediaEmbed.js': {realm: 'Backend'}}) %}
+		{% do AssetHelper.add(['Frontend/social_media_embed_loader.js'], {realm: 'Backend', type: 'module'}, true) %}
 	{% endblock %}
 
 	{% block socialMediaEmbedWrapper %}

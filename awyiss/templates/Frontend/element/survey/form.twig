@@ -23,10 +23,8 @@
 #}
 
 {% block surveyScript %}
-	{% do AssetHelper.addJsModule({'Frontend/Survey.js': {
-		as: 'Survey',
-		realm: 'Backend'
-	}}) %}
+	{% do AssetHelper.addJsModule({'Frontend/Survey.js': {realm: 'Backend'}}) %}
+	{% do AssetHelper.add(['Frontend/survey_loader.js'], {realm: 'Backend', type: 'module'}, true) %}
 {% endblock %}
 
 {% block survey %}
