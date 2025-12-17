@@ -20,8 +20,8 @@ without the need to reinvent the wheel for common CMS tasks.
 - **Advanced Content Management**:\
 Intuitive interface for managing pages and contents
 with a focus on flexibility and reusability
-- **Modules-Architecture**:\
-Easily extendable with custom modules
+- **Widgets-Architecture**:\
+Easily extendable with custom widgets
 - **User Management**:\
 Comprehensive user and permission management
 - **Multilingual Support**:\
