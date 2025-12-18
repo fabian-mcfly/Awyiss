@@ -103,10 +103,10 @@ class AwyissExtensionTest extends TestCase {
 		$filters = $this->extension->getFilters();
 
 		$this->assertIsArray($filters);
-		$this->assertCount(6, $filters);
+		$this->assertCount(7, $filters);
 
 		$filterNames = array_map(fn (TwigFilter $filter) => $filter->getName(), $filters);
-		$expectedNames = ['inline_css', 'data_attr', 'json_decode', 'prefixNumericClass', 'repeat', 'ucparts'];
+		$expectedNames = ['inlineCss', 'dataAttr', 'jsonEncode', 'jsonDecode', 'prefixNumericClass', 'repeat', 'ucparts'];
 
 		$this->assertEquals($expectedNames, $filterNames);
 	}
@@ -222,9 +222,23 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testJsonEncodeFilter(): void {
+		$filters = $this->extension->getFilters();
+		$jsonEncodeFilter = $filters[2];
+		$callable = $jsonEncodeFilter->getCallable();
+
+		$result = $callable(['key' => 'value']);
+
+		$this->assertEquals('{"key":"value"}', $result);
+	}
+
+
+	/**
+	 * @return void
+	 */
 	public function testJsonDecodeFilter(): void {
 		$filters = $this->extension->getFilters();
-		$jsonDecodeFilter = $filters[2];
+		$jsonDecodeFilter = $filters[3];
 		$callable = $jsonDecodeFilter->getCallable();
 
 		$result = $callable('{"key": "value"}');
@@ -238,7 +252,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testPrefixNumericClassFilter(): void {
 		$filters = $this->extension->getFilters();
-		$prefixFilter = $filters[3];
+		$prefixFilter = $filters[4];
 		$callable = $prefixFilter->getCallable();
 
 		$result = $callable('123test');
@@ -256,7 +270,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testRepeatFilter(): void {
 		$filters = $this->extension->getFilters();
-		$repeatFilter = $filters[4];
+		$repeatFilter = $filters[5];
 		$callable = $repeatFilter->getCallable();
 
 		$result = $callable('hello', 3);
@@ -270,7 +284,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testUcpartsFilterr(): void {
 		$filters = $this->extension->getFilters();
-		$ucpartsFilter = $filters[5];
+		$ucpartsFilter = $filters[6];
 		$callable = $ucpartsFilter->getCallable();
 
 		$result = $callable('hello_world');

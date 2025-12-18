@@ -17,16 +17,16 @@
 #}
 {% block scriptBaseVars %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
-		const Awyiss = {{ Awyiss|json_encode|raw }};
+		const Awyiss = {{ Awyiss|jsonEncode|raw }};
 		const baseUrl = '{{ baseUrl }}';
-		const designVariables = {{ designVariables|json_encode|raw }};
+		const designVariables = {{ designVariables|jsonEncode|raw }};
 		const editor = '{{ config.Awyiss.System.Backend.interface.editor }}';
 		const folder = '{{ folder }}';
 		const currentPath = '{{ currentPath }}';
 		const currentUrl = '{{ currentUrl }}';
-		const language = {{ currentLanguage|json_encode|raw }};
+		const language = {{ currentLanguage|jsonEncode|raw }};
 		const languageShortcode = '{{ languageShortcode }}';
-		const userLanguage = {{ userLanguage|json_encode|raw }};
+		const userLanguage = {{ userLanguage|jsonEncode|raw }};
 		window.exports = window.exports || {};
 	</script>
 {% endblock %}

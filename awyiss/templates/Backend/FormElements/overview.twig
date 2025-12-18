@@ -131,8 +131,8 @@
 
 {% block scriptColumnSystemVars %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
-		const columnWidths = {{ columnWidths|values|json_encode|raw }};
-		const columnIndents = {{ columnIndents|values|json_encode|raw }};
+		const columnWidths = {{ columnWidths|values|jsonEncode|raw }};
+		const columnIndents = {{ columnIndents|values|jsonEncode|raw }};
 		const columnSystemName = '{{ columnSystemName }}';
 	</script>
 {% endblock %}

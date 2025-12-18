@@ -56,7 +56,7 @@
 						templateVars: {
 							additionalContent: accessHelperFormControl
 						},
-						val: dashboardElement.access ? dashboardElement.access|json_encode : '',
+						val: dashboardElement.access ? dashboardElement.access|jsonEncode : '',
 						'data-access-helper': 'true',
 						'data-access-helper-button-text': __('access_helper_button_text'),
 					}) }}

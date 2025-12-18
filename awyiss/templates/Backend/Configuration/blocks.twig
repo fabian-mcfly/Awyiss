@@ -51,7 +51,7 @@
 		{% set value = configuration.hasValue('value') ? configuration.get('value') : configuration.configOption.defaultValue %}
 
 		{% if value is not empty and value is not array %}
-			{% set decodedValue = value|json_decode %}
+			{% set decodedValue = value|jsonDecode %}
 			{% if decodedValue is not null %}
 				{% set value = decodedValue %}
 			{% else %}
@@ -82,7 +82,7 @@
 {% endblock %}
 
 {% block formControlTypeJson %}
-	{{ FormHelper.control('value', {placeholder: configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
+	{{ FormHelper.control('value', {placeholder: configuration.configOption.defaultValue|jsonEncode, type: 'textarea'}) }}
 {% endblock %}
 
 {% block formControlTypeString %}
@@ -92,7 +92,7 @@
 {% block formControlTypeValueCollection %}
 	<div class="FormInput FormInputType-ValueCollection FormInputName-Value">
 		<label class="Label">{{ __('value') }}</label>
-		{% set currentValue = configuration.hasValue('value') ? configuration.get('value')|json_decode :
+		{% set currentValue = configuration.hasValue('value') ? configuration.get('value')|jsonDecode :
 			(configuration.isNew() ? configuration.configOption.defaultValue : []) %}
 		{% set currentValue = (currentValue ?? [])|map(value => value|underscore) %}
 		<input type="hidden" name="value" value="">

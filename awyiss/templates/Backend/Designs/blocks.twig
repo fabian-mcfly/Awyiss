@@ -140,7 +140,7 @@
 				empty: false,
 				options: combine(options.units|keys, options.units|keys),
 				val: design.settings[ variable ~ 'Unit' ] ?? options.unit,
-				'data-units': options.units|json_encode,
+				'data-units': options.units|jsonEncode,
 			}) }}
 		{% endif %}
 	{% endset %}

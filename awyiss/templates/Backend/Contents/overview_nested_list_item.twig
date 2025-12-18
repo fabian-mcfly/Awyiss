@@ -53,7 +53,7 @@
 		{%- if contentTemplate.contentTemplateElements.column_width is not defined %}
 			data-resizable="false"
 		{%- endif %}
-		data-content-area-ids="{{ contentTemplate.contentAreaIds|json_encode }}"
+		data-content-area-ids="{{ contentTemplate.contentAreaIds|jsonEncode }}"
 		data-column-width-class="{{ entity.column.width.cssClass }}"
 		data-max-column-width="{{ 1 - entity.column.indent.percentage }}"
 		>

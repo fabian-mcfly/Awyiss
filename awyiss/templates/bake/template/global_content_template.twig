@@ -24,7 +24,7 @@
 
 #}{% endverbatim %}
 
-<div class="{% verbatim %}{{ globalContent.cssClass }}{% endverbatim %}"{% verbatim %} {{ globalContent.data|data_attr|raw }}{% endverbatim %} id="GlobalContent{% verbatim %}{{ globalContent.id }}{% endverbatim %}">
+<div class="{% verbatim %}{{ globalContent.cssClass }}{% endverbatim %}"{% verbatim %} {{ globalContent.data|dataAttr|raw }}{% endverbatim %} id="GlobalContent{% verbatim %}{{ globalContent.id }}{% endverbatim %}">
 	{% verbatim %}{% if globalContent.title %}
 		{% set tag = globalContent.titleTag ?? 'div' %}
 		<{{ tag }} class="Title" id="{{ globalContent.title|ucparts(false) }}">

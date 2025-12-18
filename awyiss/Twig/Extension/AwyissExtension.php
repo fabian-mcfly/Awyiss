@@ -36,11 +36,15 @@ class AwyissExtension extends AbstractExtension {
 	 */
 	public function getFilters(): array {
 		return [
-			new TwigFilter('inline_css', $this->inlineCss(...), ['is_safe' => ['all']]),
+			new TwigFilter('inlineCss', $this->inlineCss(...), ['is_safe' => ['all']]),
 
-			new TwigFilter('data_attr', $this->htmlDataAttributes(...)),
+			new TwigFilter('dataAttr', $this->htmlDataAttributes(...)),
 
-			new TwigFilter('json_decode', function (string $json): ?array {
+			new TwigFilter('jsonEncode', function (array|object $data): string {
+				return json_encode($data);
+			}),
+
+			new TwigFilter('jsonDecode', function (string $json): ?array {
 				$return = json_decode($json, true);
 
 				// If the JSON is invalid, return null

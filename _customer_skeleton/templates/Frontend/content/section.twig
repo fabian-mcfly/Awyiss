@@ -30,7 +30,7 @@
 	{% set cssClass = cssClass ~ ' BackgroundImage Lazyload' %}
 {% endif %}
 
-<section class="{{ cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
+<section class="{{ cssClass }}" {{ content.data|dataAttr|raw }} id="Content{{ content.id }}">
 	{{ backgroundImage }}
 	{{ children|raw }}
 </section>

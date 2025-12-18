@@ -54,18 +54,18 @@
 {% block script %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
 		{% block scriptBaseVars %}
-			const Awyiss = {{ Awyiss|json_encode|raw }};
+			const Awyiss = {{ Awyiss|jsonEncode|raw }};
 			const baseUrl = '{{ baseUrl }}';
 			const folder = '{{ folder }}';
 			const currentPath = '{{ currentPath }}';
 			const currentUrl = '{{ currentUrl }}';
-			const language = {{ currentLanguage|json_encode|raw }};
+			const language = {{ currentLanguage|jsonEncode|raw }};
 			const languageShortcode = '{{ languageShortcode }}';
 			{% if frontendEditorConfig %}
-				const frontendEditorConfig = {{ frontendEditorConfig|json_encode|raw }};
+				const frontendEditorConfig = {{ frontendEditorConfig|jsonEncode|raw }};
 			{% endif %}
 			{% if frontendPreviewConfig %}
-				const frontendPreviewConfig = {{ frontendPreviewConfig|json_encode|raw }};
+				const frontendPreviewConfig = {{ frontendPreviewConfig|jsonEncode|raw }};
 			{% endif %}
 		{% endblock %}
 

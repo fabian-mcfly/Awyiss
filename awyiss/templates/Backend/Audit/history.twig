@@ -103,7 +103,7 @@
 					{% endif %}
 
 					{% if revertable %}
-						<input type="text" value="{{ oldValue is array ? oldValue|json_encode : oldValue }}" name="media_assignments[{{ mediaElement.id }}][{{ mediaSelector.identifier }}][media_id]">
+						<input type="text" value="{{ oldValue is array ? oldValue|jsonEncode : oldValue }}" name="media_assignments[{{ mediaElement.id }}][{{ mediaSelector.identifier }}][media_id]">
 
 						{% if changed and settings.isAjax %}
 							<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
@@ -208,7 +208,7 @@
 		{%- elseif columnType == 'time' %}
 			{{- oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], timeFormat) : '' }}
 		{%- elseif columnType == 'json' %}
-			{{- oldData[ field ] is not empty ? oldData[ field ]|json_encode : '' }}
+			{{- oldData[ field ] is not empty ? oldData[ field ]|jsonEncode : '' }}
 		{%- elseif columnType == 'string' and field == 'languageShortcode' %}
 			{{- oldData[ field ] ? languages.Frontend[ oldData[ field ] ].title : '' }}
 		{%- elseif field == 'columnWidth' %}
@@ -241,7 +241,7 @@
 		{%- elseif columnType == 'time' %}
 			{{- entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), timeFormat) : '' }}
 		{%- elseif columnType == 'json' %}
-			{{- entity.get(field) is not empty ? entity.get(field)|json_encode : '' }}
+			{{- entity.get(field) is not empty ? entity.get(field)|jsonEncode : '' }}
 		{%- elseif field == 'columnWidth' %}
 			{{- entity.column.width.label }}
 		{%- elseif field == 'columnIndent' %}

@@ -69,7 +69,7 @@
 						templateVars: {
 							additionalContent: helperFormControl
 						},
-						val: backendMenuEntry.access ? backendMenuEntry.access|json_encode : '',
+						val: backendMenuEntry.access ? backendMenuEntry.access|jsonEncode : '',
 						'data-access-helper': 'true',
 						'data-access-helper-button-text': __('access_helper_button_text'),
 					}) }}

@@ -27,7 +27,7 @@
 	{% set cssClass = cssClass ~ ' BackgroundColor BackgroundColor-' ~ content.backgroundColor|ucparts(false) %}
 {% endif %}
 
-<div class="{{ cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
+<div class="{{ cssClass }}" {{ content.data|dataAttr|raw }} id="Content{{ content.id }}">
 	ColumnWidth of the content 12: {{ mediaRenderOptions.getColumnWidth() }}
 
 	{{ MediaHelper.element('standard', content.mediaAssignments, mediaRenderOptions, {link: content.link}) }}

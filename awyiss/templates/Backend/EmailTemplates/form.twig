@@ -203,6 +203,6 @@
 
 {% block scriptPlaceholderVars %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
-		window.availablePlaceholders = {{ availablePlaceholders|json_encode|raw }};
+		window.availablePlaceholders = {{ availablePlaceholders|jsonEncode|raw }};
 	</script>
 {% endblock %}

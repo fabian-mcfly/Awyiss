@@ -24,7 +24,7 @@
 
 #}
 
-<div class="{{ content.cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
+<div class="{{ content.cssClass }}" {{ content.data|dataAttr|raw }} id="Content{{ content.id }}">
 	{% if content.title %}
 		{% set tag = content.titleTag ?? 'div' %}
 		<{{ tag }} class="Title" id="{{ content.title|ucparts(false) }}">

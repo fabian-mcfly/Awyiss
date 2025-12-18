@@ -320,6 +320,6 @@
 
 {% block scriptAssignableModelVars %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
-		const assignableModelEntities = {{ entities|json_encode|raw }};
+		const assignableModelEntities = {{ entities|jsonEncode|raw }};
 	</script>
 {% endblock %}

@@ -30,4 +30,4 @@
 	{%- set cssClass = cssClass ~ ' BackgroundColor BackgroundColor-' ~ content.backgroundColor|ucparts(false) %}
 {%- endif -%}
 
-<div class="{{ cssClass }}" {{ content.data|data_attr|raw }}id="Content{{ content.id }}">CustomTemplate</div>
+<div class="{{ cssClass }}" {{ content.data|dataAttr|raw }}id="Content{{ content.id }}">CustomTemplate</div>

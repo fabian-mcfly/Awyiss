@@ -23,7 +23,7 @@
 {%- do _view.setRowClass('FlexRow') -%}
 #}
 
-<div class="{{ globalContent.cssClass }}" {{ globalContent.data|data_attr|raw }} id="GlobalContent{{ globalContent.id }}">
+<div class="{{ globalContent.cssClass }}" {{ globalContent.data|dataAttr|raw }} id="GlobalContent{{ globalContent.id }}">
 	{{ MediaHelper.element('standard', globalContent.mediaAssignments, mediaRenderOptions, {link: globalContent.link}) }}
 
 	{% if globalContent.title %}

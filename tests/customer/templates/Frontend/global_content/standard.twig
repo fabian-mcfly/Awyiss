@@ -24,7 +24,7 @@
 
 #}
 
-<div class="{{ globalContent.cssClass }}" {{ globalContent.data|data_attr|raw }} id="GlobalContent{{ globalContent.id }}">
+<div class="{{ globalContent.cssClass }}" {{ globalContent.data|dataAttr|raw }} id="GlobalContent{{ globalContent.id }}">
 	{% if globalContent.title %}
 		{% set tag = globalContent.titleTag ?? 'div' %}
 		<{{ tag }} class="Title" id="{{ globalContent.title|ucparts(false) }}">
