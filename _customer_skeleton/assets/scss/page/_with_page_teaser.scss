@@ -1,0 +1,41 @@
+html.PageTemplate-WithPageTeaser {
+	.PageTeasers {
+		padding-top:100px;
+
+		> .ContentRow {
+			display:grid;
+			gap:20px;
+			grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+		}
+	}
+
+	.PageTeaser {
+		aspect-ratio:2;
+		padding:20px;
+		border-radius:5px;
+		background-color:var(--colorMain);
+		color:var(--colorBright);
+		text-align:right;
+		align-content:end;
+		position:relative;
+		transition:background-color .3s ease-in-out;
+
+		&:has(> .Link:is(:hover, :focus-visible)) {
+			background-color:var(--colorContrast);
+		}
+
+		> .Title {
+			&:nth-last-child(2) {
+				margin-bottom:0;
+			}
+		}
+
+		> .Link {
+			font-size:0;
+			line-height:0;
+			position:absolute;
+			inset:0;
+			z-index:2;
+		}
+	}
+}

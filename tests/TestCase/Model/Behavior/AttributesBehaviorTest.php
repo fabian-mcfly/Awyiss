@@ -1228,7 +1228,7 @@ class AttributesBehaviorTest extends TestCase {
 		$news1 = $this->table->newDefaultEntity([
 			'title' => 'News 1',
 			'slug' => 'news_1',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 34,
 			'languageShortcode' => 'de',
 			'date' => new DateTime('-1 year'),
@@ -1238,7 +1238,7 @@ class AttributesBehaviorTest extends TestCase {
 		$news2 = $this->table->newDefaultEntity([
 			'title' => 'News 2',
 			'slug' => 'news_2',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 34,
 			'languageShortcode' => 'de',
 			'date' => new DateTime('+2 days'),
@@ -1248,7 +1248,7 @@ class AttributesBehaviorTest extends TestCase {
 		$news3 = $this->table->newDefaultEntity([
 			'title' => 'News 3',
 			'slug' => 'news_3',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 34,
 			'languageShortcode' => 'de',
 			'date' => new DateTime('+1 year'),
@@ -1258,7 +1258,7 @@ class AttributesBehaviorTest extends TestCase {
 		$news4 = $this->table->newDefaultEntity([
 			'title' => 'News 4',
 			'slug' => 'news_4',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 34,
 			'languageShortcode' => 'de',
 			'date' => new DateTime('-2 years'),
@@ -1290,7 +1290,7 @@ class AttributesBehaviorTest extends TestCase {
 		$news1 = $this->table->newDefaultEntity([
 			'title' => 'News 1',
 			'slug' => 'news_1',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 34,
 			'languageShortcode' => 'de',
 			'date' => new DateTime('-1 year'),
@@ -1300,7 +1300,7 @@ class AttributesBehaviorTest extends TestCase {
 		$news2 = $this->table->newDefaultEntity([
 			'title' => 'News 2',
 			'slug' => 'news_2',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 34,
 			'languageShortcode' => 'de',
 			'date' => new DateTime('+2 days'),
@@ -1310,7 +1310,7 @@ class AttributesBehaviorTest extends TestCase {
 		$news3 = $this->table->newDefaultEntity([
 			'title' => 'News 3',
 			'slug' => 'news_3',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 34,
 			'languageShortcode' => 'de',
 			'date' => new DateTime('+1 year'),
@@ -1320,7 +1320,7 @@ class AttributesBehaviorTest extends TestCase {
 		$news4 = $this->table->newDefaultEntity([
 			'title' => 'News 4',
 			'slug' => 'news_4',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 34,
 			'languageShortcode' => 'de',
 			'date' => new DateTime('-2 years'),

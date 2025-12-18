@@ -14,7 +14,7 @@ class PageTemplatesCustomSeed extends AbstractSeed {
 	public function run(): void {
 		$data = [
 			[
-				'id' => 2,
+				'id' => 3,
 				'page_role_id' => 3,
 				'title' => 'Standard',
 				'file_name' => 'news',

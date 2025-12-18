@@ -575,7 +575,7 @@ class PagesTableTest extends TestCase {
 		$this->assertTrue($result);
 
 		$entity->pageRoleId = PageRole::News;
-		$entity->pageTemplateId = 2;
+		$entity->pageTemplateId = 3;
 
 		$result = $this->pagesTable->checkRules($entity);
 
@@ -1203,6 +1203,7 @@ class PagesTableTest extends TestCase {
 
 		$this->assertSame([
 			1 => 'Standard',
+			2 => 'Mit Seitenteaser',
 			4 => 'Unused',
 		], $result);
 	}
@@ -1220,7 +1221,7 @@ class PagesTableTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertSame([
-			2 => 'Standard',
+			3 => 'Standard',
 		], $result);
 	}
 

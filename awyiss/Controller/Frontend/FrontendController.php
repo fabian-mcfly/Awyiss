@@ -75,6 +75,32 @@ class FrontendController extends AppController {
 
 
 	/**
+	 * This method is called when a page with the page role "page" is requested
+	 * and after the page has been found and checked for its status.
+	 *
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @return void
+	 */
+	public function page(Page $page): void {
+		DebugTimer::start('FrontendController::page');
+
+		if ($page->pageTemplateId === 2) {
+			$pagesTable = $this->fetchTable('Pages');
+			$children = $pagesTable->find($this->previewMode ? 'all' : 'active')
+				->find(!$this->previewMode ? 'published' : 'all')
+				->find('mediaAssignments', useMediaEntity: true)
+				->where(['parent_id' => $page->id])
+				->all()
+				->toArray();
+
+			$this->set('childPages', $children);
+		}
+
+		DebugTimer::stop('FrontendController::page');
+	}
+
+
+	/**
 	 * This method is called when a page with the page role "news" is requested
 	 * and after the page has been found and checked for its status.
 	 *

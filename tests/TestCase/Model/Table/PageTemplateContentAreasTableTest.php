@@ -264,7 +264,7 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	 */
 	public function testNewDefaultEntityWithData(): void {
 		$additionalData = [
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'contentAreaId' => 3,
 			'systemOrder' => 5,
 		];
@@ -274,7 +274,7 @@ class PageTemplateContentAreasTableTest extends TestCase {
 		$this->assertInstanceOf(PageTemplateContentArea::class, $entity);
 		$this->assertTrue($entity->isNew());
 
-		$this->assertSame(2, $entity->pageTemplateId);
+		$this->assertSame(3, $entity->pageTemplateId);
 		$this->assertSame(3, $entity->contentAreaId);
 		$this->assertSame(5, $entity->systemOrder);
 	}

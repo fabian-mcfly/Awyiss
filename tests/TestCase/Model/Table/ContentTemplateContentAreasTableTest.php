@@ -386,7 +386,7 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 		$invalidData = [
 			'contentTemplateId' => 1,
 			'contentAreaId' => 2, // This combination doesn't exist in the seed data
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 		];
 
 		$invalidEntity = $this->contentTemplateContentAreasTable->newEntity($invalidData);

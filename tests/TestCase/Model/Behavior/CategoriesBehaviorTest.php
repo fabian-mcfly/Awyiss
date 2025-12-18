@@ -1223,7 +1223,7 @@ class CategoriesBehaviorTest extends TestCase {
 		$entity = $this->table->newDefaultEntity([
 			'title' => 'Test News',
 			'languageShortcode' => 'de',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 36,
 		]);
 
@@ -1248,7 +1248,7 @@ class CategoriesBehaviorTest extends TestCase {
 		$entity = $this->table->newDefaultEntity([
 			'title' => 'Test News',
 			'languageShortcode' => 'de',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'slug' => 'healthcare',
 		]);
 
@@ -1266,7 +1266,7 @@ class CategoriesBehaviorTest extends TestCase {
 		$entity = $this->table->newDefaultEntity([
 			'title' => 'Test News',
 			'languageShortcode' => 'de',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 		]);
 
 		$result = $this->table->checkRules($entity);
@@ -1287,7 +1287,7 @@ class CategoriesBehaviorTest extends TestCase {
 		$entity = $this->table->newDefaultEntity([
 			'title' => 'Test News',
 			'languageShortcode' => 'de',
-			'pageTemplateId' => 2,
+			'pageTemplateId' => 3,
 			'parentId' => 999, // Invalid category ID
 		]);
 
