@@ -49,39 +49,5 @@ class DashboardElementsSeed extends AbstractSeed {
 
 		$table = $this->table('dashboard_elements');
 		$table->insert($data)->save();
-
-		$data = [
-			[
-				'locale' => 'de',
-				'model' => 'dashboard_elements',
-				'foreign_key' => 1,
-				'field' => 'title',
-				'content' => 'Neue Formulareinträge',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'dashboard_elements',
-				'foreign_key' => 1,
-				'field' => 'title',
-				'content' => 'New Form Entries',
-			],
-			[
-				'locale' => 'de',
-				'model' => 'dashboard_elements',
-				'foreign_key' => 2,
-				'field' => 'title',
-				'content' => 'Neue 404 Fehler',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'dashboard_elements',
-				'foreign_key' => 2,
-				'field' => 'title',
-				'content' => 'New 404 Errors',
-			],
-		];
-
-		$table = $this->table('i18n');
-		$table->insert($data)->save();
 	}
 }

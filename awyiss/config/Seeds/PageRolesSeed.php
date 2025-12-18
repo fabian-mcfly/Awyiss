@@ -32,25 +32,5 @@ class PageRolesSeed extends AbstractSeed {
 
 		$table = $this->table('page_roles');
 		$table->insert($data)->save();
-
-		$data = [
-			[
-				'locale' => 'de',
-				'model' => 'page_roles',
-				'foreign_key' => 1,
-				'field' => 'title',
-				'content' => 'Seite',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'page_roles',
-				'foreign_key' => 1,
-				'field' => 'title',
-				'content' => 'Page',
-			],
-		];
-
-		$table = $this->table('i18n');
-		$table->insert($data)->save();
 	}
 }

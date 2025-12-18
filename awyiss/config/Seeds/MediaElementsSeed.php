@@ -95,53 +95,5 @@ class MediaElementsSeed extends AbstractSeed {
 
 		$table = $this->table('media_elements');
 		$table->insert($data)->save();
-
-		$data = [
-			[
-				'locale' => 'de',
-				'model' => 'media_elements',
-				'foreign_key' => 2,
-				'field' => 'title',
-				'content' => 'Standard',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'media_elements',
-				'foreign_key' => 2,
-				'field' => 'title',
-				'content' => 'Standard',
-			],
-			[
-				'locale' => 'de',
-				'model' => 'media_elements',
-				'foreign_key' => 3,
-				'field' => 'title',
-				'content' => 'Titel- & Teaserbild',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'media_elements',
-				'foreign_key' => 3,
-				'field' => 'title',
-				'content' => 'Title- & Teaser image',
-			],
-			[
-				'locale' => 'de',
-				'model' => 'media_elements',
-				'foreign_key' => 4,
-				'field' => 'title',
-				'content' => 'Galerie',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'media_elements',
-				'foreign_key' => 4,
-				'field' => 'title',
-				'content' => 'Gallery',
-			],
-		];
-
-		$table = $this->table('i18n');
-		$table->insert($data)->save();
 	}
 }

@@ -47,25 +47,5 @@ class PageTemplatesSeed extends AbstractSeed {
 
 		$table = $this->table('page_templates');
 		$table->insert($data)->save();
-
-		$data = [
-			[
-				'locale' => 'de',
-				'model' => 'page_templates',
-				'foreign_key' => 1,
-				'field' => 'title',
-				'content' => 'Standard',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'page_templates',
-				'foreign_key' => 1,
-				'field' => 'title',
-				'content' => 'Standard',
-			],
-		];
-
-		$table = $this->table('i18n');
-		$table->insert($data)->save();
 	}
 }

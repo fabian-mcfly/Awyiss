@@ -68,53 +68,5 @@ class LanguagesSeed extends AbstractSeed {
 
 		$table = $this->table('languages');
 		$table->insert($data)->save();
-
-		$data = [
-			[
-				'locale' => 'de',
-				'model' => 'languages',
-				'foreign_key' => 1,
-				'field' => 'title',
-				'content' => 'Deutsch',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'languages',
-				'foreign_key' => 1,
-				'field' => 'title',
-				'content' => 'German',
-			],
-			[
-				'locale' => 'de',
-				'model' => 'languages',
-				'foreign_key' => 2,
-				'field' => 'title',
-				'content' => 'Deutsch',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'languages',
-				'foreign_key' => 2,
-				'field' => 'title',
-				'content' => 'German',
-			],
-			[
-				'locale' => 'de',
-				'model' => 'languages',
-				'foreign_key' => 3,
-				'field' => 'title',
-				'content' => 'Englisch',
-			],
-			[
-				'locale' => 'en',
-				'model' => 'languages',
-				'foreign_key' => 3,
-				'field' => 'title',
-				'content' => 'English',
-			],
-		];
-
-		$table = $this->table('i18n');
-		$table->insert($data)->save();
 	}
 }
