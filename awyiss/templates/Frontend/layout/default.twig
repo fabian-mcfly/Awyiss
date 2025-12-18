@@ -23,8 +23,8 @@
 {%- if htmlClass == '' %}
 	{%- set htmlClass = 'Page-' ~ page.title|trim|slug|ucparts(false) %}
 	{%- set htmlClass = htmlClass ~ ' ' ~ page.slug|split('/')|map(e => e|ucparts(false))|map(e => e|prefixNumericClass)|join('-')|trim %}
-	{%- set htmlClass = htmlClass ~ ' PageRole-' ~ page.pageRoleId.name|ucparts %}
-	{%- set htmlClass = htmlClass ~ ' ' ~ page.pageRoleId.name|ucparts ~ 'Template-' ~ page.pageTemplate.fileName|ucparts %}
+	{%- set htmlClass = htmlClass ~ ' PageRole-' ~ page.pageRoleId.name|ucparts(false) %}
+	{%- set htmlClass = htmlClass ~ ' ' ~ page.pageRoleId.name|ucparts(false) ~ 'Template-' ~ page.pageTemplate.fileName|ucparts(false) %}
 	{%- if environment %}
 		{%- set htmlClass = htmlClass ~ ' ' ~ environment %}
 	{%- endif %}

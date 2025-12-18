@@ -89,7 +89,7 @@
 
 				{% block customAnswer %}
 					{% if question.allowCustomAnswer %}
-						<li class="SurveyAnswer SurveyAnswer-Custom" id="SurveyAnswer-Custom{{ question.identifier|ucparts }}">
+						<li class="SurveyAnswer SurveyAnswer-Custom" id="SurveyAnswer-Custom{{ question.identifier|ucparts(false) }}">
 							{% block customAnswerInput %}
 								<input type="radio" name="survey[{{ survey.identifier }}][{{ question.identifier }}]" value="custom" id="SurveyAnswer-InputCustom">
 							{% endblock %}

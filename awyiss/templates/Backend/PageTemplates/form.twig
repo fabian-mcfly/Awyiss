@@ -62,7 +62,7 @@
 						escape: false,
 						hiddenField: false,
 						label: contentArea.label ~ ' (<em>' ~ contentArea.identifier ~ '</em>)',
-						id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|camelize,
+						id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|ucparts(false),
 						value: contentArea.id,
 					}) }}
 				{% endblock %}
@@ -82,7 +82,7 @@
 												checked: contentArea.contentTemplates[ contentTemplate.id ] is defined,
 												escape: false,
 												hiddenField: false,
-												id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|camelize ~ '-ContentTemplate-' ~ contentTemplate.fileName|camelize,
+												id: 'PageTemplate-ContentArea-' ~ contentArea.identifier|ucparts(false) ~ '-ContentTemplate-' ~ contentTemplate.fileName|camelize,
 												label: contentTemplate.title,
 												type: 'checkbox',
 												value: contentTemplate.id,
