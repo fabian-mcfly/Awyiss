@@ -81,8 +81,6 @@ class FrontendController extends AppController {
 	 * It conveniently fetches the news category and the newer and older news items,
 	 * as well as the title media for the page.
 	 *
-	 * The method also sets the og:image meta tag for the page.
-	 *
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return void
 	 */
@@ -126,12 +124,6 @@ class FrontendController extends AppController {
 
 		if ($older) {
 			ResizedImageManager::addMediaItemsFromEntity($older);
-		}
-
-		/** @var \Awyiss\Model\Entity\Media $titleMedia */
-		$titleMedia = $page->mediaAssignments['titleAndTeaserImage']['titleMedia'] ?? null;
-		if ($titleMedia) {
-			$this->set('ogImage', Router::url('/', true) . ($titleMedia->isImage() ? $titleMedia->path : $titleMedia->previewPath));
 		}
 
 		$this->set([
