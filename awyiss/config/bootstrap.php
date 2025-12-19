@@ -85,8 +85,7 @@ if (defined('CUSTOM_DIR')) {
 	if (!defined('CUSTOM_NAMESPACE')) {
 		$parts = explode(DS, CUSTOM_DIR);
 		array_walk($parts, function (&$part) {
-			$part = Inflector::camelize($part, '-');
-			$part = Inflector::camelize($part);
+			$part = Inflector::ucparts($part, false);
 		});
 		define('CUSTOM_NAMESPACE', implode('/', $parts));
 	}
