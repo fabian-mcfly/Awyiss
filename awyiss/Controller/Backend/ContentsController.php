@@ -836,6 +836,11 @@ class ContentsController extends Controller {
 			}
 		}
 
+		if (!$pageId) {
+			$this->Flash->error(__d('pages', 'record_not_found'));
+			throw new RedirectException(Router::url(['controller' => 'dashboard', 'action' => 'overview'], true), 404);
+		}
+
 		try {
 			$page = $this->getPage($pageId);
 		}
