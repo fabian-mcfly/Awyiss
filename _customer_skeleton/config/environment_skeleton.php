@@ -15,6 +15,7 @@ return [
 			'log' => true,
 			//'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
 			'password' => '',
+			'port' => null,
 			'username' => '',
 		],
 	],

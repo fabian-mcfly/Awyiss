@@ -12,6 +12,7 @@ use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -92,9 +93,6 @@ class InstallCommand extends Command {
 		// Create the .env file
 		$this->createEnv();
 
-		// Update the base configuration file with the user inputs
-		$this->setBaseConfigFile();
-
 		// Update the environment configuration file with the user inputs
 		$this->setEnvironmentConfigFile();
 
@@ -108,6 +106,10 @@ class InstallCommand extends Command {
 
 			// Create the admin user with the provided username and password
 			$this->createAdminUser();
+		}
+		else {
+			$this->io->warning('Skipping database migration and admin user creation due to invalid database connection.');
+			$this->io->out('You need to create an admin user and run the migrations once the database connection is fixed manually.');
 		}
 
 		// Set up the demo attribute collection
@@ -199,12 +201,14 @@ class InstallCommand extends Command {
 		$this->customerName = $this->io->ask('Customer name?');
 		$this->validateCustomerName();
 
-		// Ask for the database username. If provided, also ask for the database password, name, and host.
-		$this->dbUsername = $this->io->ask('Database username?');
-		if ($this->dbUsername) {
+		// Ask for the database name. If provided, also ask for the database username, password, host, and port.
+		$this->dbName = $this->io->ask('Database name?');
+		if ($this->dbName) {
+			$this->dbType = $this->io->askChoice('Database type?', ['mysql', 'postgresql', 'sqlite'], 'mysql');
+			$this->dbUsername = $this->io->ask('Database username?');
 			$this->dbPassword = $this->io->ask('Database password?');
-			$this->dbName = $this->io->ask('Database name?', $this->dbUsername);
 			$this->dbHost = $this->io->ask('Database host?', 'localhost');
+			$this->dbPort = $this->io->ask('Database port?');
 		}
 
 		// Ask for the admin username. If provided, also ask for the admin password.
@@ -223,11 +227,21 @@ class InstallCommand extends Command {
 	 */
 	protected function copyDummyFolder(): void {
 		if ($this->dryRun) {
+			if (
+				file_exists(ROOT . DS . $this->customerName) ||
+				!is_writable(dirname(ROOT . DS . $this->customerName))
+			) {
+				$this->io->abort('Cannot copy skeleton folder. Target folder already exists or is not writable.');
+			}
+
+			$this->io->success('Skeleton folder can be copied.');
+
 			return;
 		}
 
 		try {
 			$this->filesystem->mirror(ROOT . DS . '_customer_skeleton', ROOT . DS . $this->customerName);
+			$this->io->success('Skeleton folder copied successfully.');
 		}
 		catch (IOExceptionInterface) {
 			$this->io->abort('Failed to move skeleton folder.');
@@ -237,7 +251,7 @@ class InstallCommand extends Command {
 
 	/**
 	 * Checks the database connection.
-	 * This method attempts to establish a connection to the database using the "default" connection configuration.
+	 * This method attempts to establish a connection to the database using the "custom" connection configuration.
 	 * It then executes a simple SQL statement to verify that the connection is working.
 	 * If the connection is successful, it sets the $connectionValid property to true and outputs a success message.
 	 * If the connection fails, it sets the $connectionValid property to false, outputs a warning message, and returns early.
@@ -246,20 +260,13 @@ class InstallCommand extends Command {
 	 * @throws \Cake\Database\Exception\MissingConnectionException if the connection fails.
 	 */
 	protected function checkConnection(): void {
-		if ($this->dryRun) {
-			$this->connectionValid = true;
-			$this->io->success('Connected to the database successfully.');
-
-			return;
-		}
-
 		try {
 			/**
-			 * Get the "default" connection
+			 * Get the "custom" connection
 			 *
 			 * @var \Cake\Database\Connection $connection
 			 */
-			$connection = ConnectionManager::get('default');
+			$connection = ConnectionManager::get('custom');
 
 			// Execute a simple SQL statement to check the connection
 			$connection->execute('SELECT 1');
@@ -267,7 +274,7 @@ class InstallCommand extends Command {
 
 			$this->io->success('Connected to the database successfully.');
 		}
-		catch (MissingConnectionException) {
+		catch (MissingConnectionException | MissingDatasourceConfigException) {
 			$this->connectionValid = false;
 			$this->io->warning('Failed to connect to the database. Please check your database credentials.');
 		}
@@ -283,21 +290,19 @@ class InstallCommand extends Command {
 	 */
 	protected function migrateDatabase(): void {
 		// Run the migrations
-		if (!$this->dryRun) {
-			$this->runCommand(['bin' . DS . 'cake', 'migrations', 'migrate', '-q', '--no-lock']);
+		if ($this->dryRun) {
+			$this->io->out('Skipping database migrations in dry run mode.');
+			return;
 		}
+
+		$this->runCommand(['bin' . DS . 'cake', 'migrations', 'migrate', '-q', '--no-lock']);
 		$this->io->success('Migrations completed.');
 
-		// Run the Queue plugin migrations
-		if (!$this->dryRun) {
-			$this->runCommand(['bin' . DS . 'cake', 'migrations', 'migrate', '-q', '-p', 'Queue']);
-		}
+		$this->runCommand(['bin' . DS . 'cake', 'migrations', 'migrate', '-q', '-p', 'Queue']);
 		$this->io->success('Queue migrations completed.');
 
 		// Seed the database
-		if (!$this->dryRun) {
-			$this->runCommand(['bin' . DS . 'cake', 'migrations', 'seed', '-q']);
-		}
+		$this->runCommand(['bin' . DS . 'cake', 'migrations', 'seed', '-q']);
 		$this->io->success('Seeding completed.');
 	}
 
@@ -309,6 +314,8 @@ class InstallCommand extends Command {
 	 */
 	protected function createAssetSymlinks(): ?bool {
 		if ($this->dryRun) {
+			$this->io->success('Skipping symlink creation in dry run mode.');
+
 			return null;
 		}
 
@@ -453,7 +460,7 @@ class InstallCommand extends Command {
 	 */
 	protected function removeGitkeepFiles(): void {
 		if ($this->dryRun) {
-			$this->io->success('.gitkeep files removed successfully.');
+			$this->io->success('Skipping .gitkeep removal in dry run mode.');
 
 			return;
 		}

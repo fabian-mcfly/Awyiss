@@ -290,10 +290,10 @@ return [
 	 *   You should treat it as extremely sensitive data.
 	 */
 	'Security' => [
-		'salt' => env('SECURITY_SALT', 'dummy-salt'),
+		'salt' => env('SECURITY_SALT', 'dummy_salt'),
 	],
 
 	'Session' => [
-		'cookie' => '',
+		'cookie' => env('SESSION_COOKIE_NAME', 'awyiss_session'),
 	],
 ];

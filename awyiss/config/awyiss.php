@@ -100,6 +100,7 @@ return [
 			'driver' => Mysql::class,
 			'flags' => [],
 			'host' => 'localhost',
+			'port' => null,
 			'log' => false,
 			'persistent' => false,
 			'quoteIdentifiers' => false,

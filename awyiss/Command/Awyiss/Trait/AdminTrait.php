@@ -73,7 +73,6 @@ trait AdminTrait {
 		if (!$this->adminUsername) {
 			$this->io->out('No admin username provided. Skipping admin user creation.');
 
-
 			return;
 		}
 

@@ -31,72 +31,28 @@ class InstallCommandTest extends TestCase {
 	 */
 	public function testInstallCommand(): void {
 		$this->exec('awyiss install --dry-run', [
-			'foobar',
+			'foo-bar',
+			'db_database',
+			'postgresql',
 			'db_username',
 			'db_password',
-			'db_database',
 			'db_host',
+			'',
 			'awyiss',
 			'',
-			'',
+			'dev',
 			'',
 		]);
 
 		$this->assertExitSuccess();
 
-		//<success>.env file created.</success>
-		$this->assertOutputContains('.env file created.');
-
-		//<success>Base config file set.</success>
-		$this->assertOutputContains('Base config file set.');
-
-		//<success>Environment config file set.</success>
-		$this->assertOutputContains('Environment config file set.');
-
-		//<success>Connected to the database successfully.</success>
-		$this->assertOutputContains('Connected to the database successfully.');
-
-		//<success>Migrations completed.</success>
-		$this->assertOutputContains('Migrations completed.');
-
-		//<success>Queue migrations completed.</success>
-		$this->assertOutputContains('Queue migrations completed.');
-
-		//<success>Seeding completed.</success>
-		$this->assertOutputContains('Seeding completed.');
-
-		//<success>Admin usergroup created successfully.</success>
-		$this->assertOutputContains('Admin usergroup created successfully.');
-
-		//<success>Admin user created successfully.</success>
-		$this->assertOutputContains('Admin user created successfully.');
-
-		//<info> The password for the admin user is: ...</info>
-		$this->assertOutputContains('The password for the admin user is:');
-
-		//<success>\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.</success>
-		$this->assertOutputContains('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.');
-
-		//<success>\Customer\View\Cell\Frontend\MenuCell file updated.</success>
-		$this->assertOutputContains('\Customer\View\Cell\Frontend\MenuCell file updated.');
-
-		//<success>ide-twig.json file updated.</success>
-		$this->assertOutputContains('ide-twig.json file updated.');
-
-		//<success>\Twig\Extension\CustomerExtension file updated and renamed.</success>
-		$this->assertOutputContains('\Twig\Extension\CustomerExtension file updated and renamed.');
-
-		//<success>.gitkeep files removed successfully.</success>
-		$this->assertOutputContains('.gitkeep files removed successfully.');
-
-		//<success>Skeleton folder removed successfully.</success>
-		$this->assertOutputContains('Skeleton folder removed successfully.');
-
-		//<success>Rich text editor set.</success>
-		$this->assertOutputContains('Rich text editor set.');
-
-		//<success>Installation completed.</success
-		$this->assertOutputContains('Installation completed.');
+		$this->assertOutputContains('<success>Skeleton folder can be copied.</success>');
+		$this->assertOutputContains('<success>.env file can be created.</success>');
+		$this->assertOutputContains('You need to create an admin user and run the migrations once the database connection is fixed manually.');
+		$this->assertOutputContains('<success>Skipping symlink creation in dry run mode.</success>');
+		$this->assertOutputContains('<success>Skipping .gitkeep removal in dry run mode.</success>');
+		$this->assertOutputContains('<success>Skeleton folder removed successfully.</success>');
+		$this->assertOutputContains('<success>Installation completed.</success>');
 	}
 
 
@@ -109,9 +65,11 @@ class InstallCommandTest extends TestCase {
 		$this->exec('awyiss install --dry-run', [
 			'awyiss',
 			'db_username',
+			'',
 			'db_password',
 			'db_database',
 			'db_host',
+			'',
 			'awyiss',
 			'',
 			'',

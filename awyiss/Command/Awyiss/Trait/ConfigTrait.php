@@ -8,6 +8,8 @@ use Awyiss\Awyiss;
 use Awyiss\Utility\Inflector;
 use Brick\VarExporter\VarExporter;
 use Cake\Database\Connection;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
 use Cake\Datasource\ConnectionManager;
 
 
@@ -36,6 +38,14 @@ trait ConfigTrait {
 	 */
 	protected string $dbHost;
 	/**
+	 * @var string The database port
+	 */
+	protected string $dbPort;
+	/**
+	 * @var string The database type
+	 */
+	protected string $dbType;
+	/**
 	 * @var string
 	 */
 	protected string $rtEditor;
@@ -45,93 +55,61 @@ trait ConfigTrait {
 	 * Creates an environment file by copying the .env.example file to .env and replacing placeholders with user inputs.
 	 *
 	 * @return void
+	 * @throws \Random\RandomException
 	 */
 	protected function createEnv(): void {
+		$envExampleFilePath = ROOT . DS . $this->customerName . DS . '.env.example';
+		$envFilePath = ROOT . DS . '.env';
+
 		if ($this->dryRun) {
+			// Check if the .env file can be created
+			if (
+				(
+					file_exists($envFilePath) &&
+					!is_writable($envFilePath)
+				) ||
+				(
+					!file_exists($envFilePath) &&
+					!is_writable(dirname($envFilePath))
+				)
+			) {
+				$this->io->error('.env file cannot be created due to permission issues.');
+
+				return;
+			}
+
+			$this->io->success('.env file can be created.');
+
+			return;
+		}
+
+		if (!file_exists($envExampleFilePath)) {
+			$envContents = 'export CONFIG_ENV=\'' . $this->installEnvironment . '\'' . PHP_EOL;
+			$envContents .= 'export CUSTOM_DIR=\'' . $this->customerName . '\'' . PHP_EOL;
+			$envContents .= 'export SECURITY_SALT=\'' . bin2hex(random_bytes(32)) . '\'' . PHP_EOL;
+			$envContents .= 'export SESSION_COOKIE_NAME=\'' . Inflector::underscore($this->customerName) . '_session\'' . PHP_EOL;
+		}
+		else {
+			// Load the contents of the .env.example file
+			$envExampleContents = file_get_contents($envExampleFilePath);
+			unlink($envExampleFilePath);
+
+			// Replace the placeholders with the user inputs
+			$envContents = str_replace('CONFIG_ENV=\'development\'', 'CONFIG_ENV=\'' . $this->installEnvironment . '\'', $envExampleContents);
+			$envContents = str_replace('CUSTOM_DIR=\'customer\'', 'CUSTOM_DIR=\'' . $this->customerName . '\'', $envContents);
+			$envContents = str_replace('SECURITY_SALT=\'random_salt\'', 'SECURITY_SALT=\'' . bin2hex(random_bytes(32)) . '\'', $envContents);
+			$envContents = str_replace('SESSION_COOKIE_NAME=\'awyiss_session\'', 'SESSION_COOKIE_NAME=\'' . Inflector::underscore($this->customerName) . '_session\'', $envContents);
+		}
+
+		// Write the updated contents back to the .env file
+		if (file_put_contents($envFilePath, $envContents)) {
 			$this->io->success('.env file created.');
 
 			return;
 		}
 
-		$envExampleFilePath = ROOT . DS . $this->customerName . DS . '.env.example';
-		$envFilePath = ROOT . DS . '.env';
-
-		// Load the contents of the .env.example file
-		$envExampleContents = file_get_contents($envExampleFilePath);
-
-		// Replace the placeholders with the user inputs
-		$envContents = str_replace('CONFIG_ENV=\'development\'', 'CONFIG_ENV=\'' . $this->installEnvironment . '\'', $envExampleContents);
-		$envContents = str_replace('CUSTOM_DIR=\'customer\'', 'CUSTOM_DIR=\'' . $this->customerName . '\'', $envContents);
-
-		// Write the updated contents back to the .env file
-		file_put_contents($envFilePath, $envContents);
-
-		unlink($envExampleFilePath);
-
-		$this->io->success('.env file created.');
-	}
-
-
-	/**
-	 * Sets the base configuration file by loading it, replacing the salt and cookie name, and writing it back.
-	 *
-	 * @return void
-	 * @throws \Brick\VarExporter\ExportException
-	 * @throws \Random\RandomException
-	 */
-	protected function setBaseConfigFile(): void {
-		if ($this->dryRun) {
-			$this->io->success('Base config file set.');
-
-			return;
-		}
-
-		// Define the path to the base configuration file
-		$baseConfigFilePath = ROOT . DS . $this->customerName . DS . 'config/awyiss.php';
-
-		// Load the base config file
-		$baseConfig = include $baseConfigFilePath;
-
-		// Generate a new salt
-		$securitySalt = bin2hex(random_bytes(32));
-
-		// Replace the salt in the base config file
-		$baseConfig['Security']['salt'] = $securitySalt;
-
-		// Set the cookie name based on the customer name
-		$baseConfig['Session']['cookie'] = $this->customerName;
-
-		// Convert the updated configuration array to a string of PHP code
-		$contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
-		$contents .= VarExporter::export($baseConfig, VarExporter::TRAILING_COMMA_IN_ARRAY);
-		$contents .= ';';
-		$contents = str_replace('    ', "\t", $contents);
-
-		/**
-		 * Replace
-		 *
-		 *- `'previewScssFiles' => null,`
-		 * - `'scssFiles' => null,`
-		 *
-		 * with
-		 *
-		 * - 'previewScssFiles' => defined('CUSTOM_DIR') ? [ROOT . DS . CUSTOM_DIR . '/assets/scss/full.scss'] : null,
-		 * - 'scssFiles' => defined('CUSTOM_DIR') ? [ROOT . DS . CUSTOM_DIR . '/assets/scss/helper/_variables.scss'] : null,
-		 *
-		 * since including the config file evaluates the statement
-		 */
-		$contents = str_replace([
-			'\'previewScssFiles\' => null,',
-			'\'scssFiles\' => null,',
-		], [
-			'\'previewScssFiles\' => defined(\'CUSTOM_DIR\') ? [ROOT . DS . CUSTOM_DIR . \'/assets/scss/full.scss\'] : null,',
-			'\'scssFiles\' => defined(\'CUSTOM_DIR\') ? [ROOT . DS . CUSTOM_DIR . \'/assets/scss/helper/_variables.scss\'] : null,',
-		], $contents);
-
-		// Write the updated contents back to the base config file
-		file_put_contents($baseConfigFilePath, $contents);
-
-		$this->io->success('Base config file set.');
+		$this->io->warning('Could not create .env file. You can manually create the .env file with the following contents:');
+		$this->io->info($envContents);
 	}
 
 
@@ -144,30 +122,15 @@ trait ConfigTrait {
 	 * @throws \Brick\VarExporter\ExportException
 	 */
 	protected function setEnvironmentConfigFile(): void {
-		if (!$this->dbUsername) {
-			$this->io->out('No database credentials provided. Skipping environment config file.');
-
-			return;
-		}
-
-		if ($this->dryRun) {
-			$this->io->success('Environment config file set.');
-
-			return;
-		}
-
 		$skeletonEnvironmentFilePath = ROOT . DS . $this->customerName . DS . 'config' . DS . 'environment_skeleton.php';
-		$environmentConfigFilePath = ROOT . DS . $this->customerName . DS . 'config' . DS . $this->installEnvironment . DS . 'awyiss.php';
+		if (!file_exists($skeletonEnvironmentFilePath)) {
+			$this->io->error('Skeleton environment config file does not exist.');
 
-		$environmentFolderPath = dirname($environmentConfigFilePath);
-
-		// Create the environment folder if it does not exist
-		if (!file_exists($environmentFolderPath)) {
-			mkdir($environmentFolderPath, 0755, true);
+			return;
 		}
 
-		// Copy the environment skeleton file to the environment config file
-		rename($skeletonEnvironmentFilePath, $environmentConfigFilePath);
+		$environmentConfigFilePath = ROOT . DS . $this->customerName . DS . 'config' . DS . $this->installEnvironment . DS . 'awyiss.php';
+		$environmentFolderPath = dirname($environmentConfigFilePath);
 
 		// Determine if the environment resembles a production environment
 		$isProductionEnvironment = in_array($this->installEnvironment, ['production', 'prod', 'live']);
@@ -175,17 +138,50 @@ trait ConfigTrait {
 		// Set the log and debug flags and error level based on the environment
 		$logFlag = !$isProductionEnvironment;
 		$debugFlag = !$isProductionEnvironment;
-		$errorLevel = $isProductionEnvironment ? 0 : 'E_ALL';
+		$errorLevel = $isProductionEnvironment ? 0 : E_ALL;
 
 		// Load the environment config file
 		$environmentConfig = include $environmentConfigFilePath;
 
 		// Set the database configuration based on user inputs
 		$environmentConfig['Datasources']['default']['database'] = $this->dbName;
-		$environmentConfig['Datasources']['default']['host'] = $this->dbHost;
+
+		if ($this->dbType === 'postgresql') {
+			$environmentConfig['Datasources']['default']['driver'] = Postgres::class;
+		}
+		elseif ($this->dbType === 'sqlite') {
+			$environmentConfig['Datasources']['default']['driver'] = Sqlite::class;
+		}
+
+		if ($this->dbHost) {
+			$environmentConfig['Datasources']['default']['host'] = $this->dbHost;
+		}
+		else {
+			unset($environmentConfig['Datasources']['default']['host']);
+		}
+
+		if ($this->dbPort) {
+			$environmentConfig['Datasources']['default']['port'] = $this->dbPort;
+		}
+		else {
+			unset($environmentConfig['Datasources']['default']['port']);
+		}
+
+		if ($this->dbPassword) {
+			$environmentConfig['Datasources']['default']['password'] = $this->dbPassword;
+		}
+		else {
+			unset($environmentConfig['Datasources']['default']['password']);
+		}
+
+		if ($this->dbUsername) {
+			$environmentConfig['Datasources']['default']['username'] = $this->dbUsername;
+		}
+		else {
+			unset($environmentConfig['Datasources']['default']['username']);
+		}
+
 		$environmentConfig['Datasources']['default']['log'] = $logFlag;
-		$environmentConfig['Datasources']['default']['password'] = $this->dbPassword;
-		$environmentConfig['Datasources']['default']['username'] = $this->dbUsername;
 
 		// Temporarily set the 'custom' connection as the default connection to apply the new database configuration immediately
 		$config = ConnectionManager::get('default')->config();
@@ -194,6 +190,40 @@ trait ConfigTrait {
 		]));
 		ConnectionManager::alias('custom', 'default');
 
+		if ($this->dryRun) {
+			// Check if the folder can be created
+			if (
+				(
+					file_exists($environmentConfigFilePath) &&
+					!is_writable($environmentConfigFilePath)
+				) ||
+				(
+					!file_exists($environmentConfigFilePath) &&
+					!file_exists($environmentFolderPath) &&
+					!is_writable(dirname($environmentFolderPath))
+				)
+			) {
+				$this->io->error('Environment config file cannot be created due to permission issues.');
+
+				return;
+			}
+
+			$this->io->success('Environment config file can be created.');
+
+			return;
+		}
+
+		// Create the environment folder if it does not exist
+		if (!file_exists($environmentFolderPath)) {
+			mkdir($environmentFolderPath, 0755, true);
+		}
+
+		// Move the environment skeleton file to the environment config file
+		if (!rename($skeletonEnvironmentFilePath, $environmentConfigFilePath)) {
+			$this->io->error('Could not set environment config file. Please check the file permissions and try again.');
+
+			return;
+		}
 
 		// Set the debug flag and error level based on the environment
 		$environmentConfig['debug'] = $debugFlag;
@@ -206,9 +236,12 @@ trait ConfigTrait {
 		$contents = str_replace('    ', "\t", $contents);
 
 		// Write the updated contents back to the environment config file
-		file_put_contents($environmentConfigFilePath, $contents);
+		if (file_put_contents($environmentConfigFilePath, $contents)) {
+			$this->io->success('Environment config file set.');
+			return;
+		}
 
-		$this->io->success('Environment config file set.');
+		$this->io->error('Could not set environment config file. Please check the file permissions and try again.');
 	}
 
 
@@ -218,25 +251,40 @@ trait ConfigTrait {
 	 * @return void
 	 */
 	protected function setupDemoAttributeCollection(): void {
+		// Define the path to the ContentsAttributeOptions.php file
+		$filePath = ROOT . DS . $this->customerName . DS . 'Attribute' . DS . 'AttributeOptions' . DS . 'ContentsAttributeOptions.php';
+
 		if ($this->dryRun) {
-			$this->io->success('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.');
+			// If the file does not exist or is not writable, skip the update
+			if (
+				(
+					!file_exists($filePath) ||
+					!is_writable($filePath)
+				)
+			) {
+				$this->io->warning('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file cannot be updated due to permission issues.');
+				return;
+			}
+
+			$this->io->success('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions can be updated.');
 
 			return;
 		}
 
-		// Define the path to the ContentsAttributeOptions.php file
-		$filePath = ROOT . DS . $this->customerName . DS . 'Attribute' . DS . 'AttributeOptions' . DS . 'ContentsAttributeOptions.php';
 
 		// Load the contents of the ContentsAttributeOptions.php file
 		$fileContents = file_get_contents($filePath);
 
-		$newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Attribute\\AttributeOptions;';
+		$newNamespace = 'namespace ' . Inflector::ucparts($this->customerName, false) . '\\Attribute\\AttributeOptions;';
 		$fileContents = str_replace('namespace Customer\\Attribute\\AttributeOptions;', $newNamespace, $fileContents);
 
 		// Write the updated contents back to the ContentsAttributeOptions.php file
-		file_put_contents($filePath, $fileContents);
+		if (file_put_contents($filePath, $fileContents)) {
+			$this->io->success('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.');
+			return;
+		}
 
-		$this->io->success('\Customer\Attribute\AttributeOptions\ContentsAttributeOptions file updated.');
+		$this->io->error('Could not update \Customer\Attribute\AttributeOptions\ContentsAttributeOptions file.');
 	}
 
 
@@ -246,26 +294,40 @@ trait ConfigTrait {
 	 * @return void
 	 */
 	protected function setupDemoMenuCell(): void {
+		// Define the path to the MenuCell.php file
+		$filePath = ROOT . DS . $this->customerName . DS . 'View' . DS . 'Cell' . DS . 'Frontend' . DS . 'MenuCell.php';
+
 		if ($this->dryRun) {
-			$this->io->success('\Customer\View\Cell\Frontend\MenuCell file updated.');
+			// If the file does not exist or is not writable, skip the update
+			if (
+				(
+					!file_exists($filePath) ||
+					!is_writable($filePath)
+				)
+			) {
+				$this->io->warning('\Customer\View\Cell\Frontend\MenuCell file cannot be updated due to permission issues.');
+				return;
+			}
+
+			$this->io->success('\Customer\View\Cell\Frontend\MenuCell can be updated.');
 
 			return;
 		}
 
-		// Define the path to the MenuCell.php file
-		$filePath = ROOT . DS . $this->customerName . DS . 'View' . DS . 'Cell' . DS . 'Frontend' . DS . 'MenuCell.php';
-
 		// Load the contents of the MenuCell.php file
 		$fileContents = file_get_contents($filePath);
 
-		// Replace the namespace with the camelized version of the given customer name
-		$newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\View\\Cell\\Frontend;';
+		// Replace the namespace with the CamelCased version of the given customer name
+		$newNamespace = 'namespace ' . Inflector::ucparts($this->customerName, false) . '\\View\\Cell\\Frontend;';
 		$fileContents = str_replace('namespace Customer\\View\\Cell\\Frontend;', $newNamespace, $fileContents);
 
 		// Write the updated contents back to the MenuCell.php file
-		file_put_contents($filePath, $fileContents);
+		if (file_put_contents($filePath, $fileContents)) {
+			$this->io->success('\Customer\View\Cell\Frontend\MenuCell file updated.');
+			return;
+		}
 
-		$this->io->success('\Customer\View\Cell\Frontend\MenuCell file updated.');
+		$this->io->error('Could not update \Customer\View\Cell\Frontend\MenuCell file.');
 	}
 
 
@@ -275,14 +337,25 @@ trait ConfigTrait {
 	 * @return void
 	 */
 	protected function setTwigNamespace(): void {
+		// Define the path to the ide-twig.json file
+		$filePath = ROOT . DS . $this->customerName . DS . 'templates' . DS . 'ide-twig.json';
+
 		if ($this->dryRun) {
-			$this->io->success('ide-twig.json file updated.');
+			// If the file does not exist or is not writable, skip the update
+			if (
+				(
+					!file_exists($filePath) ||
+					!is_writable($filePath)
+				)
+			) {
+				$this->io->warning('ide-twig.json file cannot be updated due to permission issues.');
+				return;
+			}
+
+			$this->io->success('ide-twig.json file can be updated.');
 
 			return;
 		}
-
-		// Define the path to the ide-twig.json file
-		$filePath = ROOT . DS . $this->customerName . DS . 'templates' . DS . 'ide-twig.json';
 
 		// Load the contents of the ide-twig.json file
 		$fileContents = file_get_contents($filePath);
@@ -290,16 +363,20 @@ trait ConfigTrait {
 		// Decode the JSON content to a PHP array
 		$content = json_decode($fileContents, true);
 
-		// Change the value of the namespace key to the camelized version of the given customer name
-		$content['namespaces'][0]['namespace'] = Inflector::camelize($this->customerName);
+		// Change the value of the namespace key to the CamelCased version of the given customer name
+		$content['namespaces'][0]['namespace'] = Inflector::ucparts($this->customerName, false);
 
 		// Encode the updated PHP array back to a JSON string
 		$updatedContents = json_encode($content, JSON_PRETTY_PRINT);
 
 		// Write the updated JSON string back to the ide-twig.json file
-		file_put_contents($filePath, $updatedContents);
+		if (file_put_contents($filePath, $updatedContents)) {
+			$this->io->success('ide-twig.json file updated.');
 
-		$this->io->success('ide-twig.json file updated.');
+			return;
+		}
+
+		$this->io->error('Could not update ide-twig.json file.');
 	}
 
 
@@ -309,33 +386,52 @@ trait ConfigTrait {
 	 * @return void
 	 */
 	protected function setTwigExtension(): void {
+		// Define the path to the CustomerExtension.php file
+		$filePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . 'CustomerExtension.php';
+
 		if ($this->dryRun) {
-			$this->io->success('\Twig\Extension\CustomerExtension file updated and renamed.');
+			// If the file does not exist or is not writable, skip the update
+			if (
+				(
+					!file_exists($filePath) ||
+					!is_writable($filePath)
+				)
+			) {
+				$this->io->warning('\Twig\Extension\CustomerExtension file cannot be updated due to permission issues.');
+				return;
+			}
+
+			$this->io->success('\Twig\Extension\CustomerExtension can be updated.');
 
 			return;
 		}
 
-		// Define the path to the CustomerExtension.php file
-		$filePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . 'CustomerExtension.php';
-
 		// Load the contents of the CustomerExtension.php file
 		$fileContents = file_get_contents($filePath);
 
-		// Replace the namespace and class name with the camelized version of the given customer name
-		$newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Twig\\Extension;';
-		$newClassName = 'class ' . Inflector::camelize($this->customerName) . 'Extension extends AbstractExtension {';
+		// Replace the namespace and class name with the CamelCased version of the given customer name
+		$newNamespace = 'namespace ' . Inflector::ucparts($this->customerName, false) . '\\Twig\\Extension;';
+		$newClassName = 'class ' . Inflector::ucparts($this->customerName, false) . 'Extension extends AbstractExtension {';
 
 		$fileContents = str_replace('namespace Customer\\Twig\\Extension;', $newNamespace, $fileContents);
 		$fileContents = str_replace('class CustomerExtension extends AbstractExtension {', $newClassName, $fileContents);
 
 		// Write the updated contents back to the CustomerExtension.php file
-		file_put_contents($filePath, $fileContents);
+		if (!file_put_contents($filePath, $fileContents)) {
+			$this->io->error('Could not update \Twig\Extension\CustomerExtension file.');
+
+			return;
+		}
 
 		// Rename the CustomerExtension.php file to match the new class name
-		$newFilePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . Inflector::camelize($this->customerName) . 'Extension.php';
-		rename($filePath, $newFilePath);
+		$newFilePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . Inflector::ucparts($this->customerName, false) . 'Extension.php';
+		if (rename($filePath, $newFilePath)) {
+			$this->io->success('\Twig\Extension\CustomerExtension file updated and renamed.');
 
-		$this->io->success('\Twig\Extension\CustomerExtension file updated and renamed.');
+			return;
+		}
+
+		$this->io->error('Could not update and rename \Twig\Extension\CustomerExtension file.');
 	}
 
 
@@ -350,7 +446,7 @@ trait ConfigTrait {
 		}
 
 		if ($this->dryRun) {
-			$this->io->success('Rich text editor set.');
+			$this->io->info('Rich text editor would be set to ' . strtolower($this->rtEditor) . '.');
 
 			return;
 		}
