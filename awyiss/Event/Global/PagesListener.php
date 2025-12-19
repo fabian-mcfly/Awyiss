@@ -16,7 +16,7 @@ use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Core\App;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Schema\SqliteSchemaDialect;
+use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -72,33 +72,30 @@ class PagesListener implements EventListenerInterface {
 		$prefixedColumn = $query->getRepository()->getAlias() . '.page_role_id';
 
 		$dialect = $query->getConnection()->getDriver()->schemaDialect();
-		/**
-		 * SQLite does not support FIND_IN_SET(),
-		 * so ordering using CASE WHEN is used instead
-		 */
-		if ($dialect instanceof SqliteSchemaDialect) {
-			$query->orderBy(function (QueryExpression $exp) use ($pageRoles, $prefixedColumn) {
-				$index = 0;
-
-				$case = $exp->case();
-				foreach ($pageRoles as $pageRole) {
-					$case->when([$prefixedColumn => $pageRole->id])->then($index, 'integer');
-
-					$index++;
-				}
-
-				$case->else(999, 'integer');
-
-				return $case;
-			});
+		// Only MySQL supports FIND_IN_SET for ordering.
+		if ($dialect instanceof MysqlSchemaDialect) {
+			/** @noinspection PhpUndefinedMethodInspection */
+			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+				$prefixedColumn => 'identifier',
+				implode(',', array_column($pageRoles, 'id')),
+			])));
 
 			return;
 		}
 
-		/** @noinspection PhpUndefinedMethodInspection */
-		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-			$prefixedColumn => 'identifier',
-			implode(',', array_column($pageRoles, 'id')),
-		])));
+		$query->orderBy(function (QueryExpression $exp) use ($pageRoles, $prefixedColumn) {
+			$index = 0;
+
+			$case = $exp->case();
+			foreach ($pageRoles as $pageRole) {
+				$case->when([$prefixedColumn => $pageRole->id])->then($index, 'integer');
+
+				$index++;
+			}
+
+			$case->else(999, 'integer');
+
+			return $case;
+		});
 	}
 }

@@ -1,4 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+/**
+ * @noinspection PhpInternalEntityUsedInspection
+ */
+
+
+declare(strict_types=1); // phpcs:ignore
 
 
 namespace Awyiss\Controller\Frontend;
@@ -16,6 +23,7 @@ use Awyiss\Utility\DebugTimer;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Core\Configure;
+use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -742,16 +750,41 @@ class FrontendController extends AppController {
 			$urls[] = rtrim($url, '/');
 		}
 
+		$urls = array_filter($urls);
+		if (!$urls) {
+			DebugTimer::stop('FrontendController::historyRedirect');
+			return;
+		}
+
 		$query = $historyTable->find('all')
 			->where(['url IN' => $urls])
 			->contain(['Media', 'Pages'])
 			->limit(1);
 
-		/** @noinspection PhpUndefinedMethodInspection */
-		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-			'UrlHistory.url' => 'identifier',
-			implode(',', $urls),
-		])), true);
+		$dialect = $query->getConnection()->getDriver()->schemaDialect();
+		// Only MySQL supports FIND_IN_SET for ordering.
+		if ($dialect instanceof MysqlSchemaDialect) {
+			/** @noinspection PhpUndefinedMethodInspection */
+			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+				'UrlHistory.url' => 'identifier',
+				implode(',', $urls),
+			])), true);
+		}
+		else {
+			$query->orderBy(function ($exp) use ($urls) {
+				$index = 0;
+				$case = $exp->case();
+
+				foreach ($urls as $url) {
+					$case->when(['UrlHistory.url' => $url])->then($index, 'integer');
+					$index++;
+				}
+
+				$case->else(999, 'integer');
+
+				return $case;
+			});
+		}
 
 		$query->orderByDesc('UrlHistory.created_on');
 

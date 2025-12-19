@@ -19,7 +19,7 @@ use Awyiss\Utility\Inflector;
 use BackedEnum;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
-use Cake\Database\Schema\SqliteSchemaDialect;
+use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
@@ -521,11 +521,15 @@ class CategoriesBehavior extends Behavior {
 		}
 
 		$dialect = $query->getConnection()->getDriver()->schemaDialect();
-		/**
-		 * SQLite does not support FIND_IN_SET(),
-		 * so ordering using CASE WHEN is used instead
-		 */
-		if ($dialect instanceof SqliteSchemaDialect) {
+		// Only MySQL supports FIND_IN_SET for ordering.
+		if ($dialect instanceof MysqlSchemaDialect) {
+			/** @noinspection PhpUndefinedMethodInspection */
+			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+				$prefixedColumn => 'identifier',
+				implode(',', $categoryIdentifiers),
+			])), true);
+		}
+		else {
 			$query->orderBy(function ($exp) use ($prefixedColumn, $categoryIdentifiers) {
 				$index = 0;
 
@@ -540,13 +544,6 @@ class CategoriesBehavior extends Behavior {
 
 				return $case;
 			});
-		}
-		else {
-			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-				$prefixedColumn => 'identifier',
-				implode(',', $categoryIdentifiers),
-			])), true);
 		}
 
 		/*
@@ -736,11 +733,16 @@ class CategoriesBehavior extends Behavior {
 			$field = $association->aliasField($field);
 
 			$dialect = $query->getConnection()->getDriver()->schemaDialect();
-			/**
-			 * SQLite does not support FIND_IN_SET(),
-			 * so ordering using CASE WHEN is used instead
-			 */
-			if ($dialect instanceof SqliteSchemaDialect) {
+			// Order by parent categories first
+			// Only MySQL supports FIND_IN_SET for ordering.
+			if ($dialect instanceof MysqlSchemaDialect) {
+				/** @noinspection PhpUndefinedMethodInspection */
+				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+					$field => 'identifier',
+					implode(',', $parentCategorieIds),
+				])), true);
+			}
+			else {
 				$query->orderBy(function ($exp) use ($field, $parentCategorieIds) {
 					$index = 0;
 
@@ -753,17 +755,6 @@ class CategoriesBehavior extends Behavior {
 
 					return $case;
 				});
-			}
-			else {
-				/**
-				 * Order by parent categories first
-				 *
-				 * @noinspection PhpUndefinedMethodInspection
-				 */
-				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-					$field => 'identifier',
-					implode(',', $parentCategorieIds),
-				])), true);
 			}
 		}
 

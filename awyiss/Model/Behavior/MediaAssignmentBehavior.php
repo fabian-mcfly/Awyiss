@@ -29,7 +29,7 @@ use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Schema\SqliteSchemaDialect;
+use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
@@ -652,7 +652,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	protected function getContainConditions(SelectQuery $query): SelectQuery {
 		$identifiers = array_unique(Hash::extract(static::$mediaElements, '{n}.mediaElementSelectors.{n}.identifier'));
 
-		$dialect = $query->getConnection()->getDriver()->schemaDialect();
 
 		$aliasedField = $query->aliasField('media_element_id');
 		$elementField = key($aliasedField);
@@ -660,57 +659,57 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		$aliasedField = $query->aliasField('media_element_selector_identifier');
 		$selectorField = key($aliasedField);
 
-		/**
-		 * SQLite does not support FIND_IN_SET(),
-		 * so ordering using CASE WHEN is used instead
-		 */
-		if ($dialect instanceof SqliteSchemaDialect) {
-			$query->orderBy(function (QueryExpression $exp) use ($elementField) {
-				$index = 0;
+		$query->contain(['Media', 'MediaFolders']);
 
-				$case = $exp->case();
-				foreach (static::$mediaElements as $mediaElement) {
-					$case->when([$elementField => $mediaElement->id])->then($index, 'integer');
+		$dialect = $query->getConnection()->getDriver()->schemaDialect();
+		// Only MySQL supports FIND_IN_SET for ordering.
+		if ($dialect instanceof MysqlSchemaDialect) {
+			/** @noinspection PhpUndefinedMethodInspection */
+			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+				$elementField => 'identifier',
+				implode(',', array_column(static::$mediaElements, 'id')),
+			])), true);
 
-					$index++;
-				}
+			/** @noinspection PhpUndefinedMethodInspection */
+			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+				$selectorField => 'identifier',
+				implode(',', $identifiers),
+			])));
 
-				$case->else(999, 'integer');
-
-				return $case;
-			}, true);
-
-			$query->orderBy(function (QueryExpression $exp) use ($selectorField, $identifiers) {
-				$index = 0;
-
-				$case = $exp->case();
-				foreach ($identifiers as $identifier) {
-					$case->when([$selectorField => $identifier])->then($index, 'integer');
-
-					$index++;
-				}
-
-				$case->else(999, 'integer');
-
-				return $case;
-			});
-
-			return $query->contain(['Media', 'MediaFolders']);
+			return $query;
 		}
 
-		/** @noinspection PhpUndefinedMethodInspection */
-		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-			$elementField => 'identifier',
-			implode(',', array_column(static::$mediaElements, 'id')),
-		])), true);
+		$query->orderBy(function (QueryExpression $exp) use ($elementField) {
+			$index = 0;
 
-		/** @noinspection PhpUndefinedMethodInspection */
-		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-			$selectorField => 'identifier',
-			implode(',', $identifiers),
-		])));
+			$case = $exp->case();
+			foreach (static::$mediaElements as $mediaElement) {
+				$case->when([$elementField => $mediaElement->id])->then($index, 'integer');
 
-		return $query->contain(['Media', 'MediaFolders']);
+				$index++;
+			}
+
+			$case->else(999, 'integer');
+
+			return $case;
+		}, true);
+
+		$query->orderBy(function (QueryExpression $exp) use ($selectorField, $identifiers) {
+			$index = 0;
+
+			$case = $exp->case();
+			foreach ($identifiers as $identifier) {
+				$case->when([$selectorField => $identifier])->then($index, 'integer');
+
+				$index++;
+			}
+
+			$case->else(999, 'integer');
+
+			return $case;
+		});
+
+		return $query;
 	}
 
 
