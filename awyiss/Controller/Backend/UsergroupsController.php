@@ -206,7 +206,7 @@ class UsergroupsController extends Controller {
 			if ($this->Usergroups->save($usergroup, ['asCopy' => $saveAsCopy])) {
 				/** @var \Awyiss\Model\Entity\User $currentUser */
 				$session = $this->request->getSession();
-				$currentUser = $session->read('Auth');
+				$currentUser = $session->read('Backend.Auth');
 				$userId = $currentUser?->id;
 
 				if ($usergroup->users && in_array($userId, array_column($usergroup->users, 'id'))) {

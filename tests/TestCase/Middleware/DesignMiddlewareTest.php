@@ -300,7 +300,7 @@ class DesignMiddlewareTest extends TestCase {
 		$lastModified = $files->getLastModified();
 
 		$user = $this->login();
-		$this->session(['Auth' => $user]);
+		$this->session(['Backend.Auth' => $user]);
 
 		$this->get('/backend/zu/users/login');
 

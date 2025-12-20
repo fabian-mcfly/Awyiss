@@ -9,6 +9,7 @@ use Authentication\Authenticator\ResultInterface;
 use Authentication\Authenticator\StatelessInterface;
 use Awyiss\Authentication\Authenticator\AuthenticatorCollection;
 use Awyiss\Authentication\Identifier\IdentifierCollection;
+use Awyiss\Awyiss;
 use Awyiss\Event\EventDispatcherTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
@@ -97,7 +98,7 @@ class AuthenticationService extends BaseAuthenticationService {
 		) {
 			/** @var \Cake\Http\Session $session */
 			$session = $request->getAttribute('session');
-			$session->write('unauthenticatedRedirectUrl', $redirectUri);
+			$session->write(Awyiss::getRealm() . '.unauthenticatedRedirectUrl', $redirectUri);
 		}
 
 		return parent::getUnauthenticatedRedirectUrl($request);
@@ -114,7 +115,7 @@ class AuthenticationService extends BaseAuthenticationService {
 		$session = $request->getAttribute('session');
 
 
-		return $session->read('unauthenticatedRedirectUrl');
+		return $session->read(Awyiss::getRealm() . '.unauthenticatedRedirectUrl');
 	}
 
 

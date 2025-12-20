@@ -158,6 +158,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				return false;
 			},
 			'identifier' => $this->getIdentifiers(),
+			'sessionKey' => Awyiss::getRealm() . '.Auth',
 		], 10);
 
 		$this->addAuthenticator(FormAuthenticator::class, [

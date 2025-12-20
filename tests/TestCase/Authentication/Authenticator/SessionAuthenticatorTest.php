@@ -21,7 +21,9 @@ class SessionAuthenticatorTest extends TestCase {
 	 * @return void
 	 */
 	public function testCallableAuthentication(): void {
-		$authenticator = new SessionAuthenticator(new IdentifierCollection());
+		$authenticator = new SessionAuthenticator(new IdentifierCollection(), [
+			'sessionKey' => 'Backend.Auth',
+		]);
 
 		$authenticator->setConfig('identify', function ($user) {
 			$this->assertInstanceOf(User::class, $user);
@@ -39,7 +41,7 @@ class SessionAuthenticatorTest extends TestCase {
 		$user = $users->get(1);
 
 		$sessionMock = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->onlyMethods(['read', 'write', 'delete', 'renew', 'check'])->getMock();
-		$sessionMock->expects($this->once())->method('read')->with('Auth')->willReturn($user);
+		$sessionMock->expects($this->once())->method('read')->with('Backend.Auth')->willReturn($user);
 
 		$request = $request->withAttribute('session', $sessionMock);
 

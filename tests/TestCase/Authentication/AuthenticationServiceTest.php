@@ -164,7 +164,7 @@ class AuthenticationServiceTest extends TestCase {
 		);
 
 		$sessionMock = $this->getMockBuilder(Session::class)->disableOriginalConstructor()->onlyMethods(['read', 'write', 'delete', 'renew', 'check'])->getMock();
-		$sessionMock->expects($this->once())->method('read')->with('unauthenticatedRedirectUrl')->willReturn('/home/');
+		$sessionMock->expects($this->once())->method('read')->with(Awyiss::getRealm() . '.unauthenticatedRedirectUrl')->willReturn('/home/');
 
 		$request = $request->withAttribute('session', $sessionMock);
 
