@@ -1526,7 +1526,7 @@ textarea {
 	}
 }
 
-.Fieldset-MediaElementAssignments {
+.AssignmentLists {
 	padding:0;
 	box-shadow:none;
 	background-color:transparent;
@@ -1547,11 +1547,11 @@ textarea {
 		}
 	}
 
-	> .Fieldset-MediaElements-Available {
+	.AssignmentList-Available {
 		grid-column:1 / 1;
 	}
 
-	> .Fieldset-MediaElements-Assigned {
+	.AssignmentList-Assigned {
 		grid-column:auto / -1;
 	}
 
@@ -1642,10 +1642,7 @@ textarea {
 	}
 }
 
-:is(
-	.Fieldset-MediaElements-Available,
-	.Fieldset-MediaElements-Assigned
-) {
+.AssignmentList {
 	display:block;
 	padding-inline:0;
 	padding-bottom:0;
@@ -1670,6 +1667,10 @@ textarea {
 			padding-inline:0;
 			padding-bottom:0;
 		}
+	}
+
+	&:focus-within {
+		box-shadow:none;
 	}
 
 	&:not(:has(.Item)) {
@@ -1725,7 +1726,7 @@ textarea {
 	}
 }
 
-.Fieldset-MediaElements-Available {
+.AssignmentList-Available {
 	.List {
 		max-height:calc(100dvh - 240px);
 		margin:0 -10px 0;

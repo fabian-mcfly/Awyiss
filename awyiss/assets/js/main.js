@@ -2,6 +2,7 @@
 
 import AccessHelperDialog from 'Form/AccessHelperDialog';
 import AddressFinder from 'Form/AddressFinder';
+import AssignableElements from 'Form/AssignableElements';
 import Audit from 'Audit/Audit';
 import ButtonArea from 'ButtonArea';
 import ButtonHandler from 'ButtonHandler';
@@ -20,7 +21,6 @@ import GenericDialog from 'GenericDialog';
 import IdentifierAutofill from 'Form/IdentifierAutofill';
 import InputListManager from 'Form/InputListManager';
 import LinkHelperDialog from 'Form/LinkHelperDialog';
-import MediaElements from 'Media/Elements';
 import MediaOverlay from 'Media/Overlay';
 import MediaProgressChecker from 'Media/ProgressChecker';
 import NestedListHandler from 'NestedListHandler';
@@ -406,9 +406,9 @@ export async function initMainOnReady() {
 
 	/**
 	 * @global
-	 * @type {MediaElements}
+	 * @type {AssignableElements}
 	 */
-	window.mediaElements = new MediaElements();
+	window.assignableElements = new AssignableElements();
 
 	/**
 	 * @global
