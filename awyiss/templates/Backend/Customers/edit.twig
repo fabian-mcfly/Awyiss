@@ -1,0 +1,71 @@
+{#
+@var customer \Awyiss\Model\Entity\Customer
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AuditHelper \Awyiss\View\Helper\AuditHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Customers Form Edit">
+	{% block headlinesEdit %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
+
+			{% block headlineEdit %}
+				<h1>{{ __('headline_edit') }}</h1>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.checkbox('save_as_copy', {form: 'CustomerForm', id: 'SaveAsCopy', value: true, 'data-form-updater': true}) }}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formEditButtons %}
+				{% block formEditButtonSaveAsCopy %}
+					<label for="SaveAsCopy" tabindex="0" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+				{% endblock %}
+
+				{% block formEditButtonSave %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'CustomerForm'}) }}
+				{% endblock %}
+
+				{% block formEditButtonSaveClose %}
+					{% if isOverlayForm != true and AuthorizationHelper.isAccessible('read') %}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'CustomerForm', name: 'submit_type', value: 'submit_close'}) }}
+					{% endif %}
+				{% endblock %}
+
+				{% block overlayFormButtonClose %}
+					{% if isOverlayForm == true %}
+						{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
+					{% endif %}
+				{% endblock %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block formEdit %}
+		{% include('@Backend/Customers/form.twig') %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formEditButtons') }}
+		</div>
+	{% endblock %}
+</div>
+

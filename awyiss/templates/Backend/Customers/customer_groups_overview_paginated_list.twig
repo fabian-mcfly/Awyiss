@@ -1,0 +1,160 @@
+{#
+@var customerGroups \Awyiss\Model\Entity\CustomerGroup[]
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuditHelper \Awyiss\View\Helper\AuditHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% set tableFootColSpan = displayedFields|length + 3 %}
+
+{% block tableOverview %}
+	<table class="Overview-Table Responsive-Table" style="--columns:{{ tableFootColSpan }}; --rows:{{ max(1, customerGroups|length) }};">
+		{% block tableOverviewHead %}
+			<thead>
+				{% block tableOverviewHeadRow %}
+					<tr>
+						{% block tableOverviewHeadRowInner %}
+							{% block tableOverviewHeaderCustomerGroupCheckbox %}
+								<th class="TableHeader-CustomerGroupCheckbox"></th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderId %}
+								<th class="TableHeader-Id">
+									{{ __df('customer_groups', 'system', 'id') }}
+								</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderTitle %}
+								<th class="TableHeader-Title">
+									{{ __df('customer_groups', 'system', 'title') }}
+								</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderDefaultFields %}{% endblock %}
+
+							{% block tableOverviewHeaderDisplayedFields %}
+								{% for field in displayedFields %}
+									{% block tableOverviewHeaderDisplayedField %}
+										{% if field starts with 'attributes.' %}
+											{% set field = field|slice(11)|underscore %}
+											<th class="TableHeader-{{ field|camelize }}">
+												{{ attributes[field].label }}
+											</th>
+										{% else %}
+											{% set field = field|underscore %}
+
+											{% if field ends with '_id' and field != 'parent_id' %}
+												{% set associationName = field|slice(0, -3) %}
+												<th class="TableHeader-{{ field|camelize }}">
+													{{ __df('customer_groups', 'system', field) }}
+												</th>
+											{% else %}
+												<th class="TableHeader-{{ field|camelize }}">
+													{{ __df('customer_groups', 'system', field) }}
+												</th>
+											{% endif %}
+										{% endif %}
+									{% endblock %}
+								{% endfor %}
+							{% endblock %}
+						{% endblock %}
+					</tr>
+				{% endblock %}
+			</thead>
+		{% endblock %}
+		{% block tableOverviewBody %}
+			<tbody>
+				{# @var customerGroup \Awyiss\Model\Entity\CustomerGroup #}
+				{% for customerGroup in customerGroups %}
+					{% block tableOverviewBodyRow %}
+						<tr
+							class="
+								{%- if customerGroup.active is defined and customerGroup.active == false %} Inactive{% endif -%}
+								{%- if customerGroup.isPublished() is same as false %} NotPublished{% endif %}
+							">
+
+							{% block tableOverviewBodyRowInner %}
+								{% block tableOverviewCellCustomerGroupCheckbox %}
+									<td class="TableCell-CustomerGroupCheckbox">
+										{{ FormHelper.control('customerGroups._ids.' ~ customerGroup.id, {
+											hiddenField: false,
+											type: 'checkbox',
+											value: customerGroup.id,
+											label: '',
+											checked: customerGroup.id in (customer.customerGroups)|column('id'),
+										}) }}
+									</td>
+								{% endblock %}
+
+								{% block tableOverviewCellId %}
+									<td class="TableCell-Id">{{ customerGroup.id }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellTitle %}
+									<td class="TableCell-Title">{{ customerGroup.title }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellDefaultFields %}{% endblock %}
+
+								{% block tableOverviewCellDisplayedFields %}
+									{% for field in displayedFields %}
+										{% block tableOverviewCellDisplayedField %}
+											<td class="TableCell-{{ field|camelize }}">
+												{% if field starts with 'attributes.' %}
+													{% set field = field|slice(11)|underscore %}
+													{% block tableOverviewCellDisplayedFieldAttributeValue %}
+														{% if attributes[field].inputType in ['date', 'datetime', 'time'] and customerGroup.has('attributes') and customerGroup.attributes.has(field) %}
+															{% if attributes[field].inputType == 'datetime' %}
+																{{ TimeHelper.nice(customerGroup.attributes.get(field)) }}
+															{% else %}
+																{{ TimeHelper.i18nFormat(customerGroup.attributes.get(field), attributes[field].inputType == 'date' ? dateFormat : timeFormat) }}
+															{% endif %}
+														{% else %}
+															{{ customerGroup.attributes.get(field) ?: '-' }}
+														{% endif %}
+													{% endblock %}
+												{% else %}
+													{% set field = field|underscore %}
+													{% block tableOverviewCellDisplayedFieldDefaultValue %}
+														{% if field == 'language_shortcode' %}
+															{{ customerGroup.get(field) ? languages.Frontend[ customerGroup.get(field) ].title : '-' }}
+														{% elseif field in ['created_on', 'changed_on'] %}
+															{{ customerGroup.has(field) ? TimeHelper.nice(customerGroup.get(field)) ?: '-' }}
+														{% elseif categories.config.field and field == categories.config.field|underscore %}
+															{{ customerGroup.has(field) ? (categories.simple[ customerGroup.get(field) ] ?? '-') : '-' }}
+														{% else %}
+															{% set value = customerGroup.has(field) ? customerGroup.get(field) : '-' %}
+															{% if value is same as true or value is same as 'true' %}
+																<i class="las la-check">{{ __('true') }}</i>
+															{% elseif value is same as false or value is same as 'false' %}
+																<i class="las la-times">{{ __('false') }}</i>
+															{% else %}
+																{{ value }}
+															{% endif %}
+														{% endif %}
+													{% endblock %}
+												{% endif %}
+											</td>
+										{% endblock %}
+									{% endfor %}
+								{% endblock %}
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				{% endfor %}
+			</tbody>
+		{% endblock %}
+	</table>
+{% endblock %}

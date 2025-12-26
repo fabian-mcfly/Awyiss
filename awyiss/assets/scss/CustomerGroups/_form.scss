@@ -1,0 +1,137 @@
+.CustomerGroups.Form {
+	.Fieldset-Customers {
+		padding:0;
+
+		.Overview-Table {
+			margin:0;
+
+			&:has(th:nth-last-child(4)) {
+				@media screen and (width <= 768px) {
+					--idColumnWidth:60px;
+
+					th {
+						@media screen and (width <= 640px) {
+							padding-top:10px;
+						}
+
+						&.TableHeader-CustomerCheckbox {
+							width:100%;
+						}
+					}
+
+					td {
+						&.TableHeader-CustomerCheckbox {
+							width:100%;
+						}
+					}
+				}
+
+				td {
+					&.TableCell-CustomerCheckbox {
+						@media screen and (width <= 640px) {
+							height:42px;
+						}
+					}
+				}
+
+				.FormInputType-Checkbox {
+					.Label {
+						&::before {
+							@media screen and (width <= 640px) {
+								top:10px;
+								left:10px;
+							}
+						}
+					}
+				}
+			}
+
+			tr {
+				position:relative;
+
+				&:has(input:checked) {
+					--backgroundColor:color-mix(in srgb, var(--colorSuccess), transparent 90%);
+				}
+			}
+
+			th {
+				padding-top:20px;
+
+				&.TableHeader-CustomerCheckbox {
+					width:60px;
+					min-width:0;
+					padding:0;
+				}
+			}
+
+			td {
+				&.TableCell-CustomerCheckbox {
+					min-width:0;
+					padding:0;
+					position:static;
+
+					&:has(input:checked) {
+						background-color:var(--backgroundColor);
+
+						&::before {
+							display:none;
+						}
+
+						~ td {
+							background-color:var(--backgroundColor);
+
+							&::before {
+								background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		.FormInputType-Checkbox {
+			position:static;
+
+			.Label {
+				padding:0;
+				position:absolute;
+				inset:0;
+				z-index:2;
+
+				&::before {
+					top:18px;
+					left:18px;
+
+					@media screen and (width <= 1024px) {
+						top:10px;
+					}
+
+					@media screen and (width <= 768px) {
+						top:8px;
+					}
+
+					@media screen and (width <= 640px) {
+						top:7px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							top:8px;
+						}
+					}
+				}
+			}
+
+			input {
+				&:checked {
+					+ Label {
+						&::before {
+							border-color:transparent;
+							background-color:var(--colorSuccess);
+						}
+					}
+				}
+			}
+		}
+	}
+}
