@@ -59,7 +59,7 @@ class UrlHistoryTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\UrlHistoryTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(6, $this->urlHistoryTable->associations()->keys());
+		$this->assertCount(8, $this->urlHistoryTable->associations()->keys());
 
 		$this->assertTrue($this->urlHistoryTable->hasAssociation('Pages'));
 		$pagesAssociation = $this->urlHistoryTable->getAssociation('Pages');
@@ -94,7 +94,7 @@ class UrlHistoryTableTest extends TestCase {
 		$this->assertFalse($deletedByUserAssociation->getCascadeCallbacks());
 		$this->assertFalse($deletedByUserAssociation->getDependent());
 
-		// MediaAssignments is defined, but we don't care about it for this table
+		// CustomerGroupAccessSettings, CustomerGroupAssignments and MediaAssignments are defined, but we don't care about it for this table
 	}
 
 

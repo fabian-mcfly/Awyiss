@@ -23,6 +23,8 @@ use Cake\Utility\Text;
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\MenuEntry[] $menuEntries
+ * @property \Awyiss\Model\Entity\CustomerGroupAccessSetting $customerGroupAccessSettings
+ * @property \Awyiss\Model\Entity\CustomerGroupAssignment[] $customerGroupAssignments
  */
 class Menu extends Entity {
 	/**

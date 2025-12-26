@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Table\LanguagesTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
+use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
@@ -62,7 +63,7 @@ class LanguagesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\LanguagesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(8, $this->languagesTable->associations()->keys());
+		$this->assertCount(10, $this->languagesTable->associations()->keys());
 
 		// Test Configuration association (HasMany)
 		$this->assertTrue($this->languagesTable->hasAssociation('Configuration'));
@@ -81,6 +82,20 @@ class LanguagesTableTest extends TestCase {
 		$this->assertFalse($formEntriesAssociation->getDependent());
 		$this->assertSame('shortcode', $formEntriesAssociation->getBindingKey());
 		$this->assertSame('language_shortcode', $formEntriesAssociation->getForeignKey());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->languagesTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->languagesTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->languagesTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->languagesTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->languagesTable->hasAssociation('MediaAssignments'));

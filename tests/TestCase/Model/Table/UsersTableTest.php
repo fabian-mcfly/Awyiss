@@ -9,6 +9,7 @@ use Awyiss\Model\Table\UsersTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
+use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Collection\CollectionInterface;
@@ -63,7 +64,7 @@ class UsersTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\UsersTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(6, $this->usersTable->associations()->keys());
+		$this->assertCount(8, $this->usersTable->associations()->keys());
 
 		$this->assertTrue($this->usersTable->hasAssociation('Usergroups'));
 		$usergroupsAssociation = $this->usersTable->getAssociation('Usergroups');
@@ -76,6 +77,20 @@ class UsersTableTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $userConfigurationAssociation);
 		$this->assertTrue($userConfigurationAssociation->getCascadeCallbacks());
 		$this->assertTrue($userConfigurationAssociation->getDependent());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->usersTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->usersTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->usersTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->usersTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->usersTable->hasAssociation('MediaAssignments'));

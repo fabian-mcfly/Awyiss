@@ -58,7 +58,7 @@ class PageTemplateContentAreasTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\PageTemplateContentAreasTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(3, $this->pageTemplateContentAreasTable->associations()->keys());
+		$this->assertCount(5, $this->pageTemplateContentAreasTable->associations()->keys());
 
 		// Test ContentAreas association (BelongsTo)
 		$this->assertTrue($this->pageTemplateContentAreasTable->hasAssociation('ContentAreas'));
@@ -73,8 +73,7 @@ class PageTemplateContentAreasTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $pageTemplatesAssociation);
 		$this->assertFalse($pageTemplatesAssociation->getCascadeCallbacks());
 		$this->assertFalse($pageTemplatesAssociation->getDependent());
-
-		// MediaAssignments is defined, but we don't care about it for this table
+		// CustomerGroupAccessSettings, CustomerGroupAssignments and MediaAssignments are defined, but we don't care about it for this table
 	}
 
 

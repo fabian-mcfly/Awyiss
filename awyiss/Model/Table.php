@@ -275,12 +275,17 @@ class Table extends BaseTable {
 			}
 
 			if (
-				!str_starts_with($this->getTable(), 'media') &&
+				!str_starts_with($this->getTable(), 'customer_group_') &&
+				!str_starts_with($this->getTable(), 'customer_groups_') &&
+				!str_starts_with($this->getTable(), 'media_') &&
 				!in_array($this->getTable(), [
 					'audit',
+					'customers',
+					'media',
 					'publication_data',
 				])
 			) {
+				$this->addBehavior('CustomerGroupAccessSetting');
 				$this->addBehavior('MediaAssignment');
 				$this->addBehavior('MediaElementAssignment');
 			}

@@ -1,0 +1,451 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\Model\Behavior;
+
+
+use ArrayObject;
+use Awyiss\Authentication\IdentityAwareTrait;
+use Awyiss\Model\Entity\CustomerGroupAccessSetting;
+use Awyiss\Model\Entity\CustomerGroupAssignment;
+use Awyiss\Model\Enum\CustomerGroupAccessType;
+use Awyiss\Model\Table;
+use Awyiss\ORM\Behavior;
+use Awyiss\Utility\Inflector;
+use Cake\Collection\CollectionInterface;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
+use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Marshaller;
+use Cake\ORM\PropertyMarshalInterface;
+use Cake\ORM\Query\SelectQuery;
+
+
+/**
+ * Behavior for managing customer group access settings and assignments.
+ * Controls frontend visibility/access per entity via customer groups (all_groups, hide_on_login, specific_groups).
+ * Also manages customer group assignments for entities when access type is 'specific_groups'.
+ */
+class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMarshalInterface {
+	use IdentityAwareTrait;
+	use LocatorAwareTrait;
+
+
+	/**
+	 * Default config
+	 * These are merged with user-provided configuration when the behavior is used.
+	 *
+	 * @var array<string, mixed>
+	 */
+	protected array $_defaultConfig = [ // phpcs:ignore
+		'enabled' => true,
+		'implementedEvents' => [
+			'beforeSave',
+		],
+		'implementedFinders' => [
+			'customerGroupAccessSettings' => 'findCustomerGroupAccessSettings',
+			'customerGroupAssignments' => 'findCustomerGroupAssignments',
+		],
+		'implementedMethods' => [
+			'getCustomerGroupAccessSettings' => 'getCustomerGroupAccessSettings',
+			'rebuildCustomerGroupAssignments' => 'rebuildCustomerGroupAssignments',
+		],
+		'referenceName' => '',
+		'strategy' => 'select',
+		'tableLocator' => null,
+	];
+	/**
+	 * Instance of Table responsible for access settings
+	 *
+	 * @var \Awyiss\Model\Table
+	 */
+	protected Table $accessSettingsTable;
+	/**
+	 * Instance of Table responsible for customer group assignments
+	 *
+	 * @var \Awyiss\Model\Table
+	 */
+	protected Table $assignmentsTable;
+
+
+	/**
+	 * @inheritDoc
+	 * @param Table $table
+	 * @param array $config
+	 */
+	public function __construct(Table $table, array $config = []) {
+		$config += [
+			'referenceName' => $this->getScope($table),
+			'tableLocator' => $table->associations()->getTableLocator(),
+		];
+
+		parent::__construct($table, $config);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(array $config): void {
+		parent::initialize($config);
+
+		$this->_tableLocator = $this->getConfig('tableLocator');
+		$this->accessSettingsTable = $this->getTableLocator()->get('CustomerGroupAccessSettings', ['allowFallbackClass' => false]);
+		$this->assignmentsTable = $this->getTableLocator()->get('CustomerGroupAssignments', ['allowFallbackClass' => false]);
+
+		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
+		$entityClass = $this->_table->getEntityClass();
+
+		// Setup customer group access settings association
+		$this->_table->hasOne('CustomerGroupAccessSettings', [
+			'conditions' => [
+				'CustomerGroupAccessSettings.scope' => $this->getScope($this->table()),
+			],
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+			'foreignKey' => 'foreign_key',
+			'propertyName' => 'customerGroupAccessSettings',
+			'saveStrategy' => 'replace',
+		]);
+
+		// Setup customer group assignments association
+		$this->_table->hasMany('CustomerGroupAssignments', [
+			'conditions' => [
+				'CustomerGroupAssignments.scope' => $this->getScope($this->table()),
+			],
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+			'foreignKey' => 'foreign_key',
+			'propertyName' => 'customerGroupAssignments',
+			'saveStrategy' => 'replace',
+			'strategy' => $this->getConfig('strategy'),
+		]);
+
+		$entityClass::addFieldMapping('customer_group_access_settings', 'customerGroupAccessSettings');
+		$entityClass::addFieldMapping('customer_group_assignments', 'customerGroupAssignments');
+	}
+
+
+	/**
+	 * Handle saving of access settings and customer group assignments before entity is saved.
+	 * Only saves assignments when access type is 'specific_groups'.
+	 *
+	 * @param \Cake\Event\EventInterface $event The event
+	 * @param \Cake\Datasource\EntityInterface $entity The entity
+	 * @param \ArrayObject $options Save options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		// Skip if not enabled or explicitly skipped
+		if (
+			!$this->getConfig('enabled') ||
+			($options['customerGroupAssignments']['skip'] ?? false) === true
+		) {
+			return;
+		}
+
+		// If no customer group assignments are set, skip the processing
+		if (!$entity->has('customerGroupAssignments')) {
+			return;
+		}
+
+		/**
+		 * Get the access setting to check the access type
+		 *
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		$accessSetting = $entity->has('customerGroupAccessSettings') ? $entity->customerGroupAccessSettings : null;
+
+		// Only save assignments if access type is 'specific_groups'
+		if ($accessSetting?->accessType !== CustomerGroupAccessType::SpecificGroups) {
+			// Clear assignments if not specific_groups
+			$entity->set('customerGroupAssignments', []);
+
+			return;
+		}
+
+		/**
+		 * Make sure assignments in the wrong format are removed from the entity.
+		 * This happens when no customer group was assigned but an assignment is part of the entity/patched data.
+		 */
+		$assignments = $entity->get('customerGroupAssignments') ?: [];
+		foreach ($assignments as $key => $assignment) {
+			if (!is_numeric($key) || !$assignment instanceof CustomerGroupAssignment) {
+				unset($assignments[ $key ]);
+			}
+		}
+
+		$entity->set('customerGroupAssignments', $assignments);
+
+		if (($options['isCopy'] ?? false) === true) {
+			// If the entity is a copy, we need to set the assignments as new
+			foreach ($assignments as $assignment) {
+				if (!$assignment instanceof CustomerGroupAssignment) {
+					continue;
+				}
+
+				$assignment->unset('id');
+				$assignment->setNew(true);
+			}
+		}
+	}
+
+
+	/**
+	 * Find entities with specific access settings
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findCustomerGroupAccessSettings(SelectQuery $query): SelectQuery {
+		if (!$this->getConfig('enabled')) {
+			return $query;
+		}
+
+		$query->contain(['CustomerGroupAccessSettings']);
+
+		return $query;
+	}
+
+
+	/**
+	 * Find customer group assignments when querying a table.
+	 * This finder will automatically fetch the customer group assignments for the entity.
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param bool $formatResult Whether to format the result so that the customer group assignments are nested
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findCustomerGroupAssignments(SelectQuery $query, bool $formatResult = true): SelectQuery {
+		if (!$this->getConfig('enabled')) {
+			return $query;
+		}
+
+		$query->contain([
+			'CustomerGroupAssignments' => function (SelectQuery $q) {
+				return $q->contain(['CustomerGroups']);
+			},
+		]);
+
+		if ($formatResult) {
+			$query->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results), $query::PREPEND);
+		}
+
+		return $query;
+	}
+
+
+	/**
+	 * Get the access setting for a specific entity
+	 *
+	 * @param string|int|null $entityId The entity ID
+	 * @return \Awyiss\Model\Entity\CustomerGroupAccessSetting|null
+	 */
+	public function getCustomerGroupAccessSettings(int|string|null $entityId = null): ?CustomerGroupAccessSetting {
+		return $this->accessSettingsTable
+			->find()
+			->where([
+				'scope' => $this->getScope($this->table()),
+				'foreign_key' => $entityId,
+				'deleted' => false,
+			])
+			->first();
+	}
+
+
+	/**
+	 * Rebuild customer group assignments into a nested array structure
+	 *
+	 * @param \Cake\Datasource\EntityInterface|array $entity
+	 * @return \Cake\Datasource\EntityInterface|array
+	 */
+	public function rebuildCustomerGroupAssignments(EntityInterface|array $entity): EntityInterface|array {
+		$customerGroups = [];
+
+		/** @var \Awyiss\Model\Entity\CustomerGroupAssignment $assignment */
+		foreach (($entity['customerGroupAssignments'] ?? []) as $assignment) {
+			if (is_array($assignment)) {
+				// Seems like the assignments have already been rebuilt
+				return $entity;
+			}
+
+			if ($assignment->customerGroup) {
+				$customerGroups[] = $assignment->customerGroup;
+			}
+		}
+
+		$entity['customerGroupAssignments'] = $customerGroups;
+
+		return $entity;
+	}
+
+
+	/**
+	 * @param \Cake\Collection\CollectionInterface $results
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function rowMapper(CollectionInterface $results): CollectionInterface {
+		return $results->map(function (EntityInterface|array|null $row): EntityInterface|array|null {
+			$originalRow = $row;
+
+			if ($row === null || empty($row['customerGroupAssignments'])) {
+				return $row;
+			}
+
+			$row = $this->rebuildCustomerGroupAssignments($row);
+
+			if ($originalRow instanceof EntityInterface) {
+				$originalRow->setDirty('customerGroupAssignments', false);
+			}
+
+			return $row;
+		});
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Marshaller $marshaller
+	 * @param array $map
+	 * @param array $options
+	 * @return array
+	 */
+	public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array {
+		$result = [];
+
+		// Handle customer group access settings
+		if ($this->getConfig('enabled') && ($options['customerGroupAccessSettings'] ?? true) !== false) {
+			$result['customer_group_access_settings'] = function (array $values, EntityInterface $entity) {
+				if (!$values) {
+					return null;
+				}
+
+				/** @var \Awyiss\Model\Entity\CustomerGroupAccessSetting $accessSettings */
+				$accessSettings = $entity->customerGroupAccessSettings ?? $this->accessSettingsTable->newDefaultEntity();
+
+				$accessSettingData = [
+					'scope' => $this->getConfig('referenceName'),
+					'accessType' => $values['access_type'] ?? $values['accessType'] ?? null,
+				];
+
+				if (!$accessSettingData['accessType']) {
+					if (!$accessSettings->isNew()) {
+						$this->accessSettingsTable->delete($accessSettings);
+					}
+
+					return false;
+				}
+
+				$settingMarshaller = $this->accessSettingsTable->marshaller();
+				$settingMarshaller->merge($accessSettings, $accessSettingData);
+
+				$settingErrors = $accessSettings->getErrors();
+				if ($settingErrors) {
+					$entity->setErrors(['customerGroupAccessSettings' => $settingErrors]);
+				}
+
+				$isDirty = $accessSettings->isNew() || (
+					$accessSettings->hasOriginal('accessType') &&
+					$accessSettings->accessType !== $accessSettings->getOriginal('accessType')
+				);
+
+				$entity->setDirty('customerGroupAccessSettings', $isDirty);
+
+				return $accessSettings;
+			};
+		}
+
+		// Handle customer group assignments
+		if (!$this->getConfig('enabled') || ($options['customerGroupAssignments'] ?? true) === false) {
+			return $result;
+		}
+
+		unset($options['associated']);
+		$options['fields'] = [
+			'id',
+			'customerGroupId',
+			'scope',
+			'foreignKey',
+		];
+
+		$result['customer_group_assignments'] = function (array $values, EntityInterface $entity) use ($options): array {
+			/**
+			 * @var array<\Awyiss\Model\Entity\CustomerGroupAssignment> $customerGroupAssignments
+			 */
+			$customerGroupAssignments = [];
+
+			$errors = [];
+			$marshaller = $this->assignmentsTable->marshaller();
+
+			foreach ($values as $assignmentData) {
+				// Handle both simple ID values and array data with id
+				if (is_array($assignmentData)) {
+					$customerGroupId = $assignmentData['customer_group_id'] ?? $assignmentData['customerGroupId'] ?? null;
+					$assignmentId = $assignmentData['id'] ?? null;
+				}
+				else {
+					$customerGroupId = $assignmentData;
+					$assignmentId = null;
+				}
+
+				if (empty($customerGroupId)) {
+					continue;
+				}
+
+				/** @var \Awyiss\Model\Entity\CustomerGroupAssignment $assignment */
+				$assignment = $this->assignmentsTable->newDefaultEntity();
+
+
+				if (!empty($assignmentId)) {
+					$assignment->id = $assignmentId;
+				}
+
+				$data = [
+					'customerGroupId' => (int)$customerGroupId,
+					'scope' => $this->getConfig('referenceName'),
+				];
+
+				$marshaller->merge($assignment, $data, $options);
+
+				$dataErrors = $assignment->getErrors();
+				if ($dataErrors) {
+					$errors[] = $dataErrors;
+				}
+
+				if ($assignment->id) {
+					$assignment->unset('createdBy');
+					$assignment->unset('createdOn');
+				}
+
+				$customerGroupAssignments[] = $assignment;
+			}
+
+			//Set errors into the root entity, so validation errors match the original form data position.
+			if ($errors) {
+				$entity->setErrors(['customerGroupAssignments' => $errors]);
+			}
+
+			$entity->setDirty('customerGroupAssignments');
+
+			return $customerGroupAssignments;
+		};
+
+		return $result;
+	}
+
+
+	/**
+	 * @param Table $table The table class to get a reference name for.
+	 * @return string
+	 */
+	protected function getScope(Table $table): string {
+		$name = namespaceSplit($table::class);
+		$name = substr((string)end($name), 0, -5);
+
+		if (empty($name)) {
+			$name = $table->getTable() ?: $table->getAlias();
+		}
+
+		return Inflector::underscore($name);
+	}
+}

@@ -62,7 +62,7 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\SurveySurveyQuestionsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(12, $this->surveySurveyQuestionsTable->associations()->keys());
+		$this->assertCount(14, $this->surveySurveyQuestionsTable->associations()->keys());
 
 		$this->assertTrue($this->surveySurveyQuestionsTable->hasAssociation('Surveys'));
 		$surveysAssociation = $this->surveySurveyQuestionsTable->getAssociation('Surveys');
@@ -83,6 +83,20 @@ class SurveySurveyQuestionsTableTest extends TestCase {
 		$this->assertTrue($surveySurveyAnswersAssociation->getCascadeCallbacks());
 		$this->assertTrue($surveySurveyAnswersAssociation->getDependent());
 		$this->assertSame('replace', $surveySurveyAnswersAssociation->getSaveStrategy());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->surveySurveyQuestionsTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->surveySurveyQuestionsTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->surveySurveyQuestionsTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->surveySurveyQuestionsTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->surveySurveyQuestionsTable->hasAssociation('MediaAssignments'));

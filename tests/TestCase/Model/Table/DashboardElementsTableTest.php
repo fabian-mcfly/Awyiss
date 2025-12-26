@@ -90,7 +90,21 @@ class DashboardElementsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\DashboardElementsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(6, $this->dashboardElementsTable->associations()->keys());
+		$this->assertCount(8, $this->dashboardElementsTable->associations()->keys());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->dashboardElementsTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->dashboardElementsTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->dashboardElementsTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->dashboardElementsTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must exist
 		$this->assertTrue($this->dashboardElementsTable->hasAssociation('MediaAssignments'));
@@ -702,6 +716,10 @@ class DashboardElementsTableTest extends TestCase {
 			'content_areas::headline_overview',
 			'content_templates::headline_overview',
 			'contents::headline_overview',
+			'customer_group_access_settings::headline_overview',
+			'customer_group_assignments::headline_overview',
+			'customer_groups::headline_overview',
+			'customers::headline_overview',
 			'datatables::headline_overview',
 			'designs::headline_overview',
 			'dummy_users::headline_overview',

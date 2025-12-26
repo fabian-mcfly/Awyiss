@@ -63,7 +63,7 @@ class PageRolesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\PageRolesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(8, $this->pageRolesTable->associations()->keys());
+		$this->assertCount(10, $this->pageRolesTable->associations()->keys());
 
 		// Test PageTemplates association (HasOne)
 		$this->assertTrue($this->pageRolesTable->hasAssociation('PageTemplates'));
@@ -84,6 +84,20 @@ class PageRolesTableTest extends TestCase {
 		$this->assertArrayHasKey('all', $finderOptions);
 		$this->assertArrayHasKey('skipPageRoleCheck', $finderOptions['all']);
 		$this->assertTrue($finderOptions['all']['skipPageRoleCheck']);
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->pageRolesTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->pageRolesTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->pageRolesTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->pageRolesTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->pageRolesTable->hasAssociation('MediaAssignments'));

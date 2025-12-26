@@ -9,6 +9,7 @@ use Awyiss\Model\Enum\ComparisonOperator;
 use Awyiss\Model\Table\FormConditionalRecipientsTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
+use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
@@ -60,7 +61,7 @@ class FormConditionalRecipientsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormConditionalRecipientsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(5, $this->formConditionalRecipientsTable->associations()->keys());
+		$this->assertCount(7, $this->formConditionalRecipientsTable->associations()->keys());
 
 		// Test Forms association (BelongsTo)
 		$this->assertTrue($this->formConditionalRecipientsTable->hasAssociation('Forms'));
@@ -68,6 +69,20 @@ class FormConditionalRecipientsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $formsAssociation);
 		$this->assertSame('form_id', $formsAssociation->getForeignKey());
 		$this->assertSame('INNER', $formsAssociation->getJoinType());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->formConditionalRecipientsTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->formConditionalRecipientsTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->formConditionalRecipientsTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->formConditionalRecipientsTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->formConditionalRecipientsTable->hasAssociation('MediaAssignments'));

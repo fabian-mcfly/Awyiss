@@ -49,6 +49,8 @@ class GlobalContentTemplateElementTest extends TestCase {
 			'systemOrder' => true,
 			'_translations' => true,
 			'_publicationData' => true,
+			'customerGroupAccessSettings' => true,
+			'customerGroupAssignments' => true,
 			'mediaAssignments' => true,
 			'mediaElementAssignments' => true,
 		], $entity->getAccessible());

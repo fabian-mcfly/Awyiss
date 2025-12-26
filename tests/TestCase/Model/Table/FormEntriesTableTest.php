@@ -8,6 +8,7 @@ use Awyiss\Model\Entity\FormEntry;
 use Awyiss\Model\Table\FormEntriesTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
+use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
@@ -59,7 +60,7 @@ class FormEntriesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormEntriesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(5, $this->formEntriesTable->associations()->keys());
+		$this->assertCount(7, $this->formEntriesTable->associations()->keys());
 
 		// Test Forms association (BelongsTo)
 		$this->assertTrue($this->formEntriesTable->hasAssociation('Forms'));
@@ -75,7 +76,6 @@ class FormEntriesTableTest extends TestCase {
 		$this->assertSame('page_id', $pagesAssociation->getForeignKey());
 		$this->assertSame(['all' => ['skipPageRoleCheck' => true]], $pagesAssociation->getFinder());
 
-
 		// Test Languages association (BelongsTo)
 		$this->assertTrue($this->formEntriesTable->hasAssociation('Languages'));
 		$languagesAssociation = $this->formEntriesTable->getAssociation('Languages');
@@ -84,6 +84,20 @@ class FormEntriesTableTest extends TestCase {
 		$this->assertFalse($languagesAssociation->getDependent());
 		$this->assertEquals('shortcode', $languagesAssociation->getBindingKey());
 		$this->assertEquals('language_shortcode', $languagesAssociation->getForeignKey());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->formEntriesTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->formEntriesTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->formEntriesTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->formEntriesTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->formEntriesTable->hasAssociation('MediaAssignments'));

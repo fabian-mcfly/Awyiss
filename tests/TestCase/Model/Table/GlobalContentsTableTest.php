@@ -68,7 +68,7 @@ class GlobalContentsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\GlobalContentsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(15, $this->globalContentsTable->associations()->keys());
+		$this->assertCount(17, $this->globalContentsTable->associations()->keys());
 
 		$this->assertTrue($this->globalContentsTable->hasAssociation('AttributesGlobalContents'));
 		$attributesGlobalContentsAssociation = $this->globalContentsTable->getAssociation('AttributesGlobalContents');
@@ -81,6 +81,20 @@ class GlobalContentsTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $formsAssociation);
 		$this->assertFalse($formsAssociation->getCascadeCallbacks());
 		$this->assertFalse($formsAssociation->getDependent());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->globalContentsTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->globalContentsTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->globalContentsTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->globalContentsTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->globalContentsTable->hasAssociation('MediaAssignments'));

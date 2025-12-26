@@ -59,14 +59,14 @@ class UsergroupPermissionsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\UsergroupPermissionsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(2, $this->usergroupPermissionsTable->associations()->keys());
+		$this->assertCount(4, $this->usergroupPermissionsTable->associations()->keys());
 
 		$this->assertTrue($this->usergroupPermissionsTable->hasAssociation('Usergroups'));
 		$usergroupsAssociation = $this->usergroupPermissionsTable->getAssociation('Usergroups');
 		$this->assertInstanceOf(BelongsTo::class, $usergroupsAssociation);
 		$this->assertSame('INNER', $usergroupsAssociation->getJoinType());
 
-		// MediaAssignments is defined, but we don't care about it for this table
+		// CustomerGroupAccessSettings CustomerGroupAssignments and MediaAssignments are defined, but we don't care about it for this table
 	}
 
 

@@ -58,7 +58,7 @@ class SurveyEntriesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\SurveyEntriesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(4, $this->surveyEntriesTable->associations()->keys());
+		$this->assertCount(6, $this->surveyEntriesTable->associations()->keys());
 
 		// Test Surveys association (BelongsTo)
 		$this->assertTrue($this->surveyEntriesTable->hasAssociation('Surveys'));
@@ -77,7 +77,7 @@ class SurveyEntriesTableTest extends TestCase {
 		// Test Pages association finder configuration
 		$this->assertSame(['all' => ['skipPageRoleCheck' => true]], $pagesAssociation->getFinder());
 
-		// MediaAssignments is defined, but we don't care about it for this table
+		// CustomerGroupAccessSettings, CustomerGroupAssignments and MediaAssignments are defined, but we don't care about it for this table
 
 		// 'DeletedByUser' must also exist
 		$this->assertTrue($this->surveyEntriesTable->hasAssociation('DeletedByUser'));

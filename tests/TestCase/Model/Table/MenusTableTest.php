@@ -60,7 +60,7 @@ class MenusTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\MenusTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(7, $this->menusTable->associations()->keys());
+		$this->assertCount(9, $this->menusTable->associations()->keys());
 
 		// Test MenuEntries association (HasMany)
 		$this->assertTrue($this->menusTable->hasAssociation('MenuEntries'));
@@ -70,6 +70,20 @@ class MenusTableTest extends TestCase {
 		$this->assertTrue($menuEntriesAssociation->getDependent());
 		$this->assertEquals('menu_id', $menuEntriesAssociation->getForeignKey());
 		$this->assertEquals('forCurrentLanguage', $menuEntriesAssociation->getFinder());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->menusTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->menusTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->menusTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->menusTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->menusTable->hasAssociation('MediaAssignments'));

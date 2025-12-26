@@ -62,7 +62,7 @@ class SurveySurveyAnswersTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\SurveySurveyAnswersTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(10, $this->surveySurveyAnswersTable->associations()->keys());
+		$this->assertCount(12, $this->surveySurveyAnswersTable->associations()->keys());
 
 		$this->assertTrue($this->surveySurveyAnswersTable->hasAssociation('SurveyAnswers'));
 		$surveyAnswersAssociation = $this->surveySurveyAnswersTable->getAssociation('SurveyAnswers');
@@ -75,6 +75,20 @@ class SurveySurveyAnswersTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $surveySurveyQuestionsAssociation);
 		$this->assertSame('survey_survey_question_id', $surveySurveyQuestionsAssociation->getForeignKey());
 		$this->assertSame('INNER', $surveySurveyQuestionsAssociation->getJoinType());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->surveySurveyAnswersTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->surveySurveyAnswersTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->surveySurveyAnswersTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->surveySurveyAnswersTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->surveySurveyAnswersTable->hasAssociation('MediaAssignments'));

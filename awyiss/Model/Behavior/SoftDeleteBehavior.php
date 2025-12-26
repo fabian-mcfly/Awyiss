@@ -231,6 +231,7 @@ class SoftDeleteBehavior extends Behavior {
 			$options->getArrayCopy() + [
 				'_cleanOnSuccess' => false,
 				'checkRules' => false,
+				'customerGroupAssignments' => ['skip' => true],
 				'systemOrder' => ['skip' => true],
 				'_primary' => true,
 			]

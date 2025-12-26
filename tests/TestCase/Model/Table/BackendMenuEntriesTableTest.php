@@ -91,7 +91,21 @@ class BackendMenuEntriesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\BackendMenuEntriesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(8, $this->backendMenuEntriesTable->associations()->keys());
+		$this->assertCount(10, $this->backendMenuEntriesTable->associations()->keys());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->backendMenuEntriesTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->backendMenuEntriesTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->backendMenuEntriesTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->backendMenuEntriesTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->backendMenuEntriesTable->hasAssociation('MediaAssignments'));

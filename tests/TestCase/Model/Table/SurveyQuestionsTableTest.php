@@ -10,6 +10,7 @@ use Awyiss\Model\Enum\Survey\QuestionType;
 use Awyiss\Model\Table\SurveyQuestionsTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
+use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
@@ -63,7 +64,7 @@ class SurveyQuestionsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\SurveyQuestionsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(10, $this->surveyQuestionsTable->associations()->keys());
+		$this->assertCount(12, $this->surveyQuestionsTable->associations()->keys());
 
 		// Test SurveyAnswers association
 		$this->assertTrue($this->surveyQuestionsTable->hasAssociation('SurveyAnswers'));
@@ -82,6 +83,20 @@ class SurveyQuestionsTableTest extends TestCase {
 		$this->assertTrue($surveySurveyQuestionsAssociation->getDependent());
 		$this->assertEquals('survey_question_id', $surveySurveyQuestionsAssociation->getForeignKey());
 		$this->assertEquals('replace', $surveySurveyQuestionsAssociation->getSaveStrategy());
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->surveyQuestionsTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->surveyQuestionsTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->surveyQuestionsTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->surveyQuestionsTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->surveyQuestionsTable->hasAssociation('MediaAssignments'));

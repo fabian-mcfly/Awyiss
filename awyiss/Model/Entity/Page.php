@@ -53,6 +53,8 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\Survey|null $survey
  * @property \Awyiss\Model\Entity\Language $language
  * @property array<int, int> $addMenuEntry
+ * @property \Awyiss\Model\Entity\CustomerGroupAccessSetting $customerGroupAccessSettings
+ * @property \Awyiss\Model\Entity\CustomerGroupAssignment[] $customerGroupAssignments
  */
 class Page extends Entity {
 	/**

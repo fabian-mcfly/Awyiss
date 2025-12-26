@@ -88,14 +88,14 @@ class UserConfigurationTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\UserConfigurationTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(2, $this->userConfigurationTable->associations()->keys());
+		$this->assertCount(4, $this->userConfigurationTable->associations()->keys());
 
 		$this->assertTrue($this->userConfigurationTable->hasAssociation('Users'));
 		$usersAssociation = $this->userConfigurationTable->getAssociation('Users');
 		$this->assertInstanceOf(BelongsTo::class, $usersAssociation);
 		$this->assertSame('LEFT', $usersAssociation->getJoinType());
 
-		// MediaAssignments is defined, but we don't care about it for this table
+		// CustomerGroupAccessSettings, CustomerGroupAssignments and MediaAssignments are defined, but we don't care about it for this table
 	}
 
 
@@ -637,6 +637,8 @@ class UserConfigurationTableTest extends TestCase {
 			'cars' => 'Autos',
 			'content_templates' => 'content_templates::menu_title',
 			'contents' => 'contents::menu_title',
+			'customer_groups' => 'customer_groups::menu_title',
+			'customers' => 'customers::menu_title',
 			'dashboard_elements' => 'dashboard_elements::menu_title',
 			'datatables' => 'datatables::menu_title',
 			'email_templates' => 'email_templates::menu_title',
@@ -706,6 +708,8 @@ class UserConfigurationTableTest extends TestCase {
 			'Cars',
 			'ContentTemplates',
 			'Contents',
+			'CustomerGroups',
+			'Customers',
 			'DashboardElements',
 			'Datatables',
 			'EmailTemplates',

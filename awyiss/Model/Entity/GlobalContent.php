@@ -50,6 +50,8 @@ use Cake\Datasource\FactoryLocator;
  * @property array|null $parentGlobalContents
  * @property float|null $realColumnWidth
  * @property int $realSystemOrder
+ * @property \Awyiss\Model\Entity\CustomerGroupAccessSetting $customerGroupAccessSettings
+ * @property \Awyiss\Model\Entity\CustomerGroupAssignment[] $customerGroupAssignments
  */
 class GlobalContent extends Entity {
 	use ForcedTitleTrait;
