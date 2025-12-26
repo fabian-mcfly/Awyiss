@@ -52,6 +52,7 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 
 	/**
 	 * @return void
+	 * @see \Awyiss\Configuration\ConfigOptions\GenericDatatablesConfigOptions::initializeConfigOptions()
 	 */
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
@@ -106,6 +107,11 @@ class GenericDatatablesConfigOptionsTest extends TestCase {
 			'ContentTemplateElements' => 'ContentTemplateElements',
 			'ContentTemplates' => 'ContentTemplates',
 			'Contents' => 'Contents',
+			'CustomerGroupAccessSettings' => 'CustomerGroupAccessSettings',
+			'CustomerGroupAssignments' => 'CustomerGroupAssignments',
+			'CustomerGroups' => 'CustomerGroups',
+			'CustomerGroupsCustomers' => 'CustomerGroupsCustomers',
+			'Customers' => 'Customers',
 			'DashboardElements' => 'DashboardElements',
 			'Datatables' => 'Datatables',
 			'Designs' => 'Designs',
