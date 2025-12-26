@@ -67,6 +67,14 @@ class Entity extends BaseEntity {
 			$this->setAccess('_publicationData', true);
 		}
 
+		if (!array_key_exists('customerGroupAccessSettings', $this->_accessible)) {
+			$this->setAccess('customerGroupAccessSettings', true);
+		}
+
+		if (!array_key_exists('customerGroupAssignments', $this->_accessible)) {
+			$this->setAccess('customerGroupAssignments', true);
+		}
+
 		if (!array_key_exists('mediaAssignments', $this->_accessible)) {
 			$this->setAccess('mediaAssignments', true);
 		}

@@ -49,6 +49,8 @@ class DummyUser extends Entity {
 		'lastLogin' => true,
 		'failedAttempts' => true,
 		'active' => true,
+		'customerGroupAccessSettings' => true,
+		'customerGroupAssignments' => true,
 		'mediaAssignments' => true,
 	];
 	/**

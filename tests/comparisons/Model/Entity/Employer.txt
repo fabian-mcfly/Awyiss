@@ -47,6 +47,8 @@ class Employer extends Entity {
 		'systemOrder' => true,
 		'active' => true,
 		'language' => true,
+		'customerGroupAccessSettings' => true,
+		'customerGroupAssignments' => true,
 		'mediaAssignments' => true,
 		'mediaElementAssignments' => true,
 		'childEmployers' => true,
