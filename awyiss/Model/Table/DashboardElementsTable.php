@@ -282,6 +282,7 @@ class DashboardElementsTable extends Table {
 					'audit',
 					'content_template_content_areas',
 					'content_template_elements',
+					'customer_groups_customers',
 					'dashboard_elements',
 					'form_conditional_recipients',
 					'generic_datatables',
