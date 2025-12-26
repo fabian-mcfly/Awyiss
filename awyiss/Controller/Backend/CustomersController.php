@@ -8,7 +8,6 @@ use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Customer;
 use Awyiss\Routing\Router;
-use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -30,21 +29,6 @@ class CustomersController extends Controller {
 			'created_on' => 'desc',
 		],
 	];
-
-
-	/**
-	 * @inheritDoc
-	 */
-	#[NoDirectAccess]
-	public function beforeFilter(EventInterface $event): void {
-		parent::beforeFilter($event);
-
-		$this->Authentication->allowUnauthenticated(['login', 'logout']);
-
-		if (in_array($this->getRequest()->getParam('action'), ['login', 'logout'])) {
-			$this->Categories->disable();
-		}
-	}
 
 
 	/**
