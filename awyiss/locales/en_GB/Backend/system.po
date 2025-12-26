@@ -636,3 +636,12 @@ msgstr "Apply"
 
 msgid "access_helper_dialog_confirm_cancel"
 msgstr "Cancel"
+
+msgid "fieldset_customer_groups_access_type"
+msgstr "Access"
+
+msgid "customer_groups_available"
+msgstr "Available Customer Groups"
+
+msgid "customer_groups_assigned"
+msgstr "Assigned Customer Groups"
