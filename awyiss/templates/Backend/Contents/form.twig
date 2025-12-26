@@ -170,6 +170,12 @@
 	{% endblock %}
 {% endset %}
 
+{% set elementCustomerGroupSettings %}
+	{% block fieldsetCustomerGroupAssignments %}
+		{{ cell('Backend/CustomerGroups', [content]) }}
+	{% endblock %}
+{% endset %}
+
 {% set elementPublicationData %}
 	{% block elementPublicationData %}
 		{% if allowedKeys is empty %}
@@ -195,6 +201,7 @@
 			{{ fieldsetMediaElementAssignments }}
 			{{ fieldsetAttributes }}
 			{{ fieldsetData }}
+			{{ elementCustomerGroupSettings }}
 			{{ elementPublicationData }}
 		{% endif %}
 
@@ -205,6 +212,7 @@
 					{{ fieldsetContent }}
 					{{ fieldsetMedia }}
 					{{ fieldsetMediaElementAssignments }}
+					{{ elementCustomerGroupSettings }}
 				</div>
 			{% endif %}
 		{% endblock %}
