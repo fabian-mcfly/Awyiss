@@ -226,6 +226,7 @@ class EventListenersProviderTest extends TestCase {
 		$result = EventListenersProvider::getListeners('Frontend');
 
 		$this->assertSame([
+			'Authentication' => '\Awyiss\Event\Frontend\AuthenticationListener',
 			'GeneralEvents' => '\Awyiss\Event\Frontend\GeneralEventsListener',
 		], $result);
 	}

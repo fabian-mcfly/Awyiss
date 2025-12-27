@@ -117,6 +117,14 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	// Load the event listeners as early as possible to possibly listen to middleware events
 	$routeBuilder->applyMiddleware('eventListeners');
 
+	/** @var class-string<\Awyiss\Authentication\AuthenticationService> $authenticationClass */
+	$authenticationClass = App::className('Authentication', 'Authentication');
+	$authentication = new $authenticationClass(Awyiss::REALM_FRONTEND);
+	/** @var class-string<\Awyiss\Middleware\AuthenticationMiddleware> $authenticationMiddlewareClass */
+	$authenticationMiddlewareClass = App::className('Authentication', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('frontendAuthentication', new $authenticationMiddlewareClass($authentication));
+	$routeBuilder->applyMiddleware('frontendAuthentication');
+
 	$routeBuilder->applyMiddleware('csp');
 
 	$routeBuilder->applyMiddleware('design');
