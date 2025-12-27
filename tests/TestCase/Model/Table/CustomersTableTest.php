@@ -8,6 +8,7 @@ use Awyiss\Model\Entity\Customer;
 use Awyiss\Model\Table\CustomersTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
+use Awyiss\ORM\Association\HasMany;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Collection\CollectionInterface;
@@ -62,7 +63,14 @@ class CustomersTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\CustomersTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(4, $this->customersTable->associations()->keys());
+		$this->assertCount(5, $this->customersTable->associations()->keys());
+
+		// Test MediaAssignments association (HasMany)
+		$this->assertTrue($this->customersTable->hasAssociation('MediaAssignments'));
+		$mediaAssignmentsAssociation = $this->customersTable->getAssociation('MediaAssignments');
+		$this->assertInstanceOf(HasMany::class, $mediaAssignmentsAssociation);
+		$this->assertTrue($mediaAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($mediaAssignmentsAssociation->getDependent());
 
 		$this->assertTrue($this->customersTable->hasAssociation('CustomerGroups'));
 		$customerGroupsAssociation = $this->customersTable->getAssociation('CustomerGroups');

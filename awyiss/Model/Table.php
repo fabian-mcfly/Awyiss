@@ -280,12 +280,14 @@ class Table extends BaseTable {
 				!str_starts_with($this->getTable(), 'media_') &&
 				!in_array($this->getTable(), [
 					'audit',
-					'customers',
 					'media',
 					'publication_data',
 				])
 			) {
-				$this->addBehavior('CustomerGroupAccessSetting');
+				if ($this->getTable() !== 'customers') {
+					$this->addBehavior('CustomerGroupAccessSetting');
+				}
+
 				$this->addBehavior('MediaAssignment');
 				$this->addBehavior('MediaElementAssignment');
 			}
