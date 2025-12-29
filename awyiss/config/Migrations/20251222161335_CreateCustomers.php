@@ -43,6 +43,14 @@ class CreateCustomers extends BaseMigration {
 			'default' => null,
 			'limit' => 64,
 			'null' => true,
+		])->addColumn('password_reset_code', 'char', [
+			'default' => null,
+			'limit' => 64,
+			'null' => true,
+		])->addColumn('password_reset_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
 		])->addColumn('active', 'boolean', [
 			'default' => true,
 			'limit' => null,

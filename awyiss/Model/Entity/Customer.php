@@ -22,6 +22,8 @@ use Cake\Datasource\FactoryLocator;
  * @property bool $verified
  * @property \Cake\I18n\DateTime|null $verifiedOn
  * @property string|null $verificationCode
+ * @property string|null $passwordResetCode
+ * @property \Cake\I18n\DateTime|null $passwordResetOn
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
@@ -42,7 +44,9 @@ class Customer extends Entity {
 		'verified' => 'verified',
 		'verified_on' => 'verifiedOn',
 		'verification_code' => 'verificationCode',
+		'password_reset_code' => 'passwordResetCode',
 		'customer_groups' => 'customerGroups',
+		'password_reset_on' => 'passwordResetOn',
 	];
 
 
@@ -59,6 +63,8 @@ class Customer extends Entity {
 		'verified' => true,
 		'verifiedOn' => true,
 		'verificationCode' => true,
+		'passwordResetCode' => true,
+		'passwordResetOn' => true,
 		'active' => true,
 		'customerGroups' => true,
 	];
