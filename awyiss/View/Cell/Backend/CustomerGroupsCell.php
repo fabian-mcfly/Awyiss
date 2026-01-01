@@ -38,14 +38,6 @@ class CustomerGroupsCell extends Cell {
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Backend/cell/CustomerGroups')->setTemplate('group_assignments');
 
-		$table = $this->fetchTable($entity->getSource());
-		$table->loadInto($entity, [
-			'CustomerGroupAccessSettings',
-			'CustomerGroupAssignments' => [
-				'CustomerGroups',
-			],
-		]);
-
 		$availableGroups = $this->getGroups();
 		$assignedGroups = $entity->customerGroupAssignments ?? false;
 
@@ -86,6 +78,8 @@ class CustomerGroupsCell extends Cell {
 
 	/**
 	 * Retrieve the identity attribute from the current request
+	 *
+	 * @noinspection PhpUnused
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $identity */
