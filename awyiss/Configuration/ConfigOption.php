@@ -561,6 +561,15 @@ class ConfigOption {
 			return $value;
 		}
 
+		// If value is only numeric, cast it to int to match the key type
+		if (is_numeric($value) && ctype_digit((string)$value)) {
+			$value = (int)$value;
+
+			if (in_array($value, array_keys($values), true)) {
+				return $value;
+			}
+		}
+
 		// If the value is not a key, search for it in the values and return the corresponding key
 		$key = array_search($value, $values, true);
 
