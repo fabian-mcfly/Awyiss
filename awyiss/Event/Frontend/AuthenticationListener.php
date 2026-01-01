@@ -53,6 +53,8 @@ class AuthenticationListener implements EventListenerInterface {
 	/**
 	 * @param \Cake\Event\Event $event
 	 * @return void
+	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function authenticationRequestIdentity(Event $event): void {
 		try {
