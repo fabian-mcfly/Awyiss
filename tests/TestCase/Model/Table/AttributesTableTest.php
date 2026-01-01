@@ -99,28 +99,7 @@ class AttributesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\AttributesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(8, $this->attributesTable->associations()->keys());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->attributesTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->attributesTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->attributesTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->attributesTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
-
-		// 'MediaAssignments' must also exist
-		$this->assertTrue($this->attributesTable->hasAssociation('MediaAssignments'));
-		$mediaAssignmentsAssociation = $this->attributesTable->getAssociation('MediaAssignments');
-		$this->assertInstanceOf(HasMany::class, $mediaAssignmentsAssociation);
-		$this->assertTrue($mediaAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($mediaAssignmentsAssociation->getDependent());
+		$this->assertCount(5, $this->attributesTable->associations()->keys());
 
 		// 'CreatedByUser' must exist
 		$this->assertTrue($this->attributesTable->hasAssociation('CreatedByUser'));

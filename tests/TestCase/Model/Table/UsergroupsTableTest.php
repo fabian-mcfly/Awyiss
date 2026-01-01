@@ -62,7 +62,7 @@ class UsergroupsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\UsergroupsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(10, $this->usergroupsTable->associations()->keys());
+		$this->assertCount(8, $this->usergroupsTable->associations()->keys());
 
 		$this->assertTrue($this->usergroupsTable->hasAssociation('UsergroupPermissions'));
 		$usergroupPermissionsAssociation = $this->usergroupsTable->getAssociation('UsergroupPermissions');
@@ -74,20 +74,6 @@ class UsergroupsTableTest extends TestCase {
 		$this->assertTrue($this->usergroupsTable->hasAssociation('Users'));
 		$usersAssociation = $this->usergroupsTable->getAssociation('Users');
 		$this->assertInstanceOf(BelongsToMany::class, $usersAssociation);
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->usergroupsTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->usergroupsTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->usergroupsTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->usergroupsTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->usergroupsTable->hasAssociation('MediaAssignments'));

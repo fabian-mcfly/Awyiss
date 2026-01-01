@@ -88,14 +88,14 @@ class UserConfigurationTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\UserConfigurationTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(4, $this->userConfigurationTable->associations()->keys());
+		$this->assertCount(2, $this->userConfigurationTable->associations()->keys());
 
 		$this->assertTrue($this->userConfigurationTable->hasAssociation('Users'));
 		$usersAssociation = $this->userConfigurationTable->getAssociation('Users');
 		$this->assertInstanceOf(BelongsTo::class, $usersAssociation);
 		$this->assertSame('LEFT', $usersAssociation->getJoinType());
 
-		// CustomerGroupAccessSettings, CustomerGroupAssignments and MediaAssignments are defined, but we don't care about it for this table
+		// MediaAssignments is also defined, but we don't care about it for this table
 	}
 
 

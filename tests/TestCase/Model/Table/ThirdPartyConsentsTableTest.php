@@ -57,9 +57,9 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\PublicationDataTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(3, $this->thirdPartyConsentsTable->associations()->keys());
+		$this->assertCount(1, $this->thirdPartyConsentsTable->associations()->keys());
 
-		// CustomerGroupAccessSettings, CustomerGroupAssignments and MediaAssignments are defined, but we don't care about it for this table
+		// MediaAssignments is also defined, but we don't care about it for this table
 	}
 
 

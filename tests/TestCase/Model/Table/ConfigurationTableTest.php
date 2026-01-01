@@ -10,7 +10,6 @@ use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Table\ConfigurationTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
-use Awyiss\ORM\Association\HasOne;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
@@ -86,21 +85,7 @@ class ConfigurationTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\ConfigurationTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(7, $this->configurationTable->associations()->keys());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->configurationTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->configurationTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->configurationTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->configurationTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
+		$this->assertCount(5, $this->configurationTable->associations()->keys());
 
 		// Test Languages association (BelongsTo)
 		$this->assertTrue($this->configurationTable->hasAssociation('Languages'));

@@ -61,7 +61,7 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\GlobalContentTemplateElementsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(6, $this->globalContentTemplateElementsTable->associations()->keys());
+		$this->assertCount(4, $this->globalContentTemplateElementsTable->associations()->keys());
 
 		$this->assertTrue($this->globalContentTemplateElementsTable->hasAssociation('GlobalContentTemplates'));
 		$globalContentTemplatesAssociation = $this->globalContentTemplateElementsTable->getAssociation('GlobalContentTemplates');
@@ -69,20 +69,6 @@ class GlobalContentTemplateElementsTableTest extends TestCase {
 		$this->assertEquals('INNER', $globalContentTemplatesAssociation->getJoinType());
 		$this->assertFalse($globalContentTemplatesAssociation->getCascadeCallbacks());
 		$this->assertFalse($globalContentTemplatesAssociation->getDependent());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->globalContentTemplateElementsTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->globalContentTemplateElementsTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->globalContentTemplateElementsTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->globalContentTemplateElementsTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->globalContentTemplateElementsTable->hasAssociation('MediaAssignments'));

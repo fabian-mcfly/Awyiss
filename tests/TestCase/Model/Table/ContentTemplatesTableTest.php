@@ -86,7 +86,7 @@ class ContentTemplatesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\ContentTemplatesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(13, $this->contentTemplatesTable->associations()->keys());
+		$this->assertCount(11, $this->contentTemplatesTable->associations()->keys());
 
 		// Test Contents association (HasMany)
 		$this->assertTrue($this->contentTemplatesTable->hasAssociation('Contents'));
@@ -114,20 +114,6 @@ class ContentTemplatesTableTest extends TestCase {
 		$pageTemplatesAssociation = $this->contentTemplatesTable->getAssociation('PageTemplates');
 		$this->assertInstanceOf(BelongsToMany::class, $pageTemplatesAssociation);
 		$this->assertSame('ContentTemplateContentAreas', $pageTemplatesAssociation->getThrough());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->contentTemplatesTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->contentTemplatesTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->contentTemplatesTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->contentTemplatesTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// Test MediaAssignments association (HasMany)
 		$this->assertTrue($this->contentTemplatesTable->hasAssociation('MediaAssignments'));

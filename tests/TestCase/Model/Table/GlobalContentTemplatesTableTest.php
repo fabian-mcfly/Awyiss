@@ -85,7 +85,7 @@ class GlobalContentTemplatesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\GlobalContentTemplatesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(11, $this->globalContentTemplatesTable->associations()->keys());
+		$this->assertCount(9, $this->globalContentTemplatesTable->associations()->keys());
 
 		$this->assertTrue($this->globalContentTemplatesTable->hasAssociation('GlobalContents'));
 		$globalContentsAssociation = $this->globalContentTemplatesTable->getAssociation('GlobalContents');
@@ -120,20 +120,6 @@ class GlobalContentTemplatesTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $deletedByUserAssociation);
 		$this->assertFalse($deletedByUserAssociation->getCascadeCallbacks());
 		$this->assertFalse($deletedByUserAssociation->getDependent());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->globalContentTemplatesTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->globalContentTemplatesTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->globalContentTemplatesTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->globalContentTemplatesTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->globalContentTemplatesTable->hasAssociation('MediaAssignments'));

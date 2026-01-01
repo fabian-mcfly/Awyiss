@@ -61,21 +61,7 @@ class DatatablesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\DatatablesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(9, $this->datatablesTable->associations()->keys());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->datatablesTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->datatablesTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->datatablesTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->datatablesTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
+		$this->assertCount(7, $this->datatablesTable->associations()->keys());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->datatablesTable->hasAssociation('MediaAssignments'));

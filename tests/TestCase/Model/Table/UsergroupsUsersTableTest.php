@@ -58,7 +58,7 @@ class UsergroupsUsersTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\UsergroupsUsersTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(5, $this->usergroupsUsersTable->associations()->keys());
+		$this->assertCount(3, $this->usergroupsUsersTable->associations()->keys());
 
 		$this->assertTrue($this->usergroupsUsersTable->hasAssociation('Usergroups'));
 		$usergroupsAssociation = $this->usergroupsUsersTable->getAssociation('Usergroups');
@@ -70,7 +70,7 @@ class UsergroupsUsersTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $usersAssociation);
 		$this->assertSame('INNER', $usersAssociation->getJoinType());
 
-		// CustomerGroupAccessSettings CustomerGroupAssignments and MediaAssignments are defined, but we don't care about it for this table
+		// MediaAssignments is also defined, but we don't care about it for this table
 	}
 
 

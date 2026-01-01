@@ -61,21 +61,7 @@ class ContentAreasTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\ContentAreasTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(10, $this->contentAreasTable->associations()->keys());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->contentAreasTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->contentAreasTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->contentAreasTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->contentAreasTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
+		$this->assertCount(8, $this->contentAreasTable->associations()->keys());
 
 		// Test ContentTemplates association (BelongsToMany)
 		$this->assertTrue($this->contentAreasTable->hasAssociation('ContentTemplates'));

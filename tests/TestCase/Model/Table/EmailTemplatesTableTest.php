@@ -62,21 +62,7 @@ class EmailTemplatesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\EmailTemplatesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(12, $this->emailTemplatesTable->associations()->keys());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->emailTemplatesTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->emailTemplatesTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->emailTemplatesTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->emailTemplatesTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
+		$this->assertCount(10, $this->emailTemplatesTable->associations()->keys());
 
 		// Test FormEmails association (HasMany to Forms)
 		$this->assertTrue($this->emailTemplatesTable->hasAssociation('FormEmails'));

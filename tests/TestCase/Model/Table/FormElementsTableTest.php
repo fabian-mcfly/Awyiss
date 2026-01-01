@@ -65,7 +65,7 @@ class FormElementsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\FormElementsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(14, $this->formElementsTable->associations()->keys());
+		$this->assertCount(12, $this->formElementsTable->associations()->keys());
 
 		// Test Forms association (BelongsTo)
 		$this->assertTrue($this->formElementsTable->hasAssociation('Forms'));
@@ -87,20 +87,6 @@ class FormElementsTableTest extends TestCase {
 		$this->assertInstanceOf(HasMany::class, $childFormElementsAssociation);
 		$this->assertTrue($childFormElementsAssociation->getCascadeCallbacks());
 		$this->assertTrue($childFormElementsAssociation->getDependent());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->formElementsTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->formElementsTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->formElementsTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->formElementsTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->formElementsTable->hasAssociation('MediaAssignments'));

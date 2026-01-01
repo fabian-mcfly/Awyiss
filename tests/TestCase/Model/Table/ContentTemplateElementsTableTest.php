@@ -61,7 +61,7 @@ class ContentTemplateElementsTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\ContentTemplateElementsTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(6, $this->contentTemplateElementsTable->associations()->keys());
+		$this->assertCount(4, $this->contentTemplateElementsTable->associations()->keys());
 
 		$this->assertTrue($this->contentTemplateElementsTable->hasAssociation('ContentTemplates'));
 		$contentTemplatesAssociation = $this->contentTemplateElementsTable->getAssociation('ContentTemplates');
@@ -69,20 +69,6 @@ class ContentTemplateElementsTableTest extends TestCase {
 		$this->assertEquals('INNER', $contentTemplatesAssociation->getJoinType());
 		$this->assertFalse($contentTemplatesAssociation->getCascadeCallbacks());
 		$this->assertFalse($contentTemplatesAssociation->getDependent());
-
-		// 'CustomerGroupAccessSettings' must also exist
-		$this->assertTrue($this->contentTemplateElementsTable->hasAssociation('CustomerGroupAccessSettings'));
-		$customerGroupAccessSettingsAssociation = $this->contentTemplateElementsTable->getAssociation('CustomerGroupAccessSettings');
-		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
-
-		// 'CustomerGroupAssignments' must also exist
-		$this->assertTrue($this->contentTemplateElementsTable->hasAssociation('CustomerGroupAssignments'));
-		$customerGroupAssignmentsAssociation = $this->contentTemplateElementsTable->getAssociation('CustomerGroupAssignments');
-		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
-		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// Test MediaAssignments association (HasMany)
 		$this->assertTrue($this->contentTemplateElementsTable->hasAssociation('MediaAssignments'));

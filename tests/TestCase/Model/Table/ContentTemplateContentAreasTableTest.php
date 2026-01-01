@@ -58,7 +58,7 @@ class ContentTemplateContentAreasTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\ContentTemplateContentAreasTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(6, $this->contentTemplateContentAreasTable->associations()->keys());
+		$this->assertCount(4, $this->contentTemplateContentAreasTable->associations()->keys());
 
 		// Test ContentAreas association (BelongsTo)
 		$this->assertTrue($this->contentTemplateContentAreasTable->hasAssociation('ContentAreas'));
