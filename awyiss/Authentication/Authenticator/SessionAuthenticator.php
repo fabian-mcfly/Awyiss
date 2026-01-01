@@ -76,8 +76,10 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 				) ||
 				$reidentifiedUser->changedOn?->notEquals($user->changedOn)
 			) {
-				// unset the permissions and use the new changedOn value
-				$user->unsetPermissionCollection();
+				if (method_exists($user, 'unsetPermissionCollection')) {
+					// unset the permissions and use the new changedOn value
+					$user->unsetPermissionCollection();
+				}
 				$user->changedOn = $reidentifiedUser->changedOn;
 			}
 		}
