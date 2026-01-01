@@ -1,0 +1,54 @@
+.FlashMessage {
+	--backgroundColor:var(--colorBright);
+	--boxShadowColor:color-mix(in srgb, var(--colorInfo, #31C5E0), transparent 75%);
+	--colorText:var(--colorInfo, #31C5E0);
+
+	width:fit-content;
+	margin-block:var(--lineHeightMain);
+	padding:10px 20px 10px 70px;
+	border-radius:5px;
+	border:1px solid;
+	box-shadow:0 0 30px var(--boxShadowColor);
+	background-color:var(--backgroundColor);
+	color:var(--colorText);
+	position:relative;
+	overflow:hidden;
+
+	&.Success {
+		--boxShadowColor:color-mix(in srgb, var(--colorSuccess, #63d1a5), transparent 75%);
+		--colorText:var(--colorSuccess, #63d1a5);
+
+		&::before {
+			content:'\f00c';
+		}
+	}
+
+	&.Error {
+		--boxShadowColor:color-mix(in srgb, var(--colorError, #CA2E55), transparent 75%);
+		--colorText:var(--colorError, #CA2E55);
+
+		&::before {
+			content:'\f00d';
+			text-indent:-2px;
+		}
+	}
+
+	&::before {
+		@include fa('\f05a');
+
+		display:flex;
+		width:calc(var(--lineHeightMain) + 20px);
+		height:100%;
+		border-radius:0 5px 5px 0;
+		background-color:var(--colorText);
+		color:var(--colorBright);
+		font-size:1.25rem;
+		text-align:center;
+		line-height:var(--lineHeightMain);
+		position:absolute;
+		top:0;
+		left:0;
+		align-items:center;
+		justify-content:center;
+	}
+}
