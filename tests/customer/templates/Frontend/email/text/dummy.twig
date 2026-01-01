@@ -1,0 +1,41 @@
+{#
+@var content string
+@var userName string
+@var message string
+@var items array
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+#}
+
+{{- content|default('Default test content')|raw }}
+
+{%- if userName is defined %}
+
+User: {{ userName }}
+{%- endif %}
+
+{%- if message is defined %}
+
+Message: {{ message }}
+{%- endif %}
+
+{%- if items is defined %}
+
+{%- for item in items %}
+- {{ item }}
+{%- endfor %}
+{%- endif %}
+
