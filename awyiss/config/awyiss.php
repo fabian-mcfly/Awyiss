@@ -173,6 +173,12 @@ return [
 			'priority' => 3,
 			'transport' => 'default',
 		],
+		'customerCenter' => [
+			'emailFormat' => 'both',
+			'emailPattern' => null,
+			'priority' => 3,
+			'transport' => 'default',
+		],
 		'form' => [
 			'emailFormat' => 'both',
 			'emailPattern' => null,
@@ -340,6 +346,58 @@ return [
 		 * pages unreachable if the same slug exists in different languages.
 		 */
 		'includeLanguageShortcode' => true,
+
+		/**
+		 * Customer Center route configuration
+		 *
+		 * Allows configuring the URL path and available actions for the customer center.
+		 * Actions are mapped from action names to visible URL names.
+		 * Per-language customization is supported.
+		 *
+		 * Example:
+		 * 'Customers' => [
+		 *     'path' => '_customer-center',
+		 *     'actions' => [
+		 *         'login' => 'login',
+		 *         'logout' => 'logout',
+		 *         'register' => 'register',
+		 *         'dashboard' => 'dashboard',
+		 *         'editProfile' => 'edit-profile',
+		 *         'changePassword' => 'change-password',
+		 *         'forgotPassword' => 'forgot-password',
+		 *         'resetPassword' => 'reset-password',
+		 *         'verifyAccount' => 'verify-account',
+		 *     ],
+		 *     'languages' => [
+		 *         'de' => [
+		 *             'path' => '_kundencenter',
+		 *             'actions' => [
+		 *                 'login' => 'anmelden',
+		 *                 'logout' => 'abmelden',
+		 *             ],
+		 *         ],
+		 *     ],
+		 * ]
+		 */
+		'CustomerCenter' => [
+			'path' => 'customer-center',
+			'actions' => [
+				'login' => 'login',
+				'logout' => 'logout',
+				'register' => 'register',
+				'dashboard' => 'dashboard',
+				'editProfile' => 'edit-profile',
+				'changePassword' => 'change-password',
+				'forgotPassword' => 'forgot-password',
+				'resetPassword' => 'reset-password',
+				'verifyAccount' => 'verify-account',
+			],
+			'languages' => [
+				'de' => [
+					'path' => 'konto',
+				],
+			],
+		],
 	],
 
 

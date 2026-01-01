@@ -1,0 +1,84 @@
+{#
+@var customer \Awyiss\Model\Entity\Customer
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block assignHtmlClass %}
+	{% do _view.assign('htmlClass', 'CustomerCenterController DashboardAction') %}
+{% endblock %}
+
+{% block assignMetaTitle %}
+	{% do _view.assign('metaTitle', __d('customers', 'page_title_dashboard') ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
+{% endblock %}
+
+{% block contentArea %}
+	<main id="ContentArea">
+		<section class="ContentElement Template-Section">
+			<div class="ContentRow">
+				{% include '@Frontend/CustomerCenter/navigation.twig' with {
+					activeMenuItem: 'dashboard',
+				} %}
+
+				{% block dashboardContent %}
+					<div class="ContentElement Template-Standard Column-75">
+						{% block dashboardWelcome %}
+							<h1>{{ __d('customers', 'section_welcome') }}, {{ customer.firstname ?? customer.email }}</h1>
+						{% endblock %}
+
+						{% block flashMessages %}
+							{{ FlashHelper.render() }}
+						{% endblock %}
+
+						{% block accountInfoSection %}
+							<section class="CustomerCenter-Section">
+								{% block accountInfoContainer %}
+									<div class="CustomerCenter-Info">
+										{% block accountInfoList %}
+											<ul class="CustomerCenter-InfoList">
+												{% block emailInfoItem %}
+													<li>
+														<span class="Label">{{ __d('customers', 'email') }}:</span>
+														<span class="Value">{{ customer.email }}</span>
+													</li>
+												{% endblock %}
+
+												{% block firstnameInfoItem %}
+													{% if customer.firstname %}
+														<li>
+															<span class="Label">{{ __d('customers', 'firstname') }}:</span>
+															<span class="Value">{{ customer.firstname }}</span>
+														</li>
+													{% endif %}
+												{% endblock %}
+
+												{% block lastnameInfoItem %}
+													{% if customer.lastname %}
+														<li>
+															<span class="Label">{{ __d('customers', 'lastname') }}:</span>
+															<span class="Value">{{ customer.lastname }}</span>
+														</li>
+													{% endif %}
+												{% endblock %}
+											</ul>
+										{% endblock %}
+									</div>
+								{% endblock %}
+							</section>
+						{% endblock %}
+
+						{% block additionalDashboardContent %}
+						{% endblock %}
+					</div>
+				{% endblock %}
+			</div>
+		</section>
+	</main>
+{% endblock %}
+

@@ -1,0 +1,68 @@
+{#
+@var activeMenuItem string
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var CellHelper \Cake\View\Helper\CellHelper
+#}
+
+{% block accountOptions %}
+	<div class="ContentElement Template-Standard Column-25">
+		{% block accountOptionsMenu %}
+			{% set menuIdentifier = config('Awyiss.Customers.Frontend.navigation.menuIdentifier') %}
+			{% if menuIdentifier %}
+				<nav class="CustomerCenter-Nav CustomerCenter-NavMenu">
+					{{ menu(menuIdentifier, {includeWrapper: false}) }}
+				</nav>
+			{% endif %}
+		{% endblock %}
+
+		<nav class="CustomerCenter-Nav">
+			{% block accountOptionsDefaultMenu %}
+				<ul class="Level1">
+					{% block dashboardOption %}
+						{% set classes = 'Level1 Dashboard' %}
+						{% if activeMenuItem == 'dashboard' %}
+							{% set classes = classes ~ ' Active' %}
+						{% endif %}
+						<li class="{{ classes }}">
+							{{ HtmlHelper.link(__d('customers', 'link_dashboard'), { _name: 'FrontendCustomerCenterDashboard' ~ languageShortcode|ucparts }, {
+								class: classes,
+							}) }}
+						</li>
+					{% endblock %}
+
+					{% block editProfileOption %}
+						{% set classes = 'Level1 EditProfile' %}
+						{% if activeMenuItem == 'editProfile' %}
+							{% set classes = classes ~ ' Active' %}
+						{% endif %}
+						<li class="{{ classes }}">
+							{{ HtmlHelper.link(__d('customers', 'link_edit_profile'), { _name: 'FrontendCustomerCenterEditProfile' ~ languageShortcode|ucparts }, {
+								class: classes,
+							}) }}
+						</li>
+					{% endblock %}
+
+					{% block changePasswordOption %}
+						{% set classes = 'Level1 ChangePassword' %}
+						{% if activeMenuItem == 'changePassword' %}
+							{% set classes = classes ~ ' Active' %}
+						{% endif %}
+						<li class="{{ classes }}">
+							{{ HtmlHelper.link(__d('customers', 'link_change_password'), { _name: 'FrontendCustomerCenterChangePassword' ~ languageShortcode|ucparts }, {
+								class: classes,
+							}) }}
+						</li>
+					{% endblock %}
+
+					{% block logoutOption %}
+						<li class="Level1 Logout">
+							{{ HtmlHelper.link(__d('customers', 'link_logout'), { _name: 'FrontendCustomerCenterLogout' ~ languageShortcode|ucparts }, {
+								class: 'Level1 Logout',
+							}) }}
+						</li>
+					{% endblock %}
+				</ul>
+			{% endblock %}
+		</nav>
+	</div>
+{% endblock %}

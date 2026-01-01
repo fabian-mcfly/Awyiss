@@ -1,0 +1,69 @@
+{#
+@var code string|null
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block assignHtmlClass %}
+	{% do _view.assign('htmlClass', 'CustomerCenterController VerifyAccountAction') %}
+{% endblock %}
+
+{% block assignMetaTitle %}
+	{% do _view.assign('metaTitle', __d('customers', 'page_title_verify_account') ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
+{% endblock %}
+
+{% block contentArea %}
+	<main id="ContentArea">
+		<section class="ContentElement Template-Section">
+			<div class="ContentRow">
+				<div class="ContentElement Template-Standard Column-60 ColumnIndent-20">
+					<div class="CustomerCenter">
+						<h1>{{ __d('customers', 'page_title_verify_account') }}</h1>
+
+						{% block flashMessages %}
+							{{ FlashHelper.render() }}
+						{% endblock %}
+
+						{{ FormHelper.create(null, { class: 'CustomerCenter-Form' }) }}
+
+						<fieldset>
+							<legend>{{ __d('customers', 'page_title_verify_account') }}</legend>
+
+							<div class="FormRow">
+								<div class="FormElement Column-100">
+									<p>{{ __d('customers', 'text_verify_account_confirmation') }}</p>
+								</div>
+							</div>
+
+							<div class="FormRow">
+								<div class="FormElement Column-100">
+									{{ FormHelper.label('code', __d('customers', 'verification_code'), { class: 'FormElement-Label' }) }}
+									{{ FormHelper.text('code', {
+										value: code,
+										class: 'FormInputType-Input',
+										required: true,
+									}) }}
+								</div>
+							</div>
+
+							<div class="FormRow">
+								<div class="FormElement Column-100 FormElementType-Submit">
+									{{ FormHelper.button(__d('customers', 'button_verify_account'), { type: 'submit', class: 'FormInputType-Button Button' }) }}
+								</div>
+							</div>
+						</fieldset>
+
+						{{ FormHelper.end() }}
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+{% endblock %}
+

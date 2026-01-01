@@ -1,0 +1,112 @@
+{#
+@var registrationEnabled bool
+@var passwordResetEnabled bool
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block assignHtmlClass %}
+	{% do _view.assign('htmlClass', 'CustomerCenterController LoginAction') %}
+{% endblock %}
+
+{% block assignMetaTitle %}
+	{% do _view.assign('metaTitle', __d('customers', 'page_title_login') ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
+{% endblock %}
+
+{% block contentArea %}
+	<main id="ContentArea">
+		<section class="ContentElement Template-Section">
+			<div class="ContentRow">
+				<div class="ContentElement Template-Standard Column-60 ColumnIndent-20">
+					{% block loginContainer %}
+						{% block loginHeading %}
+							<h1>{{ __d('customers', 'page_title_login') }}</h1>
+						{% endblock %}
+
+						{% block flashMessages %}
+							{{ FlashHelper.render() }}
+						{% endblock %}
+
+						{% block loginForm %}
+							{{ FormHelper.create(null, { class: 'CustomerCenter-Form' }) }}
+
+							{% block loginFormFieldset %}
+								<fieldset>
+									{% block loginFormLegend %}
+										<legend>{{ __d('customers', 'page_title_login') }}</legend>
+									{% endblock %}
+
+									{% block loginFormFields %}
+										{% block emailField %}
+											<div class="FormRow">
+												<div class="FormElement Column-100{% if false %} FormElement-IsInvalid{% endif %}">
+													{% block emailLabel %}
+														{{ FormHelper.label('email', __d('customers', 'email'), { class: 'FormElement-Label' }) }}
+													{% endblock %}
+													{% block emailInput %}
+														{{ FormHelper.email('email', {
+															autofocus: true,
+															class: 'FormInputType-Input',
+															required: true,
+														}) }}
+													{% endblock %}
+												</div>
+											</div>
+										{% endblock %}
+
+										{% block passwordField %}
+											<div class="FormRow">
+												<div class="FormElement Column-100{% if false %} FormElement-IsInvalid{% endif %}">
+													{% block passwordLabel %}
+														{{ FormHelper.label('password', __d('customers', 'password'), { class: 'FormElement-Label' }) }}
+													{% endblock %}
+													{% block passwordInput %}
+														{{ FormHelper.password('password', {
+															class: 'FormInputType-Input',
+															required: true,
+														}) }}
+													{% endblock %}
+
+													{% if passwordResetEnabled %}
+														{% block forgotPasswordLink %}
+															{{ HtmlHelper.link(__d('customers', 'link_forgot_password'), { _name: 'FrontendCustomerCenterForgotPassword' ~ languageShortcode|ucparts }) }}
+														{% endblock %}
+													{% endif %}
+												</div>
+											</div>
+										{% endblock %}
+									{% endblock %}
+
+									{% block loginFormSubmit %}
+										<div class="FormRow">
+											<div class="FormElement Column-100 FormElementType-Submit">
+												{{ FormHelper.button(__d('customers', 'button_login'), { type: 'submit', class: 'FormInputType-Button Button' }) }}
+											</div>
+										</div>
+									{% endblock %}
+								</fieldset>
+							{% endblock %}
+
+							{{ FormHelper.end() }}
+						{% endblock %}
+
+						{% if registrationEnabled %}
+							{% block registrationSection %}
+								<div class="CustomerCenter-NotRegisteredYet">
+									{{ __d('customers', 'text_not_registered_yet') }}
+									{{ HtmlHelper.link(__d('customers', 'link_register'), { _name: 'FrontendCustomerCenterRegister' ~ languageShortcode|ucparts }) }}
+								</div>
+							{% endblock %}
+						{% endif %}
+					</div>
+				{% endblock %}
+			</div>
+		</section>
+	</main>
+{% endblock %}
