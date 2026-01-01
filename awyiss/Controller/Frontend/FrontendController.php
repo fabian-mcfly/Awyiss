@@ -24,11 +24,11 @@ use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Core\Configure;
 use Cake\Database\Schema\MysqlSchemaDialect;
+use Cake\Http\Exception\GoneException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use DateTime;
-use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
 
 /**
@@ -207,6 +207,7 @@ class FrontendController extends AppController {
 	 * @param array $where
 	 * @return \Awyiss\Model\Entity\Page|null
 	 * @throws \Exception
+	 * @noinspection DuplicatedCode
 	 */
 	protected function findPage(?string $languageShortcode = null, ?string $slug = null, array $where = []): ?Page {
 		DebugTimer::start('FrontendController::findPage');
@@ -390,31 +391,30 @@ class FrontendController extends AppController {
 			// Try to find an entry in the slug history
 			$this->historyRedirect($page->languageShortcode . '/' . $page->slug);
 
-			$this->track404();
 
-			// Find the 410 page for the current language
-			$statusCode = '410';
-
-			// If the page or the language was deleted more than 6 months ago, use the 404 instead
+			// If the page or the language was deleted more than 6 months ago,
+			// use the 404 instead by throwing NotFoundException and letting the ErrorController handle it
 			if (
 				($page->deletedOn && $page->deletedOn->diff(new DateTime())->days > 180) ||
 				($page->language->deletedOn && $page->language->deletedOn->diff(new DateTime())->days > 180)
 			) {
-				$statusCode = '404';
-			}
-
-			$page = $this->findPage($page->languageShortcode, $statusCode, ['active' => true, 'deleted' => false]);
-			$errorCode = (int)$statusCode;
-
-			if (!$page) {
 				throw new NotFoundException();
 			}
+
+			// Otherwise, throw a GoneException and let the ErrorController handle it
+			throw new GoneException();
 		}
 
-		/*
-		 * If no page was found or the page is not active or the parents are not active,
-		 * or the page role is not active or the language is not active,
-		 * find the 404 page for the current language.
+		/**
+		 * If
+		 * - no page was found
+		 * - or the page is not active
+		 * - or the parents are not active
+		 * - or the page role is not active
+		 * - or the language is not active
+		 * - or the parents are not published
+		 * throw a NotFoundException and let the ErrorController handle it,
+		 * as long as we're not in preview mode.
 		 */
 		if (
 			!$page ||
@@ -429,15 +429,7 @@ class FrontendController extends AppController {
 				!$this->previewMode
 			)
 		) {
-			$this->track404();
-
-			// Find the 404 page for the current language
-			$page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, '404', ['active' => true, 'deleted' => false]);
-			$errorCode = 404;
-
-			if (!$page) {
-				throw new NotFoundException();
-			}
+			throw new NotFoundException();
 		}
 
 		if (!$errorCode) {
@@ -473,16 +465,10 @@ class FrontendController extends AppController {
 		// Make sure the page is of the correct entity class (page role specific)
 		$page = $this->ensureCorrectEntityType($page, $pageRoleEnum);
 
-		// If there is no page, it's most likely not published
+		// If there is no page, it's most likely not published, so throw a NotFoundException
+		// and let the ErrorController handle it
 		if (!$page) {
-			$this->track404();
-
-			// Find the 404 page for the current language
-			$page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, '404', ['active' => true, 'deleted' => false]);
-
-			if (!$page) {
-				throw new NotFoundException();
-			}
+			throw new NotFoundException();
 		}
 
 		DebugTimer::stop('FrontendController::handlePage: entity-type-check');
@@ -1001,101 +987,6 @@ class FrontendController extends AppController {
 				], true),
 			],
 		]);
-	}
-
-
-	/**
-	 * @return void
-	 */
-	protected function track404(): void {
-		DebugTimer::start('FrontendController::track404');
-
-		static $tracked;
-
-		if (!isset($tracked)) {
-			$tracked = true;
-		}
-		else {
-			DebugTimer::stop('FrontendController::track404');
-			return;
-		}
-
-		$languageShortcode = $this->getRequest()->getParam('lang');
-		$slug = $languageShortcode . '/' . $this->getRequest()->getParam('slug');
-		$slug = '/' . trim($slug, '/');
-
-		// Don't track resized and preview images and assets
-		if (
-			$slug === '/apple-touch-icon-precomposed.png' ||
-			$slug === '/apple-touch-icon.png' ||
-			$slug === '/favicon.png' ||
-			$slug === '/backup' ||
-			$slug === '/new' ||
-			$slug === '/old' ||
-			$slug === '/test' ||
-			$slug === '/temp' ||
-			str_contains($slug, '/_resized') ||
-			str_contains($slug, '_preview/') ||
-			str_starts_with($slug, '/.git/') ||
-			str_starts_with($slug, '/assets/') ||
-			str_starts_with($slug, '/awyiss/assets/') ||
-			str_starts_with($slug, '/config/') ||
-			str_starts_with($slug, '//google') ||
-			str_starts_with($slug, '/wordpress') ||
-			str_starts_with($slug, '/wp-admin')
-		) {
-			DebugTimer::stop('FrontendController::track404');
-			return;
-		}
-
-		$blocklistedUrls = Configure::read('Awyiss.UrlsNotFound.Frontend.blocklistedUrls', []);
-		foreach ($blocklistedUrls as $blocklistedUrl) {
-			$pattern = preg_quote(trim($blocklistedUrl, '*/'), '/');
-
-			if (str_starts_with($blocklistedUrl, '*')) {
-				$pattern = '.*' . $pattern;
-			}
-			if (str_ends_with($blocklistedUrl, '*')) {
-				$pattern .= '.*';
-			}
-
-			if (preg_match('/' . $pattern . '/', trim($slug, '/'))) {
-				DebugTimer::stop('FrontendController::track404');
-				return;
-			}
-		}
-
-		/**
-		 * Check if an entry for the current slug already exists within the last 5 minutes
-		 * If it does, don't track it again
-		 *
-		 * @var \Awyiss\Model\Table\UrlsNotFoundTable $urlsNotFoundTable
-		 */
-		$urlsNotFoundTable = $this->fetchTable('UrlsNotFound');
-		if ($urlsNotFoundTable->exists(['url' => $slug, 'created_on >' => new DateTime('-5 minutes')])) {
-			DebugTimer::stop('FrontendController::track404');
-			return;
-		}
-
-		$notFound = $urlsNotFoundTable->newDefaultEntity([
-			'url' => $slug,
-			'referrer' => $this->getRequest()->referer(),
-			'isRobot' => $this->isRobot(),
-		]);
-
-		$urlsNotFoundTable->save($notFound, ['allowFrontendSave' => true]);
-
-		DebugTimer::stop('FrontendController::track404');
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	protected function isRobot(): bool {
-		$userAgent = $this->getRequest()->getHeaderLine('User-Agent');
-
-		return new CrawlerDetect()->isCrawler($userAgent);
 	}
 
 
