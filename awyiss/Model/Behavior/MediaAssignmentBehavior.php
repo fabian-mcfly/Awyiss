@@ -359,7 +359,11 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$identity = $this->getIdentity();
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		if (!$identity?->scopeIsAccessible('Media', [], 'read')) {
+		if (
+			!$identity ||
+			!method_exists($identity, 'scopeIsAccessible') ||
+			!$identity->scopeIsAccessible('Media', [], 'read')
+		) {
 			return [];
 		}
 
