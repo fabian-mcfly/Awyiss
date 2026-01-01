@@ -269,10 +269,9 @@ class CustomersTableTest extends TestCase {
 	public function testEntityValidationFieldLength(): void {
 		$data = [
 			'id' => 123456789123, // exceeds 11 char limit
-			'email' => str_repeat('a', 51), // exceeds 50 char limit
 			'password' => 'short', // below 8 char minimum
-			'firstname' => str_repeat('b', 51), // exceeds 50 char limit
-			'lastname' => str_repeat('c', 51), // exceeds 50 char limit
+			'firstname' => str_repeat('b', 256), // exceeds 255 char limit
+			'lastname' => str_repeat('c', 256), // exceeds 255 char limit
 			'failedAttempts' => 12, // exceeds 1 char limit
 			'verificationCode' => str_repeat('d', 65), // exceeds 64 char limit
 		];
@@ -282,7 +281,6 @@ class CustomersTableTest extends TestCase {
 		$errors = $entity->getErrors();
 
 		$this->assertArrayHasKey('id', $errors);
-		$this->assertArrayHasKey('email', $errors);
 		$this->assertArrayHasKey('password', $errors);
 		$this->assertArrayHasKey('firstname', $errors);
 		$this->assertArrayHasKey('lastname', $errors);
@@ -525,5 +523,444 @@ class CustomersTableTest extends TestCase {
 		$this->assertTrue($config['enabled']);
 		$this->assertSame('CustomerGroups', $config['associationName']);
 		$this->assertSame('customerGroup', $config['identifier']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testValidationRegistration(): void {
+		$validator = new Validator();
+		$result = $this->customersTable->validationRegistration($validator);
+
+		$this->assertInstanceOf(Validator::class, $result);
+		$this->assertSame('customers', $result->getI18nDomain());
+
+		// Test required fields for registration
+		$this->assertTrue($result->hasField('email'));
+		$this->assertTrue($result->hasField('password'));
+		$this->assertTrue($result->hasField('password_confirm'));
+
+		// Test other fields exist
+		$this->assertTrue($result->hasField('id'));
+		$this->assertTrue($result->hasField('firstname'));
+		$this->assertTrue($result->hasField('lastname'));
+		$this->assertTrue($result->hasField('verified'));
+		$this->assertTrue($result->hasField('verificationCode'));
+		$this->assertTrue($result->hasField('verifiedOn'));
+		$this->assertTrue($result->hasField('passwordResetCode'));
+		$this->assertTrue($result->hasField('passwordResetOn'));
+		$this->assertTrue($result->hasField('active'));
+		$this->assertTrue($result->hasField('deleted'));
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationSuccess(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+			'firstname' => 'Test',
+			'lastname' => 'User',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertEmpty($errors);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationMissingEmail(): void {
+		$data = [
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('email', $errors);
+		$this->assertArrayHasKey('_required', $errors['email']);
+		$this->assertSame('customers::error_required', $errors['email']['_required']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationMissingPassword(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password_confirm' => 'password123',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('password', $errors);
+		$this->assertArrayHasKey('_required', $errors['password']);
+		$this->assertSame('customers::error_required', $errors['password']['_required']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationMissingPasswordConfirm(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('password_confirm', $errors);
+		$this->assertArrayHasKey('_required', $errors['password_confirm']);
+		$this->assertSame('customers::error_required', $errors['password_confirm']['_required']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationEmptyEmail(): void {
+		$data = [
+			'email' => '',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('email', $errors);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationEmptyPassword(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => '',
+			'password_confirm' => '',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('password', $errors);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationInvalidEmail(): void {
+		$data = [
+			'email' => 'invalid-email',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('email', $errors);
+		$this->assertArrayHasKey('email', $errors['email']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationPasswordTooShort(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'short',
+			'password_confirm' => 'short',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('password', $errors);
+		$this->assertArrayHasKey('minLength', $errors['password']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationPasswordTooLong(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => str_repeat('a', 101),
+			'password_confirm' => str_repeat('a', 101),
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('password', $errors);
+		$this->assertArrayHasKey('maxLength', $errors['password']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationPasswordMismatch(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'differentpassword',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('password', $errors);
+		$this->assertArrayHasKey('compareWith', $errors['password']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationEmailTooLong(): void {
+		$data = [
+			'email' => str_repeat('a', 245) . '@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('email', $errors);
+		$this->assertArrayHasKey('maxLength', $errors['email']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationFirstnameTooLong(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+			'firstname' => str_repeat('a', 256),
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('firstname', $errors);
+		$this->assertArrayHasKey('maxLength', $errors['firstname']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationLastnameTooLong(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+			'lastname' => str_repeat('a', 256),
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('lastname', $errors);
+		$this->assertArrayHasKey('maxLength', $errors['lastname']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationOptionalFirstnameLastname(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+			'firstname' => '',
+			'lastname' => '',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayNotHasKey('firstname', $errors);
+		$this->assertArrayNotHasKey('lastname', $errors);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationVerificationCodeLength(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+			'verificationCode' => str_repeat('a', 65),
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('verificationCode', $errors);
+		$this->assertArrayHasKey('maxLength', $errors['verificationCode']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationPasswordResetCodeLength(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+			'passwordResetCode' => str_repeat('a', 65),
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('passwordResetCode', $errors);
+		$this->assertArrayHasKey('maxLength', $errors['passwordResetCode']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationInvalidVerifiedOn(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'passwordConfirm' => 'password123',
+			'verifiedOn' => 'not_a_datetime',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('verifiedOn', $errors);
+		$this->assertArrayHasKey('dateTime', $errors['verifiedOn']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationInvalidPasswordResetOn(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+			'passwordResetOn' => 'not_a_datetime',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('passwordResetOn', $errors);
+		$this->assertArrayHasKey('dateTime', $errors['passwordResetOn']);
+	}
+
+	/**
+	 * @return void
+	 * @see \Awyiss\Model\Table\CustomersTable::validationRegistration()
+	 */
+	public function testRegistrationValidationInvalidTypeBoolean(): void {
+		$data = [
+			'email' => 'registration@example.com',
+			'password' => 'password123',
+			'password_confirm' => 'password123',
+			'verified' => 'not_a_boolean',
+			'active' => 'not_a_boolean',
+			'deleted' => 'not_a_boolean',
+		];
+
+		$entity = $this->customersTable->newDefaultEntity();
+		$this->customersTable->patchEntity($entity, $data, [
+			'validate' => 'registration',
+		]);
+		$errors = $entity->getErrors();
+
+		$this->assertArrayHasKey('verified', $errors);
+		$this->assertArrayHasKey('active', $errors);
+		$this->assertArrayHasKey('deleted', $errors);
 	}
 }

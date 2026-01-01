@@ -77,6 +77,8 @@ class CustomerTest extends TestCase {
 			'verified' => true,
 			'verifiedOn' => true,
 			'verificationCode' => true,
+			'passwordResetCode' => true,
+			'passwordResetOn' => true,
 			'active' => true,
 			'customerGroups' => true,
 			'_translations' => true,

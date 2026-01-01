@@ -56,6 +56,7 @@ class CustomersTable extends Table {
 		$query->where([
 			'active' => true,
 			'verified' => true,
+			'password IS NOT' => null,
 			'OR' => [
 				'failed_attempts <' => 5,
 				'last_login <=' => DateTime::now()->subMinutes(10),
@@ -86,11 +87,12 @@ class CustomersTable extends Table {
 		]);
 
 
+		$validator->allowEmptyString('email');
 		$validator->add('email', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'email' => ['rule' => 'email'],
-			'maxLength' => ['rule' => ['maxLength', 50]],
+			'maxLength' => ['rule' => ['maxLength', 254]],
 		]);
 
 
@@ -107,14 +109,14 @@ class CustomersTable extends Table {
 		$validator->add('firstname', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
-			'maxLength' => ['rule' => ['maxLength', 50]],
+			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
 		$validator->add('lastname', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
-			'maxLength' => ['rule' => ['maxLength', 50]],
+			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
@@ -140,6 +142,109 @@ class CustomersTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
 			'maxLength' => ['rule' => ['maxLength', 64]],
+		]);
+
+
+		$validator->add('active', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$validator->add('deleted', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		return $validator;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @noinspection DuplicatedCode
+	 */
+	public function validationRegistration(Validator $validator): Validator {
+		parent::validationDefault($validator);
+
+
+		$validator->requirePresence([
+			'email',
+			'password',
+			'password_confirm',
+		]);
+
+
+		$validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$validator->notEmptyString('email');
+		$validator->add('email', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'email' => ['rule' => 'email'],
+			'maxLength' => ['rule' => ['maxLength', 254]],
+		]);
+
+
+		$validator->notEmptyString('password');
+		$validator->add('password', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'minLength' => ['rule' => ['minLength', 8]],
+			'maxLength' => ['rule' => ['maxLength', 100]],
+			'compareWith' => ['rule' => ['compareWith', 'password_confirm']],
+		]);
+
+
+		$validator->allowEmptyString('firstname');
+		$validator->add('firstname', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+		]);
+
+
+		$validator->allowEmptyString('lastname');
+		$validator->add('lastname', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+		]);
+
+
+		$validator->add('verified', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$validator->allowEmptyString('verificationCode');
+		$validator->add('verificationCode', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 64]],
+		]);
+
+
+		$validator->allowEmptyDateTime('verifiedOn');
+		$validator->add('verifiedOn', [
+			'dateTime' => ['rule' => 'dateTime'],
+		]);
+
+
+		$validator->allowEmptyString('passwordResetCode');
+		$validator->add('passwordResetCode', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 64]],
+		]);
+
+
+		$validator->allowEmptyDateTime('passwordResetOn');
+		$validator->add('passwordResetOn', [
+			'dateTime' => ['rule' => 'dateTime'],
 		]);
 
 
