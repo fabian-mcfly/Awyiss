@@ -104,3 +104,60 @@ msgstr "Verifiziert"
 msgid "verified_on"
 msgstr "Verifiziert am"
 
+msgid "configuration_category_frontend_emails"
+msgstr "E-Mails"
+
+msgid "configuration_identifier_frontend_emails_sender_name"
+msgstr "Absendername"
+
+msgid "configuration_identifier_frontend_emails_sender_email"
+msgstr "Absender-E-Mail"
+
+msgid "configuration_identifier_frontend_emails_transport_profile"
+msgstr "Transportprofil"
+
+msgid "configuration_category_frontend_login"
+msgstr "Anmeldung"
+
+msgid "configuration_identifier_frontend_login_enabled"
+msgstr "Anmeldung aktiviert"
+
+msgid "configuration_category_frontend_registration"
+msgstr "Registrierung"
+
+msgid "configuration_identifier_frontend_registration_enabled"
+msgstr "Registrierung aktiviert"
+
+msgid "configuration_identifier_frontend_registration_requires_verification"
+msgstr "E-Mail-Bestätigung erforderlich"
+
+msgid "configuration_identifier_frontend_registration_active_on_registration"
+msgstr "Konten werden direkt nach Registrierung aktiviert"
+
+msgid "configuration_identifier_frontend_registration_verification_code_validity"
+msgstr "Gültigkeit des Bestätigungscodes (in Sekunden)"
+
+msgid "configuration_identifier_frontend_registration_default_groups"
+msgstr "Standard-Kundengruppen"
+
+msgid "configuration_category_frontend_password_reset"
+msgstr "Passwort zurücksetzen"
+
+msgid "configuration_identifier_frontend_password_reset_enabled"
+msgstr "Passwort zurücksetzen aktiviert"
+
+msgid "configuration_identifier_frontend_password_reset_code_validity"
+msgstr "Gültigkeit des Passwort-Zurücksetzen-Codes (in Sekunden)"
+
+msgid "configuration_category_frontend_navigation"
+msgstr "Navigation"
+
+msgid "configuration_identifier_frontend_navigation_menu_identifier"
+msgstr "Menü im Kundenbereich"
+
+msgid "configuration_category_frontend_profile"
+msgstr "Profil"
+
+msgid "configuration_identifier_frontend_profile_email_change_allowed"
+msgstr "Kunden erlauben, ihre E-Mail-Adresse zu ändern"
+

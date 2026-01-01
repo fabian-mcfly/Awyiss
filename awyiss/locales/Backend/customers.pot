@@ -104,3 +104,60 @@ msgstr "Verified"
 msgid "verified_on"
 msgstr "Verified on"
 
+msgid "configuration_category_frontend_emails"
+msgstr "Emails"
+
+msgid "configuration_identifier_frontend_emails_sender_name"
+msgstr "Sender name"
+
+msgid "configuration_identifier_frontend_emails_sender_email"
+msgstr "Sender email"
+
+msgid "configuration_identifier_frontend_emails_transport_profile"
+msgstr "Transport profile"
+
+msgid "configuration_category_frontend_login"
+msgstr "Login"
+
+msgid "configuration_identifier_frontend_login_enabled"
+msgstr "Login enabled"
+
+msgid "configuration_category_frontend_registration"
+msgstr "Registration"
+
+msgid "configuration_identifier_frontend_registration_enabled"
+msgstr "Registration enabled"
+
+msgid "configuration_identifier_frontend_registration_requires_verification"
+msgstr "Email verification required"
+
+msgid "configuration_identifier_frontend_registration_active_on_registration"
+msgstr "Accounts active immediately after registration"
+
+msgid "configuration_identifier_frontend_registration_verification_code_validity"
+msgstr "Verification code validity (in seconds)"
+
+msgid "configuration_identifier_frontend_registration_default_groups"
+msgstr "Default Customer Groups"
+
+msgid "configuration_category_frontend_password_reset"
+msgstr "Password Reset"
+
+msgid "configuration_identifier_frontend_password_reset_enabled"
+msgstr "Password reset enabled"
+
+msgid "configuration_identifier_frontend_password_reset_code_validity"
+msgstr "Password reset code validity (in seconds)"
+
+msgid "configuration_category_frontend_navigation"
+msgstr "Navigation"
+
+msgid "configuration_identifier_frontend_navigation_menu_identifier"
+msgstr "Menu in Customer Center"
+
+msgid "configuration_category_frontend_profile"
+msgstr "Profile"
+
+msgid "configuration_identifier_frontend_profile_email_change_allowed"
+msgstr "Allow customers to change their email address"
+

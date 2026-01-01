@@ -1,0 +1,249 @@
+# Customer Center translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-12-27 15:15+0000\n"
+"PO-Revision-Date: 2025-12-27 15:15+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "error_not_authenticated"
+msgstr "You must be logged in to access this page."
+
+msgid "error_invalid_login"
+msgstr "Invalid email or password."
+
+msgid "error_invalid_reset_code"
+msgstr "The password reset code is invalid or has expired."
+
+msgid "error_invalid_verification_code"
+msgstr "The verification code is invalid."
+
+msgid "error_password_incorrect"
+msgstr "The current password is incorrect."
+
+msgid "error_password_mismatch"
+msgstr "The passwords do not match."
+
+msgid "error_password_too_short"
+msgstr "The password must be at least 8 characters long."
+
+msgid "error_email_required"
+msgstr "An email address is required."
+
+msgid "error_email"
+msgstr "There was an error with your email address."
+
+msgid "error_profile_update_failed"
+msgstr "The profile could not be updated."
+
+msgid "error_password_change_failed"
+msgstr "The password could not be changed."
+
+msgid "error_password_reset_failed"
+msgstr "The password could not be reset."
+
+msgid "error_registration_failed"
+msgstr "The account could not be created."
+
+msgid "error_email_verification_failed"
+msgstr "The email could not be verified."
+
+msgid "error_registration_disabled"
+msgstr "Registration is currently disabled."
+
+msgid "error_password_reset_disabled"
+msgstr "Password reset is currently disabled."
+
+msgid "message_logout_success"
+msgstr "You have been successfully logged out."
+
+msgid "message_profile_updated"
+msgstr "Your profile has been updated successfully."
+
+msgid "message_password_changed"
+msgstr "Your password has been changed successfully."
+
+msgid "message_password_reset_sent"
+msgstr "If the email exists, a password reset link has been sent."
+
+msgid "message_password_reset_success"
+msgstr "Your password has been reset successfully."
+
+msgid "message_registration_success"
+msgstr "Your account has been created successfully."
+
+msgid "message_registration_success_verification_required"
+msgstr "Your account has been created successfully. Please check your email to verify your address and activate your account."
+
+msgid "message_account_verified"
+msgstr "Your account has been verified successfully."
+
+msgid "email"
+msgstr "Email"
+
+msgid "password"
+msgstr "Password"
+
+msgid "password_confirm"
+msgstr "Confirm password"
+
+msgid "current_password"
+msgstr "Current password"
+
+msgid "new_password"
+msgstr "New password"
+
+msgid "firstname"
+msgstr "First name"
+
+msgid "lastname"
+msgstr "Last name"
+
+msgid "verification_code"
+msgstr "Verification code"
+
+msgid "text_not_registered_yet"
+msgstr "Not registered yet?"
+
+msgid "text_already_registered"
+msgstr "Already registered?"
+
+msgid "text_verify_account_confirmation"
+msgstr "Please enter the verification code sent to your email to verify your account."
+
+msgid "text_enter_new_password"
+msgstr "Please enter your new password below."
+
+msgid "button_login"
+msgstr "Login"
+
+msgid "link_login"
+msgstr "Login now"
+
+msgid "link_logout"
+msgstr "Logout"
+
+msgid "link_register"
+msgstr "Create account"
+
+msgid "link_forgot_password"
+msgstr "Forgot password?"
+
+msgid "link_reset_password"
+msgstr "Reset password"
+
+msgid "link_change_password"
+msgstr "Change password"
+
+msgid "link_edit_profile"
+msgstr "Edit profile"
+
+msgid "link_save_changes"
+msgstr "Save changes"
+
+msgid "button_save_changes"
+msgstr "Save changes"
+
+msgid "button_register"
+msgstr "Register"
+
+msgid "button_verify_account"
+msgstr "Verify Account"
+
+msgid "button_change_password"
+msgstr "Change Password"
+
+msgid "link_dashboard"
+msgstr "Overview"
+
+msgid "page_title_dashboard"
+msgstr "Customer Center"
+
+msgid "page_title_login"
+msgstr "Login"
+
+msgid "page_title_register"
+msgstr "Create Account"
+
+msgid "page_title_forgot_password"
+msgstr "Forgot Password"
+
+msgid "page_title_reset_password"
+msgstr "Reset Password"
+
+msgid "page_title_edit_profile"
+msgstr "Edit Profile"
+
+msgid "page_title_change_password"
+msgstr "Change Password"
+
+msgid "page_title_verify_account"
+msgstr "Verify Account"
+
+msgid "section_welcome"
+msgstr "Welcome"
+
+msgid "section_account_info"
+msgstr "Account Information"
+
+msgid "section_account_options"
+msgstr "Account Options"
+
+msgid "error_account_not_verified"
+msgstr "Your account has not been verified. Please check your email for the verification link."
+
+msgid "error_sending_verification_email"
+msgstr "There was an error sending the verification email. Please try again later."
+
+msgid "error_account_verification_failed"
+msgstr "The account could not be verified."
+
+msgid "email_subject_verify_account"
+msgstr "Verify your account"
+
+msgid "email_subject_password_reset"
+msgstr "Password reset request"
+
+msgid "account_verification_email_greeting_name"
+msgstr "Hello {0} {1},"
+
+msgid "account_verification_email_greeting_generic"
+msgstr "Hello,"
+
+msgid "account_verification_email_text"
+msgstr "Please click the link below to verify your account:"
+
+msgid "account_verification_email_link_text"
+msgstr "Verify my account"
+
+msgid "password_reset_email_greeting_name"
+msgstr "Hello {0} {1},"
+
+msgid "password_reset_email_greeting_generic"
+msgstr "Hello,"
+
+msgid "password_reset_email_text"
+msgstr "A password reset request has been initiated. Please click the link below to reset your password. This link will expire in {0,plural,=1{1 hour} other{{0,number} hours}}."
+
+msgid "password_reset_email_link_text"
+msgstr "Reset my password"
+
+msgid "button_forgot_password"
+msgstr "Send reset link"
+
+msgid "reset_code"
+msgstr "Reset code"
+
+msgid "button_verify_reset_code"
+msgstr "Verify Code"
+
+msgid "button_reset_password"
+msgstr "Reset Password"
+
+msgid "error_sending_password_reset_email"
+msgstr "There was an error sending the password reset email. Please try again later."
