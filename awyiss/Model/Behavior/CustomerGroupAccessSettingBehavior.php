@@ -19,6 +19,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
+use Cake\Utility\Hash;
 
 
 /**
@@ -40,6 +41,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 	protected array $_defaultConfig = [ // phpcs:ignore
 		'enabled' => true,
 		'implementedEvents' => [
+			'beforeFind',
 			'beforeSave',
 		],
 		'implementedFinders' => [
@@ -51,6 +53,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			'rebuildCustomerGroupAssignments' => 'rebuildCustomerGroupAssignments',
 		],
 		'referenceName' => '',
+		'skip' => false,
 		'strategy' => 'select',
 		'tableLocator' => null,
 	];
@@ -123,6 +126,43 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 
 		$entityClass::addFieldMapping('customer_group_access_settings', 'customerGroupAccessSettings');
 		$entityClass::addFieldMapping('customer_group_assignments', 'customerGroupAssignments');
+	}
+
+
+	/**
+	 * @param EventInterface $event
+	 * @param SelectQuery $query
+	 * @param ArrayObject $options
+	 * @param bool $primary
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary): void {
+		if (!$this->getConfig('enabled')) {
+			return;
+		}
+
+		$queryOptions = Hash::merge($this->getConfig(), Hash::get($options, 'customerGroupAccessSettings', []));
+		// Skip if explicitly skipped
+		if ($queryOptions['skip'] === true) {
+			return;
+		}
+
+		if (
+			$query->clause('select') &&
+			!$query->isAutoFieldsEnabled() &&
+			!in_array('id', $query->clause('select'), true) &&
+			!in_array($query->aliasField('id'), $query->clause('select'), true)
+		) {
+			$query->select($query->aliasField('id'));
+		}
+
+		$query->contain([
+			'CustomerGroupAccessSettings',
+			'CustomerGroupAssignments' => [
+				'CustomerGroups',
+			],
+		]);
 	}
 
 
@@ -333,7 +373,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 						$this->accessSettingsTable->delete($accessSettings);
 					}
 
-					return false;
+					return null;
 				}
 
 				$settingMarshaller = $this->accessSettingsTable->marshaller();
