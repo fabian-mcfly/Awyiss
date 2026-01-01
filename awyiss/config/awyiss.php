@@ -355,7 +355,7 @@ return [
 		 * Per-language customization is supported.
 		 *
 		 * Example:
-		 * 'Customers' => [
+		 * 'CustomerCenter' => [
 		 *     'path' => '_customer-center',
 		 *     'actions' => [
 		 *         'login' => 'login',
