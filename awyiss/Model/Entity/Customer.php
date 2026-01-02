@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Authentication\PasswordHasher\DefaultPasswordHasher;
+use Awyiss\Authorization\IdentityGroupPermissionInterface;
 use Awyiss\Model\Entity;
 use Cake\Datasource\FactoryLocator;
 
@@ -34,7 +35,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\CustomerGroup[] $customerGroups
  */
-class Customer extends Entity {
+class Customer extends Entity implements IdentityGroupPermissionInterface {
 	/**
 	 * @inheritDoc
 	 */
@@ -77,11 +78,9 @@ class Customer extends Entity {
 
 
 	/**
-	 * Returns an array of CustomerGroup-entities
-	 *
-	 * @return array<\Awyiss\Model\Entity\CustomerGroup>
+	 * @inheritDoc
 	 */
-	public function getCustomerGroups(): array {
+	public function getGroups(): array {
 		if (isset($this->customerGroups)) {
 			return $this->customerGroups;
 		}
@@ -96,6 +95,16 @@ class Customer extends Entity {
 		]);
 
 		return $this->customerGroups;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function unsetGroups(): static {
+		$this->unset('customerGroups');
+
+		return $this;
 	}
 
 
