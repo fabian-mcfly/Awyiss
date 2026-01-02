@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Trait\CustomerGroupAccessTrait;
 use Cake\Utility\Text;
 
 
@@ -27,6 +28,8 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\CustomerGroupAssignment[] $customerGroupAssignments
  */
 class Menu extends Entity {
+	use CustomerGroupAccessTrait;
+
 	/**
 	 * @inheritDoc
 	 */

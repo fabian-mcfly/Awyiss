@@ -4,6 +4,7 @@
 namespace Awyiss\View\Cell\Frontend;
 
 
+use Authentication\IdentityInterface;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Menu as MenuEntity;
 use Awyiss\Model\Entity\MenuEntry;
@@ -13,7 +14,6 @@ use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
 use Awyiss\View\FrontendView;
-use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\I18n\DateTime;
@@ -77,9 +77,13 @@ class MenuCell extends Cell {
 	 * @param \Awyiss\View\FrontendView $view
 	 * @param array $options
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function display(string $identifier, string $languageShortcode, FrontendView $view, array $options = []): void {
 		DebugTimer::start('MenuCell::display', sprintf('MenuCell::display: Rendering menu "%s" for language "%s"', $identifier, $languageShortcode));
+
+		// Get the user's identity and session
+		$identity = $this->_getIdentity();
 
 		$this->View = $view;
 
@@ -103,19 +107,23 @@ class MenuCell extends Cell {
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Menu');
 
 		$menuRecord = $this->getMenu($identifier);
-		$menuEntries = $menuRecord ? $this->getMenuEntries($menuRecord, $languageShortcode) : new Collection([]);
 
-		$active = false;
-		if ($menuRecord) {
-			$active = $menuRecord->active;
+		// If no menu is found or the user has no access, do not render the menu
+		if (!$menuRecord || !$menuRecord->isAccessibleBy($identity?->getOriginalData())) {
+			DebugTimer::stop('MenuCell::display');
 
-			$now = new DateTime();
-			if (
-				($menuRecord->publicationStart && $menuRecord->publicationStart > $now) ||
-				($menuRecord->publicationEnd && $menuRecord->publicationEnd < $now)
-			) {
-				$active = false;
-			}
+			return;
+		}
+
+		$menuEntries = $this->getMenuEntries($menuRecord, $languageShortcode);
+
+		$active = $menuRecord->active;
+		$now = new DateTime();
+		if (
+			($menuRecord->publicationStart && $menuRecord->publicationStart > $now) ||
+			($menuRecord->publicationEnd && $menuRecord->publicationEnd < $now)
+		) {
+			$active = false;
 		}
 
 		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenu> $menuClass */
@@ -126,10 +134,12 @@ class MenuCell extends Cell {
 		/** @see \Awyiss\Utility\Menu\FrontendMenu::__construct() */
 		$menu = new $menuClass($menuEntries->toArray(), [
 			'active' => $active,
-			'identifier' => $menuRecord?->identifier ? Inflector::ucparts($menuRecord->identifier, false) : null,
+			'identifier' => $menuRecord->identifier ? Inflector::ucparts($menuRecord->identifier, false) : null,
 			'menuClass' => $menuClass,
 			'menuItemClass' => $menuItemClass,
 		]);
+
+		$menu->setIdentity($identity?->getOriginalData());
 
 		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $menuRendererClass */
 		$menuRendererClass = App::className('MenuRenderer', 'Utility/Menu');
@@ -308,5 +318,15 @@ class MenuCell extends Cell {
 		DebugTimer::stop('MenuCell::renderContent');
 
 		return $content;
+	}
+
+
+	/**
+	 * Retrieve the identity attribute from the current request
+	 *
+	 * @return \Authentication\IdentityInterface|null
+	 */
+	protected function _getIdentity(): ?IdentityInterface {
+		return $this->request->getAttribute('identity');
 	}
 }
