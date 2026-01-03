@@ -268,7 +268,8 @@ class ContentsCell extends Cell {
 	 */
 	protected function getThreadedContents(Page $page, string $contentArea, bool $isPreview = false): CollectionInterface {
 		DebugTimer::start('ContentsCell::getThreadedContents', sprintf('ContentsCell::getThreadedContents: Fetching threaded contents for content area "%s" on page %d', $contentArea, $page->id));
-		$query = $this->getContentsQuery($isPreview);
+		/** @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible() */
+		$query = $this->getContentsQuery($isPreview)->find('accessible');
 
 		$query->where([
 			'Contents.page_id' => $page->duplicateOf ?? $page->id,

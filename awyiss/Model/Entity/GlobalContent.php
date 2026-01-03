@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Trait\CustomerGroupAccessTrait;
 use Awyiss\Model\Trait\ForcedTitleTrait;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
@@ -54,6 +55,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\CustomerGroupAssignment[] $customerGroupAssignments
  */
 class GlobalContent extends Entity {
+	use CustomerGroupAccessTrait;
 	use ForcedTitleTrait;
 
 

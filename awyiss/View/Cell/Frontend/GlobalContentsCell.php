@@ -139,10 +139,14 @@ class GlobalContentsCell extends Cell {
 		}
 		else {
 			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$query = $globalContentsTable->find('active')->find('published');
+			$query = $globalContentsTable
+				->find('accessible')
+				->find('active')
+				->find('published');
 		}
 
 		$query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
