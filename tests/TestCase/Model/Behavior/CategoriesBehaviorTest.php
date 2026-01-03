@@ -398,7 +398,7 @@ class CategoriesBehaviorTest extends TestCase {
 			$this->assertInstanceOf(News::class, $entity);
 			$this->assertSame(36, $entity->parentId);
 		}
-		$this->assertStringContainsString('News.parent_id = :c6', $query->sql());
+		$this->assertStringContainsString('News.parent_id = :c15', $query->sql());
 
 		$this->behavior->setConfig('allowUnassigned', true);
 
@@ -413,7 +413,7 @@ class CategoriesBehaviorTest extends TestCase {
 			$this->assertInstanceOf(News::class, $entity);
 			$this->assertSame(19, $entity->parentId);
 		}
-		$this->assertStringContainsString('((News.parent_id) IS NULL OR News.parent_id NOT IN (:c6,:c7,:c8,:c9)', $query->sql());
+		$this->assertStringContainsString('((News.parent_id) IS NULL OR News.parent_id NOT IN (:c15,:c16,:c17,:c18)', $query->sql());
 
 		$this->behavior->setConfig('allowAggregation', true);
 
@@ -423,8 +423,8 @@ class CategoriesBehaviorTest extends TestCase {
 		$result = $query->all();
 
 		$this->assertCount(6, $result);
-		$this->assertStringNotContainsString('News.parent_id = :c6', $query->sql());
-		$this->assertStringNotContainsString('((News.parent_id) IS NULL OR News.parent_id NOT IN (:c6,:c7,:c8,:c9)', $query->sql());
+		$this->assertStringNotContainsString('News.parent_id = :c15', $query->sql());
+		$this->assertStringNotContainsString('((News.parent_id) IS NULL OR News.parent_id NOT IN', $query->sql());
 	}
 
 

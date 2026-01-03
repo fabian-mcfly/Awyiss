@@ -6,10 +6,8 @@ namespace Awyiss\Test\TestCase\Model\Behavior;
 
 use ArrayObject;
 use Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior;
-use Awyiss\Model\Entity\CustomerGroup;
 use Awyiss\Model\Entity\CustomerGroupAccessSetting;
 use Awyiss\Model\Entity\CustomerGroupAssignment;
-use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\CustomerGroupAccessType;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Association\HasMany;
@@ -69,13 +67,11 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 		$this->assertTrue($config['enabled']);
 
 		$this->assertSame([
-			'customerGroupAccessSettings' => 'findCustomerGroupAccessSettings',
-			'customerGroupAssignments' => 'findCustomerGroupAssignments',
+			'accessible' => 'findAccessible',
 		], $config['implementedFinders']);
 
 		$this->assertSame([
 			'getCustomerGroupAccessSettings' => 'getCustomerGroupAccessSettings',
-			'rebuildCustomerGroupAssignments' => 'rebuildCustomerGroupAssignments',
 		], $config['implementedMethods']);
 
 		$this->assertSame('pages', $config['referenceName']);
@@ -111,85 +107,6 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 
 	/**
 	 * @return void
-	 * @see \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findCustomerGroupAccessSettings()
-	 */
-	public function testFindCustomerGroupAccessSettings(): void {
-		$query = $this->table->find('customerGroupAccessSettings')->where(['id' => 1]);
-		$result = $query->first();
-
-		$this->assertNotEmpty($result);
-		$this->assertInstanceOf(Page::class, $result);
-		$this->assertInstanceOf(CustomerGroupAccessSetting::class, $result->customerGroupAccessSettings);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findCustomerGroupAccessSettings()
-	 */
-	public function testFindCustomerGroupAccessSettingsWhenDisabled(): void {
-		$this->behavior->setConfig('enabled', false);
-
-		$query = $this->table->find('customerGroupAccessSettings')->where(['id' => 1]);
-		$result = $query->first();
-
-		$this->assertNotEmpty($result);
-		$this->assertInstanceOf(Page::class, $result);
-		// When disabled, access settings should not be included
-		$this->assertNull($result->customerGroupAccessSettings);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findCustomerGroupAssignments()
-	 */
-	public function testFindCustomerGroupAssignments(): void {
-		$query = $this->table->find('customerGroupAssignments')->where(['id' => 1]);
-		$result = $query->first();
-
-		$this->assertNotEmpty($result);
-		$this->assertInstanceOf(Page::class, $result);
-		$this->assertIsArray($result->customerGroupAssignments);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findCustomerGroupAssignments()
-	 */
-	public function testFindCustomerGroupAssignmentsWhenDisabled(): void {
-		$this->behavior->setConfig('enabled', false);
-
-		$query = $this->table->find('customerGroupAssignments')->where(['id' => 1]);
-		$result = $query->first();
-
-		$this->assertNotEmpty($result);
-		$this->assertInstanceOf(Page::class, $result);
-		// When disabled, assignments should not be included
-		$this->assertEmpty($result->customerGroupAssignments);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findCustomerGroupAssignments()
-	 */
-	public function testFindCustomerGroupAssignmentsWithoutFormatResult(): void {
-		$query = $this->table->find('customerGroupAssignments', formatResult: false)->where(['id' => 1]);
-		$result = $query->first();
-
-		$this->assertNotEmpty($result);
-		$this->assertInstanceOf(Page::class, $result);
-		$this->assertIsArray($result->customerGroupAssignments);
-		foreach ($result->customerGroupAssignments as $assignment) {
-			$this->assertInstanceOf(CustomerGroupAssignment::class, $assignment);
-		}
-	}
-
-
-	/**
-	 * @return void
 	 * @see \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::getCustomerGroupAccessSettings()
 	 */
 	public function testGetCustomerGroupAccessSettings(): void {
@@ -197,94 +114,6 @@ class CustomerGroupAccessSettingBehaviorTest extends TestCase {
 
 		$this->assertInstanceOf(CustomerGroupAccessSetting::class, $accessSetting);
 		$this->assertSame('pages', $accessSetting->scope);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::rebuildCustomerGroupAssignments()
-	 */
-	public function testRebuildCustomerGroupAssignments(): void {
-		$query = $this->table->find('customerGroupAssignments', formatResult: false)->where(['id' => 1]);
-		$entity = $query->first();
-
-		$this->assertNotEmpty($entity);
-		$this->assertNotEmpty($entity->customerGroupAssignments);
-
-		// Before rebuild: should have assignment entities with nested customerGroup
-		$this->assertIsArray($entity->customerGroupAssignments);
-		$originalAssignmentCount = count($entity->customerGroupAssignments);
-
-		foreach ($entity->customerGroupAssignments as $item) {
-			$this->assertInstanceOf(CustomerGroupAssignment::class, $item);
-			// Assignments should have customerGroup data
-			$this->assertNotEmpty($item->customerGroup);
-		}
-
-		$this->behavior->rebuildCustomerGroupAssignments($entity);
-
-		// After rebuild: customerGroupAssignments should now contain just the customer groups
-		$this->assertIsArray($entity->customerGroupAssignments);
-
-		// Should have same count as original assignments
-		$this->assertSame($originalAssignmentCount, count($entity->customerGroupAssignments));
-
-		// Each item should now be a customer group (extracted from the assignment)
-		foreach ($entity->customerGroupAssignments as $group) {
-			// The extracted group should have id and title
-			$this->assertInstanceOf(CustomerGroup::class, $group);
-			$this->assertNotNull($group->id);
-			$this->assertNotNull($group->title);
-		}
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::rebuildCustomerGroupAssignments()
-	 */
-	public function testRebuildCustomerGroupAssignmentsExtractsGroups(): void {
-		// Create a mock entity with assignments containing customer groups
-		$entity = [
-			'id' => 1,
-			'title' => 'Test Page',
-			'customerGroupAssignments' => [
-				new CustomerGroupAssignment([
-					'id' => 1,
-					'customerGroupId' => 1,
-					'scope' => 'pages',
-					'customerGroup' => [
-						'id' => 1,
-						'title' => 'Premium',
-						'active' => true,
-					],
-				]),
-				new CustomerGroupAssignment([
-					'id' => 2,
-					'customerGroupId' => 2,
-					'scope' => 'pages',
-					'customerGroup' => [
-						'id' => 2,
-						'title' => 'Standard',
-						'active' => true,
-					],
-				]),
-			],
-		];
-
-		$result = $this->behavior->rebuildCustomerGroupAssignments($entity);
-
-		// After rebuild, customerGroupAssignments should contain just the groups (not assignments)
-		$this->assertCount(2, $result['customerGroupAssignments']);
-
-		// Verify the groups are extracted
-		foreach ($result['customerGroupAssignments'] as $group) {
-			// Should have id and title from the customer groups
-			if (is_array($group)) {
-				$this->assertArrayHasKey('id', $group);
-				$this->assertArrayHasKey('title', $group);
-			}
-		}
 	}
 
 

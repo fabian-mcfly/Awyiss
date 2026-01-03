@@ -32,6 +32,12 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 
 	/**
+	 * @var array
+	 */
+	protected static array $pageRoles;
+
+
+	/**
 	 * Default config
 	 * These are merged with user-provided configuration when the behavior is used.
 	 *
@@ -93,7 +99,15 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$this->publicationDataTable = $this->getTableLocator()->get('PublicationData', ['allowFallbackClass' => false]);
 
-		$this->setupAssociations();
+		if (!isset(static::$pageRoles)) {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+			$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			foreach ($pageRoleEnum::cases() as $pageRole) {
+				static::$pageRoles[] = Inflector::pluralize(Inflector::underscore($pageRole->name));
+			}
+		}
+
+		$this->setupAssociations(in_array($this->getConfig('referenceName'), static::$pageRoles, true));
 	}
 
 
@@ -187,9 +201,12 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 
 	/**
+	 * Sets up the necessary associations on the table
+	 *
+	 * @param bool $forPages Whether the associations are being set up for pages.
 	 * @return void
 	 */
-	protected function setupAssociations(): void {
+	protected function setupAssociations(bool $forPages = false): void {
 		$targetAlias = $this->publicationDataTable->getAlias();
 		$alias = $this->_table->getAlias();
 		$tableLocator = $this->getTableLocator();
@@ -217,17 +234,11 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 				$name . '.type' => $identifier,
 			];
 
-			$scope = $this->getConfig('referenceName');
-			if ($this->getConfig('referenceName') === 'pages') {
-				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
-				$pageRoleEnum = App::className('PageRole', 'Model/Enum');
-				$scopes = array_map(function ($pageRole) {
-					return Inflector::underscore(Inflector::pluralize($pageRole->name));
-				}, $pageRoleEnum::cases());
-				$conditions[ $name . '.scope IN' ] = $scopes;
+			if ($forPages) {
+				$conditions[ $name . '.scope IN' ] = static::$pageRoles;
 			}
 			else {
-				$conditions[ $name . '.scope' ] = $scope;
+				$conditions[ $name . '.scope' ] = $this->getConfig('referenceName');
 			}
 
 			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
@@ -242,11 +253,20 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			$entityClass::addFieldMapping('publication_' . $identifier, Inflector::variable('publication_' . $identifier));
 		}
 
+		if ($forPages) {
+			$conditions = [
+				$targetAlias . '.scope IN' => static::$pageRoles,
+			];
+		}
+		else {
+			$conditions = [
+				$targetAlias . '.scope' => $this->getConfig('referenceName'),
+			];
+		}
+
 		$this->_table->hasMany($targetAlias, [
 			'className' => $this->publicationDataTable::class,
-			'conditions' => [
-				$targetAlias . '.scope' => $this->getConfig('referenceName'),
-			],
+			'conditions' => $conditions,
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'foreign_key',

@@ -6,13 +6,15 @@ namespace Awyiss\Model\Behavior;
 
 use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\CustomerGroupAccessSetting;
 use Awyiss\Model\Entity\CustomerGroupAssignment;
 use Awyiss\Model\Enum\CustomerGroupAccessType;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
+use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
-use Cake\Collection\CollectionInterface;
+use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -33,6 +35,12 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 
 
 	/**
+	 * @var array
+	 */
+	protected static array $pageRoles;
+
+
+	/**
 	 * Default config
 	 * These are merged with user-provided configuration when the behavior is used.
 	 *
@@ -45,12 +53,10 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			'beforeSave',
 		],
 		'implementedFinders' => [
-			'customerGroupAccessSettings' => 'findCustomerGroupAccessSettings',
-			'customerGroupAssignments' => 'findCustomerGroupAssignments',
+			'accessible' => 'findAccessible',
 		],
 		'implementedMethods' => [
 			'getCustomerGroupAccessSettings' => 'getCustomerGroupAccessSettings',
-			'rebuildCustomerGroupAssignments' => 'rebuildCustomerGroupAssignments',
 		],
 		'referenceName' => '',
 		'skip' => false,
@@ -78,6 +84,7 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 	 */
 	public function __construct(Table $table, array $config = []) {
 		$config += [
+			'identity' => Router::getRequest()?->getAttribute('identity'),
 			'referenceName' => $this->getScope($table),
 			'tableLocator' => $table->associations()->getTableLocator(),
 		];
@@ -96,15 +103,41 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 		$this->accessSettingsTable = $this->getTableLocator()->get('CustomerGroupAccessSettings', ['allowFallbackClass' => false]);
 		$this->assignmentsTable = $this->getTableLocator()->get('CustomerGroupAssignments', ['allowFallbackClass' => false]);
 
+		if (!isset(static::$pageRoles)) {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum */
+			$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			foreach ($pageRoleEnum::cases() as $pageRole) {
+				static::$pageRoles[] = Inflector::pluralize(Inflector::underscore($pageRole->name));
+			}
+		}
+
+		$this->setupAssociations(in_array($this->getConfig('referenceName'), static::$pageRoles, true));
+	}
+
+
+	/**
+	 * Setup associations for customer group access settings and assignments.
+	 *
+	 * @param bool $forPages Whether the associations are being set up for pages.
+	 * @return void
+	 */
+	protected function setupAssociations(bool $forPages = false): void {
 		/** @var class-string<\Awyiss\Model\Entity> $entityClass */
 		$entityClass = $this->_table->getEntityClass();
 
+		if ($forPages) {
+			$accessSettingConditions['CustomerGroupAccessSettings.scope IN'] = static::$pageRoles;
+			$assignmentConditions['CustomerGroupAssignments.scope IN'] = static::$pageRoles;
+		}
+		else {
+			$accessSettingConditions['CustomerGroupAccessSettings.scope'] = $this->getConfig('referenceName');
+			$assignmentConditions['CustomerGroupAssignments.scope'] = $this->getConfig('referenceName');
+		}
+
 		// Setup customer group access settings association
 		$this->_table->hasOne('CustomerGroupAccessSettings', [
-			'conditions' => [
-				'CustomerGroupAccessSettings.scope' => $this->getScope($this->table()),
-			],
 			'cascadeCallbacks' => true,
+			'conditions' => $accessSettingConditions,
 			'dependent' => true,
 			'foreignKey' => 'foreign_key',
 			'propertyName' => 'customerGroupAccessSettings',
@@ -113,10 +146,8 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 
 		// Setup customer group assignments association
 		$this->_table->hasMany('CustomerGroupAssignments', [
-			'conditions' => [
-				'CustomerGroupAssignments.scope' => $this->getScope($this->table()),
-			],
 			'cascadeCallbacks' => true,
+			'conditions' => $assignmentConditions,
 			'dependent' => true,
 			'foreignKey' => 'foreign_key',
 			'propertyName' => 'customerGroupAssignments',
@@ -233,44 +264,25 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 
 
 	/**
-	 * Find entities with specific access settings
+	 * Add a formatter that will discard entities not accessible to the current customer.
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @return \Cake\ORM\Query\SelectQuery
+	 * @noinspection PhpUnused
 	 */
-	public function findCustomerGroupAccessSettings(SelectQuery $query): SelectQuery {
+	public function findAccessible(SelectQuery $query): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
 		}
 
-		$query->contain(['CustomerGroupAccessSettings']);
-
-		return $query;
-	}
-
-
-	/**
-	 * Find customer group assignments when querying a table.
-	 * This finder will automatically fetch the customer group assignments for the entity.
-	 *
-	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param bool $formatResult Whether to format the result so that the customer group assignments are nested
-	 * @return \Cake\ORM\Query\SelectQuery
-	 */
-	public function findCustomerGroupAssignments(SelectQuery $query, bool $formatResult = true): SelectQuery {
-		if (!$this->getConfig('enabled')) {
-			return $query;
-		}
-
-		$query->contain([
-			'CustomerGroupAssignments' => function (SelectQuery $q) {
-				return $q->contain(['CustomerGroups']);
-			},
-		]);
-
-		if ($formatResult) {
-			$query->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results), $query::PREPEND);
-		}
+		$identity = $this->getConfig('identity')?->getOriginalData();
+		// Apply a mapReduce call that'll remove all entities from the query, except those that are re-added using the `emit()`-method
+		$query->mapReduce(function (EntityInterface $entity, int $key, MapReduce $mapReduce) use ($identity): void {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			if ($entity->isAccessibleBy($identity)) {
+				$mapReduce->emit($entity, $key);
+			}
+		});
 
 		return $query;
 	}
@@ -291,56 +303,6 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 				'deleted' => false,
 			])
 			->first();
-	}
-
-
-	/**
-	 * Rebuild customer group assignments into a nested array structure
-	 *
-	 * @param \Cake\Datasource\EntityInterface|array $entity
-	 * @return \Cake\Datasource\EntityInterface|array
-	 */
-	public function rebuildCustomerGroupAssignments(EntityInterface|array $entity): EntityInterface|array {
-		$customerGroups = [];
-
-		/** @var \Awyiss\Model\Entity\CustomerGroupAssignment $assignment */
-		foreach (($entity['customerGroupAssignments'] ?? []) as $assignment) {
-			if (is_array($assignment)) {
-				// Seems like the assignments have already been rebuilt
-				return $entity;
-			}
-
-			if ($assignment->customerGroup) {
-				$customerGroups[] = $assignment->customerGroup;
-			}
-		}
-
-		$entity['customerGroupAssignments'] = $customerGroups;
-
-		return $entity;
-	}
-
-
-	/**
-	 * @param \Cake\Collection\CollectionInterface $results
-	 * @return \Cake\Collection\CollectionInterface
-	 */
-	protected function rowMapper(CollectionInterface $results): CollectionInterface {
-		return $results->map(function (EntityInterface|array|null $row): EntityInterface|array|null {
-			$originalRow = $row;
-
-			if ($row === null || empty($row['customerGroupAssignments'])) {
-				return $row;
-			}
-
-			$row = $this->rebuildCustomerGroupAssignments($row);
-
-			if ($originalRow instanceof EntityInterface) {
-				$originalRow->setDirty('customerGroupAssignments', false);
-			}
-
-			return $row;
-		});
 	}
 
 
