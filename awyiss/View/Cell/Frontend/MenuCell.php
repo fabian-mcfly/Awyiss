@@ -4,7 +4,6 @@
 namespace Awyiss\View\Cell\Frontend;
 
 
-use Authentication\IdentityInterface;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Menu as MenuEntity;
 use Awyiss\Model\Entity\MenuEntry;
@@ -77,13 +76,9 @@ class MenuCell extends Cell {
 	 * @param \Awyiss\View\FrontendView $view
 	 * @param array $options
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	public function display(string $identifier, string $languageShortcode, FrontendView $view, array $options = []): void {
 		DebugTimer::start('MenuCell::display', sprintf('MenuCell::display: Rendering menu "%s" for language "%s"', $identifier, $languageShortcode));
-
-		// Get the user's identity and session
-		$identity = $this->_getIdentity();
 
 		$this->View = $view;
 
@@ -109,7 +104,7 @@ class MenuCell extends Cell {
 		$menuRecord = $this->getMenu($identifier);
 
 		// If no menu is found or the user has no access, do not render the menu
-		if (!$menuRecord || !$menuRecord->isAccessibleBy($identity?->getOriginalData())) {
+		if (!$menuRecord) {
 			DebugTimer::stop('MenuCell::display');
 
 			return;
@@ -138,8 +133,6 @@ class MenuCell extends Cell {
 			'menuClass' => $menuClass,
 			'menuItemClass' => $menuItemClass,
 		]);
-
-		$menu->setIdentity($identity?->getOriginalData());
 
 		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $menuRendererClass */
 		$menuRendererClass = App::className('MenuRenderer', 'Utility/Menu');
@@ -179,10 +172,14 @@ class MenuCell extends Cell {
 		}
 		else {
 			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$query = $menusTable->find('active')->find('published');
+			$query = $menusTable
+				->find('accessible')
+				->find('active')
+				->find('published');
 		}
 
 		/**
@@ -219,10 +216,14 @@ class MenuCell extends Cell {
 		}
 		else {
 			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$query = $menuEntriesTable->find('active')->find('published');
+			$query = $menuEntriesTable
+				->find('accessible')
+				->find('active')
+				->find('published');
 		}
 
 		$menuEntries = $query->find('threaded')->where([
@@ -318,15 +319,5 @@ class MenuCell extends Cell {
 		DebugTimer::stop('MenuCell::renderContent');
 
 		return $content;
-	}
-
-
-	/**
-	 * Retrieve the identity attribute from the current request
-	 *
-	 * @return \Authentication\IdentityInterface|null
-	 */
-	protected function _getIdentity(): ?IdentityInterface {
-		return $this->request->getAttribute('identity');
 	}
 }
