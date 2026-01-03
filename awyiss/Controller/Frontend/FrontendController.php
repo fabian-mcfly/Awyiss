@@ -94,9 +94,23 @@ class FrontendController extends AppController {
 
 		if ($page->pageTemplateId === 2) {
 			$pagesTable = $this->fetchTable('Pages');
-			$children = $pagesTable->find($this->previewMode ? 'all' : 'active')
-				->find(!$this->previewMode ? 'published' : 'all')
-				->find('mediaAssignments', useMediaEntity: true)
+
+			/** @uses \Awyiss\Model\Table::findActive() */
+			$query = $pagesTable->find('all');
+
+			if (!$this->previewMode) {
+				/**
+				 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
+				 * @uses \Awyiss\Model\Table::findActive()
+				 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+				 */
+				$query
+					->find('accessible')
+					->find('active')
+					->find('published');
+			}
+
+			$children = $query->find('mediaAssignments', useMediaEntity: true)
 				->where(['parent_id' => $page->id])
 				->all()
 				->toArray();
@@ -126,13 +140,39 @@ class FrontendController extends AppController {
 
 		$newsCategory = null;
 		if ($page->parentId) {
-			$query = $newsTable->find($this->previewMode ? 'all' : 'active')->find(!$this->previewMode ? 'published' : 'all', skipPageRoleCheck: true);
-			$query->where(['id' => $page->parentId]);
-			$newsCategory = $query->first();
+			$newCategoryQuery = $newsTable->find('all', skipPageRoleCheck: true);
+
+			if (!$this->previewMode) {
+				/**
+				 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
+				 * @uses \Awyiss\Model\Table::findActive()
+				 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+				 */
+				$newCategoryQuery
+					->find('active')
+					->find('published');
+			}
+
+			$newCategoryQuery->where(['id' => $page->parentId]);
+			$newsCategory = $newCategoryQuery->first();
 		}
 
-		$newer = $newsTable->find($this->previewMode ? 'all' : 'active')
-			->find(!$this->previewMode ? 'published' : 'all')
+		/** @uses \Awyiss\Model\Table::findActive() */
+		$newerNewsQuery = $newsTable->find('all');
+
+		if (!$this->previewMode) {
+			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
+			 * @uses \Awyiss\Model\Table::findActive()
+			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+			 */
+			$newerNewsQuery
+				->find('accessible')
+				->find('active')
+				->find('published');
+		}
+
+		$newerNews = $newerNewsQuery
 			->find('mediaAssignments', useMediaEntity: true)
 			->where([
 				'parent_id' . (!$page->parentId ? ' IS' : '') => $page->parentId,
@@ -142,28 +182,43 @@ class FrontendController extends AppController {
 			->limit(1)
 			->first();
 
-		$older = $newsTable->find($this->previewMode ? 'all' : 'active')
-			->find(!$this->previewMode ? 'published' : 'all')
+		if ($newerNews) {
+			ResizedImageManager::addMediaItemsFromEntity($newerNews);
+		}
+
+		/** @uses \Awyiss\Model\Table::findActive() */
+		$olderNewsQuery = $newsTable->find('all');
+
+		if (!$this->previewMode) {
+			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
+			 * @uses \Awyiss\Model\Table::findActive()
+			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+			 */
+			$olderNewsQuery
+				->find('accessible')
+				->find('active')
+				->find('published');
+		}
+
+		$olderNews = $olderNewsQuery
 			->find('mediaAssignments', useMediaEntity: true)
 			->where([
 				'parent_id' . (!$page->parentId ? ' IS' : '') => $page->parentId,
 				'system_order >' => $page->systemOrder,
 			])
 			->orderBy(['system_order' => 'ASC'])
-			->limit(1)->first();
+			->limit(1)
+			->first();
 
-		if ($newer) {
-			ResizedImageManager::addMediaItemsFromEntity($newer);
-		}
-
-		if ($older) {
-			ResizedImageManager::addMediaItemsFromEntity($older);
+		if ($olderNews) {
+			ResizedImageManager::addMediaItemsFromEntity($olderNews);
 		}
 
 		$this->set([
 			'category' => $newsCategory,
-			'newer' => $newer,
-			'older' => $older,
+			'newer' => $newerNews,
+			'older' => $olderNews,
 		]);
 
 		DebugTimer::stop('FrontendController::news');
@@ -216,8 +271,18 @@ class FrontendController extends AppController {
 		$pagesTable = $this->fetchTable('Pages');
 
 		$query = $pagesTable
-			->find(!$this->previewMode ? 'published' : 'all', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true)
+			->find('all', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true)
 			->find('mediaAssignments', useMediaEntity: true);
+
+		if (!$this->previewMode) {
+			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
+			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+			 */
+			$query
+				->find('accessible')
+				->find('published');
+		}
 
 		/**
 		 * Add additional where conditions but don't add defaults.
@@ -391,7 +456,6 @@ class FrontendController extends AppController {
 			// Try to find an entry in the slug history
 			$this->historyRedirect($page->languageShortcode . '/' . $page->slug);
 
-
 			// If the page or the language was deleted more than 6 months ago,
 			// use the 404 instead by throwing NotFoundException and letting the ErrorController handle it
 			if (
@@ -412,7 +476,7 @@ class FrontendController extends AppController {
 		 * - or the parents are not active
 		 * - or the page role is not active
 		 * - or the language is not active
-		 * - or the parents are not published
+		 * - or the parents are not accessible (no group access, unpublished, etc.)
 		 * throw a NotFoundException and let the ErrorController handle it,
 		 * as long as we're not in preview mode.
 		 */
@@ -424,7 +488,7 @@ class FrontendController extends AppController {
 					!$page->parentsActive ||
 					!$page->pageRole->active ||
 					!$page->language?->active ||
-					!$this->parentsArePublished($page)
+					!$this->parentsAreAccessible($page)
 				) &&
 				!$this->previewMode
 			)
@@ -465,8 +529,8 @@ class FrontendController extends AppController {
 		// Make sure the page is of the correct entity class (page role specific)
 		$page = $this->ensureCorrectEntityType($page, $pageRoleEnum);
 
-		// If there is no page, it's most likely not published, so throw a NotFoundException
-		// and let the ErrorController handle it
+		// If there is no page, it's most likely not published or inaccessible,
+		// so throw a NotFoundException and let the ErrorController handle it
 		if (!$page) {
 			throw new NotFoundException();
 		}
@@ -788,6 +852,12 @@ class FrontendController extends AppController {
 				'slug' => $record->page->slug,
 			]);
 
+			// If the resulting url is one of the checked urls, do not redirect to itself
+			if (in_array(trim($realUrl, '/'), $urls)) {
+				DebugTimer::stop('FrontendController::historyRedirect');
+				return;
+			}
+
 			throw new RedirectException($realUrl, $record->status ?? 307);
 		}
 
@@ -826,7 +896,19 @@ class FrontendController extends AppController {
 		$pageRole = Inflector::pluralize($page->pageRoleId->name);
 		$pageRoleTable = $this->fetchTable($pageRole);
 
-		$query = $pageRoleTable->find(!$this->previewMode ? 'published' : 'all')->find('mediaAssignments', useMediaEntity: true)->where(['id' => $page->id])->limit(1);
+		$query = $pageRoleTable->find('all');
+
+		if (!$this->previewMode) {
+			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
+			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+			 */
+			$query
+				->find('accessible')
+				->find('published');
+		}
+
+		$query->find('mediaAssignments', useMediaEntity: true)->where(['id' => $page->id])->limit(1);
 
 		$contain = [
 			'Languages',
@@ -991,24 +1073,20 @@ class FrontendController extends AppController {
 
 
 	/**
-	 * Check if the parents of the page are published
+	 * Check if the parents of the page are accessible
 	 *
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return bool
 	 */
-	protected function parentsArePublished(Page $page): bool {
-		DebugTimer::start('FrontendController::parentsArePublished');
+	protected function parentsAreAccessible(Page $page): bool {
+		DebugTimer::start('FrontendController::parentsAreAccessible');
 
 		if (!$page->parentId) {
-			DebugTimer::stop('FrontendController::parentsArePublished');
+			DebugTimer::stop('FrontendController::parentsAreAccessible');
 			return true;
 		}
 
 		$checkAncestorPagesPublicationStatus = Configure::read('Awyiss.System.Frontend.publicationData.checkAncestorPagesPublicationStatus', true);
-		if (!$checkAncestorPagesPublicationStatus) {
-			DebugTimer::stop('FrontendController::parentsArePublished');
-			return true;
-		}
 
 		$parts = explode('/', $page->slug);
 		// Remove the last part
@@ -1017,7 +1095,17 @@ class FrontendController extends AppController {
 		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
 		$pagesTable = $this->fetchTable('Pages');
 
-		$query = $pagesTable->find(!$this->previewMode ? 'published' : 'all', skipPageRoleCheck: true);
+		$query = $pagesTable->find('all', skipPageRoleCheck: true);
+
+		if (!$this->previewMode) {
+			/** @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible() */
+			$query->find('accessible');
+
+			if ($checkAncestorPagesPublicationStatus) {
+				/** @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findAccessible() */
+				$query->find('published');
+			}
+		}
 
 		$slugs = [];
 		$lastPart = '';
@@ -1032,11 +1120,13 @@ class FrontendController extends AppController {
 			'language_shortcode' => $page->languageShortcode,
 		]);
 
-		$parentsArePublished = $query->count() === count($slugs);
+		$parents = $query->all();
 
-		DebugTimer::stop('FrontendController::parentsArePublished');
+		$parentsAreAccessible = $parents->count() === count($slugs);
 
-		return $parentsArePublished;
+		DebugTimer::stop('FrontendController::parentsAreAccessible');
+
+		return $parentsAreAccessible;
 	}
 
 

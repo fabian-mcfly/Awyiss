@@ -7,6 +7,7 @@ namespace Awyiss\Model\Entity;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
+use Awyiss\Model\Trait\CustomerGroupAccessTrait;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
@@ -57,6 +58,8 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\CustomerGroupAssignment[] $customerGroupAssignments
  */
 class Page extends Entity {
+	use CustomerGroupAccessTrait;
+
 	/**
 	 * @inheritDoc
 	 */
