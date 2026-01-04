@@ -5,7 +5,9 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
+use Authentication\IdentityInterface;
 use Awyiss\Authentication\IdentityAwareTrait;
+use Awyiss\Authorization\IdentityGroupPermissionInterface;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\CustomerGroupAccessSetting;
 use Awyiss\Model\Entity\CustomerGroupAssignment;
@@ -267,15 +269,24 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 	 * Add a formatter that will discard entities not accessible to the current customer.
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param \Authentication\IdentityInterface|\Awyiss\Authorization\IdentityGroupPermissionInterface|null $identity The current identity
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpUnused
 	 */
-	public function findAccessible(SelectQuery $query): SelectQuery {
+	public function findAccessible(SelectQuery $query, IdentityInterface|IdentityGroupPermissionInterface|null $identity = null): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
 		}
 
-		$identity = $this->getConfig('identity')?->getOriginalData();
+		if (!$identity) {
+			$identity = $this->getConfig('identity')?->getOriginalData();
+		}
+
+		// Ensure we have the original Customer entity
+		if ($identity instanceof IdentityInterface) {
+			$identity = $identity->getOriginalData();
+		}
+
 		// Apply a mapReduce call that'll remove all entities from the query, except those that are re-added using the `emit()`-method
 		$query->mapReduce(function (EntityInterface $entity, int $key, MapReduce $mapReduce) use ($identity): void {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
