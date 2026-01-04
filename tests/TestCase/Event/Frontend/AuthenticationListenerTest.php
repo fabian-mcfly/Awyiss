@@ -220,7 +220,7 @@ class AuthenticationListenerTest extends TestCase {
 		$result = $event->getResult();
 
 		$this->assertIsString($result);
-		$this->assertStringContainsString('/de/konto/login/', $result);
+		$this->assertStringContainsString('/de/konto/anmelden/', $result);
 	}
 
 
