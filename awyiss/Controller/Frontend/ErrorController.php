@@ -129,17 +129,15 @@ class ErrorController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function findErrorPage(string $errorCode): ?Page {
-		$where = ['active' => true, 'deleted' => false];
-
 		// Try language-specific error page
-		$page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, $errorCode, $where);
+		$page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, $errorCode);
 
 		if ($page) {
 			return $page;
 		}
 
 		// Try main language error page
-		$page = $this->findPage(null, $errorCode, $where);
+		$page = $this->findPage(null, $errorCode);
 
 		if ($page) {
 			return $page;
@@ -151,14 +149,14 @@ class ErrorController extends AppController {
 		}
 
 		// Try language-specific 404
-		$page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, '404', $where);
+		$page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, '404');
 
 		if ($page) {
 			return $page;
 		}
 
 		// Try main language 404
-		$page = $this->findPage(null, '404', $where);
+		$page = $this->findPage(null, '404');
 
 		if ($page) {
 			return $page;
@@ -182,7 +180,12 @@ class ErrorController extends AppController {
 		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
 		$pagesTable = $this->fetchTable('Pages');
 
+		/**
+		 * @uses \Awyiss\Model\Table::findActive()
+		 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+		 */
 		$query = $pagesTable
+			->find('active')
 			->find('published', skipPageRoleCheck: true)
 			->find('mediaAssignments', useMediaEntity: true);
 
