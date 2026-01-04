@@ -395,6 +395,17 @@ return [
 			'languages' => [
 				'de' => [
 					'path' => 'konto',
+					'actions' => [
+						'login' => 'anmelden',
+						'logout' => 'abmelden',
+						'register' => 'registrieren',
+						'dashboard' => 'uebersicht',
+						'editProfile' => 'profil-bearbeiten',
+						'changePassword' => 'passwort-aendern',
+						'forgotPassword' => 'passwort-vergessen',
+						'resetPassword' => 'passwort-zuruecksetzen',
+						'verifyAccount' => 'konto-bestaetigen',
+					],
 				],
 			],
 		],

@@ -3,7 +3,9 @@
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
+use Cake\Utility\Text;
 
 
 /**
@@ -40,7 +42,7 @@ foreach ($languages as $language) {
 	// Register each action individually with hardcoded language
 	foreach ($actions as $actionName => $visibleName) {
 		$routeBuilder->connect(
-			'/' . $language->shortcode . '/' . $path . '/' . $visibleName . '/*',
+			'/' . $language->shortcode . '/' . Text::slug($path) . '/' . Text::slug($visibleName) . '/*',
 			[
 				'prefix' => 'Frontend',
 				'controller' => 'CustomerCenter',
@@ -48,7 +50,7 @@ foreach ($languages as $language) {
 				'lang' => $language->shortcode,
 			],
 			[
-				'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenter' . ucfirst($actionName) . ucfirst($language->shortcode),
+				'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenter' . Inflector::camelize($actionName) . Inflector::camelize($language->shortcode),
 			]
 		);
 	}
