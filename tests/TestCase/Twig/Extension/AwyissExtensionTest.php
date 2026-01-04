@@ -120,12 +120,13 @@ class AwyissExtensionTest extends TestCase {
 		$functions = $this->extension->getFunctions();
 
 		$this->assertIsArray($functions);
-		$this->assertCount(27, $functions);
+		$this->assertCount(28, $functions);
 
 		$functionNames = array_map(fn (TwigFunction $function) => $function->getName(), $functions);
 		$expectedNames = [
 			'combine',
 			'content',
+			'customerCenterUrl',
 			'dump',
 			'form',
 			'getClass',
@@ -378,9 +379,119 @@ class AwyissExtensionTest extends TestCase {
 	/**
 	 * @return void
 	 */
+	public function testCustomerCenterUrlFunction(): void {
+		$functions = $this->extension->getFunctions();
+		$customerCenterUrlFunction = $functions[2];
+		$callable = $customerCenterUrlFunction->getCallable();
+
+		// Test with explicit language parameter
+		$result = $callable(['languageShortcode' => 'es'], 'login', 'es');
+		$this->assertSame('/es/customer-center/login/', $result);
+
+		// Test with language from context
+		$result = $callable(['languageShortcode' => 'es'], 'logout');
+		$this->assertSame('/es/customer-center/logout/', $result);
+
+		// Test another action
+		$result = $callable(['languageShortcode' => 'es'], 'register', 'es');
+		$this->assertSame('/es/customer-center/register/', $result);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testCustomerCenterUrlFunctionWithDifferentLanguage(): void {
+		$functions = $this->extension->getFunctions();
+		$customerCenterUrlFunction = $functions[2];
+		$callable = $customerCenterUrlFunction->getCallable();
+
+		// Test with German language that has custom configuration
+		$result = $callable(['languageShortcode' => 'de'], 'login', 'de');
+		$this->assertSame('/de/konto/anmelden/', $result);
+
+		$result = $callable(['languageShortcode' => 'de'], 'logout', 'de');
+		$this->assertSame('/de/konto/abmelden/', $result);
+
+		$result = $callable(['languageShortcode' => 'de'], 'dashboard', 'de');
+		$this->assertSame('/de/konto/uebersicht/', $result);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testCustomerCenterUrlFunctionWithInvalidAction(): void {
+		$functions = $this->extension->getFunctions();
+		$customerCenterUrlFunction = $functions[2];
+		$callable = $customerCenterUrlFunction->getCallable();
+
+		// Test with non-existent action
+		$result = $callable(['languageShortcode' => 'xy'], 'nonExistentAction', 'xy');
+		$this->assertNull($result);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testCustomerCenterUrlFunctionWithoutLanguage(): void {
+		$functions = $this->extension->getFunctions();
+		$customerCenterUrlFunction = $functions[2];
+		$callable = $customerCenterUrlFunction->getCallable();
+
+		// Test without language in context or parameter - should use default from LocaleMiddleware
+		$result = $callable([], 'login');
+		$this->assertSame('/de/konto/anmelden/', $result);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testCustomerCenterUrlFunctionWithoutConfig(): void {
+		$functions = $this->extension->getFunctions();
+		$customerCenterUrlFunction = $functions[2];
+		$callable = $customerCenterUrlFunction->getCallable();
+
+		// Temporarily remove the customer center configuration
+		$originalConfig = Configure::read('Route.CustomerCenter');
+		Configure::write('Route.CustomerCenter', null);
+
+		$result = $callable(['languageShortcode' => 'xy'], 'login', 'xy');
+		$this->assertNull($result);
+
+		// Restore configuration
+		Configure::write('Route.CustomerCenter', $originalConfig);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function testCustomerCenterUrlFunctionWithCamelCaseAction(): void {
+		$functions = $this->extension->getFunctions();
+		$customerCenterUrlFunction = $functions[2];
+		$callable = $customerCenterUrlFunction->getCallable();
+
+		// Test with camelCase action names
+		$result = $callable(['languageShortcode' => 'es'], 'editProfile', 'es');
+		$this->assertSame('/es/customer-center/edit-profile/', $result);
+
+		$result = $callable(['languageShortcode' => 'es'], 'changePassword', 'es');
+		$this->assertSame('/es/customer-center/change-password/', $result);
+
+		$result = $callable(['languageShortcode' => 'de'], 'forgotPassword', 'de');
+		$this->assertSame('/de/konto/passwort-vergessen/', $result);
+	}
+
+
+	/**
+	 * @return void
+	 */
 	public function testFormFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$formFunction = $functions[3];
+		$formFunction = $functions[4];
 		$callable = $formFunction->getCallable();
 
 		$output = $callable([
@@ -404,7 +515,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testFormFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
-		$formFunction = $functions[3];
+		$formFunction = $functions[4];
 		$callable = $formFunction->getCallable();
 
 		$output = $callable(
@@ -436,7 +547,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testFormFunctionWithoutPage(): void {
 		$functions = $this->extension->getFunctions();
-		$formFunction = $functions[3];
+		$formFunction = $functions[4];
 		$callable = $formFunction->getCallable();
 
 		$this->expectException(InvalidArgumentException::class);
@@ -451,7 +562,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testGetClassFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$getClassFunction = $functions[4];
+		$getClassFunction = $functions[5];
 		$callable = $getClassFunction->getCallable();
 
 		$object = new DummyConfigOptions();
@@ -466,7 +577,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testGlobalContentFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$globalContentFunction = $functions[5];
+		$globalContentFunction = $functions[6];
 		$callable = $globalContentFunction->getCallable();
 
 		$output = $callable(['_view' => $this->view], 'dummy_row_overflow', [
@@ -487,7 +598,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testGlobalContentFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
-		$globalContentFunction = $functions[5];
+		$globalContentFunction = $functions[6];
 		$callable = $globalContentFunction->getCallable();
 
 		$output = $callable(
@@ -518,7 +629,7 @@ class AwyissExtensionTest extends TestCase {
 		$translationFunctions = ['__', '__f', '__n', '__d', '__dn', '__x', '__xn', '__dx', '__dxn', '__df', '__dfx', '__l', '__ld'];
 
 		foreach ($translationFunctions as $index => $funcName) {
-			$function = $functions[ 6 + $index ]; // Translation functions start at index 5
+			$function = $functions[ 7 + $index ]; // Translation functions start at index 7
 			$this->assertEquals($funcName, $function->getName());
 			$this->assertEquals($funcName, $function->getCallable());
 		}
@@ -530,7 +641,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testHashPrinterFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$hashPrinterFunction = $functions[19];
+		$hashPrinterFunction = $functions[20];
 		$callable = $hashPrinterFunction->getCallable();
 
 		$data = [
@@ -573,7 +684,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testMenuFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$menuFunction = $functions[21];
+		$menuFunction = $functions[22];
 		$callable = $menuFunction->getCallable();
 
 		$output = $callable(
@@ -596,7 +707,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testMenuFunctionWithoutLanguageShortcode(): void {
 		$functions = $this->extension->getFunctions();
-		$menuFunction = $functions[21];
+		$menuFunction = $functions[22];
 		$callable = $menuFunction->getCallable();
 
 		$this->expectException(InvalidArgumentException::class);
@@ -611,7 +722,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testNaturalSortFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$naturalSortFunction = $functions[22];
+		$naturalSortFunction = $functions[23];
 		$callable = $naturalSortFunction->getCallable();
 
 		$data = ['item10', 'item2', 'item1'];
@@ -642,7 +753,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testStaticCallFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$staticCallFunction = $functions[23];
+		$staticCallFunction = $functions[24];
 		$callable = $staticCallFunction->getCallable();
 
 		$result = $callable('DateTime', 'createFromFormat', 'Y-m-d', '2020-02-02');
@@ -672,7 +783,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testSurveyFunction(): void {
 		$functions = $this->extension->getFunctions();
-		$surveyFunction = $functions[24];
+		$surveyFunction = $functions[25];
 		$callable = $surveyFunction->getCallable();
 
 		$output = $callable(
@@ -703,7 +814,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testSurveyFunctionWithArguments(): void {
 		$functions = $this->extension->getFunctions();
-		$surveyFunction = $functions[24];
+		$surveyFunction = $functions[25];
 		$callable = $surveyFunction->getCallable();
 
 		$surveyQuestionsTable = $this->getTableLocator()->get('SurveyQuestions');
@@ -752,7 +863,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testSurveyFunctionWithoutPage(): void {
 		$functions = $this->extension->getFunctions();
-		$surveyFunction = $functions[24];
+		$surveyFunction = $functions[25];
 		$callable = $surveyFunction->getCallable();
 
 		$this->expectException(InvalidArgumentException::class);
@@ -767,7 +878,7 @@ class AwyissExtensionTest extends TestCase {
 	 */
 	public function testWidgetFunctionCallsWidgetFunctionMethod(): void {
 		$functions = $this->extension->getFunctions();
-		$widgetFunction = $functions[25];
+		$widgetFunction = $functions[26];
 		$callable = $widgetFunction->getCallable();
 
 		$result = $callable(['_view' => $this->view], 'test', ['key' => 'some_value']);

@@ -4,6 +4,7 @@
 namespace Awyiss\Twig\Extension;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -105,6 +106,51 @@ class AwyissExtension extends AbstractExtension {
 					}
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
+			),
+
+
+			new TwigFunction(
+				'customerCenterUrl',
+				function (array $context, string $action, ?string $lang = null): ?string {
+					// Use current language if none specified
+					if ($lang === null) {
+						$lang = $context['languageShortcode'] ?? LocaleMiddleware::getLanguage()->shortcode;
+					}
+
+					if (!$lang) {
+						return null;
+					}
+
+					// Get customer center configuration
+					$customerCenterConfig = Configure::read('Route.CustomerCenter');
+					if (!$customerCenterConfig || !is_array($customerCenterConfig)) {
+						return null;
+					}
+
+					// Get default and language-specific actions
+					$defaultActions = $customerCenterConfig['actions'] ?? [];
+					$languageConfigs = $customerCenterConfig['languages'] ?? [];
+					$langConfig = $languageConfigs[ $lang ] ?? [];
+					$langActions = $langConfig['actions'] ?? [];
+
+					// Merge language-specific actions with defaults
+					$actions = array_merge($defaultActions, $langActions);
+
+					// Check if the action exists
+					if (!isset($actions[ $action ])) {
+						return null;
+					}
+
+					// Build route name: FrontendCustomerCenter{Action}{Lang}
+					$routeName = Awyiss::REALM_FRONTEND . 'CustomerCenter' . Inflector::camelize($action) . Inflector::camelize($lang);
+
+					// Use Router to generate URL
+					/** @var class-string<\Awyiss\Routing\Router> $routerClass */
+					$routerClass = App::className('Router', 'Routing');
+
+					return $routerClass::url(['_name' => $routeName]);
+				},
+				['needs_context' => true]
 			),
 
 			new TwigFunction('dump', function (): void {
