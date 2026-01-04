@@ -241,10 +241,14 @@ class NewsListingWidget extends AbstractWidget {
 		}
 		else {
 			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$query = $newsTable->find('active')->find('published');
+			$query = $newsTable
+				->find('accessible')
+				->find('active')
+				->find('published');
 		}
 
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
