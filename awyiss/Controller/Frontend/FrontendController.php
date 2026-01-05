@@ -568,7 +568,7 @@ class FrontendController extends AppController {
 		$this->setRequest($request);
 		Router::setRequest($request);
 
-		if ($this->getRequest()->getSession()->read('Auth')) {
+		if ($this->getRequest()->getSession()->read('Backend.Auth')) {
 			$this->loadFrontendEditor($page);
 		}
 
@@ -1010,7 +1010,7 @@ class FrontendController extends AppController {
 			return;
 		}
 
-		$identity = $this->getRequest()->getSession()->read('Auth');
+		$identity = $this->getRequest()->getSession()->read('Backend.Auth');
 
 		if (!$identity instanceof IdentityPermissionsInterface) {
 			DebugTimer::stop('FrontendController::loadFrontendEditor');
