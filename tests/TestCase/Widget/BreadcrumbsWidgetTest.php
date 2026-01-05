@@ -136,18 +136,21 @@ class BreadcrumbsWidgetTest extends TestCase {
 		$this->assertArrayHasKey('settings.includeHomepage', $result);
 		$this->assertArrayHasKey('settings.includeCurrentPage', $result);
 		$this->assertArrayHasKey('settings.showOnHomepage', $result);
+		$this->assertArrayHasKey('settings.includeInaccessiblePages', $result);
 		$this->assertArrayHasKey('settings.homepageId', $result);
 
 		// Test default values
 		$this->assertTrue($result['settings.includeHomepage']['checked']);
 		$this->assertTrue($result['settings.includeCurrentPage']['checked']);
 		$this->assertFalse($result['settings.showOnHomepage']['checked']);
+		$this->assertFalse($result['settings.includeInaccessiblePages']['checked']);
 		$this->assertNull($result['settings.homepageId']['value']);
 
 		// Test field types
 		$this->assertSame('checkbox', $result['settings.includeHomepage']['type']);
 		$this->assertSame('checkbox', $result['settings.includeCurrentPage']['type']);
 		$this->assertSame('checkbox', $result['settings.showOnHomepage']['type']);
+		$this->assertSame('checkbox', $result['settings.includeInaccessiblePages']['type']);
 		$this->assertSame('select', $result['settings.homepageId']['type']);
 
 		// Test that options is an array (from getHomepageOptions call)
@@ -163,17 +166,19 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 */
 	public function testGetFormFieldsWithCustomSettings(): void {
 		$settings = [
-			'includeHomepage' => 'includeHomepage',
-			'includeCurrentPage' => 'includeCurrentPage',
-			'showOnHomepage' => 'showOnHomepage',
+			'includeHomepage' => true,
+			'includeCurrentPage' => true,
+			'showOnHomepage' => true,
+			'includeInaccessiblePages' => true,
 			'homepageId' => 5,
 		];
 
 		$result = BreadcrumbsWidget::getFormFields($this->mockBackendView, null, null, $settings);
 
-		$this->assertSame('includeHomepage', $result['settings.includeHomepage']['checked']);
-		$this->assertSame('includeCurrentPage', $result['settings.includeCurrentPage']['checked']);
-		$this->assertSame('showOnHomepage', $result['settings.showOnHomepage']['checked']);
+		$this->assertTrue($result['settings.includeHomepage']['checked']);
+		$this->assertTrue($result['settings.includeCurrentPage']['checked']);
+		$this->assertTrue($result['settings.showOnHomepage']['checked']);
+		$this->assertTrue($result['settings.includeInaccessiblePages']['checked']);
 		$this->assertSame(5, $result['settings.homepageId']['value']);
 	}
 
@@ -309,7 +314,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 
 		// In preview mode, the query should NOT call find('published')
 		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
-		$this->mockQuery->method('find')->with([])->willReturn($this->mockQuery);
+		$this->mockQuery->method('find')->willReturn($this->mockQuery);
 		$this->mockQuery->method('first')->willReturn($mockHomepage);
 		$this->mockQuery->method('all')->willReturn($this->createMock(ResultSet::class));
 

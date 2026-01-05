@@ -44,6 +44,9 @@ msgstr "Include current Page"
 msgid "show_on_homepage"
 msgstr "Show on homepage"
 
+msgid "include_inaccessible_pages"
+msgstr "Include inaccessible pages"
+
 msgid "homepage_id"
 msgstr "Homepage"
 
