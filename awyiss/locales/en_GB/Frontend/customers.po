@@ -158,6 +158,9 @@ msgstr "Verify Account"
 msgid "button_change_password"
 msgstr "Change Password"
 
+msgid "link_customer_center"
+msgstr "Customer Center"
+
 msgid "link_dashboard"
 msgstr "Overview"
 

@@ -158,6 +158,9 @@ msgstr "Konto bestätigen"
 msgid "button_change_password"
 msgstr "Passwort ändern"
 
+msgid "link_customer_center"
+msgstr "Kundencenter"
+
 msgid "link_dashboard"
 msgstr "Übersicht"
 

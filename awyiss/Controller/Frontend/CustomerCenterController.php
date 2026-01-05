@@ -11,8 +11,10 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Customer;
 use Awyiss\Model\Table\CustomersTable;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Mail\MailSender;
 use Cake\Core\Configure;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
@@ -85,6 +87,39 @@ class CustomerCenterController extends AppController {
 		$this->viewBuilder()
 			->setClassName('Frontend')
 			->addHelper('Flash');
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function beforeRender(EventInterface $event): void {
+		/** @var class-string<\Awyiss\Widget\BreadcrumbsWidget> $breadcrumbsWidgetClass */
+		$breadcrumbsWidgetClass = App::className('BreadcrumbsWidget', 'Widget');
+		if (!$breadcrumbsWidgetClass) {
+			return;
+		}
+
+		// Register a new crumb for the Customer Center
+		$breadcrumbsWidgetClass::registerCrumb(
+			__d('customers', 'link_customer_center'),
+			Router::url([
+				'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenter' . ucfirst($this->languageShortcode),
+			])
+		);
+
+		// Register a crumb for the current action
+		$action = $this->request->getParam('action');
+		if ($action === 'dashboard') {
+			return;
+		}
+
+		$breadcrumbsWidgetClass::registerCrumb(
+			__d('customers', 'link_' . Inflector::underscore($action)),
+			Router::url([
+				'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenter' . Inflector::camelize($action) . ucfirst($this->languageShortcode),
+			])
+		);
 	}
 
 
