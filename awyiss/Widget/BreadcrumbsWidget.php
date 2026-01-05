@@ -24,11 +24,55 @@ use Exception;
  */
 class BreadcrumbsWidget extends AbstractWidget {
 	/**
+	 * Additional breadcrumb items for routes that don't have page entries
+	 * Format: [['title' => 'Title', 'url' => '/url'], ...]
+	 *
+	 * @var array<int, array{title: string, url: string}>
+	 */
+	protected static array $additionalCrumbs = [];
+
+
+	/**
 	 * @inheritDoc
 	 */
 	public static function getTitle(): string {
 		// Translate using __d() if needed
 		return 'Breadcrumbs';
+	}
+
+
+	/**
+	 * Register an additional breadcrumb item for controller routes without page entries
+	 *
+	 * @param string $title The title to display in the breadcrumb
+	 * @param string $url The URL to link to
+	 * @return void
+	 */
+	public static function registerCrumb(string $title, string $url): void {
+		static::$additionalCrumbs[] = [
+			'title' => $title,
+			'url' => $url,
+		];
+	}
+
+
+	/**
+	 * Clear all registered additional crumbs (useful for testing)
+	 *
+	 * @return void
+	 */
+	public static function clearCrumbs(): void {
+		static::$additionalCrumbs = [];
+	}
+
+
+	/**
+	 * Get all registered additional crumbs
+	 *
+	 * @return array<int, array{title: string, url: string}>
+	 */
+	public static function getAdditionalCrumbs(): array {
+		return static::$additionalCrumbs;
 	}
 
 
@@ -170,6 +214,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 			'homepageId' => $homepageId,
 			'homepage' => $homepage,
 			'pages' => $pages,
+			'additionalCrumbs' => static::$additionalCrumbs,
 			'settings' => $settings,
 		]);
 	}

@@ -8,6 +8,7 @@
 @var homepageId int
 @var homepage \Awyiss\Model\Entity\Page
 @var pages \Awyiss\Model\Entity\Page[]
+@var additionalCrumbs array
 @var settings array
 @var _view \Awyiss\View\FrontendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
@@ -32,6 +33,16 @@
 							</li>
 						{% endblock %}
 					{% endfor %}
+
+					{% block breadcrumbsAdditionalItems %}
+						{% for additionalCrumb in additionalCrumbs %}
+							{% block breadcrumbsAdditionalItem %}
+								<li class="Breadcrumb">
+									<a href="{{ additionalCrumb.url }}">{{ additionalCrumb.title }}</a>
+								</li>
+							{% endblock %}
+						{% endfor %}
+					{% endblock %}
 				</ol>
 			{% endblock %}
 		</div>
