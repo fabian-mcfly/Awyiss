@@ -39,6 +39,20 @@ foreach ($languages as $language) {
 	$langActions = $langConfig['actions'] ?? [];
 	$actions = array_merge($defaultActions, $langActions);
 
+	// Always create a route for the dashboard action
+	$routeBuilder->connect(
+		'/' . $language->shortcode . '/' . Text::slug($path) . '/*',
+		[
+			'prefix' => 'Frontend',
+			'controller' => 'CustomerCenter',
+			'action' => 'dashboard',
+			'lang' => $language->shortcode,
+		],
+		[
+			'_name' => Awyiss::REALM_FRONTEND . 'CustomerCenter' . Inflector::camelize($language->shortcode),
+		]
+	);
+
 	// Register each action individually with hardcoded language
 	foreach ($actions as $actionName => $visibleName) {
 		$routeBuilder->connect(
