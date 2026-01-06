@@ -41,7 +41,7 @@ class CustomersConfigOptionsTest extends TestCase {
 	public function testInitializeConfigOptions(): void {
 		$configOptions = $this->flattenConfigOptions($this->configOptions->getConfigOptions());
 
-		$this->assertCount(15, $configOptions);
+		$this->assertCount(16, $configOptions);
 
 		$this->assertArrayHasKey('Backend.overview.displayedFields', $configOptions);
 		$this->assertFalse($configOptions['Backend.overview.displayedFields']->isLocalizable());
@@ -172,6 +172,14 @@ class CustomersConfigOptionsTest extends TestCase {
 			1 => 'Premium',
 			2 => 'Standard',
 		], $configOptions['Frontend.registration.defaultGroups']->getValues(true));
+
+		$this->assertArrayHasKey('Frontend.registration.deleteUnverifiedAccounts', $configOptions);
+		$this->assertFalse($configOptions['Frontend.registration.deleteUnverifiedAccounts']->isLocalizable());
+		$this->assertFalse($configOptions['Frontend.registration.deleteUnverifiedAccounts']->isNullable());
+		$this->assertFalse($configOptions['Frontend.registration.deleteUnverifiedAccounts']->isPersonalizable());
+		$this->assertTrue($configOptions['Frontend.registration.deleteUnverifiedAccounts']->getDefaultValue());
+		$this->assertSame('true', $configOptions['Frontend.registration.deleteUnverifiedAccounts']->getPrintableValue());
+		$this->assertSame(ConfigOptionType::Bool, $configOptions['Frontend.registration.deleteUnverifiedAccounts']->getType());
 
 		$this->assertArrayHasKey('Frontend.passwordReset.enabled', $configOptions);
 		$this->assertFalse($configOptions['Frontend.passwordReset.enabled']->isLocalizable());

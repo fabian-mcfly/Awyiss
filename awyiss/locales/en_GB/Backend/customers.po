@@ -140,6 +140,9 @@ msgstr "Verification code validity (in seconds)"
 msgid "configuration_identifier_frontend_registration_default_groups"
 msgstr "Default Customer Groups"
 
+msgid "configuration_identifier_frontend_registration_delete_unverified_accounts"
+msgstr "Delete unverified accounts automatically"
+
 msgid "configuration_category_frontend_password_reset"
 msgstr "Password Reset"
 

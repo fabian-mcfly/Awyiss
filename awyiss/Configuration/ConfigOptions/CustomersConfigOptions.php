@@ -179,6 +179,13 @@ class CustomersConfigOptions extends AbstractConfigOptions {
 						return $customerGroups;
 					},
 				),
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'deleteUnverifiedAccounts',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
 			],
 			'passwordReset' => [
 				new ConfigOption(

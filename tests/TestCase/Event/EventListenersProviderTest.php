@@ -213,6 +213,7 @@ class EventListenersProviderTest extends TestCase {
 			'Authentication' => '\Customer\Event\Global\AuthenticationListener',
 			'Cars' => '\Customer\Event\Global\CarsListener',
 			'GeneralEvents' => '\Customer\Event\Global\GeneralEventsListener',
+			'Customers' => '\Awyiss\Event\Global\CustomersListener',
 			'Pages' => '\Awyiss\Event\Global\PagesListener',
 		], $result);
 	}

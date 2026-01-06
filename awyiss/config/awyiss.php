@@ -325,6 +325,22 @@ return [
 	],
 
 
+	/**
+	 * Periodic events configuration
+	 * Each key represents a frequency (currently only 'hourly' and 'daily' are supported)
+	 * and contains an array of Events to be triggered at that frequency.
+	 *
+	 * If no event but a callable is given, the callable will be executed directly,
+	 * without any context or event object.
+	 */
+	'PeriodicEvents' => [
+		'hourly' => [],
+		'daily' => [
+			'Customers.cleanupUnverifiedCustomers',
+		],
+	],
+
+
 	'Queue' => [
 		'defaultworkertimeout' => 120,
 		'maxworkers' => 3,

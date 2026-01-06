@@ -140,6 +140,9 @@ msgstr "Gültigkeit des Bestätigungscodes (in Sekunden)"
 msgid "configuration_identifier_frontend_registration_default_groups"
 msgstr "Standard-Kundengruppen"
 
+msgid "configuration_identifier_frontend_registration_delete_unverified_accounts"
+msgstr "Unbestätigte Konten automatisch löschen"
+
 msgid "configuration_category_frontend_password_reset"
 msgstr "Passwort zurücksetzen"
 
