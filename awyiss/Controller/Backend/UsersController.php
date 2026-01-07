@@ -279,7 +279,7 @@ class UsersController extends Controller {
 		/** @var \Cake\Http\Session $session */
 		$session = $this->getRequest()->getAttribute('session');
 		$lockIdentifier = $session->read('Backend.lockIdentifier');
-		$session->destroy();
+		$session->delete(Awyiss::REALM_BACKEND);
 
 		$identity = $this->Authentication->getIdentity();
 

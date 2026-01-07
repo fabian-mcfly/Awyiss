@@ -1,0 +1,110 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var availableGroups \Cake\Datasource\ResultSetDecorator
+@var assignedGroups \Awyiss\Model\Entity\CustomerGroupAssignment[]
+@var customerGroupAccessSettings \Awyiss\Model\Entity\CustomerGroupAccessSetting|null
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuditHelper \Awyiss\View\Helper\AuditHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% set assignedGroups = assignedGroups ? combine(assignedGroups|column('customerGroupId'), assignedGroups) : [] %}
+{% set currentAccessType = customerGroupAccessSettings.accessType %}
+
+{% block formControlCustomerGroupAccessType %}
+	<fieldset class="Fieldset-CustomerGroupAccessType">
+		<legend>{{ __('fieldset_customer_groups_access_type') }}</legend>
+
+		{% block formControlAccessType %}
+			{{ FormHelper.control('customer_group_access_settings.access_type', {
+				empty: __d('customer_groups', 'access_type_available_for_all'),
+				label: __d('customer_groups', 'access_type'),
+				options: {
+					'hide_on_login': __d('customer_groups', 'access_type_hide_on_login'),
+					'all_groups': __d('customer_groups', 'access_type_all_groups'),
+					'specific_groups': __d('customer_groups', 'access_type_specific_groups'),
+				},
+				type: 'select',
+				value: currentAccessType,
+				'data-form-updater': true,
+			}) }}
+		{% endblock %}
+
+		{% block formControlAccessId %}
+			{{ FormHelper.hidden('customer_group_access_settings.id', {
+				value: customerGroupAccessSettings.id,
+			}) }}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block formControlCustomerGroups %}
+	{% if currentAccessType == enum(accessTypes).SpecificGroups %}
+		<fieldset class="Fieldset-CustomerGroupAssignments AssignmentLists">
+			{% set assignedGroupIds = assignedGroups|column('customerGroupId') %}
+			{% set elementCounter = 0 %}
+			{% set fieldsetGroups = {} %}
+
+			<fieldset class="Fieldset-CustomerGroups-Available AssignmentList AssignmentList-Available">
+				<legend>{{ __('customer_groups_available') }}</legend>
+				<ul class="List CustomerGroups-List SortableList">
+					{% for availableGroup in availableGroups %}
+						{% if availableGroup.id not in assignedGroupIds %}
+							<li class="Item CustomerGroup">
+								<span class="Title">
+									{{ FormHelper.checkbox('customer_group_assignments.' ~ loop.index0 ~ '.customer_group_id', {
+										checked: false,
+										hiddenField: false,
+										id: 'CustomerGroup-Group-' ~ availableGroup.id,
+										value: availableGroup.id,
+									}) }}
+
+									{{ availableGroup.label }}
+								</span>
+							</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</fieldset>
+
+			<fieldset class="Fieldset-CustomerGroups-Assigned AssignmentList AssignmentList-Assigned">
+				<legend>{{ __('customer_groups_assigned') }}</legend>
+
+				<ul class="List CustomerGroups-List SortableList">
+					{% for availableGroup in availableGroups %}
+						{% if availableGroup.id in assignedGroupIds %}
+							{% set assignedGroup = assignedGroups[ availableGroup.id ] %}
+							<li class="Item CustomerGroup">
+								<span class="Title">
+									{{ FormHelper.checkbox('customer_group_assignments.' ~ loop.index0 ~ '.customer_group_id', {
+										checked: true,
+										id: 'CustomerGroup-Group-' ~ availableGroup.id,
+										value: availableGroup.id,
+									}) }}
+
+									{{ FormHelper.hidden('customer_group_assignments.' ~ loop.index0 ~ '.id', {
+										value: assignedGroup.id,
+									}) }}
+
+									{{ availableGroup.label }}
+								</span>
+							</li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</fieldset>
+		</fieldset>
+	{% endif %}
+{% endblock %}

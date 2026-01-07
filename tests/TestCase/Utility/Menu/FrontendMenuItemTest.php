@@ -4,10 +4,14 @@
 namespace Awyiss\Test\TestCase\Utility\Menu;
 
 
-use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Customer;
+use Awyiss\Model\Entity\CustomerGroup;
+use Awyiss\Model\Entity\CustomerGroupAccessSetting;
+use Awyiss\Model\Entity\CustomerGroupAssignment;
 use Awyiss\Model\Entity\MenuEntry;
+use Awyiss\Model\Enum\CustomerGroupAccessType;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Menu\FrontendMenu;
@@ -244,18 +248,33 @@ class FrontendMenuItemTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testIsAccessibleWithAccess(): void {
-		// Create a menu entry with access control
-		$accessObj = new stdClass();
-		$accessObj->scope = 'test-scope';
-		$accessObj->identifier = 'test-permission';
+		// Create a menu entry with customer group access control
+		$menuEntryWithAccess = new MenuEntry([
+			'id' => 1,
+			'active' => true,
+			'title' => 'Test Item',
+		]);
 
-		/** @noinspection PhpUndefinedFieldInspection */
-		$this->menuEntry->access = $accessObj;
+		$menuEntryWithAccess->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
 
-		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
+		$menuEntryWithAccess->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
 
-		// Default behavior - should return true
-		$this->assertFalse($menuItem->isAccessible());
+		// Create customer with the required group
+		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
+		$customer = $this->createMock(Customer::class);
+		$customer->method('getGroups')->willReturn([$customerGroup]);
+
+		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
+		$menuItem->setIdentity($customer);
+
+		// With identity that has access - should return true
+		$this->assertTrue($menuItem->isAccessible());
 
 		// Explicitly set false
 		$menuItem->setAccessible(false);
@@ -265,9 +284,9 @@ class FrontendMenuItemTest extends TestCase {
 		$menuItem->setAccessible(true);
 		$this->assertTrue($menuItem->isAccessible());
 
-		// Explicitly set null
+		// Explicitly set null - should use the identity-based calculation (true)
 		$menuItem->setAccessible(null);
-		$this->assertFalse($menuItem->isAccessible()); // Default is false for frontend items with access control
+		$this->assertTrue($menuItem->isAccessible());
 	}
 
 
@@ -304,18 +323,33 @@ class FrontendMenuItemTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testIsVisibleWithAccess(): void {
-		// Create a menu entry with access control
-		$accessObj = new stdClass();
-		$accessObj->scope = 'test-scope';
-		$accessObj->identifier = 'test-permission';
+		// Create a menu entry with customer group access control
+		$menuEntryWithAccess = new MenuEntry([
+			'id' => 2,
+			'active' => true,
+			'title' => 'Test Item',
+		]);
 
-		/** @noinspection PhpUndefinedFieldInspection */
-		$this->menuEntry->access = $accessObj;
+		$menuEntryWithAccess->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
 
-		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
+		$menuEntryWithAccess->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
 
-		// Default behavior - should return true
-		$this->assertFalse($menuItem->isVisible());
+		// Create customer with the required group
+		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
+		$customer = $this->createMock(Customer::class);
+		$customer->method('getGroups')->willReturn([$customerGroup]);
+
+		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
+		$menuItem->setIdentity($customer);
+
+		// With identity that has access - should return true
+		$this->assertTrue($menuItem->isVisible());
 
 		// Explicitly set false
 		$menuItem->setVisible(false);
@@ -325,9 +359,9 @@ class FrontendMenuItemTest extends TestCase {
 		$menuItem->setVisible(true);
 		$this->assertTrue($menuItem->isVisible());
 
-		// Explicitly set null
+		// Explicitly set null - should use the identity-based calculation (true)
 		$menuItem->setVisible(null);
-		$this->assertFalse($menuItem->isVisible()); // Default is false for frontend items with access control
+		$this->assertTrue($menuItem->isVisible());
 	}
 
 
@@ -462,21 +496,38 @@ class FrontendMenuItemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 */
 	public function testDetermineVisibilityWithAccess(): void {
-		// Test with access control - should be invisible by default
-		$accessObj = new stdClass();
-		$accessObj->scope = 'test-scope';
-		$accessObj->identifier = 'test-permission';
+		// Test with customer group access control
+		$menuEntryWithAccess = new MenuEntry([
+			'id' => 3,
+			'active' => true,
+			'title' => 'Test Item',
+		]);
 
-		/** @noinspection PhpUndefinedFieldInspection */
-		$this->menuEntry->access = $accessObj;
-		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
+		$menuEntryWithAccess->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
 
-		// Must be false because it has access control
-		$this->assertFalse($menuItem->determineVisibility(true));
-		$this->assertFalse($menuItem->isVisible());
+		$menuEntryWithAccess->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
+
+		// Create customer with the required group
+		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
+		$customer = $this->createMock(Customer::class);
+		$customer->method('getGroups')->willReturn([$customerGroup]);
+
+		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
+		$menuItem->setIdentity($customer);
+
+		// Should be visible because customer has the required group
+		$this->assertTrue($menuItem->determineVisibility(true));
+		$this->assertTrue($menuItem->isVisible());
 	}
 
 
@@ -496,23 +547,39 @@ class FrontendMenuItemTest extends TestCase {
 	/**
 	 * @return void
 	 * @see \Awyiss\Utility\Menu\FrontendMenuItem::determineVisibility()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 * @throws \ReflectionException
 	 */
 	public function testDetermineVisibilityWithLinkAndAccess(): void {
-		// Create menu item with link and access control
-		$accessObj = new stdClass();
-		$accessObj->scope = 'test-scope';
-		$accessObj->identifier = 'test-permission';
+		// Create menu item with link and customer group access control
+		$menuEntryWithAccess = new MenuEntry([
+			'id' => 4,
+			'active' => true,
+			'title' => 'Test Item',
+			'link' => '/test-url',
+		]);
 
-		$this->menuEntry->link = '/test-url';
-		/** @noinspection PhpUndefinedFieldInspection */
-		$this->menuEntry->access = $accessObj;
+		$menuEntryWithAccess->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
 
-		$menuItem = new FrontendMenuItem($this->menuEntry, $this->menuConfig);
+		$menuEntryWithAccess->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
 
-		// Must be false because it has access control
-		$this->assertFalse($menuItem->determineVisibility(true));
-		$this->assertFalse($menuItem->isVisible());
+		// Create customer with the required group
+		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
+		$customer = $this->createMock(Customer::class);
+		$customer->method('getGroups')->willReturn([$customerGroup]);
+
+		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
+		$menuItem->setIdentity($customer);
+
+		// Should be visible because customer has the required group
+		$this->assertTrue($menuItem->determineVisibility(true));
+		$this->assertTrue($menuItem->isVisible());
 	}
 
 
@@ -523,25 +590,33 @@ class FrontendMenuItemTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testDetermineVisibilityWithIdentityAllowed(): void {
-		// Create menu item with access control
-		$accessObj = new stdClass();
-		$accessObj->scope = 'test-scope';
-		$accessObj->identifier = 'test-permission';
+		// Create a customer identity with groups
+		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
+		$customer = $this->createMock(Customer::class);
+		$customer->method('getGroups')->willReturn([$customerGroup]);
 
+		// Create menu entry with customer group access settings
 		$menuEntryWithAccess = new MenuEntry([
 			'id' => 5,
 			'active' => true,
 			'title' => 'Protected Item',
 			'link' => '/protected',
-			'access' => $accessObj,
 		]);
 
-		// Create identity that grants access
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
-		$identity->expects($this->once())->method('scopeIsAccessible')->with('test-scope', [], 'test-permission')->willReturn(true);
+		// Set up customer group access settings - accessible to specific groups
+		$menuEntryWithAccess->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
+
+		// Assign the customer group that the identity belongs to
+		$menuEntryWithAccess->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
 
 		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
-		$menuItem->setIdentity($identity);
+		$menuItem->setIdentity($customer);
 
 		$this->assertTrue($menuItem->determineVisibility());
 		$this->assertTrue($menuItem->isVisible());
@@ -555,25 +630,33 @@ class FrontendMenuItemTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testDetermineVisibilityWithIdentityDenied(): void {
-		// Create menu item with access control
-		$accessObj = new stdClass();
-		$accessObj->scope = 'test-scope';
-		$accessObj->identifier = 'test-permission';
+		// Create a customer identity with a different group
+		$customerGroup = new CustomerGroup(['id' => 2, 'name' => 'Other Group']);
+		$customer = $this->createMock(Customer::class);
+		$customer->method('getGroups')->willReturn([$customerGroup]);
 
+		// Create menu entry with customer group access settings
 		$menuEntryWithAccess = new MenuEntry([
 			'id' => 6,
 			'active' => true,
 			'title' => 'Protected Item',
 			'link' => '/protected',
-			'access' => $accessObj,
 		]);
 
-		// Create identity that denies access
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
-		$identity->expects($this->once())->method('scopeIsAccessible')->willReturn(false);
+		// Set up customer group access settings - accessible only to group 1
+		$menuEntryWithAccess->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
+
+		// Assign customer group 1, but identity has group 2
+		$menuEntryWithAccess->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
 
 		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
-		$menuItem->setIdentity($identity);
+		$menuItem->setIdentity($customer);
 
 		$this->assertFalse($menuItem->determineVisibility());
 		$this->assertFalse($menuItem->isVisible());
@@ -587,18 +670,28 @@ class FrontendMenuItemTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testDetermineVisibilityParentWithAccessibleChild(): void {
-		// Child with access control
-		$accessObj = new stdClass();
-		$accessObj->scope = 'test-scope';
-		$accessObj->identifier = 'test-permission';
+		// Create a customer identity with group 1
+		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
+		$customer = $this->createMock(Customer::class);
+		$customer->method('getGroups')->willReturn([$customerGroup]);
 
+		// Child with customer group access control
 		$childEntry = new MenuEntry([
 			'id' => 7,
 			'active' => true,
 			'title' => 'Child Item',
 			'link' => '/child',
-			'access' => $accessObj,
 		]);
+
+		$childEntry->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
+
+		$childEntry->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
 
 		// Parent without link
 		$parentEntry = new MenuEntry([
@@ -608,12 +701,8 @@ class FrontendMenuItemTest extends TestCase {
 			'children' => [$childEntry],
 		]);
 
-		// Identity that grants access to child
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
-		$identity->expects($this->atLeastOnce())->method('scopeIsAccessible')->willReturn(true);
-
 		$parentItem = new FrontendMenuItem($parentEntry, $this->menuConfig);
-		$parentItem->setIdentity($identity);
+		$parentItem->setIdentity($customer);
 
 		// Parent should be visible because child is visible
 		$this->assertTrue($parentItem->determineVisibility());
@@ -628,18 +717,28 @@ class FrontendMenuItemTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testDetermineVisibilityParentWithInaccessibleChild(): void {
-		// Child with access control
-		$accessObj = new stdClass();
-		$accessObj->scope = 'test-scope';
-		$accessObj->identifier = 'test-permission';
+		// Create a customer identity with group 2
+		$customerGroup = new CustomerGroup(['id' => 2, 'name' => 'Other Group']);
+		$customer = $this->createMock(Customer::class);
+		$customer->method('getGroups')->willReturn([$customerGroup]);
 
+		// Child with customer group access control - requires group 1
 		$childEntry = new MenuEntry([
 			'id' => 9,
 			'active' => true,
 			'title' => 'Child Item',
 			'link' => '/child',
-			'access' => $accessObj,
 		]);
+
+		$childEntry->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
+
+		$childEntry->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
 
 		// Parent without link
 		$parentEntry = new MenuEntry([
@@ -649,12 +748,8 @@ class FrontendMenuItemTest extends TestCase {
 			'children' => [$childEntry],
 		]);
 
-		// Identity that denies access to child
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
-		$identity->expects($this->atLeastOnce())->method('scopeIsAccessible')->willReturn(false);
-
 		$parentItem = new FrontendMenuItem($parentEntry, $this->menuConfig);
-		$parentItem->setIdentity($identity);
+		$parentItem->setIdentity($customer);
 
 		// Parent should be invisible because child is invisible and parent has no link
 		$this->assertFalse($parentItem->determineVisibility());
@@ -861,22 +956,28 @@ class FrontendMenuItemTest extends TestCase {
 	 * @throws \ReflectionException
 	 */
 	public function testSetIdentityResetsVisibility(): void {
-		// Create a menu item with access control
-		$accessObj = new stdClass();
-		$accessObj->scope = 'test-scope';
-		$accessObj->identifier = 'test-permission';
-
+		// Create a menu entry with customer group access settings
 		$menuEntryWithAccess = new MenuEntry([
 			'id' => 50,
 			'active' => true,
 			'title' => 'Protected Item',
 			'link' => '/protected',
-			'access' => $accessObj,
 		]);
 
-		// Create identity that grants access
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
-		$identity->expects($this->once())->method('scopeIsAccessible')->with('test-scope', [], 'test-permission')->willReturn(true);
+		$menuEntryWithAccess->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
+
+		$menuEntryWithAccess->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
+
+		// Create identity with group 1 that grants access
+		$customerGroup1 = new CustomerGroup(['id' => 1, 'name' => 'Group 1']);
+		$identity = $this->createMock(Customer::class);
+		$identity->method('getGroups')->willReturn([$customerGroup1]);
 
 		$menuItem = new FrontendMenuItem($menuEntryWithAccess, $this->menuConfig);
 		$menuItem->setIdentity($identity);
@@ -884,9 +985,10 @@ class FrontendMenuItemTest extends TestCase {
 		// Initially should be visible
 		$this->assertTrue($menuItem->isVisible());
 
-		// Change identity to one that denies access
-		$identityDenied = $this->createMock(IdentityPermissionsInterface::class);
-		$identityDenied->expects($this->once())->method('scopeIsAccessible')->willReturn(false);
+		// Change identity to one with group 2 that denies access
+		$customerGroup2 = new CustomerGroup(['id' => 2, 'name' => 'Group 2']);
+		$identityDenied = $this->createMock(Customer::class);
+		$identityDenied->method('getGroups')->willReturn([$customerGroup2]);
 
 		$menuItem->setIdentity($identityDenied);
 

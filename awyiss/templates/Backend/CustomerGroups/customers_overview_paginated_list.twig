@@ -1,0 +1,155 @@
+{#
+@var customers \Awyiss\Model\Entity\Customers[]
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuditHelper \Awyiss\View\Helper\AuditHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% set tableFootColSpan = displayedFields|length + 3 %}
+
+{% block tableOverview %}
+	<table class="Overview-Table Responsive-Table" style="--columns:{{ tableFootColSpan }}; --rows:{{ max(1, customers|length) }};">
+		{% block tableOverviewHead %}
+			<thead>
+				{% block tableOverviewHeadRow %}
+					<tr>
+						{% block tableOverviewHeadRowInner %}
+							{% block tableOverviewHeaderCustomerCheckbox %}
+								<th class="TableHeader-CustomerCheckbox"></th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderId %}
+								<th class="TableHeader-Id">
+									{{ __df('customers', 'system', 'id') }}
+								</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderDefaultFields %}
+								<th class="TableHeader-Email">
+									{{ __df('customers', 'system', 'email') }}
+								</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderDisplayedFields %}
+								{% for field in displayedFields %}
+									{% block tableOverviewHeaderDisplayedField %}
+										{% if field starts with 'attributes.' %}
+											{% set field = field|slice(11)|underscore %}
+											<th class="TableHeader-{{ field|camelize }}">
+												{{ attributes[field].label }}
+											</th>
+										{% else %}
+											{% set field = field|underscore %}
+
+											{% if field ends with '_id' and field != 'parent_id' %}
+												{% set associationName = field|slice(0, -3) %}
+												<th class="TableHeader-{{ field|camelize }}">
+													{{ __df('customers', 'system', field) }}
+												</th>
+											{% else %}
+												<th class="TableHeader-{{ field|camelize }}">
+													{{ __df('customers', 'system', field) }}
+												</th>
+											{% endif %}
+										{% endif %}
+									{% endblock %}
+								{% endfor %}
+							{% endblock %}
+						{% endblock %}
+					</tr>
+				{% endblock %}
+			</thead>
+		{% endblock %}
+		{% block tableOverviewBody %}
+			<tbody>
+				{# @var customer \Awyiss\Model\Entity\Customer #}
+				{% for customer in customers %}
+					{% block tableOverviewBodyRow %}
+						<tr
+							class="
+							{%- if customer.active is defined and customer.active == false %} Inactive{% endif -%}
+							{%- if customer.isPublished() is same as false %} NotPublished{% endif %}
+						">
+							{% block tableOverviewBodyRowInner %}
+								{% block tableOverviewCellCustomerCheckbox %}
+									<td class="TableCell-CustomerCheckbox">
+										{{ FormHelper.control('customers._ids.' ~ customer.id, {
+											hiddenField: false,
+											type: 'checkbox',
+											value: customer.id,
+											label: '',
+											checked: customer.id in (customerGroup.customers ?? [])|column('id'),
+										}) }}
+									</td>
+								{% endblock %}
+
+								{% block tableOverviewCellId %}
+									<td class="TableCell-Id">{{ customer.id }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellDefaultFields %}
+									<td class="TableCell-Email">{{ customer.email }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellDisplayedFields %}
+									{% for field in displayedFields %}
+										{% block tableOverviewCellDisplayedField %}
+											<td class="TableCell-{{ field|camelize }}">
+												{% if field starts with 'attributes.' %}
+													{% set field = field|slice(11)|underscore %}
+													{% block tableOverviewCellDisplayedFieldAttributeValue %}
+														{% if attributes[field].inputType in ['date', 'datetime', 'time'] and customer.has('attributes') and customer.attributes.has(field) %}
+															{% if attributes[field].inputType == 'datetime' %}
+																{{ TimeHelper.nice(customer.attributes.get(field)) }}
+															{% else %}
+																{{ TimeHelper.i18nFormat(customer.attributes.get(field), attributes[field].inputType == 'date' ? dateFormat : timeFormat) }}
+															{% endif %}
+														{% else %}
+															{{ customer.attributes.get(field) ?: '-' }}
+														{% endif %}
+													{% endblock %}
+												{% else %}
+													{% set field = field|underscore %}
+													{% block tableOverviewCellDisplayedFieldDefaultValue %}
+														{% if field == 'language_shortcode' %}
+															{{ customer.get(field) ? languages.Frontend[ customer.get(field) ].title : '-' }}
+														{% elseif field in ['created_on', 'changed_on'] %}
+															{{ customer.has(field) ? TimeHelper.nice(customer.get(field)) ?: '-' }}
+														{% elseif categories.config.field and field == categories.config.field|underscore %}
+															{{ customer.has(field) ? (categories.simple[ customer.get(field) ] ?? '-') : '-' }}
+														{% else %}
+															{% set value = customer.has(field) ? customer.get(field) : '-' %}
+															{% if value is same as true or value is same as 'true' %}
+																<i class="las la-check">{{ __('true') }}</i>
+															{% elseif value is same as false or value is same as 'false' %}
+																<i class="las la-times">{{ __('false') }}</i>
+															{% else %}
+																{{ value }}
+															{% endif %}
+														{% endif %}
+													{% endblock %}
+												{% endif %}
+											</td>
+										{% endblock %}
+									{% endfor %}
+								{% endblock %}
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				{% endfor %}
+			</tbody>
+		{% endblock %}
+	</table>
+{% endblock %}

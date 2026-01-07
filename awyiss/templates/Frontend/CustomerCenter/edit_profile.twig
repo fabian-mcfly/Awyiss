@@ -1,0 +1,152 @@
+{#
+@var customer \Awyiss\Model\Entity\Customer
+@var emailChangeAllowed bool
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block assignHtmlClass %}
+	{% do _view.assign('htmlClass', 'CustomerCenterController EditProfileAction') %}
+{% endblock %}
+
+{% block assignMetaTitle %}
+	{% do _view.assign('metaTitle', __d('customers', 'page_title_edit_profile') ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
+{% endblock %}
+
+{% block contentArea %}
+	<main id="ContentArea">
+		<section class="ContentElement Template-Section">
+			<div class="ContentRow">
+				{% include '@Frontend/CustomerCenter/navigation.twig' with {
+					activeMenuItem: 'editProfile',
+				} %}
+
+				{% block editProfileContent %}
+					<div class="ContentElement Template-Standard Column-75">
+						{% block editProfileHeading %}
+							<h1>{{ __d('customers', 'page_title_edit_profile') }}</h1>
+						{% endblock %}
+
+						{% block flashMessages %}
+							{{ FlashHelper.render() }}
+						{% endblock %}
+
+						{% block editProfileForm %}
+							{{ FormHelper.create(customer, { class: 'CustomerCenter-Form' }) }}
+
+							{% block editProfileFormFieldset %}
+								<fieldset>
+									{% block editProfileFormLegend %}
+										<legend>{{ __d('customers', 'page_title_edit_profile') }}</legend>
+									{% endblock %}
+
+									{% block editProfileFormFields %}
+									{% block emailField %}
+										<div class="FormRow">
+											<div class="FormElement Column-100{% if customer.error('email') %} FormElement-IsInvalid{% endif %}">
+												{% block emailLabel %}
+													{{ FormHelper.label('email', __d('customers', 'email'), { class: 'FormElement-Label' }) }}
+												{% endblock %}
+												{% block emailInput %}
+													{% if emailChangeAllowed %}
+														{{ FormHelper.email('email', {
+															class: 'FormInputType-Input',
+													 	}) }}
+													{% else %}
+														{{ FormHelper.text('email', {
+															class: 'FormInputType-Input',
+															readonly: true,
+															value: customer.email,
+														}) }}
+													{% endif %}
+												{% endblock %}
+
+												{% block emailError %}
+													{% if customer.error('email') %}
+														<div class="FormElement-Error">{{ __d('customers', 'error_email') }}</div>
+													{% endif %}
+												{% endblock %}
+											</div>
+										</div>
+									{% endblock %}
+
+										{% block nameFields %}
+											<div class="FormRow">
+												{% block firstnameField %}
+													<div class="FormElement Column-50{% if customer.error('firstname') %} FormElement-IsInvalid{% endif %}">
+														{% block firstnameLabel %}
+															{{ FormHelper.label('firstname', __d('customers', 'firstname'), { class: 'FormElement-Label' }) }}
+														{% endblock %}
+														{% block firstnameInput %}
+															{{ FormHelper.text('firstname', {
+																class: 'FormInputType-Input',
+															}) }}
+														{% endblock %}
+
+														{% block firstnameError %}
+															{% if customer.error('firstname') %}
+																<div class="FormElement-Error">
+																	{% for error in customer.error('firstname') %}
+																		{{ error }}<br>
+																	{% endfor %}
+																</div>
+															{% endif %}
+														{% endblock %}
+													</div>
+												{% endblock %}
+
+												{% block lastnameField %}
+													<div class="FormElement Column-50{% if customer.error('lastname') %} FormElement-IsInvalid{% endif %}">
+														{% block lastnameLabel %}
+															{{ FormHelper.label('lastname', __d('customers', 'lastname'), { class: 'FormElement-Label' }) }}
+														{% endblock %}
+														{% block lastnameInput %}
+															{{ FormHelper.text('lastname', {
+																class: 'FormInputType-Input',
+															}) }}
+														{% endblock %}
+
+														{% block lastnameError %}
+															{% if customer.error('lastname') %}
+																<div class="FormElement-Error">
+																	{% for error in customer.error('lastname') %}
+																		{{ error }}<br>
+																	{% endfor %}
+																</div>
+															{% endif %}
+														{% endblock %}
+													</div>
+												{% endblock %}
+											</div>
+										{% endblock %}
+
+										{% block attributeFields %}{% endblock %}
+									{% endblock %}
+
+									{% block editProfileFormSubmit %}
+										<div class="FormRow">
+											<div class="FormElement Column-100 FormElementType-Submit">
+												{% block editProfileSubmit %}
+													{{ FormHelper.button(__d('customers', 'button_save_changes'), { type: 'submit', class: 'FormInputType-Button Button' }) }}
+												{% endblock %}
+											</div>
+										</div>
+									{% endblock %}
+								</fieldset>
+							{% endblock %}
+
+							{{ FormHelper.end() }}
+						{% endblock %}
+					</div>
+				{% endblock %}
+			</div>
+		</section>
+	</main>
+{% endblock %}
+

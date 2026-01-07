@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Trait\CustomerGroupAccessTrait;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 
@@ -33,8 +34,12 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\MenuEntry[] $childMenuEntries
  * @property \Awyiss\Model\Entity\MenuEntry[] $children
  * @property \Awyiss\Model\Entity\Language $language
+ * @property \Awyiss\Model\Entity\CustomerGroupAccessSetting $customerGroupAccessSettings
+ * @property \Awyiss\Model\Entity\CustomerGroupAssignment[] $customerGroupAssignments
  */
 class MenuEntry extends Entity {
+	use CustomerGroupAccessTrait;
+
 	/**
 	 * @inheritDoc
 	 */

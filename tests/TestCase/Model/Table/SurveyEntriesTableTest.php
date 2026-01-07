@@ -77,7 +77,7 @@ class SurveyEntriesTableTest extends TestCase {
 		// Test Pages association finder configuration
 		$this->assertSame(['all' => ['skipPageRoleCheck' => true]], $pagesAssociation->getFinder());
 
-		// MediaAssignments is defined, but we don't care about it for this table
+		// MediaAssignments is also defined, but we don't care about it for this table
 
 		// 'DeletedByUser' must also exist
 		$this->assertTrue($this->surveyEntriesTable->hasAssociation('DeletedByUser'));

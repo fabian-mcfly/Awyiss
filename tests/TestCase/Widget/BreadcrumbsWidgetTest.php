@@ -100,6 +100,8 @@ class BreadcrumbsWidgetTest extends TestCase {
 		$property->setAccessible(true);
 		// Reset the static property to null
 		$property->setValue(null, null);
+
+		BreadcrumbsWidget::clearCrumbs();
 	}
 
 
@@ -136,18 +138,21 @@ class BreadcrumbsWidgetTest extends TestCase {
 		$this->assertArrayHasKey('settings.includeHomepage', $result);
 		$this->assertArrayHasKey('settings.includeCurrentPage', $result);
 		$this->assertArrayHasKey('settings.showOnHomepage', $result);
+		$this->assertArrayHasKey('settings.includeInaccessiblePages', $result);
 		$this->assertArrayHasKey('settings.homepageId', $result);
 
 		// Test default values
 		$this->assertTrue($result['settings.includeHomepage']['checked']);
 		$this->assertTrue($result['settings.includeCurrentPage']['checked']);
 		$this->assertFalse($result['settings.showOnHomepage']['checked']);
+		$this->assertFalse($result['settings.includeInaccessiblePages']['checked']);
 		$this->assertNull($result['settings.homepageId']['value']);
 
 		// Test field types
 		$this->assertSame('checkbox', $result['settings.includeHomepage']['type']);
 		$this->assertSame('checkbox', $result['settings.includeCurrentPage']['type']);
 		$this->assertSame('checkbox', $result['settings.showOnHomepage']['type']);
+		$this->assertSame('checkbox', $result['settings.includeInaccessiblePages']['type']);
 		$this->assertSame('select', $result['settings.homepageId']['type']);
 
 		// Test that options is an array (from getHomepageOptions call)
@@ -163,17 +168,19 @@ class BreadcrumbsWidgetTest extends TestCase {
 	 */
 	public function testGetFormFieldsWithCustomSettings(): void {
 		$settings = [
-			'includeHomepage' => 'includeHomepage',
-			'includeCurrentPage' => 'includeCurrentPage',
-			'showOnHomepage' => 'showOnHomepage',
+			'includeHomepage' => true,
+			'includeCurrentPage' => true,
+			'showOnHomepage' => true,
+			'includeInaccessiblePages' => true,
 			'homepageId' => 5,
 		];
 
 		$result = BreadcrumbsWidget::getFormFields($this->mockBackendView, null, null, $settings);
 
-		$this->assertSame('includeHomepage', $result['settings.includeHomepage']['checked']);
-		$this->assertSame('includeCurrentPage', $result['settings.includeCurrentPage']['checked']);
-		$this->assertSame('showOnHomepage', $result['settings.showOnHomepage']['checked']);
+		$this->assertTrue($result['settings.includeHomepage']['checked']);
+		$this->assertTrue($result['settings.includeCurrentPage']['checked']);
+		$this->assertTrue($result['settings.showOnHomepage']['checked']);
+		$this->assertTrue($result['settings.includeInaccessiblePages']['checked']);
 		$this->assertSame(5, $result['settings.homepageId']['value']);
 	}
 
@@ -309,7 +316,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 
 		// In preview mode, the query should NOT call find('published')
 		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
-		$this->mockQuery->method('find')->with([])->willReturn($this->mockQuery);
+		$this->mockQuery->method('find')->willReturn($this->mockQuery);
 		$this->mockQuery->method('first')->willReturn($mockHomepage);
 		$this->mockQuery->method('all')->willReturn($this->createMock(ResultSet::class));
 
@@ -541,5 +548,114 @@ class BreadcrumbsWidgetTest extends TestCase {
 		// Verify the order: Startseite < Kundenbereich < Dokumentenverwaltung
 		$this->assertLessThan($kundenbereichPosition, $startseitePosistion, 'Startseite should appear before Kundenbereich');
 		$this->assertLessThan($dokumentenverwaltungPosition, $kundenbereichPosition, 'Kundenbereich should appear before Dokumentenverwaltung');
+	}
+
+
+	/**
+	 * Test registerCrumb method
+	 *
+	 * @return void
+	 * @see \Awyiss\Widget\BreadcrumbsWidget::registerCrumb()
+	 */
+	public function testRegisterCrumb(): void {
+		BreadcrumbsWidget::registerCrumb(
+			'Dashboard',
+			'/customer-center/dashboard'
+		);
+
+		$crumbs = BreadcrumbsWidget::getAdditionalCrumbs();
+
+		$this->assertCount(1, $crumbs);
+		$this->assertSame('Dashboard', $crumbs[0]['title']);
+		$this->assertSame('/customer-center/dashboard', $crumbs[0]['url']);
+	}
+
+
+	/**
+	 * Test clearCrumbs method
+	 *
+	 * @return void
+	 * @see \Awyiss\Widget\BreadcrumbsWidget::clearCrumbs()
+	 */
+	public function testClearCrumbs(): void {
+		BreadcrumbsWidget::registerCrumb('Title 1', '/url1');
+		BreadcrumbsWidget::registerCrumb('Title 2', '/url2');
+
+		$this->assertCount(2, BreadcrumbsWidget::getAdditionalCrumbs());
+
+		BreadcrumbsWidget::clearCrumbs();
+
+		$this->assertEmpty(BreadcrumbsWidget::getAdditionalCrumbs());
+	}
+
+
+	/**
+	 * Test render method with additional registered crumbs
+	 *
+	 * @return void
+	 * @see \Awyiss\Widget\BreadcrumbsWidget::render()
+	 * @throws \PHPUnit\Framework\MockObject\Exception
+	 */
+	public function testRenderWithAdditionalCrumbs(): void {
+		// Register a custom crumb for customer center
+		BreadcrumbsWidget::registerCrumb(
+			'Dashboard',
+			'/de/kundenbereich/dashboard'
+		);
+
+		$settings = [
+			'includeHomepage' => true,
+			'includeCurrentPage' => true,
+		];
+
+		$mockHomepage = new Page();
+		$mockHomepage->id = 1;
+		$mockHomepage->slug = '';
+
+		$mockRequest = $this->createMock(ServerRequest::class);
+		$mockRequest->method('getPath')->willReturn('/de/kundenbereich/dashboard');
+		Router::setRequest($mockRequest);
+
+		$this->mockQuery->method('orderBy')->willReturn($this->mockQuery);
+		$this->mockQuery->method('find')->willReturn($this->mockQuery);
+		$this->mockQuery->method('where')->willReturn($this->mockQuery);
+		$this->mockQuery->method('first')->willReturn($mockHomepage);
+
+		// Mock the kundenbereich page
+		$mockKundenbereich = new Page();
+		$mockKundenbereich->id = 19;
+		$mockKundenbereich->slug = 'kundenbereich';
+		$mockKundenbereich->title = 'Kundenbereich';
+
+		$mockResultSet = $this->createMock(ResultSet::class);
+		$mockResultSet->method('indexBy')->willReturn($mockResultSet);
+		$mockResultSet->method('toArray')->willReturn([19 => $mockKundenbereich]);
+
+		$this->mockQuery->method('all')->willReturn($mockResultSet);
+		$this->mockPagesTable->method('find')->willReturn($this->mockQuery);
+
+		$this->mockFrontendView->expects($this->once())->method('element')->with(
+			'widget/breadcrumbs',
+			$this->callback(function (array $params): bool {
+				// Should have homepage and kundenbereich page
+				$this->assertCount(2, $params['pages']);
+
+				// Check that all additional crumbs are passed to the template
+				$this->assertArrayHasKey('additionalCrumbs', $params);
+				$this->assertCount(1, $params['additionalCrumbs']);
+				$this->assertSame('Dashboard', $params['additionalCrumbs'][0]['title']);
+				$this->assertSame('/de/kundenbereich/dashboard', $params['additionalCrumbs'][0]['url']);
+
+				return true;
+			})
+		)->willReturn('<nav class="breadcrumbs">Breadcrumbs with dashboard</nav>');
+
+		$result = BreadcrumbsWidget::render(
+			$settings,
+			$this->mockFrontendView,
+			null
+		);
+
+		$this->assertSame('<nav class="breadcrumbs">Breadcrumbs with dashboard</nav>', $result);
 	}
 }

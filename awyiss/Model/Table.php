@@ -99,6 +99,18 @@ class Table extends BaseTable {
 
 
 	/**
+	 * @var array<string>
+	 */
+	public static array $tablesWithCustomerGroupAccess = [
+		'contents',
+		'global_contents',
+		'menu_entries',
+		'menus',
+		'pages',
+	];
+
+
+	/**
 	 * @var array Settings for the AttributesBehavior
 	 */
 	protected array $attributes = [];
@@ -274,10 +286,21 @@ class Table extends BaseTable {
 				$this->addBehavior('SystemOrder', $this->systemOrder);
 			}
 
+			if (in_array($this->getTable(), static::$tablesWithCustomerGroupAccess)) {
+				$this->addBehavior('CustomerGroupAccessSetting');
+			}
+
 			if (
-				!str_starts_with($this->getTable(), 'media') &&
+				!str_starts_with($this->getTable(), 'media_') &&
+				!str_starts_with($this->getTable(), 'customer_group_') &&
+				!str_starts_with($this->getTable(), 'customer_groups_') &&
 				!in_array($this->getTable(), [
+					'attributes',
 					'audit',
+					'designs',
+					'i18n',
+					'locks',
+					'media',
 					'publication_data',
 				])
 			) {

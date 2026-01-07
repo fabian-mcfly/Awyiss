@@ -74,7 +74,7 @@ class PageTemplateContentAreasTableTest extends TestCase {
 		$this->assertFalse($pageTemplatesAssociation->getCascadeCallbacks());
 		$this->assertFalse($pageTemplatesAssociation->getDependent());
 
-		// MediaAssignments is defined, but we don't care about it for this table
+		// CustomerGroupAccessSettings, CustomerGroupAssignments and MediaAssignments are defined, but we don't care about it for this table
 	}
 
 

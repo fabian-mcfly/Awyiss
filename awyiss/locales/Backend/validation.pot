@@ -170,6 +170,12 @@ msgstr "This option belongs to a user and cannot be changed"
 msgid "error_usergroup_exists"
 msgstr "This Usergroup does not exist"
 
+msgid "error_customer_group_exists"
+msgstr "This Customer Group does not exist"
+
+msgid "error_customer_exists"
+msgstr "This customer does not exist"
+
 msgid "error_title_unique"
 msgstr "This title is already in use"
 

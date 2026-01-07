@@ -44,6 +44,9 @@ msgstr "Aktuelle Seite anzeigen"
 msgid "show_on_homepage"
 msgstr "Auf Startseite anzeigen"
 
+msgid "include_inaccessible_pages"
+msgstr "Seiten anzeigen, die nicht zugänglich sind"
+
 msgid "homepage_id"
 msgstr "Startseite"
 

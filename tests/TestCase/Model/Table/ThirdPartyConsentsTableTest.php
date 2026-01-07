@@ -59,7 +59,7 @@ class ThirdPartyConsentsTableTest extends TestCase {
 	public function testInitializeAssociations(): void {
 		$this->assertCount(1, $this->thirdPartyConsentsTable->associations()->keys());
 
-		// MediaAssignments is defined, but we don't care about it for this table
+		// MediaAssignments is also defined, but we don't care about it for this table
 	}
 
 

@@ -99,14 +99,7 @@ class AttributesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\AttributesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(6, $this->attributesTable->associations()->keys());
-
-		// 'MediaAssignments' must also exist
-		$this->assertTrue($this->attributesTable->hasAssociation('MediaAssignments'));
-		$mediaAssignmentsAssociation = $this->attributesTable->getAssociation('MediaAssignments');
-		$this->assertInstanceOf(HasMany::class, $mediaAssignmentsAssociation);
-		$this->assertTrue($mediaAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($mediaAssignmentsAssociation->getDependent());
+		$this->assertCount(5, $this->attributesTable->associations()->keys());
 
 		// 'CreatedByUser' must exist
 		$this->assertTrue($this->attributesTable->hasAssociation('CreatedByUser'));
@@ -670,6 +663,8 @@ class AttributesTableTest extends TestCase {
 			'cars' => 'Autos',
 			'content_templates' => 'content_templates::menu_title',
 			'contents' => 'contents::menu_title',
+			'customer_groups' => 'customer_groups::menu_title',
+			'customers' => 'customers::menu_title',
 			'dummy_users' => 'dummy_users::menu_title',
 			'global_content_templates' => 'global_content_templates::menu_title',
 			'global_contents' => 'global_contents::menu_title',
@@ -758,6 +753,8 @@ class AttributesTableTest extends TestCase {
 			'cars',
 			'content_templates',
 			'contents',
+			'customer_groups',
+			'customers',
 			'dummy_users',
 			'employees',
 			'employers',

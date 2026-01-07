@@ -13,6 +13,7 @@ use Awyiss\Authentication\Authenticator\SessionAuthenticator;
 use Awyiss\Awyiss;
 use Awyiss\Event\EventDispatcherTrait;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Customer;
 use Awyiss\Model\Entity\User;
 use Awyiss\Routing\Router;
 use Cake\I18n\DateTime;
@@ -38,21 +39,33 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 */
 	protected string $realm;
 	/**
-	 * @var array
+	 * @var array<string, array>
 	 */
-	protected static array $authenticators = [];
+	protected static array $authenticators = [
+		Awyiss::REALM_BACKEND => [],
+		Awyiss::REALM_FRONTEND => [],
+	];
 	/**
-	 * @var bool
+	 * @var array<string, bool>
 	 */
-	protected static bool $disableDefaultAuthenticators = false;
+	protected static array $disableDefaultAuthenticators = [
+		Awyiss::REALM_BACKEND => false,
+		Awyiss::REALM_FRONTEND => false,
+	];
 	/**
-	 * @var bool
+	 * @var array<string, bool>
 	 */
-	protected static bool $disableDefaultIdentifiers = false;
+	protected static array $disableDefaultIdentifiers = [
+		Awyiss::REALM_BACKEND => false,
+		Awyiss::REALM_FRONTEND => false,
+	];
 	/**
-	 * @var array
+	 * @var array<string, array>
 	 */
-	protected static array $identifiers = [];
+	protected static array $identifiers = [
+		Awyiss::REALM_BACKEND => [],
+		Awyiss::REALM_FRONTEND => [],
+	];
 
 
 	/**
@@ -78,6 +91,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			return $this->service;
 		}
 
+		if ($this->realm === Awyiss::REALM_FRONTEND) {
+			if (!isset($this->service)) {
+				$this->service = $this->getFrontendAuthenticationService($request);
+			}
+
+			return $this->service;
+		}
+
 		throw new Exception(__d('authenticator', 'unknown_authentication'));
 	}
 
@@ -93,19 +114,15 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
-	 * Registers default Authenticators if not disabled, sorts all Authenticators by priority and adds them to the `AuthenticationServiceInterface`
+	 * Load the registered Authenticators for the given realm
 	 *
+	 * @param string $realm
 	 * @param AuthenticationServiceInterface $service
-	 * @param ServerRequestInterface $request
 	 * @throws Exception
 	 * @see AuthenticationServiceInterface::loadAuthenticator
 	 */
-	protected function loadAuthenticators(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
-		if (!static::$disableDefaultAuthenticators) {
-			$this->addDefaultAuthenticators($service, $request);
-		}
-
-		$authenticators = static::$authenticators;
+	protected function loadAuthenticators(string $realm, AuthenticationServiceInterface $service): void {
+		$authenticators = static::$authenticators[ $realm ];
 		usort($authenticators, function (array $a, array $b): int {
 			return $a['priority'] <=> $b['priority'];
 		});
@@ -139,13 +156,16 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
-	 * Register the default authenticators for Session and Form
+	 * Add the default authenticators for Session and Form
+	 * for the Backend
 	 *
 	 * @throws Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function addDefaultAuthenticators(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
-		$this->addAuthenticator(SessionAuthenticator::class, [
+	protected function addDefaultBackendAuthenticators(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
+		$identifiers = $this->getIdentifiers(Awyiss::REALM_BACKEND);
+
+		$this->addAuthenticator(Awyiss::REALM_BACKEND, SessionAuthenticator::class, [
 			'identify' => function (User $user): bool {
 				//Set last_login
 				$checkTime = DateTime::now()->subMinutes(1);
@@ -157,38 +177,75 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 				return false;
 			},
-			'identifier' => $this->getIdentifiers(),
+			'identifier' => $identifiers,
 			'sessionKey' => Awyiss::getRealm() . '.Auth',
 		], 10);
 
-		$this->addAuthenticator(FormAuthenticator::class, [
+		$this->addAuthenticator(Awyiss::REALM_BACKEND, FormAuthenticator::class, [
 			'fields' => [
 				AbstractIdentifier::CREDENTIAL_USERNAME => 'username',
 				AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
 			],
 			'loginUrl' => $this->dispatchEvent('Authentication.requestLoginUrl', [], $this)->getResult(),
-			'identifier' => $this->getIdentifiers(),
+			'identifier' => $identifiers,
 		], 20);
 	}
 
 
 	/**
-	 * Registers the default identifiers if not disabled, sorts all Identifiers by priority and adds them to the `AuthenticationServiceInterface`
+	 * Register the default authenticators for Session and Form
+	 * for the Frontend
 	 *
+	 * @throws Exception
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	protected function addDefaultFrontendAuthenticators(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
+		$identifiers = $this->getIdentifiers(Awyiss::REALM_FRONTEND);
+
+		$this->addAuthenticator(Awyiss::REALM_FRONTEND, SessionAuthenticator::class, [
+			'fields' => [
+				AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
+			],
+			'identify' => function (Customer $customer): bool {
+				//Set last_login
+				$checkTime = DateTime::now()->subMinutes(1);
+				if ($checkTime >= $customer->lastLogin) {
+					$customer->set('lastLogin', DateTime::now());
+
+					return true;
+				}
+
+				return false;
+			},
+			'identifier' => $identifiers,
+			'sessionKey' => Awyiss::getRealm() . '.Auth',
+		], 10);
+
+		$this->addAuthenticator(Awyiss::REALM_FRONTEND, FormAuthenticator::class, [
+			'fields' => [
+				AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
+				AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
+			],
+			'loginUrl' => $this->dispatchEvent('Authentication.requestLoginUrl', [], $this)->getResult(),
+			'identifier' => $identifiers,
+		], 20);
+	}
+
+
+	/**
+	 * Get the registered identifiers sorted by priority
+	 *
+	 * @param string $realm
 	 * @return array
 	 * @throws Exception
 	 */
-	protected function getIdentifiers(): array {
-		if (!static::$disableDefaultIdentifiers) {
-			$this->addDefaultIdentifiers();
-		}
-
-		usort(static::$identifiers, function (array $a, array $b): int {
+	protected function getIdentifiers(string $realm): array {
+		usort(static::$identifiers[ $realm ], function (array $a, array $b): int {
 			return $a['priority'] <=> $b['priority'];
 		});
 
 		$identifiers = [];
-		foreach (static::$identifiers as $identifier) {
+		foreach (static::$identifiers[ $realm ] as $identifier) {
 			$identifier = $identifier['identifier'];
 
 			/*
@@ -217,15 +274,36 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
-	 * Register the default identifiers for backend users#
+	 * Add the default identifier for the Backend
 	 *
 	 * @return void
 	 */
-	protected function addDefaultIdentifiers(): void {
-		$this->addIdentifier('Authentication.Password', [
+	protected function addDefaultBackendIdentifiers(): void {
+		$this->addIdentifier(Awyiss::REALM_BACKEND, 'Authentication.Password', [
 			'resolver' => [
 				'className' => OrmResolver::class,
 				/** @see \Awyiss\Model\Table\UsersTable::findActive() */
+				'finder' => 'active',
+			],
+		]);
+	}
+
+
+	/**
+	 * Add the default identifier for the Frontend
+	 *
+	 * @return void
+	 */
+	protected function addDefaultFrontendIdentifiers(): void {
+		$this->addIdentifier(Awyiss::REALM_FRONTEND, 'Authentication.Password', [
+			'fields' => [
+				AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
+				AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',
+			],
+			'resolver' => [
+				'className' => OrmResolver::class,
+				'userModel' => 'Customers',
+				/** @see \Awyiss\Model\Table\CustomersTable::findActive() */
 				'finder' => 'active',
 			],
 		]);
@@ -256,7 +334,46 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			'queryParam' => null,
 		]);
 
-		$this->loadAuthenticators($service, $request);
+		if (!static::$disableDefaultIdentifiers[ Awyiss::REALM_BACKEND ]) {
+			$this->addDefaultBackendIdentifiers();
+		}
+
+		if (!static::$disableDefaultAuthenticators[ Awyiss::REALM_BACKEND ]) {
+			$this->addDefaultBackendAuthenticators($service, $request);
+		}
+
+		$this->loadAuthenticators(Awyiss::REALM_BACKEND, $service);
+
+		return $service;
+	}
+
+
+	/**
+	 * Returns a frontend-specific AuthenticationServiceInterface
+	 *
+	 * @param ServerRequestInterface $request
+	 * @return AuthenticationServiceInterface
+	 * @throws Exception
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	protected function getFrontendAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface {
+		$service = new AuthenticationService();
+
+		// Define where customers should be redirected to when they are not authenticated
+		$service->setConfig([
+			'unauthenticatedRedirect' => null,
+			'queryParam' => null,
+		]);
+
+		if (!static::$disableDefaultIdentifiers[ Awyiss::REALM_FRONTEND ]) {
+			$this->addDefaultFrontendIdentifiers();
+		}
+
+		if (!static::$disableDefaultAuthenticators[ Awyiss::REALM_FRONTEND ]) {
+			$this->addDefaultFrontendAuthenticators($service, $request);
+		}
+
+		$this->loadAuthenticators(Awyiss::REALM_FRONTEND, $service);
 
 		return $service;
 	}
@@ -265,13 +382,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Registers an Authenticators to the list of available Authenticators.
 	 *
+	 * @param string $realm
 	 * @param callable|string $authenticator
 	 * @param array $config
 	 * @param int $priority
 	 */
-	public static function addAuthenticator(string|callable $authenticator, array $config = [], int $priority = 100): void {
+	public static function addAuthenticator(string $realm, string|callable $authenticator, array $config = [], int $priority = 100): void {
 		if (is_string($authenticator)) {
-			static::$authenticators[] = [
+			static::$authenticators[ $realm ][] = [
 				'authenticator' => [
 					'name' => $authenticator,
 					'config' => $config,
@@ -282,7 +400,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			return;
 		}
 
-		static::$authenticators[] = [
+		static::$authenticators[ $realm ][] = [
 			'authenticator' => $authenticator,
 			'priority' => $priority,
 		];
@@ -290,26 +408,38 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
-	 * Disable the default authenticators for Session and Form
+	 * Disable the default Backend authenticators for Session and Form
 	 *
 	 * @param bool $disableDefaultAuthenticators
 	 * @noinspection PhpUnused
 	 */
-	public static function disableDefaultAuthenticators(bool $disableDefaultAuthenticators): void {
-		static::$disableDefaultAuthenticators = $disableDefaultAuthenticators;
+	public static function disableDefaultBackendAuthenticators(bool $disableDefaultAuthenticators): void {
+		static::$disableDefaultAuthenticators[ Awyiss::REALM_BACKEND ] = $disableDefaultAuthenticators;
+	}
+
+
+	/**
+	 * Disable the default Frontend authenticators for Session and Form
+	 *
+	 * @param bool $disableDefaultAuthenticators
+	 * @noinspection PhpUnused
+	 */
+	public static function disableDefaultFrontendAuthenticators(bool $disableDefaultAuthenticators): void {
+		static::$disableDefaultAuthenticators[ Awyiss::REALM_FRONTEND ] = $disableDefaultAuthenticators;
 	}
 
 
 	/**
 	 * Registers an identifier
 	 *
+	 * @param string $realm
 	 * @param callable|string $identifier
 	 * @param array $config
 	 * @param int $priority
 	 */
-	public static function addIdentifier(string|callable $identifier, array $config = [], int $priority = 100): void {
+	public static function addIdentifier(string $realm, string|callable $identifier, array $config = [], int $priority = 100): void {
 		if (is_string($identifier)) {
-			static::$identifiers[] = [
+			static::$identifiers[ $realm ][] = [
 				'identifier' => [
 					'name' => $identifier,
 					'config' => $config,
@@ -320,7 +450,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			return;
 		}
 
-		static::$identifiers[] = [
+		static::$identifiers[ $realm ][] = [
 			'identifier' => $identifier,
 			'priority' => $priority,
 		];
@@ -328,12 +458,23 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
-	 * Disable the default identifier (PasswordIdentifier)
+	 * Disable the default Backend identifier (PasswordIdentifier)
 	 *
 	 * @param bool $disableDefaultIdentifiers
 	 * @noinspection PhpUnused
 	 */
-	public static function disableDefaultIdentifiers(bool $disableDefaultIdentifiers): void {
-		static::$disableDefaultIdentifiers = $disableDefaultIdentifiers;
+	public static function disableDefaultBackendIdentifiers(bool $disableDefaultIdentifiers): void {
+		static::$disableDefaultIdentifiers[ Awyiss::REALM_BACKEND ] = $disableDefaultIdentifiers;
+	}
+
+
+	/**
+	 * Disable the default Frontend identifier (PasswordIdentifier)
+	 *
+	 * @param bool $disableDefaultIdentifiers
+	 * @noinspection PhpUnused
+	 */
+	public static function disableDefaultFrontendIdentifiers(bool $disableDefaultIdentifiers): void {
+		static::$disableDefaultIdentifiers[ Awyiss::REALM_FRONTEND ] = $disableDefaultIdentifiers;
 	}
 }

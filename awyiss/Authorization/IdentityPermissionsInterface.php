@@ -33,4 +33,12 @@ interface IdentityPermissionsInterface {
 	 * @see PermissionCollection::scopeIsAccessible
 	 */
 	public function scopeIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): bool;
+
+
+	/**
+	 * Unsets the PermissionCollection for this identity after changes have been made that could affect permissions.
+	 *
+	 * @return $this
+	 */
+	public function unsetPermissionCollection(): static;
 }

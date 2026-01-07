@@ -49,6 +49,8 @@ class MediaElementTest extends TestCase {
 			'mediaElementSelectors' => true,
 			'_translations' => true,
 			'_publicationData' => true,
+			'customerGroupAccessSettings' => true,
+			'customerGroupAssignments' => true,
 			'mediaAssignments' => true,
 		], $entity->getAccessible());
 	}

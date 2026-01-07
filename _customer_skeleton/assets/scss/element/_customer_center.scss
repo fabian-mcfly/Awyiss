@@ -1,0 +1,80 @@
+.CustomerCenter-AlreadyRegistered,
+.CustomerCenter-NotRegisteredYet {
+	margin-top:var(--lineHeightMain);
+	padding:var(--elementPadding);
+	border-radius:5px;
+	background-color:var(--colorText);
+	color:var(--colorBright);
+}
+
+.CustomerCenter-Nav {
+	&:first-child {
+		margin-top:-2px;
+	}
+
+	&:last-child {
+		margin-bottom:-2px;
+	}
+
+	.Level1 {
+		&:is(ul) {
+			display:block;
+			margin:0;
+			text-align:inherit;
+		}
+
+		&:is(li) {
+			display:block;
+			background-color:color-mix(in srgb, var(--colorLight), #000000 10%);
+			border-radius:5px;
+			margin:2px 0;
+			overflow:hidden;
+		}
+
+		&:is(a) {
+			display:block;
+			padding:10px 20px;
+			color:var(--colorText);
+			font-weight:400;
+			text-decoration:none;
+			transition-property:background-color, color;
+			opacity:inherit;
+
+			&.Logout {
+				background-color:var(--colorContrast, #CA2E55);
+				color:var(--colorBright);
+
+				&:hover,
+				&:focus-visible {
+					color:var(--colorBright);
+				}
+			}
+
+			&.Active,
+			&:hover,
+			&:focus-visible {
+				background-color:var(--colorMain);
+				color:var(--colorBright);
+			}
+		}
+	}
+}
+
+.CustomerCenter-InfoList {
+	display:grid;
+	grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+	gap:10px;
+
+	li {
+		display:grid;
+		margin:0;
+		padding:20px;
+		border-radius:5px;
+		background-color:color-mix(in srgb, var(--colorLight), #000000 10%);
+		list-style-type:none;
+	}
+
+	.Value {
+		font-weight:700;
+	}
+}

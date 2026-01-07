@@ -6,8 +6,10 @@ namespace Awyiss\Model\Behavior;
 
 use ArrayObject;
 use Awyiss\ORM\Behavior;
+use Cake\Database\Expression\CaseStatementExpression;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\ExpressionInterface;
@@ -54,13 +56,13 @@ class AutoPrefixBehavior extends Behavior {
 		}
 
 		//For all parts of the query, call `expressionVisitor`
-		$query->traverseParts(function (?QueryExpression $expression): void {
+		$query->traverseParts(function (?QueryExpression $expression, string $clause): void {
 			if (is_null($expression)) {
 				return;
 			}
 
 			$this->expressionVisitor($expression);
-		}, ['where']);
+		}, ['where', 'order']);
 	}
 
 
@@ -124,20 +126,35 @@ class AutoPrefixBehavior extends Behavior {
 						$expression->setField($this->alias . '.' . $field);
 					}
 				}
+
+				return $expression;
 			}
 			/*
 			 * If the expression is an instance of either QueryExpression or UnaryExpression,
 			 * call expressionVisitor again with this sub-expression. Kind of a recursive function here.
 			 */
-			elseif ($expression instanceof QueryExpression || $expression instanceof UnaryExpression) {
+			if ($expression instanceof QueryExpression || $expression instanceof UnaryExpression) {
 				$this->expressionVisitor($expression);
-			}
-			else {
-				dd($expression, __FILE__, __LINE__);
+
+				return $expression;
 			}
 
+			if ($expression instanceof OrderClauseExpression) {
+				$field = $expression->getField();
+				if (is_string($field) && !str_contains($field, '.')) {
+					$expression->setField($this->alias . '.' . $field);
+				}
 
-			return $expression;
+				return $expression;
+			}
+
+			if ($expression instanceof CaseStatementExpression) {
+				// Skip CaseStatementExpression for now
+				return $expression;
+			}
+
+			dump($expression, __FILE__, __LINE__);
+			exit;
 		});
 	}
 }

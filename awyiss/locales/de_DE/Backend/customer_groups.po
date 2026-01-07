@@ -1,0 +1,85 @@
+# Customer Groups translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-12-23 19:03+0000\n"
+"PO-Revision-Date: 2025-12-23 19:03+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Kundengruppen"
+
+msgid "meta_title_add"
+msgstr "Kundengruppe hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Kundengruppe bearbeiten"
+
+msgid "menu_title"
+msgstr "Kundengruppen"
+
+msgid "menu_add"
+msgstr "Neue Kundengruppe"
+
+msgid "headline_overview"
+msgstr "Kundengruppen"
+
+msgid "create"
+msgstr "Neue Kundengruppe"
+
+msgid "headline_add"
+msgstr "Kundengruppe hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Die Kundengruppe wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Die Kundengruppe konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Kundengruppe bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Die Kundengruppe wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Die Kundengruppe konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Die Kundengruppe wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diese Kundengruppe (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Die Kundengruppe wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Die Kundengruppe konnte nicht gelöscht werden"
+
+msgid "fieldset_customers"
+msgstr "Kunden"
+
+msgid "fieldset_access_type"
+msgstr "Zugriffstyp"
+
+msgid "access_type"
+msgstr "Zugriffstyp"
+
+msgid "access_type_available_for_all"
+msgstr "Für alle verfügbar"
+
+msgid "access_type_hide_on_login"
+msgstr "Nur sichtbar wenn nicht angemeldet"
+
+msgid "access_type_all_groups"
+msgstr "Verfügbar für alle Gruppen"
+
+msgid "access_type_specific_groups"
+msgstr "Nur sichtbar für bestimmte Gruppen"
+

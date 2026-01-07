@@ -24,11 +24,55 @@ use Exception;
  */
 class BreadcrumbsWidget extends AbstractWidget {
 	/**
+	 * Additional breadcrumb items for routes that don't have page entries
+	 * Format: [['title' => 'Title', 'url' => '/url'], ...]
+	 *
+	 * @var array<int, array{title: string, url: string}>
+	 */
+	protected static array $additionalCrumbs = [];
+
+
+	/**
 	 * @inheritDoc
 	 */
 	public static function getTitle(): string {
 		// Translate using __d() if needed
 		return 'Breadcrumbs';
+	}
+
+
+	/**
+	 * Register an additional breadcrumb item for controller routes without page entries
+	 *
+	 * @param string $title The title to display in the breadcrumb
+	 * @param string $url The URL to link to
+	 * @return void
+	 */
+	public static function registerCrumb(string $title, string $url): void {
+		static::$additionalCrumbs[] = [
+			'title' => $title,
+			'url' => $url,
+		];
+	}
+
+
+	/**
+	 * Clear all registered additional crumbs (useful for testing)
+	 *
+	 * @return void
+	 */
+	public static function clearCrumbs(): void {
+		static::$additionalCrumbs = [];
+	}
+
+
+	/**
+	 * Get all registered additional crumbs
+	 *
+	 * @return array<int, array{title: string, url: string}>
+	 */
+	public static function getAdditionalCrumbs(): array {
+		return static::$additionalCrumbs;
 	}
 
 
@@ -40,7 +84,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 			// Checkbox if the homepage should be included in the breadcrumbs (default: true)
 			'settings.includeHomepage' => [
 				'checked' => $settings['includeHomepage'] ?? true,
-				'columnSpan' => 4,
+				'columnSpan' => 6,
 				'label' => __df('Frontend/breadcrumbs', 'Frontend/widgets', 'include_homepage'),
 				'type' => 'checkbox',
 			],
@@ -48,7 +92,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 			// Checkbox if the current page should be included in the breadcrumbs (default: true)
 			'settings.includeCurrentPage' => [
 				'checked' => $settings['includeCurrentPage'] ?? true,
-				'columnSpan' => 4,
+				'columnSpan' => 6,
 				'label' => __df('Frontend/breadcrumbs', 'Frontend/widgets', 'include_current_page'),
 				'type' => 'checkbox',
 			],
@@ -56,8 +100,16 @@ class BreadcrumbsWidget extends AbstractWidget {
 			// Checkbox if the breadcrumb should be shown on the homepage (default: false)
 			'settings.showOnHomepage' => [
 				'checked' => $settings['showOnHomepage'] ?? false,
-				'columnSpan' => 4,
+				'columnSpan' => 6,
 				'label' => __df('Frontend/breadcrumbs', 'Frontend/widgets', 'show_on_homepage'),
+				'type' => 'checkbox',
+			],
+
+			// Checkbox if inaccessible pages should be included in the breadcrumbs (default: false)
+			'settings.includeInaccessiblePages' => [
+				'checked' => $settings['includeInaccessiblePages'] ?? false,
+				'columnSpan' => 6,
+				'label' => __df('Frontend/breadcrumbs', 'Frontend/widgets', 'include_inaccessible_pages'),
 				'type' => 'checkbox',
 			],
 
@@ -82,6 +134,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 		$includeCurrentPage = $settings['includeCurrentPage'] ?? true;
 		$showOnHomepage = $settings['showOnHomepage'] ?? false;
 		$homepageId = $settings['homepageId'] ?? null;
+		$includeInaccessiblePages = $settings['includeInaccessiblePages'] ?? false;
 
 		/** @var \Awyiss\Model\Table\PagesTable $pagesTable */
 		$pagesTable = FactoryLocator::get('Table')->get('Pages');
@@ -108,6 +161,18 @@ class BreadcrumbsWidget extends AbstractWidget {
 		// Get all pages in the current path
 		/** @uses \Awyiss\Model\Table::findForCurrentLanguage() */
 		$query = $pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true);
+
+		if (!$includeInaccessiblePages) {
+			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
+			 * @uses \Awyiss\Model\Table::findActive()
+			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
+			 */
+			$query
+				->find('accessible')
+				->find('active')
+				->find('published');
+		}
 
 		$currentPath = '';
 		$paths = [];
@@ -149,6 +214,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 			'homepageId' => $homepageId,
 			'homepage' => $homepage,
 			'pages' => $pages,
+			'additionalCrumbs' => static::$additionalCrumbs,
 			'settings' => $settings,
 		]);
 	}

@@ -1032,6 +1032,7 @@ class SystemOrderBehavior extends Behavior {
 				'audit' => ['skip' => true],
 				'atomic' => false,
 				'checkRules' => false,
+				'customerGroupAssignments' => ['skip' => true],
 				'mediaAssignments' => ['skip' => true],
 				'nest' => ['skip' => true],
 				'systemOrder' => ['skip' => true],

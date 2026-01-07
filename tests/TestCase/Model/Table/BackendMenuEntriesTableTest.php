@@ -93,13 +93,6 @@ class BackendMenuEntriesTableTest extends TestCase {
 	public function testInitializeAssociations(): void {
 		$this->assertCount(8, $this->backendMenuEntriesTable->associations()->keys());
 
-		// 'MediaAssignments' must also exist
-		$this->assertTrue($this->backendMenuEntriesTable->hasAssociation('MediaAssignments'));
-		$mediaAssignmentsAssociation = $this->backendMenuEntriesTable->getAssociation('MediaAssignments');
-		$this->assertInstanceOf(HasMany::class, $mediaAssignmentsAssociation);
-		$this->assertTrue($mediaAssignmentsAssociation->getCascadeCallbacks());
-		$this->assertTrue($mediaAssignmentsAssociation->getDependent());
-
 		// 'CreatedByUser' must exist
 		$this->assertTrue($this->backendMenuEntriesTable->hasAssociation('CreatedByUser'));
 		$createdByUserAssociation = $this->backendMenuEntriesTable->getAssociation('CreatedByUser');

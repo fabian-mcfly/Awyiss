@@ -4,8 +4,12 @@
 namespace Awyiss\Test\TestCase\Utility\Menu;
 
 
-use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Model\Entity\Customer;
+use Awyiss\Model\Entity\CustomerGroup;
+use Awyiss\Model\Entity\CustomerGroupAccessSetting;
+use Awyiss\Model\Entity\CustomerGroupAssignment;
 use Awyiss\Model\Entity\MenuEntry;
+use Awyiss\Model\Enum\CustomerGroupAccessType;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Awyiss\Utility\Menu\FrontendMenu;
@@ -441,7 +445,6 @@ class FrontendMenuTest extends TestCase {
 			'item2' => new MenuEntry([
 				'title' => 'Item 2',
 				'active' => true,
-				'access' => ['scope' => 'test_scope', 'identifier' => 'test_identifier'],
 				'children' => [
 					'item2_1' => new MenuEntry([
 						'title' => 'Item 2.1',
@@ -469,28 +472,50 @@ class FrontendMenuTest extends TestCase {
 	 * @throws \PHPUnit\Framework\MockObject\Exception
 	 */
 	public function testSetIdentity(): void {
+		// Create menu entry without access control
+		$item1Entry = new MenuEntry([
+			'title' => 'Item 1',
+			'active' => true,
+		]);
+
+		// Create menu entry with customer group access control
+		$item2Entry = new MenuEntry([
+			'title' => 'Item 2',
+			'active' => true,
+			'children' => [
+				'item2_1' => new MenuEntry([
+					'title' => 'Item 2.1',
+					'active' => true,
+				]),
+			],
+		]);
+
+		$item2Entry->customerGroupAccessSettings = new CustomerGroupAccessSetting([
+			'accessType' => CustomerGroupAccessType::SpecificGroups,
+		]);
+
+		$item2Entry->customerGroupAssignments = [
+			new CustomerGroupAssignment([
+				'customerGroupId' => 1,
+			]),
+		];
+
 		$menu = new FrontendMenu([
-			'item1' => new MenuEntry([
-				'title' => 'Item 1',
-				'active' => true,
-			]),
-			'item2' => new MenuEntry([
-				'title' => 'Item 2',
-				'active' => true,
-				'access' => ['scope' => 'test_scope', 'identifier' => 'test_identifier'],
-				'children' => [
-					'item2_1' => new MenuEntry([
-						'title' => 'Item 2.1',
-						'active' => true,
-					]),
-				],
-			]),
+			'item1' => $item1Entry,
+			'item2' => $item2Entry,
 		], $this->menuConfig);
 
-		$identity = $this->createMock(IdentityPermissionsInterface::class);
-		$identity->expects($this->once())->method('scopeIsAccessible');
+		// Create customer with the required group
+		$customerGroup = new CustomerGroup(['id' => 1, 'name' => 'Test Group']);
+		$customer = $this->createMock(Customer::class);
+		$customer->method('getGroups')->willReturn([$customerGroup]);
 
-		$menu->setIdentity($identity);
+		// Set identity should propagate to all menu items
+		$menu->setIdentity($customer);
+
+		// Verify that items are accessible with the correct identity
+		$this->assertTrue($menu->getItem('item1')->isAccessible());
+		$this->assertTrue($menu->getItem('item2')->isAccessible());
 	}
 
 

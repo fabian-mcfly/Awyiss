@@ -1,0 +1,252 @@
+# Customer Center translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-12-27 15:15+0000\n"
+"PO-Revision-Date: 2025-12-27 15:15+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "error_not_authenticated"
+msgstr "Sie müssen angemeldet sein, um auf diese Seite zuzugreifen."
+
+msgid "error_invalid_login"
+msgstr "Ungültige E-Mail oder Passwort."
+
+msgid "error_invalid_reset_code"
+msgstr "Der Passwort-Zurücksetzen-Code ist ungültig oder abgelaufen."
+
+msgid "error_invalid_verification_code"
+msgstr "Der Bestätigungscode ist ungültig."
+
+msgid "error_password_incorrect"
+msgstr "Das aktuelle Passwort ist falsch."
+
+msgid "error_password_mismatch"
+msgstr "Die Passwörter stimmen nicht überein."
+
+msgid "error_password_too_short"
+msgstr "Das Passwort muss mindestens 8 Zeichen lang sein."
+
+msgid "error_email_required"
+msgstr "Eine E-Mail-Adresse ist erforderlich."
+
+msgid "error_email"
+msgstr "Es gab einen Fehler bei Ihrer E-Mail-Adresse."
+
+msgid "error_profile_update_failed"
+msgstr "Das Profil konnte nicht aktualisiert werden."
+
+msgid "error_password_change_failed"
+msgstr "Das Passwort konnte nicht geändert werden."
+
+msgid "error_password_reset_failed"
+msgstr "Das Passwort konnte nicht zurückgesetzt werden."
+
+msgid "error_registration_failed"
+msgstr "Das Konto konnte nicht erstellt werden."
+
+msgid "error_email_verification_failed"
+msgstr "Die E-Mail konnte nicht bestätigt werden."
+
+msgid "error_registration_disabled"
+msgstr "Registrierung ist derzeit deaktiviert."
+
+msgid "error_password_reset_disabled"
+msgstr "Passwort-Zurücksetzen ist derzeit deaktiviert."
+
+msgid "message_logout_success"
+msgstr "Sie wurden erfolgreich abgemeldet."
+
+msgid "message_profile_updated"
+msgstr "Ihr Profil wurde erfolgreich aktualisiert."
+
+msgid "message_password_changed"
+msgstr "Ihr Passwort wurde erfolgreich geändert."
+
+msgid "message_password_reset_sent"
+msgstr "Falls die E-Mail existiert, wurde ein Passwort-Zurücksetzen-Link versendet."
+
+msgid "message_password_reset_success"
+msgstr "Ihr Passwort wurde erfolgreich zurückgesetzt."
+
+msgid "message_registration_success"
+msgstr "Ihr Konto wurde erfolgreich erstellt."
+
+msgid "message_registration_success_verification_required"
+msgstr "Ihr Konto wurde erfolgreich erstellt. Bitte überprüfen Sie Ihre E-Mail, um Ihre Adresse zu bestätigen und Ihr Konto zu aktivieren."
+
+msgid "message_account_verified"
+msgstr "Ihr Konto wurde erfolgreich bestätigt."
+
+msgid "email"
+msgstr "E-Mail"
+
+msgid "password"
+msgstr "Passwort"
+
+msgid "password_confirm"
+msgstr "Passwort bestätigen"
+
+msgid "current_password"
+msgstr "Aktuelles Passwort"
+
+msgid "new_password"
+msgstr "Neues Passwort"
+
+msgid "firstname"
+msgstr "Vorname"
+
+msgid "lastname"
+msgstr "Nachname"
+
+msgid "verification_code"
+msgstr "Bestätigungscode"
+
+msgid "text_not_registered_yet"
+msgstr "Noch nicht registriert?"
+
+msgid "text_already_registered"
+msgstr "Bereits registriert?"
+
+msgid "text_verify_account_confirmation"
+msgstr "Bitte geben Sie den Bestätigungscode ein, der an Ihre E-Mail gesendet wurde, um Ihr Konto zu bestätigen."
+
+msgid "text_enter_new_password"
+msgstr "Bitte geben Sie Ihr neues Passwort unten ein."
+
+msgid "button_login"
+msgstr "Anmelden"
+
+msgid "link_login"
+msgstr "Jetzt anmelden"
+
+msgid "link_logout"
+msgstr "Abmelden"
+
+msgid "link_register"
+msgstr "Konto erstellen"
+
+msgid "link_forgot_password"
+msgstr "Passwort vergessen?"
+
+msgid "link_reset_password"
+msgstr "Passwort zurücksetzen"
+
+msgid "link_change_password"
+msgstr "Passwort ändern"
+
+msgid "link_edit_profile"
+msgstr "Profil bearbeiten"
+
+msgid "link_save_changes"
+msgstr "Änderungen speichern"
+
+msgid "button_save_changes"
+msgstr "Änderungen speichern"
+
+msgid "button_register"
+msgstr "Registrieren"
+
+msgid "button_verify_account"
+msgstr "Konto bestätigen"
+
+msgid "button_change_password"
+msgstr "Passwort ändern"
+
+msgid "link_customer_center"
+msgstr "Kundencenter"
+
+msgid "link_dashboard"
+msgstr "Übersicht"
+
+msgid "page_title_dashboard"
+msgstr "Kundencenter"
+
+msgid "page_title_login"
+msgstr "Anmelden"
+
+msgid "page_title_register"
+msgstr "Konto erstellen"
+
+msgid "page_title_forgot_password"
+msgstr "Passwort vergessen"
+
+msgid "page_title_reset_password"
+msgstr "Passwort zurücksetzen"
+
+msgid "page_title_edit_profile"
+msgstr "Profil bearbeiten"
+
+msgid "page_title_change_password"
+msgstr "Passwort ändern"
+
+msgid "page_title_verify_account"
+msgstr "Konto bestätigen"
+
+msgid "section_welcome"
+msgstr "Willkommen"
+
+msgid "section_account_info"
+msgstr "Kontoinformationen"
+
+msgid "section_account_options"
+msgstr "Kontooptionen"
+
+msgid "error_account_not_verified"
+msgstr "Ihr Konto wurde noch nicht bestätigt. Bitte überprüfen Sie Ihre E-Mails."
+
+msgid "error_sending_verification_email"
+msgstr "Die Bestätigungs-E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."
+
+msgid "error_account_verification_failed"
+msgstr "Das Konto konnte nicht bestätigt werden."
+
+msgid "email_subject_verify_account"
+msgstr "Konto bestätigen"
+
+msgid "email_subject_password_reset"
+msgstr "Passwort zurücksetzen"
+
+msgid "account_verification_email_greeting_name"
+msgstr "Hallo {0} {1},"
+
+msgid "account_verification_email_greeting_generic"
+msgstr "Hallo,"
+
+msgid "account_verification_email_text"
+msgstr "Bitte klicken Sie auf den untenstehenden Link, um Ihr Konto zu bestätigen:"
+
+msgid "account_verification_email_link_text"
+msgstr "Mein Konto bestätigen"
+
+msgid "password_reset_email_greeting_name"
+msgstr "Hallo {0} {1},"
+
+msgid "password_reset_email_greeting_generic"
+msgstr "Hallo,"
+
+msgid "password_reset_email_text"
+msgstr "Eine Anfrage zum Zurücksetzen des Passworts wurde eingeleitet. Bitte klicken Sie auf den untenstehenden Link, um Ihr Passwort zurückzusetzen. Dieser Link verfällt in {0,plural,=1{1 Stunde} other{{0,number} Stunden}}."
+
+msgid "password_reset_email_link_text"
+msgstr "Mein Passwort zurücksetzen"
+
+msgid "button_forgot_password"
+msgstr "Zurücksetzen-Link senden"
+
+msgid "reset_code"
+msgstr "Zurücksetzen-Code"
+
+msgid "button_verify_reset_code"
+msgstr "Code bestätigen"
+
+msgid "button_reset_password"
+msgstr "Passwort zurücksetzen"
+
+msgid "error_sending_password_reset_email"
+msgstr "Die Passwort-Zurücksetzen-E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es später erneut."

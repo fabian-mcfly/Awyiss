@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Trait\CustomerGroupAccessTrait;
 use Awyiss\Model\Trait\ForcedTitleTrait;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
@@ -56,8 +57,11 @@ use Cake\Datasource\FactoryLocator;
  * @property array|null $parentContents
  * @property float|null $realColumnWidth
  * @property int $realSystemOrder
+ * @property \Awyiss\Model\Entity\CustomerGroupAccessSetting $customerGroupAccessSettings
+ * @property \Awyiss\Model\Entity\CustomerGroupAssignment[] $customerGroupAssignments
  */
 class Content extends Entity {
+	use CustomerGroupAccessTrait;
 	use ForcedTitleTrait;
 
 

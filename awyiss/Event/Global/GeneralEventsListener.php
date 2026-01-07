@@ -5,7 +5,11 @@ namespace Awyiss\Event\Global;
 
 
 use Awyiss\Event\EventListenersProvider;
+use Awyiss\Event\EventManager;
 use Awyiss\Model\Table;
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 
@@ -33,6 +37,7 @@ class GeneralEventsListener implements EventListenerInterface {
 		return [
 			'Awyiss.getRealm' => 'awyissGetRealm',
 			'Awyiss.setRealm' => 'awyissSetRealm',
+			'Controller.initialize' => 'controllerInitialize',
 			'Model.initialize' => 'modelInitialize',
 		];
 	}
@@ -58,6 +63,77 @@ class GeneralEventsListener implements EventListenerInterface {
 		foreach (static::$initializedModels as $key => $model) {
 			EventListenersProvider::loadListener($model->getAlias(), $this->realm);
 			unset(static::$initializedModels[ $key ]);
+		}
+	}
+
+
+	/**
+	 * Execute periodic events based on configured intervals
+	 *
+	 * @param \Cake\Event\EventInterface $event
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function controllerInitialize(EventInterface $event): void {
+		$this->executePeriodicEvents();
+	}
+
+
+	/**
+	 * Check and execute periodic events if their interval has passed
+	 *
+	 * @return void
+	 */
+	protected function executePeriodicEvents(): void {
+		$config = Configure::read('PeriodicEvents');
+
+		if (empty($config)) {
+			return;
+		}
+
+		$now = time();
+
+		foreach ($config as $interval => $events) {
+			if (empty($events)) {
+				continue;
+			}
+
+			$cacheKey = 'periodic_event_last_run_' . $interval;
+			$lastRun = Cache::read($cacheKey, 'persistent');
+
+			// Determine if we should run based on interval
+			$shouldRun = false;
+			if ($lastRun === null) {
+				$shouldRun = true;
+			}
+			else {
+				switch ($interval) {
+					case 'hourly':
+						$shouldRun = $now - $lastRun >= 3600; // 1 hour in seconds
+						break;
+					case 'daily':
+						$shouldRun = $now - $lastRun >= 86400; // 24 hours in seconds
+						break;
+				}
+			}
+
+			if (!$shouldRun) {
+				continue;
+			}
+
+			// Execute all events for this interval
+			foreach ($events as $event) {
+				if (is_callable($event)) {
+					call_user_func($event);
+					continue;
+				}
+
+				$eventManager = EventManager::instance();
+				$eventManager->dispatch(new Event($event));
+			}
+
+			// Update last run time
+			Cache::write($cacheKey, $now, 'persistent');
 		}
 	}
 

@@ -94,7 +94,7 @@ class UrlHistoryTableTest extends TestCase {
 		$this->assertFalse($deletedByUserAssociation->getCascadeCallbacks());
 		$this->assertFalse($deletedByUserAssociation->getDependent());
 
-		// MediaAssignments is defined, but we don't care about it for this table
+		// MediaAssignments is also defined, but we don't care about it for this table
 	}
 
 

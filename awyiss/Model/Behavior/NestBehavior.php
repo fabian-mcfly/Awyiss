@@ -762,6 +762,7 @@ class NestBehavior extends Behavior {
 				'audit' => ['skip' => true],
 				'atomic' => false,
 				'checkRules' => false,
+				'customerGroupAssignments' => ['skip' => true],
 				'nest' => ['skip' => true],
 				'systemOrder' => ['skip' => true],
 				'transaction' => false,

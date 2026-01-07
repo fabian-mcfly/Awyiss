@@ -222,7 +222,9 @@
 			{% block fieldsetUsers %}
 				{% if (AuthorizationHelper.anyIsAccessible(
 					{scope: 'users', identifier: 'read'},
-					{scope: 'usergroups', identifier: 'read'}
+					{scope: 'usergroups', identifier: 'read'},
+					{scope: 'customers', identifier: 'read'},
+					{scope: 'customer_groups', identifier: 'read'}
 				)) %}
 					<fieldset class="Fieldset-Users ColumnSpan-4">
 						<legend>{{ __('system_overview_category_users_usergroups') }}</legend>
@@ -241,6 +243,22 @@
 									{% if AuthorizationHelper.scopeIsAccessible('usergroups', [], 'read') %}
 										<li class="ListItem-Usergroups">
 											{{ HtmlHelper.link(__d('usergroups', 'headline_overview'), {controller: 'Usergroups', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemCustomersOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('customers', [], 'read') %}
+										<li class="ListItem-Customers">
+											{{ HtmlHelper.link(__d('customers', 'headline_overview'), {controller: 'Customers', action: 'overview'}) }}
+										</li>
+									{% endif %}
+								{% endblock %}
+
+								{% block listItemCustomerGroupsOverview %}
+									{% if AuthorizationHelper.scopeIsAccessible('customer_groups', [], 'read') %}
+										<li class="ListItem-CustomerGroups">
+											{{ HtmlHelper.link(__d('customer_groups', 'headline_overview'), {controller: 'CustomerGroups', action: 'overview'}) }}
 										</li>
 									{% endif %}
 								{% endblock %}

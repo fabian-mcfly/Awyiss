@@ -1,0 +1,196 @@
+{#
+@var customer \Awyiss\Model\Entity\Customer
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block assignHtmlClass %}
+	{% do _view.assign('htmlClass', 'CustomerCenterController RegisterAction') %}
+{% endblock %}
+
+{% block assignMetaTitle %}
+	{% do _view.assign('metaTitle', __d('customers', 'page_title_register') ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
+{% endblock %}
+
+{% block contentArea %}
+	<main id="ContentArea">
+		<section class="ContentElement Template-Section">
+			<div class="ContentRow">
+				<div class="ContentElement Template-Standard Column-60 ColumnIndent-20">
+					{% block registerHeading %}
+						<h1>{{ __d('customers', 'page_title_register') }}</h1>
+					{% endblock %}
+
+					{% block flashMessages %}
+						{{ FlashHelper.render() }}
+					{% endblock %}
+
+					{% block registerForm %}
+						{{ FormHelper.create(null, { class: 'CustomerCenter-Form' }) }}
+
+						{% block registerFormFieldset %}
+							<fieldset>
+								{% block registerFormLegend %}
+									<legend>{{ __d('customers', 'page_title_register') }}</legend>
+								{% endblock %}
+
+								{% block registerFormFields %}
+									{% block emailField %}
+										<div class="FormRow">
+											<div class="FormElement Column-100{% if customer.error('email') %} FormElement-IsInvalid{% endif %}">
+												{% block emailLabel %}
+													{{ FormHelper.label('email', __d('customers', 'email'), { class: 'FormElement-Label' }) }}
+												{% endblock %}
+												{% block emailInput %}
+													{{ FormHelper.email('email', {
+														autofocus: true,
+														class: 'FormInputType-Input',
+														required: true,
+													 }) }}
+												{% endblock %}
+
+												{% block emailError %}
+													{% if customer.error('email') %}
+														<div class="FormElement-Error">{{ __d('customers', 'error_email') }}</div>
+													{% endif %}
+												{% endblock %}
+											</div>
+										</div>
+									{% endblock %}
+
+									{% block nameFields %}
+										<div class="FormRow">
+											{% block firstnameField %}
+												<div class="FormElement Column-50{% if customer.error('firstname') %} FormElement-IsInvalid{% endif %}">
+													{% block firstnameLabel %}
+														{{ FormHelper.label('firstname', __d('customers', 'firstname'), { class: 'FormElement-Label' }) }}
+													{% endblock %}
+													{% block firstnameInput %}
+														{{ FormHelper.text('firstname', {
+															class: 'FormInputType-Input',
+														 }) }}
+													{% endblock %}
+
+													{% block firstnameError %}
+														{% if customer.error('firstname') %}
+															<div class="FormElement-Error">
+																{% for error in customer.error('firstname') %}
+																	{{ error }}<br>
+																{% endfor %}
+															</div>
+														{% endif %}
+													{% endblock %}
+												</div>
+											{% endblock %}
+
+											{% block lastnameField %}
+												<div class="FormElement Column-50{% if customer.error('lastname') %} FormElement-IsInvalid{% endif %}">
+													{% block lastnameLabel %}
+														{{ FormHelper.label('lastname', __d('customers', 'lastname'), { class: 'FormElement-Label' }) }}
+													{% endblock %}
+													{% block lastnameInput %}
+														{{ FormHelper.text('lastname', {
+															class: 'FormInputType-Input',
+														}) }}
+													{% endblock %}
+
+													{% block lastnameError %}
+														{% if customer.error('lastname') %}
+															<div class="FormElement-Error">
+																{% for error in customer.error('lastname') %}
+																	{{ error }}<br>
+																{% endfor %}
+															</div>
+														{% endif %}
+													{% endblock %}
+												</div>
+											{% endblock %}
+										</div>
+									{% endblock %}
+
+									{% block passwordFields %}
+										<div class="FormRow">
+											{% block passwordField %}
+												<div class="FormElement Column-50{% if customer.error('password') %} FormElement-IsInvalid{% endif %}">
+													{% block passwordLabel %}
+														{{ FormHelper.label('password', __d('customers', 'password'), { class: 'FormElement-Label' }) }}
+													{% endblock %}
+													{% block passwordInput %}
+														{{ FormHelper.password('password', {
+															class: 'FormInputType-Input',
+															required: true,
+														}) }}
+													{% endblock %}
+
+													{% block passwordError %}
+														{% if customer.error('password') %}
+															<div class="FormElement-Error">
+																{% for error in customer.error('password') %}
+																	{{ error }}<br>
+																{% endfor %}
+															</div>
+														{% endif %}
+													{% endblock %}
+												</div>
+											{% endblock %}
+
+											{% block passwordConfirmField %}
+												<div class="FormElement Column-50">
+													{% block passwordConfirmLabel %}
+														{{ FormHelper.label('password_confirm', __d('customers', 'password_confirm'), { class: 'FormElement-Label' }) }}
+													{% endblock %}
+													{% block passwordConfirmInput %}
+														{{ FormHelper.password('password_confirm', {
+															class: 'FormInputType-Input',
+															required: true,
+														}) }}
+													{% endblock %}
+
+													{% block passwordConfirmError %}
+														{% if customer.error('password_confirm') %}
+															<div class="FormElement-Error">{{ __d('customers', 'error_password_confirm_invalid') }}</div>
+														{% endif %}
+													{% endblock %}
+												</div>
+											{% endblock %}
+										</div>
+									{% endblock %}
+								{% endblock %}
+
+								{% block registerFormSubmit %}
+									<div class="FormRow">
+										<div class="FormElement Column-100 FormElementType-Submit">
+											{{ FormHelper.button(__d('customers', 'button_register'), { type: 'submit', class: 'FormInputType-Button Button' }) }}
+										</div>
+									</div>
+								{% endblock %}
+							</fieldset>
+						{% endblock %}
+
+						{{ FormHelper.end() }}
+					{% endblock %}
+
+					{% block loginSection %}
+						{% if loginEnabled %}
+							<div class="CustomerCenter-AlreadyRegistered">
+								{% block loginText %}
+									{{ __d('customers', 'text_already_registered') }}
+								{% endblock %}
+								{% block loginLink %}
+									{{ HtmlHelper.link(__d('customers', 'link_login'), { _name: 'FrontendCustomerCenterLogin' ~ languageShortcode|ucparts }) }}
+								{% endblock %}
+							</div>
+						{% endif %}
+					{% endblock %}
+				</div>
+			</div>
+		</section>
+	</main>
+{% endblock %}
+

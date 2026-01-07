@@ -6,6 +6,7 @@ namespace Awyiss\View;
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Customer;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
@@ -138,6 +139,7 @@ class FrontendView extends AppView {
 		$twig->addGlobal('baseUrl', Router::url('/', true));
 		$twig->addGlobal('config', Configure::read());
 		$twig->addGlobal('currentBackendLanguage', $backendLanguage);
+		$twig->addGlobal('currentCustomer', $this->getCurrentCustomer());
 		$twig->addGlobal('currentLanguage', $frontendLanguage);
 		$twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
 		$twig->addGlobal('currentUrl', $uri->__toString());
@@ -513,6 +515,16 @@ class FrontendView extends AppView {
 		$designMiddleware = $this->getRequest()->getAttribute('design');
 
 		return $designMiddleware?->getDesignVariables() ?? [];
+	}
+
+
+	/**
+	 * @return \Awyiss\Model\Entity\Customer|null
+	 */
+	protected function getCurrentCustomer(): ?Customer {
+		$identity = $this->getRequest()->getAttribute('identity');
+
+		return $identity?->getOriginalData() ?? null;
 	}
 
 

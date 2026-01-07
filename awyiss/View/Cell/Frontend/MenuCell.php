@@ -13,7 +13,6 @@ use Awyiss\Utility\Inflector;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\Cell\Frontend\Trait\RenderTrimmedTrait;
 use Awyiss\View\FrontendView;
-use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\I18n\DateTime;
@@ -103,19 +102,23 @@ class MenuCell extends Cell {
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Menu');
 
 		$menuRecord = $this->getMenu($identifier);
-		$menuEntries = $menuRecord ? $this->getMenuEntries($menuRecord, $languageShortcode) : new Collection([]);
 
-		$active = false;
-		if ($menuRecord) {
-			$active = $menuRecord->active;
+		// If no menu is found or the user has no access, do not render the menu
+		if (!$menuRecord) {
+			DebugTimer::stop('MenuCell::display');
 
-			$now = new DateTime();
-			if (
-				($menuRecord->publicationStart && $menuRecord->publicationStart > $now) ||
-				($menuRecord->publicationEnd && $menuRecord->publicationEnd < $now)
-			) {
-				$active = false;
-			}
+			return;
+		}
+
+		$menuEntries = $this->getMenuEntries($menuRecord, $languageShortcode);
+
+		$active = $menuRecord->active;
+		$now = new DateTime();
+		if (
+			($menuRecord->publicationStart && $menuRecord->publicationStart > $now) ||
+			($menuRecord->publicationEnd && $menuRecord->publicationEnd < $now)
+		) {
+			$active = false;
 		}
 
 		/** @var class-string<\Awyiss\Utility\Menu\FrontendMenu> $menuClass */
@@ -126,7 +129,7 @@ class MenuCell extends Cell {
 		/** @see \Awyiss\Utility\Menu\FrontendMenu::__construct() */
 		$menu = new $menuClass($menuEntries->toArray(), [
 			'active' => $active,
-			'identifier' => $menuRecord?->identifier ? Inflector::ucparts($menuRecord->identifier, false) : null,
+			'identifier' => $menuRecord->identifier ? Inflector::ucparts($menuRecord->identifier, false) : null,
 			'menuClass' => $menuClass,
 			'menuItemClass' => $menuItemClass,
 		]);
@@ -169,10 +172,14 @@ class MenuCell extends Cell {
 		}
 		else {
 			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$query = $menusTable->find('active')->find('published');
+			$query = $menusTable
+				->find('accessible')
+				->find('active')
+				->find('published');
 		}
 
 		/**
@@ -209,10 +216,14 @@ class MenuCell extends Cell {
 		}
 		else {
 			/**
+			 * @uses \Awyiss\Model\Behavior\CustomerGroupAccessSettingBehavior::findAccessible()
 			 * @uses \Awyiss\Model\Table::findActive()
 			 * @uses \Awyiss\Model\Behavior\PublicationDataBehavior::findPublished()
 			 */
-			$query = $menuEntriesTable->find('active')->find('published');
+			$query = $menuEntriesTable
+				->find('accessible')
+				->find('active')
+				->find('published');
 		}
 
 		$menuEntries = $query->find('threaded')->where([

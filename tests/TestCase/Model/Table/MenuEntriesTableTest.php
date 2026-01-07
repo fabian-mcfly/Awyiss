@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Model\Table\MenuEntriesTable;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
+use Awyiss\ORM\Association\HasOne;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
@@ -61,7 +62,7 @@ class MenuEntriesTableTest extends TestCase {
 	 * @see \Awyiss\Model\Table\MenuEntriesTable::initializeAssociations()
 	 */
 	public function testInitializeAssociations(): void {
-		$this->assertCount(8, $this->menuEntriesTable->associations()->keys());
+		$this->assertCount(10, $this->menuEntriesTable->associations()->keys());
 
 		// Test Menus association (BelongsTo)
 		$this->assertTrue($this->menuEntriesTable->hasAssociation('Menus'));
@@ -83,6 +84,20 @@ class MenuEntriesTableTest extends TestCase {
 		$conditions = $languagesAssociation->getConditions();
 		$this->assertArrayHasKey('realm', $conditions);
 		$this->assertEquals(Awyiss::REALM_FRONTEND, $conditions['realm']);
+
+		// 'CustomerGroupAccessSettings' must also exist
+		$this->assertTrue($this->menuEntriesTable->hasAssociation('CustomerGroupAccessSettings'));
+		$customerGroupAccessSettingsAssociation = $this->menuEntriesTable->getAssociation('CustomerGroupAccessSettings');
+		$this->assertInstanceOf(HasOne::class, $customerGroupAccessSettingsAssociation);
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAccessSettingsAssociation->getDependent());
+
+		// 'CustomerGroupAssignments' must also exist
+		$this->assertTrue($this->menuEntriesTable->hasAssociation('CustomerGroupAssignments'));
+		$customerGroupAssignmentsAssociation = $this->menuEntriesTable->getAssociation('CustomerGroupAssignments');
+		$this->assertInstanceOf(HasMany::class, $customerGroupAssignmentsAssociation);
+		$this->assertTrue($customerGroupAssignmentsAssociation->getCascadeCallbacks());
+		$this->assertTrue($customerGroupAssignmentsAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->menuEntriesTable->hasAssociation('MediaAssignments'));

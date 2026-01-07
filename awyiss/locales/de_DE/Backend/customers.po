@@ -1,0 +1,166 @@
+# Customers translations of Awyiss CMS
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-12-23 19:03+0000\n"
+"PO-Revision-Date: 2025-12-23 19:03+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Kunden"
+
+msgid "meta_title_add"
+msgstr "Kunde hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Kunde bearbeiten"
+
+msgid "menu_title"
+msgstr "Kunden"
+
+msgid "menu_add"
+msgstr "Neuer Kunde"
+
+msgid "headline_overview"
+msgstr "Kunden"
+
+msgid "customer_group_filter_label"
+msgstr "Kundengruppe"
+
+msgid "customer_group_filter_all"
+msgstr "Alle"
+
+msgid "customer_group_filter_unassigned"
+msgstr "Nicht zugeordnet"
+
+msgid "create"
+msgstr "Neuer Kunde"
+
+msgid "headline_add"
+msgstr "Kunde hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Der Kunde wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Der Kunde konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Kunde bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Der Kunde wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Der Kunde konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Der Kunde wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diesen Kunden (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Der Kunde wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Der Kunde konnte nicht gelöscht werden"
+
+msgid "email"
+msgstr "E-Mail"
+
+msgid "password"
+msgstr "Passwort"
+
+msgid "password_confirm"
+msgstr "Passwort bestätigen"
+
+msgid "show_password"
+msgstr "Passwort anzeigen"
+
+msgid "firstname"
+msgstr "Vorname"
+
+msgid "lastname"
+msgstr "Nachname"
+
+msgid "fieldset_customer_groups"
+msgstr "Kundengruppen"
+
+msgid "last_login"
+msgstr "Letzte Anmeldung"
+
+msgid "failed_attempts"
+msgstr "Anmeldeversuche"
+
+msgid "verified"
+msgstr "Verifiziert"
+
+msgid "verified_on"
+msgstr "Verifiziert am"
+
+msgid "configuration_category_frontend_emails"
+msgstr "E-Mails"
+
+msgid "configuration_identifier_frontend_emails_sender_name"
+msgstr "Absendername"
+
+msgid "configuration_identifier_frontend_emails_sender_email"
+msgstr "Absender-E-Mail"
+
+msgid "configuration_identifier_frontend_emails_transport_profile"
+msgstr "Transportprofil"
+
+msgid "configuration_category_frontend_login"
+msgstr "Anmeldung"
+
+msgid "configuration_identifier_frontend_login_enabled"
+msgstr "Anmeldung aktiviert"
+
+msgid "configuration_category_frontend_registration"
+msgstr "Registrierung"
+
+msgid "configuration_identifier_frontend_registration_enabled"
+msgstr "Registrierung aktiviert"
+
+msgid "configuration_identifier_frontend_registration_requires_verification"
+msgstr "E-Mail-Bestätigung erforderlich"
+
+msgid "configuration_identifier_frontend_registration_active_on_registration"
+msgstr "Konten werden direkt nach Registrierung aktiviert"
+
+msgid "configuration_identifier_frontend_registration_verification_code_validity"
+msgstr "Gültigkeit des Bestätigungscodes (in Sekunden)"
+
+msgid "configuration_identifier_frontend_registration_default_groups"
+msgstr "Standard-Kundengruppen"
+
+msgid "configuration_identifier_frontend_registration_delete_unverified_accounts"
+msgstr "Unbestätigte Konten automatisch löschen"
+
+msgid "configuration_category_frontend_password_reset"
+msgstr "Passwort zurücksetzen"
+
+msgid "configuration_identifier_frontend_password_reset_enabled"
+msgstr "Passwort zurücksetzen aktiviert"
+
+msgid "configuration_identifier_frontend_password_reset_code_validity"
+msgstr "Gültigkeit des Passwort-Zurücksetzen-Codes (in Sekunden)"
+
+msgid "configuration_category_frontend_navigation"
+msgstr "Navigation"
+
+msgid "configuration_identifier_frontend_navigation_menu_identifier"
+msgstr "Menü im Kundenbereich"
+
+msgid "configuration_category_frontend_profile"
+msgstr "Profil"
+
+msgid "configuration_identifier_frontend_profile_email_change_allowed"
+msgstr "Kunden erlauben, ihre E-Mail-Adresse zu ändern"
+

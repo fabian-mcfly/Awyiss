@@ -22,13 +22,13 @@
 {% set assignedElements = assignedElements ? combine(assignedElements|column('media_element_id'), assignedElements) : [] %}
 
 {% if availableElements %}
-	<fieldset class="Fieldset-MediaElementAssignments">
+	<fieldset class="Fieldset-MediaElementAssignments AssignmentLists">
 		{% block formControlMediaElements %}
 			{% set assignedElementIds = assignedElements|column('media_element_id') %}
 			{% set elementCounter = 0 %}
 			{% set fieldsetElements = {} %}
 
-			<fieldset class="Fieldset-MediaElements-Available Collapsible">
+			<fieldset class="Fieldset-MediaElements-Available AssignmentList AssignmentList-Available">
 				<legend>{{ __('media_elements_available') }}</legend>
 				<ul class="List MediaElements-List SortableList">
 					{% for availableElement in availableElements %}
@@ -50,7 +50,7 @@
 				</ul>
 			</fieldset>
 
-			<fieldset class="Fieldset-MediaElements-Assigned Collapsible">
+			<fieldset class="Fieldset-MediaElements-Assigned AssignmentList AssignmentList-Assigned">
 				<legend>{{ __('media_elements_assigned') }}</legend>
 
 				<ul class="List MediaElements-List SortableList">

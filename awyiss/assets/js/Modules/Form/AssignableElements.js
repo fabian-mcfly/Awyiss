@@ -2,7 +2,7 @@
 
 import Sortable from 'SortableJS/sortable';
 
-export default class Elements {
+export default class AssignableElements {
 	/**
 	 * The lists containing draggable items
 	 * @type {NodeListOf<Element>}
@@ -17,13 +17,9 @@ export default class Elements {
 	 * The sortable list selector
 	 * @type {string}
 	 */
-	sortableListSelector = '.MediaElements-List';
+	sortableListSelector = '.AssignmentList > .List';
 
 	constructor() {
-		if (document.body.classList.contains('MediaElementsController')) {
-			return;
-		}
-
 		this.lists = document.querySelectorAll(this.sortableListSelector);
 
 		this.lists.forEach((element) => {
@@ -70,7 +66,7 @@ export default class Elements {
 		const checkbox = item.querySelector('.Title input[type="checkbox"]');
 		// Check the checkbox if the fieldset isn't "unused", uncheck otherwise
 		setTimeout(function () {
-			checkbox.checked = !targetFieldset.classList.contains('Fieldset-MediaElements-Available');
+			checkbox.checked = targetFieldset.matches('.AssignmentList-Assigned');
 		}, 50);
 
 		this.lists.forEach(item => {

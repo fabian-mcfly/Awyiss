@@ -140,6 +140,12 @@
 	{% endblock %}
 {% endset %}
 
+{% set elementCustomerGroupSettings %}
+	{% block fieldsetCustomerGroupAssignments %}
+		{{ cell('Backend/CustomerGroups', [menu]) }}
+	{% endblock %}
+{% endset %}
+
 {% set elementPublicationData %}
 	{% block elementPublicationData %}
 		{{ element('publication_data/fieldset', {fields: AttributesHelper.allControls('publication')}) }}
@@ -162,6 +168,7 @@
 			{{ fieldsetMedia }}
 			{{ fieldsetMediaElementAssignments }}
 			{{ fieldsetAttributes }}
+			{{ elementCustomerGroupSettings }}
 			{{ elementPublicationData }}
 		{% endif %}
 
@@ -172,6 +179,7 @@
 					{{ fieldsetContent }}
 					{{ fieldsetMedia }}
 					{{ fieldsetMediaElementAssignments }}
+					{{ elementCustomerGroupSettings }}
 				</div>
 			{% endif %}
 		{% endblock %}

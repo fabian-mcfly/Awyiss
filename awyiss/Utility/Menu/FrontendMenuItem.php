@@ -4,6 +4,8 @@
 namespace Awyiss\Utility\Menu;
 
 
+use Awyiss\Authorization\IdentityGroupPermissionInterface;
+use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Model\Entity\MenuEntry;
 use Cake\I18n\DateTime;
 
@@ -16,6 +18,11 @@ use Cake\I18n\DateTime;
  */
 class FrontendMenuItem extends MenuItem {
 	/**
+	 * @var \Awyiss\Model\Entity\MenuEntry
+	 */
+	protected MenuEntry $menuEntry;
+
+	/**
 	 * @param \Awyiss\Model\Entity\MenuEntry $entity
 	 * @param array $config
 	 * @param int $level
@@ -27,6 +34,8 @@ class FrontendMenuItem extends MenuItem {
 		array $config = [],
 		int $level = 1
 	) {
+		$this->menuEntry = $entity;
+
 		$active = $entity->active;
 		// If the item is active, but not published, it is not active
 		if ($active) {
@@ -59,6 +68,14 @@ class FrontendMenuItem extends MenuItem {
 		 */
 		unset($config['identity']);
 		$this->setConfig($config);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function isAccessibleBy(IdentityGroupPermissionInterface|IdentityPermissionsInterface|null $identity = null): ?bool {
+		return $this->menuEntry->isAccessibleBy($identity);
 	}
 
 

@@ -70,7 +70,7 @@ class UsergroupsUsersTableTest extends TestCase {
 		$this->assertInstanceOf(BelongsTo::class, $usersAssociation);
 		$this->assertSame('INNER', $usersAssociation->getJoinType());
 
-		// MediaAssignments is defined, but we don't care about it for this table
+		// MediaAssignments is also defined, but we don't care about it for this table
 	}
 
 

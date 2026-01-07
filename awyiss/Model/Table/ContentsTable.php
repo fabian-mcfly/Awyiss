@@ -200,7 +200,10 @@ class ContentsTable extends Table {
 		$subquery = $this->find()->select([
 			'latest_page_id' => 'page_id',
 			'latest_date' => $this->find()->func()->max(
-				new FunctionExpression('COALESCE', ['changed_on' => 'literal', 'created_on' => 'literal'])
+				new FunctionExpression('COALESCE', [
+					'Contents.changed_on' => 'literal',
+					'Contents.created_on' => 'literal',
+				])
 			),
 		])->groupBy('page_id')->applyOptions([
 			'attributes' => [

@@ -4,6 +4,7 @@
 namespace Awyiss\Utility\Menu;
 
 
+use Awyiss\Authorization\IdentityGroupPermissionInterface;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Utility\Menu\Exception\MenuValidationException;
 use Cake\Core\InstanceConfigTrait;
@@ -263,11 +264,11 @@ abstract class Menu {
 
 
 	/**
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|IdentityGroupPermissionInterface|null $identity
 	 * @return $this
 	 * @throws \ReflectionException
 	 */
-	public function setIdentity(IdentityPermissionsInterface $identity): static {
+	public function setIdentity(IdentityPermissionsInterface|IdentityGroupPermissionInterface|null $identity): static {
 		foreach ($this->items() as $item) {
 			//Don't let MenuItem::setIdentity loop through nested children since $this->items() already iterates over ALL items
 			$item->setIdentity($identity, false);

@@ -5,6 +5,7 @@ namespace Awyiss\Utility\Menu;
 
 
 use ArrayAccess;
+use Awyiss\Authorization\IdentityGroupPermissionInterface;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Core\App;
 use Awyiss\Routing\Router;
@@ -47,9 +48,9 @@ abstract class MenuItem implements ArrayAccess {
 	 */
 	protected string|int|null $identifier;
 	/**
-	 * @var \Awyiss\Authorization\IdentityPermissionsInterface|mixed|null
+	 * @var \Awyiss\Authorization\IdentityPermissionsInterface|\Awyiss\Authorization\IdentityGroupPermissionInterface|null
 	 */
-	protected ?IdentityPermissionsInterface $identity = null;
+	protected IdentityPermissionsInterface|IdentityGroupPermissionInterface|null $identity = null;
 	/**
 	 * @var bool|null
 	 */
@@ -86,12 +87,12 @@ abstract class MenuItem implements ArrayAccess {
 	/**
 	 * Checks if the menu item is accessible by a specific identity.
 	 *
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $identity The identity to check accessibility for.
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|\Awyiss\Authorization\IdentityGroupPermissionInterface|null $identity The identity to check accessibility for.
 	 * @return bool|null Returns true if the menu item is accessible by the provided identity, false otherwise.
 	 * If the accessibility is not set, it returns null.
 	 * @throws \ReflectionException
 	 */
-	public function isAccessibleBy(?IdentityPermissionsInterface $identity = null): ?bool {
+	public function isAccessibleBy(IdentityPermissionsInterface|IdentityGroupPermissionInterface|null $identity = null): ?bool {
 		//No access settings means the item is always accessible
 		if (!$this->access) {
 			return true;
@@ -293,12 +294,12 @@ abstract class MenuItem implements ArrayAccess {
 	/**
 	 * Sets the identity of the menu item.
 	 *
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity The identity to set.
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|IdentityGroupPermissionInterface|null $identity The identity to set.
 	 * @param bool $deep Whether to set the identity deeply.
 	 * @return $this
 	 * @throws \ReflectionException
 	 */
-	public function setIdentity(IdentityPermissionsInterface $identity, bool $deep = true): static {
+	public function setIdentity(IdentityPermissionsInterface|IdentityGroupPermissionInterface|null $identity, bool $deep = true): static {
 		$this->identity = $identity;
 		$this->accessible = $this->isAccessibleBy($identity);
 

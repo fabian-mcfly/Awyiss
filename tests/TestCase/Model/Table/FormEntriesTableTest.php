@@ -75,7 +75,6 @@ class FormEntriesTableTest extends TestCase {
 		$this->assertSame('page_id', $pagesAssociation->getForeignKey());
 		$this->assertSame(['all' => ['skipPageRoleCheck' => true]], $pagesAssociation->getFinder());
 
-
 		// Test Languages association (BelongsTo)
 		$this->assertTrue($this->formEntriesTable->hasAssociation('Languages'));
 		$languagesAssociation = $this->formEntriesTable->getAssociation('Languages');

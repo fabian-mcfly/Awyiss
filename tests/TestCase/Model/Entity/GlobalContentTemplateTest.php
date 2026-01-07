@@ -48,6 +48,8 @@ class GlobalContentTemplateTest extends TestCase {
 			'globalContentTemplateElements' => true,
 			'_translations' => true,
 			'_publicationData' => true,
+			'customerGroupAccessSettings' => true,
+			'customerGroupAssignments' => true,
 			'mediaAssignments' => true,
 			'mediaElementAssignments' => true,
 		], $accessible);

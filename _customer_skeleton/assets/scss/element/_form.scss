@@ -1,11 +1,23 @@
+fieldset {
+	padding:0 var(--elementPadding) var(--elementPadding);
+	border:2px solid var(--colorText);
+	border-radius:5px;
+}
+
+legend {
+	margin-left:-10px;
+	padding-inline:10px;
+	line-height:var(--lineHeightMain);
+
+	+ .FormRow {
+		margin-top:calc(var(--elementPadding) - var(--lineHeightMain));
+	}
+}
+
 .FormRow {
 	margin-top:var(--formRowGap);
 	margin-left:0;
 	flex-basis:100%;
-
-	&.FormElementType-Fieldset {
-		padding:1rem 2rem 2rem;
-	}
 
 	&:first-child {
 		margin-top:0;
@@ -43,7 +55,6 @@
 		list-style-type:none;
 	}
 }
-
 
 .FormCaptcha-Word-Spacer {
 	width:0;
@@ -93,6 +104,16 @@
 	}
 }
 
+.FormElementType-Submit {
+	margin-top:calc(var(--formRowGap) * 2);
+
+	.Button {
+		width:100%;
+		padding-block:15px;
+		cursor:pointer;
+	}
+}
+
 :is(
 	.FormElement-Label,
 	.FormInputType-Input,
@@ -128,6 +149,12 @@
 
 	&:focus-visible {
 		border-color:var(--colorMain);
+	}
+
+	&[readonly] {
+		border-color:color-mix(in srgb, currentColor, transparent 25%);
+		color:color-mix(in srgb, currentColor, transparent 25%);
+		cursor:default;
 	}
 }
 

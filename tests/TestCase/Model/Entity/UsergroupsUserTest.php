@@ -45,6 +45,8 @@ class UsergroupsUserTest extends TestCase {
 			'user' => true,
 			'_translations' => true,
 			'_publicationData' => true,
+			'customerGroupAccessSettings' => true,
+			'customerGroupAssignments' => true,
 			'mediaAssignments' => true,
 			'mediaElementAssignments' => true,
 		], $entity->getAccessible());

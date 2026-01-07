@@ -10,6 +10,8 @@ use Authentication\Authenticator\Result;
 use Authentication\Authenticator\ResultInterface;
 use Authentication\Authenticator\SessionAuthenticator as BaseSessionAuthenticator;
 use Authentication\Identifier\IdentifierInterface;
+use Awyiss\Authorization\IdentityGroupPermissionInterface;
+use Awyiss\Authorization\IdentityPermissionsInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 
@@ -76,8 +78,16 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 				) ||
 				$reidentifiedUser->changedOn?->notEquals($user->changedOn)
 			) {
-				// unset the permissions and use the new changedOn value
-				$user->unsetPermissionCollection();
+				// If the class implements `IdentityPermissionsInterface`, we need to reset the permissions
+				if ($user instanceof IdentityPermissionsInterface) {
+					$user->unsetPermissionCollection();
+				}
+
+				// If the class implements `IdentityGroupPermissionInterface`, we need to reset the customer groups
+				if ($user instanceof IdentityGroupPermissionInterface) {
+					$user->unsetGroups();
+				}
+
 				$user->changedOn = $reidentifiedUser->changedOn;
 			}
 		}

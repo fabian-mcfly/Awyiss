@@ -173,6 +173,12 @@ return [
 			'priority' => 3,
 			'transport' => 'default',
 		],
+		'customerCenter' => [
+			'emailFormat' => 'both',
+			'emailPattern' => null,
+			'priority' => 3,
+			'transport' => 'default',
+		],
 		'form' => [
 			'emailFormat' => 'both',
 			'emailPattern' => null,
@@ -319,6 +325,22 @@ return [
 	],
 
 
+	/**
+	 * Periodic events configuration
+	 * Each key represents a frequency (currently only 'hourly' and 'daily' are supported)
+	 * and contains an array of Events to be triggered at that frequency.
+	 *
+	 * If no event but a callable is given, the callable will be executed directly,
+	 * without any context or event object.
+	 */
+	'PeriodicEvents' => [
+		'hourly' => [],
+		'daily' => [
+			'Customers.cleanupUnverifiedCustomers',
+		],
+	],
+
+
 	'Queue' => [
 		'defaultworkertimeout' => 120,
 		'maxworkers' => 3,
@@ -340,6 +362,69 @@ return [
 		 * pages unreachable if the same slug exists in different languages.
 		 */
 		'includeLanguageShortcode' => true,
+
+		/**
+		 * Customer Center route configuration
+		 *
+		 * Allows configuring the URL path and available actions for the customer center.
+		 * Actions are mapped from action names to visible URL names.
+		 * Per-language customization is supported.
+		 *
+		 * Example:
+		 * 'CustomerCenter' => [
+		 *     'path' => '_customer-center',
+		 *     'actions' => [
+		 *         'login' => 'login',
+		 *         'logout' => 'logout',
+		 *         'register' => 'register',
+		 *         'dashboard' => 'dashboard',
+		 *         'editProfile' => 'edit-profile',
+		 *         'changePassword' => 'change-password',
+		 *         'forgotPassword' => 'forgot-password',
+		 *         'resetPassword' => 'reset-password',
+		 *         'verifyAccount' => 'verify-account',
+		 *     ],
+		 *     'languages' => [
+		 *         'de' => [
+		 *             'path' => '_kundencenter',
+		 *             'actions' => [
+		 *                 'login' => 'anmelden',
+		 *                 'logout' => 'abmelden',
+		 *             ],
+		 *         ],
+		 *     ],
+		 * ]
+		 */
+		'CustomerCenter' => [
+			'path' => 'customer-center',
+			'actions' => [
+				'login' => 'login',
+				'logout' => 'logout',
+				'register' => 'register',
+				'dashboard' => 'dashboard',
+				'editProfile' => 'edit-profile',
+				'changePassword' => 'change-password',
+				'forgotPassword' => 'forgot-password',
+				'resetPassword' => 'reset-password',
+				'verifyAccount' => 'verify-account',
+			],
+			'languages' => [
+				'de' => [
+					'path' => 'konto',
+					'actions' => [
+						'login' => 'anmelden',
+						'logout' => 'abmelden',
+						'register' => 'registrieren',
+						'dashboard' => 'uebersicht',
+						'editProfile' => 'profil-bearbeiten',
+						'changePassword' => 'passwort-aendern',
+						'forgotPassword' => 'passwort-vergessen',
+						'resetPassword' => 'passwort-zuruecksetzen',
+						'verifyAccount' => 'konto-bestaetigen',
+					],
+				],
+			],
+		],
 	],
 
 

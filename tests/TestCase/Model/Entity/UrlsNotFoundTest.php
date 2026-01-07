@@ -44,6 +44,8 @@ class UrlsNotFoundTest extends TestCase {
 			'isRobot' => true,
 			'_translations' => true,
 			'_publicationData' => true,
+			'customerGroupAccessSettings' => true,
+			'customerGroupAssignments' => true,
 			'mediaAssignments' => true,
 			'mediaElementAssignments' => true,
 		], $entity->getAccessible());

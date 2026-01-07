@@ -198,11 +198,26 @@ return [
 			],
 		],
 	],
-	/**
-	 * Email transport profiles.
-	 *
-	 * @see https://book.cakephp.org/5/en/core-libraries/email.html#email-transport
-	 */
+	'Email' => [
+		'default' => [
+			'emailFormat' => 'both',
+			'emailPattern' => null,
+			'priority' => 3,
+			'transport' => 'default',
+		],
+		'customerCenter' => [
+			'emailFormat' => 'both',
+			'emailPattern' => null,
+			'priority' => 3,
+			'transport' => 'default',
+		],
+		'form' => [
+			'emailFormat' => 'both',
+			'emailPattern' => null,
+			'priority' => 3,
+			'transport' => 'default',
+		],
+	],
 	'EmailTransport' => [
 		'default' => [
 			'className' => MailTransport::class,

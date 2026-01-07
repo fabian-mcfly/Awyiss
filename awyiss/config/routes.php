@@ -117,6 +117,14 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	// Load the event listeners as early as possible to possibly listen to middleware events
 	$routeBuilder->applyMiddleware('eventListeners');
 
+	/** @var class-string<\Awyiss\Authentication\AuthenticationService> $authenticationClass */
+	$authenticationClass = App::className('Authentication', 'Authentication');
+	$authentication = new $authenticationClass(Awyiss::REALM_FRONTEND);
+	/** @var class-string<\Awyiss\Middleware\AuthenticationMiddleware> $authenticationMiddlewareClass */
+	$authenticationMiddlewareClass = App::className('Authentication', 'Middleware', 'Middleware');
+	$routeBuilder->registerMiddleware('frontendAuthentication', new $authenticationMiddlewareClass($authentication));
+	$routeBuilder->applyMiddleware('frontendAuthentication');
+
 	$routeBuilder->applyMiddleware('csp');
 
 	$routeBuilder->applyMiddleware('design');
@@ -142,6 +150,9 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	}
 
 
+	/**
+	 * Sitemap and robots.txt routes
+	 */
 	$routeBuilder->connect(
 		'/robots',
 		['prefix' => 'Frontend', 'controller' => 'Sitemap', 'action' => 'robots'],
@@ -152,12 +163,17 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 		['prefix' => 'Frontend', 'controller' => 'Sitemap', 'action' => 'index'],
 	)->setExtensions(['xml']);
 
+
+	/**
+	 * Third-party consent tracking route
+	 */
 	$routeBuilder->connect(
 		'/_third-party-consent',
 		['prefix' => 'Frontend', 'controller' => 'ThirdPartyConsents', 'action' => 'track'],
 	)->setMethods([
 		'POST',
 	]);
+
 
 	/**
 	 * Form and route planner routes always
@@ -185,6 +201,10 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 		'formEntry' => '[a-z0-9]{32}',
 	])->setPersist(['lang']);
 
+
+	/**
+	 * Route planner routes
+	 */
 	$routeBuilder->connect(
 		'/{lang}/_route/start:{start}/end:{end}/*',
 		['prefix' => 'Frontend', 'controller' => 'Route', 'action' => 'route'],
@@ -203,6 +223,10 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 		'lang' => '[a-z]{2}',
 	])->setPersist(['lang']);
 
+
+	/**
+	 * Open Graph routes
+	 */
 	$routeBuilder->connect(
 		'/_open-graph-image/id:{id}/',
 		['prefix' => 'Frontend', 'controller' => 'OpenGraph', 'action' => 'image'],
@@ -221,6 +245,18 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 		'id' => '[0-9]+',
 	])->setPass(['id']);
 
+
+	/**
+	 * Load customer center routes from separate file
+	 */
+	$file = ROOT . DS . APP_DIR . DS . 'config' . DS . 'routes_customer_center.php';
+	if (is_file($file)) {
+		include $file;
+	}
+
+	/**
+	 * Frontend catch-all route, either with or without language shortcode
+	 */
 	if (Configure::read('Route.includeLanguageShortcode')) {
 		$routeBuilder->connect(
 			'/{lang}/{slug}/*',
@@ -255,6 +291,7 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 			'slug' => '[^:]{3,}',
 		])->setPersist(['slug']);
 	}
+
 
 	$routeBuilder->connect(
 		'/*',
