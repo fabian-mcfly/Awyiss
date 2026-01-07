@@ -32,6 +32,14 @@ class CustomerGroupsCustomersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $audit = [
+		'enabled' => false,
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('CustomerGroups', [
 			'joinType' => 'INNER',
