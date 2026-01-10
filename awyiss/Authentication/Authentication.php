@@ -10,6 +10,7 @@ use Authentication\Authenticator\FormAuthenticator;
 use Authentication\Identifier\AbstractIdentifier;
 use Authentication\Identifier\Resolver\OrmResolver;
 use Awyiss\Authentication\Authenticator\SessionAuthenticator;
+use Awyiss\Authentication\Identifier\PasswordIdentifier;
 use Awyiss\Awyiss;
 use Awyiss\Event\EventDispatcherTrait;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -279,7 +280,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @return void
 	 */
 	protected function addDefaultBackendIdentifiers(): void {
-		$this->addIdentifier(Awyiss::REALM_BACKEND, 'Authentication.Password', [
+		$this->addIdentifier(Awyiss::REALM_BACKEND, PasswordIdentifier::class, [
 			'resolver' => [
 				'className' => OrmResolver::class,
 				/** @see \Awyiss\Model\Table\UsersTable::findActive() */
@@ -295,7 +296,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @return void
 	 */
 	protected function addDefaultFrontendIdentifiers(): void {
-		$this->addIdentifier(Awyiss::REALM_FRONTEND, 'Authentication.Password', [
+		$this->addIdentifier(Awyiss::REALM_FRONTEND, PasswordIdentifier::class, [
 			'fields' => [
 				AbstractIdentifier::CREDENTIAL_USERNAME => 'email',
 				AbstractIdentifier::CREDENTIAL_PASSWORD => 'password',

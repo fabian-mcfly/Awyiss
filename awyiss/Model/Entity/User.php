@@ -15,8 +15,10 @@ use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Event\EventDispatcherTrait;
 use Awyiss\Model\Entity;
 use Awyiss\Routing\Router;
+use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Hash;
+use Cake\Utility\Security;
 use RuntimeException;
 
 
@@ -298,7 +300,16 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			return null;
 		}
 
+		$passwordHasher = new DefaultPasswordHasher();
+		$passwordHasher->setConfig('hashOptions', [
+			'cost' => 14,
+		]);
+
+		if (Configure::read('Security.prehashPassword', false) && Security::getSalt()) {
+			$password = hash_hmac('sha256', $password, Security::getSalt());
+		}
+
 		// Automatically hash passwords when they are changed.
-		return new DefaultPasswordHasher()->hash($password);
+		return $passwordHasher->hash($password);
 	}
 }

@@ -7,7 +7,9 @@ namespace Awyiss\Model\Entity;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Awyiss\Authorization\IdentityGroupPermissionInterface;
 use Awyiss\Model\Entity;
+use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
+use Cake\Utility\Security;
 
 
 /**
@@ -121,7 +123,16 @@ class Customer extends Entity implements IdentityGroupPermissionInterface {
 			return null;
 		}
 
+		$passwordHasher = new DefaultPasswordHasher();
+		$passwordHasher->setConfig('hashOptions', [
+			'cost' => 14,
+		]);
+
+		if (Configure::read('Security.prehashPassword', false) && Security::getSalt()) {
+			$password = hash_hmac('sha256', $password, Security::getSalt());
+		}
+
 		// Automatically hash passwords when they are changed.
-		return new DefaultPasswordHasher()->hash($password);
+		return $passwordHasher->hash($password);
 	}
 }

@@ -12,6 +12,7 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
+use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Awyiss\Attribute\AttributeOptionsProvider;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity;
@@ -22,6 +23,7 @@ use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Inflector;
 use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
+use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
@@ -31,6 +33,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Hash;
+use Cake\Utility\Security;
 
 
 /**
@@ -498,13 +501,21 @@ class AttributesBehavior extends Behavior {
 
 			if (!$entity->get($attribute->identifier)) {
 				$entity->setDirty($attribute->identifier, false);
+				continue;
 			}
-			else {
-				$entity->set(
-					$attribute->identifier,
-					password_hash($entity->get($attribute->identifier), PASSWORD_BCRYPT, ['cost' => 12])
-				);
+
+			$password = $entity->get($attribute->identifier);
+
+			$passwordHasher = new DefaultPasswordHasher();
+			$passwordHasher->setConfig('hashOptions', [
+				'cost' => 14,
+			]);
+
+			if (Configure::read('Security.prehashPassword', false) && Security::getSalt()) {
+				$password = hash_hmac('sha256', $password, Security::getSalt());
 			}
+
+			$entity->set($attribute->identifier, $passwordHasher->hash($password));
 		}
 	}
 

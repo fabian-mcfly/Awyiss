@@ -5,6 +5,7 @@ return [
 		'\\Authentication\\AuthenticationService::authenticate' => 'adddbb6f7347520819015c62c8e9351d',
 		'\\Authentication\\AuthenticationService::identifiers' => '8c4de1c5f9c18fcf438145d6d34ec9ee',
 		'\\Authentication\\Authenticator\\SessionAuthenticator::authenticate' => '8bf52052666d6c7e55c6e93db02c5ace',
+		'\\Authentication\\Identifier\\PasswordIdentifier::_checkPassword' => '1186152f8da1feb4d1bf4b41c83c7088',
 		'\\Bake\\Command\\ControllerCommand::bake' => '77437bd426a869dd7fc5ea540ce01e31',
 		'\\Bake\\Command\\ControllerCommand::bakeController' => '4c2f5082db5e65c84e98c43e741f3be9',
 		'\\Bake\\Command\\TemplateCommand::getContent' => '302551b690ec75dd16276379c610d1c3',

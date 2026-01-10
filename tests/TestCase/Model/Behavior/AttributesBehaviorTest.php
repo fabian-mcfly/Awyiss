@@ -1121,7 +1121,7 @@ class AttributesBehaviorTest extends TestCase {
 
 		$this->assertTrue($car->get('attributes')->isDirty('dummyPw'));
 
-		$this->assertStringStartsWith('$2y$12$', $car->get('attributes')->dummyPw);
+		$this->assertStringStartsWith('$2y$14$', $car->get('attributes')->dummyPw);
 	}
 
 

@@ -290,6 +290,7 @@ return [
 	 *   You should treat it as extremely sensitive data.
 	 */
 	'Security' => [
+		'prehashPassword' => true, // Changing this after users or customers have been created, login for those will no longer work.
 		'salt' => env('SECURITY_SALT', 'dummy_salt'),
 	],
 

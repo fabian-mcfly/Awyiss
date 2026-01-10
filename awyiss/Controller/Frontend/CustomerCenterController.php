@@ -525,6 +525,10 @@ class CustomerCenterController extends AppController {
 			$data = $this->request->getData();
 			$currentPassword = $data['current_password'] ?? null;
 
+			if (Configure::read('Security.prehashPassword', false) && Security::getSalt()) {
+				$currentPassword = hash_hmac('sha256', $currentPassword, Security::getSalt());
+			}
+
 			// Validate current password
 			if (!$currentPassword || !password_verify($currentPassword, $customer->password)) {
 				$this->Flash->error(__d('customers', 'error_password_incorrect'));
