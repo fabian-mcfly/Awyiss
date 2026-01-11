@@ -5,6 +5,7 @@ namespace Awyiss\Authentication\Identifier;
 
 
 use ArrayAccess;
+use Authentication\Identifier\PasswordIdentifier as BasePasswordIdentifier;
 use Cake\Core\Configure;
 use Cake\Utility\Security;
 
@@ -14,7 +15,7 @@ use Cake\Utility\Security;
  * Re-implemented the `_checkPassword` method to use prehash the password
  * if the Security configuration 'prehashPassword' is enabled.
  */
-class PasswordIdentifier extends \Authentication\Identifier\PasswordIdentifier {
+class PasswordIdentifier extends BasePasswordIdentifier {
 	/**
 	 * Re-implemented to support pre-hashing of passwords.
 	 *
