@@ -164,3 +164,11 @@ msgstr "Profile"
 msgid "configuration_identifier_frontend_profile_email_change_allowed"
 msgstr "Allow customers to change their email address"
 
+msgid "verification_code"
+msgstr "Verification code"
+
+msgid "password_reset_code"
+msgstr "Password reset code"
+
+msgid "password_reset_on"
+msgstr "Password reset on"

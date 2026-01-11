@@ -164,3 +164,11 @@ msgstr "Profil"
 msgid "configuration_identifier_frontend_profile_email_change_allowed"
 msgstr "Kunden erlauben, ihre E-Mail-Adresse zu ändern"
 
+msgid "verification_code"
+msgstr "Bestätigungscode"
+
+msgid "password_reset_code"
+msgstr "Passwort-Zurücksetzen-Code"
+
+msgid "password_reset_on"
+msgstr "Passwort zurückgesetzt am"
