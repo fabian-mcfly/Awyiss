@@ -88,7 +88,6 @@ export default class HistoryTables {
 		});
 
 		range.addEventListener('input', () => {
-			console.log(range.value);
 			this.updateSlider(slider, range.value * 1);
 		});
 	}

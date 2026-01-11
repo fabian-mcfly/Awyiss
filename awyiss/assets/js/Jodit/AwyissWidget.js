@@ -243,8 +243,6 @@ class AwyissWidget {
 					target = target.parentNode;
 				}
 
-				console.log(target, target.nodeName);
-
 				if (target.matches('body')) {
 					target = target.querySelector('p');
 				}
