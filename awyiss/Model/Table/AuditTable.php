@@ -82,6 +82,34 @@ class AuditTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('subjectLeftTable');
+		$validator->add('subjectLeftTable', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->add('subjectLeftForeignKey', [
+			'isInteger' => ['rule' => 'isInteger'],
+		]);
+
+
+		$validator->notEmptyString('subjectRightTable');
+		$validator->add('subjectRightTable', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'notBoolean' => ['rule' => 'notBoolean'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$validator->add('subjectRightForeignKey', [
+			'isInteger' => ['rule' => 'isInteger'],
+		]);
+
+
 		$validator->notEmptyString('transactionId');
 		$validator->add('transactionId', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -95,7 +123,7 @@ class AuditTable extends Table {
 		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'notBoolean' => ['rule' => 'notBoolean'],
-			'inList' => ['rule' => ['inList', ['u', 'd']]],
+			'inList' => ['rule' => ['inList', ['c', 'd', 'u']]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 

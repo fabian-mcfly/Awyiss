@@ -41,6 +41,10 @@ class AuditTest extends TestCase {
 		$this->assertSame([
 			'scope' => true,
 			'foreignKey' => true,
+			'subjectLeftTable' => true,
+			'subjectLeftForeignKey' => true,
+			'subjectRightTable' => true,
+			'subjectRightForeignKey' => true,
 			'transactionId' => true,
 			'type' => true,
 			'dataOld' => true,

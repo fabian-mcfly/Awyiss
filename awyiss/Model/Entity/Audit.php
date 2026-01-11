@@ -13,6 +13,10 @@ use Awyiss\Model\Entity;
  * @property int $id
  * @property string|null $scope
  * @property int|null $foreignKey
+ * @property string|null $subjectLeftTable
+ * @property int|null $subjectLeftForeignKey
+ * @property string|null $subjectRightTable
+ * @property int|null $subjectRightForeignKey
  * @property string|null $transactionId
  * @property string|null $type
  * @property string|null $dataOld
@@ -28,6 +32,10 @@ class Audit extends Entity {
 	protected static array $fieldMap = [
 		'transaction_id' => 'transactionId',
 		'foreign_key' => 'foreignKey',
+		'subject_left_table' => 'subjectLeftTable',
+		'subject_left_foreign_key' => 'subjectLeftForeignKey',
+		'subject_right_table' => 'subjectRightTable',
+		'subject_right_foreign_key' => 'subjectRightForeignKey',
 		'data_old' => 'dataOld',
 		'data_new' => 'dataNew',
 		'created_by' => 'createdBy',
@@ -40,6 +48,10 @@ class Audit extends Entity {
 	protected array $_accessible = [ // phpcs:ignore
 		'scope' => true,
 		'foreignKey' => true,
+		'subjectLeftTable' => true,
+		'subjectLeftForeignKey' => true,
+		'subjectRightTable' => true,
+		'subjectRightForeignKey' => true,
 		'transactionId' => true,
 		'type' => true,
 		'dataOld' => true,
