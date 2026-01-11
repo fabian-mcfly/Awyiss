@@ -220,6 +220,8 @@
 			{%- set isHtml = true -%}
 		{%- elseif isAttribute and settings.attributeOptionsCollection %}
 			{{- options[ oldData[ field ] ] ?? '' }}
+		{%- elseif field == 'password' or (isAttribute and attribute.inputType == 'password') %}
+			{{- oldData[ field ] ? '********' : '' }}
 		{%- else %}
 			{{- oldData[ field ] ?? '' }}
 		{%- endif %}
@@ -250,6 +252,8 @@
 			<code>{{- MediaHelper.rebuildSimpleImageTagsInText(entity.get(field), settings.media)|escape }}</code>
 		{%- elseif isAttribute and settings.attributeOptionsCollection %}
 			{{- options[ entity.get(field) ] ?? '' }}
+		{%- elseif field == 'password' or (isAttribute and attribute.inputType == 'password') %}
+			{{- entity.get(field) ? '********' : '' }}
 		{%- else %}
 			{{- entity.get(field) }}
 		{%- endif %}
