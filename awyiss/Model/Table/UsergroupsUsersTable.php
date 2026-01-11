@@ -32,6 +32,16 @@ class UsergroupsUsersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $audit = [
+		'isPivotTable' => true,
+		'leftTable' => 'Users',
+		'rightTable' => 'Usergroups',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Usergroups', [
 			'joinType' => 'INNER',

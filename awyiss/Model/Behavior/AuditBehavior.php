@@ -8,6 +8,7 @@ use ArrayObject;
 use Authentication\IdentityInterface;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Model\Entity;
+use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
@@ -73,10 +74,13 @@ class AuditBehavior extends Behavior {
 			'_locale',
 			'_joinData',
 		],
+		'isPivotTable' => false,
 		'setTimeOnCreate' => true,
 		'setTimeOnUpdate' => true,
 		'setTimeOnDelete' => true,
 		'skip' => false,
+		'leftTable' => null,
+		'rightTable' => null,
 	];
 	/**
 	 * @var \Authentication\IdentityInterface|null
@@ -370,7 +374,13 @@ class AuditBehavior extends Behavior {
 			}
 		}
 
-		if ($entity->isNew() || !$entity->allowsAudit()) {
+		if (
+			!$entity->allowsAudit() ||
+			(
+				$entity->isNew() &&
+				!$this->getConfig('isPivotTable')
+			)
+		) {
 			return;
 		}
 
@@ -390,7 +400,13 @@ class AuditBehavior extends Behavior {
 			return;
 		}
 
-		if ($entity->isNew() || !$entity->allowsAudit()) {
+		if (
+			!$entity->allowsAudit() ||
+			(
+				$entity->isNew() &&
+				!$this->getConfig('isPivotTable')
+			)
+		) {
 			return;
 		}
 
@@ -402,27 +418,62 @@ class AuditBehavior extends Behavior {
 
 		$entityData = $this->auditData[ $entity->get('id') ] ?? [];
 		//No difference? Do nothing.
-		if (empty($entityData) || (empty($entityData['changes']['old']) && empty($entityData['changes']['new']))) {
+		if (
+			!$this->getConfig('isPivotTable') &&
+			(
+				empty($entityData) ||
+				(
+					empty($entityData['changes']['old']) &&
+					empty($entityData['changes']['new'])
+				)
+			)
+		) {
 			return;
 		}
 
 		$identityId = $this->getIdentityId();
 
+		$type = match (true) {
+			$entity->isNew() && $this->getConfig('isPivotTable') => 'c',
+			!empty($entity->get('deleted')) => 'd',
+			default => 'u',
+		};
+
 		//Set the data to be used in `newEntity`
 		$auditData = [
 			'transactionId' => $options['transactionId'],
-			'type' => !empty($entity->get('deleted')) ? 'd' : 'u',
+			'type' => $type,
 			'scope' => $event->getSubject()->getTable(),
 			'foreignKey' => $entity->get('id'),
-			'dataOld' => base64_encode(gzcompress(json_encode($entityData['old']), 9)),
-			'dataNew' => base64_encode(gzcompress(json_encode($entityData['new']), 9)),
-			'diff' => $entityData['changes'],
+			'dataOld' => !empty($entityData['old']) ? base64_encode(gzcompress(json_encode($entityData['old']), 9)) : null,
+			'dataNew' => !empty($entityData['new']) ? base64_encode(gzcompress(json_encode($entityData['new']), 9)) : null,
+			'diff' => $entityData['changes'] ?? null,
 			'createdOn' => new DateTime(),
 			'createdBy' => $identityId,
 		];
 
+		/** @var \Awyiss\Model\Table\AuditTable $auditModel */
 		$auditModel = $this->getTableLocator()->get('Audit');
+		/** @var \Awyiss\Model\Entity\Audit $audit */
 		$audit = $auditModel->newEntity($auditData);
+
+		if ($this->getConfig('isPivotTable') && $this->getConfig('leftTable') && $this->getConfig('rightTable')) {
+			$leftAssociation = $this->table()->getAssociation($this->getConfig('leftTable'));
+			$rightAssociation = $this->table()->getAssociation($this->getConfig('rightTable'));
+
+			if (!($leftAssociation instanceof BelongsTo) || !($rightAssociation instanceof BelongsTo)) {
+				throw new RuntimeException('The `leftTable` and `rightTable` configurations must refer to BelongsToMany associations.');
+			}
+
+			$leftForeignKey = $leftAssociation->getForeignKey();
+			$rightForeignKey = $rightAssociation->getForeignKey();
+
+			$audit->subjectLeftForeignKey = $entity->get($leftForeignKey);
+			$audit->subjectLeftTable = $leftAssociation->getTarget()->getTable();
+
+			$audit->subjectRightForeignKey = $entity->get($rightForeignKey);
+			$audit->subjectRightTable = $rightAssociation->getTarget()->getTable();
+		}
 
 		//Save the audit entity and skip the access check
 		if (!$auditModel->save($audit)) {
@@ -476,6 +527,24 @@ class AuditBehavior extends Behavior {
 		$auditModel = $this->getTableLocator()->get('Audit');
 		/** @var \Awyiss\Model\Entity\Audit $audit */
 		$audit = $auditModel->newEntity($auditData);
+
+		if ($this->getConfig('isPivotTable') && $this->getConfig('leftTable') && $this->getConfig('rightTable')) {
+			$leftAssociation = $this->table()->getAssociation($this->getConfig('leftTable'));
+			$rightAssociation = $this->table()->getAssociation($this->getConfig('rightTable'));
+
+			if (!($leftAssociation instanceof BelongsTo) || !($rightAssociation instanceof BelongsTo)) {
+				throw new RuntimeException('The `leftTable` and `rightTable` configurations must refer to BelongsToMany associations.');
+			}
+
+			$leftForeignKey = $leftAssociation->getForeignKey();
+			$rightForeignKey = $rightAssociation->getForeignKey();
+
+			$audit->subjectLeftForeignKey = $entity->get($leftForeignKey);
+			$audit->subjectLeftTable = $leftAssociation->getTarget()->getTable();
+
+			$audit->subjectRightForeignKey = $entity->get($rightForeignKey);
+			$audit->subjectRightTable = $rightAssociation->getTarget()->getTable();
+		}
 
 		//Save the audit entity and skip the access check
 		if (!$auditModel->save($audit)) {

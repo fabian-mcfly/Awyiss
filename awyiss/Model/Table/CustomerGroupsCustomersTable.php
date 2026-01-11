@@ -33,7 +33,9 @@ class CustomerGroupsCustomersTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $audit = [
-		'enabled' => false,
+		'isPivotTable' => true,
+		'leftTable' => 'Customers',
+		'rightTable' => 'CustomerGroups',
 	];
 
 

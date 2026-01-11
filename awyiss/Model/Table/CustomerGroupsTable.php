@@ -36,9 +36,7 @@ class CustomerGroupsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->belongsToMany('Customers', [
-			'joinTable' => 'customer_groups_customers',
-		]);
+		$this->belongsToMany('Customers');
 	}
 
 
