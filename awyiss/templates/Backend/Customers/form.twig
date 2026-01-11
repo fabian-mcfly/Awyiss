@@ -134,7 +134,11 @@
 				{% endblock %}
 
 				{% block formControlVerified %}
-					{{ FormHelper.control('verified', {columnSpan: 6, readonly: true}) }}
+					{% if config.Awyiss.Customers.Frontend.registration.requiresVerification %}
+						{{ FormHelper.control('verified', {columnSpan: 6, readonly: true}) }}
+					{% else %}
+						{{ FormHelper.hidden('verified', {value: 1}) }}
+					{% endif %}
 				{% endblock %}
 
 				{% block fieldsetPresentationAttributes %}
