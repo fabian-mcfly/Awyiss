@@ -111,6 +111,27 @@ class Customer extends Entity implements IdentityGroupPermissionInterface {
 
 
 	/**
+	 * Returns the full name of the customer, if set, otherwise the email address,
+	 * prefixed with 'inactive' if the customer is not active
+	 *
+	 * @return string
+	 */
+	protected function _getLabel(): string {
+		$inactive = '';
+
+		if (key_exists('active', $this->_fields) && empty($this->active)) {
+			$inactive = __d('users', 'inactive') . ' ';
+		}
+
+		if (!empty($this->firstname) && !empty($this->lastname)) {
+			return $inactive . $this->firstname . ' ' . $this->lastname;
+		}
+
+		return $inactive . $this->username;
+	}
+
+
+	/**
 	 * If the provided password is not an empty string, hash it.
 	 * Otherwise, set it to null
 	 *
