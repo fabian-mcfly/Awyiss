@@ -172,3 +172,6 @@ msgstr "Password reset code"
 
 msgid "password_reset_on"
 msgstr "Password reset on"
+
+msgid "customer_groups"
+msgstr "Customer Groups"

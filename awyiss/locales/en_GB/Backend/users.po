@@ -118,3 +118,6 @@ msgstr "Usergroups"
 
 msgid "failed_attempts"
 msgstr "Login attempts"
+
+msgid "usergroups"
+msgstr "Usergroups"

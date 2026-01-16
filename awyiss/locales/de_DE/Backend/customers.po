@@ -172,3 +172,6 @@ msgstr "Passwort-Zurücksetzen-Code"
 
 msgid "password_reset_on"
 msgstr "Passwort zurückgesetzt am"
+
+msgid "customer_groups"
+msgstr "Kundengruppen"

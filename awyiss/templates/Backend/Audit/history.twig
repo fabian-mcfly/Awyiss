@@ -169,26 +169,41 @@
 			{% endif %}
 	{% endif %}
 
-	{% set isHtml = false %}
-	{% set changed = oldData[ field ] != entity.get(field) %}
-	{% if entity.get(field) is enum %}
-		{% set changed = oldData[ field ] != entity.get(field).value %}
+	{%- set isHtml = false %}
+	{%- set changed = oldData[ field ] != entity.get(field) %}
+	{%- if entity.get(field) is enum %}
+		{%- set changed = oldData[ field ] != entity.get(field).value %}
 	{%- elseif columnType == 'date' %}
-		{% set changed = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], dateFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), dateFormat) : '') %}
+		{%- set changed = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], dateFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), dateFormat) : '') %}
 	{%- elseif columnType == 'datetime' %}
-		{% set changed = (oldData[ field ] ? TimeHelper.nice(oldData[ field ]) : '') != (entity.get(field) ? TimeHelper.nice(entity.get(field)) : '') %}
+		{%- set changed = (oldData[ field ] ? TimeHelper.nice(oldData[ field ]) : '') != (entity.get(field) ? TimeHelper.nice(entity.get(field)) : '') %}
 	{%- elseif columnType == 'time' %}
-		{% set changed = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], timeFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), timeFormat) : '') %}
-	{% elseif isAttribute and oldData[ field ] is empty and entity.get(field) is empty %}
+		{%- set changed = (oldData[ field ] ? TimeHelper.i18nFormat(oldData[ field ], timeFormat) : '') != (entity.get(field) ? TimeHelper.i18nFormat(entity.get(field), timeFormat) : '') %}
+	{%- elseif associations[ field ] is defined and associations[ field ].type == 'manyToMany' %}
+		{%- set oldIds = oldData[ field ] is not empty ? oldData[ field ]|column('id') : [] %}
+		{%- set currentIds = entity.get(associations[ field ]['property']) is not empty ? entity.get(associations[ field ]['property'])|column('id') : [] %}
+		{%- set changed = oldIds|sort != currentIds|sort %}
+	{%- elseif isAttribute and oldData[ field ] is empty and entity.get(field) is empty %}
 		{% set changed = false %}
-	{% endif %}
+	{%- endif %}
 
 	{% set options = isAttribute ? (settings.attributeOptionsCollection.getAttributeOption(field).getOptions(field) ?? []) : [] %}
 
 	{%- set oldValue %}
 		{%- if associations[ field ] is defined %}
 			{%- set associationField = associations[ field ]['property'] %}
-			{%- if oldData[ field ] is not empty and changed == false %}
+			{%- if associations[ field ].type == 'manyToMany' %}
+				{%- if oldData[ field ] is not empty %}
+					<ul>
+						{%- for associatedEntity in oldData[ field ] %}
+							<li>
+								{{- associatedEntity.label ?? __('unknown_entity') }}
+								{%- if associatedEntity %} (ID: {{ associatedEntity.id }}){% endif %}
+							</li>
+						{%- endfor %}
+					</ul>
+				{%- endif %}
+			{%- elseif oldData[ field ] is not empty and changed == false %}
 				{{- entity.get(associationField).label }}
 				{%- if entity.get( associationField) %} (ID: {{ entity.get(associationField).id }}){% endif %}
 			{%- elseif oldData[ field ] %}
@@ -232,8 +247,22 @@
 	{%- set currentValue %}
 		{%- if associations[ field ] is defined %}
 			{%- set associationField = associations[ field ]['property'] %}
-			{{- entity.get(associationField).label }}
-			{%- if entity.get(associationField) %} (ID: {{ entity.get(associationField).id }}){% endif %}
+			{%- if associations[ field ].type == 'manyToMany' %}
+				{%- if entity.get(associationField) is not empty %}
+					<ul>
+						{%- set associatedEntities = naturalSort(entity.get(associationField), 'label')  %}
+						{%- for associatedEntity in associatedEntities %}
+							<li>
+								{{- associatedEntity.label ?? __('unknown_entity') }}
+								{%- if associatedEntity %} (ID: {{ associatedEntity.id }}){% endif %}
+							</li>
+						{%- endfor %}
+					</ul>
+				{%- endif %}
+			{%- else %}
+				{{- entity.get(associationField).label }}
+				{%- if entity.get(associationField) %} (ID: {{ entity.get(associationField).id }}){% endif %}
+			{%- endif %}
 		{%- elseif columnType == 'boolean' %}
 			{{- entity.get(field) ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
 		{%- elseif columnType == 'date' %}

@@ -18,7 +18,9 @@ use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Table;
+use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -59,18 +61,17 @@ class AuditController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function history(): void {
-		$id = $this->request->getParam('id');
+		$id = (int)$this->request->getParam('id');
 		$scope = $this->request->getParam('scope');
 		$realScope = $scope;
 
-		if ($id === null || $scope === null) {
+		if (!$id || $scope === null) {
 			if ($this->request->is('ajax')) {
 				throw new InvalidArgumentException(__('error_invalid_request'));
 			}
-			else {
-				$this->Flash->error(__('error_invalid_request'));
-				throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'overview']));
-			}
+
+			$this->Flash->error(__('error_invalid_request'));
+			throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'overview']));
 		}
 
 		/** @var \Awyiss\Model\Table $table */
@@ -87,10 +88,9 @@ class AuditController extends Controller {
 			if ($this->request->is('ajax')) {
 				throw new RuntimeException(__('error_record_not_found'));
 			}
-			else {
-				$this->Flash->error(__('error_record_not_found'));
-				throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'overview']));
-			}
+
+			$this->Flash->error(__('error_record_not_found'));
+			throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'overview']));
 		}
 
 		/**
@@ -129,20 +129,12 @@ class AuditController extends Controller {
 		}
 
 		// Get the audit history of the record
-		$audits = $this->Audit->find()->where([
+		$audits = $this->findAudits([
 			'foreign_key' => $id,
 			'scope' => $realScope,
-		])->contain(['Users'])->orderBy(['Audit.created_on' => 'desc'])
-		->formatResults(function (ResultSetInterface $results): CollectionInterface {
-			return $results->map(function (Audit $audit) {
-				$audit->dataOld = json_decode(gzuncompress(base64_decode($audit->dataOld)), true);
-				$audit->dataNew = json_decode(gzuncompress(base64_decode($audit->dataNew)), true);
+		]);
 
-				return $audit;
-			});
-		})
-		->all()
-		->compile();
+		$this->addPivotTableAudits($audits, $table, $entity);
 
 		// Check audits for changes in the associations and load the associated entities
 		$this->loadOldAssociationEntities($entity, $audits, $associations);
@@ -171,7 +163,7 @@ class AuditController extends Controller {
 			$behavior = $table->getBehavior('Translate');
 			$translatableFields = $behavior->getConfig('fields');
 
-			$realm = $behavior->getConfig('realm');
+			$realm = $behavior->getConfig('realm') ?? Awyiss::REALM_BACKEND;
 			$languages = LocaleMiddleware::getLanguages($realm);
 
 			// Filter out inactive languages
@@ -195,8 +187,10 @@ class AuditController extends Controller {
 			'attributeOptionsCollection' => $attributeOptions ?? null,
 			'attributesSchema' => $table->hasAttributes() ? $table->getAttributesTable()->getSchema() : null,
 			'associations' => array_map(fn (Association $association) => [
+				'association' => $association,
 				'name' => $association->getName(),
 				'property' => $entityClass::mapField($association->getProperty()),
+				'type' => $association->type(),
 			], $associations),
 			'media' => $media->toArray(),
 			'mediaElements' => $mediaElements,
@@ -221,9 +215,9 @@ class AuditController extends Controller {
 	 *
 	 * If the request is an AJAX request, it returns a JSON response with the audit information
 	 * of the record. The audit information includes the createdBy, createdOn, changedBy,
-	 * changedOn, created, and changed fields. If the createdBy or changedBy fields are empty,
-	 * they are set to 'System' if the corresponding createdBy or changedBy fields are empty,
-	 * otherwise they are set to 'Unknown'.
+	 * changedOn.
+	 * If the createdBy or changedBy fields are empty, they are set to 'System' if the corresponding
+	 * createdBy or changedBy fields are empty, otherwise they are set to 'Unknown'.
 	 *
 	 * @return void
 	 * @throws \Cake\Http\Exception\RedirectException|\Exception If the id or scope is not provided in the request parameters
@@ -313,10 +307,9 @@ class AuditController extends Controller {
 			if ($this->request->is('ajax')) {
 				throw new RuntimeException(__('error_record_not_found'));
 			}
-			else {
-				$this->Flash->error(__('error_record_not_found'));
-				throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'overview']));
-			}
+
+			$this->Flash->error(__('error_record_not_found'));
+			throw new RedirectException(Router::url(['controller' => 'Dashboard', 'action' => 'overview']));
 		}
 
 		$table->forPageRole($page->pageRoleId);
@@ -353,7 +346,12 @@ class AuditController extends Controller {
 				continue;
 			}
 
-			$foreignKey = $entityClass::mapFields((array)$association->getForeignKey())[0];
+			if ($association instanceof BelongsToMany) {
+				$foreignKey = $entityClass::mapField($association->getProperty());
+			}
+			else {
+				$foreignKey = $entityClass::mapFields((array)$association->getForeignKey())[0];
+			}
 
 			// If the key of the association is in the history fields, add it to the associations using the key as the key
 			if (in_array($foreignKey, $historyFields)) {
@@ -399,7 +397,7 @@ class AuditController extends Controller {
 			'MediaElementSelectors.MediaSelectors',
 		])->all()->indexBy('identifier');
 
-		$oldMediaElements = Hash::extract($audits->toList(), '{n}.diff.old.mediaAssignments');
+		$oldMediaElements = Hash::extract($audits->toList(), '{n}.dataOld.mediaAssignments');
 		$oldMediaElements = array_unique(array_merge(...array_map('array_keys', $oldMediaElements)));
 
 		$currentMediaElements = array_keys($entity->mediaAssignments ?? []);
@@ -423,24 +421,26 @@ class AuditController extends Controller {
 		$entityClass = get_class($entity);
 
 		$associationProperties = array_map(fn (Association $association) => [
+			'association' => $association,
 			'name' => $association->getName(),
 			'property' => $entityClass::mapField($association->getProperty()),
 		], $associations);
 
-		$diffData = Hash::extract($audits->toList(), '{n}.diff.old');
+		$diffData = Hash::extract($audits->toList(), '{n}.dataOld');
 
 		$oldEntities = [];
 
-		foreach ($associationProperties as $foreignKey => $association) {
-			$foreignKeys = array_column($diffData, $foreignKey);
-			$foreignKeys = array_unique(array_filter($foreignKeys));
+		foreach ($associationProperties as $propertyName => $association) {
+			$foreignKeys = array_column($diffData, $propertyName);
+			$foreignKeys = Hash::flatten($foreignKeys);
+			$foreignKeys = array_unique(array_filter($foreignKeys, fn($value) => !empty($value)));
 
 			// Get the current value of the entity
-			$currentValue = $entity->get($foreignKey);
+			$currentValue = $entity->get($propertyName);
 
 			// Remove the current value from the foreign keys
-			if ($currentValue) {
-				$foreignKeys = array_diff($foreignKeys, [$currentValue]);
+			if ($currentValue && !$association['association'] instanceof BelongsToMany) {
+				$foreignKeys = array_diff($foreignKeys, (array)$currentValue);
 			}
 
 			if (!$foreignKeys) {
@@ -448,8 +448,8 @@ class AuditController extends Controller {
 			}
 
 			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-			$oldEntities[ $foreignKey ] = $associations[ $foreignKey ]->find('withDeleted', skipPageRoleCheck: true)->where([
-				$associations[ $foreignKey ]->getBindingKey() . ' IN' => $foreignKeys,
+			$oldEntities[ $propertyName ] = $associations[ $propertyName ]->find('withDeleted', skipPageRoleCheck: true)->where([
+				$associations[ $propertyName ]->getBindingKey() . ' IN' => $foreignKeys,
 			])->all()->indexBy('id')->toArray();
 		}
 
@@ -463,6 +463,30 @@ class AuditController extends Controller {
 
 			foreach ($associationProperties as $foreignKey => $association) {
 				$id = $oldData[ $foreignKey ] ?? null;
+
+
+				if (is_array($id)) {
+					if (!isset($id['_ids'])) {
+						// Invalid or currently unsupported data format
+						continue;
+					}
+
+					// If the old data is an array, convert it to an array of old entities
+					$oldEntitiesArray = [];
+					$oldIds = $id['_ids'];
+					foreach ($oldIds as $oldId) {
+						if (isset($oldEntities[ $foreignKey ][ $oldId ])) {
+							$oldEntitiesArray[] = $oldEntities[ $foreignKey ][ $oldId ];
+						}
+					}
+
+					Arrays::naturalSort($oldEntitiesArray, 'label');
+
+					$audit->dataOld[ $association['property'] ] = $oldEntitiesArray;
+					$audit->diff['old'][ $association['property'] ] = $oldEntitiesArray;
+
+					continue;
+				}
 
 				if (!isset($oldEntities[ $foreignKey ][ $id ])) {
 					continue;
@@ -494,5 +518,472 @@ class AuditController extends Controller {
 
 			return $audit;
 		});
+	}
+
+
+	/**
+	 * Find audits based on the given conditions and
+	 * decompress and decode the old and new data
+	 *
+	 * @param array $where
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function findAudits(array $where): CollectionInterface {
+		return $this->Audit
+			->find()
+			->where($where)
+			->contain(['Users'])
+			->orderBy(['Audit.created_on' => 'desc'])
+			->formatResults(function (ResultSetInterface $results): CollectionInterface {
+				return $results->map(function (Audit $audit) {
+					$audit->dataOld = $audit->dataOld ? json_decode(gzuncompress(base64_decode($audit->dataOld)), true) : null;
+					$audit->dataNew = $audit->dataNew ? json_decode(gzuncompress(base64_decode($audit->dataNew)), true) : null;
+
+					return $audit;
+				});
+			})
+			->all()
+			->compile();
+	}
+
+
+	/**
+	 * @param \Cake\Collection\CollectionInterface $audits
+	 * @param \Awyiss\Model\Table $table
+	 * @param \Awyiss\Model\Entity $entity
+	 * @return void
+	 */
+	protected function addPivotTableAudits(CollectionInterface &$audits, Table $table, Entity $entity): void {
+		$pivotTableAudits = $this->getPivotTableAudits($table, $entity, $audits);
+
+		if ($pivotTableAudits->isEmpty()) {
+			return;
+		}
+
+		// Group pivot table audits by transaction ID
+		$groupedPivotAudits = $this->groupPivotAuditsByTransaction($pivotTableAudits, $table);
+
+		// Combine grouped audits into single audit entries per transaction
+		$combinedPivotAudits = $this->combinePivotAudits($groupedPivotAudits, $table, $entity);
+
+		// Merge with main audits and sort
+		$audits = $audits->append($combinedPivotAudits)->sortBy('createdOn', SORT_ASC)->toList();
+
+		// Build complete state for each pivot audit including cumulative association changes
+		$audits = $this->buildPivotAuditStates($audits, $table, $entity);
+
+		$audits = new Collection($audits)->sortBy('createdOn')->compile();
+	}
+
+
+	/**
+	 * Get pivot table audits for the given entity
+	 *
+	 * @param \Awyiss\Model\Table $table
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Collection\CollectionInterface $audits
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function getPivotTableAudits(Table $table, Entity $entity, CollectionInterface $audits): CollectionInterface {
+		$indexedAudits = $audits->indexBy('transactionId')->toArray();
+
+		$pivotTableAudits = $this->findAudits([
+			'OR' => [
+				[
+					'subject_left_foreign_key' => $entity->id,
+					'subject_left_table' => $table->getTable(),
+				],
+				[
+					'subject_right_foreign_key' => $entity->id,
+					'subject_right_table' => $table->getTable(),
+				],
+			],
+		]);
+
+		// Filter out audits that are already included in the main audits
+		return $pivotTableAudits->reject(fn (Audit $audit) => isset($indexedAudits[ $audit->transactionId ]));
+	}
+
+
+	/**
+	 * Group pivot table audits by transaction ID
+	 *
+	 * @param \Cake\Collection\CollectionInterface $pivotTableAudits
+	 * @param \Awyiss\Model\Table $table
+	 * @return array
+	 */
+	protected function groupPivotAuditsByTransaction(CollectionInterface $pivotTableAudits, Table $table): array {
+		$grouped = [];
+
+		foreach ($pivotTableAudits as $audit) {
+			$txId = $audit->transactionId;
+
+			if (!isset($grouped[ $txId ])) {
+				$grouped[ $txId ] = [];
+			}
+
+			$grouped[ $txId ][] = $audit;
+		}
+
+		return $grouped;
+	}
+
+
+	/**
+	 * Combine grouped pivot audits into single audit entries per transaction.
+	 *
+	 * Each pivot audit can represent an addition or removal of a single association,
+	 * or an update to the association itself, if it contains additional data.
+	 *
+	 * @param array $groupedPivotAudits
+	 * @param \Awyiss\Model\Table $table
+	 * @param \Awyiss\Model\Entity $entity
+	 * @return array
+	 */
+	protected function combinePivotAudits(array $groupedPivotAudits, Table $table, Entity $entity): array {
+		$combined = [];
+
+		foreach ($groupedPivotAudits as $audits) {
+			// Collect all association changes in this transaction
+			$allChanges = [];
+
+			foreach ($audits as $audit) {
+				// Skip create audits that happened at the same time as entity creation
+				// as they don't represent association changes, and also skip updates for now
+				if (
+					(
+						$audit->type === 'c' &&
+						$entity->createdOn &&
+						$audit->createdOn->equals($entity->createdOn)
+					) ||
+					$audit->type === 'u'
+				) {
+					continue;
+				}
+
+				// Get association info for this specific audit
+				$associationInfo = $this->getPivotAssociationInfo($audit, $table, $entity);
+
+				if (!$associationInfo) {
+					continue;
+				}
+
+				$property = $associationInfo['property'];
+
+				// Initialize if not exists
+				if (!isset($allChanges[ $property ])) {
+					$allChanges[ $property ] = [
+						'added' => [],
+						'removed' => [],
+						'associationInfo' => $associationInfo,
+						'audit' => $audit,
+					];
+				}
+
+				$foreignId = $this->getRelatedForeignId($audit, $table->getTable(), $entity->id);
+
+				$key = match ($audit->type) {
+					'c' => 'added',
+					'd' => 'removed',
+				};
+
+				$allChanges[ $property ][ $key ][] = $foreignId;
+			}
+
+			// If all audits were skipped or no valid changes, continue
+			if (empty($allChanges)) {
+				continue;
+			}
+
+			// Build ONE combined audit with ALL changes from all associations
+			// Use the first property's audit as the base
+			$firstProperty = array_key_first($allChanges);
+			$combinedAudit = clone $allChanges[ $firstProperty ]['audit'];
+			$combinedAudit->dataOld = [];
+			$combinedAudit->type = 'u';
+
+			foreach ($allChanges as $changes) {
+				$combinedAudit = $this->buildCombinedPivotAudit(
+					$combinedAudit,
+					$changes['associationInfo'],
+					$changes['added'],
+					$changes['removed']
+				);
+			}
+
+			$combined[] = $combinedAudit;
+		}
+
+		return $combined;
+	}
+
+
+	/**
+	 * Get association info for a pivot table audit
+	 *
+	 * @param \Awyiss\Model\Entity\Audit $audit
+	 * @param \Awyiss\Model\Table $table
+	 * @param \Awyiss\Model\Entity $entity
+	 * @return array|null
+	 */
+	protected function getPivotAssociationInfo(Audit $audit, Table $table, Entity $entity): ?array {
+		// Determine if current entity is on left or right side
+		$isLeft = $audit->subjectLeftTable === $table->getTable() && $audit->subjectLeftForeignKey === $entity->id;
+
+		// Get the other side's table name
+		$targetTable = $isLeft ? $audit->subjectRightTable : $audit->subjectLeftTable;
+
+		// Find the association
+		$targetTableCamelized = Inflector::camelize($targetTable);
+
+		if (
+			!$table->hasAssociation($targetTableCamelized) ||
+			!$table->getAssociation($targetTableCamelized) instanceof BelongsToMany
+		) {
+			return null;
+		}
+
+		$association = $table->getAssociation($targetTableCamelized);
+
+		return [
+			'association' => $association,
+			'property' => $entity::mapField($association->getProperty()),
+			'targetTable' => $targetTable,
+		];
+	}
+
+
+	/**
+	 * Get the related foreign ID from a pivot audit
+	 *
+	 * @param \Awyiss\Model\Entity\Audit $audit
+	 * @param string $currentTable
+	 * @param int $entityId
+	 * @return int
+	 */
+	protected function getRelatedForeignId(Audit $audit, string $currentTable, int $entityId): int {
+		$isLeft = $audit->subjectLeftTable === $currentTable && $audit->subjectLeftForeignKey === $entityId;
+
+		return $isLeft ? $audit->subjectRightForeignKey : $audit->subjectLeftForeignKey;
+	}
+
+
+	/**
+	 * Build a combined pivot audit with added/removed IDs
+	 *
+	 * @param \Awyiss\Model\Entity\Audit $baseAudit
+	 * @param array $associationInfo
+	 * @param array $addedIds
+	 * @param array $removedIds
+	 * @return \Awyiss\Model\Entity\Audit
+	 */
+	protected function buildCombinedPivotAudit(Audit $baseAudit, array $associationInfo, array $addedIds, array $removedIds): Audit {
+		$property = $associationInfo['property'];
+
+		// Store the changes using a proper nested array structure
+		$baseAudit->dataOld ??= [];
+		$baseAudit->dataOld['_pivotChanges'] ??= [];
+
+		$baseAudit->dataOld['_pivotChanges'][ $property ] = [
+			'added' => $addedIds,
+			'removed' => $removedIds,
+		];
+
+		return $baseAudit;
+	}
+
+
+	/**
+	 * Build complete state for each pivot audit including cumulative association changes
+	 *
+	 * @param array $audits
+	 * @param \Awyiss\Model\Table $table
+	 * @param \Awyiss\Model\Entity $entity
+	 * @return array
+	 */
+	protected function buildPivotAuditStates(array $audits, Table $table, Entity $entity): array {
+		// Find initial pivot audits before first entity audit
+		$initialPivotAudits = [];
+		$firstEntityAuditIndex = null;
+
+		foreach ($audits as $index => $audit) {
+			if ($audit->scope === $table->getTable()) {
+				$firstEntityAuditIndex = $index;
+				break;
+			}
+
+			$hasPivotChanges = isset($audit->dataOld['_pivotChanges']) && is_array($audit->dataOld['_pivotChanges']);
+			if ($hasPivotChanges) {
+				$initialPivotAudits[] = $audit;
+			}
+		}
+
+		// Process initial pivot audits in reverse if they exist
+		if (!empty($initialPivotAudits)) {
+			// Get reference state from first entity audit or current entity
+			if ($firstEntityAuditIndex !== null) {
+				$referenceData = $audits[ $firstEntityAuditIndex ]->dataNew ?? [];
+			}
+			else {
+				$referenceData = $entity->extract(null, false, false);
+			}
+
+			$this->processInitialPivotAuditsReverse($initialPivotAudits, $referenceData);
+		}
+
+		// Process remaining audits forward
+		$this->processAuditsForward($audits, $table, $firstEntityAuditIndex);
+
+		return $audits;
+	}
+
+
+	/**
+	 * Process initial pivot audits in reverse from a future state
+	 *
+	 * @param array $pivotAudits
+	 * @param array $referenceData
+	 * @return void
+	 */
+	protected function processInitialPivotAuditsReverse(array $pivotAudits, array $referenceData): void {
+		if (empty($pivotAudits)) {
+			return;
+		}
+
+		// Normalize reference data to extract IDs from entities
+		$normalizedData = [];
+		foreach ($referenceData as $key => $value) {
+			if (!is_array($value)) {
+				$normalizedData[ $key ] = $value;
+				continue;
+			}
+
+			if (isset($value['_ids'])) {
+				$normalizedData[ $key ] = $value;
+				continue;
+			}
+
+			if (empty($value)) {
+				continue;
+			}
+
+			// Extract IDs from entity array
+			$ids = array_map(function ($item) {
+				if ($item instanceof Entity) {
+					return $item->id;
+				}
+
+				if (is_array($item) && isset($item['id'])) {
+					return $item['id'];
+				}
+
+				return null;
+			}, $value);
+
+			$ids = array_values(
+				array_filter($ids, fn ($id) => $id !== null)
+			);
+
+			$normalizedData[ $key ] = [
+				'_ids' => $ids,
+			];
+		}
+
+		// Process in reverse order
+		$reversedAudits = array_reverse($pivotAudits);
+		$lastEntityData = $normalizedData;
+
+		foreach ($reversedAudits as $audit) {
+			$this->processPivotAudit($audit, $lastEntityData, false);
+			// Update lastEntityData to this audit's dataOld for the next pivot audit (going backwards)
+			$lastEntityData = $audit->dataOld;
+		}
+	}
+
+
+	/**
+	 * Process audits forward from entity audits
+	 *
+	 * @param array $audits
+	 * @param \Awyiss\Model\Table $table
+	 * @param int|null $startIndex
+	 * @return void
+	 */
+	protected function processAuditsForward(array $audits, Table $table, ?int $startIndex): void {
+		if ($startIndex === null) {
+			return;
+		}
+
+		$lastEntityData = null;
+
+		foreach (array_slice($audits, $startIndex) as $audit) {
+			if ($audit->scope === $table->getTable()) {
+				// This is an entity audit - it becomes the new baseline
+				$lastEntityData = $audit->dataNew ?? [];
+				continue;
+			}
+
+			// This is a pivot table audit
+			$hasPivotChanges = isset($audit->dataOld['_pivotChanges']) && is_array($audit->dataOld['_pivotChanges']);
+
+			if (!$hasPivotChanges || !$lastEntityData) {
+				continue;
+			}
+
+			$this->processPivotAudit($audit, $lastEntityData, true);
+			// Update lastEntityData to this audit's dataNew for the next pivot audit
+			$lastEntityData = $audit->dataNew;
+		}
+	}
+
+
+	/**
+	 * Process a single pivot audit
+	 *
+	 * @param \Awyiss\Model\Entity\Audit $audit
+	 * @param array $entityData
+	 * @param bool $forward
+	 * @return void
+	 */
+	protected function processPivotAudit(Audit $audit, array $entityData, bool $forward = true): void {
+		$pivotChangesData = $audit->dataOld['_pivotChanges'] ?? [];
+
+		if (empty($pivotChangesData)) {
+			return;
+		}
+
+		$newDataOld = $entityData;
+		$newDataNew = $entityData;
+		unset($newDataOld['_pivotChanges'], $newDataNew['_pivotChanges']);
+
+		foreach ($pivotChangesData as $property => $changes) {
+			$addedIds = $changes['added'];
+			$removedIds = $changes['removed'];
+
+			$currentState = $entityData[ $property ]['_ids'] ?? [];
+
+			if ($forward) {
+				// Forward: current state is BEFORE, calculate AFTER
+				$idsBefore = $currentState;
+				$idsAfter = array_values(array_diff(
+					array_unique(array_merge($idsBefore, $addedIds)),
+					$removedIds
+				));
+			}
+			else {
+				// Reverse: current state is AFTER, calculate BEFORE
+				$idsAfter = $currentState;
+				$idsBefore = array_values(array_unique(array_merge(
+					array_diff($idsAfter, $addedIds),
+					$removedIds
+				)));
+			}
+
+			$newDataOld[ $property ] = ['_ids' => $idsBefore];
+			$newDataNew[ $property ] = ['_ids' => $idsAfter];
+		}
+
+		$audit->dataOld = $newDataOld;
+		$audit->dataNew = $newDataNew;
 	}
 }

@@ -118,3 +118,6 @@ msgstr "Benutzergruppen"
 
 msgid "failed_attempts"
 msgstr "Anmeldeversuche"
+
+msgid "usergroups"
+msgstr "Benutzergruppen"
