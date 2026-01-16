@@ -239,7 +239,7 @@ class BreadcrumbsWidget extends AbstractWidget {
 		/** @var \Awyiss\Model\Entity\Page $page */
 		foreach ($pages ?? [] as $page) {
 			/** @noinspection PhpUndefinedFieldInspection */
-			$options[ $page->id ] = str_repeat('- ', $page->level) . ' ' . $page->title;
+			$options[ $page->id ] = str_repeat('- ', $page->level) . $page->title;
 		}
 
 		return $options;

@@ -354,38 +354,38 @@ class BreadcrumbsWidgetTest extends TestCase {
 		);
 
 		$this->assertSame([
-			1 => ' Startseite',
-			2 => ' Über uns',
-			3 => '-  Unternehmensgeschichte',
-			4 => '-  Mission und Vision',
-			5 => '-  Teamvorstellung',
-			6 => '-  Zertifikate und Auszeichnungen',
-			7 => '-  Aktuelles',
-			8 => ' Dienstleistungen',
-			9 => '-  Seefracht',
-			10 => '-  Luftfracht',
-			11 => '-  Landtransport',
-			12 => '-  Lagerung und Logistik',
-			13 => '-  Zollabwicklung',
-			14 => ' Flotte',
-			15 => '-  Übersicht der Schiffe',
-			16 => '-  Technische Daten',
-			17 => '-  Sicherheitsstandards',
-			18 => '-  Umweltfreundlichkeit',
-			19 => ' Kundenbereich',
-			20 => '-  Anmeldung/Registrierung',
-			22 => '-  Dokumentenverwaltung',
-			23 => '-  Rechnungsübersicht',
-			24 => ' Karriere',
-			25 => '-  Offene Stellen',
-			26 => '-  Ausbildungsprogramme',
-			27 => '-  Mitarbeiterbenefits',
-			28 => '-  Bewerbungsprozess',
-			29 => ' Kontakt',
-			30 => ' Impressum',
-			31 => ' Datenschutzrichtlinien',
-			32 => ' Fehler 404',
-			33 => ' Fehler 410',
+			1 => 'Startseite',
+			2 => 'Über uns',
+			3 => '- Unternehmensgeschichte',
+			4 => '- Mission und Vision',
+			5 => '- Teamvorstellung',
+			6 => '- Zertifikate und Auszeichnungen',
+			7 => '- Aktuelles',
+			8 => 'Dienstleistungen',
+			9 => '- Seefracht',
+			10 => '- Luftfracht',
+			11 => '- Landtransport',
+			12 => '- Lagerung und Logistik',
+			13 => '- Zollabwicklung',
+			14 => 'Flotte',
+			15 => '- Übersicht der Schiffe',
+			16 => '- Technische Daten',
+			17 => '- Sicherheitsstandards',
+			18 => '- Umweltfreundlichkeit',
+			19 => 'Kundenbereich',
+			20 => '- Anmeldung/Registrierung',
+			22 => '- Dokumentenverwaltung',
+			23 => '- Rechnungsübersicht',
+			24 => 'Karriere',
+			25 => '- Offene Stellen',
+			26 => '- Ausbildungsprogramme',
+			27 => '- Mitarbeiterbenefits',
+			28 => '- Bewerbungsprozess',
+			29 => 'Kontakt',
+			30 => 'Impressum',
+			31 => 'Datenschutzrichtlinien',
+			32 => 'Fehler 404',
+			33 => 'Fehler 410',
 		], $result);
 
 
@@ -405,7 +405,7 @@ class BreadcrumbsWidgetTest extends TestCase {
 			$this->mockPagesTable
 		);
 
-		$this->assertSame([50 => ' Startseite (Spanish)'], $result);
+		$this->assertSame([50 => 'Startseite (Spanish)'], $result);
 	}
 
 
