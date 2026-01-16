@@ -48,6 +48,14 @@ class AuditBehaviorTest extends TestCase {
 	 * @var \Awyiss\Model\Table\AuditTable
 	 */
 	protected Table $auditTable;
+	/**
+	 * @var int
+	 */
+	protected int $lastAuditId;
+	/**
+	 * @var int
+	 */
+	protected int $lastTableId;
 
 
 	/**
@@ -71,6 +79,25 @@ class AuditBehaviorTest extends TestCase {
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable = TableRegistry::getTableLocator()->get('Audit');
+
+		$this->lastAuditId = $this->auditTable->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
+		$this->lastTableId = $this->table->find('all', skipPageRoleCheck: true)->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function tearDown(): void {
+		$this->auditTable->deleteAll([
+			'id >' => $this->lastAuditId,
+		]);
+
+		$this->table->deleteAll([
+			'id >' => $this->lastTableId,
+		]);
+
+		parent::tearDown();
 	}
 
 
@@ -238,6 +265,7 @@ class AuditBehaviorTest extends TestCase {
 	public function testFindWithAuditUsers(): void {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('Employers');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$entity = $this->table->newDefaultEntity([
@@ -280,6 +308,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('Employers');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$entity = $this->table->newDefaultEntity([
@@ -312,6 +341,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('Employers');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$entity = $this->table->newDefaultEntity([
@@ -1344,6 +1374,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('Employers');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -1408,6 +1439,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('Employers');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -1482,6 +1514,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('Employers');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -1538,6 +1571,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('Employers');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -1611,6 +1645,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('Employers');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -2194,6 +2229,7 @@ class AuditBehaviorTest extends TestCase {
 		$this->login();
 
 		$this->table = $this->fetchTable('ContentTemplates');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -2264,6 +2300,7 @@ class AuditBehaviorTest extends TestCase {
 		$this->login();
 
 		$this->table = $this->fetchTable('ContentTemplates');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -2375,6 +2412,7 @@ class AuditBehaviorTest extends TestCase {
 		$this->login();
 
 		$this->table = $this->fetchTable('ContentTemplates');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -2441,6 +2479,7 @@ class AuditBehaviorTest extends TestCase {
 		$this->login();
 
 		$this->table = $this->fetchTable('ContentTemplates');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -2531,6 +2570,7 @@ class AuditBehaviorTest extends TestCase {
 		$this->login();
 
 		$this->table = $this->fetchTable('ContentTemplates');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -2694,6 +2734,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('News');
+		$this->lastTableId = $this->table->find('all', skipPageRoleCheck: true)->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -2755,6 +2796,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('News');
+		$this->lastTableId = $this->table->find('all', skipPageRoleCheck: true)->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -2829,6 +2871,7 @@ class AuditBehaviorTest extends TestCase {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $this->fetchTable('News');
+		$this->lastTableId = $this->table->find('all', skipPageRoleCheck: true)->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
@@ -2883,57 +2926,36 @@ class AuditBehaviorTest extends TestCase {
 		$this->login();
 
 		$this->table = $this->fetchTable('Users');
+		$this->lastTableId = $this->table->find()->select(['id'])->orderByDesc('id')->first()?->id ?? 0;
 		$this->behavior = $this->table->getBehavior('Audit');
 
 		$this->auditTable->deleteAll([]);
 
 		$entity = $this->table->newDefaultEntity([
-			'username' => 'newuser',
 			'email' => 'dummy@domain.com',
 		]);
 
-		$entity->id = 1001;
-		$entity->clean();
-		$entity->setNew(false);
-
 		$this->table->patchEntity($entity, [
+			'username' => 'newuser',
+			'password' => 'securepassword',
 			'usergroups' => [
-				['id' => 1, 'title' => 'Group 123'],
-				['id' => 2, 'title' => 'Group 234'],
+				['id' => 1],
+				['id' => 2],
 			],
-		]);
+		], ['validate' => false]);
 
 		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[0]);
 		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[1]);
 
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.beforeSave', $this->table, ['entity' => $entity, 'options' => $options]);
+		$this->assertNotFalse($this->table->save($entity));
 
-		$this->behavior->beforeSave($event, $entity, $options);
+		$result = $this->auditTable->find()->where([
+			'scope' => 'usergroups_users',
+			'subject_left_table' => 'users',
+			'subject_left_foreign_key' => $entity->id,
+		])->all();
 
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.afterSave', $this->table, ['entity' => $entity, 'options' => $options]);
-
-		$this->behavior->afterSave($event, $entity, $options);
-
-		$result = $this->auditTable->find()->all();
-
-		$this->assertCount(1, $result);
-
-		$audit = $result->first();
-
-		$this->assertSame([
-			'old' => [
-				'usergroups' => [
-					'_ids' => [],
-				],
-			],
-			'new' => [
-				'usergroups' => [
-					'_ids' => [1, 2],
-				],
-			],
-		], $audit->diff);
+		$this->assertCount(2, $result);
 	}
 
 
@@ -2944,66 +2966,28 @@ class AuditBehaviorTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterSaveWithBelongsToManyAssociationChanged(): void {
-		$this->login();
+		$this->testAfterSaveWithBelongsToManyAssociationAdded();
 
-		$this->table = $this->fetchTable('Users');
-		$this->behavior = $this->table->getBehavior('Audit');
+		$entity = $this->table->find()->orderByDesc('id')->first();
 
-		$this->auditTable->deleteAll([]);
-
-		$entity = $this->table->newDefaultEntity([
-			'username' => 'newuser',
-			'email' => 'dummy@domain.com',
-		]);
-
-		$entity->id = 1001;
-		$entity->clean();
-		$entity->setNew(false);
-
-		$entity->set('usergroups', [
-			$this->table->Usergroups->get(1),
-			$this->table->Usergroups->get(2),
-		], ['asOriginal' => true]);
-
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[0]);
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[1]);
+		$this->assertNotNull($entity);
 
 		$this->table->patchEntity($entity, [
 			'usergroups' => [
-				['id' => 3, 'title' => 'Group 345'],
+				['id' => 2],
+				['id' => 3],
 			],
-		]);
+		], ['validate' => false]);
 
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[0]);
+		$this->assertNotFalse($this->table->save($entity));
 
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.beforeSave', $this->table, ['entity' => $entity, 'options' => $options]);
+		$result = $this->auditTable->find()->where([
+			'scope' => 'usergroups_users',
+			'subject_left_table' => 'users',
+			'subject_left_foreign_key' => $entity->id,
+		])->all();
 
-		$this->behavior->beforeSave($event, $entity, $options);
-
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.afterSave', $this->table, ['entity' => $entity, 'options' => $options]);
-
-		$this->behavior->afterSave($event, $entity, $options);
-
-		$result = $this->auditTable->find()->all();
-
-		$this->assertCount(1, $result);
-
-		$audit = $result->first();
-
-		$this->assertSame([
-			'old' => [
-				'usergroups' => [
-					'_ids' => [1, 2],
-				],
-			],
-			'new' => [
-				'usergroups' => [
-					'_ids' => [3],
-				],
-			],
-		], $audit->diff);
+		$this->assertCount(4, $result);
 	}
 
 
@@ -3014,59 +2998,28 @@ class AuditBehaviorTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterSaveWithBelongsToManyAssociationUnchanged(): void {
-		$this->login();
+		$this->testAfterSaveWithBelongsToManyAssociationAdded();
 
-		$this->table = $this->fetchTable('Users');
-		$this->behavior = $this->table->getBehavior('Audit');
+		$entity = $this->table->find()->orderByDesc('id')->first();
 
-		$this->auditTable->deleteAll([]);
-
-		$entity = $this->table->newDefaultEntity([
-			'username' => 'newuser',
-			'email' => 'dummy@domain.com',
-		]);
-
-		$entity->id = 1001;
-		$entity->clean();
-		$entity->setNew(false);
-
-		$entity->set('usergroups', [
-			$this->table->Usergroups->get(1),
-			$this->table->Usergroups->get(2),
-		], ['asOriginal' => true]);
-
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[0]);
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[1]);
-
-		$this->table->patchEntity($entity, [
-			'usergroups' => [
-				['id' => 1],
-			],
-		]);
+		$this->assertNotNull($entity);
 
 		$this->table->patchEntity($entity, [
 			'usergroups' => [
 				['id' => 1],
 				['id' => 2],
 			],
-		]);
+		], ['validate' => false]);
 
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[0]);
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[1]);
+		$this->assertNotFalse($this->table->save($entity));
 
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.beforeSave', $this->table, ['entity' => $entity, 'options' => $options]);
+		$result = $this->auditTable->find()->where([
+			'scope' => 'usergroups_users',
+			'subject_left_table' => 'users',
+			'subject_left_foreign_key' => $entity->id,
+		])->all();
 
-		$this->behavior->beforeSave($event, $entity, $options);
-
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.afterSave', $this->table, ['entity' => $entity, 'options' => $options]);
-
-		$this->behavior->afterSave($event, $entity, $options);
-
-		$result = $this->auditTable->find()->all();
-
-		$this->assertCount(0, $result);
+		$this->assertCount(2, $result);
 	}
 
 
@@ -3077,124 +3030,25 @@ class AuditBehaviorTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testAfterSaveWithBelongsToManyAssociationRemoved(): void {
-		$this->login();
+		$this->testAfterSaveWithBelongsToManyAssociationAdded();
 
-		$this->table = $this->fetchTable('Users');
-		$this->behavior = $this->table->getBehavior('Audit');
+		$entity = $this->table->find()->orderByDesc('id')->first();
 
-		$this->auditTable->deleteAll([]);
-
-		$entity = $this->table->newDefaultEntity([
-			'username' => 'newuser',
-			'email' => 'dummy@domain.com',
-		]);
-
-		$entity->id = 1001;
-		$entity->clean();
-		$entity->setNew(false);
-
-		$entity->set('usergroups', [
-			$this->table->Usergroups->get(1),
-			$this->table->Usergroups->get(2),
-		], ['asOriginal' => true]);
-
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[0]);
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[1]);
+		$this->assertNotNull($entity);
 
 		$this->table->patchEntity($entity, [
 			'usergroups' => null,
-		]);
+		], ['validate' => false]);
 
-		$this->assertEmpty($entity->usergroups);
+		$this->assertNotFalse($this->table->save($entity));
 
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.beforeSave', $this->table, ['entity' => $entity, 'options' => $options]);
+		$result = $this->auditTable->find()->where([
+			'scope' => 'usergroups_users',
+			'subject_left_table' => 'users',
+			'subject_left_foreign_key' => $entity->id,
+		])->all();
 
-		$this->behavior->beforeSave($event, $entity, $options);
-
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.afterSave', $this->table, ['entity' => $entity, 'options' => $options]);
-
-		$this->behavior->afterSave($event, $entity, $options);
-
-		$result = $this->auditTable->find()->all();
-
-		$this->assertCount(1, $result);
-
-		$audit = $result->first();
-
-		$this->assertSame([
-			'old' => [
-				'usergroups' => [
-					'_ids' => [1, 2],
-				],
-			],
-			'new' => [
-				'usergroups' => [
-					'_ids' => [],
-				],
-			],
-		], $audit->diff);
-	}
-
-
-	/**
-	 * @return void
-	 * @see \Awyiss\Model\Behavior\AuditBehavior::afterSave()
-	 * @see \Awyiss\Model\Behavior\AuditBehavior::cleanBelongsToManyAssociationData()
-	 * @throws \Exception
-	 */
-	public function testAfterSaveWithBelongsToManyAssociationLoadsExistingAssociations(): void {
-		$this->login();
-
-		$this->table = $this->fetchTable('Users');
-		$this->behavior = $this->table->getBehavior('Audit');
-
-		$this->auditTable->deleteAll([]);
-
-		/** @var \Awyiss\Model\Entity\User $entity */
-		$entity = $this->table->get(1);
-
-		$this->assertEmpty($entity->usergroups);
-
-		$this->table->patchEntity($entity, [
-			'usergroups' => [
-				['id' => 2, 'title' => 'Group 234'],
-				['id' => 1, 'title' => 'Group 123'],
-			],
-		]);
-
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[0]);
-		$this->assertInstanceOf(Usergroup::class, $entity->usergroups[1]);
-
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.beforeSave', $this->table, ['entity' => $entity, 'options' => $options]);
-
-		$this->behavior->beforeSave($event, $entity, $options);
-
-		$options = new ArrayObject(['transactionId' => 'test-transaction-id']);
-		$event = new Event('Model.afterSave', $this->table, ['entity' => $entity, 'options' => $options]);
-
-		$this->behavior->afterSave($event, $entity, $options);
-
-		$result = $this->auditTable->find()->all();
-
-		$this->assertCount(1, $result);
-
-		$audit = $result->first();
-
-		$this->assertSame([
-			'old' => [
-				'usergroups' => [
-					'_ids' => [1, 2],
-				],
-			],
-			'new' => [
-				'usergroups' => [
-					'_ids' => [2, 1],
-				],
-			],
-		], $audit->diff);
+		$this->assertCount(4, $result);
 	}
 
 

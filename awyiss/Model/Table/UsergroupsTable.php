@@ -36,6 +36,17 @@ class UsergroupsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	public function initialize(array $config): void {
+		parent::initialize($config);
+
+		$auditBehavior = $this->getBehavior('Audit');
+		$auditBehavior->setConfig('historyFields', ['users']);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
 		$this->hasMany('UsergroupPermissions', [
 			'cascadeCallbacks' => true,
@@ -43,7 +54,10 @@ class UsergroupsTable extends Table {
 			'saveStrategy' => 'replace',
 		]);
 
-		$this->belongsToMany('Users');
+		$this->belongsToMany('Users', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+		]);
 	}
 
 

@@ -74,6 +74,8 @@ class UsergroupsTableTest extends TestCase {
 		$this->assertTrue($this->usergroupsTable->hasAssociation('Users'));
 		$usersAssociation = $this->usergroupsTable->getAssociation('Users');
 		$this->assertInstanceOf(BelongsToMany::class, $usersAssociation);
+		$this->assertTrue($usersAssociation->getCascadeCallbacks());
+		$this->assertTrue($usersAssociation->getDependent());
 
 		// 'MediaAssignments' must also exist
 		$this->assertTrue($this->usergroupsTable->hasAssociation('MediaAssignments'));

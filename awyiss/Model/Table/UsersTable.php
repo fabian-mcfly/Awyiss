@@ -41,8 +41,22 @@ class UsersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	public function initialize(array $config): void {
+		parent::initialize($config);
+
+		$auditBehavior = $this->getBehavior('Audit');
+		$auditBehavior->setConfig('historyFields', ['usergroups']);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
-		$this->belongsToMany('Usergroups');
+		$this->belongsToMany('Usergroups', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+		]);
 
 		$this->hasMany('UserConfiguration', [
 			'cascadeCallbacks' => true,

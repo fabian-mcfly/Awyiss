@@ -253,8 +253,20 @@ class AuditBehavior extends Behavior {
 		$auditModel = $this->getTableLocator()->get('Audit');
 
 		return $auditModel->find('all')->where([
-			'scope' => $this->table()->getTable(),
-			'foreign_key' => $entity->get('id'),
+			'OR' => [
+				[
+					'scope' => $this->table()->getTable(),
+					'foreign_key' => $entity->get('id'),
+				],
+				[
+					'subject_left_table' => $this->table()->getTable(),
+					'subject_left_foreign_key' => $entity->get('id'),
+				],
+				[
+					'subject_right_table' => $this->table()->getTable(),
+					'subject_right_foreign_key' => $entity->get('id'),
+				],
+			],
 		])->contain(['Users'])->orderBy(['Audit.created_on' => 'DESC']);
 	}
 
@@ -1231,6 +1243,10 @@ class AuditBehavior extends Behavior {
 		if (!$hasThrough && count($keys) === 1 && $keys[0] === 'id') {
 			$oldData = ['_ids' => array_column($oldData ?? [], 'id')];
 			$newData = ['_ids' => array_column($newData ?? [], 'id')];
+
+			// Sort the ids
+			sort($oldData['_ids']);
+			sort($newData['_ids']);
 		}
 
 		// Even if the translations are the same, they have to make their way into the db as plain arrays, not entities

@@ -35,8 +35,22 @@ class CustomerGroupsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	public function initialize(array $config): void {
+		parent::initialize($config);
+
+		$auditBehavior = $this->getBehavior('Audit');
+		$auditBehavior->setConfig('historyFields', ['customers']);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
-		$this->belongsToMany('Customers');
+		$this->belongsToMany('Customers', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+		]);
 	}
 
 
