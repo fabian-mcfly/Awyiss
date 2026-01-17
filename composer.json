@@ -33,7 +33,7 @@
 		"pgrimaud/instagram-user-feed": "^7.0",
 		"scssphp/scssphp": "^2.0",
 		"tijsverkoyen/css-to-inline-styles": "^2.2",
-		"tinymce/tinymce": "^7.1"
+		"tinymce/tinymce": "^8.0"
 	},
 	"require-dev": {
 		"cakephp/cakephp-codesniffer": "^5.0",
