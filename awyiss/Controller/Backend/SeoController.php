@@ -5,6 +5,7 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Annotation\NoDirectAccess;
+use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\PagesTable;
@@ -247,7 +248,6 @@ class SeoController extends BackendController {
 			$knownTitles[ $title ] += 1;
 		}
 
-
 		/** @var \Awyiss\Model\Entity\Page $page */
 		foreach ($pages as $page) {
 			if ($page->id !== $pageId) {
@@ -256,8 +256,13 @@ class SeoController extends BackendController {
 
 			$view->set('page', $page);
 
+			Awyiss::setRealm(Awyiss::REALM_FRONTEND);
+
 			$contents = $view->render($page->pageTemplate->fileName);
 			$body = $this->getHtmlBody($contents);
+
+			Awyiss::setRealm(Awyiss::REALM_BACKEND);
+
 			if (!$body) {
 				continue;
 			}
@@ -358,7 +363,12 @@ class SeoController extends BackendController {
 		foreach ($query->find('threaded')->all()->listNested() as $page) {
 			$view->set('page', $page);
 
+			Awyiss::setRealm(Awyiss::REALM_FRONTEND);
+
 			$body = $this->getHtmlBody($view->render($page->pageTemplate->fileName));
+
+			Awyiss::setRealm(Awyiss::REALM_BACKEND);
+
 			if (!$body) {
 				continue;
 			}
@@ -408,6 +418,8 @@ class SeoController extends BackendController {
 
 		$this->viewBuilder()->setClassName('Json');
 		$this->viewBuilder()->setOption('serialize', ['pages', 'summary']);
+
+		Awyiss::setRealm(Awyiss::REALM_BACKEND);
 	}
 
 

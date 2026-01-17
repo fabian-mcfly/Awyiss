@@ -522,7 +522,7 @@ class FrontendView extends AppView {
 	 * @return \Awyiss\Model\Entity\Customer|null
 	 */
 	protected function getCurrentCustomer(): ?Customer {
-		$identity = $this->getRequest()->getAttribute('identity');
+		$identity = $this->getRequest()->getAttribute(Awyiss::REALM_FRONTEND . 'Identity');
 
 		return $identity?->getOriginalData() ?? null;
 	}

@@ -164,7 +164,9 @@ abstract class BackendController extends AppController {
 				$this->redirect($path . '/', 301);
 			}
 
-			$this->loadComponent('Authentication.Authentication');
+			$this->loadComponent('Authentication.Authentication', [
+				'identityAttribute' => Awyiss::REALM_BACKEND . 'Identity',
+			]);
 
 			$this->loadComponent('Authorization', $this->authorization);
 

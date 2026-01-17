@@ -5,6 +5,7 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Annotation\NoDirectAccess;
+use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Design;
@@ -197,7 +198,7 @@ class DesignsController extends Controller {
 
 		if (!$design->title) {
 			/** @var \Awyiss\Model\Entity\User $identity */
-			$identity = $this->request->getAttribute('identity');
+			$identity = $this->request->getAttribute(Awyiss::REALM_BACKEND . 'Identity');
 
 			$design->title = $identity->username . ', ' . new DateTime('now')->format('Y-m-d H:i');
 
@@ -347,7 +348,7 @@ class DesignsController extends Controller {
 
 		if (!$this->request->getParam('identifier') && !$this->request->getParam('preview')) {
 			/** @var \Awyiss\Model\Entity\User $identity */
-			$identity = $this->request->getAttribute('identity');
+			$identity = $this->request->getAttribute(Awyiss::REALM_BACKEND . 'Identity');
 
 			// Check if the user has a preview design
 			$identifier = $this->designs->firstMatch([
@@ -476,7 +477,7 @@ class DesignsController extends Controller {
 		$this->Designs->patchEntity($preview, $previewData, ['validate' => false]);
 
 		/** @var \Awyiss\Model\Entity\User $identity */
-		$identity = $this->request->getAttribute('identity');
+		$identity = $this->request->getAttribute(Awyiss::REALM_BACKEND . 'Identity');
 		$now = new DateTime('now');
 		$preview->title = sprintf('Preview (%s, %s)', $identity->username, $now->format('Y-m-d H:i'));
 

@@ -8,6 +8,7 @@ use ArrayObject;
 use Authentication\IdentityInterface;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Authorization\IdentityGroupPermissionInterface;
+use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\CustomerGroupAccessSetting;
 use Awyiss\Model\Entity\CustomerGroupAssignment;
@@ -86,7 +87,6 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 	 */
 	public function __construct(Table $table, array $config = []) {
 		$config += [
-			'identity' => Router::getRequest()?->getAttribute('identity'),
 			'referenceName' => $this->getScope($table),
 			'tableLocator' => $table->associations()->getTableLocator(),
 		];
@@ -278,8 +278,11 @@ class CustomerGroupAccessSettingBehavior extends Behavior implements PropertyMar
 			return $query;
 		}
 
+
 		if (!$identity) {
-			$identity = $this->getConfig('identity')?->getOriginalData();
+			$identity = $this->getConfig('identity');
+			$identity ??= Router::getRequest()?->getAttribute(Awyiss::getRealm() . 'Identity');
+			$identity = $identity?->getOriginalData();
 		}
 
 		// Ensure we have the original Customer entity

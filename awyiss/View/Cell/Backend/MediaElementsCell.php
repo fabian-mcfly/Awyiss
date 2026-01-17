@@ -5,6 +5,7 @@ namespace Awyiss\View\Cell\Backend;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Awyiss;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
@@ -238,7 +239,7 @@ class MediaElementsCell extends Cell {
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $identity */
-		$identity = $this->request->getAttribute('identity');
+		$identity = $this->request->getAttribute(Awyiss::REALM_BACKEND . 'Identity');
 
 		if (!$identity) {
 			throw new RuntimeException('No identity found in the request.');

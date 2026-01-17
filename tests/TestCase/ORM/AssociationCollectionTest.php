@@ -78,7 +78,7 @@ class AssociationCollectionTest extends TestCase {
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$user = $this->login(1); // Simulate a logged-in user with ID 1
-		$request = $request->withAttribute('identity', $user);
+		$request = $request->withAttribute('BackendIdentity', $user);
 
 		Router::setRequest($request);
 

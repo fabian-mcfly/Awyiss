@@ -5,6 +5,7 @@ namespace Awyiss\Controller\Component;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Awyiss;
 use Awyiss\Utility\Inflector;
 use Cake\Controller\Component;
 use Cake\Http\Exception\ForbiddenException;
@@ -372,7 +373,7 @@ class AuthorizationComponent extends Component {
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface $identity */
-		$identity = $this->getController()->getRequest()->getAttribute('identity');
+		$identity = $this->getController()->getRequest()->getAttribute(Awyiss::REALM_BACKEND . 'Identity');
 		if (!($identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($identity), IdentityPermissionsInterface::class));
 		}

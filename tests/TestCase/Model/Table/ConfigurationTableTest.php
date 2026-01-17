@@ -53,7 +53,7 @@ class ConfigurationTableTest extends TestCase {
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$user = $this->login(1); // Simulate a logged-in user with ID 1
-		$request = $request->withAttribute('identity', $user);
+		$request = $request->withAttribute('BackendIdentity', $user);
 
 		Router::setRequest($request);
 
@@ -469,7 +469,7 @@ class ConfigurationTableTest extends TestCase {
 	 */
 	public function testBuildRulesInaccessibleScope(): void {
 		$user = $this->login(2); // Simulate a logged-in user with ID 2
-		$request = Router::getRequest()->withAttribute('identity', $user);
+		$request = Router::getRequest()->withAttribute('BackendIdentity', $user);
 		Router::setRequest($request);
 
 		$data = [
@@ -839,7 +839,7 @@ class ConfigurationTableTest extends TestCase {
 	 */
 	public function testBuildCategoriesWithoutAccess(): void {
 		$user = $this->login(2); // Simulate a logged-in user with ID 2
-		$request = Router::getRequest()->withAttribute('identity', $user);
+		$request = Router::getRequest()->withAttribute('BackendIdentity', $user);
 		Router::setRequest($request);
 
 		$categories = $this->configurationTable->buildCategories();
@@ -904,7 +904,7 @@ class ConfigurationTableTest extends TestCase {
 	 */
 	public function testGetScopesWithoutAccess(): void {
 		$user = $this->login(2); // Simulate a logged-in user with ID 2
-		$request = Router::getRequest()->withAttribute('identity', $user);
+		$request = Router::getRequest()->withAttribute('BackendIdentity', $user);
 		Router::setRequest($request);
 
 		$scopes = $this->configurationTable->getScopes();

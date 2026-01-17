@@ -6,6 +6,7 @@ namespace Awyiss\View\Helper;
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
+use Awyiss\Awyiss;
 use Awyiss\Model\Entity;
 use Awyiss\Utility\Inflector;
 use Cake\View\Helper;
@@ -266,7 +267,7 @@ class AuthorizationHelper extends Helper {
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $identity */
-		$identity = $this->getView()->getRequest()->getAttribute('identity');
+		$identity = $this->getView()->getRequest()->getAttribute(Awyiss::getRealm() . 'Identity');
 
 		if (!$identity) {
 			throw new RuntimeException('No identity found in the request.');

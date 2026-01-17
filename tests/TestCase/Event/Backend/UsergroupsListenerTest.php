@@ -87,7 +87,7 @@ class UsergroupsListenerTest extends TestCase {
 			'identity' => $user,
 		], $this);
 
-		$request = $request->withAttribute('identity', $user);
+		$request = $request->withAttribute('BackendIdentity', $user);
 
 		Router::setRequest($request);
 
@@ -129,7 +129,7 @@ class UsergroupsListenerTest extends TestCase {
 			'identity' => $user,
 		], $this);
 
-		$request = $request->withAttribute('identity', $user);
+		$request = $request->withAttribute('BackendIdentity', $user);
 
 		Router::setRequest($request);
 
@@ -171,7 +171,7 @@ class UsergroupsListenerTest extends TestCase {
 			'identity' => $user,
 		], $this);
 
-		$request = $request->withAttribute('identity', $user);
+		$request = $request->withAttribute('BackendIdentity', $user);
 
 		Router::setRequest($request);
 

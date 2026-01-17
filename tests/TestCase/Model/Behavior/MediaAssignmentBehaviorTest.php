@@ -1057,7 +1057,7 @@ class MediaAssignmentBehaviorTest extends TestCase {
 		$request = $request->withAttribute('authorization', new AuthorizationService('Backend'));
 
 		$user = parent::login($userId);
-		$request = $request->withAttribute('identity', $user);
+		$request = $request->withAttribute('BackendIdentity', $user);
 
 		Router::setRequest($request);
 

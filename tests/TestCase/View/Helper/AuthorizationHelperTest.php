@@ -128,7 +128,7 @@ class AuthorizationHelperTest extends TestCase {
 
 		$identityMock = $this->createMock(IdentityPermissionsInterface::class);
 
-		$request = $helper->getView()->getRequest()->withAttribute('identity', $identityMock);
+		$request = $helper->getView()->getRequest()->withAttribute('BackendIdentity', $identityMock);
 
 		$helper->getView()->setRequest($request);
 

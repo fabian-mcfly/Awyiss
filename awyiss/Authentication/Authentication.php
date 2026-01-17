@@ -320,10 +320,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected function getBackendAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface {
-		$service = new AuthenticationService();
-
-		// Define where users should be redirected to when they are not authenticated
-		$service->setConfig([
+		$service = new AuthenticationService([
+			'identityAttribute' => Awyiss::REALM_BACKEND . 'Identity',
 			'unauthenticatedRedirect' => Router::url([
 				'_name' => Awyiss::REALM_BACKEND,
 				'action' => 'login',
@@ -358,10 +356,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected function getFrontendAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface {
-		$service = new AuthenticationService();
-
-		// Define where customers should be redirected to when they are not authenticated
-		$service->setConfig([
+		$service = new AuthenticationService([
+			'identityAttribute' => Awyiss::REALM_FRONTEND . 'Identity',
 			'unauthenticatedRedirect' => null,
 			'queryParam' => null,
 		]);

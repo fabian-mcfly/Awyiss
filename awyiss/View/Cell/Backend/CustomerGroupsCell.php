@@ -5,6 +5,7 @@ namespace Awyiss\View\Cell\Backend;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Awyiss;
 use Awyiss\Model\Enum\CustomerGroupAccessType;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
@@ -64,7 +65,10 @@ class CustomerGroupsCell extends Cell {
 	 */
 	protected function getGroups(): Collection {
 		if (!isset(static::$groups)) {
-			/** @uses \Awyiss\Model\Table::findActive() */
+			/**
+			 * @uses \Awyiss\Model\Table::findActive()
+			 * @noinspection PhpFieldAssignmentTypeMismatchInspection
+			 */
 			static::$groups = $this
 				->fetchTable('CustomerGroups')
 				->find('active')
@@ -83,7 +87,7 @@ class CustomerGroupsCell extends Cell {
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $identity */
-		$identity = $this->request->getAttribute('identity');
+		$identity = $this->request->getAttribute(Awyiss::REALM_BACKEND . 'Identity');
 
 		if (!$identity) {
 			throw new RuntimeException('No identity found in the request.');

@@ -114,7 +114,7 @@ class MediaElementsCellTest extends TestCase {
 		$entity = $entityProvider();
 
 		$user = $this->login(2);
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 
 		$this->view = new BackendView($this->request, $this->response);
@@ -137,7 +137,7 @@ class MediaElementsCellTest extends TestCase {
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$user = $this->login(1);
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
@@ -171,7 +171,7 @@ class MediaElementsCellTest extends TestCase {
 		$entity = $entityProvider();
 
 		$user = $this->login(3);
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
@@ -205,7 +205,7 @@ class MediaElementsCellTest extends TestCase {
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$user = $this->login(1);
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 

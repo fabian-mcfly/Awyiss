@@ -79,6 +79,7 @@ class CustomerCenterController extends AppController {
 		$this->customersTable = $this->fetchTable('Customers');
 
 		$this->loadComponent('Authentication.Authentication', [
+			'identityAttribute' => Awyiss::REALM_FRONTEND . 'Identity',
 			'requireIdentity' => false,
 		]);
 

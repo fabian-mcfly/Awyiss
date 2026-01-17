@@ -95,7 +95,7 @@ class MenuCellTest extends TestCase {
 	 */
 	public function testDisplayWithAuthorizedUser(): void {
 		$user = $this->login();
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 
 		$output = (string)$this->cell('Backend/Menu');
@@ -117,7 +117,7 @@ class MenuCellTest extends TestCase {
 	 */
 	public function testDisplayWithUnauthorizedUser(): void {
 		$user = $this->login(2);
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 
 		$output = (string)$this->cell('Backend/Menu');
@@ -136,7 +136,7 @@ class MenuCellTest extends TestCase {
 	 */
 	public function testDisplayWithAccessDeniedUser(): void {
 		$user = $this->login(3);
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 
 		$output = (string)$this->cell('Backend/Menu');
@@ -160,7 +160,7 @@ class MenuCellTest extends TestCase {
 		$this->assertEmpty($session->read('Backend.menu.de'));
 
 		$user = $this->login();
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 
 		(string)$this->cell('Backend/Menu');
@@ -190,7 +190,7 @@ class MenuCellTest extends TestCase {
 		$table->save($entity);
 
 		$user = $this->login();
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 
 		(string)$this->cell('Backend/Menu');
@@ -217,7 +217,7 @@ class MenuCellTest extends TestCase {
 
 		$user = $this->login();
 		$user->changedOn = new DateTime()->subMinutes(10);
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 		Router::setRequest($this->request);
 
 		(string)$this->cell('Backend/Menu');
@@ -253,7 +253,7 @@ class MenuCellTest extends TestCase {
 		]);
 
 		$this->request = $this->request->withAttribute('authorization', new AuthorizationService('Backend'));
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 
 		Router::setRequest($this->request);
 
@@ -292,7 +292,7 @@ class MenuCellTest extends TestCase {
 		]);
 
 		$this->request = $this->request->withAttribute('authorization', new AuthorizationService('Backend'));
-		$this->request = $this->request->withAttribute('identity', $user);
+		$this->request = $this->request->withAttribute('BackendIdentity', $user);
 
 		Router::setRequest($this->request);
 
