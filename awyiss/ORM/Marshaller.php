@@ -52,7 +52,13 @@ class Marshaller extends BaseMarshaller {
 			}
 		}
 
-		$errors = $this->_validate($data + $keys, $options['validate'], $isNew);
+		$fieldsToValidate = $options['strictFields'] ? (array)$options['fields'] : [];
+		$context = [
+			'entity' => $entity,
+			'fields' => $fieldsToValidate,
+		];
+
+		$errors = $this->_validate($data + $keys, $options['validate'], $isNew, $context);
 		$options['isMerge'] = true;
 		$propertyMap = $this->_buildPropertyMap($data, $options);
 		$properties = $this->buildProperties($entity, $propertyMap, $data, $errors);
@@ -144,7 +150,7 @@ class Marshaller extends BaseMarshaller {
 	 * @inheritDoc
 	 */
 	protected function _prepareDataAndOptions(array $data, array $options): array {
-		$options += ['validate' => true];
+		$options += ['validate' => true, 'fields' => null, 'strictFields' => false];
 
 		$tableName = $this->_table->getAlias();
 		if (isset($data[ $tableName ]) && is_array($data[ $tableName ])) {

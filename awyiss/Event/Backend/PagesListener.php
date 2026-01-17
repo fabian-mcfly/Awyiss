@@ -664,7 +664,7 @@ class PagesListener implements EventListenerInterface {
 			 * @noinspection PhpUndefinedMethodInspection
 			 * @noinspection SpellCheckingInspection
 			 */
-			$query->set('slug', $query->newExpr($query->func()->concat([
+			$query->set('slug', $query->expr($query->func()->concat([
 				$entity->slug,
 				$query->func()->substr([
 					'slug' => 'identifier',
@@ -740,7 +740,7 @@ class PagesListener implements EventListenerInterface {
 		 * @noinspection PhpUndefinedMethodInspection
 		 * @noinspection SpellCheckingInspection
 		 */
-		$query->set('link', $query->newExpr($query->func()->concat([
+		$query->set('link', $query->expr($query->func()->concat([
 			$entity->languageShortcode . '/' . $entity->slug,
 			$query->func()->substr([
 				'link' => 'identifier',

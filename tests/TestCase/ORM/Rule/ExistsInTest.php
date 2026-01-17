@@ -102,6 +102,10 @@ class ExistsInTest extends TestCase {
 		);
 
 		$sourceTable->method('getSchema')->willReturn($schema);
+		$schema->method('hasColumn')->willReturnMap([
+			['user_id', true],
+			['role_id', true],
+		]);
 		$schema->method('getColumn')->willReturnMap([
 			['user_id', ['type' => 'integer']],
 			['role_id', ['type' => 'integer', 'null' => true]],

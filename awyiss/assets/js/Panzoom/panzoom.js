@@ -1,5 +1,5 @@
 /**
-* Panzoom 4.6.0 for panning and zooming elements using CSS transforms
+* Panzoom 4.6.1 for panning and zooming elements using CSS transforms
 * Copyright Timmy Willison and other contributors
 * https://github.com/timmywil/panzoom/blob/main/MIT-License.txt
 */
@@ -93,7 +93,7 @@ function getCSSNum(name, style) {
     return parseFloat(style[getPrefixedName(name)]) || 0;
 }
 function getBoxStyle(elem, name, style) {
-    if (style === undefined) { style = window.getComputedStyle(elem); }
+    if (style === void 0) { style = window.getComputedStyle(elem); }
     // Support: FF 68+
     // Firefox requires specificity for border
     var suffix = name === 'border' ? 'Width' : '';
@@ -408,7 +408,7 @@ function Panzoom(elem, options) {
         setStyle(elem, 'transformOrigin', '');
     }
     function setOptions(opts) {
-        if (opts === undefined) { opts = {}; }
+        if (opts === void 0) { opts = {}; }
         for (var key in opts) {
             if (opts.hasOwnProperty(key)) {
                 options[key] = opts[key];
@@ -465,7 +465,8 @@ function Panzoom(elem, options) {
     function constrainXY(toX, toY, toScale, panOptions) {
         var opts = __assign(__assign({}, options), panOptions);
         var result = { x: x, y: y, opts: opts };
-        if (!opts.force && (opts.disablePan || (opts.panOnlyWhenZoomed && scale === opts.startScale))) {
+        if (!(panOptions === null || panOptions === void 0 ? void 0 : panOptions.force) &&
+            (opts.disablePan || (opts.panOnlyWhenZoomed && scale === opts.startScale))) {
             return result;
         }
         toX = parseFloat(toX);
@@ -534,7 +535,7 @@ function Panzoom(elem, options) {
     function constrainScale(toScale, zoomOptions) {
         var opts = __assign(__assign({}, options), zoomOptions);
         var result = { scale: scale, opts: opts };
-        if (!opts.force && opts.disableZoom) {
+        if (!(zoomOptions === null || zoomOptions === void 0 ? void 0 : zoomOptions.force) && opts.disableZoom) {
             return result;
         }
         var minScale = options.minScale;
@@ -572,7 +573,7 @@ function Panzoom(elem, options) {
     function zoom(toScale, zoomOptions, originalEvent) {
         var result = constrainScale(toScale, zoomOptions);
         var opts = result.opts;
-        if (!opts.force && opts.disableZoom) {
+        if (!(zoomOptions === null || zoomOptions === void 0 ? void 0 : zoomOptions.force) && opts.disableZoom) {
             return;
         }
         toScale = result.scale;
@@ -725,9 +726,7 @@ function Panzoom(elem, options) {
         // See https://github.com/timmywil/panzoom/issues/512
         // and https://github.com/timmywil/panzoom/issues/606
         if (!hasMultiple || options.pinchAndPan) {
-            pan(origX + (current.clientX - startClientX) / toScale, origY + (current.clientY - startClientY) / toScale, {
-                animate: false
-            }, event);
+            pan(origX + (current.clientX - startClientX) / toScale, origY + (current.clientY - startClientY) / toScale, { animate: false }, event);
         }
     }
     function handleUp(event) {

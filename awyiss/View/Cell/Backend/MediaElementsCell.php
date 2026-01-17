@@ -159,14 +159,19 @@ class MediaElementsCell extends Cell {
 	 */
 	protected function getElements(): Collection {
 		if (!isset(static::$elements)) {
-			/** @uses \Awyiss\Model\Table::findActive() */
+			/**
+			 * @uses \Awyiss\Model\Table::findActive()
+			 * @noinspection PhpFieldAssignmentTypeMismatchInspection
+			 */
 			static::$elements = $this->fetchTable('MediaElements')->find('active')
 			->where(['internal' => 0])
 			->contain([
 				'MediaElementSelectors' => [
 					'MediaSelectors',
 				],
-			])->all()->compile();
+			])
+			->all()
+			->compile();
 		}
 
 		return static::$elements;

@@ -17,7 +17,7 @@
 	{% block routePlannerScripts %}
 		{% do AssetHelper.addJsModule({
 			'Frontend/MapLibre/maplibre-gl.js': {realm: 'Backend'},
-			('Frontend/MapLibre/locale/' ~ page.language.shortcode ~ '.js'): {
+			('Frontend/MapLibre/locale/' ~ page.languageShortcode ~ '.js'): {
 				as: 'Frontend/MapLibre/locale',
 				fallback: 'Frontend/MapLibre/locale/en.js',
 				realm: 'Backend'

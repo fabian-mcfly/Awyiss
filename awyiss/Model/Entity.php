@@ -26,6 +26,7 @@ use Cake\ORM\Entity as BaseEntity;
 class Entity extends BaseEntity {
 	use EntityAttributesTrait {
 		EntityAttributesTrait::get as getOrGetFromAttribute;
+		EntityAttributesTrait::getRequiredOrFail as getOrGetFromAttributeRequiredOrFail;
 		EntityAttributesTrait::set as setOrSetAttribute;
 		EntityAttributesTrait::patch as patchOrPatchAttribute;
 	}
@@ -94,6 +95,19 @@ class Entity extends BaseEntity {
 		/** @noinspection PhpUnnecessaryLocalVariableInspection ... stupid PhpStorm */
 		$value = &$this->getOrGetFromAttribute($field);
 
+
+		return $value;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function &getRequiredOrFail(string $field, bool $requireFieldPresence = true): mixed {
+		$field = static::mapField($field);
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection ... stupid PhpStorm */
+		$value = &$this->getOrGetFromAttributeRequiredOrFail($field, $requireFieldPresence);
 
 		return $value;
 	}

@@ -308,7 +308,7 @@ class Media extends Entity {
 		 * @noinspection PhpUndefinedMethodInspection
 		 * @noinspection SpellCheckingInspection
 		 */
-		$query->update('media_resized_images')->set('name', $query->newExpr($query->func()->concat([
+		$query->update('media_resized_images')->set('name', $query->expr($query->func()->concat([
 			$fileName,
 			$query->func()->substr([
 				'name' => 'identifier',
@@ -317,7 +317,7 @@ class Media extends Entity {
 				null,
 				'integer',
 			]),
-		])))->set('path', $query->newExpr($query->func()->concat([
+		])))->set('path', $query->expr($query->func()->concat([
 			$directory,
 			$query->func()->substr([
 				'path' => 'identifier',

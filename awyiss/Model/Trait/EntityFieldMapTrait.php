@@ -55,6 +55,14 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
+	public function &getRequiredOrFail(string $field, bool $requireFieldPresence = true): mixed {
+		return parent::getRequiredOrFail(static::mapField($field), $requireFieldPresence);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function set(array|string $field, mixed $value = null, array $options = []): EntityInterface {
 		if (is_array($field)) {
 			/**
@@ -132,6 +140,14 @@ trait EntityFieldMapTrait {
 	 */
 	public function hasOriginal(string $field): bool {
 		return array_key_exists(static::mapField($field), $this->_original);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function hasValue(string $field): bool {
+		return parent::hasValue(static::mapField($field));
 	}
 
 

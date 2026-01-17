@@ -12,6 +12,15 @@ use Awyiss\Event\EventManager;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
 use Awyiss\Model\Entity\Language;
+use Awyiss\Model\Trait\BehaviorProxy\AttributesBehaviorProxyTrait;
+use Awyiss\Model\Trait\BehaviorProxy\AuditBehaviorProxyTrait;
+use Awyiss\Model\Trait\BehaviorProxy\CategoriesBehaviorProxyTrait;
+use Awyiss\Model\Trait\BehaviorProxy\CustomerGroupAccessSettingBehaviorProxyTrait;
+use Awyiss\Model\Trait\BehaviorProxy\MediaAssignmentBehaviorProxyTrait;
+use Awyiss\Model\Trait\BehaviorProxy\NestBehaviorProxyTrait;
+use Awyiss\Model\Trait\BehaviorProxy\SearchBehaviorProxyTrait;
+use Awyiss\Model\Trait\BehaviorProxy\SoftDeleteBehaviorProxyTrait;
+use Awyiss\Model\Trait\BehaviorProxy\SystemOrderBehaviorProxyTrait;
 use Awyiss\Model\Trait\SqlTraceTrait;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
@@ -45,36 +54,24 @@ use RuntimeException;
  * Base Table
  *
  * @method \Cake\ORM\Query\SelectQuery findById(int $id)
- * @method \Cake\ORM\Query\SelectQuery addSystemOrderQueryConditions(?SelectQuery $query, \Cake\Datasource\EntityInterface $entity)
  * @method \Awyiss\Authorization\AuthorizationServiceInterface getAuthorizationService()
- * @method int countAuditCount(\Cake\Datasource\EntityInterface $entity)
- * @method array<\Awyiss\Model\Entity\Audit> getAuditData(\Cake\Datasource\EntityInterface $entity)
- * @method array<string> getAuditHistoryFields()
- * @method int getHighestSystemOrder(\Cake\Datasource\EntityInterface $entity)
  * @method string|\Awyiss\Authorization\Policy\AbstractGenericPolicy|null getPolicyClass()
- * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $entity = null)
- * @method array hasDirtySystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $entity = null)
- * @method array extractAttributeFields(array $fields, bool $includeBaseFields = false)
- * @method \Awyiss\Model\Entity\Attribute[] getAttributes()
- * @method \Awyiss\Model\Table getAttributesTable()
- * @method string getAttributesTableName(bool $camelized = false)
- * @method bool hasAttributes()
- * @method \Cake\Datasource\ResultSetInterface|array|null getCategories(bool $returnRaw = false)
- * @method \Awyiss\Model\Entity newDefaultEntity(array $additionalData = [])
- * @method \Cake\Datasource\EntityInterface|array rebuildMediaAssignments(\Cake\Datasource\EntityInterface|array $entity, bool $useMediaEntity = false)
- * @method \Cake\Collection\CollectionInterface listNested(\Cake\ORM\Query\SelectQuery|\Cake\Collection\Iterator\TreeIterator $query, string $nestingKey = 'children', string $direction = 'desc')
- * @method array getPossibleFieldValues(string $column, ?String $type = null)
- * @method SelectQuery searchFilterQuery(SelectQuery $query, ?array $filterColumns = null)
- * @method array<string, \Awyiss\Model\Behavior\Search\FilterColumnSettings> getFilterColumns(array $blocklistedColumns = [], ?array $selectedOperators = null, ?array $selectedValues = null, bool $includePossibleValues = true)
- * @method string normalizeColumnType(string $type)
- * @method bool searchIsActive()
  * @noinspection PhpFullyQualifiedNameUsageInspection
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class Table extends BaseTable {
+	use AttributesBehaviorProxyTrait;
+	use AuditBehaviorProxyTrait;
+	use CategoriesBehaviorProxyTrait;
+	use CustomerGroupAccessSettingBehaviorProxyTrait;
 	use IdentityAwareTrait;
 	use InstanceConfigTrait;
+	use MediaAssignmentBehaviorProxyTrait;
+	use NestBehaviorProxyTrait;
+	use SearchBehaviorProxyTrait;
+	use SoftDeleteBehaviorProxyTrait;
 	use SqlTraceTrait;
+	use SystemOrderBehaviorProxyTrait;
 
 
 	/**
@@ -1112,11 +1109,11 @@ class Table extends BaseTable {
 		}
 
 		/**
-		 * The html cleaning happens here and not in the `beforeSave`-event
-		 * since it could result in empty fields in case the html contained
+		 * The HTML cleaning happens here and not in the `beforeSave`-event
+		 * since it could result in empty fields in case the HTML contained
 		 * only empty tags.
 		 *
-		 * Rules, that check for empty fields, would not fail if the html
+		 * Rules, that check for empty fields, would not fail if the HTML
 		 * cleaning would be done later on.
 		 */
 		if (Configure::read('Awyiss.System.Backend.htmlCleaning', 'none') !== 'none') {
@@ -1219,5 +1216,20 @@ class Table extends BaseTable {
 				$associated->setNew(true);
 			}
 		}
+	}
+
+
+
+	/**
+	 * Returns a new entity for the table the method was called on,
+	 * populated with the default values set in the database.
+	 *
+	 * @param array $additionalData
+	 * @param array $options
+	 * @return \Awyiss\Model\Entity
+	 * @see \Awyiss\Model\Behavior\DefaultValuesBehavior::newDefaultEntity()
+	 */
+	public function newDefaultEntity(array $additionalData = [], array $options = []): EntityInterface {
+		return $this->getBehavior('DefaultValues')->newDefaultEntity($additionalData, $options);
 	}
 }

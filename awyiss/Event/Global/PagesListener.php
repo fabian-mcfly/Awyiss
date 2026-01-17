@@ -75,7 +75,7 @@ class PagesListener implements EventListenerInterface {
 		// Only MySQL supports FIND_IN_SET for ordering.
 		if ($dialect instanceof MysqlSchemaDialect) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+			$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
 				$prefixedColumn => 'identifier',
 				implode(',', array_column($pageRoles, 'id')),
 			])));

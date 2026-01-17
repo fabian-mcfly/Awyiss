@@ -101,7 +101,7 @@ class NumericPaginator extends BaseNumericPaginator {
 			}
 			elseif (isset($data['options']['fieldTranslations'][ $field ])) {
 				$translations = $data['options']['fieldTranslations'][ $field ];
-				$expr = $query->newExpr()->case();
+				$expr = $query->expr()->case();
 				foreach ($translations as $translationKey => $translationValue) {
 					$expr->when([$field => $translationKey])->then($translationValue);
 				}

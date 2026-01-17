@@ -152,7 +152,7 @@ abstract class BackendController extends AppController {
 						[
 							'_name' => $parts['_name'],
 							'_base' => false,
-							'?' => $request->getParam('?'),
+							'?' => $request->getQueryParams(),
 						] + $request->getParam('parts') + ['lang' => $languageShortcode]
 					),
 					301

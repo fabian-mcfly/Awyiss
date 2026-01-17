@@ -243,7 +243,6 @@ class MediaElementsCellTest extends TestCase {
 	 * @param bool $assignmentsAvailable
 	 * @return void
 	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::elementAssignments()
-	 * @see \Awyiss\View\Cell\Backend\MediaElementsCell::elementAssignments
 	 */
 	public function testElementAssignments(callable $entityProvider, bool $assignmentsAvailable) {
 		$entity = $entityProvider();
@@ -253,9 +252,9 @@ class MediaElementsCellTest extends TestCase {
 		$output = trim((string)$this->view->cell('Backend/MediaElements::elementAssignments', [$entity]));
 
 		if ($assignmentsAvailable) {
-			$this->assertStringContainsString('<fieldset class="Fieldset-MediaElementAssignments">', $output);
-			$this->assertStringContainsString('<fieldset class="Fieldset-MediaElements-Available Collapsible">', $output);
-			$this->assertStringContainsString('<fieldset class="Fieldset-MediaElements-Assigned Collapsible">', $output);
+			$this->assertStringContainsString('<fieldset class="Fieldset-MediaElementAssignments AssignmentLists">', $output);
+			$this->assertStringContainsString('<fieldset class="Fieldset-MediaElements-Available AssignmentList AssignmentList-Available">', $output);
+			$this->assertStringContainsString('<fieldset class="Fieldset-MediaElements-Assigned AssignmentList AssignmentList-Assigned">', $output);
 			$this->assertStringContainsString('id="MediaElement-Element-Standard"', $output);
 			$this->assertStringContainsString('id="MediaElement-Element-TitleAndTeaserImage"', $output);
 			$this->assertStringContainsString('id="MediaElement-Element-Gallery"', $output);

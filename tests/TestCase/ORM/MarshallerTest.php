@@ -404,7 +404,7 @@ class MarshallerTest extends TestCase {
 
 		$this->assertEquals([
 			['title' => 'Test Title', 'include_in_linklist' => true, 'system_order' => 5],
-			['events' => false, 'validate' => true],
+			['events' => false, 'validate' => true, 'fields' => null, 'strictFields' => false],
 		], $result);
 	}
 
@@ -429,7 +429,7 @@ class MarshallerTest extends TestCase {
 
 		$this->assertEquals([
 			['title' => 'Test Title', 'includeInLinklist' => true, 'systemOrder' => 5],
-			['events' => false, 'validate' => true],
+			['events' => false, 'validate' => true, 'fields' => null, 'strictFields' => false],
 		], $result);
 	}
 }

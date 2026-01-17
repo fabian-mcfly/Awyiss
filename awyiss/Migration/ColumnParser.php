@@ -67,6 +67,12 @@ class ColumnParser extends BaseColumnParser {
 				}
 			}
 
+			// Handle references - convert to integer type
+			$isReference = in_array($type, ['references', 'references?'], true);
+			if ($isReference) {
+				$type = str_contains($type, '?') ? 'integer?' : 'integer';
+			}
+
 			$nullable = (bool)strpos($type, '?');
 			$type = $nullable ? str_replace('?', '', $type) : $type;
 

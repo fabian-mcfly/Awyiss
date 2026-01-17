@@ -44,10 +44,13 @@ class Validator extends BaseValidator {
 
 
 	/**
+	 * @param array $data
+	 * @param bool $newRecord
+	 * @param array $context
 	 * @inheritDoc
 	 */
-	public function validate(array $data, bool $newRecord = true): array {
-		return parent::validate($this->underscoreFields($data, true), $newRecord);
+	public function validate(array $data, bool $newRecord = true, array $context = []): array {
+		return parent::validate($this->underscoreFields($data, true), $newRecord, $context);
 	}
 
 
@@ -158,20 +161,18 @@ class Validator extends BaseValidator {
 	 * Result: `This value does not match the field "Confirm password"`
 	 *
 	 * @param string $field
-	 * @param ValidationSet $rules
+	 * @param \Cake\Validation\ValidationSet $rules
 	 * @param array $data
 	 * @param bool $newRecord
+	 * @param array $context
 	 * @return array
 	 */
-	protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array {
+	protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord, array $context = []): array {
 		$errors = [];
+		$context = compact('newRecord', 'data', 'field') + $context;
 
 		foreach ($rules as $name => $rule) {
-			$result = $rule->process($data[ $field ], $this->_providers, [
-				'newRecord' => $newRecord,
-				'data' => $data,
-				'field' => $field,
-			]);
+			$result = $rule->process($data[ $field ], $this->_providers, $context);
 
 			if ($result === true) {
 				continue;

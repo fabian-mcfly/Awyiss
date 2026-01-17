@@ -54,8 +54,14 @@ class ExistsIn extends BaseExistsIn {
 			return true;
 		}
 
-		// If a repository is provided, use it as the source table
-		$source = $options['repository'] ?? $this->_repository;
+		if (!empty($options['repository'])) {
+			/** @var \Cake\ORM\Table $source */
+			$source = $options['repository'];
+		}
+		else {
+			$source = $this->_repository;
+		}
+
 		// If the source is an association, get the source table
 		if ($source instanceof Association) {
 			$source = $source->getSource();
@@ -79,13 +85,19 @@ class ExistsIn extends BaseExistsIn {
 		if ($this->_options['allowNullableNulls']) {
 			$schema = $source->getSchema();
 			foreach ($fields as $i => $field) {
-				if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+				if (
+					!$schema->hasColumn($field) ||
+					(
+						$schema->isNullable($field) &&
+						$entity->get($field) === null
+					)
+				) {
 					unset($bindingKey[ $i ], $fields[ $i ]);
 				}
 			}
 		}
 
-		$primary = array_map(function ($key) use ($realTarget) {
+		$primary = array_map(function (string $key) use ($realTarget) {
 			// Prefix the key with the target alias and append ` IS`
 			// in case the value is null.
 			return $realTarget->aliasField($key) . ' IS';

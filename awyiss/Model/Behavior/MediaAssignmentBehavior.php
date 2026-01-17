@@ -669,13 +669,13 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		// Only MySQL supports FIND_IN_SET for ordering.
 		if ($dialect instanceof MysqlSchemaDialect) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+			$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
 				$elementField => 'identifier',
 				implode(',', array_column(static::$mediaElements, 'id')),
 			])), true);
 
 			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+			$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
 				$selectorField => 'identifier',
 				implode(',', $identifiers),
 			])));

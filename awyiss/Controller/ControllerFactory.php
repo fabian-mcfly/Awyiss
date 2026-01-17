@@ -18,6 +18,7 @@ use GenericDatatablesBase;
 use GenericPagesBase;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
+use ReflectionNamedType;
 
 
 /**
@@ -89,7 +90,9 @@ class ControllerFactory extends BaseControllerFactory {
 				$paramType = $parameter->getType();
 				// TODO: In a future minor release it would be good to start requiring the components parameter
 				if (
-					$parameter->getName() === 'components' && $paramType !== null && $paramType->getName() == ComponentRegistry::class
+					$parameter->getName() === 'components' &&
+					$paramType instanceof ReflectionNamedType &&
+					$paramType->getName() == ComponentRegistry::class
 				) {
 					$hasComponents = true;
 					break;

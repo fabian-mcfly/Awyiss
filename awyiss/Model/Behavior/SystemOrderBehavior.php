@@ -760,7 +760,6 @@ class SystemOrderBehavior extends Behavior {
 		$table = $this->table();
 		/** @var \Awyiss\Model\Entity $entityClass */
 		$entityClass = $table->getEntityClass();
-
 		if (str_starts_with($field, 'attributes.')) {
 			$field = $entityClass::unmapField(substr($field, 11));
 			$fieldType = $table->getAttributesTable()->getSchema()->getColumnType($field);

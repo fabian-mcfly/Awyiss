@@ -32,11 +32,13 @@ use Awyiss\ORM\Marshaller;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\Utility\Content\HtmlCleaner;
+use Cake\Collection\Iterator\TreeIterator;
 use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\Http\ServerRequest;
 use Cake\ORM\AssociationCollection;
@@ -194,7 +196,7 @@ HTML;
 			/**
 			 * @return array
 			 */
-			public function getCategories(): array {
+			public function getCategories(bool $returnRaw = false): ResultSetInterface|TreeIterator|array|null {
 				return $this->categories;
 			}
 
@@ -299,7 +301,7 @@ HTML;
 			/**
 			 * @return array
 			 */
-			public function getCategories(): array {
+			public function getCategories(bool $returnRaw = false): ResultSetInterface|TreeIterator|array|null {
 				return $this->categories;
 			}
 
@@ -834,7 +836,7 @@ HTML;
 		];
 		$attributesBehavior = $this->getMockBuilder(AttributesBehavior::class)->disableOriginalConstructor()->onlyMethods(['getAttributes'])->getMock();
 
-		$attributesBehavior->expects($this->once())->method('getAttributes')->willReturn($attributes);
+		$attributesBehavior->expects($this->exactly(2))->method('getAttributes')->willReturn($attributes);
 
 		$table = new class (['alias' => 'AttributesTest', 'table' => 'attributes_contents', 'attributesBehavior' => $attributesBehavior]) extends Table {
 			/**
@@ -2439,17 +2441,12 @@ HTML;
 			/**
 			 * @inheritDoc
 			 */
-			public function associations(): AssociationCollection {
-				$association = new HasMany('TestAssociations', [
+			public function initializeAssociations(): void {
+				$this->hasMany('TestAssociations', [
 					'className' => PagesTable::class,
 					'foreignKey' => 'test_id',
 					'propertyName' => 'test_associations',
 				]);
-
-				$collection = new AssociationCollection();
-				$collection->add('TestAssociations', $association);
-
-				return $collection;
 			}
 
 
@@ -2501,16 +2498,12 @@ HTML;
 			/**
 			 * @inheritDoc
 			 */
-			public function associations(): AssociationCollection {
-				$association = new HasOne('TestAssociation', [
+			public function initializeAssociations(): void {
+				$this->hasOne('TestAssociation', [
 					'className' => PagesTable::class,
 					'foreignKey' => 'test_id',
 					'propertyName' => 'test_association',
 				]);
-
-				$collection = new AssociationCollection();
-				$collection->add('TestAssociation', $association);
-				return $collection;
 			}
 
 

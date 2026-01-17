@@ -6,6 +6,7 @@ namespace Awyiss\Model\Trait;
 
 use Awyiss\Model\Entity;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Exception\MissingPropertyException;
 use InvalidArgumentException;
 
 
@@ -17,6 +18,14 @@ trait EntityAttributesTrait {
 	 * @inheritDoc
 	 */
 	public function &get(string $field) {
+		return $this->getRequiredOrFail($field, false);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function &getRequiredOrFail(string $field, bool $requireFieldPresence = true): mixed {
 		if ($field === '') {
 			throw new InvalidArgumentException('Cannot get an empty field');
 		}
@@ -41,7 +50,7 @@ trait EntityAttributesTrait {
 		 * @noinspection PhpUnnecessaryLocalVariableInspection Does this sound _unnecessary_ to you?
 		 *    Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
 		 */
-		$value = &$this->getFromAttribute($field);
+		$value = &$this->getFromAttribute($field, false);
 
 
 		return $value;
@@ -52,13 +61,21 @@ trait EntityAttributesTrait {
 	 * Return the value of a field of the attached attribute entity (or null)
 	 *
 	 * @param string $field
+	 * @param bool $requireFieldPresence
 	 * @return mixed
 	 */
-	public function &getFromAttribute(string $field): mixed {
+	public function &getFromAttribute(string $field, bool $requireFieldPresence = true): mixed {
 		$value = null;
 
 		// No attributes field = no value to fetch from there
 		if (empty($this->_fields['attributes']) || !($this->_fields['attributes'] instanceof Entity)) {
+			if ($requireFieldPresence) {
+				throw new MissingPropertyException([
+					'property' => $field,
+					'entity' => $this::class,
+				]);
+			}
+
 			return $value;
 		}
 
@@ -73,7 +90,7 @@ trait EntityAttributesTrait {
 		 * @noinspection PhpUnnecessaryLocalVariableInspection Does this sound _unnecessary_ to you?
 		 *    Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
 		 */
-		$value = &$attributesEntity->get($field);
+		$value = &$attributesEntity->getRequiredOrFail($field, $requireFieldPresence);
 
 
 		return $value;

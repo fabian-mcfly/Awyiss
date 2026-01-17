@@ -317,7 +317,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		 *
 		 * @noinspection PhpUndefinedMethodInspection
 		 */
-		$query->update($table)->set('path', $query->newExpr($query->func()->concat([
+		$query->update($table)->set('path', $query->expr($query->func()->concat([
 			$entity->path,
 			$query->func()->substr([
 				'path' => 'identifier',

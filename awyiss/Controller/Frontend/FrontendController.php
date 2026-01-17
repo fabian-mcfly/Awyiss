@@ -630,7 +630,7 @@ class FrontendController extends AppController {
 					$url = Router::url([
 						'_name' => 'FrontendRoot',
 						...$this->getRequest()->getQueryParams(),
-						'?' => $this->getRequest()->getParam('?'),
+						'?' => $this->getRequest()->getQueryParams(),
 					], true);
 
 					throw new RedirectException($url, 301);
@@ -640,7 +640,7 @@ class FrontendController extends AppController {
 					$url = Router::url([
 						'_name' => 'FrontendLanguageRoot',
 						'lang' => $languageShortcode,
-						'?' => $this->getRequest()->getParam('?'),
+						'?' => $this->getRequest()->getQueryParams(),
 						...$this->getRequest()->getQueryParams(),
 					], true);
 
@@ -663,14 +663,14 @@ class FrontendController extends AppController {
 					$redirectUrl = [
 						'_name' => 'FrontendLanguageRoot',
 						'lang' => $languageShortcode,
-						'?' => $this->getRequest()->getParam('?'),
+						'?' => $this->getRequest()->getQueryParams(),
 						...$this->getRequest()->getQueryParams(),
 					];
 
 					// For the default language, the language is not included in the URL
 					if ($languageShortcode === LocaleMiddleware::getDefaultLanguage()->shortcode) {
 						$redirectUrl = [
-							'?' => $this->getRequest()->getParam('?'),
+							'?' => $this->getRequest()->getQueryParams(),
 							...$this->getRequest()->getQueryParams(),
 							'_name' => 'FrontendRoot',
 						];
@@ -694,7 +694,7 @@ class FrontendController extends AppController {
 		) {
 			if (!trim($currentUrl, '/')) {
 				$realUrl = Router::url([
-					'?' => $this->getRequest()->getParam('?'),
+					'?' => $this->getRequest()->getQueryParams(),
 					...$this->getRequest()->getQueryParams(),
 					'_name' => 'FrontendRoot',
 				]);
@@ -703,7 +703,7 @@ class FrontendController extends AppController {
 				$realUrl = Router::url([
 					'lang' => Configure::read('Route.includeLanguageShortcode') ? $page->languageShortcode : null,
 					'slug' => $page->slug,
-					'?' => $this->getRequest()->getParam('?'),
+					'?' => $this->getRequest()->getQueryParams(),
 					...$this->getRequest()->getQueryParams(),
 				]);
 			}
@@ -747,7 +747,7 @@ class FrontendController extends AppController {
 				$url = Router::url([
 					'_name' => 'FrontendRoot',
 					...$this->getRequest()->getQueryParams(),
-					'?' => $this->getRequest()->getParam('?'),
+					'?' => $this->getRequest()->getQueryParams(),
 				], true);
 
 				throw new RedirectException($url, 301);
@@ -761,7 +761,7 @@ class FrontendController extends AppController {
 
 		if (static::$firstPage->id === $page->id) {
 			$redirectUrl = [
-				'?' => $this->getRequest()->getParam('?'),
+				'?' => $this->getRequest()->getQueryParams(),
 				...$this->getRequest()->getQueryParams(),
 				'_name' => 'FrontendRoot',
 			];
@@ -815,7 +815,7 @@ class FrontendController extends AppController {
 		// Only MySQL supports FIND_IN_SET for ordering.
 		if ($dialect instanceof MysqlSchemaDialect) {
 			/** @noinspection PhpUndefinedMethodInspection */
-			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+			$query->orderByAsc($query->expr($query->func()->FIND_IN_SET([
 				'UrlHistory.url' => 'identifier',
 				implode(',', $urls),
 			])), true);

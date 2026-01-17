@@ -153,7 +153,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		 *
 		 * @noinspection GrazieInspection
 		 */
-		$this->permissionCollection = new PermissionCollection($authorizationService, array_merge(...array_column($usergroups, 'usergroup_permissions')));
+		$this->permissionCollection = new PermissionCollection($authorizationService, array_merge(...array_column($usergroups, 'usergroupPermissions')));
 
 		foreach (['read', 'create', 'update', 'delete'] as $identifier) {
 			$this->permissionCollection->add(Permission::createFromArray([
