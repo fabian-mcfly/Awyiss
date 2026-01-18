@@ -610,6 +610,7 @@ class AuditBehavior extends Behavior {
 		if (
 			!$association ||
 			(
+				!$association instanceof BelongsToMany &&
 				$association->getCascadeCallbacks() &&
 				$association->hasBehavior('Audit') &&
 				$association->getBehavior('Audit')->getConfig('enabled')

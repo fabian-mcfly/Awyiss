@@ -166,7 +166,7 @@
 
 		{% if isAttribute %}
 			{% set inputName = 'attributes[_translations][' ~ language.shortcode ~ '][' ~ inputName ~']' %}
-			{% endif %}
+		{% endif %}
 	{% endif %}
 
 	{%- set isHtml = false %}

@@ -134,7 +134,7 @@ class AuditController extends Controller {
 			'scope' => $realScope,
 		]);
 
-		$this->addPivotTableAudits($audits, $table, $entity);
+		$this->addPivotTableAudits($audits, $table, $entity, $associations);
 
 		// Check audits for changes in the associations and load the associated entities
 		$this->loadOldAssociationEntities($entity, $audits, $associations);
@@ -431,12 +431,17 @@ class AuditController extends Controller {
 		$oldEntities = [];
 
 		foreach ($associationProperties as $propertyName => $association) {
-			$foreignKeys = array_column($diffData, $propertyName);
-			$foreignKeys = Hash::flatten($foreignKeys);
-			$foreignKeys = array_unique(array_filter($foreignKeys, fn($value) => !empty($value)));
-
 			// Get the current value of the entity
 			$currentValue = $entity->get($propertyName);
+
+			$foreignKeys = array_column($diffData, $propertyName);
+
+			if (!$foreignKeys) {
+				continue;
+			}
+
+			$foreignKeys = Hash::flatten($foreignKeys);
+			$foreignKeys = array_unique(array_filter($foreignKeys, fn($value) => !empty($value)));
 
 			// Remove the current value from the foreign keys
 			if ($currentValue && !$association['association'] instanceof BelongsToMany) {
@@ -463,7 +468,6 @@ class AuditController extends Controller {
 
 			foreach ($associationProperties as $foreignKey => $association) {
 				$id = $oldData[ $foreignKey ] ?? null;
-
 
 				if (is_array($id)) {
 					if (!isset($id['_ids'])) {
@@ -551,9 +555,10 @@ class AuditController extends Controller {
 	 * @param \Cake\Collection\CollectionInterface $audits
 	 * @param \Awyiss\Model\Table $table
 	 * @param \Awyiss\Model\Entity $entity
+	 * @param array $associations
 	 * @return void
 	 */
-	protected function addPivotTableAudits(CollectionInterface &$audits, Table $table, Entity $entity): void {
+	protected function addPivotTableAudits(CollectionInterface &$audits, Table $table, Entity $entity, array $associations): void {
 		$pivotTableAudits = $this->getPivotTableAudits($table, $entity, $audits);
 
 		if ($pivotTableAudits->isEmpty()) {
@@ -561,7 +566,7 @@ class AuditController extends Controller {
 		}
 
 		// Group pivot table audits by transaction ID
-		$groupedPivotAudits = $this->groupPivotAuditsByTransaction($pivotTableAudits, $table);
+		$groupedPivotAudits = $this->groupPivotAuditsByTransaction($pivotTableAudits);
 
 		// Combine grouped audits into single audit entries per transaction
 		$combinedPivotAudits = $this->combinePivotAudits($groupedPivotAudits, $table, $entity);
@@ -570,7 +575,7 @@ class AuditController extends Controller {
 		$audits = $audits->append($combinedPivotAudits)->sortBy('createdOn', SORT_ASC)->toList();
 
 		// Build complete state for each pivot audit including cumulative association changes
-		$audits = $this->buildPivotAuditStates($audits, $table, $entity);
+		$audits = $this->buildPivotAuditStates($audits, $table, $entity, $associations);
 
 		$audits = new Collection($audits)->sortBy('createdOn')->compile();
 	}
@@ -609,10 +614,9 @@ class AuditController extends Controller {
 	 * Group pivot table audits by transaction ID
 	 *
 	 * @param \Cake\Collection\CollectionInterface $pivotTableAudits
-	 * @param \Awyiss\Model\Table $table
 	 * @return array
 	 */
-	protected function groupPivotAuditsByTransaction(CollectionInterface $pivotTableAudits, Table $table): array {
+	protected function groupPivotAuditsByTransaction(CollectionInterface $pivotTableAudits): array {
 		$grouped = [];
 
 		foreach ($pivotTableAudits as $audit) {
@@ -650,6 +654,7 @@ class AuditController extends Controller {
 			foreach ($audits as $audit) {
 				// Skip create audits that happened at the same time as entity creation
 				// as they don't represent association changes, and also skip updates for now
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				if (
 					(
 						$audit->type === 'c' &&
@@ -799,9 +804,10 @@ class AuditController extends Controller {
 	 * @param array $audits
 	 * @param \Awyiss\Model\Table $table
 	 * @param \Awyiss\Model\Entity $entity
+	 * @param array $associations
 	 * @return array
 	 */
-	protected function buildPivotAuditStates(array $audits, Table $table, Entity $entity): array {
+	protected function buildPivotAuditStates(array $audits, Table $table, Entity $entity, array $associations): array {
 		// Find initial pivot audits before first entity audit
 		$initialPivotAudits = [];
 		$firstEntityAuditIndex = null;
@@ -825,10 +831,10 @@ class AuditController extends Controller {
 				$referenceData = $audits[ $firstEntityAuditIndex ]->dataNew ?? [];
 			}
 			else {
-				$referenceData = $entity->extract(null, false, false);
+				$referenceData = $this->buildReferenceDataFromEntity($entity, $table);
 			}
 
-			$this->processInitialPivotAuditsReverse($initialPivotAudits, $referenceData);
+			$this->processInitialPivotAuditsReverse($initialPivotAudits, $referenceData, $associations);
 		}
 
 		// Process remaining audits forward
@@ -839,13 +845,109 @@ class AuditController extends Controller {
 
 
 	/**
+	 * Build reference data from entity including media assignments, publication data and translations
+	 *
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\ORM\Table $table
+	 * @return array
+	 */
+	protected function buildReferenceDataFromEntity(Entity $entity, Table $table): array {
+		$referenceData = $entity->extract(null, false, false);
+
+		// Add media assignments
+		if ($entity->get('mediaAssignments')) {
+			$mediaData = [];
+			$blocklistedFields = [
+				'id',
+				'foreignKey',
+				'deleted',
+				'createdBy',
+				'createdOn',
+				'changedBy',
+				'changedOn',
+				'deletedBy',
+				'deletedOn',
+				'media',
+				'mediaFolder',
+			];
+
+			foreach ($entity->get('mediaAssignments') as $elementIdentifier => $elementAssignments) {
+				foreach ($elementAssignments as $selectorIdentifier => $selectorAssignments) {
+					if ($selectorAssignments instanceof Entity) {
+						$values = $selectorAssignments->extract(null, false, false);
+						$values = array_diff_key($values, array_flip($blocklistedFields));
+						ksort($values);
+						$mediaData[ $elementIdentifier ][ $selectorIdentifier ] = $values;
+						continue;
+					}
+
+					foreach ($selectorAssignments as $key => $mediaAssignment) {
+						$values = $mediaAssignment->extract(null, false, false);
+						$values = array_diff_key($values, array_flip($blocklistedFields));
+						ksort($values);
+						$mediaData[ $elementIdentifier ][ $selectorIdentifier ][ $key ] = $values;
+					}
+				}
+
+				if (is_array($mediaData[ $elementIdentifier ] ?? null)) {
+					ksort($mediaData[ $elementIdentifier ]);
+				}
+			}
+
+			ksort($mediaData);
+			$referenceData['mediaAssignments'] = $mediaData;
+		}
+
+		// Add publication data
+		if ($entity->get('_publicationData')) {
+			$publicationData = ['start' => ['dateTime' => null], 'end' => ['dateTime' => null]];
+
+			foreach ($entity->get('_publicationData') ?? [] as $data) {
+				$date = $data->has('dateTime') ? $data->get('dateTime') : null;
+
+				if ($date) {
+					$date = $date->format('Y-m-d H:i:s');
+				}
+
+				$publicationData[ $data->type->value ] = [
+					'dateTime' => $date ?: null,
+				];
+			}
+
+			$referenceData['_publicationData'] = $publicationData;
+		}
+
+		// Add translations
+		if ($entity->get('_translations')) {
+			$translateFields = null;
+			if ($table->hasBehavior('Translate')) {
+				$translateFields = $table->getBehavior('Translate')->getConfig('fields');
+			}
+
+			if ($translateFields) {
+				$translations = [];
+
+				foreach (($entity->get('_translations') ?? []) as $languageShortcode => $translatedEntity) {
+					$translations[ $languageShortcode ] = $translatedEntity?->extract($translateFields, false, false) ?? null;
+				}
+
+				$referenceData['_translations'] = $translations;
+			}
+		}
+
+		return $referenceData;
+	}
+
+
+	/**
 	 * Process initial pivot audits in reverse from a future state
 	 *
 	 * @param array $pivotAudits
 	 * @param array $referenceData
+	 * @param array $associations
 	 * @return void
 	 */
-	protected function processInitialPivotAuditsReverse(array $pivotAudits, array $referenceData): void {
+	protected function processInitialPivotAuditsReverse(array $pivotAudits, array $referenceData, array $associations): void {
 		if (empty($pivotAudits)) {
 			return;
 		}
@@ -853,6 +955,11 @@ class AuditController extends Controller {
 		// Normalize reference data to extract IDs from entities
 		$normalizedData = [];
 		foreach ($referenceData as $key => $value) {
+			if (!isset($associations[ $key ])) {
+				$normalizedData[ $key ] = $value;
+				continue;
+			}
+
 			if (!is_array($value)) {
 				$normalizedData[ $key ] = $value;
 				continue;
@@ -930,7 +1037,8 @@ class AuditController extends Controller {
 				continue;
 			}
 
-			$this->processPivotAudit($audit, $lastEntityData, true);
+			$this->processPivotAudit($audit, $lastEntityData);
+
 			// Update lastEntityData to this audit's dataNew for the next pivot audit
 			$lastEntityData = $audit->dataNew;
 		}
