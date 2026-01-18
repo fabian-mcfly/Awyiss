@@ -23,24 +23,24 @@
 {% block permissionOptions %}
 	{% set fieldName = 'permissions[' ~ scope ~ '][' ~ identifier ~ ']' %}
 	{% set label = 'Permissions-' ~ scope|camelize ~ '-' ~ identifier|camelize %}
-	{% set value = entity.usergroup_permissions[ scope ][ identifier ].access ?? null %}
+	{% set value = entity.usergroupPermissions[ scope ][ identifier ].access ?? null %}
 	{% set options = permission.getOptions %}
 
 	<span class="Options SimpleRadio">
 		{% block optionDenied %}
-			<input type="radio" name="{{ fieldName }}" value="{{ options.denied.value }}"
+			<input type="radio" name="{{ fieldName ~ '[access]' }}" value="{{ options.denied.value }}"
 				{{ value is same as (options.denied) ? 'checked="checked"' : '' }}
 				id="{{ label ~ '-' ~ options.denied.value }}">
 		{% endblock %}
 
 		{% block optionIndifferent %}
-			<input type="radio" name="{{ fieldName }}" value="{{ options.indifferent }}"
+			<input type="radio" name="{{ fieldName ~ '[access]' }}" value="{{ options.indifferent }}"
 				{{ value is same as (options.indifferent) ? 'checked="checked"' : '' }}
 				id="{{ label }}">
 		{% endblock %}
 
 		{% block optionGranted %}
-			<input type="radio" name="{{ fieldName }}" value="{{ options.granted.value }}"
+			<input type="radio" name="{{ fieldName ~ '[access]' }}" value="{{ options.granted.value }}"
 				{{ value is same as (options.granted) ? 'checked="checked"' : '' }}
 				id="{{ label ~ '-' ~ options.granted.value }}">
 		{% endblock %}
@@ -69,4 +69,8 @@
 			</span>
 		{% endblock %}
 	</span>
+
+	{% if entity.usergroupPermissions[ scope ][ identifier ] is defined %}
+		{{ FormHelper.hidden(fieldName ~ '[id]', { value: entity.usergroupPermissions[ scope ][ identifier ].id }) }}
+	{% endif %}
 {% endblock %}

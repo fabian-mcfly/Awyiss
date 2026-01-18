@@ -187,6 +187,7 @@ class UsergroupsController extends Controller {
 
 		$requestData = $this->request->getData();
 		$requestData['usergroup_permissions'] = $this->reformatPermissionsData($requestData);
+		unset($requestData['permissions']);
 
 		$associated[] = 'UsergroupPermissions';
 		$usergroup->setAccess('usergroupPermissions', true);
@@ -310,16 +311,22 @@ class UsergroupsController extends Controller {
 				$identifier = $permission->getConfig('identifier');
 				$identifier = Inflector::underscore($identifier);
 
-				$access = Hash::get($data, ['permissions', $scope, $identifier]);
-				$access = $permission->harmonizeOptionValue($access);
+				$accessSettings = Hash::get($data, ['permissions', $scope, $identifier]);
+
+				if (!$accessSettings) {
+					continue;
+				}
+
+				$access = $permission->harmonizeOptionValue($accessSettings['access']);
 
 				if (is_null($access)) {
 					continue;
 				}
 
-				$settings = Hash::get($data, ['permission_settings', $scope, $identifier]);
+				$settings = $accessSettings['settings'] ?? null;
 
 				$permissions[] = [
+					'id' => $accessSettings['id'] ?? null,
 					'scope' => $scope,
 					'identifier' => $permission->getConfig('identifier'),
 					'access' => $access->value,
@@ -366,6 +373,7 @@ class UsergroupsController extends Controller {
 
 			$currentPermissions[ $usergroupPermission->scope ][ $usergroupPermission->identifier ] = (object)[
 				'access' => $usergroupPermission->access,
+				'id' => $usergroupPermission->id,
 				'settings' => $usergroupPermission->settings,
 			];
 		}
