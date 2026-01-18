@@ -83,3 +83,5 @@ msgstr "Available for all groups"
 msgid "access_type_specific_groups"
 msgstr "Only visible for specific groups"
 
+msgid "customers"
+msgstr "Customers"

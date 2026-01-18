@@ -91,3 +91,6 @@ msgstr "Contents"
 
 msgid "permission_analyze"
 msgstr "Analysis"
+
+msgid "users"
+msgstr "Users"
