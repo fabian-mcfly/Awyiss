@@ -154,6 +154,14 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
+	protected function isModified(string $field, mixed $value): bool {
+		return parent::isModified(static::mapField($field), $value);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function getOriginal(string $field, bool $allowFallback = false): mixed {
 		return parent::getOriginal(static::mapField($field), $allowFallback);
 	}
