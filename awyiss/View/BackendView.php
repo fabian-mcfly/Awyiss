@@ -44,7 +44,9 @@ class BackendView extends AppView {
 
 		$this->addHelper('Audit');
 
-		$this->addHelper('Authentication.Identity');
+		$this->addHelper('Authentication.Identity', [
+			'identityAttribute' => Awyiss::REALM_BACKEND . 'Identity',
+		]);
 
 		$this->addHelper('Authorization');
 
