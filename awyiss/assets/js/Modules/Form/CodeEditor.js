@@ -45,7 +45,8 @@ export default class CodeEditor {
 			language: 'css',
 			lineNumbers: true,
 			maxLines: 20,
-			minLines: 10,
+			minLines: 5,
+			readonly: element.dataset.readonly === "1" || element.dataset.readonly === "true",
 		});
 
 		let content = element.value.trim();
