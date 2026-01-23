@@ -265,8 +265,13 @@ class AwyissExtension extends AbstractExtension {
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
 
-			new TwigFunction('naturalSort', function (array $data, int|string|null $key = null): array {
-				Arrays::naturalSort($data, $key);
+			new TwigFunction('naturalSort', function (array $data, int|string|true|null $key = null): array {
+				$sortByKey = $key === true;
+				if ($sortByKey === true) {
+					$key = null;
+				}
+
+				Arrays::naturalSort($data, $key, $sortByKey);
 
 				return $data;
 			}),
