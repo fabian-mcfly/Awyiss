@@ -2367,6 +2367,7 @@ class AuditBehaviorTest extends TestCase {
 						'fieldset' => '',
 						'required' => false,
 						'systemOrder' => 0,
+						'id' => 345,
 					],
 					[
 						'identifier' => 'title',
@@ -2375,6 +2376,7 @@ class AuditBehaviorTest extends TestCase {
 						'fieldset' => '',
 						'required' => false,
 						'systemOrder' => 0,
+						'id' => 346,
 					],
 				],
 			],
@@ -2387,6 +2389,7 @@ class AuditBehaviorTest extends TestCase {
 						'fieldset' => '',
 						'required' => false,
 						'systemOrder' => 0,
+						'id' => 345,
 					],
 					[
 						'identifier' => 'title',
@@ -2395,6 +2398,7 @@ class AuditBehaviorTest extends TestCase {
 						'fieldset' => '',
 						'required' => false,
 						'systemOrder' => 0,
+						'id' => 346,
 					],
 				],
 			],
@@ -2542,6 +2546,7 @@ class AuditBehaviorTest extends TestCase {
 						'fieldset' => '',
 						'required' => false,
 						'systemOrder' => 0,
+						'id' => 345,
 					],
 					[
 						'identifier' => 'title',
@@ -2550,6 +2555,7 @@ class AuditBehaviorTest extends TestCase {
 						'fieldset' => '',
 						'required' => false,
 						'systemOrder' => 0,
+						'id' => 346,
 					],
 				],
 			],
@@ -2610,6 +2616,7 @@ class AuditBehaviorTest extends TestCase {
 			'old' => [
 				'contentTemplateElements' => [
 					[
+						'id' => 19,
 						'identifier' => 'active',
 						'title' => null,
 						'fieldset' => 'presentation',
@@ -2618,6 +2625,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 1,
 					],
 					[
+						'id' => 100,
 						'identifier' => 'active',
 						'title' => null,
 						'fieldset' => 'presentation',
@@ -2626,6 +2634,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 1,
 					],
 					[
+						'id' => 102,
 						'identifier' => 'form_id',
 						'title' => null,
 						'fieldset' => 'content',
@@ -2634,6 +2643,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 1,
 					],
 					[
+						'id' => 20,
 						'identifier' => 'content_template_id',
 						'title' => null,
 						'fieldset' => 'presentation',
@@ -2642,6 +2652,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 2,
 					],
 					[
+						'id' => 101,
 						'identifier' => 'attributes.background_color',
 						'title' => null,
 						'fieldset' => 'presentation',
@@ -2650,6 +2661,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 2,
 					],
 					[
+						'id' => 103,
 						'identifier' => 'survey_id',
 						'title' => null,
 						'fieldset' => 'content',
@@ -2658,6 +2670,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 2,
 					],
 					[
+						'id' => 21,
 						'identifier' => 'language_shortcode',
 						'title' => null,
 						'fieldset' => 'conditions',
@@ -2666,6 +2679,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 3,
 					],
 					[
+						'id' => 22,
 						'identifier' => 'page_id',
 						'title' => null,
 						'fieldset' => 'conditions',
@@ -2674,6 +2688,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 4,
 					],
 					[
+						'id' => 23,
 						'identifier' => 'content_area_id',
 						'title' => null,
 						'fieldset' => 'conditions',
@@ -2682,6 +2697,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 5,
 					],
 					[
+						'id' => 24,
 						'identifier' => 'system_order',
 						'title' => null,
 						'fieldset' => 'conditions',
@@ -2690,6 +2706,7 @@ class AuditBehaviorTest extends TestCase {
 						'systemOrder' => 6,
 					],
 					[
+						'id' => 25,
 						'identifier' => 'css_class',
 						'title' => null,
 						'fieldset' => 'presentation',
@@ -2704,6 +2721,7 @@ class AuditBehaviorTest extends TestCase {
 					[
 						'identifier' => 'active',
 						'columnSpan' => '12/12',
+						'id' => 19,
 						'title' => null,
 						'fieldset' => 'presentation',
 						'required' => false,
@@ -2712,6 +2730,7 @@ class AuditBehaviorTest extends TestCase {
 					[
 						'identifier' => 'title',
 						'columnSpan' => '6/12',
+						'id' => 100,
 						'title' => null,
 						'fieldset' => 'presentation',
 						'required' => false,

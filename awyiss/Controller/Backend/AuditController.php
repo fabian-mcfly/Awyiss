@@ -17,8 +17,10 @@ use Awyiss\Model\Entity\Audit;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Entity\MediaElement;
+use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Association\BelongsToMany;
+use Awyiss\ORM\Association\HasMany;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Arrays;
 use Awyiss\Utility\Inflector;
@@ -177,6 +179,13 @@ class AuditController extends Controller {
 			$translatableAttributes = array_keys(array_filter($translatableAttributes, fn(Attribute $attribute) => $attribute->translatable));
 		}
 
+		$associations = array_map(fn (Association $association) => [
+			'association' => $association,
+			'name' => $association->getName(),
+			'property' => $entityClass::mapField($association->getProperty()),
+			'type' => $association->type(),
+		], $associations);
+
 		$this->set([
 			'entity' => $entity,
 			'audits' => $audits->compile(),
@@ -186,12 +195,7 @@ class AuditController extends Controller {
 			'attributes' => $attributes,
 			'attributeOptionsCollection' => $attributeOptions ?? null,
 			'attributesSchema' => $table->hasAttributes() ? $table->getAttributesTable()->getSchema() : null,
-			'associations' => array_map(fn (Association $association) => [
-				'association' => $association,
-				'name' => $association->getName(),
-				'property' => $entityClass::mapField($association->getProperty()),
-				'type' => $association->type(),
-			], $associations),
+			'associations' => $associations,
 			'media' => $media->toArray(),
 			'mediaElements' => $mediaElements,
 			'isAjax' => $this->request->is('ajax'),
@@ -200,6 +204,10 @@ class AuditController extends Controller {
 			'languages' => $languages,
 			'translatableFields' => $translatableFields,
 			'translatableAttributes' => $translatableAttributes,
+			'datatables' => $this->fetchTable('Datatables')->findAllAndCache()->indexBy('identifier')->toArray(),
+			'pageRoles' => $this->fetchTable('PageRoles')->findAllAndCache()->indexBy(function (PageRole $pageRole) {
+				return Inflector::pluralize($pageRole->identifier);
+			})->toArray(),
 		]);
 
 		if ($this->request->is('ajax')) {
@@ -349,6 +357,16 @@ class AuditController extends Controller {
 			if ($association instanceof BelongsToMany) {
 				$foreignKey = $entityClass::mapField($association->getProperty());
 			}
+			elseif (
+				$association instanceof HasMany &&
+				$association->getCascadeCallbacks() &&
+				$association->getDependent() &&
+				!in_array($association->getTarget()->getTable(), [
+					'media_assignments',
+				])
+			) {
+				$foreignKey = $entityClass::mapField($association->getProperty());
+			}
 			else {
 				$foreignKey = $entityClass::mapFields((array)$association->getForeignKey())[0];
 			}
@@ -453,6 +471,12 @@ class AuditController extends Controller {
 				continue;
 			}
 
+			$foreignKeys = Hash::merge(
+				Hash::extract($foreignKeys, '{n}.{n}.id'),
+				Hash::extract($foreignKeys, '{n}._ids'),
+			);
+
+
 			$foreignKeys = Hash::flatten($foreignKeys);
 			$foreignKeys = array_unique(array_filter($foreignKeys, fn($value) => !empty($value)));
 
@@ -465,8 +489,13 @@ class AuditController extends Controller {
 				continue;
 			}
 
+			$finder = 'all';
+			if ($associations[ $propertyName ]->getTarget()->hasBehavior('SoftDelete')) {
+				$finder = 'withDeleted';
+			}
+
 			/** @uses \Awyiss\Model\Behavior\SoftDeleteBehavior::findWithDeleted() */
-			$oldEntities[ $propertyName ] = $associations[ $propertyName ]->find('withDeleted', skipPageRoleCheck: true)->where([
+			$oldEntities[ $propertyName ] = $associations[ $propertyName ]->find($finder, skipPageRoleCheck: true)->where([
 				$associations[ $propertyName ]->getBindingKey() . ' IN' => $foreignKeys,
 			])->all()->indexBy('id')->toArray();
 		}
@@ -499,18 +528,17 @@ class AuditController extends Controller {
 			$id = $data[ $foreignKey ] ?? null;
 
 			if (is_array($id)) {
-				if (!isset($id['_ids'])) {
-					// Invalid or currently unsupported data format
-					continue;
-				}
-
-				// If the data is an array, convert it to an array of entities
 				$entitiesArray = [];
-				$ids = $id['_ids'];
-				foreach ($ids as $entityId) {
-					if (isset($oldEntities[ $foreignKey ][ $entityId ])) {
-						$entitiesArray[] = $oldEntities[ $foreignKey ][ $entityId ];
+				if (isset($id['_ids'])) {
+					$ids = $id['_ids'];
+					foreach ($ids as $entityId) {
+						if (isset($oldEntities[ $foreignKey ][ $entityId ])) {
+							$entitiesArray[] = $oldEntities[ $foreignKey ][ $entityId ];
+						}
 					}
+				}
+				else {
+					$entitiesArray = $this->buildEntitiesArrayFromAuditData($id, $foreignKey, $oldEntities, $association);
 				}
 
 				Arrays::naturalSort($entitiesArray, 'label');
@@ -1127,5 +1155,46 @@ class AuditController extends Controller {
 
 		$audit->dataOld = $newDataOld;
 		$audit->dataNew = $newDataNew;
+	}
+
+
+	/**
+	 * Build an array of entities from audit data
+	 *
+	 * If it's a list of entities, build the array using each element's ID,
+	 * and if no entity with that id can be found, create a placeholder entity
+	 * from the source table using the data available in the audit.
+	 *
+	 * @param array $auditData
+	 * @param string $foreignKey
+	 * @param array $oldEntities
+	 * @param array $association
+	 * @return array
+	 */
+	protected function buildEntitiesArrayFromAuditData(array $auditData, string $foreignKey, array $oldEntities, array $association): array {
+		$entitiesArray = [];
+
+		/** @var \Awyiss\Model\Table $targetTable */
+		$targetTable = $this->fetchTable($association['name']);
+
+		foreach ($auditData as $entityData) {
+			if (!is_array($entityData) || !isset($entityData['id'])) {
+				continue;
+			}
+
+			$entityId = $entityData['id'];
+			if (isset($oldEntities[ $foreignKey ][ $entityId ])) {
+				$entity = unserialize(serialize($oldEntities[ $foreignKey ][ $entityId ]));
+				// Make sure the entity has the data at the time of the audit
+				$targetTable->patchEntity($entity, $entityData);
+			}
+			else {
+				$entity = $targetTable->newDefaultEntity($entityData);
+			}
+
+			$entitiesArray[] = $entity;
+		}
+
+		return $entitiesArray;
 	}
 }

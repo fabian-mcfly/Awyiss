@@ -1081,11 +1081,7 @@ class AuditBehavior extends Behavior {
 	 * @return array
 	 */
 	protected function cleanHasManyAssociationData(Entity $entity, string $field, Association|HasMany $association, array $entityData): array {
-		/** @noinspection DuplicatedCode */
-		$keys = (array)$association->getBindingKey();
-		/** @var \Awyiss\Model\Entity $entityClass */
-		$entityClass = $association->getSource()->getEntityClass();
-		$keys = $entityClass::mapFields($keys);
+		$keys = [];
 
 		$foreignKeys = (array)$association->getForeignKey();
 		/** @var \Awyiss\Model\Entity $entityClass */

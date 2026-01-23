@@ -6,6 +6,7 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Routing\Router;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -31,6 +32,10 @@ class UsergroupsTable extends Table {
 	protected array $translate = [
 		'fields' => ['title'],
 	];
+	/**
+	 * @var array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\AbstractGenericPolicy>
+	 */
+	protected static array $authorizationPolicies;
 
 
 	/**
@@ -40,7 +45,7 @@ class UsergroupsTable extends Table {
 		parent::initialize($config);
 
 		$auditBehavior = $this->getBehavior('Audit');
-		$auditBehavior->setConfig('historyFields', ['users']);
+		$auditBehavior->setConfig('historyFields', ['usergroupPermissions', 'users']);
 	}
 
 
@@ -121,5 +126,27 @@ class UsergroupsTable extends Table {
 
 
 		return $rules;
+	}
+
+
+	/**
+	 * Retrieve all available AuthorizationPolicies, found in both the Awyiss and the custom namespace,
+	 * combined with instances of AbstractGenericPolicy for page roles without a specified policy
+	 *
+	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\AbstractGenericPolicy>
+	 */
+	public function getAuthorizationPolicies(): array {
+		if (isset(static::$authorizationPolicies)) {
+			return static::$authorizationPolicies;
+		}
+
+		/** @var \Awyiss\Authorization\AuthorizationService $authorizationService */
+		$authorizationService = Router::getRequest()->getAttribute('authorization');
+		static::$authorizationPolicies = $authorizationService->getPolicies();
+		unset(static::$authorizationPolicies['user_configuration']);
+
+		ksort(static::$authorizationPolicies);
+
+		return static::$authorizationPolicies;
 	}
 }

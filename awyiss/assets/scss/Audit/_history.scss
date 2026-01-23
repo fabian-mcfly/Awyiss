@@ -647,4 +647,39 @@
 			max-height:300px;
 		}
 	}
+
+	li {
+		&:is(
+			.PermissionAccess-Granted,
+			.PermissionAccess-Denied
+		) {
+			padding-left:1.5rem;
+			margin-left:0;
+			position:relative;
+			list-style-type:none;
+
+			&::before {
+				@extend %LineAwesomeIcon;
+
+				content:'\f00c';
+				width:1rem;
+				aspect-ratio:1;
+				background-color:var(--colorSuccess);
+				color:var(--colorBright);
+				line-height:1rem;
+				text-align:center;
+				border-radius:5px;
+				position:absolute;
+				top:calc((var(--lineHeightMain) - 1rem) / 3);
+				left:0;
+			}
+		}
+
+		&.PermissionAccess-Denied {
+			&::before {
+				content:'\f00d';
+				background-color:var(--colorError);
+			}
+		}
+	}
 }

@@ -35,6 +35,14 @@ class UsergroupPermissionsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $audit = [
+		'enabled' => false,
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Usergroups', [
 			'joinType' => 'INNER',

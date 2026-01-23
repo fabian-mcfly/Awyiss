@@ -16,6 +16,8 @@
 @var languages Awyiss\Model\Entity\Language[]
 @var translatableFields array
 @var translatableAttributes array
+@var datatables array
+@var pageRoles array
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -149,6 +151,43 @@
 	{% endif %}
 {% endmacro %}
 
+{% macro formatUsergroupPermissions(entities, settings) %}
+	{#
+	Macro to format usergroup permissions grouped by scope.
+	@var entities array<\Awyiss\Model\Entity>
+	@var settings array
+	#}
+	{%- set entitiesGroupedByScope = {} %}
+	{%- for entity in entities %}
+		{%- set labelData = entity.labelData %}
+		{%- set entityScope = labelData.scope %}
+		{%- if entitiesGroupedByScope[ entityScope ] is not defined %}
+			{%- set entitiesGroupedByScope = entitiesGroupedByScope|merge({ (entityScope): [] }) %}
+		{%- endif %}
+		{%- set entitiesGroupedByScope = entitiesGroupedByScope|merge({ (entityScope): entitiesGroupedByScope[ entityScope ]|merge([entity]) }) %}
+	{%- endfor %}
+
+	{%- set entitiesGroupedByScope = naturalSort(entitiesGroupedByScope, true) %}
+
+	{%- for scopeTitle, groupEntities in entitiesGroupedByScope %}
+		{%- set groupEntities = naturalSort(groupEntities, 'label') %}
+
+		{%- if loop.index > 1 %}
+			<br><hr><br>
+		{%- endif %}
+
+		<strong>{{ scopeTitle }}:</strong>
+		<ul>
+			{%- for entity in groupEntities %}
+				{%- set labelData = entity.labelData %}
+				<li class="PermissionAccess-{{ entity.access.name }}">
+					{{ labelData.identifier }} (ID: {{ entity.id }})
+				</li>
+			{%- endfor %}
+		</ul>
+	{%- endfor %}
+{% endmacro %}
+
 {% macro tableHistoryBodyRow(entity, schema, scope, field, audit, associations, attribute, language, settings) %}
 	{#
 	Macro to render a table row for history data.
@@ -238,17 +277,21 @@
 	{%- set currentValue %}
 		{%- if associations[ field ] is defined %}
 			{%- set associationField = associations[ field ]['property'] %}
-			{%- if associations[ field ].type == 'manyToMany' %}
+			{%- if associations[ field ].type in ['oneToMany', 'manyToMany'] %}
 				{%- if entity.get(associationField) is not empty %}
-					<ul>
-						{%- set associatedEntities = naturalSort(entity.get(associationField), 'label')  %}
-						{%- for associatedEntity in associatedEntities %}
-							<li>
-								{{- associatedEntity.label ?? __('unknown_entity') }}
-								{%- if associatedEntity %} (ID: {{ associatedEntity.id }}){% endif %}
-							</li>
-						{%- endfor %}
-					</ul>
+					{%- if associations[ field ].name == 'UsergroupPermissions' %}
+						{{- _self.formatUsergroupPermissions(entity.get(associationField), settings) }}
+					{%- else %}
+						<ul>
+							{%- set associatedEntities = naturalSort(entity.get(associationField), 'label')  %}
+							{%- for associatedEntity in associatedEntities %}
+								<li>
+									{{- associatedEntity ? associatedEntity.label|raw : __('unknown_entity') }}
+									{%- if associatedEntity %} (ID: {{ associatedEntity.id }}){% endif %}
+								</li>
+							{%- endfor %}
+						</ul>
+					{%- endif %}
 				{%- endif %}
 			{%- else %}
 				{{- entity.get(associationField).label }}
@@ -347,16 +390,20 @@
 
 	{%- if associations[ field ] is defined %}
 		{%- set associationField = associations[ field ]['property'] %}
-		{%- if associations[ field ].type == 'manyToMany' %}
+		{%- if associations[ field ].type in ['oneToMany', 'manyToMany'] %}
 			{%- if oldData[ field ] is not empty %}
-				<ul>
-					{%- for associatedEntity in oldData[ field ] %}
-						<li>
-							{{- associatedEntity.label ?? __('unknown_entity') }}
-							{%- if associatedEntity %} (ID: {{ associatedEntity.id }}){% endif %}
-						</li>
-					{%- endfor %}
-				</ul>
+				{%- if associations[ field ].name == 'UsergroupPermissions' %}
+					{{ _self.formatUsergroupPermissions(oldData[ field ], settings) }}
+				{%- else %}
+					<ul>
+						{%- for associatedEntity in oldData[ field ] %}
+							<li>
+								{{- associatedEntity ? associatedEntity.label|raw : __('unknown_entity') }}
+								{%- if associatedEntity %} (ID: {{ associatedEntity.id }}){% endif %}
+							</li>
+						{%- endfor %}
+					</ul>
+				{%- endif %}
 			{%- endif %}
 		{%- elseif oldData[ field ] is not empty and oldDiffersFromCurrent == false %}
 			{{- entity.get(associationField).label }}

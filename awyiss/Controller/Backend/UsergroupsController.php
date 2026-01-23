@@ -240,31 +240,6 @@ class UsergroupsController extends Controller {
 
 
 	/**
-	 * Retrieve all available AuthorizationPolicies, found in both the Awyiss and the custom namespace,
-	 * combined with instances of AbstractGenericPolicy for page roles without a specified policy
-	 *
-	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\AbstractGenericPolicy>
-	 */
-	protected function getAuthorizationPolicies(): array {
-		static $policies;
-
-		if (isset($policies)) {
-			return $policies;
-		}
-
-		/** @var \Awyiss\Authorization\AuthorizationService $authorizationService */
-		$authorizationService = $this->getRequest()->getAttribute('authorization');
-		$policies = $authorizationService->getPolicies();
-		unset($policies['user_configuration']);
-
-		ksort($policies);
-
-
-		return $policies;
-	}
-
-
-	/**
 	 * Traverses all AuthorizationPolicies and sets an array-element if policy-related settings are present in $data
 	 *
 	 * The result is an array of arrays, each compatible with \Awyiss\Model\Entity\UsergroupPermission::class
@@ -299,7 +274,7 @@ class UsergroupsController extends Controller {
 	protected function reformatPermissionsData(array $data = []): array {
 		$permissions = [];
 
-		$authorizationPolicies = $this->getAuthorizationPolicies();
+		$authorizationPolicies = $this->Usergroups->getAuthorizationPolicies();
 
 		/** @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $authorizationPolicy */
 		foreach ($authorizationPolicies as $authorizationPolicy) {
@@ -408,17 +383,17 @@ class UsergroupsController extends Controller {
 		/**
 		 * @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $policyClass
 		 */
-		foreach ($this->getAuthorizationPolicies() as $policyClass) {
+		foreach ($this->Usergroups->getAuthorizationPolicies() as $policyClass) {
 			$scope = is_string($policyClass) ? $policyClass::getScope() : $policyClass->getScope();
 
-			if (isset($pageRoles[ $scope ])) {
-				$title = $pageRoles[ $scope ]->label;
-			}
-			elseif (isset($datatables[ $scope ])) {
-				$title = $datatables[ $scope ]->label;
-			}
-			else {
-				$title = __d($scope, 'headline_overview');
+			$title = __d($scope, 'headline_overview');
+			if (str_contains($title, '::headline_overview')) {
+				if (isset($pageRoles[ $scope ])) {
+					$title = $pageRoles[ $scope ]->label;
+				}
+				elseif (isset($datatables[ $scope ])) {
+					$title = $datatables[ $scope ]->label;
+				}
 			}
 
 			$authorizationPolicies[] = [
