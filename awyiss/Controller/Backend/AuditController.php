@@ -374,7 +374,12 @@ class AuditController extends Controller {
 			Hash::extract($entity->mediaAssignments, '{s}.{s}.mediaId'),
 			Hash::extract($entity->mediaAssignments, '{s}.{s}.{n}.mediaId')
 		);
-		$mediaAssignments = Hash::extract($audits->toList(), '{n}.dataOld.mediaAssignments');
+
+		$audits = $audits->toList();
+		$mediaAssignments = Hash::merge(
+			Hash::extract($audits, '{n}.dataOld.mediaAssignments'),
+			Hash::extract($audits, '{n}.dataNew.mediaAssignments'),
+		);
 
 		$mediaIds = array_merge($mediaIds, Hash::extract($mediaAssignments, '{n}.{s}.{*}.mediaId'), Hash::extract($mediaAssignments, '{n}.{s}.{s}.{n}.mediaId'));
 		$mediaIds = array_unique($mediaIds);
@@ -397,7 +402,11 @@ class AuditController extends Controller {
 			'MediaElementSelectors.MediaSelectors',
 		])->all()->indexBy('identifier');
 
-		$oldMediaElements = Hash::extract($audits->toList(), '{n}.dataOld.mediaAssignments');
+		$audits = $audits->toList();
+		$oldMediaElements = Hash::merge(
+			Hash::extract($audits, '{n}.dataOld.mediaAssignments'),
+			Hash::extract($audits, '{n}.dataNew.mediaAssignments')
+		);
 		$oldMediaElements = array_unique(array_merge(...array_map('array_keys', $oldMediaElements)));
 
 		$currentMediaElements = array_keys($entity->mediaAssignments ?? []);
@@ -426,7 +435,11 @@ class AuditController extends Controller {
 			'property' => $entityClass::mapField($association->getProperty()),
 		], $associations);
 
-		$diffData = Hash::extract($audits->toList(), '{n}.dataOld');
+		$audits = $audits->toList();
+		$diffData =	Hash::merge(
+			Hash::extract($audits, '{n}.dataOld'),
+			Hash::extract($audits, '{n}.dataNew')
+		);
 
 		$oldEntities = [];
 
@@ -464,41 +477,56 @@ class AuditController extends Controller {
 
 		/** @var \Awyiss\Model\Entity\Audit $audit */
 		foreach ($audits as $audit) {
-			$oldData = $audit->dataOld;
+			$this->populateAssociationEntities($audit, $associationProperties, $oldEntities, 'dataOld', 'old');
+			$this->populateAssociationEntities($audit, $associationProperties, $oldEntities, 'dataNew', 'new');
+		}
+	}
 
-			foreach ($associationProperties as $foreignKey => $association) {
-				$id = $oldData[ $foreignKey ] ?? null;
+	/**
+	 * Populate association entities in audit data
+	 *
+	 * @param \Awyiss\Model\Entity\Audit $audit
+	 * @param array $associationProperties
+	 * @param array $oldEntities
+	 * @param string $dataField The field name ('dataOld' or 'dataNew')
+	 * @param string $diffField The diff field name ('old' or 'new')
+	 * @return void
+	 */
+	protected function populateAssociationEntities(Audit $audit, array $associationProperties, array $oldEntities, string $dataField, string $diffField): void {
+		$data = $audit->{ $dataField };
 
-				if (is_array($id)) {
-					if (!isset($id['_ids'])) {
-						// Invalid or currently unsupported data format
-						continue;
-					}
+		foreach ($associationProperties as $foreignKey => $association) {
+			$id = $data[ $foreignKey ] ?? null;
 
-					// If the old data is an array, convert it to an array of old entities
-					$oldEntitiesArray = [];
-					$oldIds = $id['_ids'];
-					foreach ($oldIds as $oldId) {
-						if (isset($oldEntities[ $foreignKey ][ $oldId ])) {
-							$oldEntitiesArray[] = $oldEntities[ $foreignKey ][ $oldId ];
-						}
-					}
-
-					Arrays::naturalSort($oldEntitiesArray, 'label');
-
-					$audit->dataOld[ $association['property'] ] = $oldEntitiesArray;
-					$audit->diff['old'][ $association['property'] ] = $oldEntitiesArray;
-
+			if (is_array($id)) {
+				if (!isset($id['_ids'])) {
+					// Invalid or currently unsupported data format
 					continue;
 				}
 
-				if (!isset($oldEntities[ $foreignKey ][ $id ])) {
-					continue;
+				// If the data is an array, convert it to an array of entities
+				$entitiesArray = [];
+				$ids = $id['_ids'];
+				foreach ($ids as $entityId) {
+					if (isset($oldEntities[ $foreignKey ][ $entityId ])) {
+						$entitiesArray[] = $oldEntities[ $foreignKey ][ $entityId ];
+					}
 				}
 
-				$audit->dataOld[ $association['property'] ] = $oldEntities[ $foreignKey ][ $id ];
-				$audit->diff['old'][ $association['property'] ] = $oldEntities[ $foreignKey ][ $id ];
+				Arrays::naturalSort($entitiesArray, 'label');
+
+				$audit->{$dataField}[ $association['property'] ] = $entitiesArray;
+				$audit->diff[ $diffField ][ $association['property'] ] = $entitiesArray;
+
+				continue;
 			}
+
+			if (!isset($oldEntities[ $foreignKey ][ $id ])) {
+				continue;
+			}
+
+			$audit->{$dataField}[ $association['property'] ] = $oldEntities[ $foreignKey ][ $id ];
+			$audit->diff[ $diffField ][ $association['property'] ] = $oldEntities[ $foreignKey ][ $id ];
 		}
 	}
 
@@ -518,6 +546,11 @@ class AuditController extends Controller {
 			$audit->dataOld['column'] = [
 				'width' => $columnWidths[ $audit->dataOld['columnWidth'] ] ?? null,
 				'indent' => $columnIndents[ $audit->dataOld['columnIndent'] ] ?? null,
+			];
+
+			$audit->dataNew['column'] = [
+				'width' => $columnWidths[ $audit->dataNew['columnWidth'] ] ?? null,
+				'indent' => $columnIndents[ $audit->dataNew['columnIndent'] ] ?? null,
 			];
 
 			return $audit;
@@ -705,6 +738,7 @@ class AuditController extends Controller {
 			$firstProperty = array_key_first($allChanges);
 			$combinedAudit = clone $allChanges[ $firstProperty ]['audit'];
 			$combinedAudit->dataOld = [];
+			$combinedAudit->dataNew = [];
 			$combinedAudit->type = 'u';
 
 			foreach ($allChanges as $changes) {
@@ -848,7 +882,7 @@ class AuditController extends Controller {
 	 * Build reference data from entity including media assignments, publication data and translations
 	 *
 	 * @param \Awyiss\Model\Entity $entity
-	 * @param \Cake\ORM\Table $table
+	 * @param \Awyiss\Model\Table $table
 	 * @return array
 	 */
 	protected function buildReferenceDataFromEntity(Entity $entity, Table $table): array {

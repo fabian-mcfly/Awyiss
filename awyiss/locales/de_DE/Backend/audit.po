@@ -44,6 +44,9 @@ msgstr "Feld"
 msgid "old_value"
 msgstr "Alter Wert"
 
+msgid "new_value"
+msgstr "Neuer Wert"
+
 msgid "current_value"
 msgstr "Aktueller Wert"
 
@@ -61,3 +64,9 @@ msgstr "Der Eintrag wurde nicht gefunden"
 
 msgid "no_audit_entries"
 msgstr "Es sind keine Audit-Einträge vorhanden."
+
+msgid "show_columns"
+msgstr "Spalten anzeigen"
+
+msgid "reference_column"
+msgstr "Referenz-Spalte"

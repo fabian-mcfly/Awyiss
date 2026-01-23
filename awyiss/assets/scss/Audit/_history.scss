@@ -24,6 +24,191 @@
 			}
 		}
 	}
+
+	&[data-show-old-value="0"] {
+		.AuditHistory-Table {
+			.TableHeader-OldValue {
+				display:none;
+			}
+
+			.TableCell-OldValue {
+				display:none;
+			}
+		}
+	}
+
+	&[data-show-new-value="0"] {
+		.AuditHistory-Table {
+			.TableHeader-NewValue {
+				display:none;
+			}
+
+
+			.TableCell-NewValue {
+				display:none;
+			}
+		}
+	}
+
+	&[data-show-current-value="0"] {
+		.AuditHistory-Table {
+			.TableHeader-CurrentValue {
+				display:none;
+			}
+
+			.TableCell-CurrentValue {
+				display:none;
+			}
+		}
+	}
+
+	&.ReferenceColumn-Old {
+		&[data-show-new-value="1"] {
+			tr {
+				&.OldValueDiffersFromNew {
+					&:hover {
+						td:is(
+						.TableCell-Field,
+						.TableCell-NewValue
+					) {
+							background-color:var(--oldValueDiffersHover);
+						}
+					}
+
+					td:is(
+					.TableCell-Field,
+					.TableCell-NewValue
+				) {
+						background-color:var(--oldValueDiffers);
+					}
+				}
+			}
+		}
+
+		&[data-show-current-value="1"] {
+			tr {
+				&.OldValueDiffersFromCurrent {
+					&:hover {
+						td:is(
+						.TableCell-Field,
+						.TableCell-CurrentValue
+					) {
+							background-color:var(--oldValueDiffersHover);
+						}
+					}
+
+					td:is(
+					.TableCell-Field,
+					.TableCell-CurrentValue
+				) {
+						background-color:var(--oldValueDiffers);
+					}
+				}
+			}
+		}
+	}
+
+	&.ReferenceColumn-New {
+		&[data-show-old-value="0"] {
+			tr {
+				&.OldValueDiffersFromNew {
+					&:hover {
+						td:is(
+						.TableCell-Field,
+						.TableCell-OldValue
+					) {
+							background-color:var(--oldValueDiffersHover);
+						}
+					}
+
+					td:is(
+					.TableCell-Field,
+					.TableCell-OldValue
+				) {
+						background-color:var(--oldValueDiffers);
+					}
+				}
+			}
+		}
+
+		&[data-show-current-value="1"] {
+			tr {
+				&.NewValueDiffersFromCurrent {
+					&:hover {
+						td:is(
+						.TableCell-Field,
+						.TableCell-CurrentValue
+					) {
+							background-color:var(--oldValueDiffersHover);
+						}
+					}
+
+					td:is(
+					.TableCell-Field,
+					.TableCell-CurrentValue
+				) {
+						background-color:var(--oldValueDiffers);
+					}
+				}
+			}
+		}
+	}
+
+	&.ReferenceColumn-Current {
+		&[data-show-old-value="1"] {
+			tr {
+				&.OldValueDiffersFromCurrent {
+					&:hover {
+						td:is(
+						.TableCell-Field,
+						.TableCell-OldValue
+					) {
+							background-color:var(--oldValueDiffersHover);
+						}
+					}
+
+					td:is(
+					.TableCell-Field,
+					.TableCell-OldValue
+				) {
+						background-color:var(--oldValueDiffers);
+					}
+				}
+			}
+		}
+
+		&[data-show-new-value="1"] {
+			tr {
+				&.NewValueDiffersFromCurrent {
+					&:hover {
+						td:is(
+						.TableCell-Field,
+						.TableCell-NewValue
+					) {
+							background-color:var(--oldValueDiffersHover);
+						}
+					}
+
+					td:is(
+					.TableCell-Field,
+					.TableCell-NewValue
+				) {
+						background-color:var(--oldValueDiffers);
+					}
+				}
+			}
+		}
+	}
+
+	tr {
+		--oldValueDiffers:color-mix(in srgb, var(--colorWarning), #FFFFFF 75%);
+		--oldValueDiffersHover:color-mix(in srgb, var(--colorWarning), #FFFFFF 25%);
+
+		html.🌚 & {
+			--oldValueDiffers:color-mix(in srgb, var(--colorWarning), var(--colorBackgroundContentDarkMode) 75%);
+			--oldValueDiffersHover:color-mix(in srgb, var(--colorWarning), var(--colorBackgroundContentDarkMode) 75%);
+		}
+	}
 }
 
 
@@ -231,6 +416,44 @@
 	}
 }
 
+.AuditHistory-ColumnSelection {
+	width:90dvw;
+	max-width:300px;
+	margin:auto;
+	padding:2px 10px 10px;
+	border:0 none;
+	border-radius:0 0 5px 5px;
+	background-color:inherit;
+	color:var(--colorBright);
+	font-size:var(--fontSizeMain);
+	line-height:var(--lineHeightMain);
+	position:absolute;
+	top:100%;
+	right:0;
+	left:0;
+	transition:box-shadow .3s ease-in-out;
+
+	&[open] {
+		box-shadow:0 5px 5px rgba(0, 0, 0, .25);
+	}
+
+	summary {
+		width:fit-content;
+		margin-inline:auto;
+		font-family:inherit;
+		font-size:inherit;
+	}
+
+	> div {
+		margin-top:calc(var(--lineHeightMain) * .5);
+		box-sizing:border-box;
+	}
+
+	.FormInputType-Multicheckbox {
+		gap:10px;
+	}
+}
+
 .AuditHistory-Table {
 	margin-top:var(--rowGap);
 
@@ -241,31 +464,10 @@
 	}
 
 	tr {
-		&.ValueChanged {
-			&:is(*, :nth-child(2n)) {
-				&:hover {
-					td {
-						background-color:color-mix(in srgb, var(--colorWarning), #FFFFFF 25%);
-
-						html.🌚 & {
-							background-color:color-mix(in srgb, var(--colorWarning), var(--colorBackgroundContentDarkMode) 25%);
-						}
-					}
-				}
-
-				td {
-					background-color:color-mix(in srgb, var(--colorWarning), #FFFFFF 75%);
-
-					html.🌚 & {
-						background-color:color-mix(in srgb, var(--colorWarning), var(--colorBackgroundContentDarkMode) 75%);
-					}
-				}
-			}
-		}
-
 		&.ViewCode {
 			:is(
 				.TableCell-OldValue,
+				.TableCell-NewValue,
 				.TableCell-CurrentValue
 			) {
 				code {
@@ -360,6 +562,7 @@
 
 		&:is(
 			.TableCell-OldValue,
+			.TableCell-NewValue,
 			.TableCell-CurrentValue
 		) {
 			&:has(code) {
@@ -407,6 +610,15 @@
 		&::after {
 			content:'\f121';
 			margin-left:0;
+		}
+	}
+
+	.CodeEditor {
+		margin:15px 20px;
+
+		code {
+			margin:0;
+			white-space:pre;
 		}
 	}
 
