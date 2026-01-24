@@ -15,9 +15,10 @@ use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Mail\MailSender;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\ForbiddenException;
-use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
+use Cake\Http\Exception\ServiceUnavailableException;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Security;
@@ -73,7 +74,7 @@ class CustomerCenterController extends AppController {
 			$this->languageShortcode = LocaleMiddleware::getLanguage()->shortcode;
 		}
 		catch (Exception) {
-			throw new NotFoundException();
+			throw new BadRequestException();
 		}
 
 		$this->customersTable = $this->fetchTable('Customers');
@@ -135,7 +136,7 @@ class CustomerCenterController extends AppController {
 		$registrationEnabled = Configure::read('Awyiss.Customers.Frontend.registration.enabled', false);
 
 		if (!$registrationEnabled) {
-			throw new NotFoundException();
+			throw new ServiceUnavailableException();
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
@@ -297,7 +298,7 @@ class CustomerCenterController extends AppController {
 		$loginAllowed = Configure::read('Awyiss.Customers.Frontend.login.enabled', false);
 
 		if (!$loginAllowed) {
-			throw new NotFoundException();
+			throw new ServiceUnavailableException();
 		}
 
 		$result = $this->Authentication->getResult();
@@ -578,7 +579,7 @@ class CustomerCenterController extends AppController {
 		$passwordResetEnabled = Configure::read('Awyiss.Customers.Frontend.passwordReset.enabled', true);
 
 		if (!$passwordResetEnabled) {
-			throw new NotFoundException();
+			throw new ServiceUnavailableException();
 		}
 
 		$this->set([

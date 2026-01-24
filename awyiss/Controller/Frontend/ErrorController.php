@@ -121,6 +121,25 @@ class ErrorController extends AppController {
 
 
 	/**
+	 * Handles 503 - Service Unavailable errors by looking up for a page with the 503 slug
+	 * in the current language, or the main language as fallback.
+	 *
+	 * @return void
+	 * @throws \Cake\Http\Exception\NotFoundException|\Exception
+	 * @noinspection PhpUnused
+	 */
+	public function serviceUnavailable(): void {
+		$page = $this->findErrorPage('503');
+
+		if (!$page) {
+			return;
+		}
+
+		$this->handlePage($page);
+	}
+
+
+	/**
 	 * Find an error page by error code with fallbacks
 	 * Tries: language-specific error page -> main language error page -> language-specific 404 -> main language 404
 	 *
