@@ -135,15 +135,15 @@ class SystemController extends Controller {
 		$type = $this->request->getParam('type');
 		$commands = [];
 
-		if (!$type || $type === 'all') {
+		if (!$type || $type === 'full') {
 			$commands[] = 'bin' . DS . 'cake cache clear_all';
 		}
 
-		if (in_array($type, ['media', 'all'], true)) {
+		if (in_array($type, ['media', 'full'], true)) {
 			$commands[] = 'bin' . DS . 'cake media clear_cache';
 		}
 
-		if (in_array($type, ['twig', 'all'], true)) {
+		if (in_array($type, ['twig', 'full'], true)) {
 			$commands[] = 'bin' . DS . 'cake twig clear_cache';
 		}
 
