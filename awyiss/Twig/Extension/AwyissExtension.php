@@ -21,6 +21,7 @@ use Dom\HTMLDocument;
 use InvalidArgumentException;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 use Twig\Extension\AbstractExtension;
+use Twig\Markup;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Twig\TwigTest;
@@ -153,8 +154,12 @@ class AwyissExtension extends AbstractExtension {
 				['needs_context' => true]
 			),
 
-			new TwigFunction('dump', function (): void {
+			new TwigFunction('dump', function (): Markup {
+				ob_start();
+
 				dump(...func_get_args());
+
+				return new Markup(ob_get_clean(), 'UTF-8');
 			}),
 
 			new TwigFunction(
