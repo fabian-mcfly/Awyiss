@@ -21,6 +21,7 @@
 	//noinspection CssInvalidFunction
 	grid-template-columns:var(--idColumnWidth) repeat(var(--dynamicColumns), var(--columnWidth));
 	overflow-x:auto;
+	z-index:2000;
 
 	&:has(.TableHeader-AuditInfo, .TableHeader-Actions) {
 		--dynamicColumns:calc(var(--columns) - 2);
@@ -149,6 +150,7 @@
 		width:100cqw;
 		position:sticky;
 		left:0;
+		z-index:100;
 	}
 
 	:is(
@@ -252,6 +254,7 @@
 	grid-template-columns:var(--headerWidth) repeat(var(--rows), min(200px, calc(100% - var(--headerWidth))));
 	grid-template-rows:repeat(var(--columns), max-content);
 	container:table / inline-size;
+	overflow:scroll hidden;
 
 	@media screen and (width <= 540px) {
 		padding:10px;
@@ -380,6 +383,8 @@
 		border-radius:5px;
 		margin-top:10px;
 		grid-column:1 / -1;
+		position:sticky;
+		left:0;
 
 		td {
 			padding:10px;
