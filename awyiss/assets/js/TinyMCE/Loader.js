@@ -69,6 +69,7 @@ export default class Loader {
 			toolbar_mode: 'floating',
 		},
 		min_height: 300,
+		max_height: document.querySelector('.EditFrontendEditor') ? Math.max(600, window.innerHeight * .8) : null,
 		object_resizing: false,
 		paste_as_text: true,
 		paste_block_drop: false,
