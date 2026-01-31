@@ -33,17 +33,6 @@ import Search from 'Search';
 import TitleSetter from 'TitleSetter';
 import TranslatableTexts from 'Form/TranslatableTexts';
 
-window.bodyRemoved = false;
-// If the document contains a flash message, send an event to the parent window
-if (document.querySelector('.FlashMessage.Success') && window.parent !== window) {
-	window.parent.postMessage('closeOverlayFormAndReload', '*');
-	window.parent.postMessage('closeFrontendEditorAndFetch', '*');
-
-	// Empty the dom so the user can't interact with the page
-	document.body.innerHTML = '';
-	window.bodyRemoved = true;
-}
-
 /**
  * Dynamically load a controller class and create a new instance of it
  * @param {string} controllerClass - The name of the controller class to load

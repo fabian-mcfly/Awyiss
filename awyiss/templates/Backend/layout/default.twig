@@ -187,6 +187,21 @@
 		{% block leaveConfirmationDialog %}
 			{{ element('form_leave_confirmation_dialog') }}
 		{% endblock %}
+
+		{% block removeBodyScript %}
+			<script nonce="{{ AssetHelper.getScriptNonce() }}">
+				window.bodyRemoved = false;
+				// If the document contains a flash message, send an event to the parent window
+				if (document.querySelector('.FlashMessage.Success') && window.parent !== window) {
+					window.parent.postMessage('closeOverlayFormAndReload', '*');
+					window.parent.postMessage('closeFrontendEditorAndFetch', '*');
+
+					// Empty the dom so the user can't interact with the page
+					document.body.innerHTML = '';
+					window.bodyRemoved = true;
+				}
+			</script>
+		{% endblock %}
 	{% block bodyClose %}
 	</body>
 	{% endblock %}
