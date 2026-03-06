@@ -2,7 +2,7 @@
 
 ![Awyiss CMS](awyiss/assets/img/logo-awyiss.png)
 
-![Version](https://img.shields.io/badge/Version-0.1.0%20%22Interface%22-63D1A5?style=for-the-badge&labelColor=131A21)\
+![Version](https://img.shields.io/badge/Version-0.2.0%20%22Interface%22-63D1A5?style=for-the-badge&labelColor=131A21)\
 ![PHP](https://img.shields.io/badge/PHP-8.4+-63D1A5?style=for-the-badge&labelColor=131A21)\
 ![License](https://img.shields.io/badge/License-MIT-63D1A5?style=for-the-badge&labelColor=131A21)
 
