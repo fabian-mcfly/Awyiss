@@ -39,19 +39,45 @@ jobs:
         run: |
           if [ -n "${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}" ]; then
             echo "Generating changelog from ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }} to ${{ steps.get_version.outputs.VERSION }}"
-            CHANGELOG=$(git log ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}..${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s (%h)" --no-merges)
+            COMMIT_COUNT=$(git rev-list --count ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}..${{ steps.get_version.outputs.VERSION }} --no-merges)
+            CHANGELOG=$(git log ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}..${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s (%h)" --no-merges -n 100)
           else
-            echo "No previous tag found, generating full changelog"
-            CHANGELOG=$(git log ${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s (%h)" --no-merges)
+            echo "No previous tag found, generating changelog for last 100 commits"
+            COMMIT_COUNT=$(git rev-list --count ${{ steps.get_version.outputs.VERSION }} --no-merges)
+            CHANGELOG=$(git log ${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s (%h)" --no-merges -n 100)
           fi
           
-          # Save to file to handle multiline output
-          echo "$CHANGELOG" > CHANGELOG.txt
+          # Create formatted changelog file
+          echo "## Changes in ${{ steps.get_version.outputs.VERSION }}" > CHANGELOG.txt
+          echo "" >> CHANGELOG.txt
           
-          # Also save to output with proper formatting
-          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGELOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          if [ -n "${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}" ]; then
+            echo "**${COMMIT_COUNT} commits** since ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}" >> CHANGELOG.txt
+          else
+            echo "**${COMMIT_COUNT} total commits**" >> CHANGELOG.txt
+          fi
+          
+          echo "" >> CHANGELOG.txt
+          
+          if [ ${COMMIT_COUNT} -gt 100 ]; then
+            echo "### Latest 100 commits (of ${COMMIT_COUNT} total):" >> CHANGELOG.txt
+            echo "" >> CHANGELOG.txt
+            echo "$CHANGELOG" >> CHANGELOG.txt
+            echo "" >> CHANGELOG.txt
+            echo "**Note:** This release contains ${COMMIT_COUNT} commits. Only the latest 100 are shown above. See the full commit history on GitHub." >> CHANGELOG.txt
+          else
+            echo "### All commits:" >> CHANGELOG.txt
+            echo "" >> CHANGELOG.txt
+            echo "$CHANGELOG" >> CHANGELOG.txt
+          fi
+          
+          echo "" >> CHANGELOG.txt
+          echo "---" >> CHANGELOG.txt
+          echo "" >> CHANGELOG.txt
+          echo "### Downloads" >> CHANGELOG.txt
+          echo "" >> CHANGELOG.txt
+          echo "- **Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip**: Source code only (requires \`composer install\`)" >> CHANGELOG.txt
+          echo "- **Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip**: Full package with all dependencies (ready to deploy)" >> CHANGELOG.txt
 
       - name: Create source archive (without dependencies)
         run: |
