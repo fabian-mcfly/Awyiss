@@ -4,7 +4,9 @@
 use Awyiss\Utility\Inflector;
 use Cake\Command\Helper\ProgressHelper;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\FactoryLocator;
 use Migrations\BaseMigration;
+use Symfony\Component\Process\Process;
 
 
 /**
@@ -45,6 +47,18 @@ class RenameUnderscoredColumns extends BaseMigration {
 			},
 			'total' => count($tables),
 		]);
+
+		ConnectionManager::get('default')->getCacher()->clear();
+
+		FactoryLocator::get('Table')->clear();
+
+		$process = new Process([
+			'bin' . DS . 'cake',
+			'schema_cache',
+			'clear',
+		]);
+
+		$process->run();
 	}
 
 	/**
@@ -80,5 +94,16 @@ class RenameUnderscoredColumns extends BaseMigration {
 			},
 			'total' => count($tables),
 		]);
+
+		ConnectionManager::get('default')->getCacher()->clear();
+
+		FactoryLocator::get('Table')->clear();
+
+		$process = new Process([
+			'bin' . DS . 'cake',
+			'schema_cache',
+			'clear',
+		]);
+		$process->run();
 	}
 }
