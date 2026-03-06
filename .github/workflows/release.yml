@@ -1,0 +1,141 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for changelog generation
+
+      # Only release from prod branch
+      - name: Exit if not on main branch
+        if: endsWith(github.event.base_ref, 'main') == false
+        run: exit -1
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Get previous tag
+        id: get_previous_tag
+        run: |
+          PREVIOUS_TAG=$(git tag --sort=-version:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sed -n '2p')
+          echo "PREVIOUS_TAG=${PREVIOUS_TAG}" >> $GITHUB_OUTPUT
+          echo "Previous tag: ${PREVIOUS_TAG}"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          if [ -n "${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}" ]; then
+            echo "Generating changelog from ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }} to ${{ steps.get_version.outputs.VERSION }}"
+            CHANGELOG=$(git log ${{ steps.get_previous_tag.outputs.PREVIOUS_TAG }}..${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s (%h)" --no-merges)
+          else
+            echo "No previous tag found, generating full changelog"
+            CHANGELOG=$(git log ${{ steps.get_version.outputs.VERSION }} --pretty=format:"- %s (%h)" --no-merges)
+          fi
+          
+          # Save to file to handle multiline output
+          echo "$CHANGELOG" > changelog.txt
+          
+          # Also save to output with proper formatting
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create source archive (without dependencies)
+        run: |
+          # Create temporary directory for source files
+          mkdir -p release-source
+          
+          # Copy all files except ignored ones
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.idea' \
+            --exclude='.phpunit.cache' \
+            --exclude='.env' \
+            --exclude='release-source' \
+            ./ release-source/
+          
+          # Create zip archive
+          cd release-source
+          zip -r ../Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip .
+          cd ..
+          
+          echo "Source archive created: Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip"
+          ls -lh Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, intl, pdo_sqlite
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Install Composer dependencies
+        run: composer install --optimize-autoloader --no-interaction
+
+      - name: Create full archive (with dependencies)
+        run: |
+          # Create temporary directory for full package
+          mkdir -p release-full
+          
+          # Remove release-source directory if it exists to avoid conflicts
+          rm -rf release-source
+          
+          # Copy all files except ignored ones
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='.idea' \
+            --exclude='.phpunit.cache' \
+            --exclude='.env' \
+            --exclude='release-full' \
+            --exclude='Awyiss-*.zip' \
+            ./ release-full/
+          
+          # Create zip archive
+          cd release-full
+          zip -r ../Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip .
+          cd ..
+          
+          echo "Full archive created: Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip"
+          ls -lh Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ## Changes in ${{ steps.get_version.outputs.VERSION }}
+            
+            ${{ steps.changelog.outputs.CHANGELOG }}
+            
+            ---
+            
+            ### Downloads
+            
+            - **Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip**: Source code only (requires `composer install`)
+            - **Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip**: Full package with all dependencies (ready to deploy)
+          files: |
+            Awyiss-${{ steps.get_version.outputs.VERSION }}-source.zip
+            Awyiss-${{ steps.get_version.outputs.VERSION }}-full.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
